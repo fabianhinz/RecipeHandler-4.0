@@ -1,19 +1,33 @@
+import * as serviceWorker from "./serviceWorker";
+import App from "./components/App";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./components/App";
-import * as serviceWorker from "./serviceWorker";
-import "typeface-roboto";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { Router } from "react-router";
-import { createBrowserHistory } from "history";
-import { SnackbarProvider } from "notistack";
 import ThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
+import { createBrowserHistory } from "history";
 import { createMuiTheme } from "@material-ui/core";
+import { Router } from "react-router";
+import { SnackbarProvider } from "notistack";
+import "typeface-roboto";
 
 const theme = createMuiTheme({
   palette: {
     primary: { main: "#A5D6A7" },
     secondary: { main: "#FFCC80" }
+  },
+  overrides: {
+    MuiExpansionPanel: {
+      rounded: {
+        "&:first-child": {
+          borderTopLeftRadius: 10,
+          borderTopRightRadius: 10
+        },
+        "&:last-child": {
+          borderBottomLeftRadius: 10,
+          borderBottomRightRadius: 10
+        }
+      }
+    }
   }
 });
 
