@@ -5,12 +5,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import { createBrowserHistory } from "history";
-import { createMuiTheme } from "@material-ui/core";
+import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
 import { Router } from "react-router";
 import { SnackbarProvider } from "notistack";
 import "typeface-roboto";
 
-const theme = createMuiTheme({
+let theme = createMuiTheme({
   palette: {
     primary: { main: "#A5D6A7" },
     secondary: { main: "#FFCC80" }
@@ -30,6 +30,8 @@ const theme = createMuiTheme({
     }
   }
 });
+
+theme = responsiveFontSizes(theme);
 
 ReactDOM.render(
   <>
