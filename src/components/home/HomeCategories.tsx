@@ -38,7 +38,7 @@ export const HomeCategories: FC = props => {
   };
 
   return (
-    <Grid item>
+    <Grid item xs={12}>
       <Card>
         <CardHeader title="Kategorien" />
         <CardContent>

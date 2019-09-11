@@ -9,3 +9,7 @@
 
 - https://www.npmjs.com/package/react-loading-skeleton
 - https://draftjs.org/
+
+## known issues
+
+- chip components looks weird in prod: https://github.com/mui-org/material-ui/issues/16374
