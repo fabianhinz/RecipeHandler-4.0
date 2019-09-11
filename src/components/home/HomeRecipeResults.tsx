@@ -20,11 +20,20 @@ import Rating from "@material-ui/lab/Rating";
 import { PATHS } from "../../routes/Routes";
 import { Navigate } from "../../routes/Navigate";
 import pfannkuchenImg from "../../images/pfannkuchen.jpg";
+import blueGrey from "@material-ui/core/colors/blueGrey";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
   createStyles({
     img: {
       borderRadius: 10
+    },
+    detailsBtn: {
+      boxShadow: "none",
+      color: theme.palette.getContrastText(blueGrey[700]),
+      background: blueGrey[700],
+      "&:hover": {
+        background: blueGrey[900]
+      }
     }
   })
 );
@@ -35,7 +44,7 @@ export const HomeRecipeResults: FC = () => {
   return (
     <Grid item>
       {["Pfannkuchen", "Salat mit Pute", "herzhafte Muffins"].map(rezept => (
-        <ExpansionPanel key={rezept}>
+        <ExpansionPanel key={rezept} TransitionProps={{ unmountOnExit: true }}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Grid
               container
@@ -49,8 +58,9 @@ export const HomeRecipeResults: FC = () => {
               </Grid>
               <Grid item>
                 <Rating
+                  onClick={e => e.stopPropagation()}
                   name="customized-color"
-                  value={2.3}
+                  value={2}
                   precision={1}
                   icon={<FavoriteIcon fontSize="inherit" />}
                 />

@@ -8,11 +8,14 @@ import {
   PaletteType,
   Divider,
   Hidden,
-  SwipeableDrawer
+  SwipeableDrawer,
+  Fab
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/FindInPageTwoTone";
 import SettingsIcon from "@material-ui/icons/SettingsTwoTone";
 import BrightnessIcon from "@material-ui/icons/SettingsBrightnessTwoTone";
+import OpenDrawerIcon from "@material-ui/icons/KeyboardArrowUpTwoTone";
+import CreateIcon from "@material-ui/icons/CreateTwoTone";
 import HomeIcon from "@material-ui/icons/HomeTwoTone";
 import { Navigate } from "../routes/Navigate";
 import { PATHS } from "../routes/Routes";
@@ -29,6 +32,12 @@ const useStyles = makeStyles(theme =>
     },
     divider: {
       margin: theme.spacing(1)
+    },
+    openDrawerIcon: {
+      position: "fixed",
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+      zIndex: theme.zIndex.appBar
     }
   })
 );
@@ -62,6 +71,12 @@ export const Header: FC<HeaderProps> = props => {
             <IconButton>
               <SearchIcon />
             </IconButton>
+            <Divider className={classes.divider} />
+            <Navigate to={PATHS.recipeCreate}>
+              <IconButton>
+                <CreateIcon />
+              </IconButton>
+            </Navigate>
           </Grid>
         </Paper>
       </Hidden>
@@ -87,8 +102,18 @@ export const Header: FC<HeaderProps> = props => {
             <IconButton>
               <SearchIcon />
             </IconButton>
+            <IconButton>
+              <CreateIcon />
+            </IconButton>
           </Grid>
         </SwipeableDrawer>
+        <Fab
+          size="small"
+          className={classes.openDrawerIcon}
+          onClick={() => setDrawer(true)}
+        >
+          <OpenDrawerIcon />
+        </Fab>
       </Hidden>
     </>
   );

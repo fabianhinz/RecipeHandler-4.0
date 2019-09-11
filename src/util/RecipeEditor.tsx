@@ -10,9 +10,23 @@ import {
   CardHeader,
   CardContent,
   CardActions,
-  Typography,
-  PropTypes
+  Typography
 } from "@material-ui/core";
+import { useRouter } from "../routes/RouterContext";
+
+type Style = "BOLD" | "ITALIC" | "UNDERLINE" | "CODE";
+
+interface InlineStyle {
+  label: JSX.Element;
+  style: Style;
+}
+
+const inlineStyles: InlineStyle[] = [
+  { label: <b>F</b>, style: "BOLD" },
+  { label: <i>K</i>, style: "ITALIC" },
+  { label: <u>U</u>, style: "UNDERLINE" }
+  // { label: <code>m</code>, style: "CODE" }
+];
 
 const useStyles = makeStyles(theme => {
   const { palette, spacing, shape } = theme;
@@ -32,11 +46,13 @@ const useStyles = makeStyles(theme => {
 });
 
 export const RecipeEditor: FC = () => {
+  const { history } = useRouter();
   const classes = useStyles();
   const [editorState, setEditorState] = React.useState(
     EditorState.createEmpty()
   );
   const editorRef = useRef<Editor>(null);
+  const currentStyles = editorState.getCurrentInlineStyle();
 
   useEffect(() => {
     focusEditor();
@@ -60,18 +76,6 @@ export const RecipeEditor: FC = () => {
     setEditorState(RichUtils.toggleInlineStyle(editorState, style));
   };
 
-  const getPrimaryWhenSelected = (btn: string): PropTypes.Color => {
-    const currentStyles = editorState.getCurrentInlineStyle();
-    switch (btn) {
-      case "BOLD":
-        return currentStyles.has("BOLD") ? "primary" : "default";
-      case "ITALIC":
-        return currentStyles.has("ITALIC") ? "primary" : "default";
-      default:
-        return "default";
-    }
-  };
-
   return (
     <Card>
       <CardHeader
@@ -91,21 +95,15 @@ export const RecipeEditor: FC = () => {
                 Schriftart
               </Typography>
               <ButtonGroup variant="contained" size="small">
-                <Button
-                  onClick={handleInlinyStyleChange("BOLD")}
-                  color={getPrimaryWhenSelected("BOLD")}
-                >
-                  <b>F</b>
-                </Button>
-                <Button
-                  onClick={handleInlinyStyleChange("ITALIC")}
-                  color={getPrimaryWhenSelected("ITALIC")}
-                >
-                  <i>K</i>
-                </Button>
-                <Button>
-                  <u>U</u>
-                </Button>
+                {inlineStyles.map(({ label, style }) => (
+                  <Button
+                    key={style}
+                    color={currentStyles.has(style) ? "primary" : "default"}
+                    onClick={handleInlinyStyleChange(style)}
+                  >
+                    {label}
+                  </Button>
+                ))}
               </ButtonGroup>
             </Grid>
           </Grid>
@@ -115,10 +113,7 @@ export const RecipeEditor: FC = () => {
                 Formatvorlagen
               </Typography>
               <ButtonGroup variant="contained" size="small">
-                <Button
-                  onClick={handleInlinyStyleChange("header-one")}
-                  color={getPrimaryWhenSelected("header-one")}
-                >
+                <Button onClick={handleInlinyStyleChange("header-one")}>
                   h1
                 </Button>
                 <Button>h2</Button>
@@ -137,7 +132,9 @@ export const RecipeEditor: FC = () => {
         </div>
       </CardContent>
       <CardActions>
-        <Button size="small">Abbrechen</Button>
+        <Button size="small" onClick={() => history.goBack()}>
+          Abbrechen
+        </Button>
         <Button size="small" color="primary">
           Speichern
         </Button>
