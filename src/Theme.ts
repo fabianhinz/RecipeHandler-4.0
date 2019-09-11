@@ -33,6 +33,9 @@ const sharedTheme: Partial<ThemeOptions> = {
     MuiChip: {
       root: {
         cursor: "pointer"
+      },
+      sizeSmall: {
+        cursor: "auto"
       }
     }
   }

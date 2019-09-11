@@ -1,6 +1,8 @@
 import React, { FC } from "react";
 import FavoriteIcon from "@material-ui/icons/FavoriteTwoTone";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMoreTwoTone";
+import TimerIcon from "@material-ui/icons/AvTimerTwoTone";
+import BookIcon from "@material-ui/icons/BookTwoTone";
 import {
   Chip,
   createStyles,
@@ -11,7 +13,8 @@ import {
   makeStyles,
   Typography,
   ExpansionPanelActions,
-  Button
+  Button,
+  Avatar
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import { PATHS } from "../../routes/Routes";
@@ -58,7 +61,28 @@ export const HomeRecipeResults: FC = () => {
             <Grid container direction="column" spacing={2}>
               <Grid item container spacing={1}>
                 <Grid item>
-                  <Chip color="primary" label="ToDo Kategorien" />
+                  <Chip
+                    avatar={
+                      <Avatar>
+                        <BookIcon />
+                      </Avatar>
+                    }
+                    size="small"
+                    color="primary"
+                    label="Süß"
+                  />
+                </Grid>
+                <Grid item>
+                  <Chip
+                    avatar={
+                      <Avatar>
+                        <TimerIcon />
+                      </Avatar>
+                    }
+                    size="small"
+                    color="secondary"
+                    label="~30 Minuten"
+                  />
                 </Grid>
               </Grid>
 
