@@ -1,6 +1,6 @@
 import React, { FC, Suspense, lazy, LazyExoticComponent } from "react";
 import { Route, Redirect, Switch, RouteComponentProps } from "react-router-dom";
-import BackgroundIcon from "../util/BackgroundIcon";
+import { PathBackground } from "../util/BackgroundIcon";
 
 interface Routes {
   path: string;
@@ -48,8 +48,7 @@ export const Routes: FC = () => (
         render={routeProps => (
           <Suspense fallback={fallback}>
             <Component {...routeProps} />
-            {/* ToDo path specific background */}
-            <BackgroundIcon />
+            <PathBackground {...routeProps} />
           </Suspense>
         )}
       />

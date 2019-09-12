@@ -20,6 +20,7 @@ import BookIcon from "@material-ui/icons/BookTwoTone";
 import { useRouter } from "../../../routes/RouterContext";
 import { Categories } from "../../category/Categories";
 import { BadgeRating } from "../../../util/BadgeRating";
+import { Dropzone } from "../../../util/Dropzone";
 
 interface Tab {
   icon: JSX.Element;
@@ -79,16 +80,7 @@ const RecipeCreate: FC = () => {
                 <Tab wrapped {...editorTab} label={matches ? label : ""} />
               ))}
             </Tabs>
-            {tab.key === PICTURE_KEY && (
-              <TextField
-                placeholder="ToDo Bild handler"
-                fullWidth
-                multiline
-                rows="10"
-                margin="normal"
-                variant="outlined"
-              />
-            )}
+            {tab.key === PICTURE_KEY && <Dropzone />}
             {tab.key === INGREDIENTS_KEY && (
               <TextField
                 placeholder="Zutatenliste"
