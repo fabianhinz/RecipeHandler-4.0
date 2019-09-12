@@ -8,8 +8,7 @@ import {
   Card,
   CardMedia,
   CardHeader,
-  Fab,
-  Divider
+  Fab
 } from "@material-ui/core";
 import CancelIcon from "@material-ui/icons/CancelTwoTone";
 import AddIcon from "@material-ui/icons/AddCircleTwoTone";
@@ -30,8 +29,8 @@ const readDocumentAsync = (
   });
 };
 
-const useStyles = makeStyles(theme =>
-  createStyles({
+const useStyles = makeStyles(theme => {
+  return createStyles({
     rootProps: {
       outline: "none"
     },
@@ -49,8 +48,8 @@ const useStyles = makeStyles(theme =>
     addIcon: {
       marginRight: theme.spacing(1)
     }
-  })
-);
+  });
+});
 
 interface RecipeAttachementsDropzoneProps {
   onAttachements: (newFiles: RecipeAttachement[]) => void;

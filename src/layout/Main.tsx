@@ -6,7 +6,7 @@ const useStyles = makeStyles(theme =>
   createStyles({
     main: {
       marginTop: theme.spacing(3),
-      marginBottom: theme.spacing(3)
+      marginBottom: theme.spacing(6)
     }
   })
 );

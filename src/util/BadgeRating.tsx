@@ -11,7 +11,7 @@ import { SvgIconProps } from "@material-ui/core/SvgIcon";
 
 const useStyles = makeStyles(theme => {
   const backgroundColor =
-    theme.palette.type === "light" ? blueGrey[900] : "#fff";
+    theme.palette.type === "light" ? blueGrey[900] : theme.palette.grey[600];
 
   return createStyles({
     badge: {
