@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, FC } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   makeStyles,
@@ -8,11 +8,13 @@ import {
   Card,
   CardMedia,
   CardHeader,
-  Fab
+  Fab,
+  Divider
 } from "@material-ui/core";
 import CancelIcon from "@material-ui/icons/CancelTwoTone";
 import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import { useSnackbar } from "notistack";
+import { RecipeAttachement } from "./RecipeCreate";
 
 const readDocumentAsync = (
   document: any,
@@ -28,20 +30,13 @@ const readDocumentAsync = (
   });
 };
 
-interface RecipeAttachement {
-  name: string;
-  dataUrl: string;
-  size: number;
-}
-
 const useStyles = makeStyles(theme =>
   createStyles({
     rootProps: {
-      outline: "none",
-      borderRadius: 10,
-      marginTop: theme.spacing(2),
-      marginBottom: theme.spacing(1),
-      minHeight: 100
+      outline: "none"
+    },
+    dropActive: {
+      background: theme.palette.primary.light
     },
     // source: https://material-ui.com/components/cards/#cards
     cardMedia: {
@@ -57,9 +52,15 @@ const useStyles = makeStyles(theme =>
   })
 );
 
-export const Dropzone = () => {
+interface RecipeAttachementsDropzoneProps {
+  onAttachements: (newFiles: RecipeAttachement[]) => void;
+  attachements: RecipeAttachement[];
+}
+
+export const RecipeAttachementsDropzone: FC<
+  RecipeAttachementsDropzoneProps
+> = props => {
   const classes = useStyles();
-  const [files, setFiles] = useState<RecipeAttachement[]>([]);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const onDrop = useCallback(
@@ -75,14 +76,19 @@ export const Dropzone = () => {
           { variant: "warning" }
         );
 
+      const loadingKey = enqueueSnackbar(<>Dateien werden geladen</>, {
+        variant: "info"
+      });
+
       const newFiles: RecipeAttachement[] = [];
       for (const file of acceptedFiles) {
         const dataUrl = (await readDocumentAsync(file, "dataUrl")) as string;
         newFiles.push({ name: file.name, dataUrl, size: file.size });
       }
-      setFiles(previous => [...previous, ...newFiles]);
+      props.onAttachements(newFiles);
+      closeSnackbar(loadingKey as string);
     },
-    [enqueueSnackbar]
+    [closeSnackbar, enqueueSnackbar, props]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -99,40 +105,35 @@ export const Dropzone = () => {
   }, [closeSnackbar, enqueueSnackbar, isDragActive]);
 
   return (
-    <div {...getRootProps()} className={classes.rootProps}>
-      <input {...getInputProps()} />
-
-      <Grid
-        className={classes.filesGrid}
-        container
-        spacing={2}
-        justify="center"
-      >
-        {files.length === 0 && (
-          <Grid item>
-            <Fab size="large" color="primary" variant="extended">
-              <AddIcon className={classes.addIcon} />
-              Bilder hinzufügen
-            </Fab>
-          </Grid>
-        )}
-        {files.map(file => (
-          <Grid item key={file.name}>
-            <Card raised onClick={e => e.stopPropagation()}>
-              <CardHeader
-                title={file.name}
-                subheader={file.size}
-                action={
-                  <IconButton>
-                    <CancelIcon />
-                  </IconButton>
-                }
-              />
-              <CardMedia className={classes.cardMedia} image={file.dataUrl} />
-            </Card>
-          </Grid>
-        ))}
+    <Grid className={classes.filesGrid} container spacing={2}>
+      <Grid item xs={12} container justify="center">
+        <div {...getRootProps()} className={classes.rootProps}>
+          <input {...getInputProps()} />
+          <Fab size="medium" color="primary" variant="extended">
+            <AddIcon className={classes.addIcon} />
+            Bilder hinzufügen
+          </Fab>
+        </div>
       </Grid>
-    </div>
+      {props.attachements.map(attachement => (
+        <Grid item key={attachement.name}>
+          <Card raised onClick={e => e.stopPropagation()}>
+            <CardHeader
+              title={attachement.name}
+              subheader={attachement.size}
+              action={
+                <IconButton>
+                  <CancelIcon />
+                </IconButton>
+              }
+            />
+            <CardMedia
+              className={classes.cardMedia}
+              image={attachement.dataUrl}
+            />
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
   );
 };

@@ -20,7 +20,13 @@ import BookIcon from "@material-ui/icons/BookTwoTone";
 import { useRouter } from "../../../routes/RouterContext";
 import { Categories } from "../../category/Categories";
 import { BadgeRating } from "../../../util/BadgeRating";
-import { Dropzone } from "../../../util/Dropzone";
+import { RecipeAttachementsDropzone } from "./RecipeAttachementsDropzone";
+
+export interface RecipeAttachement {
+  name: string;
+  dataUrl: string;
+  size: number;
+}
 
 interface Tab {
   icon: JSX.Element;
@@ -40,15 +46,20 @@ const editorTabs: Tab[] = [
 
 const RecipeCreate: FC = () => {
   const { history } = useRouter();
-  const [tab, setTab] = useState<Tab>(editorTabs[0]);
+  const [selectedTab, setSelectedTab] = useState<Tab>(editorTabs[0]);
   const [test, setTest] = useState<string>();
+  const [attachements, setAttachements] = useState<RecipeAttachement[]>([]);
 
   // matches Tablet width
   const matches = useMediaQuery("(min-width:768px)");
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newKey: number) => {
     // ! if we use editorTabs as intended find always returns a tab object
-    setTab(editorTabs.find(tab => tab.key === newKey)!);
+    setSelectedTab(editorTabs.find(tab => tab.key === newKey)!);
+  };
+
+  const handleAttachementsDrop = (newAttachements: RecipeAttachement[]) => {
+    setAttachements(previous => [...previous, ...newAttachements]);
   };
 
   return (
@@ -73,15 +84,20 @@ const RecipeCreate: FC = () => {
 
             <Tabs
               indicatorColor="secondary"
-              value={tab.key}
+              value={selectedTab.key}
               onChange={handleTabChange}
             >
               {editorTabs.map(({ label, ...editorTab }) => (
                 <Tab wrapped {...editorTab} label={matches ? label : ""} />
               ))}
             </Tabs>
-            {tab.key === PICTURE_KEY && <Dropzone />}
-            {tab.key === INGREDIENTS_KEY && (
+            {selectedTab.key === PICTURE_KEY && (
+              <RecipeAttachementsDropzone
+                onAttachements={handleAttachementsDrop}
+                attachements={attachements}
+              />
+            )}
+            {selectedTab.key === INGREDIENTS_KEY && (
               <TextField
                 placeholder="Zutatenliste"
                 value={test}
@@ -93,7 +109,7 @@ const RecipeCreate: FC = () => {
                 variant="outlined"
               />
             )}
-            {tab.key === DESCRIPTION_KEY && (
+            {selectedTab.key === DESCRIPTION_KEY && (
               <TextField
                 placeholder="Beschreibung"
                 fullWidth
