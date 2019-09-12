@@ -37,6 +37,24 @@ const sharedTheme: Partial<ThemeOptions> = {
       sizeSmall: {
         cursor: "auto"
       }
+    },
+    MuiOutlinedInput: {
+      notchedOutline: {
+        borderRadius: 10
+      }
+    },
+    MuiTabs: {
+      indicator: {
+        background: "none"
+      }
+    },
+    MuiTab: {
+      textColorInherit: {
+        opacity: 0.5,
+        "& $selected": {
+          opacity: 1
+        }
+      }
     }
   }
 };

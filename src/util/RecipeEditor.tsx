@@ -1,139 +1,107 @@
-import React, { FC, useEffect, useRef } from "react";
-import { Editor, EditorState, RichUtils, DraftHandleValue } from "draft-js";
+import React, { FC, useState } from "react";
+
 import {
-  makeStyles,
-  createStyles,
-  ButtonGroup,
   Button,
-  Grid,
   Card,
   CardHeader,
   CardContent,
   CardActions,
-  Typography
+  TextField,
+  Tabs,
+  Tab
 } from "@material-ui/core";
 import { useRouter } from "../routes/RouterContext";
+import ReactMarkdown from "react-markdown";
+import CameraIcon from "@material-ui/icons/CameraTwoTone";
+import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
+import BookIcon from "@material-ui/icons/BookTwoTone";
 
-type Style = "BOLD" | "ITALIC" | "UNDERLINE" | "CODE";
+// const useStyles = makeStyles(theme => {
+//   const { palette, spacing, shape } = theme;
 
-interface InlineStyle {
-  label: JSX.Element;
-  style: Style;
+//   return createStyles({
+//     tabs: {}
+//   });
+// });
+interface Tab {
+  icon: JSX.Element;
+  key: number;
+  label: "Bilder" | "Zutatenliste" | "Beschreibungen";
 }
 
-const inlineStyles: InlineStyle[] = [
-  { label: <b>F</b>, style: "BOLD" },
-  { label: <i>K</i>, style: "ITALIC" },
-  { label: <u>U</u>, style: "UNDERLINE" }
-  // { label: <code>m</code>, style: "CODE" }
+const PICTURE_KEY = 0;
+const INGREDIENTS_KEY = 1;
+const DESCRIPTION_KEY = 2;
+
+const editorTabs: Tab[] = [
+  { key: PICTURE_KEY, label: "Bilder", icon: <CameraIcon /> },
+  { key: INGREDIENTS_KEY, label: "Zutatenliste", icon: <AssignmentIcon /> },
+  { key: DESCRIPTION_KEY, label: "Beschreibungen", icon: <BookIcon /> }
 ];
-
-const useStyles = makeStyles(theme => {
-  const { palette, spacing, shape } = theme;
-
-  return createStyles({
-    editorContainer: {
-      minHeight: 200,
-      padding: spacing(1),
-      borderRadius: shape.borderRadius,
-      border: `1px solid ${palette.divider}`,
-      cursor: "text"
-    },
-    btnGroup: {
-      marginBottom: spacing(1)
-    }
-  });
-});
 
 export const RecipeEditor: FC = () => {
   const { history } = useRouter();
-  const classes = useStyles();
-  const [editorState, setEditorState] = React.useState(
-    EditorState.createEmpty()
-  );
-  const editorRef = useRef<Editor>(null);
-  const currentStyles = editorState.getCurrentInlineStyle();
+  const [tab, setTab] = useState<Tab>(editorTabs[0]);
+  const [test, setTest] = useState<string>();
 
-  useEffect(() => {
-    focusEditor();
-  }, []);
-
-  const focusEditor = () => editorRef.current!.focus();
-
-  const handleKeyCommand = (
-    command: any,
-    editorState: EditorState
-  ): DraftHandleValue => {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      setEditorState(newState);
-      return "handled";
-    }
-    return "not-handled";
-  };
-
-  const handleInlinyStyleChange = (style: string) => () => {
-    setEditorState(RichUtils.toggleInlineStyle(editorState, style));
+  const handleTabChange = (event: React.ChangeEvent<{}>, newKey: number) => {
+    // ! if we use editorTabs as intended find always returns a tab object
+    setTab(editorTabs.find(tab => tab.key === newKey)!);
   };
 
   return (
     <Card>
       <CardHeader
         title="Rezept erstellen"
-        subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten"
+        subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein optionale Kurzbeschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
       />
       <CardContent>
-        <Grid
-          className={classes.btnGroup}
-          direction="row"
-          container
-          spacing={1}
-        >
-          <Grid item>
-            <Grid container direction="column">
-              <Typography gutterBottom variant="caption">
-                Schriftart
-              </Typography>
-              <ButtonGroup variant="contained" size="small">
-                {inlineStyles.map(({ label, style }) => (
-                  <Button
-                    key={style}
-                    color={currentStyles.has(style) ? "primary" : "default"}
-                    onClick={handleInlinyStyleChange(style)}
-                  >
-                    {label}
-                  </Button>
-                ))}
-              </ButtonGroup>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Grid container direction="column">
-              <Typography gutterBottom variant="caption">
-                Formatvorlagen
-              </Typography>
-              <ButtonGroup variant="contained" size="small">
-                <Button onClick={handleInlinyStyleChange("header-one")}>
-                  h1
-                </Button>
-                <Button>h2</Button>
-                <Button>h3</Button>
-              </ButtonGroup>
-            </Grid>
-          </Grid>
-        </Grid>
-        <div className={classes.editorContainer} onClick={focusEditor}>
-          <Editor
-            ref={editorRef}
-            editorState={editorState}
-            onChange={setEditorState}
-            handleKeyCommand={handleKeyCommand}
+        <Tabs centered value={tab.key} onChange={handleTabChange}>
+          {editorTabs.map(editorTab => (
+            <Tab {...editorTab} />
+          ))}
+        </Tabs>
+        {tab.key === PICTURE_KEY && (
+          <TextField
+            placeholder="ToDo Bild handler"
+            fullWidth
+            multiline
+            rows="10"
+            margin="normal"
+            variant="outlined"
           />
-        </div>
+        )}
+        {tab.key === INGREDIENTS_KEY && (
+          <TextField
+            placeholder="Zutatenliste"
+            value={test}
+            onChange={e => setTest(e.target.value)}
+            fullWidth
+            multiline
+            rows="10"
+            margin="normal"
+            variant="outlined"
+          />
+        )}
+        {tab.key === DESCRIPTION_KEY && (
+          <TextField
+            placeholder="Beschreibung"
+            fullWidth
+            multiline
+            rows="10"
+            margin="normal"
+            variant="outlined"
+          />
+        )}
+        <ReactMarkdown source={test} />
       </CardContent>
+
       <CardActions>
         <Button size="small" onClick={() => history.goBack()}>
           Abbrechen
+        </Button>
+        <Button size="small" color="secondary">
+          Vorschau
         </Button>
         <Button size="small" color="primary">
           Speichern

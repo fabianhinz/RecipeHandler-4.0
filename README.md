@@ -8,7 +8,9 @@
 ## may wanna use this
 
 - https://www.npmjs.com/package/react-loading-skeleton
-- https://draftjs.org/
+- Rich text editor
+  - https://draftjs.org/
+  - https://www.draft-js-plugins.com/plugin/image
 
 ## known issues
 

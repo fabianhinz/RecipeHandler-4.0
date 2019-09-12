@@ -107,13 +107,15 @@ export const Header: FC<HeaderProps> = props => {
             </IconButton>
           </Grid>
         </SwipeableDrawer>
-        <Fab
-          size="small"
-          className={classes.openDrawerIcon}
-          onClick={() => setDrawer(true)}
-        >
-          <OpenDrawerIcon />
-        </Fab>
+        {!drawer && (
+          <Fab
+            size="small"
+            className={classes.openDrawerIcon}
+            onClick={() => setDrawer(true)}
+          >
+            <OpenDrawerIcon />
+          </Fab>
+        )}
       </Hidden>
     </>
   );
