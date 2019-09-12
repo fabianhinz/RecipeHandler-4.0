@@ -1,10 +1,6 @@
 import React, { FC } from "react";
-import FavoriteIcon from "@material-ui/icons/FavoriteTwoTone";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMoreTwoTone";
-import TimerIcon from "@material-ui/icons/AvTimerTwoTone";
-import BookIcon from "@material-ui/icons/BookTwoTone";
 import {
-  Chip,
   createStyles,
   ExpansionPanel,
   ExpansionPanelDetails,
@@ -13,14 +9,19 @@ import {
   makeStyles,
   Typography,
   ExpansionPanelActions,
-  Button,
-  Avatar
+  Button
 } from "@material-ui/core";
-import Rating from "@material-ui/lab/Rating";
 import { PATHS } from "../../routes/Routes";
 import { Navigate } from "../../routes/Navigate";
 import pfannkuchenImg from "../../images/pfannkuchen.jpg";
 import blueGrey from "@material-ui/core/colors/blueGrey";
+import { CategoryChipsReadonly } from "../category/CategoryChips";
+import {
+  MOCK_CATEGORIES,
+  MOCK_TIME_CATEGORIES,
+  MOCK_RECIPES
+} from "../../util/Mock";
+import { BadgeRating } from "../../util/BadgeRating";
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -43,7 +44,7 @@ export const HomeRecipeResults: FC = () => {
 
   return (
     <Grid item>
-      {["Pfannkuchen", "Salat mit Pute", "herzhafte Muffins"].map(rezept => (
+      {MOCK_RECIPES.map(rezept => (
         <ExpansionPanel key={rezept} TransitionProps={{ unmountOnExit: true }}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Grid
@@ -57,44 +58,21 @@ export const HomeRecipeResults: FC = () => {
                 <Typography>{rezept}</Typography>
               </Grid>
               <Grid item>
-                <Rating
-                  onClick={e => e.stopPropagation()}
-                  name="customized-color"
-                  value={2}
-                  precision={1}
-                  icon={<FavoriteIcon fontSize="inherit" />}
-                />
+                <BadgeRating />
               </Grid>
             </Grid>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <Grid container direction="column" spacing={2}>
-              <Grid item container spacing={1}>
-                <Grid item>
-                  <Chip
-                    avatar={
-                      <Avatar>
-                        <BookIcon />
-                      </Avatar>
-                    }
-                    size="small"
-                    color="primary"
-                    label="Süß"
-                  />
-                </Grid>
-                <Grid item>
-                  <Chip
-                    avatar={
-                      <Avatar>
-                        <TimerIcon />
-                      </Avatar>
-                    }
-                    size="small"
-                    color="secondary"
-                    label="~30 Minuten"
-                  />
-                </Grid>
-              </Grid>
+              <CategoryChipsReadonly
+                color="primary"
+                items={MOCK_CATEGORIES.slice(1, 3)}
+              />
+              <CategoryChipsReadonly
+                color="secondary"
+                variant="time"
+                items={MOCK_TIME_CATEGORIES.slice(1, 4)}
+              />
 
               <Grid item>
                 <Grid container spacing={2} direction="row">

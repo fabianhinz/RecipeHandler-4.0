@@ -44,13 +44,18 @@ const sharedTheme: Partial<ThemeOptions> = {
       }
     },
     MuiTabs: {
+      flexContainer: {
+        justifyContent: "space-evenly"
+      },
       indicator: {
+        // borderRadius: 10,
+        // padding: 2
         background: "none"
       }
     },
     MuiTab: {
       textColorInherit: {
-        opacity: 0.5,
+        opacity: 0.4,
         "& $selected": {
           opacity: 1
         }

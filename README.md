@@ -15,7 +15,12 @@
 ## known issues
 
 - chip components looks weird in prod: https://github.com/mui-org/material-ui/issues/16374
+- Rating causes weird grid behaviour - so lets ignore this `<Rating value={2} precision={1} icon={<FavoriteIcon />} />`
 
 ## ToDo
 
 - build script
+
+## what else?
+
+- https://mui-treasury.com/
