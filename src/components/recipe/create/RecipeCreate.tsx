@@ -63,6 +63,12 @@ const RecipeCreate: FC = () => {
     setAttachements(previous => [...previous, ...newAttachements]);
   };
 
+  const handleRemoveAttachement = (name: string) => {
+    setAttachements(previous =>
+      previous.filter(attachement => attachement.name !== name)
+    );
+  };
+
   return (
     <Fade in>
       <Card>
@@ -97,6 +103,7 @@ const RecipeCreate: FC = () => {
               {selectedTab.key === PICTURE_KEY && (
                 <RecipeAttachementsDropzone
                   onAttachements={handleAttachementsDrop}
+                  onRemoveAttachement={handleRemoveAttachement}
                   attachements={attachements}
                 />
               )}

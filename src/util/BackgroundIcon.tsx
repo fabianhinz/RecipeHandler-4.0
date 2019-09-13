@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { createStyles, makeStyles, Zoom, Slide, Grow } from "@material-ui/core";
+import { createStyles, makeStyles, Slide } from "@material-ui/core";
 
 const useStyles = makeStyles(theme =>
   createStyles({

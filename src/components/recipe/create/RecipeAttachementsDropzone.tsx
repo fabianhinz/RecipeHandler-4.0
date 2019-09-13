@@ -55,6 +55,7 @@ const useStyles = makeStyles(theme => {
 
 interface RecipeAttachementsDropzoneProps {
   onAttachements: (newFiles: RecipeAttachement[]) => void;
+  onRemoveAttachement: (attachementName: string) => void;
   attachements: RecipeAttachement[];
 }
 
@@ -123,7 +124,9 @@ export const RecipeAttachementsDropzone: FC<
               title={attachement.name}
               subheader={`${(attachement.size / 1000000).toFixed(1)} MB`}
               action={
-                <IconButton>
+                <IconButton
+                  onClick={() => props.onRemoveAttachement(attachement.name)}
+                >
                   <CancelIcon />
                 </IconButton>
               }
