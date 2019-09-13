@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => {
     // source: https://material-ui.com/components/cards/#cards
     cardMedia: {
       height: 0,
-      paddingTop: "56.25%" // 16:9
+      paddingTop: "56.25%" // 16:9,
     }
   });
 });

@@ -57,6 +57,7 @@ const RecipeCreate: FC = () => {
   const [ingredients, setIngredients] = useState<string>();
   const [description, setDescription] = useState<string>();
   const [attachements, setAttachements] = useState<RecipeAttachement[]>([]);
+  const [name, setName] = useState<string>("");
   const [preview, setPreview] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -108,7 +109,15 @@ const RecipeCreate: FC = () => {
     <Fade in>
       <Card>
         <CardHeader
-          title="Rezept erstellen"
+          title={
+            <TextField
+              label="Name"
+              margin="normal"
+              value={name}
+              placeholder="Bitte eintragen"
+              onChange={e => setName(e.target.value)}
+            />
+          }
           subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein Teil der Beschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
         />
         <CardContent>
@@ -213,15 +222,18 @@ const RecipeCreate: FC = () => {
                 <Divider />
               </Grid>
 
+              <Grid item>
+                <Typography variant="h6">{name}</Typography>
+              </Grid>
+
               <Grid item xs={12}>
                 <Grid container spacing={2}>
                   {attachements.map(attachement => (
-                    <Grid key={attachement.name} item>
-                      <RecipeCreateAttachementsCard
-                        readonly
-                        attachement={attachement}
-                      />
-                    </Grid>
+                    <RecipeCreateAttachementsCard
+                      key={attachement.name}
+                      readonly
+                      attachement={attachement}
+                    />
                   ))}
                 </Grid>
               </Grid>

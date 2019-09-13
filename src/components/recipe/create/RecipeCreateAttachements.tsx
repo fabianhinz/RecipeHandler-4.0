@@ -101,14 +101,16 @@ export const RecipeCreateAttachements: FC<
 
   return (
     <Grid className={classes.filesGrid} container spacing={2}>
-      <Grid item xs={12} container justify="center">
-        <div {...getRootProps()} className={classes.rootProps}>
-          <input {...getInputProps()} />
-          <Fab size="medium" color="primary" variant="extended">
-            <AddIcon className={classes.addIcon} />
-            Bilder hinzufügen
-          </Fab>
-        </div>
+      <Grid item xs={12}>
+        <Grid container justify="center">
+          <div {...getRootProps()} className={classes.rootProps}>
+            <input {...getInputProps()} />
+            <Fab size="medium" color="primary" variant="extended">
+              <AddIcon className={classes.addIcon} />
+              Bilder hinzufügen
+            </Fab>
+          </div>
+        </Grid>
       </Grid>
       {props.attachements.map(attachement => (
         <RecipeCreateAttachementsCard
