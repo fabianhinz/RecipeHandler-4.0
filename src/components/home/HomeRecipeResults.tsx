@@ -64,15 +64,19 @@ export const HomeRecipeResults: FC = () => {
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <Grid container direction="column" spacing={2}>
-              <CategoryChipsReadonly
-                color="primary"
-                items={MOCK_CATEGORIES.slice(1, 3)}
-              />
-              <CategoryChipsReadonly
-                color="secondary"
-                variant="time"
-                items={MOCK_TIME_CATEGORIES.slice(1, 4)}
-              />
+              <Grid item>
+                <CategoryChipsReadonly
+                  color="primary"
+                  items={MOCK_CATEGORIES.slice(1, 3)}
+                />
+              </Grid>
+              <Grid item>
+                <CategoryChipsReadonly
+                  color="secondary"
+                  variant="time"
+                  items={MOCK_TIME_CATEGORIES.slice(1, 4)}
+                />
+              </Grid>
 
               <Grid item>
                 <Grid container spacing={2} direction="row">

@@ -43,7 +43,9 @@ const useStyles = makeStyles(theme => {
       paddingTop: "56.25%" // 16:9
     },
     filesGrid: {
-      padding: theme.spacing(2)
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(1),
+      minHeight: 56
     },
     addIcon: {
       marginRight: theme.spacing(1)
@@ -104,7 +106,7 @@ export const RecipeAttachementsDropzone: FC<
   }, [closeSnackbar, enqueueSnackbar, isDragActive]);
 
   return (
-    <Grid className={classes.filesGrid} container spacing={2}>
+    <Grid className={classes.filesGrid} container spacing={2} justify="center">
       <Grid item xs={12} container justify="center">
         <div {...getRootProps()} className={classes.rootProps}>
           <input {...getInputProps()} />

@@ -12,7 +12,8 @@ import {
   Grid,
   Divider,
   Typography,
-  useMediaQuery
+  useMediaQuery,
+  Fade
 } from "@material-ui/core";
 import CameraIcon from "@material-ui/icons/CameraTwoTone";
 import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
@@ -63,86 +64,87 @@ const RecipeCreate: FC = () => {
   };
 
   return (
-    <Card>
-      <CardHeader
-        title="Rezept erstellen"
-        subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein optionale Kurzbeschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
-      />
-      <CardContent>
-        <Grid direction="column" container spacing={2}>
-          <Grid item>
-            <Typography variant="h6">Kategorien</Typography>
-          </Grid>
-          <Categories />
+    <Fade in>
+      <Card>
+        <CardHeader
+          title="Rezept erstellen"
+          subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein optionale Kurzbeschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
+        />
+        <CardContent>
+          <Grid direction="column" container spacing={2}>
+            <Grid item>
+              <Typography variant="h6">Kategorien</Typography>
+            </Grid>
+            <Categories />
 
-          <Grid item>
-            <Divider />
-          </Grid>
+            <Grid item>
+              <Divider />
+            </Grid>
 
-          <Grid item>
-            <Typography variant="h6">Details</Typography>
+            <Grid item>
+              <Typography variant="h6">Details</Typography>
 
-            <Tabs
-              indicatorColor="secondary"
-              value={selectedTab.key}
-              onChange={handleTabChange}
-            >
-              {editorTabs.map(({ label, ...editorTab }) => (
-                <Tab wrapped {...editorTab} label={matches ? label : ""} />
-              ))}
-            </Tabs>
-            {selectedTab.key === PICTURE_KEY && (
-              <RecipeAttachementsDropzone
-                onAttachements={handleAttachementsDrop}
-                attachements={attachements}
-              />
-            )}
-            {selectedTab.key === INGREDIENTS_KEY && (
-              <TextField
-                placeholder="Zutatenliste"
-                value={test}
-                onChange={e => setTest(e.target.value)}
-                fullWidth
-                multiline
-                rows="10"
-                margin="normal"
-                variant="outlined"
-              />
-            )}
-            {selectedTab.key === DESCRIPTION_KEY && (
-              <TextField
-                placeholder="Beschreibung"
-                fullWidth
-                multiline
-                rows="10"
-                margin="normal"
-                variant="outlined"
-              />
-            )}
-            {/* <ReactMarkdown source={test} /> */}
-          </Grid>
-        </Grid>
-      </CardContent>
+              <Tabs
+                indicatorColor="secondary"
+                value={selectedTab.key}
+                onChange={handleTabChange}
+              >
+                {editorTabs.map(({ label, ...editorTab }) => (
+                  <Tab wrapped {...editorTab} label={matches ? label : ""} />
+                ))}
+              </Tabs>
 
-      <CardActions>
-        <Grid item container justify="space-between" alignItems="center">
-          <Grid item>
-            <Button size="small" onClick={() => history.goBack()}>
-              Abbrechen
-            </Button>
-            <Button size="small" color="secondary">
-              Vorschau
-            </Button>
-            <Button size="small" color="primary">
-              Speichern
-            </Button>
+              {selectedTab.key === PICTURE_KEY && (
+                <RecipeAttachementsDropzone
+                  onAttachements={handleAttachementsDrop}
+                  attachements={attachements}
+                />
+              )}
+              {selectedTab.key === INGREDIENTS_KEY && (
+                <TextField
+                  placeholder="Zutatenliste"
+                  value={test}
+                  onChange={e => setTest(e.target.value)}
+                  fullWidth
+                  multiline
+                  margin="normal"
+                  variant="outlined"
+                />
+              )}
+              {selectedTab.key === DESCRIPTION_KEY && (
+                <TextField
+                  placeholder="Beschreibung"
+                  fullWidth
+                  multiline
+                  margin="normal"
+                  variant="outlined"
+                />
+              )}
+              {/* <ReactMarkdown source={test} /> */}
+            </Grid>
           </Grid>
-          <Grid item>
-            <BadgeRating />
+        </CardContent>
+
+        <CardActions>
+          <Grid container justify="space-between" alignItems="center">
+            <Grid item>
+              <Button size="small" onClick={() => history.goBack()}>
+                Abbrechen
+              </Button>
+              <Button size="small" color="secondary">
+                Vorschau
+              </Button>
+              <Button size="small" color="primary">
+                Speichern
+              </Button>
+            </Grid>
+            <Grid item>
+              <BadgeRating />
+            </Grid>
           </Grid>
-        </Grid>
-      </CardActions>
-    </Card>
+        </CardActions>
+      </Card>
+    </Fade>
   );
 };
 

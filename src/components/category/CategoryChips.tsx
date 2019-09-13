@@ -62,7 +62,7 @@ export const CategoryChips: FC<CategoryChipProps> = ({
   variant
 }) => {
   return (
-    <Grid item container spacing={2}>
+    <Grid container spacing={1}>
       {items.map(category => (
         <Grid item key={category}>
           <CategoryButtonBase onClick={() => onClick(category)}>
@@ -81,7 +81,7 @@ export const CategoryChips: FC<CategoryChipProps> = ({
 export const CategoryChipsReadonly: FC<
   Pick<CategoryChipProps, "items" | "variant" | "color">
 > = ({ items, variant, color }) => (
-  <Grid item container spacing={1}>
+  <Grid container spacing={1}>
     {items.map(category => (
       <Grid item key={category}>
         <Chip

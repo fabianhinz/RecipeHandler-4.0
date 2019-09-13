@@ -6,7 +6,7 @@ const useStyles = makeStyles(theme =>
   createStyles({
     footer: {
       position: "fixed",
-      bottom: theme.spacing(3),
+      bottom: theme.spacing(1),
       right: 0,
       left: 0,
       zIndex: -1,

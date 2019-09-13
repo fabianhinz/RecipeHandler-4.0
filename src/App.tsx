@@ -16,10 +16,10 @@ const App: FC = () => {
 
     if (isPaletteLight) {
       setTheme(responsiveDarkTheme);
-      metaThemeColor.setAttribute("content", "#303030");
+      metaThemeColor.setAttribute("content", "#424242");
     } else {
       setTheme(responsiveLightTheme);
-      metaThemeColor.setAttribute("content", "#FAFAFA");
+      metaThemeColor.setAttribute("content", "#FFFFFF");
     }
   };
 

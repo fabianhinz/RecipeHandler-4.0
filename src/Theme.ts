@@ -60,6 +60,11 @@ const sharedTheme: Partial<ThemeOptions> = {
           opacity: 1
         }
       }
+    },
+    MuiCardContent: {
+      root: {
+        width: "100%"
+      }
     }
   }
 };
