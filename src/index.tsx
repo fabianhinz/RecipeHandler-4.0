@@ -7,6 +7,7 @@ import { Router } from "react-router";
 import { SnackbarProvider } from "notistack";
 import "typeface-roboto";
 import { RouterProvider } from "./routes/RouterContext";
+import "animate.css";
 
 ReactDOM.render(
   <>

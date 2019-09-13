@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { createStyles, makeStyles, Slide } from "@material-ui/core";
+import clsx from "clsx";
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -33,14 +34,20 @@ const useStyles = makeStyles(theme =>
 
 interface BackgroundIconProps {
   Icon: FC<React.SVGProps<SVGSVGElement>>;
+  loading: boolean;
 }
 
-export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon }) => {
+export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon, loading }) => {
   const classes = useStyles();
 
   return (
     <Slide in direction="up">
-      <div className={classes.backgroundContainer}>
+      <div
+        className={clsx(
+          classes.backgroundContainer,
+          loading && "animated infinite bounce"
+        )}
+      >
         <Icon className={classes.icon} />
       </div>
     </Slide>
