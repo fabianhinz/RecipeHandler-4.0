@@ -100,7 +100,7 @@ export const RecipeCreateAttachements: FC<
   }, [closeSnackbar, enqueueSnackbar, isDragActive]);
 
   return (
-    <Grid className={classes.filesGrid} container spacing={2} justify="center">
+    <Grid className={classes.filesGrid} container spacing={2}>
       <Grid item xs={12} container justify="center">
         <div {...getRootProps()} className={classes.rootProps}>
           <input {...getInputProps()} />

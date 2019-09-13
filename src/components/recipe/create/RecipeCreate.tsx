@@ -13,7 +13,10 @@ import {
   Divider,
   Typography,
   useMediaQuery,
-  Fade
+  Fade,
+  Collapse,
+  FormControlLabel,
+  Switch
 } from "@material-ui/core";
 import CameraIcon from "@material-ui/icons/CameraTwoTone";
 import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
@@ -23,6 +26,8 @@ import { Categories } from "../../category/Categories";
 import { BadgeRating } from "../../../util/BadgeRating";
 import { RecipeCreateAttachements } from "./RecipeCreateAttachements";
 import { useSnackbar } from "notistack";
+import ReactMarkdown from "react-markdown";
+import { RecipeCreateAttachementsCard } from "./RecipeCreateAttachementsCard";
 
 export interface RecipeAttachement {
   name: string;
@@ -49,8 +54,10 @@ const editorTabs: Tab[] = [
 const RecipeCreate: FC = () => {
   const { history } = useRouter();
   const [selectedTab, setSelectedTab] = useState<Tab>(editorTabs[0]);
-  const [test, setTest] = useState<string>();
+  const [ingredients, setIngredients] = useState<string>();
+  const [description, setDescription] = useState<string>();
   const [attachements, setAttachements] = useState<RecipeAttachement[]>([]);
+  const [preview, setPreview] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   // matches Tablet width
@@ -116,8 +123,24 @@ const RecipeCreate: FC = () => {
             </Grid>
 
             <Grid item>
-              <Typography variant="h6">Details</Typography>
-
+              <Grid container justify="space-between">
+                <Grid item>
+                  <Typography variant="h6">Details</Typography>
+                </Grid>
+                <Grid item>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={preview}
+                        onChange={() => setPreview(previous => !previous)}
+                      />
+                    }
+                    labelPlacement="start"
+                    label="Vorschau"
+                  />
+                </Grid>
+              </Grid>
+              {/* ToDo extract tabs*/}
               <Tabs
                 indicatorColor="secondary"
                 value={selectedTab.key}
@@ -139,8 +162,8 @@ const RecipeCreate: FC = () => {
               {selectedTab.key === INGREDIENTS_KEY && (
                 <TextField
                   placeholder="Zutatenliste"
-                  value={test}
-                  onChange={e => setTest(e.target.value)}
+                  value={ingredients}
+                  onChange={e => setIngredients(e.target.value)}
                   fullWidth
                   multiline
                   margin="normal"
@@ -150,13 +173,17 @@ const RecipeCreate: FC = () => {
               {selectedTab.key === DESCRIPTION_KEY && (
                 <TextField
                   placeholder="Beschreibung"
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
                   fullWidth
                   multiline
                   margin="normal"
                   variant="outlined"
                 />
               )}
-              {/* <ReactMarkdown source={test} /> */}
+            </Grid>
+            <Grid item>
+              <Divider />
             </Grid>
           </Grid>
         </CardContent>
@@ -167,9 +194,7 @@ const RecipeCreate: FC = () => {
               <Button size="small" onClick={() => history.goBack()}>
                 Abbrechen
               </Button>
-              <Button size="small" color="secondary">
-                Vorschau
-              </Button>
+
               <Button size="small" color="primary">
                 Speichern
               </Button>
@@ -179,6 +204,38 @@ const RecipeCreate: FC = () => {
             </Grid>
           </Grid>
         </CardActions>
+
+        {/* ToDo extract preview*/}
+        <Collapse in={preview} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  {attachements.map(attachement => (
+                    <Grid key={attachement.name} item>
+                      <RecipeCreateAttachementsCard
+                        readonly
+                        attachement={attachement}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+
+              <Grid item xs={12} md={6} lg={4}>
+                <ReactMarkdown source={ingredients} />
+              </Grid>
+
+              <Grid item xs={12} md={6} lg={8}>
+                <ReactMarkdown source={description} />
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Collapse>
       </Card>
     </Fade>
   );
