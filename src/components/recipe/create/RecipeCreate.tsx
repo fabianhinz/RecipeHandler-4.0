@@ -102,7 +102,7 @@ const RecipeCreate: FC = () => {
       <Card>
         <CardHeader
           title="Rezept erstellen"
-          subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein optionale Kurzbeschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
+          subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein Teil der Beschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
         />
         <CardContent>
           <Grid direction="column" container spacing={2}>

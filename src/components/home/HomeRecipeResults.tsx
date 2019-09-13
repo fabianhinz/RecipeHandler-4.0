@@ -44,13 +44,36 @@ const useStyles = makeStyles(theme =>
 );
 
 export const HomeRecipeResults: FC = () => {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState({ label: 1, offset: 0 });
   const classes = useStyles();
 
-  const rightLeftHandler = useCallback((event: KeyboardEvent) => {
-    if (event.code === "ArrowLeft") handlePageChange("down")();
-    if (event.code === "ArrowRight") handlePageChange("up")();
-  }, []);
+  const results = MOCK_RESULTS.slice(page.offset, page.offset + 4);
+  const isUpDisabled = results.length < 4;
+  const isDownDisabled = page.label === 1;
+
+  const handlePageChange = useCallback(
+    (change: "up" | "down") => () => {
+      if (change === "up" && !isUpDisabled)
+        setPage(previous => ({
+          label: ++previous.label,
+          offset: previous.offset + 4
+        }));
+      if (change === "down" && !isDownDisabled)
+        setPage(previous => ({
+          label: --previous.label,
+          offset: previous.offset - 4
+        }));
+    },
+    [isDownDisabled, isUpDisabled]
+  );
+
+  const rightLeftHandler = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.code === "ArrowLeft") handlePageChange("down")();
+      if (event.code === "ArrowRight") handlePageChange("up")();
+    },
+    [handlePageChange]
+  );
 
   useEffect(() => {
     document.addEventListener("keydown", rightLeftHandler);
@@ -60,16 +83,11 @@ export const HomeRecipeResults: FC = () => {
     };
   }, [rightLeftHandler]);
 
-  const handlePageChange = (change: "up" | "down") => () => {
-    if (change === "up") setPage(previous => previous + 4);
-    if (change === "down") setPage(previous => previous - 4);
-  };
-
   return (
     <Grid item>
       <Grid container spacing={2} direction="column">
         <Grid item>
-          {MOCK_RESULTS.slice(page, page + 4).map(rezept => (
+          {results.map(rezept => (
             <ExpansionPanel
               key={rezept}
               TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
@@ -128,6 +146,11 @@ export const HomeRecipeResults: FC = () => {
                       </Grid>
                     </Grid>
                   </Grid>
+                  <Grid item>
+                    <Typography variant="caption">
+                      Erstellt am {new Date().toLocaleDateString()}
+                    </Typography>
+                  </Grid>
                 </Grid>
               </ExpansionPanelDetails>
               <ExpansionPanelActions>
@@ -143,12 +166,21 @@ export const HomeRecipeResults: FC = () => {
             <Paper>
               <Grid container spacing={1}>
                 <Grid item>
-                  <ButtonBase onClick={handlePageChange("down")}>
+                  <ButtonBase
+                    disabled={isDownDisabled}
+                    onClick={handlePageChange("down")}
+                  >
                     <ChevronLeft />
                   </ButtonBase>
                 </Grid>
                 <Grid item>
-                  <ButtonBase onClick={handlePageChange("up")}>
+                  <Typography>{page.label}</Typography>
+                </Grid>
+                <Grid item>
+                  <ButtonBase
+                    disabled={isUpDisabled}
+                    onClick={handlePageChange("up")}
+                  >
                     <ChevronRight />
                   </ButtonBase>
                 </Grid>
