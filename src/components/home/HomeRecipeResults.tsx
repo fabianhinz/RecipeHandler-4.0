@@ -11,12 +11,13 @@ import {
   ExpansionPanelActions,
   Button,
   Paper,
-  ButtonBase
+  ButtonBase,
+  Avatar
 } from "@material-ui/core";
 import { PATHS } from "../../routes/Routes";
 import { Navigate } from "../../routes/Navigate";
 import pfannkuchenImg from "../../images/pfannkuchen.jpg";
-import blueGrey from "@material-ui/core/colors/blueGrey";
+import brown from "@material-ui/core/colors/brown";
 import { CategoryChipsReadonly } from "../category/CategoryChips";
 import {
   MOCK_CATEGORIES,
@@ -27,21 +28,19 @@ import { BadgeRating } from "../../util/BadgeRating";
 import ChevronLeft from "@material-ui/icons/ChevronLeftTwoTone";
 import ChevronRight from "@material-ui/icons/ChevronRightTwoTone";
 
-const useStyles = makeStyles(theme =>
-  createStyles({
+const useStyles = makeStyles(theme => {
+  const background = theme.palette.type === "light" ? brown[200] : brown[400];
+
+  return createStyles({
     img: {
       borderRadius: 10
     },
-    detailsBtn: {
-      boxShadow: "none",
-      color: theme.palette.getContrastText(blueGrey[700]),
-      background: blueGrey[700],
-      "&:hover": {
-        background: blueGrey[900]
-      }
+    avatar: {
+      background,
+      color: theme.palette.getContrastText(background)
     }
-  })
-);
+  });
+});
 
 export const HomeRecipeResults: FC = () => {
   const [page, setPage] = useState({ label: 1, offset: 0 });
@@ -101,7 +100,16 @@ export const HomeRecipeResults: FC = () => {
                   alignItems="center"
                 >
                   <Grid item>
-                    <Typography>{rezept}</Typography>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item>
+                        <Avatar className={classes.avatar}>
+                          {rezept.slice(0, 1).toUpperCase()}
+                        </Avatar>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="button">{rezept}</Typography>
+                      </Grid>
+                    </Grid>
                   </Grid>
                   <Grid item>
                     <BadgeRating />

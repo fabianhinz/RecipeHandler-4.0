@@ -10,13 +10,13 @@ import blueGrey from "@material-ui/core/colors/blueGrey";
 import { SvgIconProps } from "@material-ui/core/SvgIcon";
 
 const useStyles = makeStyles(theme => {
-  const backgroundColor =
+  const background =
     theme.palette.type === "light" ? blueGrey[900] : theme.palette.grey[600];
 
   return createStyles({
     badge: {
-      backgroundColor,
-      color: theme.palette.getContrastText(backgroundColor)
+      background,
+      color: theme.palette.getContrastText(background)
     }
   });
 });
