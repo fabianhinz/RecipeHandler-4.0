@@ -21,7 +21,8 @@ import BookIcon from "@material-ui/icons/BookTwoTone";
 import { useRouter } from "../../../routes/RouterContext";
 import { Categories } from "../../category/Categories";
 import { BadgeRating } from "../../../util/BadgeRating";
-import { RecipeAttachementsDropzone } from "./RecipeAttachementsDropzone";
+import { RecipeCreateAttachements } from "./RecipeCreateAttachements";
+import { useSnackbar } from "notistack";
 
 export interface RecipeAttachement {
   name: string;
@@ -50,6 +51,7 @@ const RecipeCreate: FC = () => {
   const [selectedTab, setSelectedTab] = useState<Tab>(editorTabs[0]);
   const [test, setTest] = useState<string>();
   const [attachements, setAttachements] = useState<RecipeAttachement[]>([]);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   // matches Tablet width
   const matches = useMediaQuery("(min-width:768px)");
@@ -67,6 +69,32 @@ const RecipeCreate: FC = () => {
     setAttachements(previous =>
       previous.filter(attachement => attachement.name !== name)
     );
+  };
+
+  const handleSaveAttachement = (name: { old: string; new: string }) => {
+    // ! close all remaining snackbars - don't know if this is a good idea
+    closeSnackbar();
+    if (attachements.filter(a => a.name === name.new).length > 0) {
+      enqueueSnackbar(
+        <>Änderung wird nicht gespeichert. Name bereits vorhanden</>,
+        {
+          variant: "warning"
+        }
+      );
+    } else {
+      attachements.forEach(attachement => {
+        if (attachement.name === name.old) attachement.name = name.new;
+      });
+      setAttachements(attachements);
+      enqueueSnackbar(
+        <>
+          Name von '{name.old}' auf '{name.new}' geändert
+        </>,
+        {
+          variant: "success"
+        }
+      );
+    }
   };
 
   return (
@@ -101,9 +129,10 @@ const RecipeCreate: FC = () => {
               </Tabs>
 
               {selectedTab.key === PICTURE_KEY && (
-                <RecipeAttachementsDropzone
+                <RecipeCreateAttachements
                   onAttachements={handleAttachementsDrop}
                   onRemoveAttachement={handleRemoveAttachement}
+                  onSaveAttachement={handleSaveAttachement}
                   attachements={attachements}
                 />
               )}

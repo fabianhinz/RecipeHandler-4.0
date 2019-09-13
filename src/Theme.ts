@@ -77,6 +77,11 @@ const sharedTheme: Partial<ThemeOptions> = {
       root: {
         borderRadius: BORDER_RADIUS
       }
+    },
+    MuiCardHeader: {
+      action: {
+        alignSelf: "center"
+      }
     }
   }
 };

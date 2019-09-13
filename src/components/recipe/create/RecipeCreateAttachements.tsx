@@ -1,19 +1,13 @@
 import React, { useCallback, useEffect, FC } from "react";
 import { useDropzone } from "react-dropzone";
-import {
-  makeStyles,
-  createStyles,
-  Grid,
-  IconButton,
-  Card,
-  CardMedia,
-  CardHeader,
-  Fab
-} from "@material-ui/core";
-import CancelIcon from "@material-ui/icons/CancelTwoTone";
+import { makeStyles, createStyles, Grid, Fab } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import { useSnackbar } from "notistack";
 import { RecipeAttachement } from "./RecipeCreate";
+import {
+  RecipeCreateAttachementsCard,
+  AttachementsCardChangeHandler
+} from "./RecipeCreateAttachementsCard";
 
 const readDocumentAsync = (
   document: any,
@@ -37,11 +31,6 @@ const useStyles = makeStyles(theme => {
     dropActive: {
       background: theme.palette.primary.light
     },
-    // source: https://material-ui.com/components/cards/#cards
-    cardMedia: {
-      height: 0,
-      paddingTop: "56.25%" // 16:9
-    },
     filesGrid: {
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(1),
@@ -53,14 +42,13 @@ const useStyles = makeStyles(theme => {
   });
 });
 
-interface RecipeAttachementsDropzoneProps {
+interface RecipeCreateAttachementsProps extends AttachementsCardChangeHandler {
   onAttachements: (newFiles: RecipeAttachement[]) => void;
-  onRemoveAttachement: (attachementName: string) => void;
   attachements: RecipeAttachement[];
 }
 
-export const RecipeAttachementsDropzone: FC<
-  RecipeAttachementsDropzoneProps
+export const RecipeCreateAttachements: FC<
+  RecipeCreateAttachementsProps
 > = props => {
   const classes = useStyles();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -83,7 +71,12 @@ export const RecipeAttachementsDropzone: FC<
       });
 
       const newFiles: RecipeAttachement[] = [];
+      const uniqueNames = new Set(props.attachements.map(({ name }) => name));
       for (const file of acceptedFiles) {
+        // filenames are our keys, react will warn about duplicate keys
+        if (uniqueNames.has(file.name)) continue;
+
+        uniqueNames.add(file.name);
         const dataUrl = (await readDocumentAsync(file, "dataUrl")) as string;
         newFiles.push({ name: file.name, dataUrl, size: file.size });
       }
@@ -118,25 +111,12 @@ export const RecipeAttachementsDropzone: FC<
         </div>
       </Grid>
       {props.attachements.map(attachement => (
-        <Grid item key={attachement.name}>
-          <Card raised onClick={e => e.stopPropagation()}>
-            <CardHeader
-              title={attachement.name}
-              subheader={`${(attachement.size / 1000000).toFixed(1)} MB`}
-              action={
-                <IconButton
-                  onClick={() => props.onRemoveAttachement(attachement.name)}
-                >
-                  <CancelIcon />
-                </IconButton>
-              }
-            />
-            <CardMedia
-              className={classes.cardMedia}
-              image={attachement.dataUrl}
-            />
-          </Card>
-        </Grid>
+        <RecipeCreateAttachementsCard
+          key={attachement.name}
+          attachement={attachement}
+          onRemoveAttachement={props.onRemoveAttachement}
+          onSaveAttachement={props.onSaveAttachement}
+        />
       ))}
     </Grid>
   );
