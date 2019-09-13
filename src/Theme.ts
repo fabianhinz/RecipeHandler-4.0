@@ -1,17 +1,19 @@
 import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
 import { ThemeOptions } from "@material-ui/core/styles/createMuiTheme";
 
+export const BORDER_RADIUS = 10;
+
 const sharedTheme: Partial<ThemeOptions> = {
   overrides: {
     MuiExpansionPanel: {
       rounded: {
         "&:first-child": {
-          borderTopLeftRadius: 10,
-          borderTopRightRadius: 10
+          borderTopLeftRadius: BORDER_RADIUS,
+          borderTopRightRadius: BORDER_RADIUS
         },
         "&:last-child": {
-          borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10
+          borderBottomLeftRadius: BORDER_RADIUS,
+          borderBottomRightRadius: BORDER_RADIUS
         }
       }
     },
@@ -21,13 +23,13 @@ const sharedTheme: Partial<ThemeOptions> = {
       }
     },
     MuiPaper: {
-      root: {
-        borderRadius: 10
+      rounded: {
+        borderRadius: BORDER_RADIUS
       }
     },
     MuiCard: {
       root: {
-        borderRadius: 10
+        borderRadius: BORDER_RADIUS
       }
     },
     MuiChip: {
@@ -40,7 +42,7 @@ const sharedTheme: Partial<ThemeOptions> = {
     },
     MuiOutlinedInput: {
       notchedOutline: {
-        borderRadius: 10
+        borderRadius: BORDER_RADIUS
       }
     },
     MuiTabs: {
@@ -48,7 +50,7 @@ const sharedTheme: Partial<ThemeOptions> = {
         justifyContent: "space-evenly"
       },
       indicator: {
-        // borderRadius: 10,
+        // borderRadius: BORDER_RADIUS,
         // padding: 2
         background: "none"
       }
@@ -63,7 +65,17 @@ const sharedTheme: Partial<ThemeOptions> = {
     },
     MuiCardContent: {
       root: {
-        width: "100%"
+        // width: "100%"
+      }
+    },
+    MuiButton: {
+      root: {
+        borderRadius: BORDER_RADIUS
+      }
+    },
+    MuiButtonBase: {
+      root: {
+        borderRadius: BORDER_RADIUS
       }
     }
   }

@@ -12,6 +12,7 @@ ReactDOM.render(
   <>
     <Router history={createBrowserHistory()}>
       <SnackbarProvider
+        preventDuplicate
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "center"

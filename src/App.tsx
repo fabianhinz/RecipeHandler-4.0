@@ -9,7 +9,7 @@ import { responsiveDarkTheme, responsiveLightTheme } from "./Theme";
 
 const App: FC = () => {
   const [theme, setTheme] = useState(responsiveLightTheme);
-
+  // ? on file select / drag & drop, the theme changes
   const handleThemeChange = () => {
     const isPaletteLight = theme.palette.type === "light";
     const metaThemeColor = document.getElementsByName("theme-color")[0];

@@ -121,7 +121,7 @@ export const RecipeAttachementsDropzone: FC<
           <Card raised onClick={e => e.stopPropagation()}>
             <CardHeader
               title={attachement.name}
-              subheader={attachement.size}
+              subheader={`${(attachement.size / 1000000).toFixed(1)} MB`}
               action={
                 <IconButton>
                   <CancelIcon />
