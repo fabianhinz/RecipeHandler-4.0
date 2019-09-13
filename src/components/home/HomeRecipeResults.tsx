@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect, useCallback } from "react";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMoreTwoTone";
 import {
   createStyles,
@@ -10,12 +10,7 @@ import {
   Typography,
   ExpansionPanelActions,
   Button,
-  Fab,
-  ButtonGroup,
-  Card,
-  CardContent,
   Paper,
-  IconButton,
   ButtonBase
 } from "@material-ui/core";
 import { PATHS } from "../../routes/Routes";
@@ -26,7 +21,6 @@ import { CategoryChipsReadonly } from "../category/CategoryChips";
 import {
   MOCK_CATEGORIES,
   MOCK_TIME_CATEGORIES,
-  MOCK_RECIPES,
   MOCK_RESULTS
 } from "../../util/Mock";
 import { BadgeRating } from "../../util/BadgeRating";
@@ -52,6 +46,24 @@ const useStyles = makeStyles(theme =>
 export const HomeRecipeResults: FC = () => {
   const [page, setPage] = useState(0);
   const classes = useStyles();
+
+  const rightLeftHandler = useCallback((event: KeyboardEvent) => {
+    if (event.code === "ArrowLeft") handlePageChange("down")();
+    if (event.code === "ArrowRight") handlePageChange("up")();
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", rightLeftHandler);
+
+    return () => {
+      document.removeEventListener("keydown", rightLeftHandler);
+    };
+  }, [rightLeftHandler]);
+
+  const handlePageChange = (change: "up" | "down") => () => {
+    if (change === "up") setPage(previous => previous + 4);
+    if (change === "down") setPage(previous => previous - 4);
+  };
 
   return (
     <Grid item>
@@ -131,12 +143,12 @@ export const HomeRecipeResults: FC = () => {
             <Paper>
               <Grid container spacing={1}>
                 <Grid item>
-                  <ButtonBase onClick={() => setPage(previous => previous - 4)}>
+                  <ButtonBase onClick={handlePageChange("down")}>
                     <ChevronLeft />
                   </ButtonBase>
                 </Grid>
                 <Grid item>
-                  <ButtonBase onClick={() => setPage(previous => previous + 4)}>
+                  <ButtonBase onClick={handlePageChange("up")}>
                     <ChevronRight />
                   </ButtonBase>
                 </Grid>
