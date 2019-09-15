@@ -7,12 +7,9 @@ import {
   CardContent,
   CardActions,
   TextField,
-  Tabs,
-  Tab,
   Grid,
   Divider,
   Typography,
-  useMediaQuery,
   Fade,
   Collapse,
   FormControlLabel,
@@ -23,11 +20,11 @@ import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
 import { useRouter } from "../../../routes/RouterContext";
 import { Categories } from "../../category/Categories";
-import { BadgeRating } from "../../../util/BadgeRating";
 import { RecipeCreateAttachements } from "./RecipeCreateAttachements";
 import { useSnackbar } from "notistack";
 import ReactMarkdown from "react-markdown";
-import { RecipeCreateAttachementsCard } from "./RecipeCreateAttachementsCard";
+import { BORDER_RADIUS } from "../../../Theme";
+import { CategoryChipsReadonly } from "../../category/CategoryChips";
 
 export interface RecipeAttachement {
   name: string;
@@ -35,39 +32,20 @@ export interface RecipeAttachement {
   size: number;
 }
 
-interface Tab {
-  icon: JSX.Element;
-  key: number;
-  label: "Bilder" | "Zutatenliste" | "Beschreibungen";
-}
-
-const PICTURE_KEY = 0;
-const INGREDIENTS_KEY = 1;
-const DESCRIPTION_KEY = 2;
-
-const editorTabs: Tab[] = [
-  { key: PICTURE_KEY, label: "Bilder", icon: <CameraIcon /> },
-  { key: INGREDIENTS_KEY, label: "Zutatenliste", icon: <AssignmentIcon /> },
-  { key: DESCRIPTION_KEY, label: "Beschreibungen", icon: <BookIcon /> }
-];
-
 const RecipeCreate: FC = () => {
   const { history } = useRouter();
-  const [selectedTab, setSelectedTab] = useState<Tab>(editorTabs[0]);
+
   const [ingredients, setIngredients] = useState<string>();
   const [description, setDescription] = useState<string>();
   const [attachements, setAttachements] = useState<RecipeAttachement[]>([]);
   const [name, setName] = useState<string>("");
   const [preview, setPreview] = useState(false);
+  const [categories, setSelectedCategories] = useState<{
+    type: Array<string>;
+    time: Array<string>;
+  }>({ type: [], time: [] });
+
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
-  // matches Tablet width
-  const matches = useMediaQuery("(min-width:768px)");
-
-  const handleTabChange = (event: React.ChangeEvent<{}>, newKey: number) => {
-    // ! if we use editorTabs as intended find always returns a tab object
-    setSelectedTab(editorTabs.find(tab => tab.key === newKey)!);
-  };
 
   const handleAttachementsDrop = (newAttachements: RecipeAttachement[]) => {
     setAttachements(previous => [...previous, ...newAttachements]);
@@ -77,6 +55,13 @@ const RecipeCreate: FC = () => {
     setAttachements(previous =>
       previous.filter(attachement => attachement.name !== name)
     );
+  };
+
+  const handleCategoriesChange = (categories: {
+    type: Array<string>;
+    time: Array<string>;
+  }) => {
+    setSelectedCategories(categories);
   };
 
   const handleSaveAttachement = (name: { old: string; new: string }) => {
@@ -125,72 +110,77 @@ const RecipeCreate: FC = () => {
             <Grid item>
               <Typography variant="h6">Kategorien</Typography>
             </Grid>
-            <Categories />
+            <Categories onChange={handleCategoriesChange} />
 
             <Grid item>
               <Divider />
             </Grid>
 
             <Grid item>
-              <Grid container justify="space-between">
+              <Grid container spacing={1} alignItems="flex-end">
                 <Grid item>
-                  <Typography variant="h6">Details</Typography>
+                  <CameraIcon />
                 </Grid>
                 <Grid item>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={preview}
-                        onChange={() => setPreview(previous => !previous)}
-                      />
-                    }
-                    labelPlacement="start"
-                    label="Vorschau"
-                  />
+                  <Typography variant="h6">Bilder</Typography>
                 </Grid>
               </Grid>
-              {/* ToDo extract tabs*/}
-              <Tabs
-                indicatorColor="secondary"
-                value={selectedTab.key}
-                onChange={handleTabChange}
-              >
-                {editorTabs.map(({ label, ...editorTab }) => (
-                  <Tab wrapped {...editorTab} label={matches ? label : ""} />
-                ))}
-              </Tabs>
-
-              {selectedTab.key === PICTURE_KEY && (
-                <RecipeCreateAttachements
-                  onAttachements={handleAttachementsDrop}
-                  onRemoveAttachement={handleRemoveAttachement}
-                  onSaveAttachement={handleSaveAttachement}
-                  attachements={attachements}
-                />
-              )}
-              {selectedTab.key === INGREDIENTS_KEY && (
-                <TextField
-                  placeholder="Zutatenliste"
-                  value={ingredients}
-                  onChange={e => setIngredients(e.target.value)}
-                  fullWidth
-                  multiline
-                  margin="normal"
-                  variant="outlined"
-                />
-              )}
-              {selectedTab.key === DESCRIPTION_KEY && (
-                <TextField
-                  placeholder="Beschreibung"
-                  value={description}
-                  onChange={e => setDescription(e.target.value)}
-                  fullWidth
-                  multiline
-                  margin="normal"
-                  variant="outlined"
-                />
-              )}
             </Grid>
+            <Grid item>
+              <RecipeCreateAttachements
+                onAttachements={handleAttachementsDrop}
+                onRemoveAttachement={handleRemoveAttachement}
+                onSaveAttachement={handleSaveAttachement}
+                attachements={attachements}
+              />
+            </Grid>
+
+            <Grid item>
+              <Grid container spacing={1} alignItems="flex-end">
+                <Grid item>
+                  <AssignmentIcon />
+                </Grid>
+                <Grid item>
+                  <Typography variant="h6">Zutaten</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <TextField
+                placeholder="Zutatenliste"
+                value={ingredients}
+                onChange={e => setIngredients(e.target.value)}
+                fullWidth
+                rows={5}
+                multiline
+                margin="normal"
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item>
+              <Grid container spacing={1} alignItems="flex-end">
+                <Grid item>
+                  <BookIcon />
+                </Grid>
+                <Grid item>
+                  <Typography variant="h6">Beschreibung</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <TextField
+                placeholder="Beschreibung"
+                value={description}
+                rows={5}
+                onChange={e => setDescription(e.target.value)}
+                fullWidth
+                multiline
+                margin="normal"
+                variant="outlined"
+              />
+            </Grid>
+
             <Grid item>
               <Divider />
             </Grid>
@@ -209,40 +199,85 @@ const RecipeCreate: FC = () => {
               </Button>
             </Grid>
             <Grid item>
-              <BadgeRating />
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={preview}
+                    onChange={() => setPreview(previous => !previous)}
+                  />
+                }
+                labelPlacement="start"
+                label="Vorschau"
+              />
             </Grid>
           </Grid>
         </CardActions>
 
         {/* ToDo extract preview*/}
-        <Collapse in={preview} timeout="auto" unmountOnExit>
+        <Collapse in={preview} timeout="auto" unmountOnExit mountOnEnter>
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Divider />
               </Grid>
 
-              <Grid item>
+              <Grid item xs={12}>
                 <Typography variant="h6">{name}</Typography>
               </Grid>
+
+              <Grid item>
+                <CategoryChipsReadonly
+                  variant="type"
+                  color="primary"
+                  items={categories.type}
+                />
+              </Grid>
+              <Grid item>
+                <CategoryChipsReadonly
+                  color="secondary"
+                  variant="time"
+                  items={categories.time}
+                />
+              </Grid>
+
+              <Grid item></Grid>
 
               <Grid item xs={12}>
                 <Grid container spacing={2}>
                   {attachements.map(attachement => (
-                    <RecipeCreateAttachementsCard
-                      key={attachement.name}
-                      readonly
-                      attachement={attachement}
-                    />
+                    <Grid xs={12} md={6} lg={4} item key={attachement.name}>
+                      <img
+                        style={{ borderRadius: BORDER_RADIUS }}
+                        src={attachement.dataUrl}
+                        alt=""
+                        width="100%"
+                      />
+                    </Grid>
                   ))}
                 </Grid>
               </Grid>
 
               <Grid item xs={12} md={6} lg={4}>
+                <Grid container spacing={1} alignItems="flex-end">
+                  <Grid item>
+                    <AssignmentIcon />
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="h6">Zutaten</Typography>
+                  </Grid>
+                </Grid>
                 <ReactMarkdown source={ingredients} />
               </Grid>
 
               <Grid item xs={12} md={6} lg={8}>
+                <Grid container spacing={1} alignItems="flex-end">
+                  <Grid item>
+                    <BookIcon />
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="h6">Beschreibung</Typography>
+                  </Grid>
+                </Grid>
                 <ReactMarkdown source={description} />
               </Grid>
             </Grid>

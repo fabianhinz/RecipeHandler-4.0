@@ -4,8 +4,7 @@ import { makeStyles, createStyles, Grid, Fab } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import { useSnackbar } from "notistack";
 import { RecipeAttachement } from "./RecipeCreate";
-import {
-  RecipeCreateAttachementsCard,
+import RecipeCreateAttachementsCard, {
   AttachementsCardChangeHandler
 } from "./RecipeCreateAttachementsCard";
 
@@ -30,11 +29,6 @@ const useStyles = makeStyles(theme => {
     },
     dropActive: {
       background: theme.palette.primary.light
-    },
-    filesGrid: {
-      marginTop: theme.spacing(2),
-      marginBottom: theme.spacing(1),
-      minHeight: 56
     },
     addIcon: {
       marginRight: theme.spacing(1)
@@ -100,7 +94,15 @@ export const RecipeCreateAttachements: FC<
   }, [closeSnackbar, enqueueSnackbar, isDragActive]);
 
   return (
-    <Grid className={classes.filesGrid} container spacing={2}>
+    <Grid container spacing={2}>
+      {props.attachements.map(attachement => (
+        <RecipeCreateAttachementsCard
+          key={attachement.name}
+          attachement={attachement}
+          onRemoveAttachement={props.onRemoveAttachement}
+          onSaveAttachement={props.onSaveAttachement}
+        />
+      ))}
       <Grid item xs={12}>
         <Grid container justify="center">
           <div {...getRootProps()} className={classes.rootProps}>
@@ -112,14 +114,6 @@ export const RecipeCreateAttachements: FC<
           </div>
         </Grid>
       </Grid>
-      {props.attachements.map(attachement => (
-        <RecipeCreateAttachementsCard
-          key={attachement.name}
-          attachement={attachement}
-          onRemoveAttachement={props.onRemoveAttachement}
-          onSaveAttachement={props.onSaveAttachement}
-        />
-      ))}
     </Grid>
   );
 };
