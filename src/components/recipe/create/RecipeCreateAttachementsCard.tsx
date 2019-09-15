@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect, memo } from "react";
 import {
   makeStyles,
   createStyles,
@@ -12,6 +12,7 @@ import {
 import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import { RecipeAttachement } from "./RecipeCreate";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const useStyles = makeStyles(theme => {
   return createStyles({
@@ -34,16 +35,31 @@ interface RecipeCreateAttachementsCardProps
   readonly?: boolean;
 }
 
-export const RecipeCreateAttachementsCard: FC<
-  RecipeCreateAttachementsCardProps
-> = ({ attachement, onRemoveAttachement, onSaveAttachement, readonly }) => {
+const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
+  attachement,
+  onRemoveAttachement,
+  onSaveAttachement,
+  readonly
+}) => {
   const [name, setName] = useState<string>(attachement.name);
+  const [isCardMedia, setIsCardMedia] = useState(false);
   const classes = useStyles();
+
+  useEffect(() => {
+    setTimeout(() => setIsCardMedia(true), 1);
+  }, []);
 
   return (
     <Grid item key={attachement.name}>
       <Card raised onClick={e => e.stopPropagation()}>
-        <CardMedia className={classes.cardMedia} image={attachement.dataUrl} />
+        {isCardMedia ? (
+          <CardMedia
+            className={classes.cardMedia}
+            image={attachement.dataUrl}
+          />
+        ) : (
+          <Skeleton variant="rect" className={classes.cardMedia} />
+        )}
 
         <CardHeader
           title={
@@ -82,3 +98,10 @@ export const RecipeCreateAttachementsCard: FC<
     </Grid>
   );
 };
+
+export default memo(
+  RecipeCreateAttachementsCard,
+  (prev, next) =>
+    prev.attachement.dataUrl === next.attachement.dataUrl ||
+    prev.attachement.name === next.attachement.name
+);

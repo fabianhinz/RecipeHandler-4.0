@@ -25,3 +25,9 @@
 ## what else?
 
 - https://mui-treasury.com/
+
+## Was könnte man noch tun?
+
+- Zutanliste statt Markdown Komponenten mit hinzufügen, entfernen (rechnen!)
+- Personenanzahl (bzgl. Zutaten)
+- RezeptResult: Bilder begrenzen

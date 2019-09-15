@@ -33,8 +33,7 @@ const CategoryButtonBase: FC<ButtonBaseProps> = ({
     </ButtonBase>
   );
 };
-
-type CategoryVariants = "default" | "time";
+export type CategoryVariants = "type" | "time";
 
 const iconFromVariant = (variant?: CategoryVariants): JSX.Element => {
   switch (variant) {
@@ -49,11 +48,11 @@ const iconFromVariant = (variant?: CategoryVariants): JSX.Element => {
 interface CategoryChipProps {
   selected: Set<string>;
   items: string[];
-  onClick: (category: string) => void;
+  onClick: (category: string, variant: CategoryVariants) => void;
   color: PropTypes.Color;
-  variant?: CategoryVariants;
+  variant: CategoryVariants;
 }
-
+// ToDo refactor color prop (variant is enough)
 export const CategoryChips: FC<CategoryChipProps> = ({
   selected,
   items,
@@ -65,7 +64,7 @@ export const CategoryChips: FC<CategoryChipProps> = ({
     <Grid container spacing={1}>
       {items.map(category => (
         <Grid item key={category}>
-          <CategoryButtonBase onClick={() => onClick(category)}>
+          <CategoryButtonBase onClick={() => onClick(category, variant)}>
             <Chip
               avatar={<Avatar>{iconFromVariant(variant)}</Avatar>}
               color={selected.has(category) ? color : "default"}

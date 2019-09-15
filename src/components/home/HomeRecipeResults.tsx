@@ -120,6 +120,7 @@ export const HomeRecipeResults: FC = () => {
                 <Grid container direction="column" spacing={2}>
                   <Grid item>
                     <CategoryChipsReadonly
+                      variant="type"
                       color="primary"
                       items={MOCK_CATEGORIES.slice(1, 3)}
                     />
