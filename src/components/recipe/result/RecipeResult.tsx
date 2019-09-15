@@ -1,9 +1,7 @@
-// import React, { FC } from "react";
+import React, { FC } from "react";
 
-// interface RecipeResultProps {}
+interface RecipeResultProps {}
 
-// export const RecipeResult: FC<RecipeResultProps> = props => {
-//   return (
-
-//   )
-// }
+export const RecipeResult: FC<RecipeResultProps> = props => {
+  return <div>result works</div>;
+};
