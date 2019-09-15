@@ -7,6 +7,7 @@
 
 ## may wanna use this
 
+- https://github.com/imagemin/imagemin#readme
 - https://www.npmjs.com/package/react-loading-skeleton
 - Rich text editor
   - https://draftjs.org/
