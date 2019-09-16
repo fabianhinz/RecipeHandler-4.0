@@ -12,6 +12,7 @@ import {
 import { ButtonBaseProps } from "@material-ui/core/ButtonBase";
 import TimerIcon from "@material-ui/icons/AvTimerTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
+import { CategoryVariants } from "./Categories";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -33,40 +34,54 @@ const CategoryButtonBase: FC<ButtonBaseProps> = ({
     </ButtonBase>
   );
 };
-export type CategoryVariants = "type" | "time";
 
-const iconFromVariant = (variant?: CategoryVariants): JSX.Element => {
+const fromVariant = (
+  variant?: CategoryVariants
+): { avatar: JSX.Element; color: PropTypes.Color } => {
   switch (variant) {
     case "time":
-      return <TimerIcon />;
+      return {
+        avatar: (
+          <Avatar>
+            <TimerIcon />
+          </Avatar>
+        ),
+        color: "secondary"
+      };
     default:
-      return <BookIcon />;
+      return {
+        avatar: (
+          <Avatar>
+            <BookIcon />
+          </Avatar>
+        ),
+        color: "primary"
+      };
   }
 };
 
-// Todo in the future we probably need more colors
 interface CategoryChipProps {
   selected: Set<string>;
   items: string[];
   onClick: (category: string, variant: CategoryVariants) => void;
-  color: PropTypes.Color;
   variant: CategoryVariants;
 }
-// ToDo refactor color prop (variant is enough)
+
 export const CategoryChips: FC<CategoryChipProps> = ({
   selected,
   items,
   onClick,
-  color,
   variant
 }) => {
+  const { avatar, color } = fromVariant(variant);
+
   return (
     <Grid container spacing={1}>
       {items.map(category => (
         <Grid item key={category}>
           <CategoryButtonBase onClick={() => onClick(category, variant)}>
             <Chip
-              avatar={<Avatar>{iconFromVariant(variant)}</Avatar>}
+              avatar={avatar}
               color={selected.has(category) ? color : "default"}
               label={<Typography variant="subtitle2">{category}</Typography>}
             />
@@ -78,18 +93,17 @@ export const CategoryChips: FC<CategoryChipProps> = ({
 };
 
 export const CategoryChipsReadonly: FC<
-  Pick<CategoryChipProps, "items" | "variant" | "color">
-> = ({ items, variant, color }) => (
-  <Grid container spacing={1}>
-    {items.map(category => (
-      <Grid item key={category}>
-        <Chip
-          avatar={<Avatar>{iconFromVariant(variant)}</Avatar>}
-          size="small"
-          color={color}
-          label={category}
-        />
-      </Grid>
-    ))}
-  </Grid>
-);
+  Pick<CategoryChipProps, "items" | "variant">
+> = ({ items, variant }) => {
+  const { avatar, color } = fromVariant(variant);
+
+  return (
+    <Grid container spacing={1}>
+      {items.map(category => (
+        <Grid item key={category}>
+          <Chip avatar={avatar} size="small" color={color} label={category} />
+        </Grid>
+      ))}
+    </Grid>
+  );
+};

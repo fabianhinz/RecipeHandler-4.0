@@ -9,22 +9,23 @@ import {
   TextField,
   Grid,
   Divider,
-  Typography,
   Fade,
   Collapse,
-  FormControlLabel,
-  Switch
+  Box,
+  makeStyles,
+  createStyles,
+  IconButton
 } from "@material-ui/core";
 import CameraIcon from "@material-ui/icons/CameraTwoTone";
 import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
+import EyeIcon from "@material-ui/icons/RemoveRedEyeTwoTone";
 import { useRouter } from "../../../routes/RouterContext";
-import { Categories } from "../../category/Categories";
+import { CategoriesAs, Categories } from "../../category/Categories";
 import { RecipeCreateAttachements } from "./RecipeCreateAttachements";
 import { useSnackbar } from "notistack";
-import ReactMarkdown from "react-markdown";
-import { BORDER_RADIUS } from "../../../Theme";
-import { CategoryChipsReadonly } from "../../category/CategoryChips";
+import { Subtitle } from "../../../util/Subtitle";
+import { RecipeResult } from "../result/RecipeResult";
 
 export interface RecipeAttachement {
   name: string;
@@ -32,20 +33,27 @@ export interface RecipeAttachement {
   size: number;
 }
 
-const RecipeCreate: FC = () => {
-  const { history } = useRouter();
+const useStyles = makeStyles(theme =>
+  createStyles({
+    textFieldName: {
+      marginBottom: theme.spacing(1)
+    }
+  })
+);
 
-  const [ingredients, setIngredients] = useState<string>();
-  const [description, setDescription] = useState<string>();
+const RecipeCreate: FC = () => {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { history } = useRouter();
+  const classes = useStyles();
+
+  const [ingredients, setIngredients] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [attachements, setAttachements] = useState<RecipeAttachement[]>([]);
   const [name, setName] = useState<string>("");
   const [preview, setPreview] = useState(false);
-  const [categories, setSelectedCategories] = useState<{
-    type: Array<string>;
-    time: Array<string>;
-  }>({ type: [], time: [] });
-
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [categories, setSelectedCategories] = useState<
+    CategoriesAs<Array<string>>
+  >({ type: [], time: [] });
 
   const handleAttachementsDrop = (newAttachements: RecipeAttachement[]) => {
     setAttachements(previous => [...previous, ...newAttachements]);
@@ -57,10 +65,7 @@ const RecipeCreate: FC = () => {
     );
   };
 
-  const handleCategoriesChange = (categories: {
-    type: Array<string>;
-    time: Array<string>;
-  }) => {
+  const handleCategoriesChange = (categories: CategoriesAs<Array<string>>) => {
     setSelectedCategories(categories);
   };
 
@@ -92,198 +97,96 @@ const RecipeCreate: FC = () => {
 
   return (
     <Fade in>
-      <Card>
-        <CardHeader
-          title={
-            <TextField
-              label="Name"
-              margin="normal"
-              value={name}
-              placeholder="Bitte eintragen"
-              onChange={e => setName(e.target.value)}
-            />
-          }
-          subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein Teil der Beschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
-        />
-        <CardContent>
-          <Grid direction="column" container spacing={2}>
-            <Grid item>
-              <Typography variant="h6">Kategorien</Typography>
-            </Grid>
+      <Box margin={2}>
+        <Card>
+          <CardHeader
+            title={
+              <TextField
+                className={classes.textFieldName}
+                label="Name"
+                value={name}
+                placeholder="Bitte eintragen"
+                onChange={e => setName(e.target.value)}
+              />
+            }
+            subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein Teil der Beschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
+          />
+          <CardContent>
+            <Subtitle text="Kategorien" />
             <Categories onChange={handleCategoriesChange} />
 
-            <Grid item>
+            <Box marginTop={2} marginBottom={2}>
               <Divider />
-            </Grid>
+            </Box>
 
-            <Grid item>
-              <Grid container spacing={1} alignItems="flex-end">
-                <Grid item>
-                  <CameraIcon />
-                </Grid>
-                <Grid item>
-                  <Typography variant="h6">Bilder</Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item>
-              <RecipeCreateAttachements
-                onAttachements={handleAttachementsDrop}
-                onRemoveAttachement={handleRemoveAttachement}
-                onSaveAttachement={handleSaveAttachement}
-                attachements={attachements}
-              />
-            </Grid>
+            <Subtitle icon={<CameraIcon />} text="Bilder" />
+            <RecipeCreateAttachements
+              onAttachements={handleAttachementsDrop}
+              onRemoveAttachement={handleRemoveAttachement}
+              onSaveAttachement={handleSaveAttachement}
+              attachements={attachements}
+            />
 
-            <Grid item>
-              <Grid container spacing={1} alignItems="flex-end">
-                <Grid item>
-                  <AssignmentIcon />
-                </Grid>
-                <Grid item>
-                  <Typography variant="h6">Zutaten</Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item>
-              <TextField
-                placeholder="Zutatenliste"
-                value={ingredients}
-                onChange={e => setIngredients(e.target.value)}
-                fullWidth
-                rows={5}
-                multiline
-                margin="normal"
-                variant="outlined"
-              />
-            </Grid>
+            <Subtitle icon={<AssignmentIcon />} text="Zutaten" />
+            <TextField
+              placeholder="Zutatenliste"
+              value={ingredients}
+              onChange={e => setIngredients(e.target.value)}
+              fullWidth
+              rows={5}
+              multiline
+              variant="outlined"
+            />
 
-            <Grid item>
-              <Grid container spacing={1} alignItems="flex-end">
-                <Grid item>
-                  <BookIcon />
-                </Grid>
-                <Grid item>
-                  <Typography variant="h6">Beschreibung</Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item>
-              <TextField
-                placeholder="Beschreibung"
-                value={description}
-                rows={5}
-                onChange={e => setDescription(e.target.value)}
-                fullWidth
-                multiline
-                margin="normal"
-                variant="outlined"
-              />
-            </Grid>
-
-            <Grid item>
-              <Divider />
-            </Grid>
-          </Grid>
-        </CardContent>
-
-        <CardActions>
-          <Grid container justify="space-between" alignItems="center">
-            <Grid item>
-              <Button size="small" onClick={() => history.goBack()}>
-                Abbrechen
-              </Button>
-
-              <Button size="small" color="primary">
-                Speichern
-              </Button>
-            </Grid>
-            <Grid item>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={preview}
-                    onChange={() => setPreview(previous => !previous)}
-                  />
-                }
-                labelPlacement="start"
-                label="Vorschau"
-              />
-            </Grid>
-          </Grid>
-        </CardActions>
-
-        {/* ToDo extract preview*/}
-        <Collapse in={preview} timeout="auto" unmountOnExit mountOnEnter>
-          <CardContent>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Divider />
-              </Grid>
-
-              <Grid item xs={12}>
-                <Typography variant="h6">{name}</Typography>
-              </Grid>
-
-              <Grid item>
-                <CategoryChipsReadonly
-                  variant="type"
-                  color="primary"
-                  items={categories.type}
-                />
-              </Grid>
-              <Grid item>
-                <CategoryChipsReadonly
-                  color="secondary"
-                  variant="time"
-                  items={categories.time}
-                />
-              </Grid>
-
-              <Grid item></Grid>
-
-              <Grid item xs={12}>
-                <Grid container spacing={2}>
-                  {attachements.map(attachement => (
-                    <Grid xs={12} md={6} lg={4} item key={attachement.name}>
-                      <img
-                        style={{ borderRadius: BORDER_RADIUS }}
-                        src={attachement.dataUrl}
-                        alt=""
-                        width="100%"
-                      />
-                    </Grid>
-                  ))}
-                </Grid>
-              </Grid>
-
-              <Grid item xs={12} md={6} lg={4}>
-                <Grid container spacing={1} alignItems="flex-end">
-                  <Grid item>
-                    <AssignmentIcon />
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="h6">Zutaten</Typography>
-                  </Grid>
-                </Grid>
-                <ReactMarkdown source={ingredients} />
-              </Grid>
-
-              <Grid item xs={12} md={6} lg={8}>
-                <Grid container spacing={1} alignItems="flex-end">
-                  <Grid item>
-                    <BookIcon />
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="h6">Beschreibung</Typography>
-                  </Grid>
-                </Grid>
-                <ReactMarkdown source={description} />
-              </Grid>
-            </Grid>
+            <Subtitle icon={<BookIcon />} text="Beschreibung" />
+            <TextField
+              placeholder="Beschreibung"
+              value={description}
+              rows={5}
+              onChange={e => setDescription(e.target.value)}
+              fullWidth
+              multiline
+              variant="outlined"
+            />
           </CardContent>
-        </Collapse>
-      </Card>
+
+          <CardActions>
+            <Grid container justify="space-between" alignItems="center">
+              <Grid item>
+                <Button size="small" onClick={() => history.goBack()}>
+                  Abbrechen
+                </Button>
+
+                <Button size="small" color="primary">
+                  Speichern
+                </Button>
+              </Grid>
+              <Grid item>
+                <IconButton onClick={() => setPreview(previous => !previous)}>
+                  <EyeIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+          </CardActions>
+
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
+
+          <Collapse in={preview} timeout="auto" unmountOnExit mountOnEnter>
+            <CardContent>
+              <RecipeResult
+                name={name}
+                created={new Date().toLocaleDateString()}
+                categories={categories}
+                attachements={attachements}
+                ingredients={ingredients}
+                description={description}
+              />
+            </CardContent>
+          </Collapse>
+        </Card>
+      </Box>
     </Fade>
   );
 };

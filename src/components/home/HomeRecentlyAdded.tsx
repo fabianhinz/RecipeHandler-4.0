@@ -7,17 +7,15 @@ import {
   Avatar,
   Card,
   CardHeader,
-  CardContent
+  CardContent,
+  Box
 } from "@material-ui/core";
-import { PATHS } from "../../routes/Routes";
-import { useRouter } from "../../routes/RouterContext";
+
 import { MOCK_RECIPES } from "../../util/Mock";
 
 export const HomeRecentlyAdded: FC = () => {
-  const { history } = useRouter();
-
   return (
-    <Grid item>
+    <Box margin={2}>
       <Card>
         <CardHeader title="Zuletzt hinzugefügt" />
         <CardContent>
@@ -25,7 +23,7 @@ export const HomeRecentlyAdded: FC = () => {
             {MOCK_RECIPES.map(category => (
               <Grid item key={category}>
                 <Chip
-                  onClick={() => history.push(PATHS.recipeDetails(category))}
+                  onClick={() => alert("TBD")}
                   avatar={
                     <Avatar>
                       <LinkIcon />
@@ -40,6 +38,6 @@ export const HomeRecentlyAdded: FC = () => {
           </Grid>
         </CardContent>
       </Card>
-    </Grid>
+    </Box>
   );
 };

@@ -1,18 +1,16 @@
 import React, { FC } from "react";
-import { Grid, Card, CardHeader, CardContent } from "@material-ui/core";
+import { Card, CardHeader, CardContent, Box } from "@material-ui/core";
 import { Categories } from "../category/Categories";
-// ! ToDo fix layout "jumping"
+
 export const HomeCategories: FC = () => {
   return (
-    <Grid item>
+    <Box margin={2}>
       <Card>
         <CardHeader title="Kategorien" />
         <CardContent>
-          <Grid direction="column" container spacing={2}>
-            <Categories />
-          </Grid>
+          <Categories />
         </CardContent>
       </Card>
-    </Grid>
+    </Box>
   );
 };

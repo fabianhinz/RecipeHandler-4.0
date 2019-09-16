@@ -12,7 +12,8 @@ import {
   Button,
   Paper,
   ButtonBase,
-  Avatar
+  Avatar,
+  Box
 } from "@material-ui/core";
 import { PATHS } from "../../routes/Routes";
 import { Navigate } from "../../routes/Navigate";
@@ -27,14 +28,12 @@ import {
 import { BadgeRating } from "../../util/BadgeRating";
 import ChevronLeft from "@material-ui/icons/ChevronLeftTwoTone";
 import ChevronRight from "@material-ui/icons/ChevronRightTwoTone";
+import { RecipeResult } from "../recipe/result/RecipeResult";
 
 const useStyles = makeStyles(theme => {
   const background = theme.palette.type === "light" ? brown[200] : brown[400];
 
   return createStyles({
-    img: {
-      borderRadius: 10
-    },
     avatar: {
       background,
       color: theme.palette.getContrastText(background)
@@ -83,121 +82,87 @@ export const HomeRecipeResults: FC = () => {
   }, [rightLeftHandler]);
 
   return (
-    <Grid item>
-      <Grid container spacing={2} direction="column">
-        <Grid item>
-          {results.map(rezept => (
-            <ExpansionPanel
-              key={rezept}
-              TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
-            >
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Grid
-                  container
-                  direction="row"
-                  spacing={2}
-                  justify="space-between"
-                  alignItems="center"
-                >
-                  <Grid item>
-                    <Grid container spacing={2} alignItems="center">
-                      <Grid item>
-                        <Avatar className={classes.avatar}>
-                          {rezept.slice(0, 1).toUpperCase()}
-                        </Avatar>
-                      </Grid>
-                      <Grid item>
-                        <Typography variant="button">{rezept}</Typography>
-                      </Grid>
+    <Box margin={2}>
+      <div>
+        {results.map(rezept => (
+          <ExpansionPanel
+            key={rezept}
+            TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
+          >
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+              <Grid
+                container
+                direction="row"
+                spacing={2}
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item>
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item>
+                      <Avatar className={classes.avatar}>
+                        {rezept.slice(0, 1).toUpperCase()}
+                      </Avatar>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="button">{rezept}</Typography>
                     </Grid>
                   </Grid>
-                  <Grid item>
-                    <BadgeRating />
-                  </Grid>
-                </Grid>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <Grid container direction="column" spacing={2}>
-                  <Grid item>
-                    <CategoryChipsReadonly
-                      variant="type"
-                      color="primary"
-                      items={MOCK_CATEGORIES.slice(1, 3)}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <CategoryChipsReadonly
-                      color="secondary"
-                      variant="time"
-                      items={MOCK_TIME_CATEGORIES.slice(1, 4)}
-                    />
-                  </Grid>
-
-                  <Grid item>
-                    <Grid container spacing={2} direction="row">
-                      <Grid item xs={4}>
-                        <img
-                          className={classes.img}
-                          src={pfannkuchenImg}
-                          alt=""
-                          width="100%"
-                        />
-                      </Grid>
-                      <Grid item xs={8}>
-                        <Typography>
-                          Lorem ipsum dolor sit amet, consetetur sadipscing
-                          elitr, sed diam nonumy eirmod tempor invidunt ut
-                          labore et dolore magna aliquyam erat, sed diam
-                          voluptua. At vero eos et accusam et justo duo dolores
-                          et ea rebum. Stet clita kasd gubergren, no sea
-                          takimata sanctus est Lorem ipsum dolor sit amet.
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="caption">
-                      Erstellt am {new Date().toLocaleDateString()}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </ExpansionPanelDetails>
-              <ExpansionPanelActions>
-                <Navigate to={PATHS.recipeDetails(rezept)}>
-                  <Button>Details</Button>
-                </Navigate>
-              </ExpansionPanelActions>
-            </ExpansionPanel>
-          ))}
-        </Grid>
-        <Grid item>
-          <Grid container justify="center">
-            <Paper>
-              <Grid container spacing={1}>
-                <Grid item>
-                  <ButtonBase
-                    disabled={isDownDisabled}
-                    onClick={handlePageChange("down")}
-                  >
-                    <ChevronLeft />
-                  </ButtonBase>
                 </Grid>
                 <Grid item>
-                  <Typography>{page.label}</Typography>
-                </Grid>
-                <Grid item>
-                  <ButtonBase
-                    disabled={isUpDisabled}
-                    onClick={handlePageChange("up")}
-                  >
-                    <ChevronRight />
-                  </ButtonBase>
+                  <BadgeRating />
                 </Grid>
               </Grid>
-            </Paper>
-          </Grid>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <RecipeResult
+                name="TBD"
+                created={new Date().toLocaleDateString()}
+                categories={{
+                  time: ["10 - 20 Minuten"],
+                  type: ["Vegetarisch"]
+                }}
+                attachements={[{ dataUrl: "", name: "", size: 123 }]}
+                ingredients="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"
+                description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+              />
+            </ExpansionPanelDetails>
+            <ExpansionPanelActions>
+              <Navigate to={PATHS.recipeEdit(rezept)}>
+                <Button>Bearbeiten</Button>
+              </Navigate>
+            </ExpansionPanelActions>
+          </ExpansionPanel>
+        ))}
+      </div>
+
+      <Box margin={1}>
+        <Grid container justify="center">
+          <Paper>
+            <Grid container spacing={1}>
+              <Grid item>
+                <ButtonBase
+                  disabled={isDownDisabled}
+                  onClick={handlePageChange("down")}
+                >
+                  <ChevronLeft />
+                </ButtonBase>
+              </Grid>
+              <Grid item>
+                <Typography>{page.label}</Typography>
+              </Grid>
+              <Grid item>
+                <ButtonBase
+                  disabled={isUpDisabled}
+                  onClick={handlePageChange("up")}
+                >
+                  <ChevronRight />
+                </ButtonBase>
+              </Grid>
+            </Grid>
+          </Paper>
         </Grid>
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 };

@@ -55,29 +55,21 @@ export const Header: FC<HeaderProps> = props => {
     <>
       <Hidden mdDown>
         <Paper className={classes.paper}>
-          <Grid direction="column" container>
-            <Navigate to={PATHS.home}>
-              <IconButton>
-                <HomeIcon />
-              </IconButton>
-            </Navigate>
-            <Divider className={classes.divider} />
-            <IconButton onClick={props.onThemeToggle}>
-              <BrightnessIcon />
-            </IconButton>
+          <Navigate to={PATHS.home}>
             <IconButton>
-              <SettingsIcon />
+              <HomeIcon />
             </IconButton>
+          </Navigate>
+          <Divider className={classes.divider} />
+          <IconButton onClick={props.onThemeToggle}>
+            <BrightnessIcon />
+          </IconButton>
+          <Divider className={classes.divider} />
+          <Navigate to={PATHS.recipeCreate}>
             <IconButton>
-              <SearchIcon />
+              <CreateIcon />
             </IconButton>
-            <Divider className={classes.divider} />
-            <Navigate to={PATHS.recipeCreate}>
-              <IconButton>
-                <CreateIcon />
-              </IconButton>
-            </Navigate>
-          </Grid>
+          </Navigate>
         </Paper>
       </Hidden>
       <Hidden lgUp>

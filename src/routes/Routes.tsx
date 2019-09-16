@@ -13,7 +13,6 @@ interface Routes {
 export const PATHS = {
   home: "/",
   recipeCreate: "/recipe/create",
-  recipeDetails: (id = ":id") => `/recipe/${id}`,
   recipeEdit: (id = ":id") => `/recipe/edit/${id}`
 };
 
@@ -30,13 +29,6 @@ const routes: Routes[] = [
     Component: lazy(() => import("../components/recipe/create/RecipeCreate")),
     Background: props => (
       <BackgroundIcon Icon={AttachementIcon} loading={props.loading} />
-    )
-  },
-  {
-    path: PATHS.recipeDetails(),
-    Component: lazy(() => import("../components/recipe/details/RecipeDetails")),
-    Background: props => (
-      <BackgroundIcon Icon={HomeIcon} loading={props.loading} />
     )
   },
   {
