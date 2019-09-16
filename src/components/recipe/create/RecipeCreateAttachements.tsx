@@ -49,13 +49,13 @@ export const RecipeCreateAttachements: FC<
           variant: "error"
         });
 
-      if (acceptedFiles.length >= 10)
+      if (acceptedFiles.length > 10)
         return enqueueSnackbar(
           <>Mehr als 10 Bilder pro Rezept sind nicht möglich</>,
           { variant: "warning" }
         );
 
-      const loadingKey = enqueueSnackbar(<>Dateien werden geladen</>, {
+      const loadingKey = enqueueSnackbar(<>Dateien werden komprimiert</>, {
         variant: "info"
       });
 
