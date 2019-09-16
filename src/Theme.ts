@@ -90,8 +90,8 @@ const sharedTheme: Partial<ThemeOptions> = {
         width: 32
       },
       colorDefault: {
-        color: "inherit",
-        backgroundColor: "rgba(0, 0, 0, 0.1)"
+        color: "inherit"
+        // backgroundColor: "rgba(0, 0, 0, 0.1)"
       }
     }
   }
