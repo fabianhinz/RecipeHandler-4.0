@@ -19,12 +19,7 @@ import { PATHS } from "../../routes/Routes";
 import { Navigate } from "../../routes/Navigate";
 import pfannkuchenImg from "../../images/pfannkuchen.jpg";
 import brown from "@material-ui/core/colors/brown";
-import { CategoryChipsReadonly } from "../category/CategoryChips";
-import {
-  MOCK_CATEGORIES,
-  MOCK_TIME_CATEGORIES,
-  MOCK_RESULTS
-} from "../../util/Mock";
+import { MOCK_RESULTS } from "../../util/Mock";
 import { BadgeRating } from "../../util/BadgeRating";
 import ChevronLeft from "@material-ui/icons/ChevronLeftTwoTone";
 import ChevronRight from "@material-ui/icons/ChevronRightTwoTone";
@@ -122,7 +117,9 @@ export const HomeRecipeResults: FC = () => {
                   time: ["10 - 20 Minuten"],
                   type: ["Vegetarisch"]
                 }}
-                attachements={[{ dataUrl: "", name: "", size: 123 }]}
+                attachements={[
+                  { dataUrl: pfannkuchenImg, name: "", size: 123 }
+                ]}
                 ingredients="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"
                 description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
               />

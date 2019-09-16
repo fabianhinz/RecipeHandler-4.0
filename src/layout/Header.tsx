@@ -6,16 +6,14 @@ import {
   makeStyles,
   createStyles,
   PaletteType,
-  Divider,
   Hidden,
   SwipeableDrawer,
-  Fab
+  Fab,
+  Box
 } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/FindInPageTwoTone";
-import SettingsIcon from "@material-ui/icons/SettingsTwoTone";
 import BrightnessIcon from "@material-ui/icons/SettingsBrightnessTwoTone";
 import OpenDrawerIcon from "@material-ui/icons/KeyboardArrowUpTwoTone";
-import CreateIcon from "@material-ui/icons/CreateTwoTone";
+import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import HomeIcon from "@material-ui/icons/HomeTwoTone";
 import { Navigate } from "../routes/Navigate";
 import { PATHS } from "../routes/Routes";
@@ -29,9 +27,6 @@ const useStyles = makeStyles(theme =>
       top: 0,
       zIndex: theme.zIndex.appBar,
       padding: theme.spacing(1)
-    },
-    divider: {
-      margin: theme.spacing(1)
     },
     openDrawerIcon: {
       position: "fixed",
@@ -51,25 +46,31 @@ export const Header: FC<HeaderProps> = props => {
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
 
+  const navigationElements = (
+    <>
+      <Navigate to={PATHS.home}>
+        <IconButton>
+          <HomeIcon />
+        </IconButton>
+      </Navigate>
+      <IconButton onClick={props.onThemeToggle}>
+        <BrightnessIcon />
+      </IconButton>
+      <Navigate to={PATHS.recipeCreate}>
+        <IconButton>
+          <AddIcon />
+        </IconButton>
+      </Navigate>
+    </>
+  );
+
   return (
     <>
       <Hidden mdDown>
         <Paper className={classes.paper}>
-          <Navigate to={PATHS.home}>
-            <IconButton>
-              <HomeIcon />
-            </IconButton>
-          </Navigate>
-          <Divider className={classes.divider} />
-          <IconButton onClick={props.onThemeToggle}>
-            <BrightnessIcon />
-          </IconButton>
-          <Divider className={classes.divider} />
-          <Navigate to={PATHS.recipeCreate}>
-            <IconButton>
-              <CreateIcon />
-            </IconButton>
-          </Navigate>
+          <Box display="flex" flexDirection="column">
+            {navigationElements}
+          </Box>
         </Paper>
       </Hidden>
       <Hidden lgUp>
@@ -79,24 +80,8 @@ export const Header: FC<HeaderProps> = props => {
           onClose={() => setDrawer(false)}
           onOpen={() => setDrawer(true)}
         >
-          <Grid direction="row" container justify="space-evenly">
-            <Navigate to={PATHS.home}>
-              <IconButton>
-                <HomeIcon />
-              </IconButton>
-            </Navigate>
-            <IconButton onClick={props.onThemeToggle}>
-              <BrightnessIcon />
-            </IconButton>
-            <IconButton>
-              <SettingsIcon />
-            </IconButton>
-            <IconButton>
-              <SearchIcon />
-            </IconButton>
-            <IconButton>
-              <CreateIcon />
-            </IconButton>
+          <Grid container justify="space-evenly">
+            {navigationElements}
           </Grid>
         </SwipeableDrawer>
         {!drawer && (
