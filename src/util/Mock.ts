@@ -1,3 +1,5 @@
+import pfannkuchenImg from "../images/pfannkuchen.jpg";
+
 export const MOCK_TIME_CATEGORIES = [
   "~20 Minuten",
   "~30 Minuten",
@@ -14,47 +16,17 @@ export const MOCK_RECIPES = [
 ];
 
 export const MOCK_RESULTS = [
-  "Familienpizza mit Hafer und sehr wenig Hefe",
-  "Buletten für Kinder ",
-  "Kartoffel-Hack-Pfanne",
-  "Crêpes (Teig)",
-  "Rumpsteak mit Zwiebel-Chutney",
-  "Cocktailgarnelen mit Kartoffelkuchen",
-  "Gulaschsuppe klassisch",
-  "Nudel-Auflauf mit Hähnchenfleisch",
-  "Kokos-Curry mit Hähnchenbrustfilet",
-  "Versunkene Eier im Spinatnest",
-  "Blaubeer-Smoothie",
-  "Apfelauflauf mit Grieß",
-  "Bananen-Orangen-Smoothie",
-  "Paprika-Reis-Pfanne mit herzhafter Cabanossi",
-  "Gemüse-Auflauf",
-  "Kartoffel-Käsecreme-Suppe",
-  "Low-Carb-Zucchini-Lasagne",
-  "Bud Spencer’s Bohneneintopf",
-  "Crêpes Rezept",
-  "Curry-Huhn mit Basmati Reis",
-  "Nudelauflauf mit Hackfleisch",
-  "Hackfleisch-Schafskäse-Auflauf",
-  "Rindsrouladen (Omas Rezept)",
-  "Lasagne mit Tomaten, Hackfleisch und Créme fraîche",
-  "Filettopf aus dem Backofen",
-  "Quiche Lorraine",
-  "Nudelsalat",
-  "Nudelsalat (Junggesellen-Variante)",
-  "Schneller Apfelauflauf",
-  "Rosenkohl in Frischkäse-Senfsauce",
-  "Mexikanischer Nudelsalat",
-  "Lammkeule mit Ofenkartoffeln",
-  "Cappelloni-Gemüse-Gratin Ratatouille",
-  "Knusprige Gänsebrust",
-  "Käse-Spinat-Gnocchi",
-  "Herzhaft gefüllte Pfannkuchen mit Champignons",
-  "Möhreneintopf mit Kassler",
-  "Flammkuchenteig mit Hefe selber machen",
-  "Nudelsalat mit Frischkäsesauce",
-  "Rotes Thai-Curry geeignet für den Thermomix®",
-  "One Pot Pasta mit Rinderfiletspitzen",
-  "Orientalische Tomaten-Möhren-Suppe mit Feta-Oliven-Topping (Low Carb)",
-  "Snack-Lasagne „Italia“"
+  {
+    name: "Pfannkuchen",
+    created: new Date().toLocaleDateString(),
+    categories: {
+      time: ["10 - 20 Minuten"],
+      type: ["Vegetarisch"]
+    },
+    attachements: [{ dataUrl: pfannkuchenImg, name: "", size: 123 }],
+    ingredients:
+      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+    description:
+      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+  }
 ];

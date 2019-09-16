@@ -16,14 +16,13 @@ import {
   Box
 } from "@material-ui/core";
 import { PATHS } from "../../routes/Routes";
-import { Navigate } from "../../routes/Navigate";
-import pfannkuchenImg from "../../images/pfannkuchen.jpg";
 import brown from "@material-ui/core/colors/brown";
 import { MOCK_RESULTS } from "../../util/Mock";
 import { BadgeRating } from "../../util/BadgeRating";
 import ChevronLeft from "@material-ui/icons/ChevronLeftTwoTone";
 import ChevronRight from "@material-ui/icons/ChevronRightTwoTone";
 import { RecipeResult } from "../recipe/result/RecipeResult";
+import { useRouter } from "../../routes/RouterContext";
 
 const useStyles = makeStyles(theme => {
   const background = theme.palette.type === "light" ? brown[200] : brown[400];
@@ -37,6 +36,7 @@ const useStyles = makeStyles(theme => {
 });
 
 export const HomeRecipeResults: FC = () => {
+  const { history } = useRouter();
   const [page, setPage] = useState({ label: 1, offset: 0 });
   const classes = useStyles();
 
@@ -79,9 +79,9 @@ export const HomeRecipeResults: FC = () => {
   return (
     <Box margin={2}>
       <div>
-        {results.map(rezept => (
+        {results.map(recipeProps => (
           <ExpansionPanel
-            key={rezept}
+            key={recipeProps.name}
             TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
           >
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -96,11 +96,13 @@ export const HomeRecipeResults: FC = () => {
                   <Grid container spacing={2} alignItems="center">
                     <Grid item>
                       <Avatar className={classes.avatar}>
-                        {rezept.slice(0, 1).toUpperCase()}
+                        {recipeProps.name.slice(0, 1).toUpperCase()}
                       </Avatar>
                     </Grid>
                     <Grid item>
-                      <Typography variant="button">{rezept}</Typography>
+                      <Typography variant="button">
+                        {recipeProps.name}
+                      </Typography>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -110,24 +112,16 @@ export const HomeRecipeResults: FC = () => {
               </Grid>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <RecipeResult
-                name="TBD"
-                created={new Date().toLocaleDateString()}
-                categories={{
-                  time: ["10 - 20 Minuten"],
-                  type: ["Vegetarisch"]
-                }}
-                attachements={[
-                  { dataUrl: pfannkuchenImg, name: "", size: 123 }
-                ]}
-                ingredients="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"
-                description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-              />
+              <RecipeResult {...recipeProps} />
             </ExpansionPanelDetails>
             <ExpansionPanelActions>
-              <Navigate to={PATHS.recipeEdit(rezept)}>
-                <Button>Bearbeiten</Button>
-              </Navigate>
+              <Button
+                onClick={() =>
+                  history.push(PATHS.recipeEdit(recipeProps.name), recipeProps)
+                }
+              >
+                Bearbeiten
+              </Button>
             </ExpansionPanelActions>
           </ExpansionPanel>
         ))}

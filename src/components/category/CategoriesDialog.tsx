@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef } from "react";
+import React, { FC, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -50,6 +50,10 @@ const useStyles = makeStyles(theme =>
       }
     },
     label: {
+      width: "100%"
+    },
+    inputBase: {
+      color: "#000",
       width: "100%"
     }
   })
@@ -125,7 +129,7 @@ export const CategoriesDialog: FC<CategoriesDialogProps> = ({
             classes={{ label: classes.label }}
             label={
               <InputBase
-                className={classes.label}
+                className={classes.inputBase}
                 placeholder="Namen eintragen"
               />
             }
