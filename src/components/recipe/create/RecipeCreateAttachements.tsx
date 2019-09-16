@@ -7,20 +7,15 @@ import { RecipeAttachement } from "./RecipeCreate";
 import RecipeCreateAttachementsCard, {
   AttachementsCardChangeHandler
 } from "./RecipeCreateAttachementsCard";
+import compressImage from "browser-image-compression";
 
-const readDocumentAsync = (
-  document: any,
-  readAs: "arrayBuffer" | "dataUrl"
-) => {
-  return new Promise<string | ArrayBuffer | null>((resolve, reject) => {
+const readDocumentAsync = (document: Blob) =>
+  new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
+    reader.onload = () => resolve(reader.result as string);
     reader.onerror = reject;
-    if (readAs === "arrayBuffer") reader.readAsArrayBuffer(document);
-    if (readAs === "dataUrl") reader.readAsDataURL(document);
-    else console.error("unkown readAs param");
+    reader.readAsDataURL(document);
   });
-};
 
 const useStyles = makeStyles(theme => {
   return createStyles({
@@ -69,10 +64,16 @@ export const RecipeCreateAttachements: FC<
       for (const file of acceptedFiles) {
         // filenames are our keys, react will warn about duplicate keys
         if (uniqueNames.has(file.name)) continue;
-
         uniqueNames.add(file.name);
-        const dataUrl = (await readDocumentAsync(file, "dataUrl")) as string;
-        newFiles.push({ name: file.name, dataUrl, size: file.size });
+
+        const compressedFile: Blob = await compressImage(file, {
+          maxSizeMB: 1,
+          useWebWorker: false,
+          maxWidthOrHeight: 3840,
+          maxIteration: 5
+        });
+        const dataUrl: string = await readDocumentAsync(compressedFile);
+        newFiles.push({ name: file.name, dataUrl, size: compressedFile.size });
       }
       props.onAttachements(newFiles);
       closeSnackbar(loadingKey as string);

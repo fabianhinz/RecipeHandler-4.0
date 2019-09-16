@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useCallback } from "react";
 
 import {
   Button,
@@ -92,32 +92,35 @@ const RecipeCreate: FC = () => {
   const handleCategoriesChange = (categories: CategoriesAs<Array<string>>) => {
     setSelectedCategories(categories);
   };
-
-  const handleSaveAttachement = (name: { old: string; new: string }) => {
-    // ! close all remaining snackbars - don't know if this is a good idea
-    closeSnackbar();
-    if (attachements.filter(a => a.name === name.new).length > 0) {
-      enqueueSnackbar(
-        <>Änderung wird nicht gespeichert. Name bereits vorhanden</>,
-        {
-          variant: "warning"
-        }
-      );
-    } else {
-      attachements.forEach(attachement => {
-        if (attachement.name === name.old) attachement.name = name.new;
-      });
-      setAttachements(attachements);
-      enqueueSnackbar(
-        <>
-          Name von '{name.old}' auf '{name.new}' geändert
-        </>,
-        {
-          variant: "success"
-        }
-      );
-    }
-  };
+  // ? with useCallback  and memo chained together we improve performance
+  const handleSaveAttachement = useCallback(
+    (name: { old: string; new: string }) => {
+      // ! close all remaining snackbars - don't know if this is a good idea
+      closeSnackbar();
+      if (attachements.filter(a => a.name === name.new).length > 0) {
+        enqueueSnackbar(
+          <>Änderung wird nicht gespeichert. Name bereits vorhanden</>,
+          {
+            variant: "warning"
+          }
+        );
+      } else {
+        attachements.forEach(attachement => {
+          if (attachement.name === name.old) attachement.name = name.new;
+        });
+        setAttachements(attachements);
+        enqueueSnackbar(
+          <>
+            Name von '{name.old}' auf '{name.new}' geändert
+          </>,
+          {
+            variant: "success"
+          }
+        );
+      }
+    },
+    [attachements, closeSnackbar, enqueueSnackbar]
+  );
 
   return (
     <Fade in>

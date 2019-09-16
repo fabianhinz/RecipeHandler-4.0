@@ -103,5 +103,6 @@ export default memo(
   RecipeCreateAttachementsCard,
   (prev, next) =>
     prev.attachement.dataUrl === next.attachement.dataUrl &&
-    prev.attachement.name === next.attachement.name
+    prev.attachement.name === next.attachement.name &&
+    prev.onSaveAttachement === next.onSaveAttachement
 );
