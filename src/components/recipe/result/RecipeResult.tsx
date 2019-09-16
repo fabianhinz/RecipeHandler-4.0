@@ -6,17 +6,7 @@ import { Subtitle } from "../../../util/Subtitle";
 import ReactMarkdown from "react-markdown";
 import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
-import { CategoriesAs } from "../../category/Categories";
-import { RecipeAttachement } from "../create/RecipeCreate";
-
-interface RecipeResultProps {
-  name: string;
-  created: string;
-  categories: CategoriesAs<Array<string>>;
-  attachements: RecipeAttachement[];
-  ingredients: string;
-  description: string;
-}
+import { Recipe } from "../../../util/Mock";
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -25,6 +15,8 @@ const useStyles = makeStyles(theme =>
     }
   })
 );
+
+type RecipeResultProps = Recipe;
 
 export const RecipeResult: FC<RecipeResultProps> = ({
   name,

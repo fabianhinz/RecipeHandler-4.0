@@ -59,8 +59,8 @@ const useStyles = makeStyles(theme =>
   })
 );
 
-const SlideLeft = React.forwardRef<unknown, TransitionProps>((props, ref) => (
-  <Slide direction="left" ref={ref} {...props} />
+const SlideUp = React.forwardRef<unknown, TransitionProps>((props, ref) => (
+  <Slide direction="up" ref={ref} {...props} />
 ));
 
 export const CategoriesDialog: FC<CategoriesDialogProps> = ({
@@ -75,7 +75,7 @@ export const CategoriesDialog: FC<CategoriesDialogProps> = ({
   return (
     <Dialog
       hideBackdrop={fullScreen}
-      TransitionComponent={SlideLeft}
+      TransitionComponent={SlideUp}
       fullWidth
       maxWidth="md"
       fullScreen={fullScreen}

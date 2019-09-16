@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { CategoryChips } from "./CategoryChips";
 import { MOCK_CATEGORIES, MOCK_TIME_CATEGORIES } from "../../util/Mock";
 import { Box } from "@material-ui/core";
@@ -14,14 +14,28 @@ export interface CategoryChangeHandler {
   onChange?: (categories: CategoriesAs<Array<string>>) => void;
 }
 
-export const Categories: FC<CategoryChangeHandler & { edit?: boolean }> = ({
+interface CategoriesProps extends CategoryChangeHandler {
+  edit?: boolean;
+  fromRecipe?: CategoriesAs<Array<string>>;
+}
+
+export const Categories: FC<CategoriesProps> = ({
   onChange,
-  edit
+  edit,
+  fromRecipe
 }) => {
   const [categories, setCategories] = useState<CategoriesAs<Set<string>>>({
     type: new Set<string>(),
     time: new Set<string>()
   });
+
+  useEffect(() => {
+    if (!fromRecipe) return;
+    setCategories({
+      time: new Set(fromRecipe.time),
+      type: new Set(fromRecipe.type)
+    });
+  }, [fromRecipe]);
 
   const handleClick = (category: string, variant: CategoryVariants) => {
     if (categories[variant].has(category)) categories[variant].delete(category);

@@ -1,14 +1,9 @@
 import React, { FC } from "react";
 import { RouteComponentProps } from "react-router";
-import { Fade } from "@material-ui/core";
+import RecipeCreate from "../create/RecipeCreate";
 
 const RecipeEdit: FC<RouteComponentProps> = ({ location }) => {
-  console.log(location.state);
-  return (
-    <Fade in>
-      <div>edit works</div>
-    </Fade>
-  );
+  return <RecipeCreate {...location.state} />;
 };
 
 export default RecipeEdit;

@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 
 import {
   Button,
@@ -26,6 +26,7 @@ import { RecipeCreateAttachements } from "./RecipeCreateAttachements";
 import { useSnackbar } from "notistack";
 import { Subtitle } from "../../../util/Subtitle";
 import { RecipeResult } from "../result/RecipeResult";
+import { Recipe } from "../../../util/Mock";
 
 export interface RecipeAttachement {
   name: string;
@@ -43,7 +44,7 @@ const useStyles = makeStyles(theme =>
 
 const RecipeCreate: FC = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { history } = useRouter();
+  const { history, location } = useRouter();
   const classes = useStyles();
 
   const [ingredients, setIngredients] = useState<string>("");
@@ -54,6 +55,29 @@ const RecipeCreate: FC = () => {
   const [categories, setSelectedCategories] = useState<
     CategoriesAs<Array<string>>
   >({ type: [], time: [] });
+
+  useEffect(() => {
+    try {
+      const {
+        name,
+        categories,
+        attachements,
+        ingredients,
+        description
+      } = location.state as Recipe;
+      setName(name);
+      setSelectedCategories(categories);
+      setAttachements(attachements);
+      setIngredients(ingredients);
+      setDescription(description);
+    } catch (e) {
+      if (location.pathname.includes("/edit/"))
+        enqueueSnackbar(
+          <>Rezept nicht gefunden, Bestimmt möchtest du eine neues erstellen</>,
+          { variant: "info" }
+        );
+    }
+  }, [enqueueSnackbar, location.pathname, location.state]);
 
   const handleAttachementsDrop = (newAttachements: RecipeAttachement[]) => {
     setAttachements(previous => [...previous, ...newAttachements]);
@@ -113,7 +137,10 @@ const RecipeCreate: FC = () => {
           />
           <CardContent>
             <Subtitle text="Kategorien" />
-            <Categories onChange={handleCategoriesChange} />
+            <Categories
+              fromRecipe={categories}
+              onChange={handleCategoriesChange}
+            />
 
             <Box marginTop={2} marginBottom={2}>
               <Divider />
