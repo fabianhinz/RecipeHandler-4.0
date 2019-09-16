@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useRef } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -15,12 +15,15 @@ import {
   FormControlLabel,
   Radio,
   makeStyles,
-  createStyles
+  createStyles,
+  Slide
 } from "@material-ui/core";
 import { Categories, CategoryVariants } from "./Categories";
 import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import TimerIcon from "@material-ui/icons/AvTimerTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
+import { TransitionProps } from "@material-ui/core/transitions/transition";
+import { chipPropsFrom, CategoryButtonBase } from "./CategoryChips";
 
 interface CategoriesDialogProps {
   open: boolean;
@@ -31,13 +34,30 @@ const useStyles = makeStyles(theme =>
   createStyles({
     radioGroup: {
       justifyContent: "center",
-      flexDirection: "row"
+      flexDirection: "row",
+      flexWrap: "nowrap",
+      overflowX: "auto"
     },
     icon: {
       marginRight: theme.spacing(1)
+    },
+    chip: {
+      borderRadius: 16,
+      marginTop: theme.spacing(1),
+      width: "100%",
+      "& > *": {
+        width: "100%"
+      }
+    },
+    label: {
+      width: "100%"
     }
   })
 );
+
+const SlideLeft = React.forwardRef<unknown, TransitionProps>((props, ref) => (
+  <Slide direction="left" ref={ref} {...props} />
+));
 
 export const CategoriesDialog: FC<CategoriesDialogProps> = ({
   open,
@@ -47,10 +67,11 @@ export const CategoriesDialog: FC<CategoriesDialogProps> = ({
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [variant, setVariant] = useState<CategoryVariants>();
-
+  const [variant, setVariant] = useState<CategoryVariants>("type");
   return (
     <Dialog
+      hideBackdrop={fullScreen}
+      TransitionComponent={SlideLeft}
       fullWidth
       maxWidth="md"
       fullScreen={fullScreen}
@@ -66,13 +87,16 @@ export const CategoriesDialog: FC<CategoriesDialogProps> = ({
           <Categories edit />
         </Box>
 
-        <DialogContentText>Neue Kategorien hinzufügen</DialogContentText>
+        <DialogContentText>Neue Kategorie hinzufügen</DialogContentText>
 
-        <RadioGroup className={classes.radioGroup}>
+        <RadioGroup
+          className={classes.radioGroup}
+          value={variant}
+          onChange={(_e, value) => setVariant(value as CategoryVariants)}
+        >
           <FormControlLabel
-            value="male"
-            control={<Radio color="primary" />}
-            labelPlacement="start"
+            value="type"
+            control={<Radio color="default" />}
             label={
               <Box display="flex" alignItems="center">
                 <BookIcon className={classes.icon} />
@@ -82,9 +106,8 @@ export const CategoriesDialog: FC<CategoriesDialogProps> = ({
           />
 
           <FormControlLabel
-            value="female"
-            control={<Radio color="primary" />}
-            labelPlacement="start"
+            value="time"
+            control={<Radio color="default" />}
             label={
               <Box display="flex" alignItems="center">
                 <TimerIcon className={classes.icon} />
@@ -94,11 +117,20 @@ export const CategoriesDialog: FC<CategoriesDialogProps> = ({
           />
         </RadioGroup>
 
-        <Chip
-          onDelete={() => alert("TODO")}
-          deleteIcon={<AddIcon />}
-          label={<InputBase placeholder="Namen eintragen" />}
-        />
+        <CategoryButtonBase className={classes.chip}>
+          <Chip
+            {...chipPropsFrom(variant)}
+            onDelete={() => alert("TODO")}
+            deleteIcon={<AddIcon />}
+            classes={{ label: classes.label }}
+            label={
+              <InputBase
+                className={classes.label}
+                placeholder="Namen eintragen"
+              />
+            }
+          />
+        </CategoryButtonBase>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Abbrechen</Button>

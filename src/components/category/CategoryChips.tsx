@@ -24,7 +24,7 @@ const useStyles = makeStyles(() =>
 );
 
 // ? keep this for now, we may wanna split categories in the future
-const CategoryButtonBase: FC<ButtonBaseProps> = ({
+export const CategoryButtonBase: FC<ButtonBaseProps> = ({
   children,
   ...buttonBaseProps
 }) => {
@@ -36,7 +36,7 @@ const CategoryButtonBase: FC<ButtonBaseProps> = ({
   );
 };
 
-export const fromVariant = (
+export const chipPropsFrom = (
   variant?: CategoryVariants
 ): { avatar: JSX.Element; color: PropTypes.Color } => {
   switch (variant) {
@@ -76,7 +76,7 @@ export const CategoryChips: FC<CategoryChipProps> = ({
   variant,
   edit
 }) => {
-  const { avatar, color } = fromVariant(variant);
+  const { avatar, color } = chipPropsFrom(variant);
 
   return (
     <Grid container spacing={1}>
@@ -104,7 +104,7 @@ export const CategoryChips: FC<CategoryChipProps> = ({
 export const CategoryChipsReadonly: FC<
   Pick<CategoryChipProps, "items" | "variant">
 > = ({ items, variant }) => {
-  const { avatar, color } = fromVariant(variant);
+  const { avatar, color } = chipPropsFrom(variant);
 
   return (
     <Grid container spacing={1}>
