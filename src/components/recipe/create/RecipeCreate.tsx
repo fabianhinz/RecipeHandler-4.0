@@ -27,6 +27,8 @@ import { useSnackbar } from "notistack";
 import { Subtitle } from "../../../util/Subtitle";
 import { RecipeResult } from "../result/RecipeResult";
 import { Recipe } from "../../../util/Mock";
+import { firestore } from "../../../util/Firebase";
+import { PATHS } from "../../../routes/Routes";
 
 export interface RecipeAttachement {
   name: string;
@@ -78,6 +80,21 @@ const RecipeCreate: FC = () => {
         );
     }
   }, [enqueueSnackbar, location.pathname, location.state]);
+
+  const handleSaveClick = () => {
+    firestore
+      .collection("recipes")
+      .add({ name, ingredients, description, attachements, categories })
+      .then(
+        onfulfilled => {
+          history.push(PATHS.home);
+          enqueueSnackbar(<>{name} gespeichert</>, { variant: "success" });
+        },
+        onRejected => {
+          enqueueSnackbar(<>Fehler beim Speichern</>, { variant: "error" });
+        }
+      );
+  };
 
   const handleAttachementsDrop = (newAttachements: RecipeAttachement[]) => {
     setAttachements(previous => [...previous, ...newAttachements]);
@@ -187,7 +204,7 @@ const RecipeCreate: FC = () => {
                   Abbrechen
                 </Button>
 
-                <Button size="small" color="primary">
+                <Button size="small" color="primary" onClick={handleSaveClick}>
                   Speichern
                 </Button>
               </Grid>

@@ -17,7 +17,7 @@ import {
 } from "@material-ui/core";
 import { PATHS } from "../../routes/Routes";
 import brown from "@material-ui/core/colors/brown";
-import { MOCK_RESULTS } from "../../util/Mock";
+import { Recipe } from "../../util/Mock";
 import { BadgeRating } from "../../util/BadgeRating";
 import ChevronLeft from "@material-ui/icons/ChevronLeftTwoTone";
 import ChevronRight from "@material-ui/icons/ChevronRightTwoTone";
@@ -35,13 +35,13 @@ const useStyles = makeStyles(theme => {
   });
 });
 
-export const HomeRecipeResults: FC = () => {
+export const HomeRecipeResults: FC<{ recipes: Array<Recipe> }> = props => {
   const { history } = useRouter();
   const [page, setPage] = useState({ label: 1, offset: 0 });
   const classes = useStyles();
-
-  const results = MOCK_RESULTS.slice(page.offset, page.offset + 4);
-  const isUpDisabled = results.length < 4;
+  // ! ToDo change this
+  const recipes = props.recipes.slice(page.offset, page.offset + 4);
+  const isUpDisabled = recipes.length < 4;
   const isDownDisabled = page.label === 1;
 
   const handlePageChange = useCallback(
@@ -79,7 +79,7 @@ export const HomeRecipeResults: FC = () => {
   return (
     <Box margin={2}>
       <div>
-        {results.map(recipeProps => (
+        {recipes.map(recipeProps => (
           <ExpansionPanel
             key={recipeProps.name}
             TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}

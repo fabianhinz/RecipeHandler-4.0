@@ -67,7 +67,7 @@ export const RecipeResult: FC<RecipeResultProps> = ({
       </Grid>
 
       <Grid item xs={12}>
-        <Typography variant="caption">Erstellt am: {created}</Typography>
+        {/* <Typography variant="caption">Erstellt am: {created}</Typography> */}
       </Grid>
     </Grid>
   );
