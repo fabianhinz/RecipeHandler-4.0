@@ -7,7 +7,8 @@ import {
   makeStyles,
   Typography,
   Avatar,
-  PropTypes
+  PropTypes,
+  InputBase
 } from "@material-ui/core";
 import { ButtonBaseProps } from "@material-ui/core/ButtonBase";
 import TimerIcon from "@material-ui/icons/AvTimerTwoTone";
@@ -35,7 +36,7 @@ const CategoryButtonBase: FC<ButtonBaseProps> = ({
   );
 };
 
-const fromVariant = (
+export const fromVariant = (
   variant?: CategoryVariants
 ): { avatar: JSX.Element; color: PropTypes.Color } => {
   switch (variant) {
@@ -65,13 +66,15 @@ interface CategoryChipProps {
   items: string[];
   onClick: (category: string, variant: CategoryVariants) => void;
   variant: CategoryVariants;
+  edit?: boolean;
 }
 
 export const CategoryChips: FC<CategoryChipProps> = ({
   selected,
   items,
   onClick,
-  variant
+  variant,
+  edit
 }) => {
   const { avatar, color } = fromVariant(variant);
 
@@ -82,8 +85,14 @@ export const CategoryChips: FC<CategoryChipProps> = ({
           <CategoryButtonBase onClick={() => onClick(category, variant)}>
             <Chip
               avatar={avatar}
-              color={selected.has(category) ? color : "default"}
-              label={<Typography variant="subtitle2">{category}</Typography>}
+              color={selected.has(category) && !edit ? color : "default"}
+              label={
+                edit ? (
+                  <InputBase defaultValue={category} />
+                ) : (
+                  <Typography variant="subtitle2">{category}</Typography>
+                )
+              }
             />
           </CategoryButtonBase>
         </Grid>

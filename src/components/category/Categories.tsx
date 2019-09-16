@@ -14,7 +14,10 @@ export interface CategoryChangeHandler {
   onChange?: (categories: CategoriesAs<Array<string>>) => void;
 }
 
-export const Categories: FC<CategoryChangeHandler> = ({ onChange }) => {
+export const Categories: FC<CategoryChangeHandler & { edit?: boolean }> = ({
+  onChange,
+  edit
+}) => {
   const [categories, setCategories] = useState<CategoriesAs<Set<string>>>({
     type: new Set<string>(),
     time: new Set<string>()
@@ -36,6 +39,7 @@ export const Categories: FC<CategoryChangeHandler> = ({ onChange }) => {
     <>
       <Box marginBottom={1}>
         <CategoryChips
+          edit={edit}
           variant="type"
           items={MOCK_CATEGORIES}
           onClick={handleClick}
@@ -44,6 +48,7 @@ export const Categories: FC<CategoryChangeHandler> = ({ onChange }) => {
       </Box>
       <Box marginBottom={1}>
         <CategoryChips
+          edit={edit}
           variant="time"
           items={MOCK_TIME_CATEGORIES}
           onClick={handleClick}
