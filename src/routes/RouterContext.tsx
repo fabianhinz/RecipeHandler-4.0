@@ -6,7 +6,7 @@ const RouterContext = React.createContext<RouteComponentProps | null>(null);
 export const useRouter = () => useContext(RouterContext) as RouteComponentProps;
 
 export const RouterProvider = withRouter(({ children, ...routerProps }) => (
-  <RouterContext.Provider value={routerProps}>
-    {children}
-  </RouterContext.Provider>
+    <RouterContext.Provider value={routerProps}>
+        {children}
+    </RouterContext.Provider>
 ));

@@ -1,147 +1,147 @@
-import React, { FC, useState } from "react";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  useTheme,
-  useMediaQuery,
-  Box,
-  DialogContentText,
-  Chip,
-  InputBase,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  makeStyles,
-  createStyles,
-  Slide
-} from "@material-ui/core";
-import { Categories, CategoryVariants } from "./Categories";
 import AddIcon from "@material-ui/icons/AddCircleTwoTone";
-import TimerIcon from "@material-ui/icons/AvTimerTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
+import React, { FC, useState } from "react";
+import TimerIcon from "@material-ui/icons/AvTimerTwoTone";
+import {
+    Box,
+    Button,
+    Chip,
+    createStyles,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    FormControlLabel,
+    InputBase,
+    makeStyles,
+    Radio,
+    RadioGroup,
+    Slide,
+    useMediaQuery,
+    useTheme
+    } from "@material-ui/core";
+import { Categories, CategoryVariants } from "./Categories";
+import { CategoryButtonBase, chipPropsFrom } from "./CategoryChips";
 import { TransitionProps } from "@material-ui/core/transitions/transition";
-import { chipPropsFrom, CategoryButtonBase } from "./CategoryChips";
 
 interface CategoriesDialogProps {
-  open: boolean;
-  onClose: () => void;
+    open: boolean;
+    onClose: () => void;
 }
 
 const useStyles = makeStyles(theme =>
-  createStyles({
-    radioGroup: {
-      justifyContent: "center",
-      flexDirection: "row",
-      flexWrap: "nowrap",
-      overflowX: "auto"
-    },
-    icon: {
-      marginRight: theme.spacing(1)
-    },
-    chip: {
-      borderRadius: 16,
-      marginTop: theme.spacing(1),
-      width: "100%",
-      "& > *": {
-        width: "100%"
-      }
-    },
-    label: {
-      width: "100%"
-    },
-    inputBase: {
-      color: "#000",
-      width: "100%"
-    }
-  })
+    createStyles({
+        radioGroup: {
+            justifyContent: "center",
+            flexDirection: "row",
+            flexWrap: "nowrap",
+            overflowX: "auto"
+        },
+        icon: {
+            marginRight: theme.spacing(1)
+        },
+        chip: {
+            borderRadius: 16,
+            marginTop: theme.spacing(1),
+            width: "100%",
+            "& > *": {
+                width: "100%"
+            }
+        },
+        label: {
+            width: "100%"
+        },
+        inputBase: {
+            color: "#000",
+            width: "100%"
+        }
+    })
 );
 
 const SlideUp = React.forwardRef<unknown, TransitionProps>((props, ref) => (
-  <Slide direction="up" ref={ref} {...props} />
+    <Slide direction="up" ref={ref} {...props} />
 ));
 
 export const CategoriesDialog: FC<CategoriesDialogProps> = ({
-  open,
-  onClose
+    open,
+    onClose
 }) => {
-  const classes = useStyles();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const classes = useStyles();
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [variant, setVariant] = useState<CategoryVariants>("type");
-  return (
-    <Dialog
-      hideBackdrop={fullScreen}
-      TransitionComponent={SlideUp}
-      fullWidth
-      maxWidth="md"
-      fullScreen={fullScreen}
-      open={open}
-      onClose={onClose}
-    >
-      <DialogTitle>Kategorien bearbeiten</DialogTitle>
-      <DialogContent>
-        <Box marginBottom={2}>
-          <DialogContentText>
-            Vorhandene Kategorien bearbeiten
-          </DialogContentText>
-          <Categories edit />
-        </Box>
-
-        <DialogContentText>Neue Kategorie hinzufügen</DialogContentText>
-
-        <RadioGroup
-          className={classes.radioGroup}
-          value={variant}
-          onChange={(_e, value) => setVariant(value as CategoryVariants)}
+    const [variant, setVariant] = useState<CategoryVariants>("type");
+    return (
+        <Dialog
+            hideBackdrop={fullScreen}
+            TransitionComponent={SlideUp}
+            fullWidth
+            maxWidth="md"
+            fullScreen={fullScreen}
+            open={open}
+            onClose={onClose}
         >
-          <FormControlLabel
-            value="type"
-            control={<Radio color="default" />}
-            label={
-              <Box display="flex" alignItems="center">
-                <BookIcon className={classes.icon} />
-                Art
-              </Box>
-            }
-          />
+            <DialogTitle>Kategorien bearbeiten</DialogTitle>
+            <DialogContent>
+                <Box marginBottom={2}>
+                    <DialogContentText>
+                        Vorhandene Kategorien bearbeiten
+          </DialogContentText>
+                    <Categories edit />
+                </Box>
 
-          <FormControlLabel
-            value="time"
-            control={<Radio color="default" />}
-            label={
-              <Box display="flex" alignItems="center">
-                <TimerIcon className={classes.icon} />
-                Zeit
-              </Box>
-            }
-          />
-        </RadioGroup>
+                <DialogContentText>Neue Kategorie hinzufügen</DialogContentText>
 
-        <CategoryButtonBase className={classes.chip}>
-          <Chip
-            {...chipPropsFrom(variant)}
-            onDelete={() => alert("TODO")}
-            deleteIcon={<AddIcon />}
-            classes={{ label: classes.label }}
-            label={
-              <InputBase
-                className={classes.inputBase}
-                placeholder="Namen eintragen"
-              />
-            }
-          />
-        </CategoryButtonBase>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Abbrechen</Button>
-        <Button onClick={onClose} color="primary" autoFocus>
-          Speichern
+                <RadioGroup
+                    className={classes.radioGroup}
+                    value={variant}
+                    onChange={(_e, value) => setVariant(value as CategoryVariants)}
+                >
+                    <FormControlLabel
+                        value="type"
+                        control={<Radio color="default" />}
+                        label={
+                            <Box display="flex" alignItems="center">
+                                <BookIcon className={classes.icon} />
+                                Art
+              </Box>
+                        }
+                    />
+
+                    <FormControlLabel
+                        value="time"
+                        control={<Radio color="default" />}
+                        label={
+                            <Box display="flex" alignItems="center">
+                                <TimerIcon className={classes.icon} />
+                                Zeit
+              </Box>
+                        }
+                    />
+                </RadioGroup>
+
+                <CategoryButtonBase className={classes.chip}>
+                    <Chip
+                        {...chipPropsFrom(variant)}
+                        onDelete={() => alert("TODO")}
+                        deleteIcon={<AddIcon />}
+                        classes={{ label: classes.label }}
+                        label={
+                            <InputBase
+                                className={classes.inputBase}
+                                placeholder="Namen eintragen"
+                            />
+                        }
+                    />
+                </CategoryButtonBase>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose}>Abbrechen</Button>
+                <Button onClick={onClose} color="primary" autoFocus>
+                    Speichern
         </Button>
-      </DialogActions>
-    </Dialog>
-  );
+            </DialogActions>
+        </Dialog>
+    );
 };

@@ -4,28 +4,28 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createBrowserHistory } from "history";
 import { Router } from "react-router";
+import { RouterProvider } from "./routes/RouterContext";
 import { SnackbarProvider } from "notistack";
 import "typeface-roboto";
-import { RouterProvider } from "./routes/RouterContext";
 import "animate.css";
 
 ReactDOM.render(
-  <>
-    <Router history={createBrowserHistory()}>
-      <SnackbarProvider
-        preventDuplicate
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left"
-        }}
-      >
-        <RouterProvider>
-          <App />
-        </RouterProvider>
-      </SnackbarProvider>
-    </Router>
-  </>,
-  document.getElementById("root")
+    <>
+        <Router history={createBrowserHistory()}>
+            <SnackbarProvider
+                preventDuplicate
+                anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left"
+                }}
+            >
+                <RouterProvider>
+                    <App />
+                </RouterProvider>
+            </SnackbarProvider>
+        </Router>
+    </>,
+    document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
