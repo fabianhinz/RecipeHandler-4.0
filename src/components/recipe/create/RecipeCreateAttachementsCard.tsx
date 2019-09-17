@@ -1,12 +1,13 @@
 import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
-import React, {
-    FC,
-    memo,
-    useEffect,
-    useState
-    } from "react";
+import React, { FC, memo, useState } from "react";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import Skeleton from "@material-ui/lab/Skeleton";
+import {
+    AttachementData,
+    AttachementMetadata,
+    isData,
+    isMetadata
+    } from "../../../util/Mock";
 import {
     Card,
     CardHeader,
@@ -15,11 +16,12 @@ import {
     Grid,
     IconButton,
     makeStyles,
-    TextField
+    TextField,
+    Zoom
     } from "@material-ui/core";
-import { RecipeAttachement } from "./RecipeCreate";
+import { useAttachementRef } from "../../../util/hooks/useAttachementRef";
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles(() => {
     return createStyles({
         // source: https://material-ui.com/components/cards/#cards
         cardMedia: {
@@ -36,7 +38,7 @@ export interface AttachementsCardChangeHandler {
 
 interface RecipeCreateAttachementsCardProps
     extends AttachementsCardChangeHandler {
-    attachement: RecipeAttachement;
+    attachement: AttachementData | AttachementMetadata;
     readonly?: boolean;
 }
 
@@ -47,67 +49,70 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
     readonly
 }) => {
     const [name, setName] = useState<string>(attachement.name);
-    const [isCardMedia, setIsCardMedia] = useState(false);
+    const { attachementRef, attachementRefLoading } = useAttachementRef(attachement);
     const classes = useStyles();
 
-    useEffect(() => {
-        setTimeout(() => setIsCardMedia(true), 1);
-    }, []);
+    const cardMedia = () => {
+        if (isData(attachement)) return <CardMedia className={classes.cardMedia} image={attachement.dataUrl} />
+        if (isMetadata(attachement)) return <CardMedia className={classes.cardMedia} image={attachementRef.dataUrl} />
+    }
 
     return (
         <Grid item key={attachement.name}>
-            <Card raised onClick={e => e.stopPropagation()}>
-                {isCardMedia ? (
-                    <CardMedia
-                        className={classes.cardMedia}
-                        image={attachement.dataUrl}
+            <Zoom in mountOnEnter>
+                <Card raised onClick={e => e.stopPropagation()}>
+                    {attachementRefLoading ? <Skeleton variant="rect" className={classes.cardMedia} /> : cardMedia()}
+                    <CardHeader
+                        title={
+                            <TextField
+                                disabled={readonly}
+                                margin="dense"
+                                label="Name"
+                                value={name}
+                                onChange={event => setName(event.target.value)}
+                            />
+                        }
+                        subheader={`${(attachement.size / 1000000).toFixed(1)} MB`}
+                        action={
+                            <>
+                                {!readonly && (
+                                    <>
+                                        <IconButton
+                                            disabled={attachement.name === name}
+                                            onClick={() =>
+                                                onSaveAttachement!({ old: attachement.name, new: name })
+                                            }
+                                        >
+                                            <SaveIcon />
+                                        </IconButton>
+                                        <IconButton
+                                            onClick={() => onRemoveAttachement!(attachement.name)}
+                                        >
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </>
+                                )}
+                            </>
+                        }
                     />
-                ) : (
-                        <Skeleton variant="rect" className={classes.cardMedia} />
-                    )}
-
-                <CardHeader
-                    title={
-                        <TextField
-                            disabled={readonly}
-                            margin="dense"
-                            label="Name"
-                            value={name}
-                            onChange={event => setName(event.target.value)}
-                        />
-                    }
-                    subheader={`${(attachement.size / 1000000).toFixed(1)} MB`}
-                    action={
-                        <>
-                            {!readonly && (
-                                <>
-                                    <IconButton
-                                        disabled={attachement.name === name}
-                                        onClick={() =>
-                                            onSaveAttachement!({ old: attachement.name, new: name })
-                                        }
-                                    >
-                                        <SaveIcon />
-                                    </IconButton>
-                                    <IconButton
-                                        onClick={() => onRemoveAttachement!(attachement.name)}
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </>
-                            )}
-                        </>
-                    }
-                />
-            </Card>
+                </Card>
+            </Zoom>
         </Grid>
     );
 };
 
 export default memo(
     RecipeCreateAttachementsCard,
-    (prev, next) =>
-        prev.attachement.dataUrl === next.attachement.dataUrl &&
-        prev.attachement.name === next.attachement.name &&
-        prev.onSaveAttachement === next.onSaveAttachement
+    (prev, next) => {
+        let sameAttachement = true;
+        if (isData(prev.attachement) && isData(next.attachement)) {
+            sameAttachement = prev.attachement.dataUrl === next.attachement.dataUrl
+        }
+        if (isMetadata(prev.attachement) && isMetadata(next.attachement)) {
+            sameAttachement = prev.attachement.fullPath === next.attachement.fullPath
+        }
+        return sameAttachement &&
+            prev.attachement.name === next.attachement.name &&
+            prev.onSaveAttachement === next.onSaveAttachement
+    }
 );

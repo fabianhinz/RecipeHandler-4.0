@@ -19,5 +19,10 @@ firebase.firestore().enablePersistence();
 const firestore = firebase.firestore();
 const storage = firebase.storage();
 const storageRef = storage.ref();
+const auth = firebase.auth();
 
-export { firestore, storageRef };
+auth.signInWithEmailAndPassword("admin@recipehandler.com", "admin@recipehandler")
+    .then(respones => console.log(respones.user!.email))
+    .catch(error => console.error(error))
+
+export { firestore, storageRef, storage };

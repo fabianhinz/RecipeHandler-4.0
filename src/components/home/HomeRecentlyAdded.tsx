@@ -10,8 +10,6 @@ import {
     Grid,
     Typography
     } from "@material-ui/core";
-import { MOCK_RECIPES } from "../../util/Mock";
-
 
 export const HomeRecentlyAdded: FC = () => {
     return (
@@ -20,7 +18,7 @@ export const HomeRecentlyAdded: FC = () => {
                 <CardHeader title="Zuletzt hinzugefügt" />
                 <CardContent>
                     <Grid container spacing={2}>
-                        {MOCK_RECIPES.map(category => (
+                        {["Pfannkuche", "Kekse"].map(category => (
                             <Grid item key={category}>
                                 <Chip
                                     onClick={() => alert("TBD")}

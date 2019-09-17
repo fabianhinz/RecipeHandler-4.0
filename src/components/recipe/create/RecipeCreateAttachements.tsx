@@ -2,13 +2,13 @@ import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import compressImage from "browser-image-compression";
 import React, { FC, useCallback, useEffect } from "react";
 import RecipeCreateAttachementsCard, { AttachementsCardChangeHandler } from "./RecipeCreateAttachementsCard";
+import { AttachementData, AttachementMetadata } from "../../../util/Mock";
 import {
     createStyles,
     Fab,
     Grid,
     makeStyles
     } from "@material-ui/core";
-import { RecipeAttachement } from "./RecipeCreate";
 import { useDropzone } from "react-dropzone";
 import { useSnackbar } from "notistack";
 
@@ -35,13 +35,11 @@ const useStyles = makeStyles(theme => {
 });
 
 interface RecipeCreateAttachementsProps extends AttachementsCardChangeHandler {
-    onAttachements: (newFiles: RecipeAttachement[]) => void;
-    attachements: RecipeAttachement[];
+    onAttachements: (newFiles: Array<AttachementData>) => void;
+    attachements: Array<AttachementData | AttachementMetadata>;
 }
 
-export const RecipeCreateAttachements: FC<
-    RecipeCreateAttachementsProps
-> = props => {
+export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props => {
     const classes = useStyles();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -62,7 +60,7 @@ export const RecipeCreateAttachements: FC<
                 variant: "info"
             });
 
-            const newFiles: RecipeAttachement[] = [];
+            const newFiles: Array<AttachementData> = [];
             const uniqueNames = new Set(props.attachements.map(({ name }) => name));
             for (const file of acceptedFiles) {
                 // filenames are our keys, react will warn about duplicate keys
@@ -70,7 +68,7 @@ export const RecipeCreateAttachements: FC<
                 uniqueNames.add(file.name);
 
                 const compressedFile: Blob = await compressImage(file, {
-                    maxSizeMB: 1,
+                    maxSizeMB: 0.5,
                     useWebWorker: false,
                     maxWidthOrHeight: 3840,
                     maxIteration: 5

@@ -9,6 +9,12 @@ import React, {
     useState
     } from "react";
 import {
+    AttachementData,
+    AttachementMetadata,
+    isData,
+    Recipe
+    } from "../../../util/Mock";
+import {
     Box,
     Button,
     Card,
@@ -25,21 +31,13 @@ import {
     TextField
     } from "@material-ui/core";
 import { Categories, CategoriesAs } from "../../category/Categories";
-import { firestore } from "../../../util/Firebase";
+import { firestore, storageRef } from "../../../util/Firebase";
 import { PATHS } from "../../../routes/Routes";
-import { Recipe } from "../../../util/Mock";
 import { RecipeCreateAttachements } from "./RecipeCreateAttachements";
 import { RecipeResult } from "../result/RecipeResult";
 import { Subtitle } from "../../../util/Subtitle";
 import { useRouter } from "../../../routes/RouterContext";
 import { useSnackbar } from "notistack";
-
-
-export interface RecipeAttachement {
-    name: string;
-    dataUrl: string;
-    size: number;
-}
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -56,10 +54,15 @@ const RecipeCreate: FC = () => {
 
     const [ingredients, setIngredients] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [attachements, setAttachements] = useState<RecipeAttachement[]>([]);
+    const [attachements, setAttachements] = useState<Array<AttachementData | AttachementMetadata>>([]);
     const [name, setName] = useState<string>("");
     const [preview, setPreview] = useState(false);
     const [categories, setSelectedCategories] = useState<CategoriesAs<Array<string>>>({ type: [], time: [] });
+
+    const [attachementsUploading, setAttachementsUploading] = useState(false);
+    const [recipeUploading, setRecipeUploading] = useState(false);
+
+    const saveDisabled = name.length === 0 || attachementsUploading
 
     useEffect(() => {
         try {
@@ -69,7 +72,7 @@ const RecipeCreate: FC = () => {
                 attachements,
                 ingredients,
                 description
-            } = location.state as Recipe;
+            } = location.state as Recipe<AttachementMetadata>;
             setName(name);
             setSelectedCategories(categories);
             setAttachements(attachements);
@@ -84,26 +87,63 @@ const RecipeCreate: FC = () => {
         }
     }, [enqueueSnackbar, location.pathname, location.state]);
 
+    useEffect(() => {
+        if (attachementsUploading) enqueueSnackbar(<>Bilder werden hochgeladen</>, { variant: "info", key: "ATTACHEMENT_UPLOAD_IN_PROGRESS" });
+        else closeSnackbar("ATTACHEMENT_UPLOAD_IN_PROGRESS");
+    }, [closeSnackbar, enqueueSnackbar, attachementsUploading])
+
+    useEffect(() => {
+        if (recipeUploading) enqueueSnackbar(<>Rezept wird engelegt</>, { variant: "info", key: "RECIPE_CREATION_IN_PROGRESS" })
+        else closeSnackbar("RECIPE_CREATION_IN_PROGRESS");
+    }, [closeSnackbar, enqueueSnackbar, recipeUploading])
+
     const handleSaveClick = () => {
-        firestore
-            .collection("recipes")
-            .add({ name, ingredients, description, attachements, categories })
-            .then(
-                onfulfilled => {
-                    history.push(PATHS.home);
-                    enqueueSnackbar(<>{name} gespeichert</>, { variant: "success" });
-                },
-                onRejected => {
-                    enqueueSnackbar(<>Fehler beim Speichern</>, { variant: "error" });
-                }
-            );
+        const tasks: Array<PromiseLike<any>> = [];
+        setAttachementsUploading(true)
+
+        attachements.forEach(attachement => {
+            if (isData(attachement)) {
+                const uploadTask = storageRef
+                    .child(`recipes/${name}/${attachement.name}`)
+                    .putString(attachement.dataUrl, "data_url");
+                tasks.push(uploadTask);
+            }
+        });
+
+        Promise.all(tasks)
+            .then(finishedTaks => {
+                setAttachementsUploading(false);
+
+                const metadata: Array<AttachementMetadata> = []
+                finishedTaks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
+                    const { fullPath, size, name } = snapshot.metadata;
+                    metadata.push({ fullPath, name, size })
+                })
+
+                setRecipeUploading(true)
+                firestore
+                    .collection("recipes")
+                    .add({ name, ingredients, description, attachements: metadata, categories })
+                    .then(() => {
+                        setRecipeUploading(false)
+                        history.push(PATHS.home);
+                        enqueueSnackbar(<>{name} angelegt</>, { variant: "success" });
+                    }
+                    )
+            })
+            .catch(error => {
+                setAttachementsUploading(false);
+                setRecipeUploading(false)
+                enqueueSnackbar(<>{error.message}</>, { variant: "error" })
+            })
     };
 
-    const handleAttachementsDrop = (newAttachements: RecipeAttachement[]) => {
+    const handleAttachementsDrop = (newAttachements: AttachementData[]) => {
         setAttachements(previous => [...previous, ...newAttachements]);
     };
 
     const handleRemoveAttachement = (name: string) => {
+        // ToDo delete ref from firestore and img from storage
         setAttachements(previous =>
             previous.filter(attachement => attachement.name !== name)
         );
@@ -116,6 +156,7 @@ const RecipeCreate: FC = () => {
     const handleSaveAttachement = useCallback(
         (name: { old: string; new: string }) => {
             // ! close all remaining snackbars - don't know if this is a good idea
+            // ? useEffect --> see uploading state
             closeSnackbar();
             if (attachements.filter(a => a.name === name.new).length > 0) {
                 enqueueSnackbar(
@@ -132,7 +173,7 @@ const RecipeCreate: FC = () => {
                 enqueueSnackbar(
                     <>
                         Name von '{name.old}' auf '{name.new}' geändert
-            </>,
+                    </>,
                     {
                         variant: "success"
                     }
@@ -205,11 +246,11 @@ const RecipeCreate: FC = () => {
                             <Grid item>
                                 <Button size="small" onClick={() => history.goBack()}>
                                     Abbrechen
-                  </Button>
+                                </Button>
 
-                                <Button size="small" color="primary" onClick={handleSaveClick}>
+                                <Button disabled={saveDisabled} size="small" color="primary" onClick={handleSaveClick}>
                                     Speichern
-                  </Button>
+                                </Button>
                             </Grid>
                             <Grid item>
                                 <IconButton onClick={() => setPreview(previous => !previous)}>
@@ -223,7 +264,7 @@ const RecipeCreate: FC = () => {
                         <Divider />
                     </Grid>
 
-                    <Collapse in={preview} timeout="auto" unmountOnExit mountOnEnter>
+                    <Collapse in={preview} timeout="auto" mountOnEnter>
                         <CardContent>
                             <RecipeResult
                                 name={name}

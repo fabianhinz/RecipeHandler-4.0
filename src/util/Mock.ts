@@ -1,6 +1,4 @@
-import pfannkuchenImg from "../images/pfannkuchen.jpg";
 import { CategoriesAs } from "../components/category/Categories";
-import { RecipeAttachement } from "../components/recipe/create/RecipeCreate";
 
 export const MOCK_TIME_CATEGORIES = [
     "~20 Minuten",
@@ -11,48 +9,30 @@ export const MOCK_TIME_CATEGORIES = [
 
 export const MOCK_CATEGORIES = ["Salat", "Fleisch", "vegetarisch"];
 
-export const MOCK_RECIPES = [
-    "Pfannkuchen",
-    "Salat mit Pute",
-    "herzhafte Muffins"
-];
+export interface Attachement {
+    name: string;
+    size: number;
+}
 
-export interface Recipe {
+export interface AttachementData extends Attachement {
+    dataUrl: string;
+}
+
+export const isData = (attachement: AttachementData | AttachementMetadata): attachement is AttachementData =>
+    (attachement as AttachementData).dataUrl !== undefined;
+
+export interface AttachementMetadata extends Attachement {
+    fullPath: string;
+}
+
+export const isMetadata = (attachement: AttachementData | AttachementMetadata): attachement is AttachementMetadata =>
+    (attachement as AttachementMetadata).fullPath !== undefined;
+
+export interface Recipe<T extends Attachement> {
     name: string;
     created: string;
     categories: CategoriesAs<Array<string>>;
-    attachements: RecipeAttachement[];
+    attachements: Array<T>;
     ingredients: string;
     description: string;
 }
-
-export const MOCK_RESULTS: Array<Recipe> = [
-    {
-        name: "Pfannkuchen",
-        created: new Date().toLocaleDateString(),
-        categories: {
-            time: ["~20 Minuten"],
-            type: ["vegetarisch"]
-        },
-        attachements: [
-            { dataUrl: pfannkuchenImg, name: "PfannkuchenBild - nomnom", size: 123 }
-        ],
-        ingredients:
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-        description:
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-    },
-    {
-        name: "Sauerbraten",
-        created: new Date().toLocaleDateString(),
-        categories: {
-            time: ["> 50 Minuten"],
-            type: ["Fleisch"]
-        },
-        attachements: [{ dataUrl: "", name: "not found", size: 123 }],
-        ingredients:
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
-        description:
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-    }
-];

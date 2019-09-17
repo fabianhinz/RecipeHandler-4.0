@@ -1,49 +1,28 @@
-import brown from "@material-ui/core/colors/brown";
 import ChevronLeft from "@material-ui/icons/ChevronLeftTwoTone";
 import ChevronRight from "@material-ui/icons/ChevronRightTwoTone";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMoreTwoTone";
 import React, {
     FC,
     useCallback,
     useEffect,
     useState
     } from "react";
+import { AttachementMetadata, Recipe } from "../../util/Mock";
 import {
-    Avatar,
     Box,
-    Button,
     ButtonBase,
-    createStyles,
-    ExpansionPanel,
-    ExpansionPanelActions,
-    ExpansionPanelDetails,
-    ExpansionPanelSummary,
     Grid,
-    makeStyles,
     Paper,
     Typography
     } from "@material-ui/core";
-import { BadgeRating } from "../../util/BadgeRating";
-import { PATHS } from "../../routes/Routes";
-import { Recipe } from "../../util/Mock";
-import { RecipeResult } from "../recipe/result/RecipeResult";
-import { useRouter } from "../../routes/RouterContext";
+import { HomeRecipeResultsPanel } from "./HomeRecipeResultsPanel";
 
-const useStyles = makeStyles(theme => {
-    const background = theme.palette.type === "light" ? brown[200] : brown[400];
 
-    return createStyles({
-        avatar: {
-            background,
-            color: theme.palette.getContrastText(background)
-        }
-    });
-});
+interface HomeRecipeResultsProps {
+    recipes: Array<Recipe<AttachementMetadata>>
+}
 
-export const HomeRecipeResults: FC<{ recipes: Array<Recipe> }> = props => {
-    const { history } = useRouter();
+export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
     const [page, setPage] = useState({ label: 1, offset: 0 });
-    const classes = useStyles();
     // ! ToDo change this
     const recipes = props.recipes.slice(page.offset, page.offset + 4);
     const isUpDisabled = recipes.length < 4;
@@ -84,51 +63,8 @@ export const HomeRecipeResults: FC<{ recipes: Array<Recipe> }> = props => {
     return (
         <Box margin={2}>
             <div>
-                {recipes.map(recipeProps => (
-                    <ExpansionPanel
-                        key={recipeProps.name}
-                        TransitionProps={{ unmountOnExit: true, mountOnEnter: true }}
-                    >
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                            <Grid
-                                container
-                                direction="row"
-                                spacing={2}
-                                justify="space-between"
-                                alignItems="center"
-                            >
-                                <Grid item>
-                                    <Grid container spacing={2} alignItems="center">
-                                        <Grid item>
-                                            <Avatar className={classes.avatar}>
-                                                {recipeProps.name.slice(0, 1).toUpperCase()}
-                                            </Avatar>
-                                        </Grid>
-                                        <Grid item>
-                                            <Typography variant="button">
-                                                {recipeProps.name}
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                                <Grid item>
-                                    <BadgeRating />
-                                </Grid>
-                            </Grid>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            <RecipeResult {...recipeProps} />
-                        </ExpansionPanelDetails>
-                        <ExpansionPanelActions>
-                            <Button
-                                onClick={() =>
-                                    history.push(PATHS.recipeEdit(recipeProps.name), recipeProps)
-                                }
-                            >
-                                Bearbeiten
-              </Button>
-                        </ExpansionPanelActions>
-                    </ExpansionPanel>
+                {recipes.map(recipe => (
+                    <HomeRecipeResultsPanel key={recipe.name} {...recipe} />
                 ))}
             </div>
 
