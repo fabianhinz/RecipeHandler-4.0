@@ -14,7 +14,7 @@ import {
     PaletteType,
     Paper,
     SwipeableDrawer
-    } from "@material-ui/core";
+} from "@material-ui/core";
 import { Navigate } from "../routes/Navigate";
 import { PATHS } from "../routes/Routes";
 
@@ -61,6 +61,9 @@ export const Header: FC<HeaderProps> = props => {
                     <AddIcon />
                 </IconButton>
             </Navigate>
+            <IconButton>
+
+            </IconButton>
         </>
     );
 
