@@ -22,7 +22,7 @@ const Home = () => {
     useEffect(() => {
         return firestoreService
             .collection("recipes")
-            .orderBy("createdDate", "asc")
+            .orderBy("createdDate", "desc")
             .limit(10)
             .onSnapshot(
                 querySnapshot => {
