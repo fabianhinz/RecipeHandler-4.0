@@ -10,16 +10,21 @@ const Home = () => {
     const [recipes, setRecipes] = useState<Array<Recipe<AttachementMetadata>>>([]);
 
     useEffect(() => {
-        return firestoreService.collection("recipes").onSnapshot(
-            observer => {
-                const data: Array<Recipe<AttachementMetadata>> = [];
-                observer.forEach(result => data.push(result.data() as Recipe<AttachementMetadata>));
-                setRecipes(data);
-            },
-            error => {
-                console.error(error);
-            }
-        );
+        return firestoreService
+            .collection("recipes")
+            .orderBy("name", "asc")
+            .onSnapshot(
+                observer => {
+                    const data: Array<Recipe<AttachementMetadata>> = [];
+                    observer.forEach(result =>
+                        data.push(result.data() as Recipe<AttachementMetadata>)
+                    );
+                    setRecipes(data);
+                },
+                error => {
+                    console.error(error);
+                }
+            );
     }, []);
 
     return (
