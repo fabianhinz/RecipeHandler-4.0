@@ -2,18 +2,7 @@ import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
 import CameraIcon from "@material-ui/icons/CameraTwoTone";
 import EyeIcon from "@material-ui/icons/RemoveRedEyeTwoTone";
-import React, {
-    FC,
-    useCallback,
-    useEffect,
-    useState
-} from "react";
-import {
-    AttachementData,
-    AttachementMetadata,
-    isData,
-    Recipe
-} from "../../../util/Mock";
+import React, { FC, useCallback, useEffect, ChangeEvent } from "react";
 import {
     Box,
     Button,
@@ -30,14 +19,17 @@ import {
     makeStyles,
     TextField
 } from "@material-ui/core";
-import { Categories, CategoriesAs } from "../../category/Categories";
-import { firestore, storageRef } from "../../../util/Firebase";
-import { PATHS } from "../../../routes/Routes";
-import { RecipeCreateAttachements } from "./RecipeCreateAttachements";
-import { RecipeResult } from "../result/RecipeResult";
-import { Subtitle } from "../../../util/Subtitle";
-import { useRouter } from "../../../routes/RouterContext";
+import { RecipeCreateAttachements } from "./Attachements/RecipeCreateAttachements";
+import { RecipeResult } from "../Result/RecipeResult";
 import { useSnackbar } from "notistack";
+import { AttachementData, AttachementMetadata, Recipe, CategoryAs } from "../../../model/model";
+import { isData } from "../../../model/modelUtil";
+import { PATHS } from "../../Routes/Routes";
+import { Subtitle } from "../../Shared/Subtitle";
+import { storageRefService, firestoreService } from "../../../firebase";
+import { CategoryWrapper } from "../../Category/CategoryWrapper";
+import { RouteComponentProps } from "react-router";
+import { useRecipeCreateReducer, CreateChangeKey } from "./RecipeCreateReducer";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -47,128 +39,124 @@ const useStyles = makeStyles(theme =>
     })
 );
 // Todo instead of multipel state and effects lets make a hook which manages loading states
-const RecipeCreate: FC = () => {
+// ToDo loading data from firbase only occures in the recipe edit component --> extract logic
+interface RecipeCreateProps extends Pick<RouteComponentProps, "history" | "location"> {
+    recipe?: Recipe<AttachementMetadata> | null;
+}
+
+const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const { history, location } = useRouter();
     const classes = useStyles();
 
-    const [ingredients, setIngredients] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
-    const [attachements, setAttachements] = useState<Array<AttachementData | AttachementMetadata>>([]);
-    const [name, setName] = useState<string>("");
-    const [preview, setPreview] = useState(false);
-    const [categories, setSelectedCategories] = useState<CategoriesAs<Array<string>>>({ type: [], time: [] });
+    const { state, dispatch } = useRecipeCreateReducer();
 
-    const [attachementsUploading, setAttachementsUploading] = useState(false);
-    const [recipeUploading, setRecipeUploading] = useState(false);
-
-    const saveDisabled = name.length === 0 || attachementsUploading
+    const saveDisabled = state.name.length === 0 || state.attachementsUploading;
 
     useEffect(() => {
-        try {
-            const {
-                name,
-                categories,
-                attachements,
-                ingredients,
-                description
-            } = location.state as Recipe<AttachementMetadata>;
-            setName(name);
-            setSelectedCategories(categories);
-            setAttachements(attachements);
-            setIngredients(ingredients);
-            setDescription(description);
-        } catch (e) {
-            if (location.pathname.includes("/edit/"))
-                enqueueSnackbar(
-                    <>Rezept nicht gefunden, Bestimmt möchtest du eine neues erstellen</>,
-                    { variant: "info" }
-                );
-        }
-    }, [enqueueSnackbar, location.pathname, location.state]);
+        // happens on edit made
+        if (recipe) dispatch({ type: "loadState", recipe });
+    }, [dispatch, recipe]);
 
     useEffect(() => {
-        if (attachementsUploading) enqueueSnackbar(<>Bilder werden hochgeladen</>, { variant: "info", key: "ATTACHEMENT_UPLOAD_IN_PROGRESS" });
+        if (state.attachementsUploading)
+            enqueueSnackbar(<>Bilder werden hochgeladen</>, {
+                variant: "info",
+                key: "ATTACHEMENT_UPLOAD_IN_PROGRESS"
+            });
         else closeSnackbar("ATTACHEMENT_UPLOAD_IN_PROGRESS");
-    }, [closeSnackbar, enqueueSnackbar, attachementsUploading])
+    }, [closeSnackbar, enqueueSnackbar, state.attachementsUploading]);
 
     useEffect(() => {
-        if (recipeUploading) enqueueSnackbar(<>Rezept wird engelegt</>, { variant: "info", key: "RECIPE_CREATION_IN_PROGRESS" })
+        if (state.recipeUploading)
+            enqueueSnackbar(<>Rezept wird engelegt</>, {
+                variant: "info",
+                key: "RECIPE_CREATION_IN_PROGRESS"
+            });
         else closeSnackbar("RECIPE_CREATION_IN_PROGRESS");
-    }, [closeSnackbar, enqueueSnackbar, recipeUploading])
+    }, [closeSnackbar, enqueueSnackbar, state.recipeUploading]);
 
     const handleSaveClick = () => {
         closeSnackbar();
-        setAttachementsUploading(true)
+        dispatch({ type: "attachementsUploadingChange", now: true });
 
         const tasks: Array<PromiseLike<any>> = [];
-        attachements.forEach(attachement => {
+        state.attachements.forEach(attachement => {
             if (isData(attachement)) {
-                const uploadTask = storageRef
-                    .child(`recipes/${name}/${attachement.name}`)
+                const uploadTask = storageRefService
+                    .child(`recipes/${state.name}/${attachement.name}`)
                     .putString(attachement.dataUrl, "data_url")
-                    .catch(error => enqueueSnackbar(<>{error.message}</>, { variant: "error" }))
+                    .catch(error =>
+                        enqueueSnackbar(<>{error.message}</>, {
+                            variant: "error"
+                        })
+                    );
                 tasks.push(uploadTask);
             }
         });
 
-        Promise.all(tasks)
-            .then(finishedTaks => {
-                setAttachementsUploading(false);
+        Promise.all(tasks).then(finishedTaks => {
+            dispatch({ type: "attachementsUploadingChange", now: false });
+            const metadata: Array<AttachementMetadata> = [];
+            finishedTaks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
+                // ? on "storage/unauthorized" snapshot is not of type "object"
+                if (typeof snapshot !== "object") return;
+                const { fullPath, size, name } = snapshot.metadata;
+                metadata.push({
+                    fullPath,
+                    name,
+                    size
+                });
+            });
 
-                const metadata: Array<AttachementMetadata> = []
-                finishedTaks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
-                    debugger;
-                    if (typeof snapshot !== "object") return;
-                    const { fullPath, size, name } = snapshot.metadata;
-                    metadata.push({ fullPath, name, size })
+            dispatch({ type: "recipeUploadingChange", now: true });
+            firestoreService
+                .collection("recipes")
+                .add({
+                    name: state.name,
+                    ingredients: state.ingredients,
+                    description: state.description,
+                    attachements: metadata,
+                    categories: state.categories
                 })
-                debugger;
-                setRecipeUploading(true)
-                firestore
-                    .collection("recipes")
-                    .add({ name, ingredients, description, attachements: metadata, categories })
-                    .then(() => {
-                        history.push(PATHS.home);
-                        enqueueSnackbar(<>{name} angelegt</>, { variant: "success" });
-                    })
-                    .catch(error => enqueueSnackbar(<>{error.message}</>, { variant: "error" }))
-                    .finally(() => setRecipeUploading(false))
-            })
+                .then(() => {
+                    history.push(PATHS.home);
+                    enqueueSnackbar(<>{state.name} angelegt</>, {
+                        variant: "success"
+                    });
+                })
+                .catch(error => enqueueSnackbar(<>{error.message}</>, { variant: "error" }))
+                .finally(() => dispatch({ type: "recipeUploadingChange", now: false }));
+        });
     };
 
     const handleAttachementsDrop = (newAttachements: AttachementData[]) => {
-        setAttachements(previous => [...previous, ...newAttachements]);
+        dispatch({ type: "attachementsDrop", newAttachements });
     };
 
     const handleRemoveAttachement = (name: string) => {
         // ToDo delete ref from firestore and img from storage
-        setAttachements(previous =>
-            previous.filter(attachement => attachement.name !== name)
-        );
+        dispatch({ type: "removeAttachement", name });
     };
 
-    const handleCategoriesChange = (categories: CategoriesAs<Array<string>>) => {
-        setSelectedCategories(categories);
+    const handleCategoriesChange = (categories: CategoryAs<Array<string>>) => {
+        dispatch({ type: "categoryChange", categories });
     };
+
     // ? with useCallback  and memo chained together we improve performance
     const handleSaveAttachement = useCallback(
         (name: { old: string; new: string }) => {
             // ! close all remaining snackbars - don't know if this is a good idea
             // ? useEffect --> see uploading state
             closeSnackbar();
-            if (attachements.filter(a => a.name === name.new).length > 0) {
-                enqueueSnackbar(
-                    <>Änderung wird nicht gespeichert. Name bereits vorhanden</>,
-                    {
-                        variant: "warning"
-                    }
-                );
+            if (state.attachements.filter(a => a.name === name.new).length > 0) {
+                enqueueSnackbar(<>Änderung wird nicht gespeichert. Name bereits vorhanden</>, {
+                    variant: "warning"
+                });
             } else {
-                attachements.forEach(attachement => {
+                state.attachements.forEach(attachement => {
                     if (attachement.name === name.old) attachement.name = name.new;
                 });
-                setAttachements(attachements);
+                dispatch({ type: "attachementsDrop", newAttachements: state.attachements });
                 enqueueSnackbar(
                     <>
                         Name von '{name.old}' auf '{name.new}' geändert
@@ -179,8 +167,14 @@ const RecipeCreate: FC = () => {
                 );
             }
         },
-        [attachements, closeSnackbar, enqueueSnackbar]
+        [closeSnackbar, dispatch, enqueueSnackbar, state.attachements]
     );
+
+    const handleTextFieldChange = (key: CreateChangeKey) => (
+        event: ChangeEvent<HTMLInputElement>
+    ) => {
+        dispatch({ type: "textFieldChange", key, value: event.target.value });
+    };
 
     return (
         <Fade in>
@@ -191,17 +185,17 @@ const RecipeCreate: FC = () => {
                             <TextField
                                 className={classes.textFieldName}
                                 label="Name"
-                                value={name}
+                                value={state.name}
                                 placeholder="Bitte eintragen"
-                                onChange={e => setName(e.target.value)}
+                                onChange={handleTextFieldChange("name")}
                             />
                         }
                         subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein Teil der Beschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
                     />
                     <CardContent>
                         <Subtitle text="Kategorien" />
-                        <Categories
-                            fromRecipe={categories}
+                        <CategoryWrapper
+                            fromRecipe={state.categories}
                             onChange={handleCategoriesChange}
                         />
 
@@ -214,14 +208,14 @@ const RecipeCreate: FC = () => {
                             onAttachements={handleAttachementsDrop}
                             onRemoveAttachement={handleRemoveAttachement}
                             onSaveAttachement={handleSaveAttachement}
-                            attachements={attachements}
+                            attachements={state.attachements}
                         />
 
                         <Subtitle icon={<AssignmentIcon />} text="Zutaten" />
                         <TextField
                             placeholder="Zutatenliste"
-                            value={ingredients}
-                            onChange={e => setIngredients(e.target.value)}
+                            value={state.ingredients}
+                            onChange={handleTextFieldChange("ingredients")}
                             fullWidth
                             rows={5}
                             multiline
@@ -231,9 +225,9 @@ const RecipeCreate: FC = () => {
                         <Subtitle icon={<BookIcon />} text="Beschreibung" />
                         <TextField
                             placeholder="Beschreibung"
-                            value={description}
+                            value={state.description}
                             rows={5}
-                            onChange={e => setDescription(e.target.value)}
+                            onChange={handleTextFieldChange("description")}
                             fullWidth
                             multiline
                             variant="outlined"
@@ -247,12 +241,17 @@ const RecipeCreate: FC = () => {
                                     Abbrechen
                                 </Button>
 
-                                <Button disabled={saveDisabled} size="small" color="primary" onClick={handleSaveClick}>
+                                <Button
+                                    disabled={saveDisabled}
+                                    size="small"
+                                    color="primary"
+                                    onClick={handleSaveClick}
+                                >
                                     Speichern
                                 </Button>
                             </Grid>
                             <Grid item>
-                                <IconButton onClick={() => setPreview(previous => !previous)}>
+                                <IconButton onClick={() => dispatch({ type: "previewChange" })}>
                                     <EyeIcon />
                                 </IconButton>
                             </Grid>
@@ -263,20 +262,19 @@ const RecipeCreate: FC = () => {
                         <Divider />
                     </Grid>
 
-                    <Collapse in={preview} timeout="auto" mountOnEnter>
+                    <Collapse in={state.preview} timeout="auto" mountOnEnter>
                         <CardContent>
                             <RecipeResult
-                                name={name}
+                                name={state.name}
                                 created={new Date().toLocaleDateString()}
-                                categories={categories}
-                                attachements={attachements}
-                                ingredients={ingredients}
-                                description={description}
+                                categories={state.categories}
+                                attachements={state.attachements}
+                                ingredients={state.ingredients}
+                                description={state.description}
                             />
                         </CardContent>
                     </Collapse>
                 </Card>
-
             </Box>
         </Fade>
     );

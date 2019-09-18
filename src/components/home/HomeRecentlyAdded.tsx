@@ -1,5 +1,5 @@
 import LinkIcon from "@material-ui/icons/LinkTwoTone";
-import React, { FC } from "react";
+import React from "react";
 import {
     Avatar,
     Box,
@@ -9,9 +9,9 @@ import {
     Chip,
     Grid,
     Typography
-    } from "@material-ui/core";
+} from "@material-ui/core";
 
-export const HomeRecentlyAdded: FC = () => {
+export const HomeRecentlyAdded = () => {
     return (
         <Box margin={2}>
             <Card>
@@ -27,9 +27,7 @@ export const HomeRecentlyAdded: FC = () => {
                                             <LinkIcon />
                                         </Avatar>
                                     }
-                                    label={
-                                        <Typography variant="subtitle2">{category}</Typography>
-                                    }
+                                    label={<Typography variant="subtitle2">{category}</Typography>}
                                 />
                             </Grid>
                         ))}

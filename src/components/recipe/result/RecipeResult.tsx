@@ -2,14 +2,11 @@ import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
 import React, { FC } from "react";
 import ReactMarkdown from "react-markdown";
-import { AttachementData, AttachementMetadata, Recipe } from "../../../util/Mock";
-import { CategoryChipsReadonly } from "../../category/CategoryChips";
 import { RecipeResultImg } from "./RecipeResultImg";
-import { Subtitle } from "../../../util/Subtitle";
-import {
-    Grid,
-    Typography,
-} from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
+import { Recipe, AttachementData, AttachementMetadata } from "../../../model/model";
+import { Subtitle } from "../../Shared/Subtitle";
+import { Category } from "../../Category/Category";
 
 type RecipeResultProps = Recipe<AttachementData | AttachementMetadata>;
 
@@ -20,10 +17,10 @@ export const RecipeResult: FC<RecipeResultProps> = props => (
         </Grid>
 
         <Grid item>
-            <CategoryChipsReadonly variant="type" items={props.categories.type} />
+            <Category readonly variant="type" items={props.categories.type} />
         </Grid>
         <Grid item>
-            <CategoryChipsReadonly variant="time" items={props.categories.time} />
+            <Category readonly variant="time" items={props.categories.time} />
         </Grid>
 
         <Grid item xs={12}>

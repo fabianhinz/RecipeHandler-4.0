@@ -1,17 +1,16 @@
-import React, { FC, useEffect, useState } from "react";
-import { AttachementMetadata, Recipe } from "../../util/Mock";
+import React, { useEffect, useState } from "react";
 import { Fade } from "@material-ui/core";
-import { firestore } from "../../util/Firebase";
-import { HomeCategories } from "./HomeCategories";
+import { HomeCategory } from "./HomeCategory";
 import { HomeRecentlyAdded } from "./HomeRecentlyAdded";
-import { HomeRecipeResults } from "./HomeRecipeResults";
-import { RouteComponentProps } from "react-router";
+import { HomeRecipe } from "./Recipe/HomeRecipe";
+import { Recipe, AttachementMetadata } from "../../model/model";
+import { firestoreService } from "../../firebase";
 
-const Home: FC<RouteComponentProps> = () => {
+const Home = () => {
     const [recipes, setRecipes] = useState<Array<Recipe<AttachementMetadata>>>([]);
 
     useEffect(() => {
-        return firestore.collection("recipes").onSnapshot(
+        return firestoreService.collection("recipes").onSnapshot(
             observer => {
                 const data: Array<Recipe<AttachementMetadata>> = [];
                 observer.forEach(result => data.push(result.data() as Recipe<AttachementMetadata>));
@@ -27,8 +26,8 @@ const Home: FC<RouteComponentProps> = () => {
         <Fade in>
             <>
                 <HomeRecentlyAdded />
-                <HomeCategories />
-                <HomeRecipeResults recipes={recipes} />
+                <HomeCategory />
+                <HomeRecipe recipes={recipes} />
             </>
         </Fade>
     );

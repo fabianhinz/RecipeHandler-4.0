@@ -2,7 +2,7 @@ import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
 import { ThemeOptions } from "@material-ui/core/styles/createMuiTheme";
 
 export const BORDER_RADIUS = 10;
-
+// ToDo revisit overrides
 const sharedTheme: Partial<ThemeOptions> = {
     overrides: {
         MuiExpansionPanel: {

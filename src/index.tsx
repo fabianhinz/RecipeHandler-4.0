@@ -1,17 +1,16 @@
 import * as serviceWorker from "./serviceWorker";
-import App from "./App";
+import App from "./Components/App";
 import React from "react";
 import ReactDOM from "react-dom";
-import { createBrowserHistory } from "history";
-import { Router } from "react-router";
-import { RouterProvider } from "./routes/RouterContext";
+import { RouterProvider } from "./Components/Routes/RouterContext";
 import { SnackbarProvider } from "notistack";
 import "typeface-roboto";
 import "animate.css";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
     <>
-        <Router history={createBrowserHistory()}>
+        <BrowserRouter>
             <SnackbarProvider
                 preventDuplicate
                 anchorOrigin={{
@@ -23,12 +22,9 @@ ReactDOM.render(
                     <App />
                 </RouterProvider>
             </SnackbarProvider>
-        </Router>
+        </BrowserRouter>
     </>,
     document.getElementById("root")
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.register();
