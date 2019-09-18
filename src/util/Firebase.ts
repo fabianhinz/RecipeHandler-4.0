@@ -21,8 +21,4 @@ const storage = firebase.storage();
 const storageRef = storage.ref();
 const auth = firebase.auth();
 
-auth.signInWithEmailAndPassword("admin@recipehandler.com", "admin@recipehandler")
-    .then(respones => console.log(respones.user!.email))
-    .catch(error => console.error(error))
-
-export { firestore, storageRef, storage };
+export { firestore, storageRef, storage, auth };

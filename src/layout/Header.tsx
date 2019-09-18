@@ -2,7 +2,8 @@ import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import BrightnessIcon from "@material-ui/icons/SettingsBrightnessTwoTone";
 import HomeIcon from "@material-ui/icons/HomeTwoTone";
 import OpenDrawerIcon from "@material-ui/icons/KeyboardArrowUpTwoTone";
-import React, { FC, useState } from "react";
+import AccountIcon from "@material-ui/icons/AccountCircleTwoTone";
+import React, { FC, useState, useEffect } from "react";
 import {
     Box,
     createStyles,
@@ -13,10 +14,20 @@ import {
     makeStyles,
     PaletteType,
     Paper,
-    SwipeableDrawer
+    SwipeableDrawer,
+    Dialog,
+    DialogContent,
+    useTheme,
+    useMediaQuery,
+    TextField,
+    DialogActions,
+    Button
 } from "@material-ui/core";
 import { Navigate } from "../routes/Navigate";
 import { PATHS } from "../routes/Routes";
+import { auth } from "../util/Firebase";
+import { SlideUp } from "../util/Transitions";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -44,7 +55,23 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = props => {
     const [drawer, setDrawer] = useState(false);
+    const [dialog, setDialog] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
     const classes = useStyles();
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
+
+    const { enqueueSnackbar } = useSnackbar();
+
+    useEffect(() => {
+        return auth.onAuthStateChanged(nextOrObserver => console.log(nextOrObserver))
+    }, [])
+
+    const handleLogin = () => {
+        auth.signInWithEmailAndPassword(email, password).catch(error => enqueueSnackbar(error.message, { variant: "error" }));
+    }
 
     const navigationElements = (
         <>
@@ -61,8 +88,8 @@ export const Header: FC<HeaderProps> = props => {
                     <AddIcon />
                 </IconButton>
             </Navigate>
-            <IconButton>
-
+            <IconButton onClick={() => setDialog(true)}>
+                <AccountIcon />
             </IconButton>
         </>
     );
@@ -97,6 +124,29 @@ export const Header: FC<HeaderProps> = props => {
                     </Fab>
                 )}
             </Hidden>
+            <Dialog
+                hideBackdrop={fullScreen}
+                TransitionComponent={SlideUp}
+                fullWidth
+                maxWidth="xs"
+                fullScreen={fullScreen}
+                open={dialog}
+                onClose={() => setDialog(false)}
+            >
+
+                <DialogContent>
+                    <form>
+                        <TextField autoComplete="username" onChange={e => setEmail(e.target.value)} variant="filled" margin="dense" fullWidth label="email" />
+                        <TextField autoComplete="current-password" onChange={e => setPassword(e.target.value)} variant="filled" margin="dense" fullWidth type="password" label="password" />
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                    <Box width="100%" display="flex" justifyContent="space-evenly">
+                        <Button onClick={() => setDialog(false)}>Abbrechen</Button>
+                        <Button color="primary" onClick={handleLogin}>Login</Button>
+                    </Box>
+                </DialogActions>
+            </Dialog>
         </>
     );
 };

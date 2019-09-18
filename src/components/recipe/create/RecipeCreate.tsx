@@ -7,13 +7,13 @@ import React, {
     useCallback,
     useEffect,
     useState
-    } from "react";
+} from "react";
 import {
     AttachementData,
     AttachementMetadata,
     isData,
     Recipe
-    } from "../../../util/Mock";
+} from "../../../util/Mock";
 import {
     Box,
     Button,
@@ -29,7 +29,7 @@ import {
     IconButton,
     makeStyles,
     TextField
-    } from "@material-ui/core";
+} from "@material-ui/core";
 import { Categories, CategoriesAs } from "../../category/Categories";
 import { firestore, storageRef } from "../../../util/Firebase";
 import { PATHS } from "../../../routes/Routes";
@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme =>
         }
     })
 );
-
+// Todo instead of multipel state and effects lets make a hook which manages loading states
 const RecipeCreate: FC = () => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const { history, location } = useRouter();
@@ -98,14 +98,16 @@ const RecipeCreate: FC = () => {
     }, [closeSnackbar, enqueueSnackbar, recipeUploading])
 
     const handleSaveClick = () => {
-        const tasks: Array<PromiseLike<any>> = [];
+        closeSnackbar();
         setAttachementsUploading(true)
 
+        const tasks: Array<PromiseLike<any>> = [];
         attachements.forEach(attachement => {
             if (isData(attachement)) {
                 const uploadTask = storageRef
                     .child(`recipes/${name}/${attachement.name}`)
-                    .putString(attachement.dataUrl, "data_url");
+                    .putString(attachement.dataUrl, "data_url")
+                    .catch(error => enqueueSnackbar(<>{error.message}</>, { variant: "error" }))
                 tasks.push(uploadTask);
             }
         });
@@ -116,25 +118,22 @@ const RecipeCreate: FC = () => {
 
                 const metadata: Array<AttachementMetadata> = []
                 finishedTaks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
+                    debugger;
+                    if (typeof snapshot !== "object") return;
                     const { fullPath, size, name } = snapshot.metadata;
                     metadata.push({ fullPath, name, size })
                 })
-
+                debugger;
                 setRecipeUploading(true)
                 firestore
                     .collection("recipes")
                     .add({ name, ingredients, description, attachements: metadata, categories })
                     .then(() => {
-                        setRecipeUploading(false)
                         history.push(PATHS.home);
                         enqueueSnackbar(<>{name} angelegt</>, { variant: "success" });
-                    }
-                    )
-            })
-            .catch(error => {
-                setAttachementsUploading(false);
-                setRecipeUploading(false)
-                enqueueSnackbar(<>{error.message}</>, { variant: "error" })
+                    })
+                    .catch(error => enqueueSnackbar(<>{error.message}</>, { variant: "error" }))
+                    .finally(() => setRecipeUploading(false))
             })
     };
 
@@ -244,7 +243,7 @@ const RecipeCreate: FC = () => {
                     <CardActions>
                         <Grid container justify="space-between" alignItems="center">
                             <Grid item>
-                                <Button size="small" onClick={() => history.goBack()}>
+                                <Button size="small" onClick={() => history.push(PATHS.home)}>
                                     Abbrechen
                                 </Button>
 

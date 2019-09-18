@@ -17,13 +17,12 @@ import {
     makeStyles,
     Radio,
     RadioGroup,
-    Slide,
     useMediaQuery,
     useTheme
-    } from "@material-ui/core";
+} from "@material-ui/core";
 import { Categories, CategoryVariants } from "./Categories";
 import { CategoryButtonBase, chipPropsFrom } from "./CategoryChips";
-import { TransitionProps } from "@material-ui/core/transitions/transition";
+import { SlideUp } from "../../util/Transitions";
 
 interface CategoriesDialogProps {
     open: boolean;
@@ -58,10 +57,6 @@ const useStyles = makeStyles(theme =>
         }
     })
 );
-
-const SlideUp = React.forwardRef<unknown, TransitionProps>((props, ref) => (
-    <Slide direction="up" ref={ref} {...props} />
-));
 
 export const CategoriesDialog: FC<CategoriesDialogProps> = ({
     open,
@@ -138,9 +133,7 @@ export const CategoriesDialog: FC<CategoriesDialogProps> = ({
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Abbrechen</Button>
-                <Button onClick={onClose} color="primary" autoFocus>
-                    Speichern
-        </Button>
+                <Button onClick={onClose} color="primary">Speichern</Button>
             </DialogActions>
         </Dialog>
     );
