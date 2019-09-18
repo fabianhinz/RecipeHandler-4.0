@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Navigate } from "../../Routes/Navigate";
 import { PATHS } from "../../Routes/Routes";
-import { IconButton } from "@material-ui/core";
+import { IconButton, Box } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import BrightnessIcon from "@material-ui/icons/SettingsBrightnessTwoTone";
 import HomeIcon from "@material-ui/icons/HomeTwoTone";
@@ -13,7 +13,7 @@ interface HeaderNavigationProps extends HeaderDispatch {
 }
 
 export const HeaderNavigation: FC<HeaderNavigationProps> = ({ onThemeChange, dispatch }) => (
-    <>
+    <Box display="flex" flexDirection="column" onClick={() => dispatch({ type: "drawerChange" })}>
         <Navigate to={PATHS.home}>
             <IconButton>
                 <HomeIcon />
@@ -30,5 +30,5 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({ onThemeChange, dis
         <IconButton onClick={() => dispatch({ type: "dialogChange" })}>
             <AccountIcon />
         </IconButton>
-    </>
+    </Box>
 );

@@ -53,9 +53,13 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     const saveDisabled = state.name.length === 0 || state.attachementsUploading;
 
     useEffect(() => {
-        // happens on edit made
         if (recipe) dispatch({ type: "loadState", recipe });
     }, [dispatch, recipe]);
+
+    useEffect(() => {
+        if (location.state && location.state.message)
+            enqueueSnackbar(location.state.message, { variant: "info" });
+    }, [enqueueSnackbar, location.state]);
 
     useEffect(() => {
         if (state.attachementsUploading)

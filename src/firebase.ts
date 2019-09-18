@@ -14,7 +14,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-firebase.firestore().enablePersistence();
+firebase.firestore().enablePersistence({ synchronizeTabs: true });
 
 export const firestoreService = firebase.firestore();
 export const storageService = firebase.storage();

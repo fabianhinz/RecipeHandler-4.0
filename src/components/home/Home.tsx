@@ -8,31 +8,38 @@ import { firestoreService } from "../../firebase";
 
 const Home = () => {
     const [recipes, setRecipes] = useState<Array<Recipe<AttachementMetadata>>>([]);
-
-    useEffect(() => {
-        return firestoreService
+    const [recipesQuery, setRecipesQuery] = useState(
+        firestoreService
             .collection("recipes")
             .orderBy("name", "asc")
-            .onSnapshot(
-                observer => {
-                    const data: Array<Recipe<AttachementMetadata>> = [];
-                    observer.forEach(result =>
-                        data.push(result.data() as Recipe<AttachementMetadata>)
-                    );
-                    setRecipes(data);
-                },
-                error => {
-                    console.error(error);
-                }
-            );
-    }, []);
+            .limit(4)
+    );
+
+    useEffect(() => {
+        return recipesQuery.onSnapshot(
+            querySnapshot => {
+                setRecipes(previous => [
+                    ...previous,
+                    ...querySnapshot.docs.map(doc => doc.data() as Recipe<AttachementMetadata>)
+                ]);
+            },
+            error => {
+                console.error(error);
+            }
+        );
+    }, [recipesQuery]);
 
     return (
         <Fade in>
             <>
                 <HomeRecentlyAdded />
                 <HomeCategory />
-                <HomeRecipe recipes={recipes} />
+                <HomeRecipe
+                    recipes={recipes}
+                    onExpandClick={lastRecipeName =>
+                        setRecipesQuery(query => query.startAfter(lastRecipeName))
+                    }
+                />
             </>
         </Fade>
     );

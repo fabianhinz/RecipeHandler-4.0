@@ -1,15 +1,6 @@
-import OpenDrawerIcon from "@material-ui/icons/KeyboardArrowUpTwoTone";
+import OpenDrawerIcon from "@material-ui/icons/MenuTwoTone";
 import React, { FC } from "react";
-import {
-    Box,
-    createStyles,
-    Fab,
-    Grid,
-    Hidden,
-    makeStyles,
-    Paper,
-    SwipeableDrawer
-} from "@material-ui/core";
+import { createStyles, Fab, Hidden, makeStyles, Paper, SwipeableDrawer } from "@material-ui/core";
 
 import { HeaderNavigation } from "./HeaderNavigation";
 import { useHeaderReducer } from "./HeaderReducer";
@@ -27,8 +18,8 @@ const useStyles = makeStyles(theme =>
         },
         openDrawerIcon: {
             position: "fixed",
-            bottom: theme.spacing(2),
-            right: theme.spacing(2),
+            top: theme.spacing(1),
+            right: theme.spacing(1),
             zIndex: theme.zIndex.drawer + 1
         }
     })
@@ -48,32 +39,22 @@ export const Header: FC<HeaderProps> = props => {
         <>
             <Hidden mdDown>
                 <Paper className={classes.paper}>
-                    <Box display="flex" flexDirection="column" onClick={handleDrawerChange}>
-                        <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
-                    </Box>
+                    <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
                 </Paper>
             </Hidden>
 
             <Hidden lgUp>
                 <SwipeableDrawer
-                    anchor="bottom"
+                    anchor="right"
                     open={state.drawer}
                     onClose={handleDrawerChange}
                     onOpen={handleDrawerChange}
                 >
-                    <Grid container justify="space-evenly">
-                        <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
-                    </Grid>
+                    <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
                 </SwipeableDrawer>
-                {!state.drawer && (
-                    <Fab
-                        size="small"
-                        className={classes.openDrawerIcon}
-                        onClick={handleDrawerChange}
-                    >
-                        <OpenDrawerIcon />
-                    </Fab>
-                )}
+                <Fab size="small" className={classes.openDrawerIcon} onClick={handleDrawerChange}>
+                    <OpenDrawerIcon />
+                </Fab>
             </Hidden>
 
             <HeaderLoginDialog
