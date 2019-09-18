@@ -49,10 +49,7 @@ export const Header: FC<HeaderProps> = props => {
             <Hidden mdDown>
                 <Paper className={classes.paper}>
                     <Box display="flex" flexDirection="column" onClick={handleDrawerChange}>
-                        <HeaderNavigation
-                            onDrawerChange={handleDrawerChange}
-                            onThemeChange={props.onThemeChange}
-                        />
+                        <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
                     </Box>
                 </Paper>
             </Hidden>
@@ -65,10 +62,7 @@ export const Header: FC<HeaderProps> = props => {
                     onOpen={handleDrawerChange}
                 >
                     <Grid container justify="space-evenly">
-                        <HeaderNavigation
-                            onDrawerChange={handleDrawerChange}
-                            onThemeChange={props.onThemeChange}
-                        />
+                        <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
                     </Grid>
                 </SwipeableDrawer>
                 {!state.drawer && (

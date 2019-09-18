@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme =>
 
 interface BackgroundIconProps {
     Icon: FC<React.SVGProps<SVGSVGElement>>;
-    loading: boolean;
+    loading?: boolean;
 }
 
 export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon, loading }) => {

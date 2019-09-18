@@ -29,11 +29,13 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
 
     const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const { email, password } = props;
-        debugger;
         authService
             .signInWithEmailAndPassword(props.email, props.password)
             .catch(error => enqueueSnackbar(error.message, { variant: "error" }));
+    };
+
+    const handleLogout = () => {
+        authService.signOut().catch(error => enqueueSnackbar(error.message, { variant: "error" }));
     };
 
     const handleDialogChange = () => dispatch({ type: "dialogChange" });
@@ -52,35 +54,43 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
             open={props.dialog}
             onClose={handleDialogChange}
         >
-            <form onSubmit={handleLogin}>
-                <DialogContent>
-                    <TextField
-                        autoComplete="username"
-                        onChange={handleTextFieldChange("email")}
-                        variant="filled"
-                        margin="dense"
-                        fullWidth
-                        label="email"
-                    />
-                    <TextField
-                        autoComplete="current-password"
-                        onChange={handleTextFieldChange("password")}
-                        variant="filled"
-                        margin="dense"
-                        fullWidth
-                        type="password"
-                        label="password"
-                    />
-                </DialogContent>
+            {props.currentUser ? (
                 <DialogActions>
-                    <Box width="100%" display="flex" justifyContent="space-evenly">
-                        <Button onClick={handleDialogChange}>Abbrechen</Button>
-                        <Button color="primary" type="submit">
-                            Login
-                        </Button>
+                    <Box width="100%" display="flex" justifyContent="center">
+                        <Button onClick={handleLogout}>logout</Button>
                     </Box>
                 </DialogActions>
-            </form>
+            ) : (
+                <form onSubmit={handleLogin}>
+                    <DialogContent>
+                        <TextField
+                            autoComplete="username"
+                            onChange={handleTextFieldChange("email")}
+                            variant="filled"
+                            margin="dense"
+                            fullWidth
+                            label="email"
+                        />
+                        <TextField
+                            autoComplete="current-password"
+                            onChange={handleTextFieldChange("password")}
+                            variant="filled"
+                            margin="dense"
+                            fullWidth
+                            type="password"
+                            label="password"
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Box width="100%" display="flex" justifyContent="space-evenly">
+                            <Button onClick={handleDialogChange}>Abbrechen</Button>
+                            <Button color="primary" type="submit">
+                                Login
+                            </Button>
+                        </Box>
+                    </DialogActions>
+                </form>
+            )}
         </Dialog>
     );
 };

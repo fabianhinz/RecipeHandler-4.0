@@ -29,7 +29,7 @@ import { Subtitle } from "../../Shared/Subtitle";
 import { storageRefService, firestoreService } from "../../../firebase";
 import { CategoryWrapper } from "../../Category/CategoryWrapper";
 import { RouteComponentProps } from "react-router";
-import { useRecipeCreateReducer, CreateChangeKey } from "./RecipeCreateReducer";
+import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -60,6 +60,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     useEffect(() => {
         if (state.attachementsUploading)
             enqueueSnackbar(<>Bilder werden hochgeladen</>, {
+                persist: true,
                 variant: "info",
                 key: "ATTACHEMENT_UPLOAD_IN_PROGRESS"
             });
@@ -69,6 +70,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     useEffect(() => {
         if (state.recipeUploading)
             enqueueSnackbar(<>Rezept wird engelegt</>, {
+                persist: true,
                 variant: "info",
                 key: "RECIPE_CREATION_IN_PROGRESS"
             });
@@ -144,19 +146,14 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
 
     // ? with useCallback  and memo chained together we improve performance
     const handleSaveAttachement = useCallback(
-        (name: { old: string; new: string }) => {
-            // ! close all remaining snackbars - don't know if this is a good idea
-            // ? useEffect --> see uploading state
+        (name: AttachementName) => {
             closeSnackbar();
             if (state.attachements.filter(a => a.name === name.new).length > 0) {
                 enqueueSnackbar(<>Änderung wird nicht gespeichert. Name bereits vorhanden</>, {
                     variant: "warning"
                 });
             } else {
-                state.attachements.forEach(attachement => {
-                    if (attachement.name === name.old) attachement.name = name.new;
-                });
-                dispatch({ type: "attachementsDrop", newAttachements: state.attachements });
+                dispatch({ type: "attachementNameChange", name });
                 enqueueSnackbar(
                     <>
                         Name von '{name.old}' auf '{name.new}' geändert

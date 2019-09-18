@@ -6,20 +6,20 @@ import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import BrightnessIcon from "@material-ui/icons/SettingsBrightnessTwoTone";
 import HomeIcon from "@material-ui/icons/HomeTwoTone";
 import AccountIcon from "@material-ui/icons/AccountCircleTwoTone";
+import { HeaderDispatch } from "./HeaderReducer";
 
-interface HeaderNavigationProps {
+interface HeaderNavigationProps extends HeaderDispatch {
     onThemeChange: () => void;
-    onDrawerChange: () => void;
 }
 
-export const HeaderNavigation: FC<HeaderNavigationProps> = props => (
+export const HeaderNavigation: FC<HeaderNavigationProps> = ({ onThemeChange, dispatch }) => (
     <>
         <Navigate to={PATHS.home}>
             <IconButton>
                 <HomeIcon />
             </IconButton>
         </Navigate>
-        <IconButton onClick={props.onThemeChange}>
+        <IconButton onClick={onThemeChange}>
             <BrightnessIcon />
         </IconButton>
         <Navigate to={PATHS.recipeCreate}>
@@ -27,7 +27,7 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = props => (
                 <AddIcon />
             </IconButton>
         </Navigate>
-        <IconButton onClick={props.onDrawerChange}>
+        <IconButton onClick={() => dispatch({ type: "dialogChange" })}>
             <AccountIcon />
         </IconButton>
     </>

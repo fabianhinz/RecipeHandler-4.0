@@ -27,6 +27,7 @@
 ## ToDo
 
 -   build script
+-   Snackbar hooks (handle exceptions?)
 
 ## best practices
 

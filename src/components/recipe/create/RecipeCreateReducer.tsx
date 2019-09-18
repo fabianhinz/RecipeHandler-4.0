@@ -13,6 +13,7 @@ interface State {
 }
 
 export type CreateChangeKey = keyof Pick<State, "ingredients" | "description" | "name">;
+export type AttachementName = { old: string; new: string };
 
 type Action =
     | { type: "loadState"; recipe: Recipe<AttachementMetadata> }
@@ -26,7 +27,8 @@ type Action =
     | { type: "recipeUploadingChange"; now: boolean }
     | { type: "attachementsDrop"; newAttachements: Array<AttachementData | AttachementMetadata> }
     | { type: "removeAttachement"; name: string }
-    | { type: "categoryChange"; categories: CategoryAs<Array<string>> };
+    | { type: "categoryChange"; categories: CategoryAs<Array<string>> }
+    | { type: "attachementNameChange"; name: AttachementName };
 
 const reducer: Reducer<State, Action> = (state, action) => {
     switch (action.type) {
@@ -52,6 +54,13 @@ const reducer: Reducer<State, Action> = (state, action) => {
             };
         case "categoryChange":
             return { ...state, categories: action.categories };
+        case "attachementNameChange": {
+            const { name } = action;
+            state.attachements.forEach(attachement => {
+                if (attachement.name === name.old) attachement.name = name.new;
+            });
+            return { ...state };
+        }
     }
 };
 

@@ -6,6 +6,9 @@ import { Footer } from "./Layout/Footer";
 import { Header } from "./Layout/Header/Header";
 import { Main } from "./Layout/Main";
 import { responsiveDarkTheme, responsiveLightTheme } from "../theme";
+import { SnackbarProvider } from "notistack";
+import { RouterProvider } from "./Routes/RouterContext";
+import { BrowserRouter } from "react-router-dom";
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme);
@@ -24,14 +27,26 @@ const App: FC = () => {
     };
 
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Container maxWidth="lg">
-                <Header onThemeChange={handleThemeChange} />
-                <Main />
-                <Footer />
-            </Container>
-        </ThemeProvider>
+        <BrowserRouter>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <SnackbarProvider
+                    preventDuplicate
+                    anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "center"
+                    }}
+                >
+                    <RouterProvider>
+                        <Container maxWidth="lg">
+                            <Header onThemeChange={handleThemeChange} />
+                            <Main />
+                            <Footer />
+                        </Container>
+                    </RouterProvider>
+                </SnackbarProvider>
+            </ThemeProvider>
+        </BrowserRouter>
     );
 };
 

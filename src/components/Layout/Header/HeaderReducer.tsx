@@ -29,7 +29,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
         case "dialogChange":
             return { ...state, dialog: !state.dialog };
         case "userChange":
-            return { ...state, user: action.user };
+            return { ...state, currentUser: action.user };
     }
 };
 

@@ -43,6 +43,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
     onSaveAttachement,
     readonly
 }) => {
+    const [visible, setVisible] = useState(true);
     const [name, setName] = useState<string>(attachement.name);
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement);
     const classes = useStyles();
@@ -53,10 +54,15 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
         if (isMetadata(attachement))
             return <CardMedia className={classes.cardMedia} image={attachementRef.dataUrl} />;
     };
+    // ! ToDo improve Transition handling (hook?)
+    const handleDeleteClick = () => {
+        setVisible(false);
+        setTimeout(() => onRemoveAttachement!(attachement.name), 200);
+    };
 
     return (
         <Grid item key={attachement.name}>
-            <Zoom in mountOnEnter>
+            <Zoom in={visible} mountOnEnter timeout={200}>
                 <Card raised onClick={e => e.stopPropagation()}>
                     {attachementRefLoading ? (
                         <Skeleton variant="rect" className={classes.cardMedia} />
@@ -89,9 +95,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
                                         >
                                             <SaveIcon />
                                         </IconButton>
-                                        <IconButton
-                                            onClick={() => onRemoveAttachement!(attachement.name)}
-                                        >
+                                        <IconButton onClick={handleDeleteClick}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </>

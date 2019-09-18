@@ -17,11 +17,6 @@ const sharedTheme: Partial<ThemeOptions> = {
                 }
             }
         },
-        MuiButtonGroup: {
-            contained: {
-                boxShadow: "none"
-            }
-        },
         MuiPaper: {
             rounded: {
                 borderRadius: BORDER_RADIUS
@@ -45,29 +40,6 @@ const sharedTheme: Partial<ThemeOptions> = {
                 borderRadius: BORDER_RADIUS
             }
         },
-        MuiTabs: {
-            flexContainer: {
-                justifyContent: "space-evenly"
-            },
-            indicator: {
-                // borderRadius: BORDER_RADIUS,
-                // padding: 2
-                background: "none"
-            }
-        },
-        MuiTab: {
-            textColorInherit: {
-                opacity: 0.4,
-                "& $selected": {
-                    opacity: 1
-                }
-            }
-        },
-        MuiCardContent: {
-            root: {
-                // width: "100%"
-            }
-        },
         MuiButton: {
             root: {
                 borderRadius: BORDER_RADIUS
@@ -78,11 +50,6 @@ const sharedTheme: Partial<ThemeOptions> = {
                 borderRadius: BORDER_RADIUS
             }
         },
-        MuiCardHeader: {
-            action: {
-                alignSelf: "center"
-            }
-        },
         // ! dirty workaround for https://github.com/mui-org/material-ui/issues/16374
         MuiAvatar: {
             root: {
@@ -91,7 +58,6 @@ const sharedTheme: Partial<ThemeOptions> = {
             },
             colorDefault: {
                 color: "inherit"
-                // backgroundColor: "rgba(0, 0, 0, 0.1)"
             }
         }
     }
