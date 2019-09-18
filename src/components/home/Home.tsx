@@ -7,7 +7,11 @@ import { Recipe, AttachementMetadata } from "../../model/model";
 import { firestoreService } from "../../firebase";
 
 const Home = () => {
-    const [recipes, setRecipes] = useState<Array<Recipe<AttachementMetadata>>>([]);
+    const [pagedRecipes, setPagedRecipes] = useState<Array<Recipe<AttachementMetadata>>>([]);
+    const [recentlyAddedRecipes, setRecentlyAddedRecipes] = useState<
+        Array<Recipe<AttachementMetadata>>
+    >([]);
+
     const [recipesQuery, setRecipesQuery] = useState(
         firestoreService
             .collection("recipes")
@@ -16,9 +20,24 @@ const Home = () => {
     );
 
     useEffect(() => {
+        return firestoreService
+            .collection("recipes")
+            .orderBy("createdDate", "asc")
+            .limit(10)
+            .onSnapshot(
+                querySnapshot => {
+                    setRecentlyAddedRecipes(
+                        querySnapshot.docs.map(doc => doc.data() as Recipe<AttachementMetadata>)
+                    );
+                },
+                error => console.error(error)
+            );
+    }, []);
+
+    useEffect(() => {
         return recipesQuery.onSnapshot(
             querySnapshot => {
-                setRecipes(previous => [
+                setPagedRecipes(previous => [
                     ...previous,
                     ...querySnapshot.docs.map(doc => doc.data() as Recipe<AttachementMetadata>)
                 ]);
@@ -32,10 +51,10 @@ const Home = () => {
     return (
         <Fade in>
             <>
-                <HomeRecentlyAdded />
+                <HomeRecentlyAdded recipes={recentlyAddedRecipes} />
                 <HomeCategory />
                 <HomeRecipe
-                    recipes={recipes}
+                    recipes={pagedRecipes}
                     onExpandClick={lastRecipeName =>
                         setRecipesQuery(query => query.startAfter(lastRecipeName))
                     }

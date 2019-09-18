@@ -20,3 +20,5 @@ export const firestoreService = firebase.firestore();
 export const storageService = firebase.storage();
 export const storageRefService = storageService.ref();
 export const authService = firebase.auth();
+
+export const createTimestampFrom = (date: Date) => firebase.firestore.Timestamp.fromDate(date);

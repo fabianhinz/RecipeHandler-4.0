@@ -26,7 +26,7 @@ import { AttachementData, AttachementMetadata, Recipe, CategoryAs } from "../../
 import { isData } from "../../../model/modelUtil";
 import { PATHS } from "../../Routes/Routes";
 import { Subtitle } from "../../Shared/Subtitle";
-import { storageRefService, firestoreService } from "../../../firebase";
+import { storageRefService, firestoreService, createTimestampFrom } from "../../../firebase";
 import { CategoryWrapper } from "../../Category/CategoryWrapper";
 import { RouteComponentProps } from "react-router";
 import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
@@ -78,7 +78,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                 variant: "info",
                 key: "RECIPE_CREATION_IN_PROGRESS"
             });
-        else closeSnackbar("RECIPE_CREATION_IN_PROGRESS");
+        return () => closeSnackbar("RECIPE_CREATION_IN_PROGRESS");
     }, [closeSnackbar, enqueueSnackbar, state.recipeUploading]);
 
     const handleSaveClick = () => {
@@ -122,7 +122,8 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                     ingredients: state.ingredients,
                     description: state.description,
                     attachements: metadata,
-                    categories: state.categories
+                    categories: state.categories,
+                    createdDate: createTimestampFrom(new Date())
                 })
                 .then(() => {
                     history.push(PATHS.home);

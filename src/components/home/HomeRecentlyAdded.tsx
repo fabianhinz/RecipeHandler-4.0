@@ -1,5 +1,5 @@
 import LinkIcon from "@material-ui/icons/LinkTwoTone";
-import React from "react";
+import React, { FC } from "react";
 import {
     Avatar,
     Box,
@@ -10,16 +10,21 @@ import {
     Grid,
     Typography
 } from "@material-ui/core";
+import { Recipe, AttachementMetadata } from "../../model/model";
 
-export const HomeRecentlyAdded = () => {
+interface HomeRecentlyAddedProps {
+    recipes: Array<Recipe<AttachementMetadata>>;
+}
+
+export const HomeRecentlyAdded: FC<HomeRecentlyAddedProps> = ({ recipes }) => {
     return (
         <Box margin={2}>
             <Card>
                 <CardHeader title="Zuletzt hinzugefügt" />
                 <CardContent>
                     <Grid container spacing={2}>
-                        {["Pfannkuche", "Kekse"].map(category => (
-                            <Grid item key={category}>
+                        {recipes.map(({ name }) => (
+                            <Grid item key={name}>
                                 <Chip
                                     onClick={() => alert("TBD")}
                                     avatar={
@@ -27,7 +32,7 @@ export const HomeRecentlyAdded = () => {
                                             <LinkIcon />
                                         </Avatar>
                                     }
-                                    label={<Typography variant="subtitle2">{category}</Typography>}
+                                    label={<Typography variant="subtitle2">{name}</Typography>}
                                 />
                             </Grid>
                         ))}
