@@ -22,14 +22,19 @@ import {
 import { RecipeCreateAttachements } from "./Attachements/RecipeCreateAttachements";
 import { RecipeResult } from "../Result/RecipeResult";
 import { useSnackbar } from "notistack";
-import { AttachementData, AttachementMetadata, Recipe, CategoryAs } from "../../../model/model";
+import {
+    AttachementData,
+    AttachementMetadata,
+    Recipe,
+    RecipeCategories
+} from "../../../model/model";
 import { isData } from "../../../model/modelUtil";
 import { PATHS } from "../../Routes/Routes";
 import { Subtitle } from "../../Shared/Subtitle";
 import { FirebaseService } from "../../../firebase";
-import { CategoryWrapper } from "../../Category/CategoryWrapper";
 import { RouteComponentProps } from "react-router";
 import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
+import { CategoryWrapper } from "../../Category/CategoryWrapper";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -143,8 +148,8 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
         dispatch({ type: "removeAttachement", name });
     };
 
-    const handleCategoriesChange = (categories: CategoryAs<Array<string>>) => {
-        dispatch({ type: "categoryChange", categories });
+    const handleCategoryChange = (key: string) => {
+        dispatch({ type: "categoryChange", key });
     };
 
     // ? with useCallback  and memo chained together we improve performance
@@ -195,8 +200,9 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                     <CardContent>
                         <Subtitle text="Kategorien" />
                         <CategoryWrapper
-                            fromRecipe={state.categories}
-                            onChange={handleCategoriesChange}
+                            variant="changeableCategory"
+                            onCategoryChange={handleCategoryChange}
+                            categories={state.categories}
                         />
 
                         <Box marginTop={2} marginBottom={2}>

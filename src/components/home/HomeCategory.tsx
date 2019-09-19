@@ -1,11 +1,17 @@
 import EditIcon from "@material-ui/icons/EditTwoTone";
 import React, { useState } from "react";
 import { Box, Card, CardContent, CardHeader, IconButton } from "@material-ui/core";
-import { CategoryWrapper } from "../Category/CategoryWrapper";
 import { CategoryDialog } from "../Category/CategoryDialog";
+import { CategoryWrapper } from "../Category/CategoryWrapper";
+import { RecipeCategories } from "../../model/model";
 
 export const HomeCategory = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [categories, setCategories] = useState<RecipeCategories>({ a: true, b: false });
+
+    const handleCategoryChange = (key: string) => {
+        setCategories(previous => ({ ...previous, [key]: !previous[key] }));
+    };
 
     return (
         <>
@@ -20,7 +26,11 @@ export const HomeCategory = () => {
                         }
                     />
                     <CardContent>
-                        <CategoryWrapper />
+                        <CategoryWrapper
+                            variant="changeableCategory"
+                            categories={categories}
+                            onCategoryChange={handleCategoryChange}
+                        />
                     </CardContent>
                 </Card>
             </Box>

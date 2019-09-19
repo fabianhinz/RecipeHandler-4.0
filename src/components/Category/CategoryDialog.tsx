@@ -20,52 +20,24 @@ import {
     useMediaQuery,
     useTheme
 } from "@material-ui/core";
-import { chipPropsFrom } from "./Category";
 import { SlideUp } from "../Shared/Transitions";
-import { CategoryWrapper } from "./CategoryWrapper";
-import { CategoryVariants } from "../../model/model";
-import { CategoryBase } from "./CategoryBase";
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        radioGroup: {
-            justifyContent: "center",
-            flexDirection: "row",
-            flexWrap: "nowrap",
-            overflowX: "auto"
-        },
-        icon: {
-            marginRight: theme.spacing(1)
-        },
-        chip: {
-            borderRadius: 16,
-            marginTop: theme.spacing(1),
-            width: "100%",
-            "& > *": {
-                width: "100%"
-            }
-        },
-        label: {
-            width: "100%"
-        },
-        inputBase: {
-            color: "#000",
-            width: "100%"
-        }
-    })
-);
+import { CategoryWrapper, CategoryBase } from "./CategoryWrapper";
+import { RecipeCategories } from "../../model/model";
 
 interface CategoryDialogProps {
     open: boolean;
     onClose: () => void;
 }
 
+type Categories = Array<{ identifier: string; displayName: string }>;
+
 export const CategoryDialog: FC<CategoryDialogProps> = ({ open, onClose }) => {
-    const classes = useStyles();
+    const [categories, setCategories] = useState<RecipeCategories>();
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const [variant, setVariant] = useState<CategoryVariants>("type");
+    const handleNameChange = (key: string, value: string) => console.log(key, value);
+
     return (
         <Dialog
             hideBackdrop={fullScreen}
@@ -80,51 +52,20 @@ export const CategoryDialog: FC<CategoryDialogProps> = ({ open, onClose }) => {
             <DialogContent>
                 <Box marginBottom={2}>
                     <DialogContentText>Vorhandene Kategorien bearbeiten</DialogContentText>
-                    <CategoryWrapper edit />
+                    <CategoryWrapper
+                        categories={{ a: true, b: true }}
+                        variant="changeableName"
+                        onNameChange={handleNameChange}
+                    />
                 </Box>
 
                 <DialogContentText>Neue Kategorie hinzufügen</DialogContentText>
 
-                <RadioGroup
-                    className={classes.radioGroup}
-                    value={variant}
-                    onChange={(_e, value) => setVariant(value as CategoryVariants)}
-                >
-                    <FormControlLabel
-                        value="type"
-                        control={<Radio color="default" />}
-                        label={
-                            <Box display="flex" alignItems="center">
-                                <BookIcon className={classes.icon} />
-                                Art
-                            </Box>
-                        }
-                    />
-
-                    <FormControlLabel
-                        value="time"
-                        control={<Radio color="default" />}
-                        label={
-                            <Box display="flex" alignItems="center">
-                                <TimerIcon className={classes.icon} />
-                                Zeit
-                            </Box>
-                        }
-                    />
-                </RadioGroup>
-
-                <CategoryBase className={classes.chip}>
+                <CategoryBase>
                     <Chip
-                        {...chipPropsFrom(variant)}
                         onDelete={() => alert("TODO")}
                         deleteIcon={<AddIcon />}
-                        classes={{ label: classes.label }}
-                        label={
-                            <InputBase
-                                className={classes.inputBase}
-                                placeholder="Namen eintragen"
-                            />
-                        }
+                        label={<InputBase placeholder="Namen eintragen" />}
                     />
                 </CategoryBase>
             </DialogContent>

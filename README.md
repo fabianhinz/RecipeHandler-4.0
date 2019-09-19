@@ -28,6 +28,7 @@
 
 -   build script
 -   Snackbar hooks (handle exceptions?)
+-   error boundary
 
 ## best practices
 

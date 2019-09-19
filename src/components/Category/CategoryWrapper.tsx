@@ -1,60 +1,119 @@
-import React, { FC, useEffect, useState } from "react";
-import { Box } from "@material-ui/core";
-import { Category } from "./Category";
-import { CategoryAs, CategoryVariants } from "../../model/model";
+import BookIcon from "@material-ui/icons/BookTwoTone";
+import React, { FC } from "react";
+import {
+    Avatar,
+    Chip,
+    Grid,
+    InputBase,
+    Typography,
+    makeStyles,
+    createStyles,
+    ButtonBase
+} from "@material-ui/core";
+import { RecipeCategories } from "../../model/model";
+import { ButtonBaseProps } from "@material-ui/core/ButtonBase";
 
-interface CategoryWrapperProps {
-    edit?: boolean;
-    fromRecipe?: CategoryAs<Array<string>>;
-    onChange?: (categories: CategoryAs<Array<string>>) => void;
+const useStyles = makeStyles(() =>
+    createStyles({
+        buttonBase: {
+            borderRadius: 16
+        }
+    })
+);
+
+export const CategoryBase: FC<ButtonBaseProps> = ({ children, ...buttonBaseProps }) => {
+    const classes = useStyles();
+    return (
+        <ButtonBase className={classes.buttonBase} {...buttonBaseProps}>
+            {children}
+        </ButtonBase>
+    );
+};
+
+const categoryAvatar = (
+    <Avatar>
+        <BookIcon />
+    </Avatar>
+);
+
+interface ReadonlyProps {
+    categories: RecipeCategories;
 }
 
-export const CategoryWrapper: FC<CategoryWrapperProps> = ({ onChange, edit, fromRecipe }) => {
-    const [categories, setCategories] = useState<CategoryAs<Set<string>>>({
-        type: new Set<string>(),
-        time: new Set<string>()
-    });
-
-    useEffect(() => {
-        if (!fromRecipe) return;
-        setCategories({
-            time: new Set(fromRecipe.time),
-            type: new Set(fromRecipe.type)
-        });
-    }, [fromRecipe]);
-
-    const handleClick = (category: string, variant: CategoryVariants) => {
-        if (categories[variant].has(category)) categories[variant].delete(category);
-        else categories[variant].add(category);
-
-        if (onChange)
-            onChange({
-                type: Array.from(categories.type),
-                time: Array.from(categories.time)
-            });
-        setCategories({ ...categories });
-    };
-
-    return (
-        <>
-            <Box marginBottom={1}>
-                <Category
-                    edit={edit}
-                    variant="type"
-                    items={["ToDo"]}
-                    onClick={handleClick}
-                    selected={categories.type}
+const Readonly: FC<ReadonlyProps> = ({ categories }) => (
+    <Grid container spacing={1}>
+        {Object.keys(categories).map(key => (
+            <Grid item key={key}>
+                <Chip
+                    avatar={categoryAvatar}
+                    size="small"
+                    color={categories[key] ? "primary" : "default"}
+                    label={key}
                 />
-            </Box>
-            <Box marginBottom={1}>
-                <Category
-                    edit={edit}
-                    variant="time"
-                    items={["ToDo"]}
-                    onClick={handleClick}
-                    selected={categories.time}
+            </Grid>
+        ))}
+    </Grid>
+);
+
+interface NameProps extends ReadonlyProps {
+    onNameChange?: (key: string, value: string) => void;
+}
+
+const Name: FC<NameProps> = ({ categories, onNameChange }) => (
+    <Grid container spacing={1}>
+        {Object.keys(categories).map(key => (
+            <Grid item key={key}>
+                <Chip
+                    avatar={categoryAvatar}
+                    color="default"
+                    label={
+                        <InputBase
+                            defaultValue={key}
+                            onChange={e => onNameChange!(key, e.target.value)}
+                        />
+                    }
                 />
-            </Box>
-        </>
-    );
+            </Grid>
+        ))}
+    </Grid>
+);
+
+interface CategoryProps extends ReadonlyProps {
+    onCategoryChange?: (key: string) => void;
+}
+
+const Category: FC<CategoryProps> = ({ categories, onCategoryChange }) => (
+    <Grid container spacing={1}>
+        {Object.keys(categories).map(key => (
+            <Grid item key={key}>
+                <CategoryBase onClick={() => onCategoryChange!(key)}>
+                    <Chip
+                        avatar={categoryAvatar}
+                        color={categories[key] ? "primary" : "default"}
+                        label={<Typography variant="subtitle2">{key}</Typography>}
+                    />
+                </CategoryBase>
+            </Grid>
+        ))}
+    </Grid>
+);
+
+interface CategoryWrapperProps extends CategoryProps, NameProps, ReadonlyProps {
+    variant: "changeableCategory" | "changeableName" | "readonly";
+}
+
+export const CategoryWrapper: FC<CategoryWrapperProps> = ({
+    categories,
+    variant,
+    onCategoryChange,
+    onNameChange
+}) => {
+    switch (variant) {
+        case "readonly":
+            return <Readonly categories={categories} />;
+        case "changeableName":
+            return <Name categories={categories} onNameChange={onNameChange} />;
+        case "changeableCategory":
+            return <Category categories={categories} onCategoryChange={onCategoryChange} />;
+    }
 };

@@ -1,10 +1,3 @@
-export interface CategoryAs<T> {
-    type: T;
-    time: T;
-}
-
-export type CategoryVariants = keyof CategoryAs<Set<string>>;
-
 export interface Attachement {
     name: string;
     size: number;
@@ -21,8 +14,12 @@ export interface AttachementMetadata extends Attachement {
 export interface Recipe<T extends Attachement> {
     name: string;
     created: string;
-    categories: CategoryAs<Array<string>>;
+    categories: RecipeCategories;
     attachements: Array<T>;
     ingredients: string;
     description: string;
+}
+
+export interface RecipeCategories {
+    [key: string]: boolean;
 }

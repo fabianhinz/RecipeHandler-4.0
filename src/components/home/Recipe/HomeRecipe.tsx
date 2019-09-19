@@ -25,7 +25,7 @@ export const HomeRecipe: FC<HomeRecipeProps> = props => {
 
             <Box marginTop={2} display="flex" justifyContent="center">
                 <Tooltip title="Weitere Rezepte laden">
-                    <Fab size="small" color="primary" onClick={handleExpandClick}>
+                    <Fab size="small" color="secondary" onClick={handleExpandClick}>
                         <ExpandIcon />
                     </Fab>
                 </Tooltip>

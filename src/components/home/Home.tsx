@@ -35,6 +35,8 @@ const Home = () => {
         return FirebaseService.firestore
             .collection("recipes")
             .orderBy("name", "asc")
+            .where("categories.a", "==", true)
+            .where("categories.b", "==", true)
             .startAfter(lastRecipeName)
             .limit(4)
             .onSnapshot(

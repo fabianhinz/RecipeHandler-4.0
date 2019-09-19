@@ -6,7 +6,7 @@ import { RecipeResultImg } from "./RecipeResultImg";
 import { Grid, Typography } from "@material-ui/core";
 import { Recipe, AttachementData, AttachementMetadata } from "../../../model/model";
 import { Subtitle } from "../../Shared/Subtitle";
-import { Category } from "../../Category/Category";
+import { CategoryWrapper } from "../../Category/CategoryWrapper";
 
 interface RecipeResultProps {
     recipe: Recipe<AttachementMetadata | AttachementData>;
@@ -20,10 +20,7 @@ export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
             </Grid>
 
             <Grid item>
-                <Category readonly variant="type" items={recipe.categories.type} />
-            </Grid>
-            <Grid item>
-                <Category readonly variant="time" items={recipe.categories.time} />
+                <CategoryWrapper variant="readonly" categories={recipe.categories} />
             </Grid>
 
             <Grid item xs={12}>
