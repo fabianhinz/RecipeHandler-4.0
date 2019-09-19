@@ -3,11 +3,10 @@ import {
     Box,
     Dialog,
     DialogContent,
-    useTheme,
-    useMediaQuery,
     TextField,
     DialogActions,
-    Button
+    Button,
+    Typography
 } from "@material-ui/core";
 
 import { SlideUp } from "../../Shared/Transitions";
@@ -19,8 +18,6 @@ type HeaderLoginDialogProps = HeaderState<"currentUser" | "email" | "dialog" | "
     HeaderDispatch;
 
 export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...props }) => {
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -50,20 +47,29 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
 
     return (
         <Dialog
-            hideBackdrop={fullScreen}
             TransitionComponent={SlideUp}
             fullWidth
             maxWidth="xs"
-            fullScreen={fullScreen}
             open={props.dialog}
             onClose={handleDialogChange}
         >
             {props.currentUser ? (
-                <DialogActions>
-                    <Box width="100%" display="flex" justifyContent="center">
-                        <Button onClick={handleLogout}>logout</Button>
-                    </Box>
-                </DialogActions>
+                <>
+                    <DialogContent>
+                        <Typography variant="subtitle1">
+                            Angemeldet als {props.currentUser.email}. Rezepte können nun bearbeitet
+                            und erstellt werden.
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Box width="100%" display="flex" justifyContent="space-evenly">
+                            <Button onClick={handleDialogChange}>Schließen</Button>
+                            <Button color="primary" onClick={handleLogout}>
+                                logout
+                            </Button>
+                        </Box>
+                    </DialogActions>
+                </>
             ) : (
                 <form onSubmit={handleLogin}>
                     <DialogContent>
@@ -87,7 +93,7 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
                     </DialogContent>
                     <DialogActions>
                         <Box width="100%" display="flex" justifyContent="space-evenly">
-                            <Button onClick={handleDialogChange}>Abbrechen</Button>
+                            <Button onClick={handleDialogChange}>Schließen</Button>
                             <Button color="primary" type="submit">
                                 Login
                             </Button>
