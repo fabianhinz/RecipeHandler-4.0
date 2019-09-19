@@ -6,8 +6,9 @@ import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 
 export const PATHS = {
     home: "/",
+    details: (name = ":name") => `/recipe/details/${name}`,
     recipeCreate: "/recipe/create",
-    recipeEdit: (id = ":id") => `/recipe/edit/${id}`
+    recipeEdit: (name = ":name") => `/recipe/edit/${name}`
 };
 
 interface Routes {
@@ -20,6 +21,11 @@ const routes: Routes[] = [
     {
         path: PATHS.home,
         Component: lazy(() => import("../Home/Home")),
+        Background: props => <BackgroundIcon Icon={HomeIcon} loading={props.loading} />
+    },
+    {
+        path: PATHS.details(),
+        Component: lazy(() => import("../Recipe/Details/RecipeDetails")),
         Background: props => <BackgroundIcon Icon={HomeIcon} loading={props.loading} />
     },
     {

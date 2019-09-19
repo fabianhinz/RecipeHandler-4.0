@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme =>
     })
 );
 // Todo instead of multipel state and effects lets make a hook which manages loading states
-// ToDo loading data from firbase only occures in the recipe edit component --> extract logic
+// ! ToDo handle updates (extra care of attachements)
 interface RecipeCreateProps extends Pick<RouteComponentProps, "history" | "location"> {
     recipe?: Recipe<AttachementMetadata> | null;
 }
@@ -265,12 +265,14 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                     <Collapse in={state.preview} timeout="auto" mountOnEnter>
                         <CardContent>
                             <RecipeResult
-                                name={state.name}
-                                created={new Date().toLocaleDateString()}
-                                categories={state.categories}
-                                attachements={state.attachements}
-                                ingredients={state.ingredients}
-                                description={state.description}
+                                recipe={{
+                                    name: state.name,
+                                    created: new Date().toLocaleDateString(),
+                                    categories: state.categories,
+                                    attachements: state.attachements,
+                                    ingredients: state.ingredients,
+                                    description: state.description
+                                }}
                             />
                         </CardContent>
                     </Collapse>

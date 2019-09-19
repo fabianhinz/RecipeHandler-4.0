@@ -8,42 +8,46 @@ import { Recipe, AttachementData, AttachementMetadata } from "../../../model/mod
 import { Subtitle } from "../../Shared/Subtitle";
 import { Category } from "../../Category/Category";
 
-type RecipeResultProps = Recipe<AttachementData | AttachementMetadata>;
+interface RecipeResultProps {
+    recipe: Recipe<AttachementMetadata | AttachementData>;
+}
 
-export const RecipeResult: FC<RecipeResultProps> = props => (
-    <Grid container spacing={2}>
-        <Grid item xs={12}>
-            <Typography variant="h6">{props.name}</Typography>
-        </Grid>
+export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
+    return (
+        <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <Typography variant="h6">{recipe.name}</Typography>
+            </Grid>
 
-        <Grid item>
-            <Category readonly variant="type" items={props.categories.type} />
-        </Grid>
-        <Grid item>
-            <Category readonly variant="time" items={props.categories.time} />
-        </Grid>
+            <Grid item>
+                <Category readonly variant="type" items={recipe.categories.type} />
+            </Grid>
+            <Grid item>
+                <Category readonly variant="time" items={recipe.categories.time} />
+            </Grid>
 
-        <Grid item xs={12}>
-            <Grid container spacing={2}>
-                {props.attachements.map(attachement => (
-                    <RecipeResultImg key={attachement.name} attachement={attachement} />
-                ))}
+            <Grid item xs={12}>
+                <Grid container spacing={2}>
+                    {recipe.attachements.map(attachement => (
+                        <RecipeResultImg key={attachement.name} attachement={attachement} />
+                    ))}
+                </Grid>
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={4}>
+                <Subtitle icon={<AssignmentIcon />} text="Zutaten" />
+                <ReactMarkdown source={recipe.ingredients} />
+            </Grid>
+
+            <Grid item xs={12} md={6} lg={8}>
+                <Subtitle icon={<BookIcon />} text="Beschreibung" />
+                <ReactMarkdown source={recipe.description} />
+            </Grid>
+
+            <Grid item xs={12}>
+                {/* ToDo: Time */}
+                {/* <Typography variant="caption">Erstellt am: {created}</Typography> */}
             </Grid>
         </Grid>
-
-        <Grid item xs={12} md={6} lg={4}>
-            <Subtitle icon={<AssignmentIcon />} text="Zutaten" />
-            <ReactMarkdown source={props.ingredients} />
-        </Grid>
-
-        <Grid item xs={12} md={6} lg={8}>
-            <Subtitle icon={<BookIcon />} text="Beschreibung" />
-            <ReactMarkdown source={props.description} />
-        </Grid>
-
-        <Grid item xs={12}>
-            {/* ToDo: Time */}
-            {/* <Typography variant="caption">Erstellt am: {created}</Typography> */}
-        </Grid>
-    </Grid>
-);
+    );
+};

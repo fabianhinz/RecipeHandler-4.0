@@ -66,7 +66,7 @@ export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                 </Grid>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <RecipeResult {...props.recipe} />
+                <RecipeResult recipe={props.recipe} />
             </ExpansionPanelDetails>
             <ExpansionPanelActions>
                 <Button onClick={() => history.push(PATHS.recipeEdit(props.recipe.name), props)}>
