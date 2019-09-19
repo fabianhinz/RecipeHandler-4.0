@@ -32,7 +32,7 @@ const App: FC = () => {
                 <SnackbarProvider
                     preventDuplicate
                     anchorOrigin={{
-                        vertical: "top",
+                        vertical: "bottom",
                         horizontal: "center"
                     }}
                 >

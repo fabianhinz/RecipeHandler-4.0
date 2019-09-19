@@ -4,30 +4,27 @@ import { HomeCategory } from "./HomeCategory";
 import { HomeRecentlyAdded } from "./HomeRecentlyAdded";
 import { HomeRecipe } from "./Recipe/HomeRecipe";
 import { Recipe, AttachementMetadata } from "../../model/model";
-import { firestoreService } from "../../firebase";
+import { FirebaseService } from "../../firebase";
+import { firestore } from "firebase";
+
+type DocumentId = string;
+type RecipeDocument = Recipe<AttachementMetadata>;
+type ChangesRecord = Record<firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>;
 
 const Home = () => {
-    const [pagedRecipes, setPagedRecipes] = useState<Array<Recipe<AttachementMetadata>>>([]);
-    const [recentlyAddedRecipes, setRecentlyAddedRecipes] = useState<
-        Array<Recipe<AttachementMetadata>>
-    >([]);
-
-    const [recipesQuery, setRecipesQuery] = useState(
-        firestoreService
-            .collection("recipes")
-            .orderBy("name", "asc")
-            .limit(4)
-    );
+    const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map());
+    const [mostRecentRecipes, setMostRecentRecipes] = useState<Array<RecipeDocument>>([]);
+    const [lastRecipeName, setLastRecipeName] = useState("");
 
     useEffect(() => {
-        return firestoreService
+        return FirebaseService.firestore
             .collection("recipes")
             .orderBy("createdDate", "desc")
             .limit(10)
             .onSnapshot(
                 querySnapshot => {
-                    setRecentlyAddedRecipes(
-                        querySnapshot.docs.map(doc => doc.data() as Recipe<AttachementMetadata>)
+                    setMostRecentRecipes(
+                        querySnapshot.docs.map(doc => doc.data() as RecipeDocument)
                     );
                 },
                 error => console.error(error)
@@ -35,29 +32,42 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        return recipesQuery.onSnapshot(
-            querySnapshot => {
-                setPagedRecipes(previous => [
-                    ...previous,
-                    ...querySnapshot.docs.map(doc => doc.data() as Recipe<AttachementMetadata>)
-                ]);
-            },
-            error => {
-                console.error(error);
-            }
-        );
-    }, [recipesQuery]);
+        return FirebaseService.firestore
+            .collection("recipes")
+            .orderBy("name", "asc")
+            .startAfter(lastRecipeName)
+            .limit(4)
+            .onSnapshot(
+                querySnapshot => {
+                    const changes: ChangesRecord = {
+                        added: new Map(),
+                        modified: new Map(),
+                        removed: new Map()
+                    };
+                    querySnapshot
+                        .docChanges()
+                        .forEach(({ type, doc }) =>
+                            changes[type].set(doc.id, doc.data() as RecipeDocument)
+                        );
+                    setPagedRecipes(recipes => {
+                        changes.removed.forEach((_v, key) => recipes.delete(key));
+                        return new Map([...recipes, ...changes.added, ...changes.modified]);
+                    });
+                },
+                error => {
+                    console.error(error);
+                }
+            );
+    }, [lastRecipeName]);
 
     return (
         <Fade in>
             <>
-                <HomeRecentlyAdded recipes={recentlyAddedRecipes} />
+                <HomeRecentlyAdded recipes={mostRecentRecipes} />
                 <HomeCategory />
                 <HomeRecipe
-                    recipes={pagedRecipes}
-                    onExpandClick={lastRecipeName =>
-                        setRecipesQuery(query => query.startAfter(lastRecipeName))
-                    }
+                    recipes={[...pagedRecipes.values()]}
+                    onExpandClick={setLastRecipeName}
                 />
             </>
         </Fade>

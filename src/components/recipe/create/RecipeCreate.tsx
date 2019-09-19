@@ -26,7 +26,7 @@ import { AttachementData, AttachementMetadata, Recipe, CategoryAs } from "../../
 import { isData } from "../../../model/modelUtil";
 import { PATHS } from "../../Routes/Routes";
 import { Subtitle } from "../../Shared/Subtitle";
-import { storageRefService, firestoreService, createTimestampFrom } from "../../../firebase";
+import { FirebaseService } from "../../../firebase";
 import { CategoryWrapper } from "../../Category/CategoryWrapper";
 import { RouteComponentProps } from "react-router";
 import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
@@ -45,21 +45,16 @@ interface RecipeCreateProps extends Pick<RouteComponentProps, "history" | "locat
 }
 
 const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const classes = useStyles();
-
     const { state, dispatch } = useRecipeCreateReducer();
 
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const classes = useStyles();
+    // ToDo what should we do here
     const saveDisabled = state.name.length === 0 || state.attachementsUploading;
 
     useEffect(() => {
         if (recipe) dispatch({ type: "loadState", recipe });
     }, [dispatch, recipe]);
-
-    useEffect(() => {
-        if (location.state && location.state.message)
-            enqueueSnackbar(location.state.message, { variant: "info" });
-    }, [enqueueSnackbar, location.state]);
 
     useEffect(() => {
         if (state.attachementsUploading)
@@ -78,62 +73,65 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                 variant: "info",
                 key: "RECIPE_CREATION_IN_PROGRESS"
             });
+        else closeSnackbar("RECIPE_CREATION_IN_PROGRESS");
         return () => closeSnackbar("RECIPE_CREATION_IN_PROGRESS");
     }, [closeSnackbar, enqueueSnackbar, state.recipeUploading]);
 
-    const handleSaveClick = () => {
-        closeSnackbar();
+    const handleSaveClick = async () => {
         dispatch({ type: "attachementsUploadingChange", now: true });
+        const uploadTasks: Array<PromiseLike<any>> = [];
+        for (const attachement of state.attachements) {
+            if (!isData(attachement)) continue;
+            const uploadTask = FirebaseService.storageRef
+                .child(`recipes/${state.name}/${attachement.name}`)
+                .putString(attachement.dataUrl, "data_url")
+                .catch(error =>
+                    enqueueSnackbar(<>{error.message}</>, {
+                        variant: "error"
+                    })
+                );
+            uploadTasks.push(uploadTask);
+        }
 
-        const tasks: Array<PromiseLike<any>> = [];
-        state.attachements.forEach(attachement => {
-            if (isData(attachement)) {
-                const uploadTask = storageRefService
-                    .child(`recipes/${state.name}/${attachement.name}`)
-                    .putString(attachement.dataUrl, "data_url")
-                    .catch(error =>
-                        enqueueSnackbar(<>{error.message}</>, {
-                            variant: "error"
-                        })
-                    );
-                tasks.push(uploadTask);
-            }
+        const finishedTaks = await Promise.all(uploadTasks);
+
+        dispatch({ type: "attachementsUploadingChange", now: false });
+        const metadata: Array<AttachementMetadata> = [];
+        finishedTaks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
+            // ? on "storage/unauthorized" snapshot is not of type "object"
+            if (typeof snapshot !== "object") return;
+            const { fullPath, size, name } = snapshot.metadata;
+            metadata.push({
+                fullPath,
+                name,
+                size
+            });
         });
 
-        Promise.all(tasks).then(finishedTaks => {
-            dispatch({ type: "attachementsUploadingChange", now: false });
-            const metadata: Array<AttachementMetadata> = [];
-            finishedTaks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
-                // ? on "storage/unauthorized" snapshot is not of type "object"
-                if (typeof snapshot !== "object") return;
-                const { fullPath, size, name } = snapshot.metadata;
-                metadata.push({
-                    fullPath,
-                    name,
-                    size
-                });
+        dispatch({ type: "recipeUploadingChange", now: true });
+        const { name, ingredients, description, categories } = state;
+        try {
+            await FirebaseService.firestore.collection("recipes").add({
+                name,
+                ingredients,
+                description,
+                attachements: metadata,
+                categories,
+                createdDate: FirebaseService.createTimestampFrom(new Date())
             });
 
-            dispatch({ type: "recipeUploadingChange", now: true });
-            firestoreService
-                .collection("recipes")
-                .add({
-                    name: state.name,
-                    ingredients: state.ingredients,
-                    description: state.description,
-                    attachements: metadata,
-                    categories: state.categories,
-                    createdDate: createTimestampFrom(new Date())
-                })
-                .then(() => {
-                    history.push(PATHS.home);
-                    enqueueSnackbar(<>{state.name} angelegt</>, {
-                        variant: "success"
-                    });
-                })
-                .catch(error => enqueueSnackbar(<>{error.message}</>, { variant: "error" }))
-                .finally(() => dispatch({ type: "recipeUploadingChange", now: false }));
-        });
+            await FirebaseService.firestore
+                .collection("rating")
+                .doc(state.name)
+                .set({ value: 0 });
+
+            history.push(PATHS.home);
+            enqueueSnackbar(<>{state.name} angelegt</>, {
+                variant: "success"
+            });
+        } catch (e) {
+            enqueueSnackbar(<>{e.message}</>, { variant: "error" });
+        }
     };
 
     const handleAttachementsDrop = (newAttachements: AttachementData[]) => {

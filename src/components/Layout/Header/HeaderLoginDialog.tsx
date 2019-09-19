@@ -10,10 +10,10 @@ import {
     Button
 } from "@material-ui/core";
 
-import { authService } from "../../../firebase";
 import { SlideUp } from "../../Shared/Transitions";
 import { useSnackbar } from "notistack";
 import { HeaderState, HeaderChangeKey, HeaderDispatch } from "./HeaderReducer";
+import { FirebaseService } from "../../../firebase";
 
 type HeaderLoginDialogProps = HeaderState<"currentUser" | "email" | "dialog" | "password"> &
     HeaderDispatch;
@@ -24,18 +24,22 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
-        return authService.onAuthStateChanged(user => dispatch({ type: "userChange", user }));
+        return FirebaseService.auth.onAuthStateChanged(user =>
+            dispatch({ type: "userChange", user })
+        );
     }, [dispatch]);
 
     const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        authService
+        FirebaseService.auth
             .signInWithEmailAndPassword(props.email, props.password)
             .catch(error => enqueueSnackbar(error.message, { variant: "error" }));
     };
 
     const handleLogout = () => {
-        authService.signOut().catch(error => enqueueSnackbar(error.message, { variant: "error" }));
+        FirebaseService.auth
+            .signOut()
+            .catch(error => enqueueSnackbar(error.message, { variant: "error" }));
     };
 
     const handleDialogChange = () => dispatch({ type: "dialogChange" });

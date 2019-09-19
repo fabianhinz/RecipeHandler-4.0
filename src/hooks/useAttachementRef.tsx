@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { storageService } from "../firebase";
 import { AttachementMetadata, AttachementData } from "../model/model";
 import { isMetadata } from "../model/modelUtil";
+import { FirebaseService } from "../firebase";
 
 export const useAttachementRef = (attachement: AttachementMetadata | AttachementData) => {
     const { name, size } = attachement;
@@ -20,7 +20,7 @@ export const useAttachementRef = (attachement: AttachementMetadata | Attachement
         if (!isMetadata(attachement)) return;
 
         setAttachementRefLoading(true);
-        storageService
+        FirebaseService.storage
             .ref(attachement.fullPath)
             .getDownloadURL()
             .then(dataUrl => setAttachementRef(previous => ({ ...previous, dataUrl })))

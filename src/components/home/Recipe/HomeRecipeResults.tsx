@@ -61,7 +61,7 @@ export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <BadgeRating />
+                        <BadgeRating name={props.recipe.name} />
                     </Grid>
                 </Grid>
             </ExpansionPanelSummary>

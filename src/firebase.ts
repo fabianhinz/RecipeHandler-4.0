@@ -16,9 +16,21 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 firebase.firestore().enablePersistence({ synchronizeTabs: true });
 
-export const firestoreService = firebase.firestore();
-export const storageService = firebase.storage();
-export const storageRefService = storageService.ref();
-export const authService = firebase.auth();
+const firestore = firebase.firestore();
+const storage = firebase.storage();
+const storageRef = storage.ref();
+const auth = firebase.auth();
 
-export const createTimestampFrom = (date: Date) => firebase.firestore.Timestamp.fromDate(date);
+const createTimestampFrom = (date: Date) => firebase.firestore.Timestamp.fromDate(date);
+const incrementBy = (value: number) => firebase.firestore.FieldValue.increment(value);
+const decreaseBy = (value: number) => firebase.firestore.FieldValue.increment(value);
+
+export const FirebaseService = {
+    firestore,
+    storage,
+    storageRef,
+    auth,
+    createTimestampFrom,
+    incrementBy,
+    decreaseBy
+};
