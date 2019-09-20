@@ -25,7 +25,9 @@ interface CategoryDialogProps {
 export const CategoryDialog: FC<CategoryDialogProps> = ({ open, onClose }) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+    // ! TODO when we add new categorys or change names we must go through all documents (batch?)
+    // 1. new categories: all documents must have the same fields (firestore will crash otherwise)
+    // 2. name change: all documents who had the old category name should be updated to match the new one
     const handleNameChange = (key: string, oldValue: string, newValue: string) =>
         console.log(key, oldValue, newValue);
 

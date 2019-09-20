@@ -11,12 +11,14 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => (
     <Grid container spacing={1}>
         {Object.keys(categories).map(type => (
             <Grid item key={type}>
-                <Chip
-                    avatar={avatarFromCategoryType(type)}
-                    size="small"
-                    color="primary"
-                    label={categories[type]}
-                />
+                {categories[type].length > 0 && (
+                    <Chip
+                        avatar={avatarFromCategoryType(type)}
+                        size="small"
+                        color="primary"
+                        label={categories[type]}
+                    />
+                )}
             </Grid>
         ))}
     </Grid>

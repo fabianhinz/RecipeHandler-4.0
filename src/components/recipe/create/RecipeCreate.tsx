@@ -31,6 +31,7 @@ import { RouteComponentProps } from "react-router";
 import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
 import { CategoryWrapper } from "../../Category/CategoryWrapper";
 import { useCategorySelect } from "../../../hooks/useCategorySelect";
+import { useCategoriesCollection } from "../../../hooks/useCategoriesCollection";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -48,11 +49,10 @@ interface RecipeCreateProps extends Pick<RouteComponentProps, "history" | "locat
 const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     const { state, dispatch } = useRecipeCreateReducer();
     const { selectedCategories, setSelectedCategories } = useCategorySelect();
+    const { categoriesCollection } = useCategoriesCollection();
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const classes = useStyles();
-    // ToDo what should we do here
-    const saveDisabled = state.name.length === 0 || state.attachementsUploading;
 
     useEffect(() => {
         let categories: Categories<string> = {};
@@ -86,6 +86,17 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     }, [closeSnackbar, enqueueSnackbar, state.recipeUploading]);
 
     const handleSaveClick = async () => {
+        // ToDo what should we do here?
+        if (!categoriesCollection) return;
+
+        if (
+            selectedCategories.size !== Object.keys(categoriesCollection).length ||
+            state.name.length === 0
+        )
+            return enqueueSnackbar(<>Das Rezept sollte um Kategorien und Namen ergänzt werden</>, {
+                variant: "warning"
+            });
+
         dispatch({ type: "attachementsUploadingChange", now: true });
         const uploadTasks: Array<PromiseLike<any>> = [];
         for (const attachement of state.attachements) {
@@ -246,7 +257,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                                 </Button>
 
                                 <Button
-                                    disabled={saveDisabled}
+                                    disabled={state.attachementsUploading}
                                     size="small"
                                     color="primary"
                                     onClick={handleSaveClick}

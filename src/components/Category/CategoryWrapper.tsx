@@ -43,17 +43,17 @@ export const CategoryWrapper: FC<CategoryWrapperProps> = ({
     onNameChange,
     selectedCategories
 }) => {
-    const { categories } = useCategoriesCollection();
+    const { categoriesCollection } = useCategoriesCollection();
 
-    if (!categories) return <Loading />;
+    if (!categoriesCollection) return <Loading />;
 
     return (
         <Grid container spacing={2}>
-            {Object.keys(categories).map(type => (
+            {Object.keys(categoriesCollection).map(type => (
                 <Grid key={type} item xs={12}>
                     <Typography gutterBottom>{type}</Typography>
                     <Grid container spacing={1}>
-                        {categories[type].map(value => (
+                        {categoriesCollection[type].map(value => (
                             <Grid item key={value}>
                                 {onNameChange && (
                                     <Chip

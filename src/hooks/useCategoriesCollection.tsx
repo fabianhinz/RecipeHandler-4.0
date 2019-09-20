@@ -4,7 +4,9 @@ import { Categories } from "../model/model";
 import { useSnackbar } from "notistack";
 
 export const useCategoriesCollection = () => {
-    const [categories, setCategories] = useState<Categories<Array<string>> | null>(null);
+    const [categoriesCollection, setCategoriesCollection] = useState<Categories<
+        Array<string>
+    > | null>(null);
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -12,10 +14,12 @@ export const useCategoriesCollection = () => {
             .collection("categories")
             .onSnapshot(
                 querySnapshot =>
-                    setCategories(querySnapshot.docs[0].data() as Categories<Array<string>>),
+                    setCategoriesCollection(querySnapshot.docs[0].data() as Categories<
+                        Array<string>
+                    >),
                 error => enqueueSnackbar(error.message, { variant: "error" })
             );
     }, [enqueueSnackbar]);
 
-    return { categories };
+    return { categoriesCollection };
 };
