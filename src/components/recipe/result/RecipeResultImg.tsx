@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { BORDER_RADIUS } from "../../../theme";
-import { Box, createStyles, Grid, LinearProgress, makeStyles } from "@material-ui/core";
+import { createStyles, Grid, makeStyles } from "@material-ui/core";
 import { AttachementData, AttachementMetadata } from "../../../model/model";
 import { useAttachementRef } from "../../../hooks/useAttachementRef";
 import { isData, isMetadata } from "../../../model/modelUtil";

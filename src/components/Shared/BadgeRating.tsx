@@ -20,17 +20,20 @@ export const BadgeRating: FC<Pick<Recipe<AttachementMetadata>, "name">> = ({ nam
     const [rating, setRating] = useState(0);
     const classes = useStyles();
 
-    const ratingRef = FirebaseService.firestore.collection("rating").doc(name);
-
     useEffect(() => {
-        return ratingRef.onSnapshot(documentSnapshot =>
-            setRating(documentSnapshot.exists ? documentSnapshot.data()!.value : 0)
-        );
-    }, [ratingRef]);
+        return FirebaseService.firestore
+            .collection("rating")
+            .doc(name)
+            .onSnapshot(documentSnapshot =>
+                setRating(documentSnapshot.exists ? documentSnapshot.data()!.value : 0)
+            );
+    }, [name]);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.stopPropagation();
-        ratingRef
+        FirebaseService.firestore
+            .collection("rating")
+            .doc(name)
             .update({ value: FirebaseService.incrementBy(1) })
             .catch(error => console.error(error));
     };

@@ -33,6 +33,7 @@ export const CategoryDialog: FC<CategoryDialogProps> = ({ open, onClose }) => {
 
     return (
         <Dialog
+            keepMounted
             hideBackdrop={fullScreen}
             TransitionComponent={SlideUp}
             fullWidth
