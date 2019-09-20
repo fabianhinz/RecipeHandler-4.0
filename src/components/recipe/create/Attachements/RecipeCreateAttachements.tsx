@@ -8,6 +8,7 @@ import { createStyles, Fab, Grid, makeStyles } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
 import { useSnackbar } from "notistack";
 import { AttachementData, AttachementMetadata } from "../../../../model/model";
+import clsx from "clsx";
 
 const readDocumentAsync = (document: Blob) =>
     new Promise<string>((resolve, reject) => {
@@ -113,8 +114,7 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
                     <div {...getRootProps()} className={classes.rootProps}>
                         <input {...getInputProps()} />
                         <Fab
-                            size="medium"
-                            className={classes.fab}
+                            className={clsx(!isDragActive && classes.fab)}
                             color="secondary"
                             variant="extended"
                         >
