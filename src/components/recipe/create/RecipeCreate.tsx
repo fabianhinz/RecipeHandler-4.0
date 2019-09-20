@@ -56,7 +56,9 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
 
     useEffect(() => {
         let categories: Categories<string> = {};
-        selectedCategories.forEach((value, type) => (categories[type] = value));
+        selectedCategories.forEach((value, type) => {
+            categories[type] = value;
+        });
         dispatch({ type: "categoriesChange", categories });
     }, [dispatch, selectedCategories]);
 
@@ -89,13 +91,13 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
         // ToDo what should we do here?
         if (!categoriesCollection) return;
 
-        if (
-            selectedCategories.size !== Object.keys(categoriesCollection).length ||
-            state.name.length === 0
-        )
-            return enqueueSnackbar(<>Das Rezept sollte um Kategorien und Namen ergänzt werden</>, {
-                variant: "warning"
-            });
+        if (selectedCategories.size === 0 || state.name.length === 0)
+            return enqueueSnackbar(
+                <>Das Rezept sollte um mindestens eine Kategorie und den Namen ergänzt werden</>,
+                {
+                    variant: "warning"
+                }
+            );
 
         dispatch({ type: "attachementsUploadingChange", now: true });
         const uploadTasks: Array<PromiseLike<any>> = [];
@@ -136,6 +138,10 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                 description,
                 attachements: metadata,
                 categories,
+                // categories: {
+                //     ...Object.keys(categoriesCollection).map(key => ({ [key]: "" })[0]),
+                //     ...categories
+                // },
                 createdDate: FirebaseService.createTimestampFrom(new Date())
             });
 

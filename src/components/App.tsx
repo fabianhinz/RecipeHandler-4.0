@@ -33,7 +33,7 @@ const App: FC = () => {
                     preventDuplicate
                     anchorOrigin={{
                         vertical: "bottom",
-                        horizontal: "center"
+                        horizontal: "left"
                     }}
                 >
                     <RouterProvider>

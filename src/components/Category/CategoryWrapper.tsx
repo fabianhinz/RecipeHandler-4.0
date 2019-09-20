@@ -2,7 +2,7 @@ import ArtIcon from "@material-ui/icons/BookTwoTone";
 import AufwandIcon from "@material-ui/icons/AvTimerTwoTone";
 import SpeisenfolgeIcon from "@material-ui/icons/DirectionsTwoTone";
 import React, { FC } from "react";
-import { Avatar, Chip, Grid, InputBase, Typography } from "@material-ui/core";
+import { Avatar, Chip, Grid, InputBase, Typography, Divider } from "@material-ui/core";
 import { useCategoriesCollection } from "../../hooks/useCategoriesCollection";
 import { CategoryBase } from "./CategoryBase";
 import { Loading } from "../Shared/Loading";
@@ -28,7 +28,12 @@ export const avatarFromCategoryType = (type: string) => {
                 </Avatar>
             );
         default: {
-            throw Error("could not get avatar from categorytype");
+            // Todo get icons for various labels
+            return (
+                <Avatar>
+                    <ArtIcon />
+                </Avatar>
+            );
         }
     }
 };
@@ -96,7 +101,7 @@ export const CategoryWrapper: FC<CategoryWrapperProps> = ({
                 <Grid key={type} item xs={12}>
                     <Typography gutterBottom>{type}</Typography>
                     <Grid container spacing={1}>
-                        {categoriesCollection[type].map(value => (
+                        {categoriesCollection[type].sort().map(value => (
                             <Grid item key={value}>
                                 <NameChangeCategory
                                     onNameChange={onNameChange}
