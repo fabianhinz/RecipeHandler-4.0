@@ -27,10 +27,53 @@ export const avatarFromCategoryType = (type: string) => {
                     <SpeisenfolgeIcon />
                 </Avatar>
             );
-        default:
+        default: {
             throw Error("could not get avatar from categorytype");
+        }
     }
 };
+
+const NameChangeCategory: FC<Pick<CategoryWrapperProps, "onNameChange"> & SharedProps> = ({
+    onNameChange,
+    type,
+    value
+}) => (
+    <>
+        {onNameChange && (
+            <Chip
+                avatar={avatarFromCategoryType(type)}
+                color="default"
+                label={
+                    <InputBase
+                        defaultValue={value}
+                        onChange={e => onNameChange(type, value, e.target.value)}
+                    />
+                }
+            />
+        )}
+    </>
+);
+
+const CategoryChangeCategory: FC<
+    Pick<CategoryWrapperProps, "onCategoryChange" | "selectedCategories"> & SharedProps
+> = ({ onCategoryChange, selectedCategories, type, value }) => (
+    <>
+        {onCategoryChange && selectedCategories && (
+            <CategoryBase onClick={() => onCategoryChange(type, value)}>
+                <Chip
+                    avatar={avatarFromCategoryType(type)}
+                    color={selectedCategories.get(type) === value ? "primary" : "default"}
+                    label={<Typography variant="subtitle2">{value}</Typography>}
+                />
+            </CategoryBase>
+        )}
+    </>
+);
+
+interface SharedProps {
+    type: string;
+    value: string;
+}
 
 interface CategoryWrapperProps {
     selectedCategories?: Map<string, string>;
@@ -55,35 +98,17 @@ export const CategoryWrapper: FC<CategoryWrapperProps> = ({
                     <Grid container spacing={1}>
                         {categoriesCollection[type].map(value => (
                             <Grid item key={value}>
-                                {onNameChange && (
-                                    <Chip
-                                        avatar={avatarFromCategoryType(type)}
-                                        color="default"
-                                        label={
-                                            <InputBase
-                                                defaultValue={value}
-                                                onChange={e =>
-                                                    onNameChange(type, value, e.target.value)
-                                                }
-                                            />
-                                        }
-                                    />
-                                )}
-                                {onCategoryChange && selectedCategories && (
-                                    <CategoryBase onClick={() => onCategoryChange(type, value)}>
-                                        <Chip
-                                            avatar={avatarFromCategoryType(type)}
-                                            color={
-                                                selectedCategories.get(type) === value
-                                                    ? "primary"
-                                                    : "default"
-                                            }
-                                            label={
-                                                <Typography variant="subtitle2">{value}</Typography>
-                                            }
-                                        />
-                                    </CategoryBase>
-                                )}
+                                <NameChangeCategory
+                                    onNameChange={onNameChange}
+                                    type={type}
+                                    value={value}
+                                />
+                                <CategoryChangeCategory
+                                    onCategoryChange={onCategoryChange}
+                                    selectedCategories={selectedCategories}
+                                    type={type}
+                                    value={value}
+                                />
                             </Grid>
                         ))}
                     </Grid>

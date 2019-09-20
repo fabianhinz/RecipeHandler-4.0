@@ -16,6 +16,8 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({ onThemeChange, dis
     <Box
         minWidth={50}
         display="flex"
+        justifyContent="center"
+        alignItems="center"
         flexDirection="column"
         onClick={() => dispatch({ type: "drawerChange" })}
     >

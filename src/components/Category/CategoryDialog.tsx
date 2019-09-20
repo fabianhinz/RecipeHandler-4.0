@@ -15,7 +15,6 @@ import {
 } from "@material-ui/core";
 import { SlideUp } from "../Shared/Transitions";
 import { CategoryWrapper } from "./CategoryWrapper";
-import { CategoryBase } from "./CategoryBase";
 
 interface CategoryDialogProps {
     open: boolean;
@@ -51,13 +50,11 @@ export const CategoryDialog: FC<CategoryDialogProps> = ({ open, onClose }) => {
 
                 <DialogContentText>Neue Kategorie hinzufügen</DialogContentText>
 
-                <CategoryBase>
-                    <Chip
-                        onDelete={() => alert("TODO")}
-                        deleteIcon={<AddIcon />}
-                        label={<InputBase placeholder="Namen eintragen" />}
-                    />
-                </CategoryBase>
+                <Chip
+                    onDelete={() => alert("TODO")}
+                    deleteIcon={<AddIcon />}
+                    label={<InputBase placeholder="Namen eintragen" />}
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Abbrechen</Button>
