@@ -1,119 +1,94 @@
-import BookIcon from "@material-ui/icons/BookTwoTone";
+import ArtIcon from "@material-ui/icons/BookTwoTone";
+import AufwandIcon from "@material-ui/icons/AvTimerTwoTone";
+import SpeisenfolgeIcon from "@material-ui/icons/DirectionsTwoTone";
 import React, { FC } from "react";
-import {
-    Avatar,
-    Chip,
-    Grid,
-    InputBase,
-    Typography,
-    makeStyles,
-    createStyles,
-    ButtonBase
-} from "@material-ui/core";
-import { RecipeCategories } from "../../model/model";
-import { ButtonBaseProps } from "@material-ui/core/ButtonBase";
+import { Avatar, Chip, Grid, InputBase, Typography } from "@material-ui/core";
+import { useCategoriesCollection } from "../../hooks/useCategoriesCollection";
+import { CategoryBase } from "./CategoryBase";
+import { Loading } from "../Shared/Loading";
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        buttonBase: {
-            borderRadius: 16
-        }
-    })
-);
-
-export const CategoryBase: FC<ButtonBaseProps> = ({ children, ...buttonBaseProps }) => {
-    const classes = useStyles();
-    return (
-        <ButtonBase className={classes.buttonBase} {...buttonBaseProps}>
-            {children}
-        </ButtonBase>
-    );
+export const avatarFromCategoryType = (type: string) => {
+    switch (type) {
+        case "Art":
+            return (
+                <Avatar>
+                    <ArtIcon />
+                </Avatar>
+            );
+        case "Aufwand":
+            return (
+                <Avatar>
+                    <AufwandIcon />
+                </Avatar>
+            );
+        case "Speisenfolge":
+            return (
+                <Avatar>
+                    <SpeisenfolgeIcon />
+                </Avatar>
+            );
+        default:
+            throw Error("could not get avatar from categorytype");
+    }
 };
 
-const categoryAvatar = (
-    <Avatar>
-        <BookIcon />
-    </Avatar>
-);
-
-interface ReadonlyProps {
-    categories: RecipeCategories;
-}
-
-const Readonly: FC<ReadonlyProps> = ({ categories }) => (
-    <Grid container spacing={1}>
-        {Object.keys(categories).map(key => (
-            <Grid item key={key}>
-                <Chip
-                    avatar={categoryAvatar}
-                    size="small"
-                    color={categories[key] ? "primary" : "default"}
-                    label={key}
-                />
-            </Grid>
-        ))}
-    </Grid>
-);
-
-interface NameProps extends ReadonlyProps {
-    onNameChange?: (key: string, value: string) => void;
-}
-
-const Name: FC<NameProps> = ({ categories, onNameChange }) => (
-    <Grid container spacing={1}>
-        {Object.keys(categories).map(key => (
-            <Grid item key={key}>
-                <Chip
-                    avatar={categoryAvatar}
-                    color="default"
-                    label={
-                        <InputBase
-                            defaultValue={key}
-                            onChange={e => onNameChange!(key, e.target.value)}
-                        />
-                    }
-                />
-            </Grid>
-        ))}
-    </Grid>
-);
-
-interface CategoryProps extends ReadonlyProps {
-    onCategoryChange?: (key: string) => void;
-}
-
-const Category: FC<CategoryProps> = ({ categories, onCategoryChange }) => (
-    <Grid container spacing={1}>
-        {Object.keys(categories).map(key => (
-            <Grid item key={key}>
-                <CategoryBase onClick={() => onCategoryChange!(key)}>
-                    <Chip
-                        avatar={categoryAvatar}
-                        color={categories[key] ? "primary" : "default"}
-                        label={<Typography variant="subtitle2">{key}</Typography>}
-                    />
-                </CategoryBase>
-            </Grid>
-        ))}
-    </Grid>
-);
-
-interface CategoryWrapperProps extends CategoryProps, NameProps, ReadonlyProps {
-    variant: "changeableCategory" | "changeableName" | "readonly";
+interface CategoryWrapperProps {
+    selectedCategories?: Map<string, string>;
+    onCategoryChange?: (type: string, value: string) => void;
+    onNameChange?: (type: string, oldValue: string, newValue: string) => void;
 }
 
 export const CategoryWrapper: FC<CategoryWrapperProps> = ({
-    categories,
-    variant,
     onCategoryChange,
-    onNameChange
+    onNameChange,
+    selectedCategories
 }) => {
-    switch (variant) {
-        case "readonly":
-            return <Readonly categories={categories} />;
-        case "changeableName":
-            return <Name categories={categories} onNameChange={onNameChange} />;
-        case "changeableCategory":
-            return <Category categories={categories} onCategoryChange={onCategoryChange} />;
-    }
+    const { categories } = useCategoriesCollection();
+
+    if (!categories) return <Loading />;
+
+    return (
+        <Grid container spacing={2}>
+            {Object.keys(categories).map(type => (
+                <Grid key={type} item xs={12}>
+                    <Typography gutterBottom>{type}</Typography>
+                    <Grid container spacing={1}>
+                        {categories[type].map(value => (
+                            <Grid item key={value}>
+                                {onNameChange && (
+                                    <Chip
+                                        avatar={avatarFromCategoryType(type)}
+                                        color="default"
+                                        label={
+                                            <InputBase
+                                                defaultValue={value}
+                                                onChange={e =>
+                                                    onNameChange(type, value, e.target.value)
+                                                }
+                                            />
+                                        }
+                                    />
+                                )}
+                                {onCategoryChange && selectedCategories && (
+                                    <CategoryBase onClick={() => onCategoryChange(type, value)}>
+                                        <Chip
+                                            avatar={avatarFromCategoryType(type)}
+                                            color={
+                                                selectedCategories.get(type) === value
+                                                    ? "primary"
+                                                    : "default"
+                                            }
+                                            label={
+                                                <Typography variant="subtitle2">{value}</Typography>
+                                            }
+                                        />
+                                    </CategoryBase>
+                                )}
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Grid>
+            ))}
+        </Grid>
+    );
 };

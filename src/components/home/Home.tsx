@@ -6,15 +6,24 @@ import { HomeRecipe } from "./Recipe/HomeRecipe";
 import { Recipe, AttachementMetadata } from "../../model/model";
 import { FirebaseService } from "../../firebase";
 import { firestore } from "firebase";
+import { useCategorySelect } from "../../hooks/useCategorySelect";
 
 type DocumentId = string;
 type RecipeDocument = Recipe<AttachementMetadata>;
 type ChangesRecord = Record<firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>;
 
 const Home = () => {
-    const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map());
     const [mostRecentRecipes, setMostRecentRecipes] = useState<Array<RecipeDocument>>([]);
+    const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map());
     const [lastRecipeName, setLastRecipeName] = useState("");
+    const [pagination, setPagination] = useState(false);
+
+    const { selectedCategories, setSelectedCategories } = useCategorySelect();
+
+    const handleCategoryChange = (type: string, value: string) => {
+        setLastRecipeName("");
+        setSelectedCategories(type, value);
+    };
 
     useEffect(() => {
         return FirebaseService.firestore
@@ -32,15 +41,19 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        return FirebaseService.firestore
-            .collection("recipes")
-            .orderBy("name", "asc")
-            .where("categories.a", "==", true)
-            .where("categories.b", "==", true)
-            .startAfter(lastRecipeName)
-            .limit(4)
-            .onSnapshot(
-                querySnapshot => {
+        // ? constructing the query with both where and orderBy clauses requires multiple indexes
+        let query:
+            | firestore.CollectionReference
+            | firestore.Query = FirebaseService.firestore.collection("recipes");
+
+        if (selectedCategories.size === 0) {
+            setPagination(true);
+
+            return query
+                .orderBy("name", "asc")
+                .startAfter(lastRecipeName)
+                .limit(4)
+                .onSnapshot(querySnapshot => {
                     const changes: ChangesRecord = {
                         added: new Map(),
                         modified: new Map(),
@@ -55,21 +68,36 @@ const Home = () => {
                         changes.removed.forEach((_v, key) => recipes.delete(key));
                         return new Map([...recipes, ...changes.added, ...changes.modified]);
                     });
-                },
-                error => {
-                    console.error(error);
-                }
+                });
+        } else {
+            setPagination(false);
+            selectedCategories.forEach(
+                (value, type) => (query = query.where(`categories.${type}`, "==", value))
             );
-    }, [lastRecipeName]);
+
+            return query.onSnapshot(
+                querySnapshot => {
+                    const added: Map<DocumentId, RecipeDocument> = new Map();
+                    querySnapshot.docs.map(doc => added.set(doc.id, doc.data() as RecipeDocument));
+                    setPagedRecipes(added);
+                },
+                error => console.error(error)
+            );
+        }
+    }, [lastRecipeName, selectedCategories, selectedCategories.size]);
 
     return (
         <Fade in>
             <>
                 <HomeRecentlyAdded recipes={mostRecentRecipes} />
-                <HomeCategory />
+                <HomeCategory
+                    selectedCategories={selectedCategories}
+                    onCategoryChange={handleCategoryChange}
+                />
                 <HomeRecipe
                     recipes={[...pagedRecipes.values()]}
                     onExpandClick={setLastRecipeName}
+                    expandDisabled={!pagination}
                 />
             </>
         </Fade>

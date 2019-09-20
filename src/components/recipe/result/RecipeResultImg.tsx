@@ -4,6 +4,7 @@ import { Box, createStyles, Grid, LinearProgress, makeStyles } from "@material-u
 import { AttachementData, AttachementMetadata } from "../../../model/model";
 import { useAttachementRef } from "../../../hooks/useAttachementRef";
 import { isData, isMetadata } from "../../../model/modelUtil";
+import { Loading } from "../../Shared/Loading";
 
 const ImgGrid: FC = ({ children }) => (
     <Grid xs={12} sm={6} md={4} lg={3} item>
@@ -45,19 +46,7 @@ export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement }) => {
         return (
             <ImgGrid>
                 {attachementRefLoading ? (
-                    <Box
-                        height="100%"
-                        minHeight={50}
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                    >
-                        <LinearProgress
-                            className={classes.progress}
-                            color="secondary"
-                            variant="query"
-                        />
-                    </Box>
+                    <Loading />
                 ) : (
                     <img className={classes.img} src={attachementRef.dataUrl} alt="" />
                 )}

@@ -6,6 +6,7 @@ import { AttachementMetadata, Recipe } from "../../../model/model";
 
 interface HomeRecipeProps {
     recipes: Array<Recipe<AttachementMetadata>>;
+    expandDisabled: boolean;
     onExpandClick: (lastRecipeName: string) => void;
 }
 
@@ -24,10 +25,17 @@ export const HomeRecipe: FC<HomeRecipeProps> = props => {
             </div>
 
             <Box marginTop={2} display="flex" justifyContent="center">
-                <Tooltip title="Weitere Rezepte laden">
-                    <Fab size="small" color="secondary" onClick={handleExpandClick}>
-                        <ExpandIcon />
-                    </Fab>
+                <Tooltip title={!props.expandDisabled ? "Weitere Rezepte laden" : ""}>
+                    <div>
+                        <Fab
+                            disabled={props.expandDisabled}
+                            size="small"
+                            color="secondary"
+                            onClick={handleExpandClick}
+                        >
+                            <ExpandIcon />
+                        </Fab>
+                    </div>
                 </Tooltip>
             </Box>
         </Box>

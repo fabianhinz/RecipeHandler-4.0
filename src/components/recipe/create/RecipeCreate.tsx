@@ -22,12 +22,7 @@ import {
 import { RecipeCreateAttachements } from "./Attachements/RecipeCreateAttachements";
 import { RecipeResult } from "../Result/RecipeResult";
 import { useSnackbar } from "notistack";
-import {
-    AttachementData,
-    AttachementMetadata,
-    Recipe,
-    RecipeCategories
-} from "../../../model/model";
+import { AttachementData, AttachementMetadata, Recipe, Categories } from "../../../model/model";
 import { isData } from "../../../model/modelUtil";
 import { PATHS } from "../../Routes/Routes";
 import { Subtitle } from "../../Shared/Subtitle";
@@ -35,6 +30,7 @@ import { FirebaseService } from "../../../firebase";
 import { RouteComponentProps } from "react-router";
 import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
 import { CategoryWrapper } from "../../Category/CategoryWrapper";
+import { useCategorySelect } from "../../../hooks/useCategorySelect";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -51,11 +47,18 @@ interface RecipeCreateProps extends Pick<RouteComponentProps, "history" | "locat
 
 const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     const { state, dispatch } = useRecipeCreateReducer();
+    const { selectedCategories, setSelectedCategories } = useCategorySelect();
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const classes = useStyles();
     // ToDo what should we do here
     const saveDisabled = state.name.length === 0 || state.attachementsUploading;
+
+    useEffect(() => {
+        let categories: Categories<string> = {};
+        selectedCategories.forEach((value, type) => (categories[type] = value));
+        dispatch({ type: "categoriesChange", categories });
+    }, [dispatch, selectedCategories]);
 
     useEffect(() => {
         if (recipe) dispatch({ type: "loadState", recipe });
@@ -148,10 +151,6 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
         dispatch({ type: "removeAttachement", name });
     };
 
-    const handleCategoryChange = (key: string) => {
-        dispatch({ type: "categoryChange", key });
-    };
-
     // ? with useCallback  and memo chained together we improve performance
     const handleSaveAttachement = useCallback(
         (name: AttachementName) => {
@@ -200,9 +199,8 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                     <CardContent>
                         <Subtitle text="Kategorien" />
                         <CategoryWrapper
-                            variant="changeableCategory"
-                            onCategoryChange={handleCategoryChange}
-                            categories={state.categories}
+                            selectedCategories={selectedCategories}
+                            onCategoryChange={setSelectedCategories}
                         />
 
                         <Box marginTop={2} marginBottom={2}>

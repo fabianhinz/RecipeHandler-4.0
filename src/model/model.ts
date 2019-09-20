@@ -14,12 +14,17 @@ export interface AttachementMetadata extends Attachement {
 export interface Recipe<T extends Attachement> {
     name: string;
     created: string;
-    categories: RecipeCategories;
+    categories: Categories<string>;
     attachements: Array<T>;
     ingredients: string;
     description: string;
 }
 
-export interface RecipeCategories {
-    [key: string]: boolean;
+export type CategoryType = string;
+export interface Categories<T> {
+    [type: string]: T;
+}
+
+export interface Category {
+    [value: string]: string;
 }

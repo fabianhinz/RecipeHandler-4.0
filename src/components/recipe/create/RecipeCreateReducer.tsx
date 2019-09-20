@@ -1,14 +1,9 @@
 import { useReducer, Reducer } from "react";
-import {
-    AttachementData,
-    AttachementMetadata,
-    Recipe,
-    RecipeCategories
-} from "../../../model/model";
+import { AttachementData, AttachementMetadata, Recipe, Categories } from "../../../model/model";
 
 interface State {
     name: string;
-    categories: RecipeCategories;
+    categories: Categories<string>;
     attachements: Array<AttachementData | AttachementMetadata>;
     ingredients: string;
     description: string;
@@ -32,7 +27,7 @@ type Action =
     | { type: "recipeUploadingChange"; now: boolean }
     | { type: "attachementsDrop"; newAttachements: Array<AttachementData | AttachementMetadata> }
     | { type: "removeAttachement"; name: string }
-    | { type: "categoryChange"; key: string }
+    | { type: "categoriesChange"; categories: Categories<string> }
     | { type: "attachementNameChange"; name: AttachementName };
 
 const reducer: Reducer<State, Action> = (state, action) => {
@@ -57,9 +52,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
                     attachement => attachement.name !== action.name
                 )
             };
-        case "categoryChange":
-            const categories = { ...state.categories, [action.key]: !state.categories[action.key] };
-            return { ...state, categories };
+        case "categoriesChange":
+            return { ...state, categories: action.categories };
         case "attachementNameChange": {
             const { name } = action;
             state.attachements.forEach(attachement => {
@@ -72,7 +66,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
 
 const initialState: State = {
     name: "",
-    categories: { a: true, b: false },
+    categories: {},
     attachements: [],
     ingredients: "",
     description: "",

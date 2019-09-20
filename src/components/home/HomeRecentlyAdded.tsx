@@ -11,8 +11,8 @@ import {
     Typography
 } from "@material-ui/core";
 import { Recipe, AttachementMetadata } from "../../model/model";
-import { useRouter } from "../Routes/RouterContext";
 import { PATHS } from "../Routes/Routes";
+import { useRouter } from "../../hooks/useRouter";
 
 interface HomeRecentlyAddedProps {
     recipes: Array<Recipe<AttachementMetadata>>;

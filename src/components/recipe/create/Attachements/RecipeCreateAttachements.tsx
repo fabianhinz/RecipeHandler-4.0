@@ -27,6 +27,9 @@ const useStyles = makeStyles(theme => {
         },
         addIcon: {
             marginRight: theme.spacing(1)
+        },
+        fab: {
+            boxShadow: "none"
         }
     });
 });
@@ -109,7 +112,12 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
                 <Grid container justify="center">
                     <div {...getRootProps()} className={classes.rootProps}>
                         <input {...getInputProps()} />
-                        <Fab size="medium" color="primary" variant="extended">
+                        <Fab
+                            size="medium"
+                            className={classes.fab}
+                            color="secondary"
+                            variant="extended"
+                        >
                             <AddIcon className={classes.addIcon} />
                             Bilder hinzufügen
                         </Fab>

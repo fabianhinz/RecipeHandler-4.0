@@ -1,17 +1,16 @@
 import EditIcon from "@material-ui/icons/EditTwoTone";
-import React, { useState } from "react";
+import React, { useState, FC } from "react";
 import { Box, Card, CardContent, CardHeader, IconButton } from "@material-ui/core";
 import { CategoryDialog } from "../Category/CategoryDialog";
 import { CategoryWrapper } from "../Category/CategoryWrapper";
-import { RecipeCategories } from "../../model/model";
 
-export const HomeCategory = () => {
+interface HomeCategoryProps {
+    selectedCategories: Map<string, string>;
+    onCategoryChange: (type: string, value: string) => void;
+}
+
+export const HomeCategory: FC<HomeCategoryProps> = ({ onCategoryChange, selectedCategories }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [categories, setCategories] = useState<RecipeCategories>({ a: true, b: false });
-
-    const handleCategoryChange = (key: string) => {
-        setCategories(previous => ({ ...previous, [key]: !previous[key] }));
-    };
 
     return (
         <>
@@ -27,9 +26,8 @@ export const HomeCategory = () => {
                     />
                     <CardContent>
                         <CategoryWrapper
-                            variant="changeableCategory"
-                            categories={categories}
-                            onCategoryChange={handleCategoryChange}
+                            selectedCategories={selectedCategories}
+                            onCategoryChange={onCategoryChange}
                         />
                     </CardContent>
                 </Card>

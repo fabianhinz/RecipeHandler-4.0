@@ -1,42 +1,33 @@
 import AddIcon from "@material-ui/icons/AddCircleTwoTone";
-import BookIcon from "@material-ui/icons/BookTwoTone";
-import React, { FC, useState } from "react";
-import TimerIcon from "@material-ui/icons/AvTimerTwoTone";
+import React, { FC } from "react";
 import {
     Box,
     Button,
     Chip,
-    createStyles,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    FormControlLabel,
     InputBase,
-    makeStyles,
-    Radio,
-    RadioGroup,
     useMediaQuery,
     useTheme
 } from "@material-ui/core";
 import { SlideUp } from "../Shared/Transitions";
-import { CategoryWrapper, CategoryBase } from "./CategoryWrapper";
-import { RecipeCategories } from "../../model/model";
+import { CategoryWrapper } from "./CategoryWrapper";
+import { CategoryBase } from "./CategoryBase";
 
 interface CategoryDialogProps {
     open: boolean;
     onClose: () => void;
 }
 
-type Categories = Array<{ identifier: string; displayName: string }>;
-
 export const CategoryDialog: FC<CategoryDialogProps> = ({ open, onClose }) => {
-    const [categories, setCategories] = useState<RecipeCategories>();
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const handleNameChange = (key: string, value: string) => console.log(key, value);
+    const handleNameChange = (key: string, oldValue: string, newValue: string) =>
+        console.log(key, oldValue, newValue);
 
     return (
         <Dialog
@@ -52,11 +43,7 @@ export const CategoryDialog: FC<CategoryDialogProps> = ({ open, onClose }) => {
             <DialogContent>
                 <Box marginBottom={2}>
                     <DialogContentText>Vorhandene Kategorien bearbeiten</DialogContentText>
-                    <CategoryWrapper
-                        categories={{ a: true, b: true }}
-                        variant="changeableName"
-                        onNameChange={handleNameChange}
-                    />
+                    <CategoryWrapper onNameChange={handleNameChange} />
                 </Box>
 
                 <DialogContentText>Neue Kategorie hinzufügen</DialogContentText>

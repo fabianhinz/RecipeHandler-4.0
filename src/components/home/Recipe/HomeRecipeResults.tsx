@@ -14,10 +14,10 @@ import {
     Typography
 } from "@material-ui/core";
 import { RecipeResult } from "../../Recipe/Result/RecipeResult";
-import { useRouter } from "../../Routes/RouterContext";
 import { Recipe, AttachementMetadata } from "../../../model/model";
 import { BadgeRating } from "../../Shared/BadgeRating";
 import { PATHS } from "../../Routes/Routes";
+import { useRouter } from "../../../hooks/useRouter";
 
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === "light" ? brown[200] : brown[400];

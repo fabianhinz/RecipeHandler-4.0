@@ -13,7 +13,12 @@ interface HeaderNavigationProps extends HeaderDispatch {
 }
 
 export const HeaderNavigation: FC<HeaderNavigationProps> = ({ onThemeChange, dispatch }) => (
-    <Box display="flex" flexDirection="column" onClick={() => dispatch({ type: "drawerChange" })}>
+    <Box
+        minWidth={50}
+        display="flex"
+        flexDirection="column"
+        onClick={() => dispatch({ type: "drawerChange" })}
+    >
         <Navigate to={PATHS.home}>
             <IconButton>
                 <HomeIcon />
