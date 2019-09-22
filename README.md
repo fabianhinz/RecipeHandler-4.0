@@ -1,8 +1,8 @@
-# T.B.D
+# ReadMe
 
 ## this project depends on the following plugins
 
--   https://marketplace.visualstudio.com/items?itemName=miclo.sort-typescript-imports
+-   https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
 -   https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
 
 ## icon source
@@ -12,8 +12,6 @@
 
 ## may wanna use this
 
--   https://github.com/imagemin/imagemin#readme
--   https://www.npmjs.com/package/react-loading-skeleton
 -   Rich text editor
     -   https://draftjs.org/
     -   https://www.draft-js-plugins.com/plugin/image
@@ -26,9 +24,7 @@
 
 ## ToDo
 
--   build script
 -   Snackbar hooks (handle exceptions?)
--   error boundary
 
 ## best practices
 
@@ -44,5 +40,3 @@
 ## Was könnte man noch tun?
 
 -   Zutanliste statt Markdown Komponenten mit hinzufügen, entfernen (rechnen!)
--   Personenanzahl (bzgl. Zutaten)
--   RezeptResult: Bilder begrenzen

@@ -28,7 +28,6 @@ export const avatarFromCategoryType = (type: string) => {
                 </Avatar>
             );
         default: {
-            // Todo get icons for various labels
             return (
                 <Avatar>
                     <ArtIcon />

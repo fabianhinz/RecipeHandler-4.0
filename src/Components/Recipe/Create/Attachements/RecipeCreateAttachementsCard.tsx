@@ -54,7 +54,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
         if (isMetadata(attachement))
             return <CardMedia className={classes.cardMedia} image={attachementRef.dataUrl} />;
     };
-    // ! ToDo improve Transition handling (hook?)
+
     const handleDeleteClick = () => {
         setVisible(false);
         setTimeout(() => onRemoveAttachement!(attachement.name), 200);
