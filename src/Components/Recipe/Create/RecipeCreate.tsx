@@ -40,8 +40,7 @@ const useStyles = makeStyles(theme =>
         }
     })
 );
-// Todo instead of multipel state and effects lets make a hook which manages loading states
-// ! ToDo handle updates (extra care of attachements)
+
 interface RecipeCreateProps extends Pick<RouteComponentProps, "history" | "location"> {
     recipe?: Recipe<AttachementMetadata> | null;
 }
@@ -88,7 +87,6 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     }, [closeSnackbar, enqueueSnackbar, state.recipeUploading]);
 
     const handleSaveClick = async () => {
-        // ToDo what should we do here?
         if (!categoriesCollection) return;
 
         if (selectedCategories.size === 0 || state.name.length === 0)
@@ -164,7 +162,6 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     };
 
     const handleRemoveAttachement = (name: string) => {
-        // ToDo delete ref from firestore and img from storage
         dispatch({ type: "removeAttachement", name });
     };
 

@@ -42,7 +42,6 @@ export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
             </Grid>
 
             <Grid item xs={12}>
-                {/* ToDo: Time */}
                 {/* <Typography variant="caption">Erstellt am: {created}</Typography> */}
             </Grid>
         </Grid>
