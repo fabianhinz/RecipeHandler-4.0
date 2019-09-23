@@ -15,7 +15,7 @@ export interface AttachementMetadata extends Attachement {
 
 export interface Recipe<T extends Attachement> {
     name: string;
-    created: string;
+    createdDate: firebase.firestore.Timestamp;
     categories: Categories<string>;
     attachements: Array<T>;
     ingredients: string;
@@ -31,4 +31,4 @@ export interface Category {
     [value: string]: string;
 }
 
-export type RouteWithRecipeName = RouteComponentProps<{ name: string }>
+export type RouteWithRecipeName = RouteComponentProps<{ name: string }>;

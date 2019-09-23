@@ -145,10 +145,6 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                     description,
                     attachements: metadata,
                     categories,
-                    // categories: {
-                    //     ...Object.keys(categoriesCollection).map(key => ({ [key]: "" })[0]),
-                    //     ...categories
-                    // },
                     createdDate: FirebaseService.createTimestampFrom(new Date())
                 });
 
@@ -296,7 +292,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                             <RecipeResult
                                 recipe={{
                                     name: state.name,
-                                    created: new Date().toLocaleDateString(),
+                                    createdDate: FirebaseService.createTimestampFrom(new Date()),
                                     categories: state.categories,
                                     attachements: state.attachements,
                                     ingredients: state.ingredients,

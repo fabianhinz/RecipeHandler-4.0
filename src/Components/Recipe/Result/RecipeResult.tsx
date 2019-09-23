@@ -52,7 +52,9 @@ export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
             </Grid>
 
             <Grid item xs={12}>
-                {/* <Typography variant="caption">Erstellt am: {created}</Typography> */}
+                <Typography variant="caption">
+                    Erstellt am: {recipe.createdDate.toDate().toLocaleDateString()}
+                </Typography>
             </Grid>
         </Grid>
     );
