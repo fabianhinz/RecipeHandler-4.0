@@ -22,7 +22,7 @@ import {
 import { RecipeCreateAttachements } from "./Attachements/RecipeCreateAttachements";
 import { RecipeResult } from "../Result/RecipeResult";
 import { useSnackbar } from "notistack";
-import { AttachementData, AttachementMetadata, Recipe, Categories } from "../../../model/model";
+import { AttachementData, AttachementMetadata, Recipe } from "../../../model/model";
 import { isData } from "../../../model/modelUtil";
 import { PATHS } from "../../Routes/Routes";
 import { Subtitle } from "../../Shared/Subtitle";

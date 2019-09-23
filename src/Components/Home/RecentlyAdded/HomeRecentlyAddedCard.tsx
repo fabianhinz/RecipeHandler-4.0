@@ -6,8 +6,7 @@ import {
     createStyles,
     Avatar,
     Paper,
-    CardActionArea,
-    Fade
+    CardActionArea
 } from "@material-ui/core";
 import { Recipe, AttachementMetadata } from "../../../model/model";
 import { useRouterContext } from "../../Provider/RouterProvider";
