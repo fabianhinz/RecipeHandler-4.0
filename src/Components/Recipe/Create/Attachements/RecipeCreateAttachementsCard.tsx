@@ -16,6 +16,7 @@ import {
 import { AttachementData, AttachementMetadata } from "../../../../model/model";
 import { useAttachementRef } from "../../../../hooks/useAttachementRef";
 import { isData, isMetadata } from "../../../../model/modelUtil";
+import { useTransition } from "../../../../hooks/useTransition";
 
 const useStyles = makeStyles(() => {
     return createStyles({
@@ -43,9 +44,9 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
     onSaveAttachement,
     readonly
 }) => {
-    const [visible, setVisible] = useState(true);
     const [name, setName] = useState<string>(attachement.name);
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement);
+    const { componentVisible, componentTransition } = useTransition();
     const classes = useStyles();
 
     const cardMedia = () => {
@@ -56,13 +57,12 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
     };
 
     const handleDeleteClick = () => {
-        setVisible(false);
-        setTimeout(() => onRemoveAttachement!(attachement.name), 200);
+        componentTransition(() => onRemoveAttachement!(attachement.name));
     };
 
     return (
         <Grid item key={attachement.name}>
-            <Zoom in={visible} mountOnEnter timeout={200}>
+            <Zoom in={componentVisible} mountOnEnter timeout={200}>
                 <Card raised onClick={e => e.stopPropagation()}>
                     {attachementRefLoading ? (
                         <Skeleton variant="rect" className={classes.cardMedia} />
