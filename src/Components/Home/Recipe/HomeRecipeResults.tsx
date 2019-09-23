@@ -11,7 +11,8 @@ import {
     ExpansionPanelSummary,
     Grid,
     makeStyles,
-    Typography
+    Typography,
+    Hidden
 } from "@material-ui/core";
 import { RecipeResult } from "../../Recipe/Result/RecipeResult";
 import { Recipe, AttachementMetadata } from "../../../model/model";
@@ -19,6 +20,7 @@ import { BadgeRating } from "../../Shared/BadgeRating";
 import { PATHS } from "../../Routes/Routes";
 import { useRouterContext } from "../../Provider/RouterProvider";
 import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
+import { Comments } from "../../Shared/Comments";
 
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === "light" ? brown[200] : brown[400];
@@ -57,13 +59,22 @@ export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                                     {props.recipe.name.slice(0, 1).toUpperCase()}
                                 </Avatar>
                             </Grid>
-                            <Grid item>
-                                <Typography variant="button">{props.recipe.name}</Typography>
-                            </Grid>
+                            <Hidden only="xs">
+                                <Grid item>
+                                    <Typography variant="button">{props.recipe.name}</Typography>
+                                </Grid>
+                            </Hidden>
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <BadgeRating name={props.recipe.name} />
+                        <Grid container spacing={2}>
+                            <Grid item>
+                                <Comments />
+                            </Grid>
+                            <Grid item>
+                                <BadgeRating name={props.recipe.name} />
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
             </ExpansionPanelSummary>

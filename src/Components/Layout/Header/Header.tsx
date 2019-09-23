@@ -45,6 +45,7 @@ export const Header: FC<HeaderProps> = props => {
 
             <Hidden lgUp>
                 <SwipeableDrawer
+                    disableBackdropTransition
                     anchor="right"
                     open={state.drawer}
                     onClose={handleDrawerChange}
