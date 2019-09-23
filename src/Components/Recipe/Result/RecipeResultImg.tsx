@@ -1,16 +1,10 @@
 import React, { FC } from "react";
 import { BORDER_RADIUS } from "../../../theme";
-import { createStyles, Grid, makeStyles } from "@material-ui/core";
+import { createStyles, Grid, makeStyles, Tooltip } from "@material-ui/core";
 import { AttachementData, AttachementMetadata } from "../../../model/model";
 import { useAttachementRef } from "../../../hooks/useAttachementRef";
-import { isData, isMetadata } from "../../../model/modelUtil";
+import { isData } from "../../../model/modelUtil";
 import { Loading } from "../../Shared/Loading";
-
-const ImgGrid: FC = ({ children }) => (
-    <Grid xs={12} sm={6} md={4} lg={3} item>
-        {children}
-    </Grid>
-);
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -34,25 +28,17 @@ export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement }) => {
     const classes = useStyles();
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement);
 
-    if (isData(attachement)) {
-        return (
-            <ImgGrid>
-                <img className={classes.img} src={attachement.dataUrl} alt="" width="100%" />
-            </ImgGrid>
-        );
-    }
+    if (attachementRefLoading) return <Loading />;
 
-    if (isMetadata(attachement)) {
-        return (
-            <ImgGrid>
-                {attachementRefLoading ? (
-                    <Loading />
+    return (
+        <Grid xs={12} sm={6} md={4} lg={3} item>
+            <Tooltip title={attachement.name}>
+                {isData(attachement) ? (
+                    <img className={classes.img} src={attachement.dataUrl} alt="" width="100%" />
                 ) : (
                     <img className={classes.img} src={attachementRef.dataUrl} alt="" />
                 )}
-            </ImgGrid>
-        );
-    }
-    // ? just to make TypeScript happy...
-    return <></>;
+            </Tooltip>
+        </Grid>
+    );
 };

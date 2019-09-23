@@ -41,6 +41,8 @@ export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
                 </Grid>
             </Grid>
 
+            <Grid item xs={12} />
+
             <Grid item xs={12} md={6} lg={4}>
                 <Subtitle icon={<AssignmentIcon />} text="Zutaten" />
                 <ReactMarkdown source={recipe.ingredients} />
