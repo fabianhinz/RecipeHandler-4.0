@@ -10,6 +10,7 @@ import { RouterProvider } from "./Provider/RouterProvider";
 import { BrowserRouter } from "react-router-dom";
 import { FirebaseAuthProvider } from "./Provider/FirebaseAuthProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { CategoriesCollectionProvider } from "./Provider/CategoriesCollectionProvider";
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme);
@@ -41,10 +42,12 @@ const App: FC = () => {
                     <ErrorBoundary>
                         <RouterProvider>
                             <FirebaseAuthProvider>
-                                <Container maxWidth="lg">
-                                    <Header onThemeChange={handleThemeChange} />
-                                    <Main />
-                                </Container>
+                                <CategoriesCollectionProvider>
+                                    <Container maxWidth="lg">
+                                        <Header onThemeChange={handleThemeChange} />
+                                        <Main />
+                                    </Container>
+                                </CategoriesCollectionProvider>
                             </FirebaseAuthProvider>
                         </RouterProvider>
                     </ErrorBoundary>

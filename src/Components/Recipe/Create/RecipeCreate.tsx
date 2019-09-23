@@ -31,8 +31,8 @@ import { RouteComponentProps, Redirect } from "react-router";
 import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
 import { CategoryWrapper } from "../../Category/CategoryWrapper";
 import { useCategorySelect } from "../../../hooks/useCategorySelect";
-import { useCategoriesCollection } from "../../../hooks/useCategoriesCollection";
 import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
+import { useCategoriesCollectionContext } from "../../Provider/CategoriesCollectionProvider";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -49,7 +49,7 @@ interface RecipeCreateProps extends Pick<RouteComponentProps, "history" | "locat
 const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     const { state, dispatch } = useRecipeCreateReducer();
     const { selectedCategories, setSelectedCategories } = useCategorySelect();
-    const { categoriesCollection } = useCategoriesCollection();
+    const { categoriesCollection } = useCategoriesCollectionContext();
     const { user } = useFirebaseAuthContext();
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();

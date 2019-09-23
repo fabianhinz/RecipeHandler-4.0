@@ -25,7 +25,6 @@ const reducer: Reducer<State, Action> = (state, action) => {
         case "drawerChange":
             return { ...state, drawer: !state.drawer };
         case "dialogChange":
-            throw new Error("ups");
             return { ...state, dialog: !state.dialog };
     }
 };
