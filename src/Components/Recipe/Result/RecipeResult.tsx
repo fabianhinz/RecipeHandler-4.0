@@ -9,10 +9,12 @@ import { Subtitle } from "../../Shared/Subtitle";
 import { CategoryResult } from "../../Category/CategoryResult";
 
 interface RecipeResultProps {
-    recipe: Recipe<AttachementMetadata | AttachementData>;
+    recipe: Recipe<AttachementMetadata | AttachementData> | null;
 }
 
 export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
+    if (!recipe) return <Typography>not found</Typography>
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>

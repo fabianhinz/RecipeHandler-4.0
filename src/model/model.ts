@@ -1,3 +1,5 @@
+import { RouteComponentProps } from "react-router";
+
 export interface Attachement {
     name: string;
     size: number;
@@ -28,3 +30,5 @@ export interface Categories<T> {
 export interface Category {
     [value: string]: string;
 }
+
+export type RouteWithRecipeName = RouteComponentProps<{ name: string }>

@@ -88,6 +88,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
 
     const handleSaveClick = async () => {
         if (!categoriesCollection) return;
+        if (FirebaseService.firestore.collection("recipes").doc(state.name)) return enqueueSnackbar(<>Rezept mit dem Namen {state.name} existiert bereits</>, { variant: "info" })
 
         if (selectedCategories.size === 0 || state.name.length === 0)
             return enqueueSnackbar(
@@ -130,7 +131,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
         dispatch({ type: "recipeUploadingChange", now: true });
         const { name, ingredients, description, categories } = state;
         try {
-            await FirebaseService.firestore.collection("recipes").add({
+            await FirebaseService.firestore.collection("recipes").doc(name).set({
                 name,
                 ingredients,
                 description,
