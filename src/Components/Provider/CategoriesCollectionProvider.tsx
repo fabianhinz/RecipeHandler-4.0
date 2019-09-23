@@ -14,9 +14,10 @@ export const CategoriesCollectionProvider: FC = ({ children }) => {
     useEffect(() => {
         FirebaseService.firestore
             .collection("categories")
+            .doc("static")
             .get()
-            .then(querySnapshot =>
-                setCategories(querySnapshot.docs[0].data() as Categories<Array<string>>)
+            .then(documentSnapshot =>
+                setCategories(documentSnapshot.data() as Categories<Array<string>>)
             );
     }, []);
 
