@@ -90,7 +90,13 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
 
     const handleSaveClick = async () => {
         if (!categoriesCollection) return;
-        if (FirebaseService.firestore.collection("recipes").doc(state.name))
+
+        const documentSnapshot = await FirebaseService.firestore
+            .collection("recipes")
+            .doc(state.name)
+            .get();
+
+        if (documentSnapshot.exists)
             return enqueueSnackbar(<>Rezept mit dem Namen {state.name} existiert bereits</>, {
                 variant: "info"
             });

@@ -60,15 +60,15 @@ export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                                     {props.recipe.name.slice(0, 1).toUpperCase()}
                                 </Avatar>
                             </Grid>
-                            <Hidden only="xs">
+                            <Hidden xsDown>
                                 <Grid item>
-                                    <Typography variant="button">{props.recipe.name}</Typography>
+                                    <Typography>{props.recipe.name}</Typography>
                                 </Grid>
                             </Hidden>
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <Grid container spacing={2}>
+                        <Grid container spacing={1}>
                             <Grid item>
                                 <Share name={props.recipe.name} />
                             </Grid>
