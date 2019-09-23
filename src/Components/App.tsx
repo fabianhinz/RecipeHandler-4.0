@@ -9,6 +9,7 @@ import { SnackbarProvider } from "notistack";
 import { RouterProvider } from "./Provider/RouterProvider";
 import { BrowserRouter } from "react-router-dom";
 import { FirebaseAuthProvider } from "./Provider/FirebaseAuthProvider";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme);
@@ -37,14 +38,16 @@ const App: FC = () => {
                         horizontal: "left"
                     }}
                 >
-                    <RouterProvider>
-                        <FirebaseAuthProvider>
-                            <Container maxWidth="lg">
-                                <Header onThemeChange={handleThemeChange} />
-                                <Main />
-                            </Container>
-                        </FirebaseAuthProvider>
-                    </RouterProvider>
+                    <ErrorBoundary>
+                        <RouterProvider>
+                            <FirebaseAuthProvider>
+                                <Container maxWidth="lg">
+                                    <Header onThemeChange={handleThemeChange} />
+                                    <Main />
+                                </Container>
+                            </FirebaseAuthProvider>
+                        </RouterProvider>
+                    </ErrorBoundary>
                 </SnackbarProvider>
             </ThemeProvider>
         </BrowserRouter>
