@@ -3,17 +3,25 @@ import BookIcon from "@material-ui/icons/BookTwoTone";
 import React, { FC } from "react";
 import ReactMarkdown from "react-markdown";
 import { RecipeResultImg } from "./RecipeResultImg";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography, Box, Slide } from "@material-ui/core";
 import { Recipe, AttachementData, AttachementMetadata } from "../../../model/model";
 import { Subtitle } from "../../Shared/Subtitle";
 import { CategoryResult } from "../../Category/CategoryResult";
+import { ReactComponent as NotFoundIcon } from "../../../icons/notFound.svg";
 
 interface RecipeResultProps {
     recipe: Recipe<AttachementMetadata | AttachementData> | null;
 }
 
 export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
-    if (!recipe) return <Typography>not found</Typography>
+    if (!recipe)
+        return (
+            <Box display="flex" justifyContent="center">
+                <Slide in direction="down" timeout={500}>
+                    <NotFoundIcon width={200} />
+                </Slide>
+            </Box>
+        );
 
     return (
         <Grid container spacing={2}>
