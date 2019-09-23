@@ -33,6 +33,7 @@ import { CategoryWrapper } from "../../Category/CategoryWrapper";
 import { useCategorySelect } from "../../../hooks/useCategorySelect";
 import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { useCategoriesCollectionContext } from "../../Provider/CategoriesCollectionProvider";
+import { Navigate } from "../../Routes/Navigate";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -46,9 +47,9 @@ interface RecipeCreateProps extends Pick<RouteComponentProps, "history" | "locat
     recipe?: Recipe<AttachementMetadata> | null;
 }
 
-const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
-    const { state, dispatch } = useRecipeCreateReducer();
-    const { selectedCategories, setSelectedCategories } = useCategorySelect();
+const RecipeCreate: FC<RecipeCreateProps> = props => {
+    const { state, dispatch } = useRecipeCreateReducer(props.recipe);
+    const { selectedCategories, setSelectedCategories } = useCategorySelect(props.recipe);
     const { categoriesCollection } = useCategoriesCollectionContext();
     const { user } = useFirebaseAuthContext();
 
@@ -56,20 +57,12 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     const classes = useStyles();
 
     useEffect(() => {
-        let categories: Categories<string> = {};
-        selectedCategories.forEach((value, type) => {
-            categories[type] = value;
-        });
-        dispatch({ type: "categoriesChange", categories });
+        dispatch({ type: "categoriesChange", selectedCategories });
     }, [dispatch, selectedCategories]);
 
     useEffect(() => {
-        if (recipe) dispatch({ type: "loadState", recipe });
-    }, [dispatch, recipe]);
-
-    useEffect(() => {
         if (state.attachementsUploading)
-            enqueueSnackbar(<>Bilder werden hochgeladen</>, {
+            enqueueSnackbar(<>Bilder werden verarbeitet</>, {
                 persist: true,
                 variant: "info",
                 key: "ATTACHEMENT_UPLOAD_IN_PROGRESS"
@@ -79,7 +72,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
 
     useEffect(() => {
         if (state.recipeUploading)
-            enqueueSnackbar(<>Rezept wird engelegt</>, {
+            enqueueSnackbar(<>Rezept wird gespeichert</>, {
                 persist: true,
                 variant: "info",
                 key: "RECIPE_CREATION_IN_PROGRESS"
@@ -96,7 +89,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
             .doc(state.name)
             .get();
 
-        if (documentSnapshot.exists)
+        if (documentSnapshot.exists && document.location.pathname.includes("create"))
             return enqueueSnackbar(<>Rezept mit dem Namen {state.name} existiert bereits</>, {
                 variant: "info"
             });
@@ -111,8 +104,12 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
 
         dispatch({ type: "attachementsUploadingChange", now: true });
         const uploadTasks: Array<PromiseLike<any>> = [];
+        const oldAttachements: Array<AttachementMetadata> = [];
         for (const attachement of state.attachements) {
-            if (!isData(attachement)) continue;
+            if (!isData(attachement)) {
+                oldAttachements.push(attachement);
+                continue;
+            }
             const uploadTask = FirebaseService.storageRef
                 .child(`recipes/${state.name}/${attachement.name}`)
                 .putString(attachement.dataUrl, "data_url")
@@ -127,12 +124,12 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
         const finishedTaks = await Promise.all(uploadTasks);
 
         dispatch({ type: "attachementsUploadingChange", now: false });
-        const metadata: Array<AttachementMetadata> = [];
+        const newAttachements: Array<AttachementMetadata> = [];
         finishedTaks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
             // ? on "storage/unauthorized" snapshot is not of type "object"
             if (typeof snapshot !== "object") return;
             const { fullPath, size, name } = snapshot.metadata;
-            metadata.push({
+            newAttachements.push({
                 fullPath,
                 name,
                 size
@@ -149,7 +146,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                     name,
                     ingredients,
                     description,
-                    attachements: metadata,
+                    attachements: [...oldAttachements, ...newAttachements],
                     categories,
                     createdDate: FirebaseService.createTimestampFrom(new Date())
                 });
@@ -159,8 +156,8 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                 .doc(state.name)
                 .set({ value: 0 });
 
-            history.push(PATHS.home);
-            enqueueSnackbar(<>{state.name} angelegt</>, {
+            props.history.push(PATHS.home);
+            enqueueSnackbar(<>{state.name} gespeichert</>, {
                 variant: "success"
             });
         } catch (e) {
@@ -173,6 +170,11 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     };
 
     const handleRemoveAttachement = (name: string) => {
+        dispatch({ type: "removeAttachement", name });
+    };
+
+    const handleDeleteAttachement = async (name: string, path: string) => {
+        await FirebaseService.storageRef.child(path).delete();
         dispatch({ type: "removeAttachement", name });
     };
 
@@ -214,6 +216,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                     <CardHeader
                         title={
                             <TextField
+                                disabled={document.location.pathname.includes("edit")}
                                 className={classes.textFieldName}
                                 label="Name"
                                 value={state.name}
@@ -237,6 +240,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                         <Subtitle icon={<CameraIcon />} text="Bilder" />
                         <RecipeCreateAttachements
                             onAttachements={handleAttachementsDrop}
+                            onDeleteAttachement={handleDeleteAttachement}
                             onRemoveAttachement={handleRemoveAttachement}
                             onSaveAttachement={handleSaveAttachement}
                             attachements={state.attachements}
@@ -268,9 +272,9 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
                     <CardActions>
                         <Grid container justify="space-between" alignItems="center">
                             <Grid item>
-                                <Button size="small" onClick={() => history.push(PATHS.home)}>
-                                    Abbrechen
-                                </Button>
+                                <Navigate to={PATHS.home}>
+                                    <Button size="small">Abbrechen</Button>
+                                </Navigate>
 
                                 <Button
                                     disabled={state.attachementsUploading}

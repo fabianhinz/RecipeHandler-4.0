@@ -6,7 +6,6 @@ import { FirebaseService } from "../firebase";
 
 export const useAttachementRef = (attachement: AttachementMetadata | AttachementData) => {
     const { name, size } = attachement;
-    // ? name, size props are here - don't know if we want to use them
     const [attachementRef, setAttachementRef] = useState<AttachementData>({
         name,
         size,
