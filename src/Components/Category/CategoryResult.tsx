@@ -15,7 +15,7 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => (
                     <Chip
                         avatar={avatarFromCategoryType(type)}
                         size="small"
-                        color="primary"
+                        color="secondary"
                         label={categories[type]}
                     />
                 )}
