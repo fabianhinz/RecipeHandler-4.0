@@ -1,15 +1,19 @@
 import React, { FC } from "react";
-import { RouteComponentProps } from "react-router";
 import { RecipeResult } from "../Result/RecipeResult";
 import { Card, CardContent, Box, Fade } from "@material-ui/core";
+import { Loading } from "../../Shared/Loading";
+import { useRecipeDoc } from "../../../hooks/useRecipeDoc";
+import { RouteWithRecipeName } from "../../../model/model";
 
-const RecipeEdit: FC<RouteComponentProps> = ({ location }) => {
+const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
+    const { recipeDoc, recipeDocLoading } = useRecipeDoc(routeProps);
+
     return (
         <Fade in>
             <Box margin={2}>
                 <Card>
                     <CardContent>
-                        <RecipeResult recipe={location.state.recipe} />
+                        {recipeDocLoading ? <Loading /> : <RecipeResult recipe={recipeDoc} />}
                     </CardContent>
                 </Card>
             </Box>
@@ -17,4 +21,4 @@ const RecipeEdit: FC<RouteComponentProps> = ({ location }) => {
     );
 };
 
-export default RecipeEdit;
+export default RecipeDetails;

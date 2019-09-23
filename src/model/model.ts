@@ -1,3 +1,5 @@
+import { RouteComponentProps } from "react-router";
+
 export interface Attachement {
     name: string;
     size: number;
@@ -13,7 +15,7 @@ export interface AttachementMetadata extends Attachement {
 
 export interface Recipe<T extends Attachement> {
     name: string;
-    created: string;
+    createdDate: firebase.firestore.Timestamp;
     categories: Categories<string>;
     attachements: Array<T>;
     ingredients: string;
@@ -28,3 +30,5 @@ export interface Categories<T> {
 export interface Category {
     [value: string]: string;
 }
+
+export type RouteWithRecipeName = RouteComponentProps<{ name: string }>;

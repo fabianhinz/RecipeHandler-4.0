@@ -105,6 +105,7 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
                 <RecipeCreateAttachementsCard
                     key={attachement.name}
                     attachement={attachement}
+                    onDeleteAttachement={props.onDeleteAttachement}
                     onRemoveAttachement={props.onRemoveAttachement}
                     onSaveAttachement={props.onSaveAttachement}
                 />

@@ -45,6 +45,7 @@ export const Header: FC<HeaderProps> = props => {
 
             <Hidden lgUp>
                 <SwipeableDrawer
+                    disableBackdropTransition
                     anchor="right"
                     open={state.drawer}
                     onClose={handleDrawerChange}
@@ -58,7 +59,6 @@ export const Header: FC<HeaderProps> = props => {
             </Hidden>
 
             <HeaderLoginDialog
-                currentUser={state.currentUser}
                 dialog={state.dialog}
                 email={state.email}
                 password={state.password}

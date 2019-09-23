@@ -16,6 +16,7 @@ import {
 import { AttachementData, AttachementMetadata } from "../../../../model/model";
 import { useAttachementRef } from "../../../../hooks/useAttachementRef";
 import { isData, isMetadata } from "../../../../model/modelUtil";
+import { useTransition } from "../../../../hooks/useTransition";
 
 const useStyles = makeStyles(() => {
     return createStyles({
@@ -26,53 +27,55 @@ const useStyles = makeStyles(() => {
         }
     });
 });
-// ! on readonly those handler don't extist
 export interface AttachementsCardChangeHandler {
-    onRemoveAttachement?: (attachementName: string) => void;
-    onSaveAttachement?: (name: { old: string; new: string }) => void;
+    onDeleteAttachement: (name: string, path: string) => void;
+    onRemoveAttachement: (attachementName: string) => void;
+    onSaveAttachement: (name: { old: string; new: string }) => void;
 }
 
 interface RecipeCreateAttachementsCardProps extends AttachementsCardChangeHandler {
     attachement: AttachementData | AttachementMetadata;
-    readonly?: boolean;
 }
 
 const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
     attachement,
     onRemoveAttachement,
-    onSaveAttachement,
-    readonly
+    onDeleteAttachement,
+    onSaveAttachement
 }) => {
-    const [visible, setVisible] = useState(true);
     const [name, setName] = useState<string>(attachement.name);
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement);
+    const { componentVisible, componentTransition } = useTransition();
     const classes = useStyles();
 
-    const cardMedia = () => {
-        if (isData(attachement))
-            return <CardMedia className={classes.cardMedia} image={attachement.dataUrl} />;
-        if (isMetadata(attachement))
-            return <CardMedia className={classes.cardMedia} image={attachementRef.dataUrl} />;
+    const handleDeleteClick = () => {
+        if (isMetadata(attachement)) {
+            componentTransition(() => onDeleteAttachement(attachement.name, attachement.fullPath));
+        } else {
+            componentTransition(() => onRemoveAttachement(attachement.name));
+        }
     };
 
-    const handleDeleteClick = () => {
-        setVisible(false);
-        setTimeout(() => onRemoveAttachement!(attachement.name), 200);
-    };
+    const handleSaveClick = () =>
+        onSaveAttachement({
+            old: attachement.name,
+            new: name
+        });
 
     return (
-        <Grid item key={attachement.name}>
-            <Zoom in={visible} mountOnEnter timeout={200}>
+        <Grid item>
+            <Zoom in={componentVisible} mountOnEnter timeout={200}>
                 <Card raised onClick={e => e.stopPropagation()}>
                     {attachementRefLoading ? (
                         <Skeleton variant="rect" className={classes.cardMedia} />
+                    ) : isMetadata(attachement) ? (
+                        <CardMedia className={classes.cardMedia} image={attachementRef.dataUrl} />
                     ) : (
-                        cardMedia()
+                        <CardMedia className={classes.cardMedia} image={attachement.dataUrl} />
                     )}
                     <CardHeader
                         title={
                             <TextField
-                                disabled={readonly}
                                 margin="dense"
                                 label="Name"
                                 value={name}
@@ -82,24 +85,15 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
                         subheader={`${(attachement.size / 1000000).toFixed(1)} MB`}
                         action={
                             <>
-                                {!readonly && (
-                                    <>
-                                        <IconButton
-                                            disabled={attachement.name === name}
-                                            onClick={() =>
-                                                onSaveAttachement!({
-                                                    old: attachement.name,
-                                                    new: name
-                                                })
-                                            }
-                                        >
-                                            <SaveIcon />
-                                        </IconButton>
-                                        <IconButton onClick={handleDeleteClick}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </>
-                                )}
+                                <IconButton
+                                    disabled={attachement.name === name}
+                                    onClick={handleSaveClick}
+                                >
+                                    <SaveIcon />
+                                </IconButton>
+                                <IconButton onClick={handleDeleteClick}>
+                                    <DeleteIcon />
+                                </IconButton>
                             </>
                         }
                     />

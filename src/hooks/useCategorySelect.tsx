@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { Recipe, AttachementMetadata } from "../model/model";
 
-export const useCategorySelect = () => {
-    const [state, setState] = useState<Map<string, string>>(new Map());
+export const useCategorySelect = (recipe?: Recipe<AttachementMetadata> | null) => {
+    const [state, setState] = useState<Map<string, string>>(() => {
+        if (!recipe) return new Map();
+        return new Map(Object.keys(recipe.categories).map(type => [type, recipe.categories[type]]));
+    });
 
     const handleChange = (type: string, value: string) => {
         setState(previous => {
@@ -14,5 +18,8 @@ export const useCategorySelect = () => {
         });
     };
 
-    return { selectedCategories: state, setSelectedCategories: handleChange };
+    return {
+        selectedCategories: state,
+        setSelectedCategories: handleChange
+    };
 };

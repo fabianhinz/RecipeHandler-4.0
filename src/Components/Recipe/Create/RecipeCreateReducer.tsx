@@ -27,7 +27,7 @@ type Action =
     | { type: "recipeUploadingChange"; now: boolean }
     | { type: "attachementsDrop"; newAttachements: Array<AttachementData | AttachementMetadata> }
     | { type: "removeAttachement"; name: string }
-    | { type: "categoriesChange"; categories: Categories<string> }
+    | { type: "categoriesChange"; selectedCategories: Map<string, string> }
     | { type: "attachementNameChange"; name: AttachementName };
 
 const reducer: Reducer<State, Action> = (state, action) => {
@@ -53,7 +53,11 @@ const reducer: Reducer<State, Action> = (state, action) => {
                 )
             };
         case "categoriesChange":
-            return { ...state, categories: action.categories };
+            let categories: Categories<string> = {};
+            action.selectedCategories.forEach((value, type) => {
+                categories[type] = value;
+            });
+            return { ...state, categories };
         case "attachementNameChange": {
             const { name } = action;
             state.attachements.forEach(attachement => {
@@ -75,7 +79,7 @@ const initialState: State = {
     recipeUploading: false
 };
 
-export const useRecipeCreateReducer = () => {
-    const [state, dispatch] = useReducer(reducer, initialState);
+export const useRecipeCreateReducer = (recipe?: Recipe<AttachementMetadata> | null) => {
+    const [state, dispatch] = useReducer(reducer, { ...initialState, ...recipe });
     return { state, dispatch };
 };

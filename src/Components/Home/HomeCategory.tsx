@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Box, Card, CardContent, CardHeader } from "@material-ui/core";
+import { Box, Card, CardContent } from "@material-ui/core";
 import { CategoryWrapper } from "../Category/CategoryWrapper";
 
 interface HomeCategoryProps {
@@ -10,7 +10,6 @@ interface HomeCategoryProps {
 export const HomeCategory: FC<HomeCategoryProps> = ({ onCategoryChange, selectedCategories }) => (
     <Box margin={2}>
         <Card>
-            <CardHeader title="Kategorien" />
             <CardContent>
                 <CategoryWrapper
                     selectedCategories={selectedCategories}

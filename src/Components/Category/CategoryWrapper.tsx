@@ -2,10 +2,10 @@ import ArtIcon from "@material-ui/icons/BookTwoTone";
 import AufwandIcon from "@material-ui/icons/AvTimerTwoTone";
 import SpeisenfolgeIcon from "@material-ui/icons/DirectionsTwoTone";
 import React, { FC } from "react";
-import { Avatar, Chip, Grid, InputBase, Typography, Divider } from "@material-ui/core";
-import { useCategoriesCollection } from "../../hooks/useCategoriesCollection";
+import { Avatar, Chip, Grid, InputBase, Typography } from "@material-ui/core";
 import { CategoryBase } from "./CategoryBase";
 import { Loading } from "../Shared/Loading";
+import { useCategoriesCollectionContext } from "../Provider/CategoriesCollectionProvider";
 
 export const avatarFromCategoryType = (type: string) => {
     switch (type) {
@@ -66,7 +66,7 @@ const CategoryChangeCategory: FC<
             <CategoryBase onClick={() => onCategoryChange(type, value)}>
                 <Chip
                     avatar={avatarFromCategoryType(type)}
-                    color={selectedCategories.get(type) === value ? "primary" : "default"}
+                    color={selectedCategories.get(type) === value ? "secondary" : "default"}
                     label={<Typography variant="subtitle2">{value}</Typography>}
                 />
             </CategoryBase>
@@ -90,7 +90,7 @@ export const CategoryWrapper: FC<CategoryWrapperProps> = ({
     onNameChange,
     selectedCategories
 }) => {
-    const { categoriesCollection } = useCategoriesCollection();
+    const { categoriesCollection } = useCategoriesCollectionContext();
 
     if (!categoriesCollection) return <Loading />;
 

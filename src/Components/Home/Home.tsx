@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Fade } from "@material-ui/core";
 import { HomeCategory } from "./HomeCategory";
-import { HomeRecentlyAdded } from "./HomeRecentlyAdded";
+import { HomeRecentlyAdded } from "./RecentlyAdded/HomeRecentlyAdded";
 import { HomeRecipe } from "./Recipe/HomeRecipe";
 import { Recipe, AttachementMetadata } from "../../model/model";
 import { FirebaseService } from "../../firebase";
@@ -29,7 +29,7 @@ const Home = () => {
         return FirebaseService.firestore
             .collection("recipes")
             .orderBy("createdDate", "desc")
-            .limit(10)
+            .limit(6)
             .onSnapshot(
                 querySnapshot => {
                     setMostRecentRecipes(

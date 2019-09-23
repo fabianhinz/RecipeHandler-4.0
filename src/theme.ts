@@ -50,6 +50,11 @@ const sharedTheme: Partial<ThemeOptions> = {
                 borderRadius: BORDER_RADIUS
             }
         },
+        MuiCardHeader: {
+            action: {
+                alignSelf: "center"
+            }
+        },
         // ! dirty workaround for https://github.com/mui-org/material-ui/issues/16374
         MuiAvatar: {
             root: {
