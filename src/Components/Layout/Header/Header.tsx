@@ -58,7 +58,6 @@ export const Header: FC<HeaderProps> = props => {
             </Hidden>
 
             <HeaderLoginDialog
-                currentUser={state.currentUser}
                 dialog={state.dialog}
                 email={state.email}
                 password={state.password}

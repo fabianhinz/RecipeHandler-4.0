@@ -12,14 +12,14 @@ import {
 } from "@material-ui/core";
 import { Recipe, AttachementMetadata } from "../../model/model";
 import { PATHS } from "../Routes/Routes";
-import { useRouter } from "../../hooks/useRouter";
+import { useRouterContext } from "../Provider/RouterProvider";
 
 interface HomeRecentlyAddedProps {
     recipes: Array<Recipe<AttachementMetadata>>;
 }
 
 export const HomeRecentlyAdded: FC<HomeRecentlyAddedProps> = ({ recipes }) => {
-    const { history } = useRouter();
+    const { history } = useRouterContext();
 
     return (
         <Box margin={2}>

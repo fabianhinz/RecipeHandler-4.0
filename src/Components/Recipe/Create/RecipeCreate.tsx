@@ -27,11 +27,12 @@ import { isData } from "../../../model/modelUtil";
 import { PATHS } from "../../Routes/Routes";
 import { Subtitle } from "../../Shared/Subtitle";
 import { FirebaseService } from "../../../firebase";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps, Redirect } from "react-router";
 import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
 import { CategoryWrapper } from "../../Category/CategoryWrapper";
 import { useCategorySelect } from "../../../hooks/useCategorySelect";
 import { useCategoriesCollection } from "../../../hooks/useCategoriesCollection";
+import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -49,6 +50,7 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     const { state, dispatch } = useRecipeCreateReducer();
     const { selectedCategories, setSelectedCategories } = useCategorySelect();
     const { categoriesCollection } = useCategoriesCollection();
+    const { user } = useFirebaseAuthContext();
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const classes = useStyles();
@@ -88,7 +90,10 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
 
     const handleSaveClick = async () => {
         if (!categoriesCollection) return;
-        if (FirebaseService.firestore.collection("recipes").doc(state.name)) return enqueueSnackbar(<>Rezept mit dem Namen {state.name} existiert bereits</>, { variant: "info" })
+        if (FirebaseService.firestore.collection("recipes").doc(state.name))
+            return enqueueSnackbar(<>Rezept mit dem Namen {state.name} existiert bereits</>, {
+                variant: "info"
+            });
 
         if (selectedCategories.size === 0 || state.name.length === 0)
             return enqueueSnackbar(
@@ -131,18 +136,21 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
         dispatch({ type: "recipeUploadingChange", now: true });
         const { name, ingredients, description, categories } = state;
         try {
-            await FirebaseService.firestore.collection("recipes").doc(name).set({
-                name,
-                ingredients,
-                description,
-                attachements: metadata,
-                categories,
-                // categories: {
-                //     ...Object.keys(categoriesCollection).map(key => ({ [key]: "" })[0]),
-                //     ...categories
-                // },
-                createdDate: FirebaseService.createTimestampFrom(new Date())
-            });
+            await FirebaseService.firestore
+                .collection("recipes")
+                .doc(name)
+                .set({
+                    name,
+                    ingredients,
+                    description,
+                    attachements: metadata,
+                    categories,
+                    // categories: {
+                    //     ...Object.keys(categoriesCollection).map(key => ({ [key]: "" })[0]),
+                    //     ...categories
+                    // },
+                    createdDate: FirebaseService.createTimestampFrom(new Date())
+                });
 
             await FirebaseService.firestore
                 .collection("rating")
@@ -194,6 +202,8 @@ const RecipeCreate: FC<RecipeCreateProps> = ({ history, location, recipe }) => {
     ) => {
         dispatch({ type: "textFieldChange", key, value: event.target.value });
     };
+
+    if (!user) return <Redirect to={PATHS.home} />;
 
     return (
         <Fade in>

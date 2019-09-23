@@ -1,4 +1,4 @@
-import React, { FC, useEffect, ChangeEvent } from "react";
+import React, { FC, ChangeEvent } from "react";
 import {
     Box,
     Dialog,
@@ -13,18 +13,14 @@ import { SlideUp } from "../../Shared/Transitions";
 import { useSnackbar } from "notistack";
 import { HeaderState, HeaderChangeKey, HeaderDispatch } from "./HeaderReducer";
 import { FirebaseService } from "../../../firebase";
+import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 
-type HeaderLoginDialogProps = HeaderState<"currentUser" | "email" | "dialog" | "password"> &
-    HeaderDispatch;
+type HeaderLoginDialogProps = HeaderState<"email" | "dialog" | "password"> & HeaderDispatch;
 
 export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...props }) => {
-    const { enqueueSnackbar } = useSnackbar();
+    const { user } = useFirebaseAuthContext();
 
-    useEffect(() => {
-        return FirebaseService.auth.onAuthStateChanged(user =>
-            dispatch({ type: "userChange", user })
-        );
-    }, [dispatch]);
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -53,12 +49,12 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
             open={props.dialog}
             onClose={handleDialogChange}
         >
-            {props.currentUser ? (
+            {user ? (
                 <>
                     <DialogContent>
                         <Typography variant="subtitle1">
-                            Angemeldet als {props.currentUser.email}. Rezepte können nun bearbeitet
-                            und erstellt werden.
+                            Angemeldet als {user.email}. Rezepte können nun bearbeitet und erstellt
+                            werden.
                         </Typography>
                     </DialogContent>
                     <DialogActions>

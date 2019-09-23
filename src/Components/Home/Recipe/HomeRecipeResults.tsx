@@ -17,7 +17,8 @@ import { RecipeResult } from "../../Recipe/Result/RecipeResult";
 import { Recipe, AttachementMetadata } from "../../../model/model";
 import { BadgeRating } from "../../Shared/BadgeRating";
 import { PATHS } from "../../Routes/Routes";
-import { useRouter } from "../../../hooks/useRouter";
+import { useRouterContext } from "../../Provider/RouterProvider";
+import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === "light" ? brown[200] : brown[400];
@@ -35,7 +36,8 @@ interface HomeRecipeResultsProps {
 }
 
 export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
-    const { history } = useRouter();
+    const { user } = useFirebaseAuthContext();
+    const { history } = useRouterContext();
     const classes = useStyles();
 
     return (
@@ -68,11 +70,15 @@ export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
             <ExpansionPanelDetails>
                 <RecipeResult recipe={props.recipe} />
             </ExpansionPanelDetails>
-            <ExpansionPanelActions>
-                <Button onClick={() => history.push(PATHS.recipeEdit(props.recipe.name), props)}>
-                    Bearbeiten
-                </Button>
-            </ExpansionPanelActions>
+            {user && (
+                <ExpansionPanelActions>
+                    <Button
+                        onClick={() => history.push(PATHS.recipeEdit(props.recipe.name), props)}
+                    >
+                        Bearbeiten
+                    </Button>
+                </ExpansionPanelActions>
+            )}
         </ExpansionPanel>
     );
 };

@@ -2,7 +2,7 @@ import ArtIcon from "@material-ui/icons/BookTwoTone";
 import AufwandIcon from "@material-ui/icons/AvTimerTwoTone";
 import SpeisenfolgeIcon from "@material-ui/icons/DirectionsTwoTone";
 import React, { FC } from "react";
-import { Avatar, Chip, Grid, InputBase, Typography, Divider } from "@material-ui/core";
+import { Avatar, Chip, Grid, InputBase, Typography } from "@material-ui/core";
 import { useCategoriesCollection } from "../../hooks/useCategoriesCollection";
 import { CategoryBase } from "./CategoryBase";
 import { Loading } from "../Shared/Loading";

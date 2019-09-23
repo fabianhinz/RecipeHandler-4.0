@@ -6,8 +6,9 @@ import { Header } from "./Layout/Header/Header";
 import { Main } from "./Layout/Main";
 import { responsiveDarkTheme, responsiveLightTheme } from "../theme";
 import { SnackbarProvider } from "notistack";
-import { RouterProvider } from "./Routes/RouterContext";
+import { RouterProvider } from "./Provider/RouterProvider";
 import { BrowserRouter } from "react-router-dom";
+import { FirebaseAuthProvider } from "./Provider/FirebaseAuthProvider";
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme);
@@ -37,10 +38,12 @@ const App: FC = () => {
                     }}
                 >
                     <RouterProvider>
-                        <Container maxWidth="lg">
-                            <Header onThemeChange={handleThemeChange} />
-                            <Main />
-                        </Container>
+                        <FirebaseAuthProvider>
+                            <Container maxWidth="lg">
+                                <Header onThemeChange={handleThemeChange} />
+                                <Main />
+                            </Container>
+                        </FirebaseAuthProvider>
                     </RouterProvider>
                 </SnackbarProvider>
             </ThemeProvider>
