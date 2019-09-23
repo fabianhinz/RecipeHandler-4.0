@@ -14,6 +14,7 @@
     "@types/react-router-dom": "^4.3.5",
     "animate.css": "^3.7.2",
     "browser-image-compression": "^1.0.6",
+    "clipboard-copy": "^3.1.0",
     "clsx": "^1.0.4",
     "firebase": "^6.6.0",
     "notistack": "^0.9.0",

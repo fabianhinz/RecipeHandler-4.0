@@ -21,6 +21,7 @@ import { PATHS } from "../../Routes/Routes";
 import { useRouterContext } from "../../Provider/RouterProvider";
 import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { Comments } from "../../Shared/Comments";
+import { Share } from "../../Shared/Share";
 
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === "light" ? brown[200] : brown[400];
@@ -69,7 +70,10 @@ export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                     <Grid item>
                         <Grid container spacing={2}>
                             <Grid item>
-                                <Comments />
+                                <Share name={props.recipe.name} />
+                            </Grid>
+                            <Grid item>
+                                <Comments name={props.recipe.name} />
                             </Grid>
                             <Grid item>
                                 <BadgeRating name={props.recipe.name} />
