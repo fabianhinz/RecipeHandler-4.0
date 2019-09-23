@@ -104,10 +104,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
         dispatch({ type: "attachementsUploadingChange", now: true });
         const uploadTasks: Array<PromiseLike<any>> = [];
-        const oldAttachements: Array<AttachementMetadata> = [];
+        const oldMetadata: Array<AttachementMetadata> = [];
         for (const attachement of state.attachements) {
             if (!isData(attachement)) {
-                oldAttachements.push(attachement);
+                // ? old Metadata indicates that those attachements are already uploaded
+                oldMetadata.push(attachement);
                 continue;
             }
             const uploadTask = FirebaseService.storageRef
@@ -124,12 +125,12 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         const finishedTaks = await Promise.all(uploadTasks);
 
         dispatch({ type: "attachementsUploadingChange", now: false });
-        const newAttachements: Array<AttachementMetadata> = [];
+        const newMetadata: Array<AttachementMetadata> = [];
         finishedTaks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
             // ? on "storage/unauthorized" snapshot is not of type "object"
             if (typeof snapshot !== "object") return;
             const { fullPath, size, name } = snapshot.metadata;
-            newAttachements.push({
+            newMetadata.push({
                 fullPath,
                 name,
                 size
@@ -146,7 +147,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     name,
                     ingredients,
                     description,
-                    attachements: [...oldAttachements, ...newAttachements],
+                    attachements: [...oldMetadata, ...newMetadata],
                     categories,
                     createdDate: FirebaseService.createTimestampFrom(new Date())
                 });

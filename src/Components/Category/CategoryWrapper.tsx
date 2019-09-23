@@ -66,7 +66,7 @@ const CategoryChangeCategory: FC<
             <CategoryBase onClick={() => onCategoryChange(type, value)}>
                 <Chip
                     avatar={avatarFromCategoryType(type)}
-                    color={selectedCategories.get(type) === value ? "primary" : "default"}
+                    color={selectedCategories.get(type) === value ? "secondary" : "default"}
                     label={<Typography variant="subtitle2">{value}</Typography>}
                 />
             </CategoryBase>

@@ -5,20 +5,18 @@ import { isMetadata } from "../model/modelUtil";
 import { FirebaseService } from "../firebase";
 
 export const useAttachementRef = (attachement: AttachementMetadata | AttachementData) => {
-    const { name, size } = attachement;
     const [attachementRef, setAttachementRef] = useState<AttachementData>({
-        name,
-        size,
+        name: attachement && attachement.name,
+        size: attachement && attachement.size,
         dataUrl: ""
     });
-    const [attachementRefLoading, setAttachementRefLoading] = useState(false);
+    const [attachementRefLoading, setAttachementRefLoading] = useState(true);
 
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
-        if (!isMetadata(attachement)) return;
+        if (!isMetadata(attachement)) return setAttachementRefLoading(false);
 
-        setAttachementRefLoading(true);
         FirebaseService.storage
             .ref(attachement.fullPath)
             .getDownloadURL()

@@ -63,7 +63,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
         });
 
     return (
-        <Grid item key={attachement.name}>
+        <Grid item>
             <Zoom in={componentVisible} mountOnEnter timeout={200}>
                 <Card raised onClick={e => e.stopPropagation()}>
                     {attachementRefLoading ? (
