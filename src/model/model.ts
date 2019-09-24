@@ -33,3 +33,5 @@ export interface Category {
 }
 
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>;
+
+export type RecipeDocument = Recipe<AttachementMetadata>;

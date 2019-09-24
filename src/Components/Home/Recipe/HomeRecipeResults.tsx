@@ -1,5 +1,5 @@
 import brown from "@material-ui/core/colors/brown";
-import React, { FC } from "react";
+import React, { FC, memo } from "react";
 import {
     Avatar,
     Button,
@@ -37,7 +37,7 @@ interface HomeRecipeResultsProps {
     recipe: Recipe<AttachementMetadata>;
 }
 
-export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
+const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
     const { user } = useFirebaseAuthContext();
     const { history } = useRouterContext();
     const classes = useStyles();
@@ -96,3 +96,5 @@ export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
         </ExpansionPanel>
     );
 };
+
+export default memo(HomeRecipeResults, (prev, next) => prev.recipe === next.recipe);

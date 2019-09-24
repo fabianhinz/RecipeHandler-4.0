@@ -5,7 +5,6 @@ const useStyles = makeStyles(theme =>
     createStyles({
         backgroundContainer: {
             display: "flex",
-            justifyContent: "flex-star",
             alignItems: "flex-end",
             position: "fixed",
             right: theme.spacing(3),
