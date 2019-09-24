@@ -11,7 +11,6 @@ import {
 } from "@material-ui/core";
 import { HomeRecentlyAddedCard } from "./HomeRecentlyAddedCard";
 import useDebounce from "../../../hooks/useDebounce";
-import { firestore } from "firebase";
 import { FirebaseService } from "../../../firebase";
 import SearchIcon from "@material-ui/icons/SearchTwoTone";
 import { RecipeDocument } from "../../../model/model";
@@ -43,8 +42,9 @@ export const HomeRecentlyAdded = () => {
 
     useEffect(() => {
         let query:
-            | firestore.CollectionReference
-            | firestore.Query = FirebaseService.firestore.collection("recipes");
+            | firebase.firestore.CollectionReference
+            | firebase.firestore.Query = FirebaseService.firestore.collection("recipes");
+
         if (debouncedSearchValue.length > 0) {
             return query
                 .where("name", ">=", debouncedSearchValue)

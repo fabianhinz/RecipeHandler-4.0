@@ -25,7 +25,7 @@ export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
         FirebaseService.firestore.collection("errors").add({
             error: error.toString(),
             componentStack: errorInfo.componentStack,
-            timestamp: FirebaseService.createTimestampFrom(new Date())
+            timestamp: FirebaseService.createTimestampFromDate(new Date())
         });
     }
 

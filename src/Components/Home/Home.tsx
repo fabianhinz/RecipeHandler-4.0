@@ -5,11 +5,10 @@ import { HomeRecentlyAdded } from "./RecentlyAdded/HomeRecentlyAdded";
 import { HomeRecipe } from "./Recipe/HomeRecipe";
 import { RecipeDocument } from "../../model/model";
 import { FirebaseService } from "../../firebase";
-import { firestore } from "firebase";
 import { useCategorySelect } from "../../hooks/useCategorySelect";
 
 type DocumentId = string;
-type ChangesRecord = Record<firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>;
+type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>;
 
 const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map());
@@ -26,8 +25,8 @@ const Home = () => {
     useEffect(() => {
         // ? constructing the query with both where and orderBy clauses requires multiple indexes
         let query:
-            | firestore.CollectionReference
-            | firestore.Query = FirebaseService.firestore.collection("recipes");
+            | firebase.firestore.CollectionReference
+            | firebase.firestore.Query = FirebaseService.firestore.collection("recipes");
 
         if (selectedCategories.size === 0) {
             setPagination(true);

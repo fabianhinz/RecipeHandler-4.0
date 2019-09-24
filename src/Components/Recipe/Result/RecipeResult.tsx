@@ -11,7 +11,7 @@ import { ReactComponent as NotFoundIcon } from "../../../icons/notFound.svg";
 import { useRouterContext } from "../../Provider/RouterProvider";
 import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { PATHS } from "../../Routes/Routes";
-import { firestore } from "firebase";
+import { FirebaseService } from "../../../firebase";
 
 interface RecipeResultProps {
     recipe: Recipe<AttachementMetadata | AttachementData> | null;
@@ -63,12 +63,10 @@ export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
             <Grid item xs={12}>
                 <Typography variant="caption">
                     Erstellt am:{" "}
-                    {new firestore.Timestamp(
+                    {FirebaseService.createDateFromTimestamp(
                         recipe.createdDate.seconds,
                         recipe.createdDate.nanoseconds
-                    )
-                        .toDate()
-                        .toLocaleDateString()}
+                    ).toLocaleDateString()}
                 </Typography>
             </Grid>
 

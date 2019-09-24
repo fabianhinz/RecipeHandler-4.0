@@ -159,7 +159,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     description,
                     attachements: [...oldMetadata, ...newMetadata],
                     categories,
-                    createdDate: FirebaseService.createTimestampFrom(new Date())
+                    createdDate: FirebaseService.createTimestampFromDate(new Date())
                 });
 
             await FirebaseService.firestore
@@ -335,7 +335,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                                 <RecipeResult
                                     recipe={{
                                         name: state.name,
-                                        createdDate: FirebaseService.createTimestampFrom(
+                                        createdDate: FirebaseService.createTimestampFromDate(
                                             new Date()
                                         ),
                                         categories: state.categories,
