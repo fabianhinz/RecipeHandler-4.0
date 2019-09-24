@@ -28,12 +28,18 @@ export const HomeRecentlyAdded = () => {
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([]);
     const [searchDrawer, setSearchDrawer] = useState(false);
     const [searchValue, setSearchValue] = useState("");
+    const [skeleton, setSkeleton] = useState(false);
 
     const debouncedSearchValue = useDebounce(searchValue, 500);
 
     const classes = useStyles();
 
     const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous);
+
+    useEffect(() => {
+        if (searchValue !== debouncedSearchValue) setSkeleton(true);
+        else setSkeleton(false);
+    }, [debouncedSearchValue, searchValue]);
 
     useEffect(() => {
         let query:
@@ -46,6 +52,7 @@ export const HomeRecentlyAdded = () => {
                 .onSnapshot(
                     querySnapshot => {
                         setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument));
+                        setSkeleton(false);
                     },
                     error => console.error(error)
                 );
@@ -74,10 +81,13 @@ export const HomeRecentlyAdded = () => {
                         </div>
                     </Tooltip>
                 </Box>
-
                 <Grid container spacing={2}>
                     {recipes.map(recipe => (
-                        <HomeRecentlyAddedCard key={recipe.name} recipe={recipe} />
+                        <HomeRecentlyAddedCard
+                            skeleton={skeleton}
+                            key={recipe.name}
+                            recipe={recipe}
+                        />
                     ))}
                 </Grid>
             </Box>

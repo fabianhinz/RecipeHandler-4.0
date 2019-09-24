@@ -27,7 +27,10 @@ const useStyles = makeStyles(theme =>
     })
 );
 
-export const HomeRecentlyAddedCard: FC<{ recipe: Recipe<AttachementMetadata> }> = ({ recipe }) => {
+export const HomeRecentlyAddedCard: FC<{
+    recipe: Recipe<AttachementMetadata>;
+    skeleton: boolean;
+}> = ({ recipe, skeleton }) => {
     const { attachementRef, attachementRefLoading } = useAttachementRef(recipe.attachements[0]);
     const { history } = useRouterContext();
     const classes = useStyles();
@@ -38,7 +41,7 @@ export const HomeRecentlyAddedCard: FC<{ recipe: Recipe<AttachementMetadata> }> 
                 <Paper className={classes.paper}>
                     <Grid container wrap="nowrap" spacing={2} alignItems="center">
                         <Grid item>
-                            {attachementRefLoading ? (
+                            {attachementRefLoading || skeleton ? (
                                 <Skeleton variant="circle" width={80} height={80} />
                             ) : (
                                 <Avatar className={classes.avatar} src={attachementRef.dataUrl}>
@@ -47,12 +50,22 @@ export const HomeRecentlyAddedCard: FC<{ recipe: Recipe<AttachementMetadata> }> 
                             )}
                         </Grid>
                         <Grid item zeroMinWidth>
-                            <Typography noWrap variant="subtitle1">
-                                {recipe.name}
-                            </Typography>
-                            <Typography noWrap color="textSecondary">
-                                Erstellt am {recipe.createdDate.toDate().toLocaleDateString()}
-                            </Typography>
+                            {skeleton ? (
+                                <>
+                                    <Skeleton width="4rem" height="1rem" />
+                                    <Skeleton width="8rem" height="1rem" />
+                                </>
+                            ) : (
+                                <>
+                                    <Typography noWrap variant="subtitle1">
+                                        {recipe.name}
+                                    </Typography>
+                                    <Typography noWrap color="textSecondary">
+                                        Erstellt am{" "}
+                                        {recipe.createdDate.toDate().toLocaleDateString()}
+                                    </Typography>
+                                </>
+                            )}
                         </Grid>
                     </Grid>
                 </Paper>

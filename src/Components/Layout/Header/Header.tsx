@@ -5,11 +5,12 @@ import { createStyles, Fab, Hidden, makeStyles, Paper, SwipeableDrawer } from "@
 import { HeaderNavigation } from "./HeaderNavigation";
 import { useHeaderReducer } from "./HeaderReducer";
 import { HeaderLoginDialog } from "./HeaderLoginDialog";
+import { BORDER_RADIUS } from "../../../theme";
 
 const useStyles = makeStyles(theme =>
     createStyles({
         paper: {
-            borderRadius: "0 0 10px 10px",
+            borderRadius: `0px 0px ${BORDER_RADIUS}px ${BORDER_RADIUS}px`,
             position: "fixed",
             right: 0,
             top: 0,

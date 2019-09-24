@@ -2,7 +2,15 @@ import ArtIcon from "@material-ui/icons/BookTwoTone";
 import AufwandIcon from "@material-ui/icons/AvTimerTwoTone";
 import SpeisenfolgeIcon from "@material-ui/icons/DirectionsTwoTone";
 import React, { FC } from "react";
-import { Avatar, Chip, Grid, InputBase, Typography } from "@material-ui/core";
+import {
+    Avatar,
+    Chip,
+    Grid,
+    InputBase,
+    Typography,
+    makeStyles,
+    createStyles
+} from "@material-ui/core";
 import { CategoryBase } from "./CategoryBase";
 import { Loading } from "../Shared/Loading";
 import { useCategoriesCollectionContext } from "../Provider/CategoriesCollectionProvider";
@@ -36,7 +44,7 @@ export const avatarFromCategoryType = (type: string) => {
         }
     }
 };
-
+// ToDo not needed anymore
 const NameChangeCategory: FC<Pick<CategoryWrapperProps, "onNameChange"> & SharedProps> = ({
     onNameChange,
     type,
@@ -85,20 +93,31 @@ interface CategoryWrapperProps {
     onNameChange?: (type: string, oldValue: string, newValue: string) => void;
 }
 
+const useStyles = makeStyles(theme =>
+    createStyles({
+        categoryType: {
+            fontWeight: 300
+        }
+    })
+);
+
 export const CategoryWrapper: FC<CategoryWrapperProps> = ({
     onCategoryChange,
     onNameChange,
     selectedCategories
 }) => {
     const { categoriesCollection } = useCategoriesCollectionContext();
+    const classes = useStyles();
 
     if (!categoriesCollection) return <Loading />;
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={4}>
             {Object.keys(categoriesCollection).map(type => (
                 <Grid key={type} item xs={12}>
-                    <Typography gutterBottom>{type}</Typography>
+                    <Typography className={classes.categoryType} gutterBottom>
+                        {type}
+                    </Typography>
                     <Grid container spacing={1}>
                         {categoriesCollection[type].sort().map(value => (
                             <Grid item key={value}>
