@@ -19,6 +19,7 @@ export interface Recipe<T extends Attachement> {
     categories: Categories<string>;
     attachements: Array<T>;
     ingredients: string;
+    amount: number;
     description: string;
 }
 

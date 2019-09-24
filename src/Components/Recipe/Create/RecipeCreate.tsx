@@ -17,7 +17,9 @@ import {
     Grid,
     IconButton,
     makeStyles,
-    TextField
+    TextField,
+    Typography,
+    InputBase
 } from "@material-ui/core";
 import { RecipeCreateAttachements } from "./Attachements/RecipeCreateAttachements";
 import { RecipeResult } from "../Result/RecipeResult";
@@ -34,6 +36,8 @@ import { useCategorySelect } from "../../../hooks/useCategorySelect";
 import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { useCategoriesCollectionContext } from "../../Provider/CategoriesCollectionProvider";
 import { Navigate } from "../../Routes/Navigate";
+import AddIcon from "@material-ui/icons/AddCircle";
+import RemoveIcon from "@material-ui/icons/RemoveCircle";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -138,7 +142,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         });
 
         dispatch({ type: "recipeUploadingChange", now: true });
-        const { name, ingredients, description, categories } = state;
+        const { name, ingredients, description, categories, amount } = state;
         try {
             await FirebaseService.firestore
                 .collection("recipes")
@@ -146,6 +150,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 .set({
                     name,
                     ingredients,
+                    amount,
                     description,
                     attachements: [...oldMetadata, ...newMetadata],
                     categories,
@@ -247,7 +252,30 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             attachements={state.attachements}
                         />
 
-                        <Subtitle icon={<AssignmentIcon />} text="Zutaten" />
+                        <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
+                            <Box display="flex" alignItems="center">
+                                <IconButton
+                                    onClick={() => dispatch({ type: "increaseAmount" })}
+                                    size="small"
+                                >
+                                    <AddIcon />
+                                </IconButton>
+                                <Box
+                                    marginLeft={0.5}
+                                    marginRight={0.5}
+                                    width={25}
+                                    textAlign="center"
+                                >
+                                    <Typography variant="h6">{state.amount}</Typography>
+                                </Box>
+                                <IconButton
+                                    onClick={() => dispatch({ type: "decreaseAmount" })}
+                                    size="small"
+                                >
+                                    <RemoveIcon />
+                                </IconButton>
+                            </Box>
+                        </Subtitle>
                         <TextField
                             placeholder="Zutatenliste"
                             value={state.ingredients}
@@ -307,6 +335,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                                     categories: state.categories,
                                     attachements: state.attachements,
                                     ingredients: state.ingredients,
+                                    amount: state.amount,
                                     description: state.description
                                 }}
                             />
