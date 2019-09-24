@@ -55,16 +55,6 @@ const sharedTheme: Partial<ThemeOptions> = {
                 alignSelf: "center"
             }
         }
-        // ! dirty workaround for https://github.com/mui-org/material-ui/issues/16374
-        // MuiAvatar: {
-        //     root: {
-        //         height: 32,
-        //         width: 32
-        //     },
-        //     colorDefault: {
-        //         color: "inherit"
-        //     }
-        // }
     }
 };
 
