@@ -1,5 +1,4 @@
 import brown from "@material-ui/core/colors/brown";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMoreTwoTone";
 import React, { FC } from "react";
 import {
     Avatar,
@@ -45,7 +44,7 @@ export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
 
     return (
         <ExpansionPanel TransitionProps={{ mountOnEnter: true }}>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <ExpansionPanelSummary>
                 <Grid
                     container
                     direction="row"

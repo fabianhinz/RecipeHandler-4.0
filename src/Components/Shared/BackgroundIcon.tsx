@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import React, { FC } from "react";
 import { createStyles, makeStyles, Slide } from "@material-ui/core";
 
@@ -34,17 +33,14 @@ const useStyles = makeStyles(theme =>
 
 interface BackgroundIconProps {
     Icon: FC<React.SVGProps<SVGSVGElement>>;
-    loading?: boolean;
 }
 
-export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon, loading }) => {
+export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon }) => {
     const classes = useStyles();
 
     return (
         <Slide in direction="up">
-            <div
-                className={clsx(classes.backgroundContainer, loading && "animated infinite bounce")}
-            >
+            <div className={classes.backgroundContainer}>
                 <Icon className={classes.icon} />
             </div>
         </Slide>
