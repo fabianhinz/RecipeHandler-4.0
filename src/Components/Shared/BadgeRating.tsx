@@ -5,7 +5,7 @@ import { Badge, createStyles, IconButton, makeStyles } from "@material-ui/core/"
 import { Recipe, AttachementMetadata } from "../../model/model";
 import { FirebaseService } from "../../firebase";
 
-const useStyles = makeStyles(theme => {
+export const useBadgeStyles = makeStyles(theme => {
     const background = theme.palette.type === "light" ? blueGrey[900] : theme.palette.grey[600];
 
     return createStyles({
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => {
 
 export const BadgeRating: FC<Pick<Recipe<AttachementMetadata>, "name">> = ({ name }) => {
     const [rating, setRating] = useState(0);
-    const classes = useStyles();
+    const classes = useBadgeStyles();
 
     useEffect(() => {
         return FirebaseService.firestore

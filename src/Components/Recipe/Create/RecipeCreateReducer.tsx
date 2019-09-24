@@ -6,10 +6,12 @@ interface State {
     categories: Categories<string>;
     attachements: Array<AttachementData | AttachementMetadata>;
     ingredients: string;
+    amount: number;
     description: string;
     preview: boolean;
     attachementsUploading: boolean;
     recipeUploading: boolean;
+    storageDeleteRefs: Array<firebase.storage.Reference>;
 }
 
 export type CreateChangeKey = keyof Pick<State, "ingredients" | "description" | "name">;
@@ -28,7 +30,10 @@ type Action =
     | { type: "attachementsDrop"; newAttachements: Array<AttachementData | AttachementMetadata> }
     | { type: "removeAttachement"; name: string }
     | { type: "categoriesChange"; selectedCategories: Map<string, string> }
-    | { type: "attachementNameChange"; name: AttachementName };
+    | { type: "attachementNameChange"; name: AttachementName }
+    | { type: "increaseAmount" }
+    | { type: "decreaseAmount" }
+    | { type: "storageDeleteRefsChange"; ref: firebase.storage.Reference };
 
 const reducer: Reducer<State, Action> = (state, action) => {
     switch (action.type) {
@@ -65,6 +70,21 @@ const reducer: Reducer<State, Action> = (state, action) => {
             });
             return { ...state };
         }
+        case "increaseAmount": {
+            return {
+                ...state,
+                amount: state.amount < 20 ? ++state.amount : state.amount
+            };
+        }
+        case "decreaseAmount": {
+            return { ...state, amount: state.amount === 1 ? state.amount : --state.amount };
+        }
+        case "storageDeleteRefsChange": {
+            return {
+                ...state,
+                storageDeleteRefs: [...state.storageDeleteRefs, action.ref]
+            };
+        }
     }
 };
 
@@ -73,10 +93,12 @@ const initialState: State = {
     categories: {},
     attachements: [],
     ingredients: "",
+    amount: 1,
     description: "",
     preview: false,
     attachementsUploading: false,
-    recipeUploading: false
+    recipeUploading: false,
+    storageDeleteRefs: []
 };
 
 export const useRecipeCreateReducer = (recipe?: Recipe<AttachementMetadata> | null) => {

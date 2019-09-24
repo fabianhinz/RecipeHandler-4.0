@@ -1,12 +1,9 @@
 import brown from "@material-ui/core/colors/brown";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMoreTwoTone";
-import React, { FC } from "react";
+import React, { FC, memo } from "react";
 import {
     Avatar,
-    Button,
     createStyles,
     ExpansionPanel,
-    ExpansionPanelActions,
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     Grid,
@@ -17,9 +14,6 @@ import {
 import { RecipeResult } from "../../Recipe/Result/RecipeResult";
 import { Recipe, AttachementMetadata } from "../../../model/model";
 import { BadgeRating } from "../../Shared/BadgeRating";
-import { PATHS } from "../../Routes/Routes";
-import { useRouterContext } from "../../Provider/RouterProvider";
-import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { Comments } from "../../Shared/Comments";
 import { Share } from "../../Shared/Share";
 
@@ -38,14 +32,12 @@ interface HomeRecipeResultsProps {
     recipe: Recipe<AttachementMetadata>;
 }
 
-export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
-    const { user } = useFirebaseAuthContext();
-    const { history } = useRouterContext();
+const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
     const classes = useStyles();
 
     return (
         <ExpansionPanel TransitionProps={{ mountOnEnter: true }}>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <ExpansionPanelSummary>
                 <Grid
                     container
                     direction="row"
@@ -85,15 +77,8 @@ export const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
             <ExpansionPanelDetails>
                 <RecipeResult recipe={props.recipe} />
             </ExpansionPanelDetails>
-            {user && (
-                <ExpansionPanelActions>
-                    <Button
-                        onClick={() => history.push(PATHS.recipeEdit(props.recipe.name), props)}
-                    >
-                        Bearbeiten
-                    </Button>
-                </ExpansionPanelActions>
-            )}
         </ExpansionPanel>
     );
 };
+
+export default memo(HomeRecipeResults, (prev, next) => prev.recipe === next.recipe);

@@ -17,7 +17,8 @@ import {
     Grid,
     IconButton,
     makeStyles,
-    TextField
+    TextField,
+    Typography
 } from "@material-ui/core";
 import { RecipeCreateAttachements } from "./Attachements/RecipeCreateAttachements";
 import { RecipeResult } from "../Result/RecipeResult";
@@ -34,6 +35,8 @@ import { useCategorySelect } from "../../../hooks/useCategorySelect";
 import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { useCategoriesCollectionContext } from "../../Provider/CategoriesCollectionProvider";
 import { Navigate } from "../../Routes/Navigate";
+import AddIcon from "@material-ui/icons/AddCircle";
+import RemoveIcon from "@material-ui/icons/RemoveCircle";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -102,6 +105,12 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 }
             );
 
+        if (state.storageDeleteRefs) {
+            for (const ref of state.storageDeleteRefs) {
+                await ref.delete();
+            }
+        }
+
         dispatch({ type: "attachementsUploadingChange", now: true });
         const uploadTasks: Array<PromiseLike<any>> = [];
         const oldMetadata: Array<AttachementMetadata> = [];
@@ -138,7 +147,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         });
 
         dispatch({ type: "recipeUploadingChange", now: true });
-        const { name, ingredients, description, categories } = state;
+        const { name, ingredients, description, categories, amount } = state;
         try {
             await FirebaseService.firestore
                 .collection("recipes")
@@ -146,10 +155,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 .set({
                     name,
                     ingredients,
+                    amount,
                     description,
                     attachements: [...oldMetadata, ...newMetadata],
                     categories,
-                    createdDate: FirebaseService.createTimestampFrom(new Date())
+                    createdDate: FirebaseService.createTimestampFromDate(new Date())
                 });
 
             await FirebaseService.firestore
@@ -174,9 +184,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         dispatch({ type: "removeAttachement", name });
     };
 
-    const handleDeleteAttachement = async (name: string, path: string) => {
-        await FirebaseService.storageRef.child(path).delete();
-        dispatch({ type: "removeAttachement", name });
+    const handleDeleteAttachement = (name: string, path: string) => {
+        const ref = FirebaseService.storageRef.child(path);
+        handleRemoveAttachement(name);
+        dispatch({ type: "storageDeleteRefsChange", ref });
     };
 
     // ? with useCallback  and memo chained together we improve performance
@@ -247,7 +258,30 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             attachements={state.attachements}
                         />
 
-                        <Subtitle icon={<AssignmentIcon />} text="Zutaten" />
+                        <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
+                            <Box display="flex" alignItems="center">
+                                <IconButton
+                                    onClick={() => dispatch({ type: "increaseAmount" })}
+                                    size="small"
+                                >
+                                    <AddIcon />
+                                </IconButton>
+                                <Box
+                                    marginLeft={0.5}
+                                    marginRight={0.5}
+                                    width={25}
+                                    textAlign="center"
+                                >
+                                    <Typography variant="h6">{state.amount}</Typography>
+                                </Box>
+                                <IconButton
+                                    onClick={() => dispatch({ type: "decreaseAmount" })}
+                                    size="small"
+                                >
+                                    <RemoveIcon />
+                                </IconButton>
+                            </Box>
+                        </Subtitle>
                         <TextField
                             placeholder="Zutatenliste"
                             value={state.ingredients}
@@ -273,44 +307,46 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     <CardActions>
                         <Grid container justify="space-between" alignItems="center">
                             <Grid item>
+                                <IconButton onClick={() => dispatch({ type: "previewChange" })}>
+                                    <EyeIcon />
+                                </IconButton>
+                            </Grid>
+                            <Grid item>
                                 <Navigate to={PATHS.home}>
-                                    <Button size="small">Abbrechen</Button>
+                                    <Button>Abbrechen</Button>
                                 </Navigate>
 
                                 <Button
                                     disabled={state.attachementsUploading}
-                                    size="small"
+                                    variant="contained"
                                     color="primary"
                                     onClick={handleSaveClick}
                                 >
                                     Speichern
                                 </Button>
                             </Grid>
-                            <Grid item>
-                                <IconButton onClick={() => dispatch({ type: "previewChange" })}>
-                                    <EyeIcon />
-                                </IconButton>
-                            </Grid>
                         </Grid>
                     </CardActions>
 
-                    <Grid item xs={12}>
-                        <Divider />
-                    </Grid>
-
                     <Collapse in={state.preview} timeout="auto" mountOnEnter>
-                        <CardContent>
-                            <RecipeResult
-                                recipe={{
-                                    name: state.name,
-                                    createdDate: FirebaseService.createTimestampFrom(new Date()),
-                                    categories: state.categories,
-                                    attachements: state.attachements,
-                                    ingredients: state.ingredients,
-                                    description: state.description
-                                }}
-                            />
-                        </CardContent>
+                        <>
+                            <Divider />
+                            <CardContent>
+                                <RecipeResult
+                                    recipe={{
+                                        name: state.name,
+                                        createdDate: FirebaseService.createTimestampFromDate(
+                                            new Date()
+                                        ),
+                                        categories: state.categories,
+                                        attachements: state.attachements,
+                                        ingredients: state.ingredients,
+                                        amount: state.amount,
+                                        description: state.description
+                                    }}
+                                />
+                            </CardContent>
+                        </>
                     </Collapse>
                 </Card>
             </Box>

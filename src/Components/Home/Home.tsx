@@ -3,17 +3,14 @@ import { Fade } from "@material-ui/core";
 import { HomeCategory } from "./HomeCategory";
 import { HomeRecentlyAdded } from "./RecentlyAdded/HomeRecentlyAdded";
 import { HomeRecipe } from "./Recipe/HomeRecipe";
-import { Recipe, AttachementMetadata } from "../../model/model";
+import { RecipeDocument } from "../../model/model";
 import { FirebaseService } from "../../firebase";
-import { firestore } from "firebase";
 import { useCategorySelect } from "../../hooks/useCategorySelect";
 
 type DocumentId = string;
-type RecipeDocument = Recipe<AttachementMetadata>;
-type ChangesRecord = Record<firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>;
+type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>;
 
 const Home = () => {
-    const [mostRecentRecipes, setMostRecentRecipes] = useState<Array<RecipeDocument>>([]);
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map());
     const [lastRecipeName, setLastRecipeName] = useState("");
     const [pagination, setPagination] = useState(false);
@@ -26,25 +23,10 @@ const Home = () => {
     };
 
     useEffect(() => {
-        return FirebaseService.firestore
-            .collection("recipes")
-            .orderBy("createdDate", "desc")
-            .limit(6)
-            .onSnapshot(
-                querySnapshot => {
-                    setMostRecentRecipes(
-                        querySnapshot.docs.map(doc => doc.data() as RecipeDocument)
-                    );
-                },
-                error => console.error(error)
-            );
-    }, []);
-
-    useEffect(() => {
         // ? constructing the query with both where and orderBy clauses requires multiple indexes
         let query:
-            | firestore.CollectionReference
-            | firestore.Query = FirebaseService.firestore.collection("recipes");
+            | firebase.firestore.CollectionReference
+            | firebase.firestore.Query = FirebaseService.firestore.collection("recipes");
 
         if (selectedCategories.size === 0) {
             setPagination(true);
@@ -89,7 +71,7 @@ const Home = () => {
     return (
         <Fade in>
             <>
-                <HomeRecentlyAdded recipes={mostRecentRecipes} />
+                <HomeRecentlyAdded />
                 <HomeCategory
                     selectedCategories={selectedCategories}
                     onCategoryChange={handleCategoryChange}

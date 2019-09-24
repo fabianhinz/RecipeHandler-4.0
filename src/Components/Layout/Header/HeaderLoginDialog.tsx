@@ -88,7 +88,7 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Box width="100%" display="flex" justifyContent="space-evenly">
+                        <Box flexGrow={1} display="flex" justifyContent="space-evenly">
                             <Button onClick={handleDialogChange}>Schließen</Button>
                             <Button color="primary" type="submit">
                                 Login

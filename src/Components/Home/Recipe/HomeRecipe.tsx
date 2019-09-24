@@ -1,7 +1,7 @@
 import ExpandIcon from "@material-ui/icons/ExpandMoreTwoTone";
 import React, { FC } from "react";
 import { Box, Fab, Tooltip } from "@material-ui/core";
-import { HomeRecipeResults } from "./HomeRecipeResults";
+import HomeRecipeResults from "./HomeRecipeResults";
 import { AttachementMetadata, Recipe } from "../../../model/model";
 
 interface HomeRecipeProps {
@@ -24,7 +24,7 @@ export const HomeRecipe: FC<HomeRecipeProps> = props => {
                 ))}
             </div>
 
-            <Box marginTop={2} display="flex" justifyContent="center">
+            <Box marginTop={2} display="flex" justifyContent="space-evenly">
                 <Tooltip title={!props.expandDisabled ? "Weitere Rezepte laden" : ""}>
                     <div>
                         <Fab

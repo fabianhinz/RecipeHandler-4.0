@@ -19,6 +19,7 @@ export interface Recipe<T extends Attachement> {
     categories: Categories<string>;
     attachements: Array<T>;
     ingredients: string;
+    amount: number;
     description: string;
 }
 
@@ -32,3 +33,5 @@ export interface Category {
 }
 
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>;
+
+export type RecipeDocument = Recipe<AttachementMetadata>;
