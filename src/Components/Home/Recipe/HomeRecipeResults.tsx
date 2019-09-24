@@ -2,10 +2,8 @@ import brown from "@material-ui/core/colors/brown";
 import React, { FC, memo } from "react";
 import {
     Avatar,
-    Button,
     createStyles,
     ExpansionPanel,
-    ExpansionPanelActions,
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     Grid,
@@ -16,9 +14,6 @@ import {
 import { RecipeResult } from "../../Recipe/Result/RecipeResult";
 import { Recipe, AttachementMetadata } from "../../../model/model";
 import { BadgeRating } from "../../Shared/BadgeRating";
-import { PATHS } from "../../Routes/Routes";
-import { useRouterContext } from "../../Provider/RouterProvider";
-import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { Comments } from "../../Shared/Comments";
 import { Share } from "../../Shared/Share";
 
@@ -38,8 +33,6 @@ interface HomeRecipeResultsProps {
 }
 
 const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
-    const { user } = useFirebaseAuthContext();
-    const { history } = useRouterContext();
     const classes = useStyles();
 
     return (
@@ -84,15 +77,6 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
             <ExpansionPanelDetails>
                 <RecipeResult recipe={props.recipe} />
             </ExpansionPanelDetails>
-            {user && (
-                <ExpansionPanelActions>
-                    <Button
-                        onClick={() => history.push(PATHS.recipeEdit(props.recipe.name), props)}
-                    >
-                        Bearbeiten
-                    </Button>
-                </ExpansionPanelActions>
-            )}
         </ExpansionPanel>
     );
 };

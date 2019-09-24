@@ -99,7 +99,9 @@ export const HomeRecentlyAdded = () => {
                 anchor="top"
             >
                 <Box padding={2} display="flex" alignItems="center">
-                    <SearchIcon />
+                    <Box marginRight={1}>
+                        <SearchIcon />
+                    </Box>
                     <InputBase
                         autoFocus
                         fullWidth

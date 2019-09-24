@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Slide, Card, CardContent, CardHeader } from "@material-ui/core";
+import { Box, Slide, Card, CardContent } from "@material-ui/core";
 import { FirebaseService } from "../firebase";
 import { ReactComponent as ErrorIcon } from "../icons/error.svg";
 
@@ -15,17 +15,17 @@ export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
     };
 
     public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+        this.setState({
+            error,
+            errorInfo
+        });
+
         if (process.env.NODE_ENV !== "production") return;
 
         FirebaseService.firestore.collection("errors").add({
             error: error.toString(),
             componentStack: errorInfo.componentStack,
             timestamp: FirebaseService.createTimestampFrom(new Date())
-        });
-
-        this.setState({
-            error,
-            errorInfo
         });
     }
 
@@ -36,7 +36,6 @@ export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
                     <Box margin={10}>
                         <Slide in direction="down" timeout={500}>
                             <Card raised>
-                                <CardHeader title="Uups - das hat wohl nicht geklappt !!!" />
                                 <CardContent>
                                     <Box display="flex" justifyContent="center">
                                         <ErrorIcon height={200} />

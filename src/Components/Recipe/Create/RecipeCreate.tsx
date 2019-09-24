@@ -105,6 +105,12 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 }
             );
 
+        if (state.storageDeleteRefs) {
+            for (const ref of state.storageDeleteRefs) {
+                await ref.delete();
+            }
+        }
+
         dispatch({ type: "attachementsUploadingChange", now: true });
         const uploadTasks: Array<PromiseLike<any>> = [];
         const oldMetadata: Array<AttachementMetadata> = [];
@@ -178,9 +184,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         dispatch({ type: "removeAttachement", name });
     };
 
-    const handleDeleteAttachement = async (name: string, path: string) => {
-        await FirebaseService.storageRef.child(path).delete();
-        dispatch({ type: "removeAttachement", name });
+    const handleDeleteAttachement = (name: string, path: string) => {
+        const ref = FirebaseService.storageRef.child(path);
+        handleRemoveAttachement(name);
+        dispatch({ type: "storageDeleteRefsChange", ref });
     };
 
     // ? with useCallback  and memo chained together we improve performance
@@ -300,45 +307,46 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     <CardActions>
                         <Grid container justify="space-between" alignItems="center">
                             <Grid item>
+                                <IconButton onClick={() => dispatch({ type: "previewChange" })}>
+                                    <EyeIcon />
+                                </IconButton>
+                            </Grid>
+                            <Grid item>
                                 <Navigate to={PATHS.home}>
-                                    <Button size="small">Abbrechen</Button>
+                                    <Button>Abbrechen</Button>
                                 </Navigate>
 
                                 <Button
                                     disabled={state.attachementsUploading}
-                                    size="small"
+                                    variant="contained"
                                     color="primary"
                                     onClick={handleSaveClick}
                                 >
                                     Speichern
                                 </Button>
                             </Grid>
-                            <Grid item>
-                                <IconButton onClick={() => dispatch({ type: "previewChange" })}>
-                                    <EyeIcon />
-                                </IconButton>
-                            </Grid>
                         </Grid>
                     </CardActions>
 
-                    <Grid item xs={12}>
-                        <Divider />
-                    </Grid>
-
                     <Collapse in={state.preview} timeout="auto" mountOnEnter>
-                        <CardContent>
-                            <RecipeResult
-                                recipe={{
-                                    name: state.name,
-                                    createdDate: FirebaseService.createTimestampFrom(new Date()),
-                                    categories: state.categories,
-                                    attachements: state.attachements,
-                                    ingredients: state.ingredients,
-                                    amount: state.amount,
-                                    description: state.description
-                                }}
-                            />
-                        </CardContent>
+                        <>
+                            <Divider />
+                            <CardContent>
+                                <RecipeResult
+                                    recipe={{
+                                        name: state.name,
+                                        createdDate: FirebaseService.createTimestampFrom(
+                                            new Date()
+                                        ),
+                                        categories: state.categories,
+                                        attachements: state.attachements,
+                                        ingredients: state.ingredients,
+                                        amount: state.amount,
+                                        description: state.description
+                                    }}
+                                />
+                            </CardContent>
+                        </>
                     </Collapse>
                 </Card>
             </Box>

@@ -3,17 +3,24 @@ import BookIcon from "@material-ui/icons/BookTwoTone";
 import React, { FC } from "react";
 import ReactMarkdown from "react-markdown";
 import { RecipeResultImg } from "./RecipeResultImg";
-import { Grid, Typography, Box, Slide } from "@material-ui/core";
+import { Grid, Typography, Box, Slide, Button } from "@material-ui/core";
 import { Recipe, AttachementData, AttachementMetadata } from "../../../model/model";
 import { Subtitle } from "../../Shared/Subtitle";
 import { CategoryResult } from "../../Category/CategoryResult";
 import { ReactComponent as NotFoundIcon } from "../../../icons/notFound.svg";
+import { useRouterContext } from "../../Provider/RouterProvider";
+import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
+import { PATHS } from "../../Routes/Routes";
+import { firestore } from "firebase";
 
 interface RecipeResultProps {
     recipe: Recipe<AttachementMetadata | AttachementData> | null;
 }
 
 export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
+    const { history, location } = useRouterContext();
+    const { user } = useFirebaseAuthContext();
+
     if (!recipe)
         return (
             <Box display="flex" justifyContent="center">
@@ -55,8 +62,28 @@ export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
 
             <Grid item xs={12}>
                 <Typography variant="caption">
-                    Erstellt am: {recipe.createdDate.toDate().toLocaleDateString()}
+                    Erstellt am:{" "}
+                    {new firestore.Timestamp(
+                        recipe.createdDate.seconds,
+                        recipe.createdDate.nanoseconds
+                    )
+                        .toDate()
+                        .toLocaleDateString()}
                 </Typography>
+            </Grid>
+
+            <Grid item xs={12}>
+                {user && location.pathname.includes("details") && (
+                    <Box textAlign="right">
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}
+                        >
+                            Bearbeiten
+                        </Button>
+                    </Box>
+                )}
             </Grid>
         </Grid>
     );
