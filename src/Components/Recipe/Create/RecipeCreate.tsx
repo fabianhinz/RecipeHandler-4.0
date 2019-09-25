@@ -1,42 +1,31 @@
-import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
-import BookIcon from "@material-ui/icons/BookTwoTone";
-import CameraIcon from "@material-ui/icons/CameraTwoTone";
-import EyeIcon from "@material-ui/icons/RemoveRedEyeTwoTone";
-import React, { FC, useCallback, useEffect, ChangeEvent } from "react";
+import { useSnackbar } from 'notistack'
+import React, { ChangeEvent, FC, useCallback, useEffect } from 'react'
+import { Redirect, RouteComponentProps } from 'react-router'
+
 import {
-    Box,
-    Button,
-    Card,
-    CardActions,
-    CardContent,
-    CardHeader,
-    Collapse,
-    createStyles,
-    Divider,
-    Fade,
-    Grid,
-    IconButton,
-    makeStyles,
-    TextField,
-    Typography
-} from "@material-ui/core";
-import { RecipeCreateAttachements } from "./Attachements/RecipeCreateAttachements";
-import { RecipeResult } from "../Result/RecipeResult";
-import { useSnackbar } from "notistack";
-import { AttachementData, AttachementMetadata, Recipe } from "../../../model/model";
-import { isData } from "../../../model/modelUtil";
-import { PATHS } from "../../Routes/Routes";
-import { Subtitle } from "../../Shared/Subtitle";
-import { FirebaseService } from "../../../firebase";
-import { RouteComponentProps, Redirect } from "react-router";
-import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
-import { CategoryWrapper } from "../../Category/CategoryWrapper";
-import { useCategorySelect } from "../../../hooks/useCategorySelect";
-import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
-import { useCategoriesCollectionContext } from "../../Provider/CategoriesCollectionProvider";
-import { Navigate } from "../../Routes/Navigate";
-import AddIcon from "@material-ui/icons/AddCircle";
-import RemoveIcon from "@material-ui/icons/RemoveCircle";
+    Box, Button, Card, CardActions, CardContent, CardHeader, Collapse, createStyles, Divider, Fade,
+    Grid, IconButton, makeStyles, TextField, Typography
+} from '@material-ui/core'
+import AddIcon from '@material-ui/icons/AddCircle'
+import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
+import BookIcon from '@material-ui/icons/BookTwoTone'
+import CameraIcon from '@material-ui/icons/CameraTwoTone'
+import RemoveIcon from '@material-ui/icons/RemoveCircle'
+import EyeIcon from '@material-ui/icons/RemoveRedEyeTwoTone'
+
+import { FirebaseService } from '../../../firebase'
+import { useCategorySelect } from '../../../hooks/useCategorySelect'
+import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
+import { isData } from '../../../model/modelUtil'
+import { CategoryWrapper } from '../../Category/CategoryWrapper'
+import { useCategoriesCollectionContext } from '../../Provider/CategoriesCollectionProvider'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { Navigate } from '../../Routes/Navigate'
+import { PATHS } from '../../Routes/Routes'
+import { Subtitle } from '../../Shared/Subtitle'
+import { RecipeResult } from '../Result/RecipeResult'
+import { RecipeCreateAttachements } from './Attachements/RecipeCreateAttachements'
+import { AttachementName, CreateChangeKey, useRecipeCreateReducer } from './RecipeCreateReducer'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -263,10 +252,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
                             <Box display="flex" alignItems="center">
                                 <IconButton
-                                    onClick={() => dispatch({ type: "increaseAmount" })}
+                                    onClick={() => dispatch({ type: "decreaseAmount" })}
                                     size="small"
                                 >
-                                    <AddIcon />
+                                    <RemoveIcon />
                                 </IconButton>
                                 <Box
                                     marginLeft={0.5}
@@ -277,10 +266,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                                     <Typography variant="h6">{state.amount}</Typography>
                                 </Box>
                                 <IconButton
-                                    onClick={() => dispatch({ type: "decreaseAmount" })}
+                                    onClick={() => dispatch({ type: "increaseAmount" })}
                                     size="small"
                                 >
-                                    <RemoveIcon />
+                                    <AddIcon />
                                 </IconButton>
                             </Box>
                         </Subtitle>
