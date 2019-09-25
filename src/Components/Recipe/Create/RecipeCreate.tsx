@@ -48,6 +48,7 @@ const useStyles = makeStyles(theme =>
 
 interface RecipeCreateProps extends Pick<RouteComponentProps, "history" | "location"> {
     recipe?: Recipe<AttachementMetadata> | null;
+    edit?: boolean;
 }
 
 const RecipeCreate: FC<RecipeCreateProps> = props => {
@@ -92,7 +93,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
             .doc(state.name)
             .get();
 
-        if (documentSnapshot.exists && document.location.pathname.includes("create"))
+        if (documentSnapshot.exists && !props.edit)
             return enqueueSnackbar(<>Rezept mit dem Namen {state.name} existiert bereits</>, {
                 variant: "info"
             });
@@ -105,11 +106,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 }
             );
 
-        if (state.storageDeleteRefs) {
+        if (state.storageDeleteRefs)
             for (const ref of state.storageDeleteRefs) {
                 await ref.delete();
             }
-        }
 
         dispatch({ type: "attachementsUploadingChange", now: true });
         const uploadTasks: Array<PromiseLike<any>> = [];
@@ -147,7 +147,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         });
 
         dispatch({ type: "recipeUploadingChange", now: true });
-        const { name, ingredients, description, categories, amount } = state;
+        const { name, ingredients, description, categories, amount, numberOfComments } = state;
         try {
             await FirebaseService.firestore
                 .collection("recipes")
@@ -158,14 +158,16 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     amount,
                     description,
                     attachements: [...oldMetadata, ...newMetadata],
+                    numberOfComments,
                     categories,
                     createdDate: FirebaseService.createTimestampFromDate(new Date())
                 });
 
-            await FirebaseService.firestore
-                .collection("rating")
-                .doc(state.name)
-                .set({ value: 0 });
+            if (!props.edit)
+                await FirebaseService.firestore
+                    .collection("rating")
+                    .doc(state.name)
+                    .set({ value: 0 });
 
             props.history.push(PATHS.home);
             enqueueSnackbar(<>{state.name} gespeichert</>, {
@@ -228,7 +230,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     <CardHeader
                         title={
                             <TextField
-                                disabled={document.location.pathname.includes("edit")}
+                                disabled={props.edit}
                                 className={classes.textFieldName}
                                 label="Name"
                                 value={state.name}
@@ -305,27 +307,35 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     </CardContent>
 
                     <CardActions>
-                        <Grid container justify="space-between" alignItems="center">
-                            <Grid item>
-                                <IconButton onClick={() => dispatch({ type: "previewChange" })}>
-                                    <EyeIcon />
-                                </IconButton>
-                            </Grid>
-                            <Grid item>
-                                <Navigate to={PATHS.home}>
-                                    <Button>Abbrechen</Button>
-                                </Navigate>
+                        <Box padding={1} flexGrow={1}>
+                            <Grid container justify="space-between" alignItems="center">
+                                <Grid item>
+                                    <IconButton onClick={() => dispatch({ type: "previewChange" })}>
+                                        <EyeIcon />
+                                    </IconButton>
+                                </Grid>
+                                <Grid item>
+                                    <Grid container spacing={2}>
+                                        <Grid item>
+                                            <Navigate to={PATHS.home}>
+                                                <Button>Abbrechen</Button>
+                                            </Navigate>
+                                        </Grid>
 
-                                <Button
-                                    disabled={state.attachementsUploading}
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={handleSaveClick}
-                                >
-                                    Speichern
-                                </Button>
+                                        <Grid item>
+                                            <Button
+                                                disabled={state.attachementsUploading}
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={handleSaveClick}
+                                            >
+                                                Speichern
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        </Box>
                     </CardActions>
 
                     <Collapse in={state.preview} timeout="auto" mountOnEnter>
@@ -333,11 +343,13 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             <Divider />
                             <CardContent>
                                 <RecipeResult
+                                    preview
                                     recipe={{
                                         name: state.name,
                                         createdDate: FirebaseService.createTimestampFromDate(
                                             new Date()
                                         ),
+                                        numberOfComments: 0,
                                         categories: state.categories,
                                         attachements: state.attachements,
                                         ingredients: state.ingredients,

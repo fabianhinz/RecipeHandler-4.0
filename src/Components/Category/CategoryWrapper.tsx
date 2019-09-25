@@ -1,6 +1,3 @@
-import ArtIcon from "@material-ui/icons/BookTwoTone";
-import AufwandIcon from "@material-ui/icons/AvTimerTwoTone";
-import SpeisenfolgeIcon from "@material-ui/icons/DirectionsTwoTone";
 import React, { FC } from "react";
 import {
     Avatar,
@@ -14,34 +11,123 @@ import {
 import { CategoryBase } from "./CategoryBase";
 import { Loading } from "../Shared/Loading";
 import { useCategoriesCollectionContext } from "../Provider/CategoriesCollectionProvider";
+import {
+    Pizza,
+    BreadSlice,
+    Cupcake,
+    Beer,
+    Pasta,
+    CakeVariant,
+    Cookie,
+    Leaf,
+    Bowl,
+    GlassCocktail,
+    Kettle,
+    Fish,
+    Cow,
+    Barley,
+    EggEaster,
+    AvTimer
+} from "mdi-material-ui";
 
 export const avatarFromCategoryType = (type: string) => {
     switch (type) {
-        case "Art":
+        case "Beilage":
             return (
                 <Avatar>
-                    <ArtIcon />
+                    <Pizza />
                 </Avatar>
             );
-        case "Aufwand":
+        case "Brot":
             return (
                 <Avatar>
-                    <AufwandIcon />
+                    <BreadSlice />
                 </Avatar>
             );
-        case "Speisenfolge":
+        case "Dessert":
             return (
                 <Avatar>
-                    <SpeisenfolgeIcon />
+                    <Cupcake />
                 </Avatar>
             );
-        default: {
+        case "Getränke":
             return (
                 <Avatar>
-                    <ArtIcon />
+                    <Beer />
                 </Avatar>
             );
-        }
+        case "Hauptgericht":
+            return (
+                <Avatar>
+                    <Pasta />
+                </Avatar>
+            );
+        case "Kuchen":
+            return (
+                <Avatar>
+                    <CakeVariant />
+                </Avatar>
+            );
+        case "Plätzchen":
+            return (
+                <Avatar>
+                    <Cookie />
+                </Avatar>
+            );
+        case "Salat":
+            return (
+                <Avatar>
+                    <Leaf />
+                </Avatar>
+            );
+        case "Suppe":
+            return (
+                <Avatar>
+                    <Bowl />
+                </Avatar>
+            );
+        case "Alkohol":
+            return (
+                <Avatar>
+                    <GlassCocktail />
+                </Avatar>
+            );
+        case "Alkoholfrei":
+            return (
+                <Avatar>
+                    <Kettle />
+                </Avatar>
+            );
+        case "Fisch":
+            return (
+                <Avatar>
+                    <Fish />
+                </Avatar>
+            );
+        case "Fleisch":
+            return (
+                <Avatar>
+                    <Cow />
+                </Avatar>
+            );
+        case "Vegan":
+            return (
+                <Avatar>
+                    <Barley />
+                </Avatar>
+            );
+        case "Vegetarisch":
+            return (
+                <Avatar>
+                    <EggEaster />
+                </Avatar>
+            );
+        default:
+            return (
+                <Avatar>
+                    <AvTimer />
+                </Avatar>
+            );
     }
 };
 // ToDo not needed anymore
@@ -73,9 +159,9 @@ const CategoryChangeCategory: FC<
         {onCategoryChange && selectedCategories && (
             <CategoryBase onClick={() => onCategoryChange(type, value)}>
                 <Chip
-                    avatar={avatarFromCategoryType(type)}
+                    avatar={avatarFromCategoryType(value)}
                     color={selectedCategories.get(type) === value ? "secondary" : "default"}
-                    label={<Typography variant="subtitle2">{value}</Typography>}
+                    label={value}
                 />
             </CategoryBase>
         )}
@@ -93,21 +179,12 @@ interface CategoryWrapperProps {
     onNameChange?: (type: string, oldValue: string, newValue: string) => void;
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        categoryType: {
-            fontWeight: 300
-        }
-    })
-);
-
 export const CategoryWrapper: FC<CategoryWrapperProps> = ({
     onCategoryChange,
     onNameChange,
     selectedCategories
 }) => {
     const { categoriesCollection } = useCategoriesCollectionContext();
-    const classes = useStyles();
 
     if (!categoriesCollection) return <Loading />;
 
@@ -115,7 +192,7 @@ export const CategoryWrapper: FC<CategoryWrapperProps> = ({
         <Grid container spacing={4}>
             {Object.keys(categoriesCollection).map(type => (
                 <Grid key={type} item xs={12}>
-                    <Typography className={classes.categoryType} gutterBottom>
+                    <Typography color="textSecondary" gutterBottom>
                         {type}
                     </Typography>
                     <Grid container spacing={1}>

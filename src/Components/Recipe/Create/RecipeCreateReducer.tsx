@@ -12,6 +12,7 @@ interface State {
     attachementsUploading: boolean;
     recipeUploading: boolean;
     storageDeleteRefs: Array<firebase.storage.Reference>;
+    numberOfComments: number;
 }
 
 export type CreateChangeKey = keyof Pick<State, "ingredients" | "description" | "name">;
@@ -98,7 +99,8 @@ const initialState: State = {
     preview: false,
     attachementsUploading: false,
     recipeUploading: false,
-    storageDeleteRefs: []
+    storageDeleteRefs: [],
+    numberOfComments: 0
 };
 
 export const useRecipeCreateReducer = (recipe?: Recipe<AttachementMetadata> | null) => {

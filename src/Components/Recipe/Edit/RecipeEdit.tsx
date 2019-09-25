@@ -19,7 +19,7 @@ const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {
                     </Card>
                 </Box>
             ) : (
-                <RecipeCreate {...routeProps} recipe={recipeDoc} />
+                <RecipeCreate {...routeProps} recipe={recipeDoc} edit />
             )}
         </>
     );

@@ -5,7 +5,7 @@ import copy from "clipboard-copy";
 import { Recipe, AttachementMetadata } from "../../model/model";
 import { PATHS } from "../Routes/Routes";
 
-export const Share: FC<Pick<Recipe<AttachementMetadata>, "name">> = ({ name }) => {
+export const RecipeShare: FC<Pick<Recipe<AttachementMetadata>, "name">> = ({ name }) => {
     const [copied, setCopied] = useState(false);
 
     const handleCommentClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
