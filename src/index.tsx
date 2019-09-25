@@ -7,4 +7,4 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 
 ReactDOM.render(<App />, document.getElementById("root"));
 
-if (process.env.NODE_ENV !== "production") serviceWorker.register();
+if (process.env.NODE_ENV === "production") serviceWorker.register();

@@ -18,7 +18,7 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({ onThemeChange, dis
 
     return (
         <Box
-            minWidth={50}
+            height="100%"
             display="flex"
             justifyContent="center"
             alignItems="center"

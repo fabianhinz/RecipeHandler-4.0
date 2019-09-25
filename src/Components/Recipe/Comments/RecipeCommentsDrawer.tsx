@@ -5,6 +5,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { FirebaseService } from "../../../firebase";
 import { ReactComponent as NoCommentsIcon } from "../../../icons/notFound.svg";
 import { RecipeComment } from "./RecipeComment";
+import { Loading } from "../../Shared/Loading";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -45,6 +46,7 @@ interface RecipeCommentsDrawerProps extends Pick<RecipeDocument, "name"> {
 export const RecipeCommentsDrawer: FC<RecipeCommentsDrawerProps> = ({ open, onClose, name }) => {
     const [comments, setComments] = useState<Array<Comment>>([]);
     const [input, setInput] = useState("");
+    const [loading, setLoading] = useState(false);
     const [inputDisabled, setInputDisabled] = useState(false);
 
     const classes = useStyles();
@@ -53,6 +55,7 @@ export const RecipeCommentsDrawer: FC<RecipeCommentsDrawerProps> = ({ open, onCl
 
     useEffect(() => {
         if (!open) return;
+        setLoading(true);
 
         return FirebaseService.firestore
             .collection("recipes")
@@ -65,6 +68,7 @@ export const RecipeCommentsDrawer: FC<RecipeCommentsDrawerProps> = ({ open, onCl
                         doc => ({ documentId: doc.id, ...doc.data() } as Comment)
                     )
                 );
+                setLoading(false);
             });
     }, [name, open]);
 
@@ -104,6 +108,8 @@ export const RecipeCommentsDrawer: FC<RecipeCommentsDrawerProps> = ({ open, onCl
                             className={classes.scrollbar}
                             options={{ suppressScrollX: true }}
                         >
+                            {loading && <Loading />}
+
                             <Grid
                                 className={classes.commentsContainer}
                                 alignItems="flex-end"
