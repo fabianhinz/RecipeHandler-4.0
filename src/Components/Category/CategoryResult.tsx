@@ -13,7 +13,7 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => (
             <Grid item key={type}>
                 {categories[type].length > 0 && (
                     <Chip
-                        avatar={avatarFromCategoryType(type)}
+                        avatar={avatarFromCategoryType(categories[type])}
                         size="small"
                         color="secondary"
                         label={categories[type]}
