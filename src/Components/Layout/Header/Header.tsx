@@ -1,6 +1,14 @@
 import OpenDrawerIcon from "@material-ui/icons/MenuTwoTone";
 import React, { FC } from "react";
-import { createStyles, Fab, Hidden, makeStyles, Paper, SwipeableDrawer } from "@material-ui/core";
+import {
+    createStyles,
+    Fab,
+    Hidden,
+    makeStyles,
+    Paper,
+    SwipeableDrawer,
+    DialogContent
+} from "@material-ui/core";
 
 import { HeaderNavigation } from "./HeaderNavigation";
 import { useHeaderReducer } from "./HeaderReducer";
@@ -52,7 +60,9 @@ export const Header: FC<HeaderProps> = props => {
                     onClose={handleDrawerChange}
                     onOpen={handleDrawerChange}
                 >
-                    <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
+                    <DialogContent>
+                        <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
+                    </DialogContent>
                 </SwipeableDrawer>
                 <Fab size="small" className={classes.openDrawerIcon} onClick={handleDrawerChange}>
                     <OpenDrawerIcon />

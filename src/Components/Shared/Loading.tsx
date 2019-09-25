@@ -27,7 +27,7 @@ export const Loading = () => {
             justifyContent="center"
             alignItems="center"
         >
-            <LinearProgress className={classes.progress} color="secondary" variant="query" />
+            <LinearProgress className={classes.progress} color="primary" variant="query" />
         </Box>
     );
 };

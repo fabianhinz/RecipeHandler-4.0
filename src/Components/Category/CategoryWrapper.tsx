@@ -1,12 +1,22 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
     Avatar,
     Chip,
     Grid,
-    InputBase,
     Typography,
-    makeStyles,
-    createStyles
+    Hidden,
+    Box,
+    useMediaQuery,
+    ListItem,
+    ListItemText,
+    ListItemAvatar,
+    ListItemIcon,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    List,
+    IconButton,
+    Drawer
 } from "@material-ui/core";
 import { CategoryBase } from "./CategoryBase";
 import { Loading } from "../Shared/Loading";
@@ -27,191 +37,185 @@ import {
     Cow,
     Barley,
     EggEaster,
-    AvTimer
+    AvTimer,
+    FilterVariant,
+    Close
 } from "mdi-material-ui";
 
-export const avatarFromCategoryType = (type: string) => {
-    switch (type) {
+export const avatarFromCategory = (category: string) => {
+    const getAvatar = (icon: JSX.Element) => <Avatar>{icon}</Avatar>;
+
+    switch (category) {
         case "Beilage":
-            return (
-                <Avatar>
-                    <Pizza />
-                </Avatar>
-            );
+            return getAvatar(<Pizza />);
         case "Brot":
-            return (
-                <Avatar>
-                    <BreadSlice />
-                </Avatar>
-            );
+            return getAvatar(<BreadSlice />);
         case "Dessert":
-            return (
-                <Avatar>
-                    <Cupcake />
-                </Avatar>
-            );
+            return getAvatar(<Cupcake />);
         case "Getränke":
-            return (
-                <Avatar>
-                    <Beer />
-                </Avatar>
-            );
+            return getAvatar(<Beer />);
         case "Hauptgericht":
-            return (
-                <Avatar>
-                    <Pasta />
-                </Avatar>
-            );
+            return getAvatar(<Pasta />);
         case "Kuchen":
-            return (
-                <Avatar>
-                    <CakeVariant />
-                </Avatar>
-            );
+            return getAvatar(<CakeVariant />);
         case "Plätzchen":
-            return (
-                <Avatar>
-                    <Cookie />
-                </Avatar>
-            );
+            return getAvatar(<Cookie />);
         case "Salat":
-            return (
-                <Avatar>
-                    <Leaf />
-                </Avatar>
-            );
+            return getAvatar(<Leaf />);
         case "Suppe":
-            return (
-                <Avatar>
-                    <Bowl />
-                </Avatar>
-            );
+            return getAvatar(<Bowl />);
         case "Alkohol":
-            return (
-                <Avatar>
-                    <GlassCocktail />
-                </Avatar>
-            );
+            return getAvatar(<GlassCocktail />);
         case "Alkoholfrei":
-            return (
-                <Avatar>
-                    <Kettle />
-                </Avatar>
-            );
+            return getAvatar(<Kettle />);
         case "Fisch":
-            return (
-                <Avatar>
-                    <Fish />
-                </Avatar>
-            );
+            return getAvatar(<Fish />);
         case "Fleisch":
-            return (
-                <Avatar>
-                    <Cow />
-                </Avatar>
-            );
+            return getAvatar(<Cow />);
         case "Vegan":
-            return (
-                <Avatar>
-                    <Barley />
-                </Avatar>
-            );
+            return getAvatar(<Barley />);
         case "Vegetarisch":
-            return (
-                <Avatar>
-                    <EggEaster />
-                </Avatar>
-            );
+            return getAvatar(<EggEaster />);
         default:
-            return (
-                <Avatar>
-                    <AvTimer />
-                </Avatar>
-            );
+            return getAvatar(<AvTimer />);
     }
 };
-// ToDo not needed anymore
-const NameChangeCategory: FC<Pick<CategoryWrapperProps, "onNameChange"> & SharedProps> = ({
-    onNameChange,
-    type,
-    value
-}) => (
-    <>
-        {onNameChange && (
-            <Chip
-                avatar={avatarFromCategoryType(type)}
-                color="default"
-                label={
-                    <InputBase
-                        defaultValue={value}
-                        onChange={e => onNameChange(type, value, e.target.value)}
-                    />
-                }
-            />
-        )}
-    </>
-);
 
-const CategoryChangeCategory: FC<
-    Pick<CategoryWrapperProps, "onCategoryChange" | "selectedCategories"> & SharedProps
-> = ({ onCategoryChange, selectedCategories, type, value }) => (
-    <>
-        {onCategoryChange && selectedCategories && (
-            <CategoryBase onClick={() => onCategoryChange(type, value)}>
-                <Chip
-                    avatar={avatarFromCategoryType(value)}
-                    color={selectedCategories.get(type) === value ? "secondary" : "default"}
-                    label={value}
-                />
-            </CategoryBase>
-        )}
-    </>
-);
-
-interface SharedProps {
+interface SharedProps extends CategoryWrapperProps {
+    categories: Array<string>;
     type: string;
-    value: string;
 }
 
+const CategoryMenu: FC<SharedProps> = ({
+    onCategoryChange,
+    selectedCategories,
+    type,
+    categories
+}) => {
+    const [drawer, setDrawer] = useState(false);
+    const selectedHasType = selectedCategories.has(type);
+    const selectedCategory = selectedCategories.get(type) as string;
+
+    const handleDialogChange = () => setDrawer(previous => !previous);
+
+    const handleCategoryChange = (value: string) => () => {
+        setDrawer(false);
+        onCategoryChange(type, value);
+    };
+
+    return (
+        <>
+            <ListItem button onClick={handleDialogChange}>
+                <ListItemIcon>
+                    {selectedHasType ? (
+                        avatarFromCategory(selectedCategory)
+                    ) : (
+                        <Avatar>
+                            <FilterVariant />
+                        </Avatar>
+                    )}
+                </ListItemIcon>
+                <ListItemText
+                    primary={type}
+                    secondary={selectedHasType ? selectedCategory : "Auswählen (optional)"}
+                />
+            </ListItem>
+
+            <Drawer anchor="bottom" open={drawer} onClose={handleDialogChange}>
+                <DialogTitle>{type} auswählen</DialogTitle>
+                <DialogContent>
+                    <Box maxHeight="50vh" overflow="auto">
+                        <List>
+                            {categories.map(category => (
+                                <ListItem
+                                    onClick={handleCategoryChange(category)}
+                                    button
+                                    key={category}
+                                >
+                                    <ListItemAvatar>{avatarFromCategory(category)}</ListItemAvatar>
+                                    <ListItemText primary={category} />
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Box flexGrow={1} display="flex" justifyContent="center">
+                        <IconButton
+                            onClick={handleCategoryChange(selectedCategory)}
+                            disabled={!selectedHasType}
+                        >
+                            <Close fontSize="large" />
+                        </IconButton>
+                    </Box>
+                </DialogActions>
+            </Drawer>
+        </>
+    );
+};
+
+const CategoryChips: FC<SharedProps> = ({
+    onCategoryChange,
+    selectedCategories,
+    type,
+    categories
+}) => (
+    <>
+        <Typography color="textSecondary" gutterBottom>
+            {type}
+        </Typography>
+        <Grid container spacing={1}>
+            {categories.sort().map(category => (
+                <Grid item key={category}>
+                    <CategoryBase onClick={() => onCategoryChange(type, category)}>
+                        <Chip
+                            avatar={avatarFromCategory(category)}
+                            color={
+                                selectedCategories.get(type) === category ? "secondary" : "default"
+                            }
+                            label={category}
+                        />
+                    </CategoryBase>
+                </Grid>
+            ))}
+        </Grid>
+    </>
+);
+
 interface CategoryWrapperProps {
-    selectedCategories?: Map<string, string>;
-    onCategoryChange?: (type: string, value: string) => void;
-    onNameChange?: (type: string, oldValue: string, newValue: string) => void;
+    selectedCategories: Map<string, string>;
+    onCategoryChange: (type: string, value: string) => void;
 }
 
 export const CategoryWrapper: FC<CategoryWrapperProps> = ({
     onCategoryChange,
-    onNameChange,
     selectedCategories
 }) => {
     const { categoriesCollection } = useCategoriesCollectionContext();
+    const xsDown = useMediaQuery("(max-width: 599px)");
 
-    if (!categoriesCollection) return <Loading />;
+    if (Object.keys(categoriesCollection).length === 0) return <Loading />;
 
     return (
-        <Grid container spacing={4}>
+        <Grid container spacing={xsDown ? 2 : 4}>
             {Object.keys(categoriesCollection).map(type => (
                 <Grid key={type} item xs={12}>
-                    <Typography color="textSecondary" gutterBottom>
-                        {type}
-                    </Typography>
-                    <Grid container spacing={1}>
-                        {categoriesCollection[type].sort().map(value => (
-                            <Grid item key={value}>
-                                <NameChangeCategory
-                                    onNameChange={onNameChange}
-                                    type={type}
-                                    value={value}
-                                />
-                                <CategoryChangeCategory
-                                    onCategoryChange={onCategoryChange}
-                                    selectedCategories={selectedCategories}
-                                    type={type}
-                                    value={value}
-                                />
-                            </Grid>
-                        ))}
-                    </Grid>
+                    <Hidden smUp>
+                        <CategoryMenu
+                            categories={categoriesCollection[type]}
+                            onCategoryChange={onCategoryChange}
+                            selectedCategories={selectedCategories}
+                            type={type}
+                        />
+                    </Hidden>
+                    <Hidden xsDown>
+                        <CategoryChips
+                            categories={categoriesCollection[type]}
+                            onCategoryChange={onCategoryChange}
+                            selectedCategories={selectedCategories}
+                            type={type}
+                        />
+                    </Hidden>
                 </Grid>
             ))}
         </Grid>
