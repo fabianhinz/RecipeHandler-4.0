@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Chip, Grid } from "@material-ui/core";
 import { Categories } from "../../model/model";
-import { avatarFromCategoryType } from "./CategoryWrapper";
+import { avatarFromCategory } from "./CategoryWrapper";
 
 interface CategoryResultProps {
     categories: Categories<string>;
@@ -13,7 +13,7 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => (
             <Grid item key={type}>
                 {categories[type].length > 0 && (
                     <Chip
-                        avatar={avatarFromCategoryType(categories[type])}
+                        avatar={avatarFromCategory(categories[type])}
                         size="small"
                         color="secondary"
                         label={categories[type]}

@@ -1,13 +1,5 @@
 import React, { FC } from "react";
-import {
-    Avatar,
-    Chip,
-    Grid,
-    InputBase,
-    Typography,
-    makeStyles,
-    createStyles
-} from "@material-ui/core";
+import { Avatar, Chip, Grid, Typography } from "@material-ui/core";
 import { CategoryBase } from "./CategoryBase";
 import { Loading } from "../Shared/Loading";
 import { useCategoriesCollectionContext } from "../Provider/CategoriesCollectionProvider";
@@ -30,8 +22,8 @@ import {
     AvTimer
 } from "mdi-material-ui";
 
-export const avatarFromCategoryType = (type: string) => {
-    switch (type) {
+export const avatarFromCategory = (category: string) => {
+    switch (category) {
         case "Beilage":
             return (
                 <Avatar>
@@ -130,58 +122,34 @@ export const avatarFromCategoryType = (type: string) => {
             );
     }
 };
-// ToDo not needed anymore
-const NameChangeCategory: FC<Pick<CategoryWrapperProps, "onNameChange"> & SharedProps> = ({
-    onNameChange,
-    type,
-    value
-}) => (
-    <>
-        {onNameChange && (
-            <Chip
-                avatar={avatarFromCategoryType(type)}
-                color="default"
-                label={
-                    <InputBase
-                        defaultValue={value}
-                        onChange={e => onNameChange(type, value, e.target.value)}
-                    />
-                }
-            />
-        )}
-    </>
-);
 
-const CategoryChangeCategory: FC<
-    Pick<CategoryWrapperProps, "onCategoryChange" | "selectedCategories"> & SharedProps
-> = ({ onCategoryChange, selectedCategories, type, value }) => (
-    <>
-        {onCategoryChange && selectedCategories && (
-            <CategoryBase onClick={() => onCategoryChange(type, value)}>
-                <Chip
-                    avatar={avatarFromCategoryType(value)}
-                    color={selectedCategories.get(type) === value ? "secondary" : "default"}
-                    label={value}
-                />
-            </CategoryBase>
-        )}
-    </>
-);
-
-interface SharedProps {
+interface SelectableCategoryProps extends CategoryWrapperProps {
     type: string;
-    value: string;
+    category: string;
 }
 
+const SelectableCategory: FC<SelectableCategoryProps> = ({
+    onCategoryChange,
+    selectedCategories,
+    type,
+    category
+}) => (
+    <CategoryBase onClick={() => onCategoryChange(type, category)}>
+        <Chip
+            avatar={avatarFromCategory(category)}
+            color={selectedCategories.get(type) === category ? "secondary" : "default"}
+            label={category}
+        />
+    </CategoryBase>
+);
+
 interface CategoryWrapperProps {
-    selectedCategories?: Map<string, string>;
-    onCategoryChange?: (type: string, value: string) => void;
-    onNameChange?: (type: string, oldValue: string, newValue: string) => void;
+    selectedCategories: Map<string, string>;
+    onCategoryChange: (type: string, value: string) => void;
 }
 
 export const CategoryWrapper: FC<CategoryWrapperProps> = ({
     onCategoryChange,
-    onNameChange,
     selectedCategories
 }) => {
     const { categoriesCollection } = useCategoriesCollectionContext();
@@ -196,18 +164,13 @@ export const CategoryWrapper: FC<CategoryWrapperProps> = ({
                         {type}
                     </Typography>
                     <Grid container spacing={1}>
-                        {categoriesCollection[type].sort().map(value => (
-                            <Grid item key={value}>
-                                <NameChangeCategory
-                                    onNameChange={onNameChange}
-                                    type={type}
-                                    value={value}
-                                />
-                                <CategoryChangeCategory
+                        {categoriesCollection[type].sort().map(category => (
+                            <Grid item key={category}>
+                                <SelectableCategory
                                     onCategoryChange={onCategoryChange}
                                     selectedCategories={selectedCategories}
                                     type={type}
-                                    value={value}
+                                    category={category}
                                 />
                             </Grid>
                         ))}
