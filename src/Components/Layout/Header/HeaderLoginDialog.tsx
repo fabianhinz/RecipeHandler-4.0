@@ -60,7 +60,7 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
                     <DialogActions>
                         <Box width="100%" display="flex" justifyContent="space-evenly">
                             <Button onClick={handleDialogChange}>Schließen</Button>
-                            <Button color="primary" onClick={handleLogout}>
+                            <Button variant="contained" color="primary" onClick={handleLogout}>
                                 logout
                             </Button>
                         </Box>
@@ -90,7 +90,7 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
                     <DialogActions>
                         <Box flexGrow={1} display="flex" justifyContent="space-evenly">
                             <Button onClick={handleDialogChange}>Schließen</Button>
-                            <Button color="primary" type="submit">
+                            <Button variant="contained" color="primary" type="submit">
                                 Login
                             </Button>
                         </Box>

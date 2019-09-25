@@ -13,9 +13,9 @@ import {
 } from "@material-ui/core";
 import { RecipeResult } from "../../Recipe/Result/RecipeResult";
 import { Recipe, AttachementMetadata } from "../../../model/model";
-import { BadgeRating } from "../../Shared/BadgeRating";
-import { Comments } from "../../Shared/Comments";
-import { Share } from "../../Shared/Share";
+import { RecipeRating } from "../../Recipe/RecipeRating";
+import { RecipeComments } from "../../Recipe/Comments/RecipeComments";
+import { RecipeShare } from "../../Recipe/RecipeShare";
 
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === "light" ? brown[200] : brown[400];
@@ -62,13 +62,16 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                     <Grid item>
                         <Grid container spacing={1}>
                             <Grid item>
-                                <Share name={props.recipe.name} />
+                                <RecipeShare name={props.recipe.name} />
                             </Grid>
                             <Grid item>
-                                <Comments name={props.recipe.name} />
+                                <RecipeComments
+                                    numberOfComments={props.recipe.numberOfComments}
+                                    name={props.recipe.name}
+                                />
                             </Grid>
                             <Grid item>
-                                <BadgeRating name={props.recipe.name} />
+                                <RecipeRating name={props.recipe.name} />
                             </Grid>
                         </Grid>
                     </Grid>

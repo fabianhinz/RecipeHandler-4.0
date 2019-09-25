@@ -22,10 +22,9 @@ const storageRef = storage.ref();
 const auth = firebase.auth();
 
 const createTimestampFromDate = (date: Date) => firebase.firestore.Timestamp.fromDate(date);
-const createDateFromTimestamp = (seconds: number, nanoseconds: number) =>
-    new firebase.firestore.Timestamp(seconds, nanoseconds).toDate();
+const createDateFromTimestamp = (timestamp: firebase.firestore.Timestamp) =>
+    new firebase.firestore.Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
 const incrementBy = (value: number) => firebase.firestore.FieldValue.increment(value);
-const decreaseBy = (value: number) => firebase.firestore.FieldValue.increment(value);
 
 export const FirebaseService = {
     firestore,
@@ -34,6 +33,5 @@ export const FirebaseService = {
     auth,
     createTimestampFromDate,
     createDateFromTimestamp,
-    incrementBy,
-    decreaseBy
+    incrementBy
 };

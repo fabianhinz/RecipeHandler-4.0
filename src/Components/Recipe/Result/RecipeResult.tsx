@@ -15,10 +15,11 @@ import { FirebaseService } from "../../../firebase";
 
 interface RecipeResultProps {
     recipe: Recipe<AttachementMetadata | AttachementData> | null;
+    preview?: boolean;
 }
 
-export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
-    const { history, location } = useRouterContext();
+export const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview }) => {
+    const { history } = useRouterContext();
     const { user } = useFirebaseAuthContext();
 
     if (!recipe)
@@ -64,14 +65,13 @@ export const RecipeResult: FC<RecipeResultProps> = ({ recipe }) => {
                 <Typography variant="caption">
                     Erstellt am:{" "}
                     {FirebaseService.createDateFromTimestamp(
-                        recipe.createdDate.seconds,
-                        recipe.createdDate.nanoseconds
+                        recipe.createdDate
                     ).toLocaleDateString()}
                 </Typography>
             </Grid>
 
             <Grid item xs={12}>
-                {user && location.pathname.includes("details") && (
+                {user && !preview && (
                     <Box textAlign="right">
                         <Button
                             color="primary"

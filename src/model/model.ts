@@ -21,6 +21,7 @@ export interface Recipe<T extends Attachement> {
     ingredients: string;
     amount: number;
     description: string;
+    numberOfComments: number;
 }
 
 export type CategoryType = string;
@@ -35,3 +36,11 @@ export interface Category {
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>;
 
 export type RecipeDocument = Recipe<AttachementMetadata>;
+
+export interface Comment {
+    createdDate: firebase.firestore.Timestamp;
+    documentId: string;
+    comment: string;
+    dislikes: number;
+    likes: number;
+}
