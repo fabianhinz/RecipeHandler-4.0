@@ -268,10 +268,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
                             <Box display="flex" alignItems="center">
                                 <IconButton
-                                    onClick={() => dispatch({ type: "increaseAmount" })}
+                                    onClick={() => dispatch({ type: "decreaseAmount" })}
                                     size="small"
                                 >
-                                    <AddIcon />
+                                    <RemoveIcon />
                                 </IconButton>
                                 <Box
                                     marginLeft={0.5}
@@ -282,10 +282,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                                     <Typography variant="h6">{state.amount}</Typography>
                                 </Box>
                                 <IconButton
-                                    onClick={() => dispatch({ type: "decreaseAmount" })}
+                                    onClick={() => dispatch({ type: "increaseAmount" })}
                                     size="small"
                                 >
-                                    <RemoveIcon />
+                                    <AddIcon />
                                 </IconButton>
                             </Box>
                         </Subtitle>
