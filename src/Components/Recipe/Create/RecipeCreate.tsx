@@ -1,5 +1,6 @@
 import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
+import MenuIcon from "@material-ui/icons/MenuBookTwoTone";
 import CameraIcon from "@material-ui/icons/CameraTwoTone";
 import EyeIcon from "@material-ui/icons/RemoveRedEyeTwoTone";
 import React, { FC, useCallback, useEffect, ChangeEvent } from "react";
@@ -21,7 +22,7 @@ import {
     Typography
 } from "@material-ui/core";
 import { RecipeCreateAttachements } from "./Attachements/RecipeCreateAttachements";
-import { RecipeResult } from "../Result/RecipeResult";
+import RecipeResult from "../Result/RecipeResult";
 import { useSnackbar } from "notistack";
 import { AttachementData, AttachementMetadata, Recipe } from "../../../model/model";
 import { isData } from "../../../model/modelUtil";
@@ -30,7 +31,7 @@ import { Subtitle } from "../../Shared/Subtitle";
 import { FirebaseService } from "../../../firebase";
 import { RouteComponentProps, Redirect } from "react-router";
 import { useRecipeCreateReducer, CreateChangeKey, AttachementName } from "./RecipeCreateReducer";
-import { CategoryWrapper } from "../../Category/CategoryWrapper";
+import CategoryWrapper from "../../Category/CategoryWrapper";
 import { useCategorySelect } from "../../../hooks/useCategorySelect";
 import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { useCategoriesCollectionContext } from "../../Provider/CategoriesCollectionProvider";
@@ -42,6 +43,9 @@ const useStyles = makeStyles(theme =>
     createStyles({
         textFieldName: {
             marginBottom: theme.spacing(1)
+        },
+        cardHeader: {
+            paddingBottom: 0
         }
     })
 );
@@ -230,6 +234,8 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     <CardHeader
                         title={
                             <TextField
+                                margin="none"
+                                fullWidth
                                 disabled={props.edit}
                                 className={classes.textFieldName}
                                 label="Name"
@@ -238,18 +244,17 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                                 onChange={handleTextFieldChange("name")}
                             />
                         }
-                        subheader="Ein Rezept sollte mindestens ein Bild, eine Zutatenliste und eine Beschreibung behinhalten. Ein Teil der Beschreibung wird in der Rezeptübersicht auf der Startseite angezeigt."
+                        subheader="Ein Rezept sollte mindestens einen Namen und Kategorie aufweißen. Nach
+                        erfolgter Speicherung ist die Änderung des Rezeptnamens nicht mehr
+                        möglich"
+                        className={classes.cardHeader}
                     />
                     <CardContent>
-                        <Subtitle text="Kategorien" />
+                        <Subtitle firstChild icon={<MenuIcon />} text="Kategorien" />
                         <CategoryWrapper
                             selectedCategories={selectedCategories}
                             onCategoryChange={setSelectedCategories}
                         />
-
-                        <Box marginTop={2} marginBottom={2}>
-                            <Divider />
-                        </Box>
 
                         <Subtitle icon={<CameraIcon />} text="Bilder" />
                         <RecipeCreateAttachements
@@ -285,37 +290,37 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             </Box>
                         </Subtitle>
                         <TextField
-                            placeholder="Zutatenliste"
+                            label="optional"
                             value={state.ingredients}
                             onChange={handleTextFieldChange("ingredients")}
                             fullWidth
-                            rows={5}
+                            rowsMax={10}
                             multiline
-                            variant="outlined"
+                            variant="filled"
                         />
 
                         <Subtitle icon={<BookIcon />} text="Beschreibung" />
                         <TextField
-                            placeholder="Beschreibung"
+                            label="optional"
                             value={state.description}
-                            rows={5}
+                            rowsMax={10}
                             onChange={handleTextFieldChange("description")}
                             fullWidth
                             multiline
-                            variant="outlined"
+                            variant="filled"
                         />
                     </CardContent>
 
                     <CardActions>
                         <Box padding={1} flexGrow={1}>
                             <Grid container justify="space-between" alignItems="center">
-                                <Grid item>
+                                <Grid item xs={2}>
                                     <IconButton onClick={() => dispatch({ type: "previewChange" })}>
                                         <EyeIcon />
                                     </IconButton>
                                 </Grid>
-                                <Grid item>
-                                    <Grid container spacing={2}>
+                                <Grid item xs={10}>
+                                    <Grid container justify="flex-end" spacing={2}>
                                         <Grid item>
                                             <Navigate to={PATHS.home}>
                                                 <Button>Abbrechen</Button>
@@ -338,7 +343,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         </Box>
                     </CardActions>
 
-                    <Collapse in={state.preview} timeout="auto" mountOnEnter>
+                    <Collapse in={state.preview} timeout="auto" mountOnEnter unmountOnExit>
                         <>
                             <Divider />
                             <CardContent>

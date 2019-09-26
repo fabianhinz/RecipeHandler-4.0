@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { RecipeResult } from "../Result/RecipeResult";
+import RecipeResult from "../Result/RecipeResult";
 import { Card, CardContent, Box, Fade } from "@material-ui/core";
 import { Loading } from "../../Shared/Loading";
 import { useRecipeDoc } from "../../../hooks/useRecipeDoc";
