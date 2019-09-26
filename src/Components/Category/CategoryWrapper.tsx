@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, memo } from "react";
 import {
     Avatar,
     Chip,
@@ -6,7 +6,6 @@ import {
     Typography,
     Hidden,
     Box,
-    useMediaQuery,
     ListItem,
     ListItemText,
     ListItemAvatar,
@@ -187,17 +186,13 @@ interface CategoryWrapperProps {
     onCategoryChange: (type: string, value: string) => void;
 }
 
-export const CategoryWrapper: FC<CategoryWrapperProps> = ({
-    onCategoryChange,
-    selectedCategories
-}) => {
+const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedCategories }) => {
     const { categoriesCollection } = useCategoriesCollectionContext();
-    const xsDown = useMediaQuery("(max-width: 599px)");
 
     if (Object.keys(categoriesCollection).length === 0) return <Loading />;
 
     return (
-        <Grid container spacing={xsDown ? 2 : 4}>
+        <Grid container spacing={2}>
             {Object.keys(categoriesCollection).map(type => (
                 <Grid key={type} item xs={12}>
                     <Hidden smUp>
@@ -221,3 +216,10 @@ export const CategoryWrapper: FC<CategoryWrapperProps> = ({
         </Grid>
     );
 };
+
+export default memo(
+    CategoryWrapper,
+    (prev, next) =>
+        prev.onCategoryChange === next.onCategoryChange &&
+        prev.selectedCategories === next.selectedCategories
+);

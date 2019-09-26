@@ -11,7 +11,7 @@ import {
     Typography,
     Hidden
 } from "@material-ui/core";
-import { RecipeResult } from "../../Recipe/Result/RecipeResult";
+import RecipeResult from "../../Recipe/Result/RecipeResult";
 import { Recipe, AttachementMetadata } from "../../../model/model";
 import { RecipeRating } from "../../Recipe/RecipeRating";
 import { RecipeComments } from "../../Recipe/Comments/RecipeComments";

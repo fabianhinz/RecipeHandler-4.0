@@ -1,14 +1,13 @@
-import AddIcon from "@material-ui/icons/AddCircleTwoTone";
 import compressImage from "browser-image-compression";
 import React, { FC, useCallback, useEffect } from "react";
 import RecipeCreateAttachementsCard, {
     AttachementsCardChangeHandler
 } from "./RecipeCreateAttachementsCard";
-import { createStyles, Fab, Grid, makeStyles } from "@material-ui/core";
+import { createStyles, Grid, makeStyles, Button, Box } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
 import { useSnackbar } from "notistack";
 import { AttachementData, AttachementMetadata } from "../../../../model/model";
-import clsx from "clsx";
+import { ReactComponent as NotFoundIcon } from "../../../../icons/notFound.svg";
 
 const readDocumentAsync = (document: Blob) =>
     new Promise<string>((resolve, reject) => {
@@ -43,6 +42,7 @@ interface RecipeCreateAttachementsProps extends AttachementsCardChangeHandler {
 export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props => {
     const classes = useStyles();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const noAttachements = props.attachements.length === 0;
 
     const onDrop = useCallback(
         async (acceptedFiles: File[], rejectedFiles: File[]) => {
@@ -100,31 +100,37 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
     }, [closeSnackbar, enqueueSnackbar, isDragActive]);
 
     return (
-        <Grid container spacing={2}>
-            {props.attachements.map(attachement => (
-                <RecipeCreateAttachementsCard
-                    key={attachement.name}
-                    attachement={attachement}
-                    onDeleteAttachement={props.onDeleteAttachement}
-                    onRemoveAttachement={props.onRemoveAttachement}
-                    onSaveAttachement={props.onSaveAttachement}
-                />
-            ))}
-            <Grid item xs={12}>
-                <Grid container justify="center">
-                    <div {...getRootProps()} className={classes.rootProps}>
-                        <input {...getInputProps()} />
-                        <Fab
-                            className={clsx(!isDragActive && classes.fab)}
-                            color="secondary"
-                            variant="extended"
-                        >
-                            <AddIcon className={classes.addIcon} />
-                            Bilder hinzufügen
-                        </Fab>
-                    </div>
+        <div {...getRootProps()} className={classes.rootProps}>
+            <input {...getInputProps()} />
+
+            <Grid container spacing={2} justify={noAttachements ? "center" : "flex-start"}>
+                {props.attachements.length === 0 && (
+                    <Box
+                        flexGrow={1}
+                        display="flex"
+                        justifyContent="center"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <NotFoundIcon width={150} />
+                    </Box>
+                )}
+                {props.attachements.map(attachement => (
+                    <RecipeCreateAttachementsCard
+                        key={attachement.name}
+                        attachement={attachement}
+                        onDeleteAttachement={props.onDeleteAttachement}
+                        onRemoveAttachement={props.onRemoveAttachement}
+                        onSaveAttachement={props.onSaveAttachement}
+                    />
+                ))}
+                <Grid item xs={12}>
+                    <Grid container justify="flex-end">
+                        <Button variant="contained" color="secondary">
+                            hinzufügen
+                        </Button>
+                    </Grid>
                 </Grid>
             </Grid>
-        </Grid>
+        </div>
     );
 };
