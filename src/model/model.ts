@@ -22,6 +22,7 @@ export interface Recipe<T extends Attachement> {
     amount: number;
     description: string;
     numberOfComments: number;
+    relatedRecipes: Array<string>;
 }
 
 export type CategoryType = string;

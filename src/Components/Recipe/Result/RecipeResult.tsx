@@ -1,5 +1,6 @@
 import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
+import LabelIcon from "@material-ui/icons/LabelTwoTone";
 import React, { FC, memo } from "react";
 import ReactMarkdown from "react-markdown";
 import { RecipeResultImg } from "./RecipeResultImg";
@@ -12,6 +13,7 @@ import { useRouterContext } from "../../Provider/RouterProvider";
 import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { PATHS } from "../../Routes/Routes";
 import { FirebaseService } from "../../../firebase";
+import { RecipeResultRelated } from "./RecipeResultRelated";
 
 interface RecipeResultProps {
     recipe: Recipe<AttachementMetadata | AttachementData> | null;
@@ -62,6 +64,11 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview }) => {
             </Grid>
 
             <Grid item xs={12}>
+                <Subtitle icon={<LabelIcon />} text="Passt gut zu" />
+                <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+            </Grid>
+
+            <Grid item xs={12}>
                 <Typography variant="caption">
                     Erstellt am:{" "}
                     {FirebaseService.createDateFromTimestamp(
@@ -87,4 +94,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview }) => {
     );
 };
 
-export default memo(RecipeResult, (prev, next) => prev.recipe === next.recipe && prev.preview === next.preview)
+export default memo(
+    RecipeResult,
+    (prev, next) => prev.recipe === next.recipe && prev.preview === next.preview
+);
