@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Box, Card, CardContent } from "@material-ui/core";
-import { CategoryWrapper } from "../Category/CategoryWrapper";
+import CategoryWrapper from "../Category/CategoryWrapper";
 
 interface HomeCategoryProps {
     selectedCategories: Map<string, string>;

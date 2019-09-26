@@ -1,6 +1,6 @@
 import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
 import BookIcon from "@material-ui/icons/BookTwoTone";
-import React, { FC } from "react";
+import React, { FC, memo } from "react";
 import ReactMarkdown from "react-markdown";
 import { RecipeResultImg } from "./RecipeResultImg";
 import { Grid, Typography, Box, Slide, Button } from "@material-ui/core";
@@ -18,7 +18,7 @@ interface RecipeResultProps {
     preview?: boolean;
 }
 
-export const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview }) => {
+const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview }) => {
     const { history } = useRouterContext();
     const { user } = useFirebaseAuthContext();
 
@@ -86,3 +86,5 @@ export const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview }) => {
         </Grid>
     );
 };
+
+export default memo(RecipeResult, (prev, next) => prev.recipe === next.recipe && prev.preview === next.preview)
