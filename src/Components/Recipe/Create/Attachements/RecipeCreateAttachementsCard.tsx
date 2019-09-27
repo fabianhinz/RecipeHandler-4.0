@@ -69,7 +69,10 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
                     {attachementRefLoading ? (
                         <Skeleton variant="rect" className={classes.cardMedia} />
                     ) : isMetadata(attachement) ? (
-                        <CardMedia className={classes.cardMedia} image={attachementRef.dataUrl} />
+                        <CardMedia
+                            className={classes.cardMedia}
+                            image={attachementRef.mediumDataUrl}
+                        />
                     ) : (
                         <CardMedia className={classes.cardMedia} image={attachement.dataUrl} />
                     )}

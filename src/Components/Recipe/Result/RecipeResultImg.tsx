@@ -4,7 +4,7 @@ import { createStyles, Grid, makeStyles, Tooltip } from "@material-ui/core";
 import { AttachementData, AttachementMetadata } from "../../../model/model";
 import { useAttachementRef } from "../../../hooks/useAttachementRef";
 import { isData } from "../../../model/modelUtil";
-import { Loading } from "../../Shared/Loading";
+import Skeleton from "@material-ui/lab/Skeleton";
 import { GridSize } from "@material-ui/core/Grid";
 import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
 
@@ -31,8 +31,6 @@ export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement, fromRel
     const classes = useStyles();
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement);
 
-    if (attachementRefLoading) return <Loading />;
-
     const breakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = fromRelated
         ? { xs: 12, md: 6 }
         : { xs: 12, sm: 6, md: 4, lg: 3 };
@@ -40,10 +38,14 @@ export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement, fromRel
     return (
         <Grid {...breakpoints} item>
             <Tooltip title={attachement.name}>
-                {isData(attachement) ? (
+                {attachementRefLoading ? (
+                    <Skeleton className={classes.img} variant="rect" height={200} />
+                ) : isData(attachement) ? (
                     <img className={classes.img} src={attachement.dataUrl} alt="" width="100%" />
                 ) : (
-                    <img className={classes.img} src={attachementRef.dataUrl} alt="" />
+                    <a href={attachementRef.fullDataUrl} rel="noreferrer noopener" target="_blank">
+                        <img className={classes.img} src={attachementRef.mediumDataUrl} alt="" />
+                    </a>
                 )}
             </Tooltip>
         </Grid>
