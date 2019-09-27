@@ -334,6 +334,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         </Subtitle>
                         <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
                         <RecipeCreateRelatedDialog
+                            defaultValues={state.relatedRecipes}
                             currentRecipeName={state.name}
                             open={state.relatedRecipesDialog}
                             onClose={relatedRecipes =>

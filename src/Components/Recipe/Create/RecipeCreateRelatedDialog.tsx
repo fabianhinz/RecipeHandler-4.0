@@ -10,15 +10,22 @@ import {
     Checkbox,
     ListItemText,
     ListItemSecondaryAction,
-    Tooltip
+    Tooltip,
+    DialogActions,
+    Box,
+    IconButton,
+    Hidden,
+    useMediaQuery
 } from "@material-ui/core";
 import { SlideUp } from "../../Shared/Transitions";
 import { FirebaseService } from "../../../firebase";
 import { RecipeDocument } from "../../../model/model";
 import { avatarFromCategory } from "../../Category/CategoryWrapper";
 import { Loading } from "../../Shared/Loading";
+import { Close } from "mdi-material-ui";
 
 interface RecipeCreateRelatedDialogProps {
+    defaultValues: Array<string>;
     currentRecipeName: string;
     open: boolean;
     onClose: (relatedRecipes: Array<string>) => void;
@@ -27,10 +34,13 @@ interface RecipeCreateRelatedDialogProps {
 export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
     onClose,
     open,
-    currentRecipeName
+    currentRecipeName,
+    defaultValues
 }) => {
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([]);
-    const [selected, setSelected] = useState<Set<string>>(new Set());
+    const [selected, setSelected] = useState<Set<string>>(new Set(defaultValues));
+
+    const fullscreen = useMediaQuery("(max-width: 768px)");
 
     useEffect(() => {
         if (!open) return;
@@ -52,6 +62,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
 
     return (
         <Dialog
+            fullScreen={fullscreen}
             TransitionComponent={SlideUp}
             open={open}
             onClose={() => onClose([...selected.values()])}
@@ -62,41 +73,57 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             <DialogContent>
                 {recipes.length === 0 && <Loading />}
                 <List>
-                    {recipes.map(recipe => (
-                        <ListItem
-                            disabled={recipe.name === currentRecipeName}
-                            onClick={() => handleSelectedChange(recipe.name)}
-                            key={recipe.name}
-                            button
-                        >
-                            <ListItemIcon>
-                                <Checkbox
-                                    checked={selected.has(recipe.name)}
-                                    edge="start"
-                                    disableRipple
+                    {recipes
+                        .filter(recipe => recipe.name !== currentRecipeName)
+                        .map(recipe => (
+                            <ListItem
+                                onClick={() => handleSelectedChange(recipe.name)}
+                                key={recipe.name}
+                                button
+                            >
+                                <ListItemIcon>
+                                    <Checkbox
+                                        color="primary"
+                                        checked={selected.has(recipe.name)}
+                                        edge="start"
+                                        disableRipple
+                                    />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={recipe.name}
+                                    secondary={FirebaseService.createDateFromTimestamp(
+                                        recipe.createdDate
+                                    ).toLocaleString()}
                                 />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary={recipe.name}
-                                secondary={FirebaseService.createDateFromTimestamp(
-                                    recipe.createdDate
-                                ).toLocaleString()}
-                            />
-                            <ListItemSecondaryAction onClick={e => e.stopPropagation()}>
-                                <Grid container spacing={1}>
-                                    {Object.keys(recipe.categories).map(category => (
-                                        <Grid item key={category}>
-                                            <Tooltip title={recipe.categories[category]}>
-                                                {avatarFromCategory(recipe.categories[category])}
-                                            </Tooltip>
+                                <Hidden xsDown>
+                                    <ListItemSecondaryAction onClick={e => e.stopPropagation()}>
+                                        <Grid container spacing={1}>
+                                            {Object.keys(recipe.categories).map(category => (
+                                                <Grid item key={category}>
+                                                    <Tooltip title={recipe.categories[category]}>
+                                                        {avatarFromCategory(
+                                                            recipe.categories[category]
+                                                        )}
+                                                    </Tooltip>
+                                                </Grid>
+                                            ))}
                                         </Grid>
-                                    ))}
-                                </Grid>
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                    ))}
+                                    </ListItemSecondaryAction>
+                                </Hidden>
+                            </ListItem>
+                        ))}
                 </List>
             </DialogContent>
+            <DialogActions>
+                <Box flexGrow={1} display="flex" justifyContent="center">
+                    <IconButton
+                        onClick={() => setSelected(new Set([]))}
+                        disabled={selected.size === 0}
+                    >
+                        <Close fontSize="large" />
+                    </IconButton>
+                </Box>
+            </DialogActions>
         </Dialog>
     );
 };
