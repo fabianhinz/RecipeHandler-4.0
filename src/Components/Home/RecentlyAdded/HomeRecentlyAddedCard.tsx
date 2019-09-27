@@ -44,7 +44,10 @@ export const HomeRecentlyAddedCard: FC<{
                             {attachementRefLoading || skeleton ? (
                                 <Skeleton variant="circle" width={80} height={80} />
                             ) : (
-                                <Avatar className={classes.avatar} src={attachementRef.dataUrl}>
+                                <Avatar
+                                    className={classes.avatar}
+                                    src={attachementRef.smallDataUrl}
+                                >
                                     {recipe.name.slice(0, 1).toUpperCase()}
                                 </Avatar>
                             )}
