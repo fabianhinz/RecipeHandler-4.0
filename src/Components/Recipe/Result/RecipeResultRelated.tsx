@@ -1,20 +1,32 @@
 import React, { FC } from "react";
-import { Grid, Chip } from "@material-ui/core";
+import { Grid, Chip, Box, useMediaQuery } from "@material-ui/core";
 import LinkIcon from "@material-ui/icons/LinkTwoTone";
 import { CategoryBase } from "../../Category/CategoryBase";
+import { useDraggableRecipesContext } from "../../Provider/DraggableRecipesProvider";
+import { useRouterContext } from "../../Provider/RouterProvider";
 import { PATHS } from "../../Routes/Routes";
-import { Navigate } from "../../Routes/Navigate";
 
-export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => (
-    <Grid container spacing={2} alignItems="center">
-        {relatedRecipes.map(recipeName => (
-            <Grid key={recipeName} item>
-                <Navigate to={PATHS.details(recipeName)}>
-                    <CategoryBase>
-                        <Chip icon={<LinkIcon />} label={recipeName} />
-                    </CategoryBase>
-                </Navigate>
+export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => {
+    const { handleDraggableChange } = useDraggableRecipesContext();
+    const { history } = useRouterContext();
+    const xs = useMediaQuery("(max-width: 599px)");
+
+    const handleRecipeClick = (recipeName: string) => () => {
+        if (xs) history.push(PATHS.details(recipeName));
+        else handleDraggableChange(recipeName);
+    };
+
+    return (
+        <Box position="relative">
+            <Grid container spacing={2} alignItems="center">
+                {relatedRecipes.map(recipeName => (
+                    <Grid key={recipeName} item>
+                        <CategoryBase onClick={handleRecipeClick(recipeName)}>
+                            <Chip icon={<LinkIcon />} label={recipeName} />
+                        </CategoryBase>
+                    </Grid>
+                ))}
             </Grid>
-        ))}
-    </Grid>
-);
+        </Box>
+    );
+};

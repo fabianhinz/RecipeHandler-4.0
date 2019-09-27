@@ -22,7 +22,9 @@ import { FirebaseService } from "../../../firebase";
 import { RecipeDocument } from "../../../model/model";
 import { avatarFromCategory } from "../../Category/CategoryWrapper";
 import { Loading } from "../../Shared/Loading";
-import { Close } from "mdi-material-ui";
+import SaveIcon from "@material-ui/icons/SaveTwoTone";
+import CloseIcon from "@material-ui/icons/CloseTwoTone";
+import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 
 interface RecipeCreateRelatedDialogProps {
     defaultValues: Array<string>;
@@ -60,12 +62,19 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
         setSelected(new Set(selected));
     };
 
+    const handleClose = () => onClose([...selected.values()]);
+
+    const handleCancelBtnClick = () => {
+        setSelected(new Set(defaultValues));
+        onClose(defaultValues);
+    };
+
     return (
         <Dialog
             fullScreen={fullscreen}
             TransitionComponent={SlideUp}
             open={open}
-            onClose={() => onClose([...selected.values()])}
+            onClose={handleClose}
             maxWidth="sm"
             fullWidth
         >
@@ -115,12 +124,18 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
                 </List>
             </DialogContent>
             <DialogActions>
-                <Box flexGrow={1} display="flex" justifyContent="center">
+                <Box flexGrow={1} display="flex" justifyContent="space-evenly" alignItems="center">
+                    <IconButton onClick={handleCancelBtnClick}>
+                        <CloseIcon />
+                    </IconButton>
+                    <IconButton onClick={handleClose}>
+                        <SaveIcon />
+                    </IconButton>
                     <IconButton
                         onClick={() => setSelected(new Set([]))}
                         disabled={selected.size === 0}
                     >
-                        <Close fontSize="large" />
+                        <DeleteIcon />
                     </IconButton>
                 </Box>
             </DialogActions>

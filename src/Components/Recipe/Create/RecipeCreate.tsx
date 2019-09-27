@@ -21,8 +21,7 @@ import {
     IconButton,
     makeStyles,
     TextField,
-    Typography,
-    Fab
+    Typography
 } from "@material-ui/core";
 import { RecipeCreateAttachements } from "./Attachements/RecipeCreateAttachements";
 import RecipeResult from "../Result/RecipeResult";

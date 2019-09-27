@@ -14,13 +14,16 @@ import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { PATHS } from "../../Routes/Routes";
 import { FirebaseService } from "../../../firebase";
 import { RecipeResultRelated } from "./RecipeResultRelated";
+import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
+import { GridSize } from "@material-ui/core/Grid";
 
 interface RecipeResultProps {
     recipe: Recipe<AttachementMetadata | AttachementData> | null;
     preview?: boolean;
+    fromRelated?: boolean;
 }
 
-const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview }) => {
+const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) => {
     const { history } = useRouterContext();
     const { user } = useFirebaseAuthContext();
 
@@ -32,6 +35,11 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview }) => {
                 </Slide>
             </Box>
         );
+
+    const breakpoints = (options: {
+        ingredient: boolean;
+    }): Partial<Record<Breakpoint, boolean | GridSize>> =>
+        fromRelated ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 };
 
     return (
         <Grid container spacing={2}>
@@ -46,19 +54,23 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview }) => {
             <Grid item xs={12}>
                 <Grid container spacing={2}>
                     {recipe.attachements.map(attachement => (
-                        <RecipeResultImg key={attachement.name} attachement={attachement} />
+                        <RecipeResultImg
+                            fromRelated={fromRelated}
+                            key={attachement.name}
+                            attachement={attachement}
+                        />
                     ))}
                 </Grid>
             </Grid>
 
             <Grid item xs={12} />
 
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid {...breakpoints({ ingredient: true })} item>
                 <Subtitle icon={<AssignmentIcon />} text={`Zutaten für ${recipe.amount}`} />
                 <ReactMarkdown source={recipe.ingredients} />
             </Grid>
 
-            <Grid item xs={12} md={6} lg={8}>
+            <Grid {...breakpoints({ ingredient: false })} item>
                 <Subtitle icon={<BookIcon />} text="Beschreibung" />
                 <ReactMarkdown source={recipe.description} />
             </Grid>
