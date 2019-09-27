@@ -11,6 +11,7 @@ import { BrowserRouter } from "react-router-dom";
 import { FirebaseAuthProvider } from "./Provider/FirebaseAuthProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { CategoriesCollectionProvider } from "./Provider/CategoriesCollectionProvider";
+import { DraggableRecipesProvider } from "./Provider/DraggableRecipesProvider";
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme);
@@ -43,10 +44,12 @@ const App: FC = () => {
                         <RouterProvider>
                             <FirebaseAuthProvider>
                                 <CategoriesCollectionProvider>
-                                    <Container maxWidth="lg">
-                                        <Header onThemeChange={handleThemeChange} />
-                                        <Main />
-                                    </Container>
+                                    <DraggableRecipesProvider>
+                                        <Container maxWidth="lg">
+                                            <Header onThemeChange={handleThemeChange} />
+                                            <Main />
+                                        </Container>
+                                    </DraggableRecipesProvider>
                                 </CategoriesCollectionProvider>
                             </FirebaseAuthProvider>
                         </RouterProvider>

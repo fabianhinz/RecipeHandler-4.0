@@ -27,9 +27,6 @@ const useStyles = makeStyles(theme => {
         },
         addIcon: {
             marginRight: theme.spacing(1)
-        },
-        fab: {
-            boxShadow: "none"
         }
     });
 });
@@ -88,7 +85,8 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
-        accept: "image/jpeg, image/png"
+        accept: "image/jpeg, image/png",
+        noDragEventsBubbling: true
     });
 
     useEffect(() => {
@@ -101,16 +99,14 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
 
     return (
         <div {...getRootProps()} className={classes.rootProps}>
-            <input {...getInputProps()} />
-
-            <Grid container spacing={2} justify={noAttachements ? "center" : "flex-start"}>
+            <Grid
+                onClick={e => e.stopPropagation()}
+                container
+                spacing={2}
+                justify={noAttachements ? "center" : "flex-start"}
+            >
                 {props.attachements.length === 0 && (
-                    <Box
-                        flexGrow={1}
-                        display="flex"
-                        justifyContent="center"
-                        onClick={e => e.stopPropagation()}
-                    >
+                    <Box flexGrow={1} display="flex" justifyContent="center">
                         <NotFoundIcon width={150} />
                     </Box>
                 )}
@@ -124,11 +120,14 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
                     />
                 ))}
                 <Grid item xs={12}>
-                    <Grid container justify="flex-end">
-                        <Button variant="contained" color="secondary">
-                            hinzufügen
-                        </Button>
-                    </Grid>
+                    <Box display="flex" justifyContent="flex-end">
+                        <div {...getRootProps()} className={classes.rootProps}>
+                            <Button variant="contained" color="secondary">
+                                <input {...getInputProps()} />
+                                hinzufügen
+                            </Button>
+                        </div>
+                    </Box>
                 </Grid>
             </Grid>
         </div>

@@ -1,26 +1,48 @@
 import { useEffect, useState } from "react";
 import { FirebaseService } from "../firebase";
-import { Recipe, AttachementMetadata, RouteWithRecipeName } from "../model/model"
+import { Recipe, AttachementMetadata, RouteWithRecipeName } from "../model/model";
 
-type RecipesCollectionState = { loading: boolean, recipe: Recipe<AttachementMetadata> | null }
+type RecipesCollectionState = { loading: boolean; recipe: Recipe<AttachementMetadata> | null };
 
-export const useRecipeDoc = ({ location, match }: RouteWithRecipeName) => {
+export const useRecipeDoc = (options: {
+    routeProps?: RouteWithRecipeName;
+    recipeName?: string | null;
+}) => {
     const [state, setState] = useState<RecipesCollectionState>({
         loading: true,
         recipe: null
     });
 
     useEffect(() => {
-        if (location.state && location.state.recipe) {
-            setState({ loading: false, recipe: location.state.recipe });
-        } else {
-            FirebaseService.firestore.collection("recipes").doc(match.params.name).get().then(
-                documentSnapshot => {
-                    setState({ loading: false, recipe: documentSnapshot.data() as Recipe<AttachementMetadata> })
-                }
-            )
+        if (options.routeProps) {
+            const { location, match } = options.routeProps;
+            if (location.state && location.state.recipe) {
+                setState({ loading: false, recipe: location.state.recipe });
+            } else {
+                FirebaseService.firestore
+                    .collection("recipes")
+                    .doc(match.params.name)
+                    .get()
+                    .then(documentSnapshot => {
+                        setState({
+                            loading: false,
+                            recipe: documentSnapshot.data() as Recipe<AttachementMetadata>
+                        });
+                    });
+            }
+        } else if (options.recipeName) {
+            FirebaseService.firestore
+                .collection("recipes")
+                .doc(options.recipeName)
+                .get()
+                .then(documentSnapshot => {
+                    setState({
+                        loading: false,
+                        recipe: documentSnapshot.data() as Recipe<AttachementMetadata>
+                    });
+                });
         }
-    }, [location.state, match.params.name])
+    }, [options.recipeName, options.routeProps]);
 
-    return { recipeDoc: state.recipe, recipeDocLoading: state.loading }
-}
+    return { recipeDoc: state.recipe, recipeDocLoading: state.loading };
+};

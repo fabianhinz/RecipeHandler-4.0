@@ -3,6 +3,8 @@ import BookIcon from "@material-ui/icons/BookTwoTone";
 import MenuIcon from "@material-ui/icons/MenuBookTwoTone";
 import CameraIcon from "@material-ui/icons/CameraTwoTone";
 import EyeIcon from "@material-ui/icons/RemoveRedEyeTwoTone";
+import SwapIcon from "@material-ui/icons/SwapHorizontalCircle";
+import LabelIcon from "@material-ui/icons/LabelTwoTone";
 import React, { FC, useCallback, useEffect, ChangeEvent } from "react";
 import {
     Box,
@@ -38,6 +40,8 @@ import { useCategoriesCollectionContext } from "../../Provider/CategoriesCollect
 import { Navigate } from "../../Routes/Navigate";
 import AddIcon from "@material-ui/icons/AddCircle";
 import RemoveIcon from "@material-ui/icons/RemoveCircle";
+import { RecipeCreateRelatedDialog } from "./RecipeCreateRelatedDialog";
+import { RecipeResultRelated } from "../Result/RecipeResultRelated";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -151,7 +155,15 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         });
 
         dispatch({ type: "recipeUploadingChange", now: true });
-        const { name, ingredients, description, categories, amount, numberOfComments } = state;
+        const {
+            name,
+            ingredients,
+            description,
+            categories,
+            amount,
+            numberOfComments,
+            relatedRecipes
+        } = state;
         try {
             await FirebaseService.firestore
                 .collection("recipes")
@@ -164,6 +176,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     attachements: [...oldMetadata, ...newMetadata],
                     numberOfComments,
                     categories,
+                    relatedRecipes,
                     createdDate: FirebaseService.createTimestampFromDate(new Date())
                 });
 
@@ -309,6 +322,24 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             multiline
                             variant="filled"
                         />
+
+                        <Subtitle icon={<LabelIcon />} text="Passt gut zu (optional)">
+                            <IconButton
+                                onClick={() => dispatch({ type: "openRelatedRecipesDialog" })}
+                                size="small"
+                            >
+                                <SwapIcon />
+                            </IconButton>
+                        </Subtitle>
+                        <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                        <RecipeCreateRelatedDialog
+                            defaultValues={state.relatedRecipes}
+                            currentRecipeName={state.name}
+                            open={state.relatedRecipesDialog}
+                            onClose={relatedRecipes =>
+                                dispatch({ type: "relatedRecipesChange", relatedRecipes })
+                            }
+                        />
                     </CardContent>
 
                     <CardActions>
@@ -359,7 +390,8 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                                         attachements: state.attachements,
                                         ingredients: state.ingredients,
                                         amount: state.amount,
-                                        description: state.description
+                                        description: state.description,
+                                        relatedRecipes: state.relatedRecipes
                                     }}
                                 />
                             </CardContent>
