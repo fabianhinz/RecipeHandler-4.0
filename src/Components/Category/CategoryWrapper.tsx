@@ -37,9 +37,9 @@ import {
     Barley,
     EggEaster,
     AvTimer,
-    FilterVariant,
-    Close
+    FilterVariant
 } from "mdi-material-ui";
+import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 
 export const avatarFromCategory = (category: string) => {
     const getAvatar = (icon: JSX.Element) => <Avatar>{icon}</Avatar>;
@@ -144,7 +144,7 @@ const CategoryMenu: FC<SharedProps> = ({
                             onClick={handleCategoryChange(selectedCategory)}
                             disabled={!selectedHasType}
                         >
-                            <Close fontSize="large" />
+                            <DeleteIcon fontSize="large" />
                         </IconButton>
                     </Box>
                 </DialogActions>

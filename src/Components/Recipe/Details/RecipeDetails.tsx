@@ -6,7 +6,7 @@ import { useRecipeDoc } from "../../../hooks/useRecipeDoc";
 import { RouteWithRecipeName } from "../../../model/model";
 
 const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
-    const { recipeDoc, recipeDocLoading } = useRecipeDoc(routeProps);
+    const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps });
 
     return (
         <Fade in>

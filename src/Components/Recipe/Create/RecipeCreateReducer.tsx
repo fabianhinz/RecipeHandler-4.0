@@ -13,6 +13,8 @@ interface State {
     recipeUploading: boolean;
     storageDeleteRefs: Array<firebase.storage.Reference>;
     numberOfComments: number;
+    relatedRecipes: Array<string>;
+    relatedRecipesDialog: boolean;
 }
 
 export type CreateChangeKey = keyof Pick<State, "ingredients" | "description" | "name">;
@@ -34,7 +36,9 @@ type Action =
     | { type: "attachementNameChange"; name: AttachementName }
     | { type: "increaseAmount" }
     | { type: "decreaseAmount" }
-    | { type: "storageDeleteRefsChange"; ref: firebase.storage.Reference };
+    | { type: "storageDeleteRefsChange"; ref: firebase.storage.Reference }
+    | { type: "relatedRecipesChange"; relatedRecipes: Array<string> }
+    | { type: "openRelatedRecipesDialog" };
 
 const reducer: Reducer<State, Action> = (state, action) => {
     switch (action.type) {
@@ -86,6 +90,12 @@ const reducer: Reducer<State, Action> = (state, action) => {
                 storageDeleteRefs: [...state.storageDeleteRefs, action.ref]
             };
         }
+        case "relatedRecipesChange": {
+            return { ...state, relatedRecipes: action.relatedRecipes, relatedRecipesDialog: false };
+        }
+        case "openRelatedRecipesDialog": {
+            return { ...state, relatedRecipesDialog: true };
+        }
     }
 };
 
@@ -100,7 +110,9 @@ const initialState: State = {
     attachementsUploading: false,
     recipeUploading: false,
     storageDeleteRefs: [],
-    numberOfComments: 0
+    numberOfComments: 0,
+    relatedRecipes: [],
+    relatedRecipesDialog: false
 };
 
 export const useRecipeCreateReducer = (recipe?: Recipe<AttachementMetadata> | null) => {
