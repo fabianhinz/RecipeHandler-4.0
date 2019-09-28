@@ -1,38 +1,9 @@
-import OpenDrawerIcon from "@material-ui/icons/MenuTwoTone";
 import React, { FC } from "react";
-import {
-    createStyles,
-    Fab,
-    Hidden,
-    makeStyles,
-    Paper,
-    SwipeableDrawer,
-    DialogContent
-} from "@material-ui/core";
-
+import { Drawer } from "@material-ui/core";
 import { HeaderNavigation } from "./HeaderNavigation";
 import { useHeaderReducer } from "./HeaderReducer";
 import { HeaderLoginDialog } from "./HeaderLoginDialog";
-import { BORDER_RADIUS } from "../../../theme";
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        paper: {
-            borderRadius: `0px 0px ${BORDER_RADIUS}px ${BORDER_RADIUS}px`,
-            position: "fixed",
-            right: 0,
-            top: 0,
-            zIndex: theme.zIndex.appBar,
-            padding: theme.spacing(1)
-        },
-        openDrawerIcon: {
-            position: "fixed",
-            top: theme.spacing(1),
-            right: theme.spacing(1),
-            zIndex: theme.zIndex.drawer + 1
-        }
-    })
-);
+import { useBreakpointsContext } from "../../Provider/BreakpointsProvider";
 
 interface HeaderProps {
     onThemeChange: () => void;
@@ -40,34 +11,23 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = props => {
     const { state, dispatch } = useHeaderReducer();
-    const classes = useStyles();
-
+    const { isDrawerBottom } = useBreakpointsContext();
     const handleDrawerChange = () => dispatch({ type: "drawerChange" });
 
     return (
         <>
-            <Hidden mdDown>
-                <Paper className={classes.paper}>
-                    <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
-                </Paper>
-            </Hidden>
-
-            <Hidden lgUp>
-                <SwipeableDrawer
-                    disableBackdropTransition
-                    anchor="right"
-                    open={state.drawer}
-                    onClose={handleDrawerChange}
-                    onOpen={handleDrawerChange}
-                >
-                    <DialogContent>
-                        <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
-                    </DialogContent>
-                </SwipeableDrawer>
-                <Fab size="small" className={classes.openDrawerIcon} onClick={handleDrawerChange}>
-                    <OpenDrawerIcon />
-                </Fab>
-            </Hidden>
+            <Drawer
+                variant="permanent"
+                anchor={isDrawerBottom ? "bottom" : "right"}
+                open={state.drawer}
+                onClose={handleDrawerChange}
+            >
+                <HeaderNavigation
+                    drawerRight={!isDrawerBottom}
+                    dispatch={dispatch}
+                    onThemeChange={props.onThemeChange}
+                />
+            </Drawer>
 
             <HeaderLoginDialog
                 dialog={state.dialog}

@@ -14,11 +14,11 @@ const useStyles = makeStyles(theme => {
     });
 });
 
-export const BadgeWrapper: FC<BadgeProps> = ({ children, badgeContent }) => {
+export const BadgeWrapper: FC<BadgeProps> = ({ children, badgeContent, anchorOrigin }) => {
     const classes = useStyles();
 
     return (
-        <Badge classes={classes} badgeContent={badgeContent} max={100}>
+        <Badge anchorOrigin={anchorOrigin} classes={classes} badgeContent={badgeContent} max={100}>
             {children}
         </Badge>
     );

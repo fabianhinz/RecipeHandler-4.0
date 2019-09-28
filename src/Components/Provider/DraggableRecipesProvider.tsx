@@ -1,12 +1,5 @@
 import React, { FC, useState, useContext } from "react";
-import {
-    makeStyles,
-    createStyles,
-    Paper,
-    IconButton,
-    Grow,
-    useMediaQuery
-} from "@material-ui/core";
+import { makeStyles, createStyles, Paper, IconButton, Grow } from "@material-ui/core";
 import CancelIcon from "@material-ui/icons/Cancel";
 import TouchIcon from "@material-ui/icons/TouchAppTwoTone";
 import Draggable from "react-draggable";
@@ -16,6 +9,7 @@ import { Loading } from "../Shared/Loading";
 import clsx from "clsx";
 import { useSnackbar } from "notistack";
 import { BadgeWrapper } from "../Shared/BadgeWrapper";
+import { useBreakpointsContext } from "./BreakpointsProvider";
 
 type DraggableRecipesState = {
     draggableContains: (recipeName: string) => boolean;
@@ -54,6 +48,12 @@ const useStyles = makeStyles(theme =>
         },
         draggable: {
             cursor: "move"
+        },
+        drawerBottomMargin: {
+            bottom: theme.spacing(8)
+        },
+        drawerRightMargin: {
+            right: theme.spacing(8)
         }
     })
 );
@@ -69,7 +69,7 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
 
-    const minWidth = useMediaQuery("(min-width: 768px)");
+    const { isDraggableRecipes, isDrawerBottom } = useBreakpointsContext();
 
     const handleDraggableChange = (recipeName: string) => {
         setDraggableRecipes(previous => {
@@ -99,12 +99,15 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
     return (
         <Context.Provider value={{ handleDraggableChange, draggableContains }}>
             {children}
-            {minWidth &&
+            {isDraggableRecipes &&
                 [...draggableRecipes.values()].map((recipeName, index) => (
                     <Draggable
                         key={recipeName}
                         handle=".draggableHandler"
-                        defaultClassName={classes.draggableContainer}
+                        defaultClassName={clsx(
+                            classes.draggableContainer,
+                            isDrawerBottom ? classes.drawerBottomMargin : classes.drawerRightMargin
+                        )}
                         defaultClassNameDragged={clsx(
                             activeRecipe === recipeName && classes.activeRecipe
                         )}
@@ -112,6 +115,7 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
                         <div>
                             <Grow in>
                                 <BadgeWrapper
+                                    anchorOrigin={{ horizontal: "left", vertical: "top" }}
                                     badgeContent={`${index + 1}/${draggableRecipes.size}`}
                                 >
                                     <Paper

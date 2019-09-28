@@ -19,6 +19,7 @@ type Action =
     | { type: "dialogChange" };
 
 const reducer: Reducer<State, Action> = (state, action) => {
+    console.log(state, action);
     switch (action.type) {
         case "textFieldChange":
             return { ...state, [action.key]: action.value };
