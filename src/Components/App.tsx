@@ -12,6 +12,20 @@ import { FirebaseAuthProvider } from "./Provider/FirebaseAuthProvider";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { CategoriesCollectionProvider } from "./Provider/CategoriesCollectionProvider";
 import { DraggableRecipesProvider } from "./Provider/DraggableRecipesProvider";
+import { BreakpointsProvider } from "./Provider/BreakpointsProvider";
+
+// ? Wrapper component for all Provider under "./Provider"
+const RecipesProvider: FC = ({ children }) => (
+    <RouterProvider>
+        <BreakpointsProvider>
+            <FirebaseAuthProvider>
+                <CategoriesCollectionProvider>
+                    <DraggableRecipesProvider>{children}</DraggableRecipesProvider>
+                </CategoriesCollectionProvider>
+            </FirebaseAuthProvider>
+        </BreakpointsProvider>
+    </RouterProvider>
+);
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme);
@@ -30,33 +44,27 @@ const App: FC = () => {
     };
 
     return (
-        <BrowserRouter>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <SnackbarProvider
-                    preventDuplicate
-                    anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "left"
-                    }}
-                >
-                    <ErrorBoundary>
-                        <RouterProvider>
-                            <FirebaseAuthProvider>
-                                <CategoriesCollectionProvider>
-                                    <DraggableRecipesProvider>
-                                        <Container maxWidth="lg">
-                                            <Header onThemeChange={handleThemeChange} />
-                                            <Main />
-                                        </Container>
-                                    </DraggableRecipesProvider>
-                                </CategoriesCollectionProvider>
-                            </FirebaseAuthProvider>
-                        </RouterProvider>
-                    </ErrorBoundary>
-                </SnackbarProvider>
-            </ThemeProvider>
-        </BrowserRouter>
+        <ErrorBoundary>
+            <BrowserRouter>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <SnackbarProvider
+                        preventDuplicate
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "left"
+                        }}
+                    >
+                        <RecipesProvider>
+                            <Container maxWidth="lg">
+                                <Header onThemeChange={handleThemeChange} />
+                                <Main />
+                            </Container>
+                        </RecipesProvider>
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </BrowserRouter>
+        </ErrorBoundary>
     );
 };
 
