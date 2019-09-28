@@ -1,10 +1,7 @@
 import React, { FC, useState, memo } from "react";
 import {
     Avatar,
-    Chip,
     Grid,
-    Typography,
-    Hidden,
     Box,
     ListItem,
     ListItemText,
@@ -15,14 +12,13 @@ import {
     DialogActions,
     List,
     IconButton,
-    Drawer
+    Dialog
 } from "@material-ui/core";
-import { CategoryBase } from "./CategoryBase";
 import { Loading } from "../Shared/Loading";
 import { useCategoriesCollectionContext } from "../Provider/CategoriesCollectionProvider";
 import {
     Pizza,
-    BreadSlice,
+    BreadSliceOutline,
     Cupcake,
     Beer,
     Pasta,
@@ -31,7 +27,7 @@ import {
     Leaf,
     Bowl,
     GlassCocktail,
-    Kettle,
+    KettleOutline,
     Fish,
     Cow,
     Barley,
@@ -40,65 +36,68 @@ import {
     FilterVariant
 } from "mdi-material-ui";
 import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
+import { SlideUp } from "../Shared/Transitions";
+import { useBreakpointsContext } from "../Provider/BreakpointsProvider";
+import CloseIcon from "@material-ui/icons/CloseTwoTone";
 
-export const avatarFromCategory = (category: string) => {
-    const getAvatar = (icon: JSX.Element) => <Avatar>{icon}</Avatar>;
-
+export const iconFromCategory = (category: string) => {
     switch (category) {
         case "Beilage":
-            return getAvatar(<Pizza />);
+            return <Pizza />;
         case "Brot":
-            return getAvatar(<BreadSlice />);
+            return <BreadSliceOutline />;
         case "Dessert":
-            return getAvatar(<Cupcake />);
+            return <Cupcake />;
         case "Getränke":
-            return getAvatar(<Beer />);
+            return <Beer />;
         case "Hauptgericht":
-            return getAvatar(<Pasta />);
+            return <Pasta />;
         case "Kuchen":
-            return getAvatar(<CakeVariant />);
+            return <CakeVariant />;
         case "Plätzchen":
-            return getAvatar(<Cookie />);
+            return <Cookie />;
         case "Salat":
-            return getAvatar(<Leaf />);
+            return <Leaf />;
         case "Suppe":
-            return getAvatar(<Bowl />);
+            return <Bowl />;
         case "Alkohol":
-            return getAvatar(<GlassCocktail />);
+            return <GlassCocktail />;
         case "Alkoholfrei":
-            return getAvatar(<Kettle />);
+            return <KettleOutline />;
         case "Fisch":
-            return getAvatar(<Fish />);
+            return <Fish />;
         case "Fleisch":
-            return getAvatar(<Cow />);
+            return <Cow />;
         case "Vegan":
-            return getAvatar(<Barley />);
+            return <Barley />;
         case "Vegetarisch":
-            return getAvatar(<EggEaster />);
+            return <EggEaster />;
         default:
-            return getAvatar(<AvTimer />);
+            return <AvTimer />;
     }
 };
 
-interface SharedProps extends CategoryWrapperProps {
+interface CategoryDialogProps extends CategoryWrapperProps {
     categories: Array<string>;
     type: string;
 }
 
-const CategoryMenu: FC<SharedProps> = ({
+const CategoryDialog: FC<CategoryDialogProps> = ({
     onCategoryChange,
     selectedCategories,
     type,
     categories
 }) => {
-    const [drawer, setDrawer] = useState(false);
+    const [dialog, setDialog] = useState(false);
+    const { isDialogFullscreen } = useBreakpointsContext();
+
     const selectedHasType = selectedCategories.has(type);
     const selectedCategory = selectedCategories.get(type) as string;
 
-    const handleDialogChange = () => setDrawer(previous => !previous);
+    const handleDialogChange = () => setDialog(previous => !previous);
 
     const handleCategoryChange = (value: string) => () => {
-        setDrawer(false);
+        setDialog(false);
         onCategoryChange(type, value);
     };
 
@@ -107,7 +106,7 @@ const CategoryMenu: FC<SharedProps> = ({
             <ListItem button onClick={handleDialogChange}>
                 <ListItemIcon>
                     {selectedHasType ? (
-                        avatarFromCategory(selectedCategory)
+                        <Avatar>{iconFromCategory(selectedCategory)}</Avatar>
                     ) : (
                         <Avatar>
                             <FilterVariant />
@@ -120,66 +119,53 @@ const CategoryMenu: FC<SharedProps> = ({
                 />
             </ListItem>
 
-            <Drawer anchor="bottom" open={drawer} onClose={handleDialogChange}>
+            <Dialog
+                fullScreen={isDialogFullscreen}
+                TransitionComponent={SlideUp}
+                open={dialog}
+                onClose={handleDialogChange}
+                maxWidth="sm"
+                fullWidth
+            >
                 <DialogTitle>{type} auswählen</DialogTitle>
                 <DialogContent>
-                    <Box maxHeight="50vh" overflow="auto">
-                        <List>
-                            {categories.map(category => (
-                                <ListItem
-                                    onClick={handleCategoryChange(category)}
-                                    button
-                                    key={category}
-                                >
-                                    <ListItemAvatar>{avatarFromCategory(category)}</ListItemAvatar>
-                                    <ListItemText primary={category} />
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Box>
+                    <List>
+                        {categories.map(category => (
+                            <ListItem
+                                onClick={handleCategoryChange(category)}
+                                button
+                                key={category}
+                            >
+                                <ListItemAvatar>
+                                    <Avatar>{iconFromCategory(category)}</Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={category} />
+                            </ListItem>
+                        ))}
+                    </List>
                 </DialogContent>
                 <DialogActions>
-                    <Box flexGrow={1} display="flex" justifyContent="center">
+                    <Box
+                        flexGrow={1}
+                        display="flex"
+                        justifyContent="space-evenly"
+                        alignItems="center"
+                    >
+                        <IconButton onClick={handleDialogChange}>
+                            <CloseIcon />
+                        </IconButton>
                         <IconButton
                             onClick={handleCategoryChange(selectedCategory)}
                             disabled={!selectedHasType}
                         >
-                            <DeleteIcon fontSize="large" />
+                            <DeleteIcon />
                         </IconButton>
                     </Box>
                 </DialogActions>
-            </Drawer>
+            </Dialog>
         </>
     );
 };
-
-const CategoryChips: FC<SharedProps> = ({
-    onCategoryChange,
-    selectedCategories,
-    type,
-    categories
-}) => (
-    <>
-        <Typography color="textSecondary" gutterBottom>
-            {type}
-        </Typography>
-        <Grid container spacing={1}>
-            {categories.sort().map(category => (
-                <Grid item key={category}>
-                    <CategoryBase onClick={() => onCategoryChange(type, category)}>
-                        <Chip
-                            avatar={avatarFromCategory(category)}
-                            color={
-                                selectedCategories.get(type) === category ? "secondary" : "default"
-                            }
-                            label={category}
-                        />
-                    </CategoryBase>
-                </Grid>
-            ))}
-        </Grid>
-    </>
-);
 
 interface CategoryWrapperProps {
     selectedCategories: Map<string, string>;
@@ -194,23 +180,13 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
     return (
         <Grid container spacing={2}>
             {Object.keys(categoriesCollection).map(type => (
-                <Grid key={type} item xs={12}>
-                    <Hidden smUp>
-                        <CategoryMenu
-                            categories={categoriesCollection[type]}
-                            onCategoryChange={onCategoryChange}
-                            selectedCategories={selectedCategories}
-                            type={type}
-                        />
-                    </Hidden>
-                    <Hidden xsDown>
-                        <CategoryChips
-                            categories={categoriesCollection[type]}
-                            onCategoryChange={onCategoryChange}
-                            selectedCategories={selectedCategories}
-                            type={type}
-                        />
-                    </Hidden>
+                <Grid key={type} item xs={12} md={4}>
+                    <CategoryDialog
+                        categories={categoriesCollection[type]}
+                        onCategoryChange={onCategoryChange}
+                        selectedCategories={selectedCategories}
+                        type={type}
+                    />
                 </Grid>
             ))}
         </Grid>

@@ -12,16 +12,10 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = props => {
     const { state, dispatch } = useHeaderReducer();
     const { isDrawerBottom } = useBreakpointsContext();
-    const handleDrawerChange = () => dispatch({ type: "drawerChange" });
 
     return (
         <>
-            <Drawer
-                variant="permanent"
-                anchor={isDrawerBottom ? "bottom" : "right"}
-                open={state.drawer}
-                onClose={handleDrawerChange}
-            >
+            <Drawer variant="permanent" anchor={isDrawerBottom ? "bottom" : "right"}>
                 <HeaderNavigation
                     drawerRight={!isDrawerBottom}
                     dispatch={dispatch}
