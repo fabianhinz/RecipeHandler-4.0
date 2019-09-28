@@ -76,7 +76,7 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
             if (previous.has(recipeName)) {
                 previous.delete(recipeName);
             } else if (draggableRecipes.size === 4) {
-                enqueueSnackbar("mehr als 4 'passt gut zu' Rezepte sind nicht erlaubt", {
+                enqueueSnackbar("mehr als 4 angepinnte Rezepte sind nicht erlaubt", {
                     variant: "info"
                 });
                 return new Set(previous);

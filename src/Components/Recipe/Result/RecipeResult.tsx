@@ -14,6 +14,7 @@ import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { PATHS } from "../../Routes/Routes";
 import { FirebaseService } from "../../../firebase";
 import { RecipeResultRelated } from "./RecipeResultRelated";
+import { useDraggableRecipesContext } from "../../Provider/DraggableRecipesProvider";
 import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
 import { GridSize } from "@material-ui/core/Grid";
 
@@ -26,6 +27,7 @@ interface RecipeResultProps {
 const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) => {
     const { history } = useRouterContext();
     const { user } = useFirebaseAuthContext();
+    const { handleDraggableChange } = useDraggableRecipesContext();
 
     if (!recipe)
         return (
@@ -90,18 +92,32 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
             </Grid>
 
             <Grid item xs={12}>
-                {user && !preview && (
-                    <Box textAlign="right">
+                <Grid container justify="flex-end" spacing={2}>
+                    <Grid item>
+                {!fromRelated && (
                         <Button
                             color="primary"
                             variant="contained"
-                            onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}
+                            onClick={() => handleDraggableChange(recipe.name)}
                         >
-                            Bearbeiten
+                            Anpinnen
                         </Button>
-                    </Box>
                 )}
+                </Grid>
+                <Grid item>
+                {user && !preview && (
+                    <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}
+                    >
+                        Bearbeiten
+                    </Button>
+                )}
+                </Grid>
             </Grid>
+        </Grid>
+
         </Grid>
     );
 };
