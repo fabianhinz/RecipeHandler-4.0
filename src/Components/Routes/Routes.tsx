@@ -1,6 +1,8 @@
 import React, { FC, lazy, LazyExoticComponent, Suspense } from "react";
 import { ReactComponent as HomeIcon } from "../../icons/home.svg";
-import { ReactComponent as AttachementIcon } from "../../icons/attachement.svg";
+import { ReactComponent as CreateIcon } from "../../icons/create.svg";
+import { ReactComponent as DetailsIcon } from "../../icons/details.svg";
+import { ReactComponent as EditIcon } from "../../icons/edit.svg";
 import { BackgroundIcon } from "../Shared/BackgroundIcon";
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { Loading } from "../Shared/Loading";
@@ -27,17 +29,17 @@ const routes: Routes[] = [
     {
         path: PATHS.details(),
         Component: lazy(() => import("../Recipe/Details/RecipeDetails")),
-        Background: <BackgroundIcon Icon={HomeIcon} />
+        Background: <BackgroundIcon Icon={DetailsIcon} />
     },
     {
         path: PATHS.recipeCreate,
         Component: lazy(() => import("../Recipe/Create/RecipeCreate")),
-        Background: <BackgroundIcon Icon={AttachementIcon} />
+        Background: <BackgroundIcon Icon={CreateIcon} />
     },
     {
         path: PATHS.recipeEdit(),
         Component: lazy(() => import("../Recipe/Edit/RecipeEdit")),
-        Background: <BackgroundIcon Icon={HomeIcon} />
+        Background: <BackgroundIcon Icon={EditIcon} />
     }
 ];
 

@@ -1,14 +1,25 @@
 import React, { FC } from "react";
-import { Grid, Chip, Box, useMediaQuery } from "@material-ui/core";
+import { Grid, Chip, Box, useMediaQuery, makeStyles, createStyles } from "@material-ui/core";
 import LinkIcon from "@material-ui/icons/LinkTwoTone";
 import { CategoryBase } from "../../Category/CategoryBase";
 import { useDraggableRecipesContext } from "../../Provider/DraggableRecipesProvider";
 import { useRouterContext } from "../../Provider/RouterProvider";
 import { PATHS } from "../../Routes/Routes";
+import clsx from "clsx";
+
+const useStyles = makeStyles(theme =>
+    createStyles({
+        selectedChip: {
+            boxShadow: theme.shadows[8]
+        }
+    })
+);
 
 export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => {
-    const { handleDraggableChange } = useDraggableRecipesContext();
+    const { handleDraggableChange, draggableContains } = useDraggableRecipesContext();
     const { history } = useRouterContext();
+
+    const classes = useStyles();
     const xs = useMediaQuery("(max-width: 599px)");
 
     const handleRecipeClick = (recipeName: string) => () => {
@@ -22,7 +33,13 @@ export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ rel
                 {relatedRecipes.map(recipeName => (
                     <Grid key={recipeName} item>
                         <CategoryBase onClick={handleRecipeClick(recipeName)}>
-                            <Chip icon={<LinkIcon />} label={recipeName} />
+                            <Chip
+                                className={clsx(
+                                    draggableContains(recipeName) && classes.selectedChip
+                                )}
+                                icon={<LinkIcon />}
+                                label={recipeName}
+                            />
                         </CategoryBase>
                     </Grid>
                 ))}

@@ -16,7 +16,6 @@ import {
     Collapse,
     createStyles,
     Divider,
-    Fade,
     Grid,
     IconButton,
     makeStyles,
@@ -241,165 +240,158 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     if (!user) return <Redirect to={PATHS.home} />;
 
     return (
-        <Fade in>
-            <Box margin={2}>
-                <Card>
-                    <CardHeader
-                        title={
-                            <TextField
-                                margin="none"
-                                fullWidth
-                                disabled={props.edit}
-                                className={classes.textFieldName}
-                                label="Name"
-                                value={state.name}
-                                placeholder="Bitte eintragen"
-                                onChange={handleTextFieldChange("name")}
-                            />
-                        }
-                        subheader="Ein Rezept sollte mindestens einen Namen und Kategorie aufweißen. Nach
+        <>
+            <Card>
+                <CardHeader
+                    title={
+                        <TextField
+                            margin="none"
+                            fullWidth
+                            disabled={props.edit}
+                            className={classes.textFieldName}
+                            label="Name"
+                            value={state.name}
+                            placeholder="Bitte eintragen"
+                            onChange={handleTextFieldChange("name")}
+                        />
+                    }
+                    subheader="Ein Rezept sollte mindestens einen Namen und Kategorie aufweißen. Nach
                         erfolgter Speicherung ist die Änderung des Rezeptnamens nicht mehr
                         möglich"
-                        className={classes.cardHeader}
+                    className={classes.cardHeader}
+                />
+                <CardContent>
+                    <Subtitle firstChild icon={<MenuIcon />} text="Kategorien" />
+                    <CategoryWrapper
+                        selectedCategories={selectedCategories}
+                        onCategoryChange={setSelectedCategories}
                     />
-                    <CardContent>
-                        <Subtitle firstChild icon={<MenuIcon />} text="Kategorien" />
-                        <CategoryWrapper
-                            selectedCategories={selectedCategories}
-                            onCategoryChange={setSelectedCategories}
-                        />
 
-                        <Subtitle icon={<CameraIcon />} text="Bilder" />
-                        <RecipeCreateAttachements
-                            onAttachements={handleAttachementsDrop}
-                            onDeleteAttachement={handleDeleteAttachement}
-                            onRemoveAttachement={handleRemoveAttachement}
-                            onSaveAttachement={handleSaveAttachement}
-                            attachements={state.attachements}
-                        />
+                    <Subtitle icon={<CameraIcon />} text="Bilder" />
+                    <RecipeCreateAttachements
+                        onAttachements={handleAttachementsDrop}
+                        onDeleteAttachement={handleDeleteAttachement}
+                        onRemoveAttachement={handleRemoveAttachement}
+                        onSaveAttachement={handleSaveAttachement}
+                        attachements={state.attachements}
+                    />
 
-                        <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
-                            <Box display="flex" alignItems="center">
-                                <IconButton
-                                    onClick={() => dispatch({ type: "decreaseAmount" })}
-                                    size="small"
-                                >
-                                    <RemoveIcon />
-                                </IconButton>
-                                <Box
-                                    marginLeft={0.5}
-                                    marginRight={0.5}
-                                    width={25}
-                                    textAlign="center"
-                                >
-                                    <Typography variant="h6">{state.amount}</Typography>
-                                </Box>
-                                <IconButton
-                                    onClick={() => dispatch({ type: "increaseAmount" })}
-                                    size="small"
-                                >
-                                    <AddIcon />
-                                </IconButton>
-                            </Box>
-                        </Subtitle>
-                        <TextField
-                            label="optional"
-                            value={state.ingredients}
-                            onChange={handleTextFieldChange("ingredients")}
-                            fullWidth
-                            rowsMax={10}
-                            multiline
-                            variant="filled"
-                        />
-
-                        <Subtitle icon={<BookIcon />} text="Beschreibung" />
-                        <TextField
-                            label="optional"
-                            value={state.description}
-                            rowsMax={10}
-                            onChange={handleTextFieldChange("description")}
-                            fullWidth
-                            multiline
-                            variant="filled"
-                        />
-
-                        <Subtitle icon={<LabelIcon />} text="Passt gut zu (optional)">
+                    <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
+                        <Box display="flex" alignItems="center">
                             <IconButton
-                                onClick={() => dispatch({ type: "openRelatedRecipesDialog" })}
+                                onClick={() => dispatch({ type: "decreaseAmount" })}
                                 size="small"
                             >
-                                <SwapIcon />
+                                <RemoveIcon />
                             </IconButton>
-                        </Subtitle>
-                        <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
-                        <RecipeCreateRelatedDialog
-                            defaultValues={state.relatedRecipes}
-                            currentRecipeName={state.name}
-                            open={state.relatedRecipesDialog}
-                            onClose={relatedRecipes =>
-                                dispatch({ type: "relatedRecipesChange", relatedRecipes })
-                            }
-                        />
-                    </CardContent>
+                            <Box marginLeft={0.5} marginRight={0.5} width={25} textAlign="center">
+                                <Typography variant="h6">{state.amount}</Typography>
+                            </Box>
+                            <IconButton
+                                onClick={() => dispatch({ type: "increaseAmount" })}
+                                size="small"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </Box>
+                    </Subtitle>
+                    <TextField
+                        label="optional"
+                        value={state.ingredients}
+                        onChange={handleTextFieldChange("ingredients")}
+                        fullWidth
+                        rowsMax={10}
+                        multiline
+                        variant="filled"
+                    />
 
-                    <CardActions>
-                        <Box padding={1} flexGrow={1}>
-                            <Grid container justify="space-between" alignItems="center">
-                                <Grid item xs={2}>
-                                    <IconButton onClick={() => dispatch({ type: "previewChange" })}>
-                                        <EyeIcon />
-                                    </IconButton>
-                                </Grid>
-                                <Grid item xs={10}>
-                                    <Grid container justify="flex-end" spacing={2}>
-                                        <Grid item>
-                                            <Navigate to={PATHS.home}>
-                                                <Button>Abbrechen</Button>
-                                            </Navigate>
-                                        </Grid>
+                    <Subtitle icon={<BookIcon />} text="Beschreibung" />
+                    <TextField
+                        label="optional"
+                        value={state.description}
+                        rowsMax={10}
+                        onChange={handleTextFieldChange("description")}
+                        fullWidth
+                        multiline
+                        variant="filled"
+                    />
 
-                                        <Grid item>
-                                            <Button
-                                                disabled={state.attachementsUploading}
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={handleSaveClick}
-                                            >
-                                                Speichern
-                                            </Button>
-                                        </Grid>
+                    <Subtitle icon={<LabelIcon />} text="Passt gut zu (optional)">
+                        <IconButton
+                            onClick={() => dispatch({ type: "openRelatedRecipesDialog" })}
+                            size="small"
+                        >
+                            <SwapIcon />
+                        </IconButton>
+                    </Subtitle>
+                    <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                    <RecipeCreateRelatedDialog
+                        defaultValues={state.relatedRecipes}
+                        currentRecipeName={state.name}
+                        open={state.relatedRecipesDialog}
+                        onClose={relatedRecipes =>
+                            dispatch({ type: "relatedRecipesChange", relatedRecipes })
+                        }
+                    />
+                </CardContent>
+
+                <CardActions>
+                    <Box padding={1} flexGrow={1}>
+                        <Grid container justify="space-between" alignItems="center">
+                            <Grid item xs={2}>
+                                <IconButton onClick={() => dispatch({ type: "previewChange" })}>
+                                    <EyeIcon />
+                                </IconButton>
+                            </Grid>
+                            <Grid item xs={10}>
+                                <Grid container justify="flex-end" spacing={2}>
+                                    <Grid item>
+                                        <Navigate to={PATHS.home}>
+                                            <Button>Abbrechen</Button>
+                                        </Navigate>
+                                    </Grid>
+
+                                    <Grid item>
+                                        <Button
+                                            disabled={state.attachementsUploading}
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={handleSaveClick}
+                                        >
+                                            Speichern
+                                        </Button>
                                     </Grid>
                                 </Grid>
                             </Grid>
-                        </Box>
-                    </CardActions>
+                        </Grid>
+                    </Box>
+                </CardActions>
 
-                    <Collapse in={state.preview} timeout="auto" mountOnEnter unmountOnExit>
-                        <>
-                            <Divider />
-                            <CardContent>
-                                <RecipeResult
-                                    preview
-                                    recipe={{
-                                        name: state.name,
-                                        createdDate: FirebaseService.createTimestampFromDate(
-                                            new Date()
-                                        ),
-                                        numberOfComments: 0,
-                                        categories: state.categories,
-                                        attachements: state.attachements,
-                                        ingredients: state.ingredients,
-                                        amount: state.amount,
-                                        description: state.description,
-                                        relatedRecipes: state.relatedRecipes
-                                    }}
-                                />
-                            </CardContent>
-                        </>
-                    </Collapse>
-                </Card>
-            </Box>
-        </Fade>
+                <Collapse in={state.preview} timeout="auto" mountOnEnter unmountOnExit>
+                    <>
+                        <Divider />
+                        <CardContent>
+                            <RecipeResult
+                                preview
+                                recipe={{
+                                    name: state.name,
+                                    createdDate: FirebaseService.createTimestampFromDate(
+                                        new Date()
+                                    ),
+                                    numberOfComments: 0,
+                                    categories: state.categories,
+                                    attachements: state.attachements,
+                                    ingredients: state.ingredients,
+                                    amount: state.amount,
+                                    description: state.description,
+                                    relatedRecipes: state.relatedRecipes
+                                }}
+                            />
+                        </CardContent>
+                    </>
+                </Collapse>
+            </Card>
+        </>
     );
 };
 

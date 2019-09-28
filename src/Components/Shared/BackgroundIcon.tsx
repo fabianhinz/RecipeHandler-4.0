@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { createStyles, makeStyles, Slide } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -20,11 +20,8 @@ const useStyles = makeStyles(theme =>
             [theme.breakpoints.only("md")]: {
                 width: 300
             },
-            [theme.breakpoints.only("lg")]: {
+            [theme.breakpoints.up("lg")]: {
                 width: 400
-            },
-            [theme.breakpoints.up("xl")]: {
-                width: 500
             }
         }
     })
@@ -38,10 +35,8 @@ export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon }) => {
     const classes = useStyles();
 
     return (
-        <Slide in direction="up">
-            <div className={classes.backgroundContainer}>
-                <Icon className={classes.icon} />
-            </div>
-        </Slide>
+        <div className={classes.backgroundContainer}>
+            <Icon className={classes.icon} />
+        </div>
     );
 };

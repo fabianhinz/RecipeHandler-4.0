@@ -8,7 +8,7 @@ interface HomeCategoryProps {
 }
 
 export const HomeCategory: FC<HomeCategoryProps> = ({ onCategoryChange, selectedCategories }) => (
-    <Box margin={2}>
+    <Box marginBottom={2}>
         <Card>
             <CardContent>
                 <CategoryWrapper

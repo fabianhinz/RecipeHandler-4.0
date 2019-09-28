@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Fade } from "@material-ui/core";
 import { HomeCategory } from "./HomeCategory";
 import { HomeRecentlyAdded } from "./RecentlyAdded/HomeRecentlyAdded";
 import { HomeRecipe } from "./Recipe/HomeRecipe";
@@ -69,20 +68,18 @@ const Home = () => {
     }, [lastRecipeName, selectedCategories, selectedCategories.size]);
 
     return (
-        <Fade in>
-            <>
-                <HomeRecentlyAdded />
-                <HomeCategory
-                    selectedCategories={selectedCategories}
-                    onCategoryChange={handleCategoryChange}
-                />
-                <HomeRecipe
-                    recipes={[...pagedRecipes.values()]}
-                    onExpandClick={setLastRecipeName}
-                    expandDisabled={!pagination}
-                />
-            </>
-        </Fade>
+        <>
+            <HomeRecentlyAdded />
+            <HomeCategory
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+            />
+            <HomeRecipe
+                recipes={[...pagedRecipes.values()]}
+                onExpandClick={setLastRecipeName}
+                expandDisabled={!pagination}
+            />
+        </>
     );
 };
 

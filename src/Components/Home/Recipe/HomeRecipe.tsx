@@ -17,7 +17,7 @@ export const HomeRecipe: FC<HomeRecipeProps> = props => {
     };
 
     return (
-        <Box margin={2}>
+        <Box marginBottom={2}>
             <div>
                 {props.recipes.map(recipe => (
                     <HomeRecipeResults key={recipe.name} recipe={recipe} />
