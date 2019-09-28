@@ -1,14 +1,24 @@
 import React, { FC, useState, useContext } from "react";
-import { makeStyles, createStyles, Paper, Box, IconButton, Grow } from "@material-ui/core";
+import {
+    makeStyles,
+    createStyles,
+    Paper,
+    IconButton,
+    Grow,
+    useMediaQuery
+} from "@material-ui/core";
 import CancelIcon from "@material-ui/icons/Cancel";
+import TouchIcon from "@material-ui/icons/TouchAppTwoTone";
 import Draggable from "react-draggable";
 import { useRecipeDoc } from "../../hooks/useRecipeDoc";
 import RecipeResult from "../Recipe/Result/RecipeResult";
 import { Loading } from "../Shared/Loading";
 import clsx from "clsx";
 import { useSnackbar } from "notistack";
+import { BadgeWrapper } from "../Shared/BadgeWrapper";
 
 type DraggableRecipesState = {
+    draggableContains: (recipeName: string) => boolean;
     handleDraggableChange: (recipeName: string) => void;
 };
 
@@ -19,6 +29,7 @@ export const useDraggableRecipesContext = () => useContext(Context) as Draggable
 const useStyles = makeStyles(theme =>
     createStyles({
         paper: {
+            boxShadow: theme.shadows[8],
             position: "relative",
             padding: theme.spacing(2),
             height: "50vh",
@@ -31,13 +42,18 @@ const useStyles = makeStyles(theme =>
             right: theme.spacing(2),
             bottom: theme.spacing(2)
         },
-        closeBtn: {
+        btnContainer: {
+            display: "flex",
+            flexDirection: "column",
             position: "fixed",
             top: theme.spacing(1),
             right: theme.spacing(1)
         },
         activeRecipe: {
             zIndex: theme.zIndex.appBar + 2
+        },
+        draggable: {
+            cursor: "move"
         }
     })
 );
@@ -52,6 +68,8 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
     const [activeRecipe, setActiveRecipe] = useState("");
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
+
+    const minWidth = useMediaQuery("(min-width: 768px)");
 
     const handleDraggableChange = (recipeName: string) => {
         setDraggableRecipes(previous => {
@@ -76,37 +94,55 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
         handleDraggableChange(recipeName);
     };
 
+    const draggableContains = (recipeName: string) => draggableRecipes.has(recipeName);
+
     return (
-        <Context.Provider value={{ handleDraggableChange }}>
+        <Context.Provider value={{ handleDraggableChange, draggableContains }}>
             {children}
-            {[...draggableRecipes.values()].map((recipeName, index) => (
-                <Draggable
-                    key={recipeName}
-                    cancel=".closeBtn"
-                    defaultClassName={classes.draggableContainer}
-                    defaultClassNameDragged={clsx(
-                        activeRecipe === recipeName && classes.activeRecipe
-                    )}
-                >
-                    <Box marginRight={index + 1} marginBottom={index + 1}>
-                        <Grow in>
-                            <Paper
-                                className={clsx(classes.paper)}
-                                onClick={() => setActiveRecipe(recipeName)}
-                            >
-                                <IconButton
-                                    onClick={handleCloseBtnClick(recipeName)}
-                                    className={clsx(classes.closeBtn, "closeBtn")}
-                                    size="small"
+            {minWidth &&
+                [...draggableRecipes.values()].map((recipeName, index) => (
+                    <Draggable
+                        key={recipeName}
+                        handle=".draggableHandler"
+                        defaultClassName={classes.draggableContainer}
+                        defaultClassNameDragged={clsx(
+                            activeRecipe === recipeName && classes.activeRecipe
+                        )}
+                    >
+                        <div>
+                            <Grow in>
+                                <BadgeWrapper
+                                    badgeContent={`${index + 1}/${draggableRecipes.size}`}
                                 >
-                                    <CancelIcon />
-                                </IconButton>
-                                <SelectedRecipe recipeName={recipeName} />
-                            </Paper>
-                        </Grow>
-                    </Box>
-                </Draggable>
-            ))}
+                                    <Paper
+                                        className={classes.paper}
+                                        onClick={() => setActiveRecipe(recipeName)}
+                                    >
+                                        <div className={classes.btnContainer}>
+                                            <IconButton
+                                                onClick={handleCloseBtnClick(recipeName)}
+                                                size="small"
+                                            >
+                                                <CancelIcon />
+                                            </IconButton>
+                                            <IconButton
+                                                size="small"
+                                                className={clsx(
+                                                    classes.draggable,
+                                                    "draggableHandler"
+                                                )}
+                                            >
+                                                <TouchIcon />
+                                            </IconButton>
+                                        </div>
+
+                                        <SelectedRecipe recipeName={recipeName} />
+                                    </Paper>
+                                </BadgeWrapper>
+                            </Grow>
+                        </div>
+                    </Draggable>
+                ))}
         </Context.Provider>
     );
 };

@@ -54,6 +54,13 @@ const sharedTheme: Partial<ThemeOptions> = {
             action: {
                 alignSelf: "center"
             }
+        },
+        // ! workaround https://github.com/mui-org/material-ui/issues/16374
+        MuiAvatar: {
+            root: {
+                width: 32,
+                height: 32
+            }
         }
     }
 };

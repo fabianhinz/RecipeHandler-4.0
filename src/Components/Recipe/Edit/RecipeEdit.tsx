@@ -3,7 +3,7 @@ import RecipeCreate from "../Create/RecipeCreate";
 import { RouteWithRecipeName } from "../../../model/model";
 import { useRecipeDoc } from "../../../hooks/useRecipeDoc";
 import { Loading } from "../../Shared/Loading";
-import { Box, Card, CardContent } from "@material-ui/core";
+import { Card, CardContent } from "@material-ui/core";
 
 const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps });
@@ -11,13 +11,11 @@ const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {
     return (
         <>
             {recipeDocLoading ? (
-                <Box margin={2}>
-                    <Card>
-                        <CardContent>
-                            <Loading />
-                        </CardContent>
-                    </Card>
-                </Box>
+                <Card>
+                    <CardContent>
+                        <Loading />
+                    </CardContent>
+                </Card>
             ) : (
                 <RecipeCreate {...routeProps} recipe={recipeDoc} edit />
             )}

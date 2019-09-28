@@ -71,7 +71,7 @@ export const HomeRecentlyAdded = () => {
 
     return (
         <>
-            <Box margin={2}>
+            <Box marginBottom={2}>
                 <Box marginBottom={2} display="flex" justifyContent="space-evenly">
                     <Tooltip title="Kürzlich hinzugefügte einschränken">
                         <div>
