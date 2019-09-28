@@ -14,8 +14,7 @@ import {
     DialogActions,
     Box,
     IconButton,
-    Hidden,
-    useMediaQuery
+    Hidden
 } from "@material-ui/core";
 import { SlideUp } from "../../Shared/Transitions";
 import { FirebaseService } from "../../../firebase";
@@ -25,6 +24,7 @@ import { Loading } from "../../Shared/Loading";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import CloseIcon from "@material-ui/icons/CloseTwoTone";
 import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
+import { useBreakpointsContext } from "../../Provider/BreakpointsProvider";
 
 interface RecipeCreateRelatedDialogProps {
     defaultValues: Array<string>;
@@ -42,7 +42,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([]);
     const [selected, setSelected] = useState<Set<string>>(new Set(defaultValues));
 
-    const fullscreen = useMediaQuery("(max-width: 768px)");
+    const { isDialogFullscreen } = useBreakpointsContext();
 
     useEffect(() => {
         if (!open) return;
@@ -71,7 +71,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
 
     return (
         <Dialog
-            fullScreen={fullscreen}
+            fullScreen={isDialogFullscreen}
             TransitionComponent={SlideUp}
             open={open}
             onClose={handleClose}

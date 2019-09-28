@@ -1,22 +1,14 @@
 import React from "react";
-import { createStyles, makeStyles } from "@material-ui/core";
 import { Routes } from "../Routes/Routes";
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        main: {
-            marginTop: theme.spacing(3),
-            marginBottom: theme.spacing(3)
-        }
-    })
-);
+import { useBreakpointsContext } from "../Provider/BreakpointsProvider";
+import { Box } from "@material-ui/core";
 
 export const Main = () => {
-    const classes = useStyles();
+    const { isDrawerBottom } = useBreakpointsContext();
 
     return (
-        <div className={classes.main}>
+        <Box marginTop={3} marginBottom={isDrawerBottom ? 9 : 3}>
             <Routes />
-        </div>
+        </Box>
     );
 };

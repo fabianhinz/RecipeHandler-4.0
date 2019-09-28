@@ -1,11 +1,12 @@
 import React, { FC } from "react";
-import { Grid, Chip, Box, useMediaQuery, makeStyles, createStyles } from "@material-ui/core";
+import { Grid, Chip, Box, makeStyles, createStyles } from "@material-ui/core";
 import LinkIcon from "@material-ui/icons/LinkTwoTone";
 import { CategoryBase } from "../../Category/CategoryBase";
 import { useDraggableRecipesContext } from "../../Provider/DraggableRecipesProvider";
 import { useRouterContext } from "../../Provider/RouterProvider";
 import { PATHS } from "../../Routes/Routes";
 import clsx from "clsx";
+import { useBreakpointsContext } from "../../Provider/BreakpointsProvider";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -17,13 +18,13 @@ const useStyles = makeStyles(theme =>
 
 export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => {
     const { handleDraggableChange, draggableContains } = useDraggableRecipesContext();
+    const { isMobile } = useBreakpointsContext();
     const { history } = useRouterContext();
 
     const classes = useStyles();
-    const xs = useMediaQuery("(max-width: 599px)");
 
     const handleRecipeClick = (recipeName: string) => () => {
-        if (xs) history.push(PATHS.details(recipeName));
+        if (isMobile) history.push(PATHS.details(recipeName));
         else handleDraggableChange(recipeName);
     };
 
