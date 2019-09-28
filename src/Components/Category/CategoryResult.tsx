@@ -14,7 +14,7 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => (
                 {categories[type].length > 0 && (
                     <Chip
                         avatar={avatarFromCategory(categories[type])}
-                        size="small"
+                        // size="small"
                         color="secondary"
                         label={categories[type]}
                     />
