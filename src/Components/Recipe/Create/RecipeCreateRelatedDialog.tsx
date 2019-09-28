@@ -14,12 +14,13 @@ import {
     DialogActions,
     Box,
     IconButton,
-    Hidden
+    Hidden,
+    Avatar
 } from "@material-ui/core";
 import { SlideUp } from "../../Shared/Transitions";
 import { FirebaseService } from "../../../firebase";
 import { RecipeDocument } from "../../../model/model";
-import { avatarFromCategory } from "../../Category/CategoryWrapper";
+import { iconFromCategory } from "../../Category/CategoryWrapper";
 import { Loading } from "../../Shared/Loading";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import CloseIcon from "@material-ui/icons/CloseTwoTone";
@@ -110,9 +111,11 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
                                             {Object.keys(recipe.categories).map(category => (
                                                 <Grid item key={category}>
                                                     <Tooltip title={recipe.categories[category]}>
-                                                        {avatarFromCategory(
-                                                            recipe.categories[category]
-                                                        )}
+                                                        <Avatar>
+                                                            {iconFromCategory(
+                                                                recipe.categories[category]
+                                                            )}
+                                                        </Avatar>
                                                     </Tooltip>
                                                 </Grid>
                                             ))}

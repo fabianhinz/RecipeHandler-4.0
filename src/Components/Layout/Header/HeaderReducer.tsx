@@ -1,7 +1,6 @@
 import { useReducer, Reducer, Dispatch } from "react";
 
 interface State {
-    drawer: boolean;
     dialog: boolean;
     email: string;
     password: string;
@@ -15,23 +14,18 @@ type Action =
           key: HeaderChangeKey;
           value: string;
       }
-    | { type: "drawerChange" }
     | { type: "dialogChange" };
 
 const reducer: Reducer<State, Action> = (state, action) => {
-    console.log(state, action);
     switch (action.type) {
         case "textFieldChange":
             return { ...state, [action.key]: action.value };
-        case "drawerChange":
-            return { ...state, drawer: !state.drawer };
         case "dialogChange":
             return { ...state, dialog: !state.dialog };
     }
 };
 
 const initialState: State = {
-    drawer: false,
     dialog: false,
     email: "",
     password: ""
