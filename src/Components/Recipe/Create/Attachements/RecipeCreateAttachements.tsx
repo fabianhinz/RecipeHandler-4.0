@@ -44,16 +44,16 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
     const onDrop = useCallback(
         async (acceptedFiles: File[], rejectedFiles: File[]) => {
             if (rejectedFiles.length > 0)
-                enqueueSnackbar(<>Lediglich JPG, PNG sind möglich</>, {
+                enqueueSnackbar("Lediglich JPG, PNG sind möglich", {
                     variant: "error"
                 });
 
             if (acceptedFiles.length > 10)
-                return enqueueSnackbar(<>Mehr als 10 Bilder pro Rezept sind nicht möglich</>, {
+                return enqueueSnackbar("Mehr als 10 Bilder pro Rezept sind nicht möglich", {
                     variant: "warning"
                 });
 
-            const loadingKey = enqueueSnackbar(<>Dateien werden komprimiert</>, {
+            const loadingKey = enqueueSnackbar("Dateien werden komprimiert", {
                 variant: "info"
             });
 
@@ -91,7 +91,7 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
 
     useEffect(() => {
         if (isDragActive)
-            enqueueSnackbar(<>Bilder ablegen um sie mit dem Rezept zu verknüpfen</>, {
+            enqueueSnackbar("Bilder ablegen um sie mit dem Rezept zu verknüpfen", {
                 variant: "info"
             });
         else closeSnackbar();

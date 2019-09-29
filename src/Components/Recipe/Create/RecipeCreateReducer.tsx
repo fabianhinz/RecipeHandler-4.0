@@ -1,7 +1,7 @@
 import { useReducer, Reducer } from "react";
 import { AttachementData, AttachementMetadata, Recipe, Categories } from "../../../model/model";
 
-interface State {
+export interface RecipeCreateState {
     name: string;
     categories: Categories<string>;
     attachements: Array<AttachementData | AttachementMetadata>;
@@ -9,15 +9,13 @@ interface State {
     amount: number;
     description: string;
     preview: boolean;
-    attachementsUploading: boolean;
-    recipeUploading: boolean;
     storageDeleteRefs: Array<firebase.storage.Reference>;
     numberOfComments: number;
     relatedRecipes: Array<string>;
     relatedRecipesDialog: boolean;
 }
 
-export type CreateChangeKey = keyof Pick<State, "ingredients" | "description" | "name">;
+export type CreateChangeKey = keyof Pick<RecipeCreateState, "ingredients" | "description" | "name">;
 export type AttachementName = { old: string; new: string };
 
 type Action =
@@ -28,8 +26,6 @@ type Action =
           value: string;
       }
     | { type: "previewChange" }
-    | { type: "attachementsUploadingChange"; now: boolean }
-    | { type: "recipeUploadingChange"; now: boolean }
     | { type: "attachementsDrop"; newAttachements: Array<AttachementData | AttachementMetadata> }
     | { type: "removeAttachement"; name: string }
     | { type: "categoriesChange"; selectedCategories: Map<string, string> }
@@ -40,7 +36,7 @@ type Action =
     | { type: "relatedRecipesChange"; relatedRecipes: Array<string> }
     | { type: "openRelatedRecipesDialog" };
 
-const reducer: Reducer<State, Action> = (state, action) => {
+const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
     switch (action.type) {
         case "loadState": {
             return { ...state, ...action.recipe };
@@ -49,10 +45,6 @@ const reducer: Reducer<State, Action> = (state, action) => {
             return { ...state, [action.key]: action.value };
         case "previewChange":
             return { ...state, preview: !state.preview };
-        case "attachementsUploadingChange":
-            return { ...state, attachementsUploading: action.now };
-        case "recipeUploadingChange":
-            return { ...state, recipeUploading: action.now };
         case "attachementsDrop":
             return { ...state, attachements: [...state.attachements, ...action.newAttachements] };
         case "removeAttachement":
@@ -99,7 +91,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
     }
 };
 
-const initialState: State = {
+const initialState: RecipeCreateState = {
     name: "",
     categories: {},
     attachements: [],
@@ -107,8 +99,6 @@ const initialState: State = {
     amount: 1,
     description: "",
     preview: false,
-    attachementsUploading: false,
-    recipeUploading: false,
     storageDeleteRefs: [],
     numberOfComments: 0,
     relatedRecipes: [],
