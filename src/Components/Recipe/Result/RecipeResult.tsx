@@ -14,23 +14,18 @@ import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { PATHS } from "../../Routes/Routes";
 import { FirebaseService } from "../../../firebase";
 import { RecipeResultRelated } from "./RecipeResultRelated";
-import { RecipeRating } from "../../Recipe/RecipeRating";
-import { RecipeComments } from "../../Recipe/Comments/RecipeComments";
-import { RecipeShare } from "../../Recipe/RecipeShare";
-import { useDraggableRecipesContext } from "../../Provider/DraggableRecipesProvider";
+import { RecipeHeaderLeft } from "../HeaderLeft/RecipeHeaderLeft";
 import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
 import { GridSize } from "@material-ui/core/Grid";
 
 interface RecipeResultProps {
     recipe: Recipe<AttachementMetadata | AttachementData> | null;
-    preview?: boolean;
-    fromRelated?: boolean;
+    source: "fromCreate" | "fromDraggable" | "fromExpansionSummary" | "fromRecentlyAdded";
 }
 
-const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) => {
+const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
     const { history } = useRouterContext();
     const { user } = useFirebaseAuthContext();
-    const { handleDraggableChange } = useDraggableRecipesContext();
 
     if (!recipe)
         return (
@@ -44,7 +39,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
     const breakpoints = (options: {
         ingredient: boolean;
     }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        fromRelated ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 };
+        source === "fromDraggable" ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 };
 
     return (
         <Grid container spacing={2}>
@@ -53,23 +48,12 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
                     <Grid item>
                         <Typography variant="h6">{recipe.name}</Typography>
                     </Grid>
-                    {!preview && (
-                        <Grid item>
-                            <Grid container>
-                                <Grid item>
-                                    <RecipeShare name={recipe.name} />
-                                </Grid>
-                                <Grid>
-                                    <RecipeComments
-                                        numberOfComments={recipe.numberOfComments}
-                                        name={recipe.name}
-                                    />
-                                </Grid>
-                                <Grid>
-                                    <RecipeRating name={recipe.name} />
-                                </Grid>
-                            </Grid>
-                        </Grid>
+                    {source !== "fromExpansionSummary" && source !== "fromCreate" && (
+                        <RecipeHeaderLeft
+                            name={recipe.name}
+                            source={source}
+                            numberOfComments={recipe.numberOfComments}
+                        />
                     )}
                 </Grid>
             </Grid>
@@ -81,7 +65,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
                 <Grid container spacing={2}>
                     {recipe.attachements.map(attachement => (
                         <RecipeResultImg
-                            fromRelated={fromRelated}
+                            fromDraggable={source === "fromDraggable"}
                             key={attachement.name}
                             attachement={attachement}
                         />
@@ -116,32 +100,17 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
             </Grid>
 
             <Grid item xs={12}>
-                <Grid container justify="flex-end" spacing={2}>
-                    <Grid item>
-                        {!fromRelated && (
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                onClick={() => handleDraggableChange(recipe.name)}
-                            >
-                                Anpinnen
-                            </Button>
-                        )}
-                    </Grid>
-                    <Grid item>
-                        {user && !preview && (
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                onClick={() =>
-                                    history.push(PATHS.recipeEdit(recipe.name), { recipe })
-                                }
-                            >
-                                Bearbeiten
-                            </Button>
-                        )}
-                    </Grid>
-                </Grid>
+                {user && source !== "fromCreate" && (
+                    <Box textAlign="right">
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}
+                        >
+                            Bearbeiten
+                        </Button>
+                    </Box>
+                )}
             </Grid>
         </Grid>
     );
@@ -149,5 +118,5 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
 
 export default memo(
     RecipeResult,
-    (prev, next) => prev.recipe === next.recipe && prev.preview === next.preview
+    (prev, next) => prev.recipe === next.recipe && prev.source === next.source
 );

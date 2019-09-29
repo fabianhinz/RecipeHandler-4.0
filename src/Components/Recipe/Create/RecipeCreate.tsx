@@ -372,7 +372,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         <Divider />
                         <CardContent>
                             <RecipeResult
-                                preview
+                                source="fromCreate"
                                 recipe={{
                                     name: state.name,
                                     createdDate: FirebaseService.createTimestampFromDate(

@@ -13,9 +13,7 @@ import {
 } from "@material-ui/core";
 import RecipeResult from "../../Recipe/Result/RecipeResult";
 import { Recipe, AttachementMetadata } from "../../../model/model";
-import { RecipeRating } from "../../Recipe/RecipeRating";
-import { RecipeComments } from "../../Recipe/Comments/RecipeComments";
-import { RecipeShare } from "../../Recipe/RecipeShare";
+import { RecipeHeaderLeft } from "../../Recipe/HeaderLeft/RecipeHeaderLeft";
 
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === "light" ? brown[200] : brown[400];
@@ -61,24 +59,17 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                     </Grid>
                     <Grid item>
                         <Grid container spacing={1}>
-                            <Grid item>
-                                <RecipeShare name={props.recipe.name} />
-                            </Grid>
-                            <Grid item>
-                                <RecipeComments
-                                    numberOfComments={props.recipe.numberOfComments}
-                                    name={props.recipe.name}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <RecipeRating name={props.recipe.name} />
-                            </Grid>
+                            <RecipeHeaderLeft
+                                name={props.recipe.name}
+                                numberOfComments={props.recipe.numberOfComments}
+                                source="fromExpansionSummary"
+                            />
                         </Grid>
                     </Grid>
                 </Grid>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <RecipeResult recipe={props.recipe} />
+                <RecipeResult recipe={props.recipe} source="fromExpansionSummary" />
             </ExpansionPanelDetails>
         </ExpansionPanel>
     );

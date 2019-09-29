@@ -24,14 +24,14 @@ const useStyles = makeStyles(theme =>
 
 interface RecipeResultImgProps {
     attachement: AttachementData | AttachementMetadata;
-    fromRelated?: boolean;
+    fromDraggable?: boolean;
 }
 
-export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement, fromRelated }) => {
+export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement, fromDraggable }) => {
     const classes = useStyles();
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement);
 
-    const breakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = fromRelated
+    const breakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = fromDraggable
         ? { xs: 12, md: 6 }
         : { xs: 12, sm: 6, md: 4, lg: 3 };
 
