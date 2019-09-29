@@ -14,7 +14,7 @@ import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
 import { PATHS } from "../../Routes/Routes";
 import { FirebaseService } from "../../../firebase";
 import { RecipeResultRelated } from "./RecipeResultRelated";
-import { RecipeHeaderLeft } from "../HeaderLeft/RecipeHeaderLeft";
+import { RecipeResultAction } from "./Action/RecipeResultAction";
 import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
 import { GridSize } from "@material-ui/core/Grid";
 
@@ -49,7 +49,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
                         <Typography variant="h6">{recipe.name}</Typography>
                     </Grid>
                     {source !== "fromExpansionSummary" && source !== "fromCreate" && (
-                        <RecipeHeaderLeft
+                        <RecipeResultAction
                             name={recipe.name}
                             source={source}
                             numberOfComments={recipe.numberOfComments}

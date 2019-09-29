@@ -2,9 +2,9 @@ import React, { FC } from "react";
 import ThumbUpIcon from "@material-ui/icons/ThumbUpRounded";
 import ThumbDownIcon from "@material-ui/icons/ThumbDownRounded";
 import { IconButton, makeStyles, createStyles, Typography, Box, Grid } from "@material-ui/core";
-import { RecipeDocument, Comment } from "../../../../model/model";
-import { FirebaseService } from "../../../../firebase";
-import { BadgeWrapper } from "../../../Shared/BadgeWrapper";
+import { RecipeDocument, Comment } from "../../../../../model/model";
+import { FirebaseService } from "../../../../../firebase";
+import { BadgeWrapper } from "../../../../Shared/BadgeWrapper";
 
 const useStyles = makeStyles(theme =>
     createStyles({

@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import RecipeResult from "../../Recipe/Result/RecipeResult";
 import { Recipe, AttachementMetadata } from "../../../model/model";
-import { RecipeHeaderLeft } from "../../Recipe/HeaderLeft/RecipeHeaderLeft";
+import { RecipeResultAction } from "../../Recipe/Result/Action/RecipeResultAction";
 
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === "light" ? brown[200] : brown[400];
@@ -59,7 +59,7 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                     </Grid>
                     <Grid item>
                         <Grid container spacing={1}>
-                            <RecipeHeaderLeft
+                            <RecipeResultAction
                                 name={props.recipe.name}
                                 numberOfComments={props.recipe.numberOfComments}
                                 source="fromExpansionSummary"

@@ -1,11 +1,11 @@
 import React, { FC, useState, useEffect } from "react";
 import { makeStyles, createStyles, Typography, Grid, Drawer, TextField } from "@material-ui/core";
-import { RecipeDocument, Comment } from "../../../../model/model";
+import { RecipeDocument, Comment } from "../../../../../model/model";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { FirebaseService } from "../../../../firebase";
-import { ReactComponent as NoCommentsIcon } from "../../../../icons/notFound.svg";
+import { FirebaseService } from "../../../../../firebase";
+import { ReactComponent as NoCommentsIcon } from "../../../../../icons/notFound.svg";
 import { RecipeComment } from "./RecipeComment";
-import { Loading } from "../../../Shared/Loading";
+import { Loading } from "../../../../Shared/Loading";
 
 const useStyles = makeStyles(theme =>
     createStyles({

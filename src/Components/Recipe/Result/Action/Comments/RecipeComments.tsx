@@ -1,8 +1,8 @@
 import React, { FC, useState } from "react";
 import CommentIcon from "@material-ui/icons/CommentTwoTone";
 import { IconButton } from "@material-ui/core";
-import { RecipeDocument } from "../../../../model/model";
-import { BadgeWrapper } from "../../../Shared/BadgeWrapper";
+import { RecipeDocument } from "../../../../../model/model";
+import { BadgeWrapper } from "../../../../Shared/BadgeWrapper";
 import { RecipeCommentsDrawer } from "./RecipeCommentsDrawer";
 
 const stopPropagation = (
