@@ -36,7 +36,7 @@ type Action =
     | { type: "attachementNameChange"; name: AttachementName }
     | { type: "increaseAmount" }
     | { type: "decreaseAmount" }
-    | { type: "storageDeleteRefsChange"; ref: firebase.storage.Reference }
+    | { type: "storageDeleteRefsChange"; refs: Array<firebase.storage.Reference> }
     | { type: "relatedRecipesChange"; relatedRecipes: Array<string> }
     | { type: "openRelatedRecipesDialog" };
 
@@ -87,7 +87,7 @@ const reducer: Reducer<State, Action> = (state, action) => {
         case "storageDeleteRefsChange": {
             return {
                 ...state,
-                storageDeleteRefs: [...state.storageDeleteRefs, action.ref]
+                storageDeleteRefs: [...state.storageDeleteRefs, ...action.refs]
             };
         }
         case "relatedRecipesChange": {

@@ -14,7 +14,7 @@ import {
     Zoom
 } from "@material-ui/core";
 import { AttachementData, AttachementMetadata } from "../../../../model/model";
-import { useAttachementRef } from "../../../../hooks/useAttachementRef";
+import { useAttachementRef, getFileExtension } from "../../../../hooks/useAttachementRef";
 import { isData, isMetadata } from "../../../../model/modelUtil";
 import { useTransition } from "../../../../hooks/useTransition";
 
@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => {
     });
 });
 export interface AttachementsCardChangeHandler {
-    onDeleteAttachement: (name: string, path: string) => void;
+    onDeleteAttachement: (name: string, fullPath: string) => void;
     onRemoveAttachement: (attachementName: string) => void;
     onSaveAttachement: (name: { old: string; new: string }) => void;
 }
@@ -59,7 +59,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
     const handleSaveClick = () =>
         onSaveAttachement({
             old: attachement.name,
-            new: name
+            new: `${name}.${getFileExtension(attachement.name)}`
         });
 
     return (
@@ -89,7 +89,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
                         action={
                             <>
                                 <IconButton
-                                    disabled={attachement.name === name}
+                                    disabled={attachement.name === name || name.length === 0}
                                     onClick={handleSaveClick}
                                 >
                                     <SaveIcon />

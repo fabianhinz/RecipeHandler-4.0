@@ -41,6 +41,7 @@ import AddIcon from "@material-ui/icons/AddCircle";
 import RemoveIcon from "@material-ui/icons/RemoveCircle";
 import { RecipeCreateRelatedDialog } from "./RecipeCreateRelatedDialog";
 import { RecipeResultRelated } from "../Result/RecipeResultRelated";
+import { getRefPaths } from "../../../hooks/useAttachementRef";
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -95,6 +96,14 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     const handleSaveClick = async () => {
         if (!categoriesCollection) return;
 
+        if (selectedCategories.size === 0 || state.name.length === 0)
+            return enqueueSnackbar(
+                <>Das Rezept sollte um mindestens eine Kategorie und den Namen ergänzt werden</>,
+                {
+                    variant: "warning"
+                }
+            );
+
         const documentSnapshot = await FirebaseService.firestore
             .collection("recipes")
             .doc(state.name)
@@ -105,20 +114,12 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 variant: "info"
             });
 
-        if (selectedCategories.size === 0 || state.name.length === 0)
-            return enqueueSnackbar(
-                <>Das Rezept sollte um mindestens eine Kategorie und den Namen ergänzt werden</>,
-                {
-                    variant: "warning"
-                }
-            );
-
+        dispatch({ type: "attachementsUploadingChange", now: true });
         if (state.storageDeleteRefs)
             for (const ref of state.storageDeleteRefs) {
                 await ref.delete();
             }
 
-        dispatch({ type: "attachementsUploadingChange", now: true });
         const uploadTasks: Array<PromiseLike<any>> = [];
         const oldMetadata: Array<AttachementMetadata> = [];
         for (const attachement of state.attachements) {
@@ -202,10 +203,15 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         dispatch({ type: "removeAttachement", name });
     };
 
-    const handleDeleteAttachement = (name: string, path: string) => {
-        const ref = FirebaseService.storageRef.child(path);
+    const handleDeleteAttachement = (name: string, fullPath: string) => {
+        const { smallPath, mediumPath } = getRefPaths(fullPath);
+
+        const full = FirebaseService.storageRef.child(fullPath);
+        const medium = FirebaseService.storageRef.child(smallPath);
+        const small = FirebaseService.storageRef.child(mediumPath);
+
         handleRemoveAttachement(name);
-        dispatch({ type: "storageDeleteRefsChange", ref });
+        dispatch({ type: "storageDeleteRefsChange", refs: [full, medium, small] });
     };
 
     // ? with useCallback  and memo chained together we improve performance
