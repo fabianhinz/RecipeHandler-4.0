@@ -13,17 +13,26 @@ interface State {
 
 const initialDataUrls = { fullDataUrl: "", mediumDataUrl: "", smallDataUrl: "" };
 
-const getResizedImages = async (fullPath: string) => {
+export const getFileExtension = (fullpath: string) => fullpath.split(".").slice(-1)[0];
+
+export const getRefPaths = (fullPath: string) => {
     // ? the fullPath Field in firestore always looks something like [whatever].jpg|png
-    const extension = fullPath.split(".").slice(-1)[0];
+    const extension = getFileExtension(fullPath);
     const basePath = fullPath.replace(`.${extension}`, "");
 
-    const urls: Omit<State, "base"> = { ...initialDataUrls };
-    const { storage } = FirebaseService;
+    return {
+        mediumPath: `${basePath}_1000x1000.${extension}`,
+        smallPath: `${basePath}_400x400.${extension}`
+    };
+};
 
-    urls.fullDataUrl = await storage.ref(fullPath).getDownloadURL();
-    urls.mediumDataUrl = await storage.ref(`${basePath}_1000x1000.${extension}`).getDownloadURL();
-    urls.smallDataUrl = await storage.ref(`${basePath}_400x400.${extension}`).getDownloadURL();
+const getResizedImages = async (fullPath: string) => {
+    const { smallPath, mediumPath } = getRefPaths(fullPath);
+    const urls: Omit<State, "base"> = { ...initialDataUrls };
+
+    urls.fullDataUrl = await FirebaseService.storage.ref(fullPath).getDownloadURL();
+    urls.mediumDataUrl = await FirebaseService.storage.ref(mediumPath).getDownloadURL();
+    urls.smallDataUrl = await FirebaseService.storage.ref(smallPath).getDownloadURL();
 
     return urls;
 };
