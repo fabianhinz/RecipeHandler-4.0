@@ -96,6 +96,14 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     const handleSaveClick = async () => {
         if (!categoriesCollection) return;
 
+        if (selectedCategories.size === 0 || state.name.length === 0)
+            return enqueueSnackbar(
+                <>Das Rezept sollte um mindestens eine Kategorie und den Namen ergänzt werden</>,
+                {
+                    variant: "warning"
+                }
+            );
+
         const documentSnapshot = await FirebaseService.firestore
             .collection("recipes")
             .doc(state.name)
@@ -105,14 +113,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
             return enqueueSnackbar(<>Rezept mit dem Namen {state.name} existiert bereits</>, {
                 variant: "info"
             });
-
-        if (selectedCategories.size === 0 || state.name.length === 0)
-            return enqueueSnackbar(
-                <>Das Rezept sollte um mindestens eine Kategorie und den Namen ergänzt werden</>,
-                {
-                    variant: "warning"
-                }
-            );
 
         dispatch({ type: "attachementsUploadingChange", now: true });
         if (state.storageDeleteRefs)
