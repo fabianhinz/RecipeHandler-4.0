@@ -1,10 +1,10 @@
-import React, { FC } from "react";
-import { Box, Grid, Typography } from "@material-ui/core";
+import { Box, Grid, Typography } from '@material-ui/core'
+import React, { FC } from 'react'
 
 interface SubtitleProps {
-    firstChild?: boolean;
-    icon?: JSX.Element;
-    text: string;
+    firstChild?: boolean
+    icon?: JSX.Element
+    text: string
 }
 
 export const Subtitle: FC<SubtitleProps> = ({ icon, text, children, firstChild }) => (
@@ -17,4 +17,4 @@ export const Subtitle: FC<SubtitleProps> = ({ icon, text, children, firstChild }
             {children && <Grid item>{children}</Grid>}
         </Grid>
     </Box>
-);
+)

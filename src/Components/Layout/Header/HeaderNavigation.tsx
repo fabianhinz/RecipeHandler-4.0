@@ -1,43 +1,44 @@
-import React, { FC } from "react";
-import { Navigate } from "../../Routes/Navigate";
-import { PATHS } from "../../Routes/Routes";
-import { IconButton } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/AddCircleTwoTone";
-import BrightnessIcon from "@material-ui/icons/SettingsBrightnessTwoTone";
-import HomeIcon from "@material-ui/icons/HomeTwoTone";
-import AccountIcon from "@material-ui/icons/AccountCircleTwoTone";
-import { HeaderDispatch } from "./HeaderReducer";
-import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
-import { makeStyles, createStyles } from "@material-ui/styles";
-import clsx from "clsx";
+import { IconButton } from '@material-ui/core'
+import AccountIcon from '@material-ui/icons/AccountCircleTwoTone'
+import AddIcon from '@material-ui/icons/AddCircleTwoTone'
+import HomeIcon from '@material-ui/icons/HomeTwoTone'
+import BrightnessIcon from '@material-ui/icons/SettingsBrightnessTwoTone'
+import { createStyles, makeStyles } from '@material-ui/styles'
+import clsx from 'clsx'
+import React, { FC } from 'react'
+
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { Navigate } from '../../Routes/Navigate'
+import { PATHS } from '../../Routes/Routes'
+import { HeaderDispatch } from './HeaderReducer'
 
 interface HeaderNavigationProps extends HeaderDispatch {
-    drawerRight: boolean;
-    onThemeChange: () => void;
+    drawerRight: boolean
+    onThemeChange: () => void
 }
 
 const useStyles = makeStyles(theme =>
     createStyles({
         container: {
             flexGrow: 1,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center"
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
         },
         drawerRight: {
-            flexDirection: "column"
-        }
+            flexDirection: 'column',
+        },
     })
-);
+)
 
 export const HeaderNavigation: FC<HeaderNavigationProps> = ({
     onThemeChange,
     dispatch,
-    drawerRight
+    drawerRight,
 }) => {
-    const { user } = useFirebaseAuthContext();
-    const classes = useStyles();
+    const { user } = useFirebaseAuthContext()
+    const classes = useStyles()
 
     return (
         <div className={clsx(classes.container, drawerRight && classes.drawerRight)}>
@@ -59,9 +60,9 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({
                 </Navigate>
             )}
 
-            <IconButton onClick={() => dispatch({ type: "dialogChange" })}>
+            <IconButton onClick={() => dispatch({ type: 'dialogChange' })}>
                 <AccountIcon />
             </IconButton>
         </div>
-    );
-};
+    )
+}

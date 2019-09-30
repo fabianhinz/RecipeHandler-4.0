@@ -1,116 +1,117 @@
-import { useSnackbar } from "notistack";
-import { RecipeCreateState } from "./RecipeCreateReducer";
-import { AttachementMetadata } from "../../../model/model";
-import { FirebaseService } from "../../../firebase";
-import { isData } from "../../../model/modelUtil";
-import { useRouterContext } from "../../Provider/RouterProvider";
-import { PATHS } from "../../Routes/Routes";
-import { useState } from "react";
+import { useSnackbar } from 'notistack'
+import { useState } from 'react'
+
+import { FirebaseService } from '../../../firebase'
+import { AttachementMetadata } from '../../../model/model'
+import { isData } from '../../../model/modelUtil'
+import { useRouterContext } from '../../Provider/RouterProvider'
+import { PATHS } from '../../Routes/Routes'
+import { RecipeCreateState } from './RecipeCreateReducer'
 
 export const useRecipeCreateService = (
     state: RecipeCreateState,
     editedRecipe: boolean | undefined
 ) => {
-    const [loading, setLoading] = useState(false);
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const { history } = useRouterContext();
+    const [loading, setLoading] = useState(false)
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const { history } = useRouterContext()
 
     const validate = async (selectedCategories: Map<string, string>) => {
-        setLoading(true);
-        let valid = true;
+        setLoading(true)
+        let valid = true
         if (selectedCategories.size === 0 || state.name.length === 0) {
             enqueueSnackbar(
-                "Das Rezept sollte um mindestens eine Kategorie und den Namen ergänzt werden",
+                'Das Rezept sollte um mindestens eine Kategorie und den Namen ergänzt werden',
                 {
-                    variant: "warning"
+                    variant: 'warning',
                 }
-            );
-            valid = false;
+            )
+            valid = false
         }
 
         try {
             const documentSnapshot = await FirebaseService.firestore
-                .collection("recipes")
+                .collection('recipes')
                 .doc(state.name)
-                .get();
+                .get()
 
             if (documentSnapshot.exists && !editedRecipe) {
                 enqueueSnackbar(`Rezept mit dem Namen ${state.name} existiert bereits`, {
-                    variant: "warning"
-                });
-                valid = false;
+                    variant: 'warning',
+                })
+                valid = false
             }
         } catch (e) {
-            valid = false;
+            valid = false
         }
 
-        setLoading(false);
-        return valid;
-    };
+        setLoading(false)
+        return valid
+    }
 
     const uploadAttachments = async () => {
-        setLoading(true);
-        const attachmentSnackbar = enqueueSnackbar("Bilder werden verarbeitet", {
+        setLoading(true)
+        const attachmentSnackbar = enqueueSnackbar('Bilder werden verarbeitet', {
             persist: true,
-            variant: "info"
-        });
+            variant: 'info',
+        })
 
         if (state.storageDeleteRefs) {
             for (const ref of state.storageDeleteRefs) {
-                await ref.delete();
+                await ref.delete()
             }
         }
 
-        const uploadTasks: Array<PromiseLike<any>> = [];
-        const oldMetadata: Array<AttachementMetadata> = [];
+        const uploadTasks: Array<PromiseLike<any>> = []
+        const oldMetadata: Array<AttachementMetadata> = []
         for (const attachement of state.attachements) {
             if (!isData(attachement)) {
                 // ? old Metadata indicates that those attachements are already uploaded
-                oldMetadata.push(attachement);
-                continue;
+                oldMetadata.push(attachement)
+                continue
             }
             const uploadTask = FirebaseService.storageRef
                 .child(`recipes/${state.name}/${attachement.name}`)
-                .putString(attachement.dataUrl, "data_url")
+                .putString(attachement.dataUrl, 'data_url')
                 .catch(error =>
                     enqueueSnackbar(error.message, {
-                        variant: "error"
+                        variant: 'error',
                     })
-                );
-            uploadTasks.push(uploadTask);
+                )
+            uploadTasks.push(uploadTask)
         }
 
-        const finishedTasks = await Promise.all(uploadTasks);
-        const newMetadata: Array<AttachementMetadata> = [];
+        const finishedTasks = await Promise.all(uploadTasks)
+        const newMetadata: Array<AttachementMetadata> = []
         finishedTasks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
             // ? on "storage/unauthorized" snapshot is not of type "object"
-            if (typeof snapshot !== "object") return;
-            const { fullPath, size, name } = snapshot.metadata;
+            if (typeof snapshot !== 'object') return
+            const { fullPath, size, name } = snapshot.metadata
             newMetadata.push({
                 fullPath,
                 name,
-                size
-            });
-        });
+                size,
+            })
+        })
 
-        closeSnackbar(attachmentSnackbar as string);
-        setLoading(false);
-        return { newMetadata, oldMetadata };
-    };
+        closeSnackbar(attachmentSnackbar as string)
+        setLoading(false)
+        return { newMetadata, oldMetadata }
+    }
 
     const saveRecipeDocument = async (args: {
-        newMetadata: Array<AttachementMetadata>;
-        oldMetadata: Array<AttachementMetadata>;
+        newMetadata: Array<AttachementMetadata>
+        oldMetadata: Array<AttachementMetadata>
     }) => {
-        setLoading(true);
-        const { oldMetadata, newMetadata } = args;
+        setLoading(true)
+        const { oldMetadata, newMetadata } = args
 
-        const saveSnackbar = enqueueSnackbar("Rezept wird gespeichert", {
+        const saveSnackbar = enqueueSnackbar('Rezept wird gespeichert', {
             persist: true,
-            variant: "info"
-        });
+            variant: 'info',
+        })
         await FirebaseService.firestore
-            .collection("recipes")
+            .collection('recipes')
             .doc(state.name)
             .set({
                 name: state.name,
@@ -121,23 +122,23 @@ export const useRecipeCreateService = (
                 numberOfComments: state.numberOfComments,
                 categories: state.categories,
                 relatedRecipes: state.relatedRecipes,
-                createdDate: FirebaseService.createTimestampFromDate(new Date())
-            });
+                createdDate: FirebaseService.createTimestampFromDate(new Date()),
+            })
 
         if (!editedRecipe) {
             await FirebaseService.firestore
-                .collection("rating")
+                .collection('rating')
                 .doc(state.name)
-                .set({ value: 0 });
+                .set({ value: 0 })
         }
 
-        setLoading(false);
-        closeSnackbar(saveSnackbar as string);
+        setLoading(false)
+        closeSnackbar(saveSnackbar as string)
         enqueueSnackbar(`${state.name} gespeichert`, {
-            variant: "success"
-        });
-        history.push(PATHS.home);
-    };
+            variant: 'success',
+        })
+        history.push(PATHS.home)
+    }
 
-    return { validate, uploadAttachments, saveRecipeDocument, loading };
-};
+    return { validate, uploadAttachments, saveRecipeDocument, loading }
+}

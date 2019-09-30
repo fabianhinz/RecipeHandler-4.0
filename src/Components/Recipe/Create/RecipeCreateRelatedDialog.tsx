@@ -1,74 +1,75 @@
-import React, { FC, useState, useEffect } from "react";
 import {
-    Grid,
+    Avatar,
+    Box,
+    Checkbox,
     Dialog,
-    DialogTitle,
+    DialogActions,
     DialogContent,
+    DialogTitle,
+    Grid,
+    Hidden,
+    IconButton,
     List,
     ListItem,
     ListItemIcon,
-    Checkbox,
-    ListItemText,
     ListItemSecondaryAction,
+    ListItemText,
     Tooltip,
-    DialogActions,
-    Box,
-    IconButton,
-    Hidden,
-    Avatar
-} from "@material-ui/core";
-import { SlideUp } from "../../Shared/Transitions";
-import { FirebaseService } from "../../../firebase";
-import { RecipeDocument } from "../../../model/model";
-import { iconFromCategory } from "../../Category/CategoryWrapper";
-import { Loading } from "../../Shared/Loading";
-import SaveIcon from "@material-ui/icons/SaveTwoTone";
-import CloseIcon from "@material-ui/icons/CloseTwoTone";
-import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
-import { useBreakpointsContext } from "../../Provider/BreakpointsProvider";
+} from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
+import SaveIcon from '@material-ui/icons/SaveTwoTone'
+import React, { FC, useEffect, useState } from 'react'
+
+import { FirebaseService } from '../../../firebase'
+import { RecipeDocument } from '../../../model/model'
+import { iconFromCategory } from '../../Category/CategoryWrapper'
+import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
+import { Loading } from '../../Shared/Loading'
+import { SlideUp } from '../../Shared/Transitions'
 
 interface RecipeCreateRelatedDialogProps {
-    defaultValues: Array<string>;
-    currentRecipeName: string;
-    open: boolean;
-    onClose: (relatedRecipes: Array<string>) => void;
+    defaultValues: Array<string>
+    currentRecipeName: string
+    open: boolean
+    onClose: (relatedRecipes: Array<string>) => void
 }
 
 export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
     onClose,
     open,
     currentRecipeName,
-    defaultValues
+    defaultValues,
 }) => {
-    const [recipes, setRecipes] = useState<Array<RecipeDocument>>([]);
-    const [selected, setSelected] = useState<Set<string>>(new Set(defaultValues));
+    const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
+    const [selected, setSelected] = useState<Set<string>>(new Set(defaultValues))
 
-    const { isDialogFullscreen } = useBreakpointsContext();
+    const { isDialogFullscreen } = useBreakpointsContext()
 
     useEffect(() => {
-        if (!open) return;
+        if (!open) return
 
         FirebaseService.firestore
-            .collection("recipes")
-            .orderBy("createdDate", "desc")
+            .collection('recipes')
+            .orderBy('createdDate', 'desc')
             .get()
             .then(querySnapshot =>
                 setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
-            );
-    }, [open]);
+            )
+    }, [open])
 
     const handleSelectedChange = (recipeName: string) => {
-        if (selected.has(recipeName)) selected.delete(recipeName);
-        else selected.add(recipeName);
-        setSelected(new Set(selected));
-    };
+        if (selected.has(recipeName)) selected.delete(recipeName)
+        else selected.add(recipeName)
+        setSelected(new Set(selected))
+    }
 
-    const handleClose = () => onClose([...selected.values()]);
+    const handleClose = () => onClose([...selected.values()])
 
     const handleCancelBtnClick = () => {
-        setSelected(new Set(defaultValues));
-        onClose(defaultValues);
-    };
+        setSelected(new Set(defaultValues))
+        onClose(defaultValues)
+    }
 
     return (
         <Dialog
@@ -77,8 +78,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             open={open}
             onClose={handleClose}
             maxWidth="sm"
-            fullWidth
-        >
+            fullWidth>
             <DialogTitle>Passende Rezepte auswählen</DialogTitle>
             <DialogContent>
                 {recipes.length === 0 && <Loading />}
@@ -89,8 +89,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
                             <ListItem
                                 onClick={() => handleSelectedChange(recipe.name)}
                                 key={recipe.name}
-                                button
-                            >
+                                button>
                                 <ListItemIcon>
                                     <Checkbox
                                         color="primary"
@@ -136,12 +135,11 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
                     </IconButton>
                     <IconButton
                         onClick={() => setSelected(new Set([]))}
-                        disabled={selected.size === 0}
-                    >
+                        disabled={selected.size === 0}>
                         <DeleteIcon />
                     </IconButton>
                 </Box>
             </DialogActions>
         </Dialog>
-    );
-};
+    )
+}

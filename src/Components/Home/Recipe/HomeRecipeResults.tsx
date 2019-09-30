@@ -1,5 +1,3 @@
-import brown from "@material-ui/core/colors/brown";
-import React, { FC, memo } from "react";
 import {
     Avatar,
     createStyles,
@@ -7,33 +5,36 @@ import {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     Grid,
+    Hidden,
     makeStyles,
     Typography,
-    Hidden
-} from "@material-ui/core";
-import RecipeResult from "../../Recipe/Result/RecipeResult";
-import { Recipe, AttachementMetadata } from "../../../model/model";
-import { RecipeRating } from "../../Recipe/RecipeRating";
-import { RecipeComments } from "../../Recipe/Comments/RecipeComments";
-import { RecipeShare } from "../../Recipe/RecipeShare";
+} from '@material-ui/core'
+import brown from '@material-ui/core/colors/brown'
+import React, { FC, memo } from 'react'
+
+import { AttachementMetadata, Recipe } from '../../../model/model'
+import { RecipeComments } from '../../Recipe/Comments/RecipeComments'
+import { RecipeRating } from '../../Recipe/RecipeRating'
+import { RecipeShare } from '../../Recipe/RecipeShare'
+import RecipeResult from '../../Recipe/Result/RecipeResult'
 
 const useStyles = makeStyles(theme => {
-    const background = theme.palette.type === "light" ? brown[200] : brown[400];
+    const background = theme.palette.type === 'light' ? brown[200] : brown[400]
 
     return createStyles({
         avatar: {
             background,
-            color: theme.palette.getContrastText(background)
-        }
-    });
-});
+            color: theme.palette.getContrastText(background),
+        },
+    })
+})
 
 interface HomeRecipeResultsProps {
-    recipe: Recipe<AttachementMetadata>;
+    recipe: Recipe<AttachementMetadata>
 }
 
 const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
-    const classes = useStyles();
+    const classes = useStyles()
 
     return (
         <ExpansionPanel TransitionProps={{ mountOnEnter: true }}>
@@ -43,8 +44,7 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                     direction="row"
                     spacing={2}
                     justify="space-between"
-                    alignItems="center"
-                >
+                    alignItems="center">
                     <Grid item>
                         <Grid container spacing={2} alignItems="center">
                             <Grid item>
@@ -81,7 +81,7 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                 <RecipeResult recipe={props.recipe} />
             </ExpansionPanelDetails>
         </ExpansionPanel>
-    );
-};
+    )
+}
 
-export default memo(HomeRecipeResults, (prev, next) => prev.recipe === next.recipe);
+export default memo(HomeRecipeResults, (prev, next) => prev.recipe === next.recipe)

@@ -1,21 +1,22 @@
-import React, { FC } from "react";
-import { Drawer } from "@material-ui/core";
-import { HeaderNavigation } from "./HeaderNavigation";
-import { useHeaderReducer } from "./HeaderReducer";
-import { HeaderLoginDialog } from "./HeaderLoginDialog";
-import { useBreakpointsContext } from "../../Provider/BreakpointsProvider";
+import { Drawer } from '@material-ui/core'
+import React, { FC } from 'react'
+
+import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
+import { HeaderLoginDialog } from './HeaderLoginDialog'
+import { HeaderNavigation } from './HeaderNavigation'
+import { useHeaderReducer } from './HeaderReducer'
 
 interface HeaderProps {
-    onThemeChange: () => void;
+    onThemeChange: () => void
 }
 
 export const Header: FC<HeaderProps> = props => {
-    const { state, dispatch } = useHeaderReducer();
-    const { isDrawerBottom } = useBreakpointsContext();
+    const { state, dispatch } = useHeaderReducer()
+    const { isDrawerBottom } = useBreakpointsContext()
 
     return (
         <>
-            <Drawer variant="permanent" anchor={isDrawerBottom ? "bottom" : "right"}>
+            <Drawer variant="permanent" anchor={isDrawerBottom ? 'bottom' : 'right'}>
                 <HeaderNavigation
                     drawerRight={!isDrawerBottom}
                     dispatch={dispatch}
@@ -30,5 +31,5 @@ export const Header: FC<HeaderProps> = props => {
                 dispatch={dispatch}
             />
         </>
-    );
-};
+    )
+}

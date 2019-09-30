@@ -1,31 +1,32 @@
-import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
-import BookIcon from "@material-ui/icons/BookTwoTone";
-import LabelIcon from "@material-ui/icons/LabelTwoTone";
-import React, { FC, memo } from "react";
-import ReactMarkdown from "react-markdown";
-import { RecipeResultImg } from "./RecipeResultImg";
-import { Grid, Typography, Box, Slide, Button } from "@material-ui/core";
-import { Recipe, AttachementData, AttachementMetadata } from "../../../model/model";
-import { Subtitle } from "../../Shared/Subtitle";
-import { CategoryResult } from "../../Category/CategoryResult";
-import { ReactComponent as NotFoundIcon } from "../../../icons/notFound.svg";
-import { useRouterContext } from "../../Provider/RouterProvider";
-import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
-import { PATHS } from "../../Routes/Routes";
-import { FirebaseService } from "../../../firebase";
-import { RecipeResultRelated } from "./RecipeResultRelated";
-import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import { GridSize } from "@material-ui/core/Grid";
+import { Box, Button, Grid, Slide, Typography } from '@material-ui/core'
+import { GridSize } from '@material-ui/core/Grid'
+import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
+import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
+import BookIcon from '@material-ui/icons/BookTwoTone'
+import LabelIcon from '@material-ui/icons/LabelTwoTone'
+import React, { FC, memo } from 'react'
+import ReactMarkdown from 'react-markdown'
+
+import { FirebaseService } from '../../../firebase'
+import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
+import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
+import { CategoryResult } from '../../Category/CategoryResult'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { useRouterContext } from '../../Provider/RouterProvider'
+import { PATHS } from '../../Routes/Routes'
+import { Subtitle } from '../../Shared/Subtitle'
+import { RecipeResultImg } from './RecipeResultImg'
+import { RecipeResultRelated } from './RecipeResultRelated'
 
 interface RecipeResultProps {
-    recipe: Recipe<AttachementMetadata | AttachementData> | null;
-    preview?: boolean;
-    fromRelated?: boolean;
+    recipe: Recipe<AttachementMetadata | AttachementData> | null
+    preview?: boolean
+    fromRelated?: boolean
 }
 
 const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) => {
-    const { history } = useRouterContext();
-    const { user } = useFirebaseAuthContext();
+    const { history } = useRouterContext()
+    const { user } = useFirebaseAuthContext()
 
     if (!recipe)
         return (
@@ -34,12 +35,12 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
                     <NotFoundIcon width={200} />
                 </Slide>
             </Box>
-        );
+        )
 
     const breakpoints = (options: {
-        ingredient: boolean;
+        ingredient: boolean
     }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        fromRelated ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 };
+        fromRelated ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
 
     return (
         <Grid container spacing={2}>
@@ -82,7 +83,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
 
             <Grid item xs={12}>
                 <Typography variant="caption">
-                    Erstellt am:{" "}
+                    Erstellt am:{' '}
                     {FirebaseService.createDateFromTimestamp(
                         recipe.createdDate
                     ).toLocaleDateString()}
@@ -95,18 +96,17 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
                         <Button
                             color="primary"
                             variant="contained"
-                            onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}
-                        >
+                            onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}>
                             Bearbeiten
                         </Button>
                     </Box>
                 )}
             </Grid>
         </Grid>
-    );
-};
+    )
+}
 
 export default memo(
     RecipeResult,
     (prev, next) => prev.recipe === next.recipe && prev.preview === next.preview
-);
+)

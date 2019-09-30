@@ -1,73 +1,74 @@
-import React, { useState, useEffect } from "react";
 import {
     Box,
-    Grid,
-    makeStyles,
     createStyles,
-    Tooltip,
-    Fab,
     Drawer,
-    InputBase
-} from "@material-ui/core";
-import { HomeRecentlyAddedCard } from "./HomeRecentlyAddedCard";
-import useDebounce from "../../../hooks/useDebounce";
-import { FirebaseService } from "../../../firebase";
-import SearchIcon from "@material-ui/icons/SearchTwoTone";
-import { RecipeDocument } from "../../../model/model";
+    Fab,
+    Grid,
+    InputBase,
+    makeStyles,
+    Tooltip,
+} from '@material-ui/core'
+import SearchIcon from '@material-ui/icons/SearchTwoTone'
+import React, { useEffect, useState } from 'react'
+
+import { FirebaseService } from '../../../firebase'
+import useDebounce from '../../../hooks/useDebounce'
+import { RecipeDocument } from '../../../model/model'
+import { HomeRecentlyAddedCard } from './HomeRecentlyAddedCard'
 
 const useStyles = makeStyles(() =>
     createStyles({
         root: {
-            background: "none"
-        }
+            background: 'none',
+        },
     })
-);
+)
 
 export const HomeRecentlyAdded = () => {
-    const [recipes, setRecipes] = useState<Array<RecipeDocument>>([]);
-    const [searchDrawer, setSearchDrawer] = useState(false);
-    const [searchValue, setSearchValue] = useState("");
-    const [skeleton, setSkeleton] = useState(false);
+    const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
+    const [searchDrawer, setSearchDrawer] = useState(false)
+    const [searchValue, setSearchValue] = useState('')
+    const [skeleton, setSkeleton] = useState(false)
 
-    const debouncedSearchValue = useDebounce(searchValue, 500);
+    const debouncedSearchValue = useDebounce(searchValue, 500)
 
-    const classes = useStyles();
+    const classes = useStyles()
 
-    const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous);
+    const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous)
 
     useEffect(() => {
-        if (searchValue !== debouncedSearchValue) setSkeleton(true);
-        else setSkeleton(false);
-    }, [debouncedSearchValue, searchValue]);
+        if (searchValue !== debouncedSearchValue) setSkeleton(true)
+        else setSkeleton(false)
+    }, [debouncedSearchValue, searchValue])
 
     useEffect(() => {
         let query:
             | firebase.firestore.CollectionReference
-            | firebase.firestore.Query = FirebaseService.firestore.collection("recipes");
+            | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
         if (debouncedSearchValue.length > 0) {
             return query
-                .where("name", ">=", debouncedSearchValue)
+                .where('name', '>=', debouncedSearchValue)
                 .limit(6)
                 .onSnapshot(
                     querySnapshot => {
-                        setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument));
-                        setSkeleton(false);
+                        setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
+                        setSkeleton(false)
                     },
                     error => console.error(error)
-                );
+                )
         } else {
             return query
-                .orderBy("createdDate", "desc")
+                .orderBy('createdDate', 'desc')
                 .limit(6)
                 .onSnapshot(
                     querySnapshot => {
-                        setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument));
+                        setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
                     },
                     error => console.error(error)
-                );
+                )
         }
-    }, [debouncedSearchValue]);
+    }, [debouncedSearchValue])
 
     return (
         <>
@@ -96,8 +97,7 @@ export const HomeRecentlyAdded = () => {
                 BackdropProps={{ classes }}
                 open={searchDrawer}
                 onClose={handleSearchDrawerChange}
-                anchor="top"
-            >
+                anchor="top">
                 <Box padding={2} display="flex" alignItems="center">
                     <Box marginRight={1}>
                         <SearchIcon />
@@ -112,5 +112,5 @@ export const HomeRecentlyAdded = () => {
                 </Box>
             </Drawer>
         </>
-    );
-};
+    )
+}

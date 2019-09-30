@@ -1,1 +1,1 @@
-declare module "browser-image-compression";
+declare module 'browser-image-compression'

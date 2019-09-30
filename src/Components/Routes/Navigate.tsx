@@ -1,14 +1,14 @@
-import React, { FC, CSSProperties } from "react";
-import { Link } from "react-router-dom";
+import React, { CSSProperties, FC } from 'react'
+import { Link } from 'react-router-dom'
 
-const style: CSSProperties = { textDecoration: "none", color: "inherit" };
+const style: CSSProperties = { textDecoration: 'none', color: 'inherit' }
 
 interface NavigateProps {
-    to: string;
+    to: string
 }
 
 export const Navigate: FC<NavigateProps> = ({ to, children }) => (
     <Link to={to} style={style}>
         {children}
     </Link>
-);
+)

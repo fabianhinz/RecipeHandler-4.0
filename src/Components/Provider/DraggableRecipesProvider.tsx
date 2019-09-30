@@ -1,100 +1,101 @@
-import React, { FC, useState, useContext } from "react";
-import { makeStyles, createStyles, Paper, IconButton, Grow } from "@material-ui/core";
-import CancelIcon from "@material-ui/icons/Cancel";
-import TouchIcon from "@material-ui/icons/TouchAppTwoTone";
-import Draggable from "react-draggable";
-import { useRecipeDoc } from "../../hooks/useRecipeDoc";
-import RecipeResult from "../Recipe/Result/RecipeResult";
-import { Loading } from "../Shared/Loading";
-import clsx from "clsx";
-import { useSnackbar } from "notistack";
-import { BadgeWrapper } from "../Shared/BadgeWrapper";
-import { useBreakpointsContext } from "./BreakpointsProvider";
+import { createStyles, Grow, IconButton, makeStyles, Paper } from '@material-ui/core'
+import CancelIcon from '@material-ui/icons/Cancel'
+import TouchIcon from '@material-ui/icons/TouchAppTwoTone'
+import clsx from 'clsx'
+import { useSnackbar } from 'notistack'
+import React, { FC, useContext, useState } from 'react'
+import Draggable from 'react-draggable'
+
+import { useRecipeDoc } from '../../hooks/useRecipeDoc'
+import RecipeResult from '../Recipe/Result/RecipeResult'
+import { BadgeWrapper } from '../Shared/BadgeWrapper'
+import { Loading } from '../Shared/Loading'
+import { useBreakpointsContext } from './BreakpointsProvider'
 
 type DraggableRecipesState = {
-    draggableContains: (recipeName: string) => boolean;
-    handleDraggableChange: (recipeName: string) => void;
-};
+    draggableContains: (recipeName: string) => boolean
+    handleDraggableChange: (recipeName: string) => void
+}
 
-const Context = React.createContext<DraggableRecipesState | null>(null);
+const Context = React.createContext<DraggableRecipesState | null>(null)
 
-export const useDraggableRecipesContext = () => useContext(Context) as DraggableRecipesState;
+export const useDraggableRecipesContext = () => useContext(Context) as DraggableRecipesState
 
 const useStyles = makeStyles(theme =>
     createStyles({
         paper: {
             boxShadow: theme.shadows[8],
-            position: "relative",
+            position: 'relative',
             padding: theme.spacing(2),
-            height: "50vh",
-            overflow: "auto",
-            width: 320
+            height: '50vh',
+            overflow: 'auto',
+            width: 320,
         },
         draggableContainer: {
             zIndex: theme.zIndex.appBar + 1,
-            position: "fixed",
+            position: 'fixed',
             right: theme.spacing(2),
-            bottom: theme.spacing(2)
+            bottom: theme.spacing(2),
         },
         btnContainer: {
-            display: "flex",
-            flexDirection: "column",
-            position: "fixed",
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'fixed',
             top: theme.spacing(1),
-            right: theme.spacing(1)
+            right: theme.spacing(1),
         },
         activeRecipe: {
-            zIndex: theme.zIndex.appBar + 2
+            zIndex: theme.zIndex.appBar + 2,
         },
         draggable: {
-            cursor: "move"
+            cursor: 'move',
         },
         drawerBottomMargin: {
-            bottom: theme.spacing(8)
+            bottom: theme.spacing(8),
         },
         drawerRightMargin: {
-            right: theme.spacing(8)
-        }
+            right: theme.spacing(8),
+        },
     })
-);
+)
 
 const SelectedRecipe: FC<{ recipeName: string | null }> = ({ recipeName }) => {
-    const { recipeDoc, recipeDocLoading } = useRecipeDoc({ recipeName });
-    return <>{recipeDocLoading ? <Loading /> : <RecipeResult fromRelated recipe={recipeDoc} />}</>;
-};
+    const { recipeDoc, recipeDocLoading } = useRecipeDoc({ recipeName })
+    return <>{recipeDocLoading ? <Loading /> : <RecipeResult fromRelated recipe={recipeDoc} />}</>
+}
 
 export const DraggableRecipesProvider: FC = ({ children }) => {
-    const [draggableRecipes, setDraggableRecipes] = useState<Set<string>>(new Set());
-    const [activeRecipe, setActiveRecipe] = useState("");
-    const classes = useStyles();
-    const { enqueueSnackbar } = useSnackbar();
+    const [draggableRecipes, setDraggableRecipes] = useState<Set<string>>(new Set())
+    const [activeRecipe, setActiveRecipe] = useState('')
+    const classes = useStyles()
+    const { enqueueSnackbar } = useSnackbar()
 
-    const { isDraggableRecipes, isDrawerBottom } = useBreakpointsContext();
+    const { isDraggableRecipes, isDrawerBottom } = useBreakpointsContext()
 
     const handleDraggableChange = (recipeName: string) => {
         setDraggableRecipes(previous => {
             if (previous.has(recipeName)) {
-                previous.delete(recipeName);
+                previous.delete(recipeName)
             } else if (draggableRecipes.size === 4) {
                 enqueueSnackbar("mehr als 4 'passt gut zu' Rezepte sind nicht erlaubt", {
-                    variant: "info"
-                });
-                return new Set(previous);
+                    variant: 'info',
+                })
+                return new Set(previous)
             } else {
-                previous.add(recipeName);
+                previous.add(recipeName)
             }
-            return new Set(previous);
-        });
-    };
+            return new Set(previous)
+        })
+    }
 
     const handleCloseBtnClick = (recipeName: string) => (
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => {
-        event.stopPropagation();
-        handleDraggableChange(recipeName);
-    };
+        event.stopPropagation()
+        handleDraggableChange(recipeName)
+    }
 
-    const draggableContains = (recipeName: string) => draggableRecipes.has(recipeName);
+    const draggableContains = (recipeName: string) => draggableRecipes.has(recipeName)
 
     return (
         <Context.Provider value={{ handleDraggableChange, draggableContains }}>
@@ -110,32 +111,27 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
                         )}
                         defaultClassNameDragged={clsx(
                             activeRecipe === recipeName && classes.activeRecipe
-                        )}
-                    >
+                        )}>
                         <div>
                             <Grow in>
                                 <BadgeWrapper
-                                    anchorOrigin={{ horizontal: "left", vertical: "top" }}
-                                    badgeContent={`${index + 1}/${draggableRecipes.size}`}
-                                >
+                                    anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                                    badgeContent={`${index + 1}/${draggableRecipes.size}`}>
                                     <Paper
                                         className={classes.paper}
-                                        onClick={() => setActiveRecipe(recipeName)}
-                                    >
+                                        onClick={() => setActiveRecipe(recipeName)}>
                                         <div className={classes.btnContainer}>
                                             <IconButton
                                                 onClick={handleCloseBtnClick(recipeName)}
-                                                size="small"
-                                            >
+                                                size="small">
                                                 <CancelIcon />
                                             </IconButton>
                                             <IconButton
                                                 size="small"
                                                 className={clsx(
                                                     classes.draggable,
-                                                    "draggableHandler"
-                                                )}
-                                            >
+                                                    'draggableHandler'
+                                                )}>
                                                 <TouchIcon />
                                             </IconButton>
                                         </div>
@@ -148,5 +144,5 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
                     </Draggable>
                 ))}
         </Context.Provider>
-    );
-};
+    )
+}

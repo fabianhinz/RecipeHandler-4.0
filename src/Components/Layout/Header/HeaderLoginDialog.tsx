@@ -1,45 +1,45 @@
-import React, { FC, ChangeEvent } from "react";
 import {
     Box,
+    Button,
     Dialog,
+    DialogActions,
     DialogContent,
     TextField,
-    DialogActions,
-    Button,
-    Typography
-} from "@material-ui/core";
+    Typography,
+} from '@material-ui/core'
+import { useSnackbar } from 'notistack'
+import React, { ChangeEvent, FC } from 'react'
 
-import { SlideUp } from "../../Shared/Transitions";
-import { useSnackbar } from "notistack";
-import { HeaderState, HeaderChangeKey, HeaderDispatch } from "./HeaderReducer";
-import { FirebaseService } from "../../../firebase";
-import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
+import { FirebaseService } from '../../../firebase'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { SlideUp } from '../../Shared/Transitions'
+import { HeaderChangeKey, HeaderDispatch, HeaderState } from './HeaderReducer'
 
-type HeaderLoginDialogProps = HeaderState<"email" | "dialog" | "password"> & HeaderDispatch;
+type HeaderLoginDialogProps = HeaderState<'email' | 'dialog' | 'password'> & HeaderDispatch
 
 export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...props }) => {
-    const { user } = useFirebaseAuthContext();
+    const { user } = useFirebaseAuthContext()
 
-    const { enqueueSnackbar } = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar()
 
     const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+        event.preventDefault()
         FirebaseService.auth
             .signInWithEmailAndPassword(props.email, props.password)
-            .catch(error => enqueueSnackbar(error.message, { variant: "error" }));
-    };
+            .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
+    }
 
     const handleLogout = () => {
         FirebaseService.auth
             .signOut()
-            .catch(error => enqueueSnackbar(error.message, { variant: "error" }));
-    };
+            .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
+    }
 
-    const handleDialogChange = () => dispatch({ type: "dialogChange" });
+    const handleDialogChange = () => dispatch({ type: 'dialogChange' })
 
     const handleTextFieldChange = (key: HeaderChangeKey) => (
         event: ChangeEvent<HTMLInputElement>
-    ) => dispatch({ type: "textFieldChange", key, value: event.target.value });
+    ) => dispatch({ type: 'textFieldChange', key, value: event.target.value })
 
     return (
         <Dialog
@@ -47,8 +47,7 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
             fullWidth
             maxWidth="xs"
             open={props.dialog}
-            onClose={handleDialogChange}
-        >
+            onClose={handleDialogChange}>
             {user ? (
                 <>
                     <DialogContent>
@@ -71,7 +70,7 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
                     <DialogContent>
                         <TextField
                             autoComplete="username"
-                            onChange={handleTextFieldChange("email")}
+                            onChange={handleTextFieldChange('email')}
                             variant="filled"
                             margin="dense"
                             fullWidth
@@ -79,7 +78,7 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
                         />
                         <TextField
                             autoComplete="current-password"
-                            onChange={handleTextFieldChange("password")}
+                            onChange={handleTextFieldChange('password')}
                             variant="filled"
                             margin="dense"
                             fullWidth
@@ -98,5 +97,5 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
                 </form>
             )}
         </Dialog>
-    );
-};
+    )
+}
