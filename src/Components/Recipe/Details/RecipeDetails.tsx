@@ -15,7 +15,10 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
                 {recipeDocLoading ? (
                     <Loading />
                 ) : (
-                    <RecipeResult recipe={recipeDoc} source="fromRecentlyAdded" />
+                    <RecipeResult
+                        recipe={recipeDoc}
+                        actionProps={{ draggEnabled: false, actionsEnabled: true }}
+                    />
                 )}
             </CardContent>
         </Card>

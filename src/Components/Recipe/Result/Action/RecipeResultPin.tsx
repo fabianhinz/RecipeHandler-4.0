@@ -1,5 +1,5 @@
 import { IconButton } from '@material-ui/core/'
-import { Pin } from 'mdi-material-ui'
+import { Pin, PinOff } from 'mdi-material-ui'
 import React, { FC } from 'react'
 
 import { useDraggableRecipesContext } from '../../../Provider/DraggableRecipesProvider'
@@ -9,11 +9,11 @@ interface RecipeResultPinProps {
 }
 
 export const RecipeResultPin: FC<RecipeResultPinProps> = ({ name }) => {
-    const { handleDraggableChange } = useDraggableRecipesContext()
+    const { handleDraggableChange, draggableContains } = useDraggableRecipesContext()
 
     return (
         <IconButton onClick={() => handleDraggableChange(name)}>
-            <Pin />
+            {draggableContains(name) ? <PinOff /> : <Pin />}
         </IconButton>
     )
 }

@@ -15,16 +15,15 @@ import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import { Subtitle } from '../../Shared/Subtitle'
-import { RecipeResultAction } from './Action/RecipeResultAction'
+import { RecipeActions, RecipeResultAction } from './Action/RecipeResultAction'
 import { RecipeResultImg } from './RecipeResultImg'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
-interface RecipeResultProps {
+interface RecipeResultProps extends RecipeActions {
     recipe: Recipe<AttachementMetadata | AttachementData> | null
-    source: 'fromCreate' | 'fromDraggable' | 'fromExpansionSummary' | 'fromRecentlyAdded'
 }
 
-const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
+const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
     const { history } = useRouterContext()
     const { user } = useFirebaseAuthContext()
 
@@ -40,7 +39,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
     const breakpoints = (options: {
         ingredient: boolean
     }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        source === 'fromDraggable' ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
+        !actionProps.actionsEnabled ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
 
     return (
         <Grid container spacing={2}>
@@ -49,13 +48,11 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
                     <Grid item>
                         <Typography variant="h6">{recipe.name}</Typography>
                     </Grid>
-                    {source === 'fromRecentlyAdded' && (
-                        <RecipeResultAction
-                            name={recipe.name}
-                            source={source}
-                            numberOfComments={recipe.numberOfComments}
-                        />
-                    )}
+                    <RecipeResultAction
+                        name={recipe.name}
+                        actionProps={actionProps}
+                        numberOfComments={recipe.numberOfComments}
+                    />
                 </Grid>
             </Grid>
             <Grid item>
@@ -66,15 +63,13 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
                 <Grid container spacing={2}>
                     {recipe.attachements.map(attachement => (
                         <RecipeResultImg
-                            fromDraggable={source === 'fromDraggable'}
+                            actionProps={actionProps}
                             key={attachement.name}
                             attachement={attachement}
                         />
                     ))}
                 </Grid>
             </Grid>
-
-            <Grid item xs={12} />
 
             <Grid {...breakpoints({ ingredient: true })} item>
                 <Subtitle icon={<AssignmentIcon />} text={`Zutaten für ${recipe.amount}`} />
@@ -101,7 +96,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
             </Grid>
 
             <Grid item xs={12}>
-                {user && source !== 'fromCreate' && (
+                {user && actionProps.actionsEnabled && (
                     <Box textAlign="right">
                         <Button
                             color="primary"
@@ -118,5 +113,5 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
 
 export default memo(
     RecipeResult,
-    (prev, next) => prev.recipe === next.recipe && prev.source === next.source
+    (prev, next) => prev.recipe === next.recipe && prev.actionProps === next.actionProps
 )

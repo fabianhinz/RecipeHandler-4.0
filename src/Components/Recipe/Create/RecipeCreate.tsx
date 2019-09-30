@@ -187,6 +187,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     rowsMax={10}
                     multiline
                     variant="filled"
+                    margin="dense"
                 />
 
                 <Subtitle icon={<BookIcon />} text="Beschreibung" />
@@ -198,6 +199,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     fullWidth
                     multiline
                     variant="filled"
+                    margin="dense"
                 />
 
                 <Subtitle icon={<LabelIcon />} text="Passt gut zu (optional)">
@@ -254,7 +256,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     <Divider />
                     <CardContent>
                         <RecipeResult
-                            source="fromCreate"
+                            actionProps={{ actionsEnabled: false, draggEnabled: false }}
                             recipe={{
                                 name: state.name,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),

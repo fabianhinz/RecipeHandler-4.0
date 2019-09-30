@@ -23,13 +23,17 @@ export const useDraggableRecipesContext = () => useContext(Context) as Draggable
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        paper: {
+        recipeWrapper: {
             boxShadow: theme.shadows[8],
-            position: 'relative',
-            padding: theme.spacing(2),
+            padding: theme.spacing(1),
             height: '50vh',
-            overflow: 'auto',
             width: 320,
+            display: 'flex',
+            flexDirection: 'column',
+        },
+        recipeContainer: {
+            padding: theme.spacing(1),
+            overflowY: 'auto',
         },
         draggableContainer: {
             zIndex: theme.zIndex.appBar + 1,
@@ -38,11 +42,10 @@ const useStyles = makeStyles(theme =>
             bottom: theme.spacing(2),
         },
         btnContainer: {
+            width: '100%',
             display: 'flex',
-            flexDirection: 'column',
-            position: 'fixed',
-            top: theme.spacing(1),
-            right: theme.spacing(1),
+            justifyContent: 'space-evenly',
+            paddingBottom: theme.spacing(1),
         },
         activeRecipe: {
             zIndex: theme.zIndex.appBar + 2,
@@ -66,7 +69,10 @@ const SelectedRecipe: FC<{ recipeName: string | null }> = ({ recipeName }) => {
             {recipeDocLoading ? (
                 <Loading />
             ) : (
-                <RecipeResult source="fromDraggable" recipe={recipeDoc} />
+                <RecipeResult
+                    actionProps={{ actionsEnabled: false, draggEnabled: true }}
+                    recipe={recipeDoc}
+                />
             )}
         </>
     )
@@ -126,12 +132,12 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
                                     anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
                                     badgeContent={`${index + 1}/${draggableRecipes.size}`}>
                                     <Paper
-                                        className={classes.paper}
-                                        onClick={() => setActiveRecipe(recipeName)}>
+                                        onClick={() => setActiveRecipe(recipeName)}
+                                        className={classes.recipeWrapper}>
                                         <div className={classes.btnContainer}>
                                             <IconButton
-                                                onClick={handleCloseBtnClick(recipeName)}
-                                                size="small">
+                                                size="small"
+                                                onClick={handleCloseBtnClick(recipeName)}>
                                                 <PinOff />
                                             </IconButton>
                                             <IconButton
@@ -143,8 +149,9 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
                                                 <TouchIcon />
                                             </IconButton>
                                         </div>
-
-                                        <SelectedRecipe recipeName={recipeName} />
+                                        <div className={classes.recipeContainer}>
+                                            <SelectedRecipe recipeName={recipeName} />
+                                        </div>
                                     </Paper>
                                 </BadgeWrapper>
                             </Grow>

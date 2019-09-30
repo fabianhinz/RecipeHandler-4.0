@@ -62,14 +62,17 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                             <RecipeResultAction
                                 name={props.recipe.name}
                                 numberOfComments={props.recipe.numberOfComments}
-                                source="fromExpansionSummary"
+                                actionProps={{ actionsEnabled: true, draggEnabled: false }}
                             />
                         </Grid>
                     </Grid>
                 </Grid>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <RecipeResult recipe={props.recipe} source="fromExpansionSummary" />
+                <RecipeResult
+                    actionProps={{ actionsEnabled: false, draggEnabled: false }}
+                    recipe={props.recipe}
+                />
             </ExpansionPanelDetails>
         </ExpansionPanel>
     )

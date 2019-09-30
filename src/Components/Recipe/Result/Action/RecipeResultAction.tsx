@@ -6,9 +6,10 @@ import { RecipeResultPin } from './RecipeResultPin'
 import { RecipeResultRating } from './RecipeResultRating'
 import { RecipeResultShare } from './RecipeResultShare'
 
-interface RecipeResultActionProps {
+export type RecipeActions = { actionProps: { draggEnabled: boolean; actionsEnabled: boolean } }
+
+interface RecipeResultActionProps extends RecipeActions {
     name: string
-    source: 'fromCreate' | 'fromDraggable' | 'fromExpansionSummary' | 'fromRecentlyAdded'
     numberOfComments: number
 }
 
@@ -18,27 +19,29 @@ const stopPropagation = (
 
 export const RecipeResultAction: FC<RecipeResultActionProps> = ({
     name,
-    source,
     numberOfComments,
+    actionProps,
 }) => {
     return (
-        <Grid item onClick={stopPropagation} onFocus={stopPropagation}>
-            <Grid container>
-                {source !== 'fromDraggable' && source !== 'fromCreate' && (
-                    <Grid item>
-                        <RecipeResultPin name={name} />
+        <>
+            {actionProps.actionsEnabled && (
+                <Grid item onClick={stopPropagation} onFocus={stopPropagation}>
+                    <Grid container>
+                        <Grid item>
+                            <RecipeResultPin name={name} />
+                        </Grid>
+                        <Grid item>
+                            <RecipeResultShare name={name} />
+                        </Grid>
+                        <Grid>
+                            <RecipeComments numberOfComments={numberOfComments} name={name} />
+                        </Grid>
+                        <Grid>
+                            <RecipeResultRating name={name} />
+                        </Grid>
                     </Grid>
-                )}
-                <Grid item>
-                    <RecipeResultShare name={name} />
                 </Grid>
-                <Grid>
-                    <RecipeComments numberOfComments={numberOfComments} name={name} />
-                </Grid>
-                <Grid>
-                    <RecipeResultRating name={name} />
-                </Grid>
-            </Grid>
-        </Grid>
+            )}
+        </>
     )
 }
