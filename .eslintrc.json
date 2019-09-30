@@ -2,7 +2,7 @@
     "extends": ["eslint:recommended", "react-app", "plugin:prettier/recommended"],
     "plugins": ["simple-import-sort"],
     "rules": {
-        "prettier/prettier": "error",
+        "prettier/prettier": "warn",
         "simple-import-sort/sort": "warn"
     }
 }
