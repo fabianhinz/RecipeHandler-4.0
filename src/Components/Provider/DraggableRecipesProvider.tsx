@@ -1,7 +1,7 @@
 import { createStyles, Grow, IconButton, makeStyles, Paper } from '@material-ui/core'
-import CancelIcon from '@material-ui/icons/Cancel'
 import TouchIcon from '@material-ui/icons/TouchAppTwoTone'
 import clsx from 'clsx'
+import { PinOff } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { FC, useContext, useState } from 'react'
 import Draggable from 'react-draggable'
@@ -132,7 +132,7 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
                                             <IconButton
                                                 onClick={handleCloseBtnClick(recipeName)}
                                                 size="small">
-                                                <CancelIcon />
+                                                <PinOff />
                                             </IconButton>
                                             <IconButton
                                                 size="small"

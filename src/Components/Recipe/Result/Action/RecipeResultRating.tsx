@@ -18,8 +18,7 @@ export const RecipeResultRating: FC<Pick<Recipe<AttachementMetadata>, 'name'>> =
             )
     }, [name])
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.stopPropagation()
+    const handleClick = () => {
         FirebaseService.firestore
             .collection('rating')
             .doc(name)

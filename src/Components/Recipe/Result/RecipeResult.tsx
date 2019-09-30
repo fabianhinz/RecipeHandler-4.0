@@ -49,7 +49,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
                     <Grid item>
                         <Typography variant="h6">{recipe.name}</Typography>
                     </Grid>
-                    {source !== 'fromExpansionSummary' && source !== 'fromCreate' && (
+                    {source === 'fromRecentlyAdded' && (
                         <RecipeResultAction
                             name={recipe.name}
                             source={source}

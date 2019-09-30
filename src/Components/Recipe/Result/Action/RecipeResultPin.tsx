@@ -1,5 +1,5 @@
 import { IconButton } from '@material-ui/core/'
-import AttachFile from '@material-ui/icons/AttachFile'
+import { Pin } from 'mdi-material-ui'
 import React, { FC } from 'react'
 
 import { useDraggableRecipesContext } from '../../../Provider/DraggableRecipesProvider'
@@ -13,7 +13,7 @@ export const RecipeResultPin: FC<RecipeResultPinProps> = ({ name }) => {
 
     return (
         <IconButton onClick={() => handleDraggableChange(name)}>
-            <AttachFile />
+            <Pin />
         </IconButton>
     )
 }

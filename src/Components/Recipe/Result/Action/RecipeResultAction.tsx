@@ -12,13 +12,17 @@ interface RecipeResultActionProps {
     numberOfComments: number
 }
 
+const stopPropagation = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLDivElement>
+) => event.stopPropagation()
+
 export const RecipeResultAction: FC<RecipeResultActionProps> = ({
     name,
     source,
     numberOfComments,
 }) => {
     return (
-        <Grid item>
+        <Grid item onClick={stopPropagation} onFocus={stopPropagation}>
             <Grid container>
                 {source !== 'fromDraggable' && source !== 'fromCreate' && (
                     <Grid item>

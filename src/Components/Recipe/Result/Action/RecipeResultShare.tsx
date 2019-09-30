@@ -9,8 +9,7 @@ import { PATHS } from '../../../Routes/Routes'
 export const RecipeResultShare: FC<Pick<Recipe<AttachementMetadata>, 'name'>> = ({ name }) => {
     const [copied, setCopied] = useState(false)
 
-    const handleCommentClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.stopPropagation()
+    const handleCommentClick = () => {
         copy(`${document.location.origin}${PATHS.details(name)}`).then(() => {
             setCopied(true)
         })

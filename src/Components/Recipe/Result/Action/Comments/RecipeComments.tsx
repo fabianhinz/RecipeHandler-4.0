@@ -6,10 +6,6 @@ import { RecipeDocument } from '../../../../../model/model'
 import { BadgeWrapper } from '../../../../Shared/BadgeWrapper'
 import { RecipeCommentsDrawer } from './RecipeCommentsDrawer'
 
-const stopPropagation = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLDivElement>
-) => event.stopPropagation()
-
 export const RecipeComments: FC<Pick<RecipeDocument, 'name' | 'numberOfComments'>> = ({
     name,
     numberOfComments,
@@ -19,7 +15,7 @@ export const RecipeComments: FC<Pick<RecipeDocument, 'name' | 'numberOfComments'
     const handleDrawerChange = () => setDrawer(previous => !previous)
 
     return (
-        <div onClick={stopPropagation} onFocus={stopPropagation}>
+        <div>
             <IconButton onClick={handleDrawerChange}>
                 <BadgeWrapper badgeContent={numberOfComments}>
                     <CommentIcon />
