@@ -9,4 +9,20 @@ import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(<App />, document.getElementById('root'))
 
-if (process.env.NODE_ENV === 'production') serviceWorker.register()
+// ? source: https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications#notifications_api
+if ('Notification' in window && navigator.serviceWorker) {
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            serviceWorker.register({
+                onSuccess: registration => {
+                    registration.showNotification('RecipeHandler 4.0 ist nun offline verfügbar')
+                },
+                onUpdate: registration => {
+                    registration.showNotification(
+                        'Eine neue Version von RecipeHandler 4.0 ist verfügbar'
+                    )
+                },
+            })
+        }
+    })
+}
