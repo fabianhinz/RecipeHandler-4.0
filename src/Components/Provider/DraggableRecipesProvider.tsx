@@ -1,7 +1,7 @@
 import { createStyles, Grow, IconButton, makeStyles, Paper } from '@material-ui/core'
-import CancelIcon from '@material-ui/icons/Cancel'
 import TouchIcon from '@material-ui/icons/TouchAppTwoTone'
 import clsx from 'clsx'
+import { PinOff } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { FC, useContext, useState } from 'react'
 import Draggable from 'react-draggable'
@@ -23,13 +23,17 @@ export const useDraggableRecipesContext = () => useContext(Context) as Draggable
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        paper: {
+        recipeWrapper: {
             boxShadow: theme.shadows[8],
-            position: 'relative',
-            padding: theme.spacing(2),
+            padding: theme.spacing(1),
             height: '50vh',
-            overflow: 'auto',
             width: 320,
+            display: 'flex',
+            flexDirection: 'column',
+        },
+        recipeContainer: {
+            padding: theme.spacing(1),
+            overflowY: 'auto',
         },
         draggableContainer: {
             zIndex: theme.zIndex.appBar + 1,
@@ -38,11 +42,10 @@ const useStyles = makeStyles(theme =>
             bottom: theme.spacing(2),
         },
         btnContainer: {
+            width: '100%',
             display: 'flex',
-            flexDirection: 'column',
-            position: 'fixed',
-            top: theme.spacing(1),
-            right: theme.spacing(1),
+            justifyContent: 'space-evenly',
+            paddingBottom: theme.spacing(1),
         },
         activeRecipe: {
             zIndex: theme.zIndex.appBar + 2,
@@ -61,7 +64,18 @@ const useStyles = makeStyles(theme =>
 
 const SelectedRecipe: FC<{ recipeName: string | null }> = ({ recipeName }) => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ recipeName })
-    return <>{recipeDocLoading ? <Loading /> : <RecipeResult fromRelated recipe={recipeDoc} />}</>
+    return (
+        <>
+            {recipeDocLoading ? (
+                <Loading />
+            ) : (
+                <RecipeResult
+                    actionProps={{ actionsEnabled: false, draggEnabled: true }}
+                    recipe={recipeDoc}
+                />
+            )}
+        </>
+    )
 }
 
 export const DraggableRecipesProvider: FC = ({ children }) => {
@@ -77,7 +91,7 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
             if (previous.has(recipeName)) {
                 previous.delete(recipeName)
             } else if (draggableRecipes.size === 4) {
-                enqueueSnackbar("mehr als 4 'passt gut zu' Rezepte sind nicht erlaubt", {
+                enqueueSnackbar('mehr als 4 angepinnte Rezepte sind nicht erlaubt', {
                     variant: 'info',
                 })
                 return new Set(previous)
@@ -118,13 +132,13 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
                                     anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
                                     badgeContent={`${index + 1}/${draggableRecipes.size}`}>
                                     <Paper
-                                        className={classes.paper}
-                                        onClick={() => setActiveRecipe(recipeName)}>
+                                        onClick={() => setActiveRecipe(recipeName)}
+                                        className={classes.recipeWrapper}>
                                         <div className={classes.btnContainer}>
                                             <IconButton
-                                                onClick={handleCloseBtnClick(recipeName)}
-                                                size="small">
-                                                <CancelIcon />
+                                                size="small"
+                                                onClick={handleCloseBtnClick(recipeName)}>
+                                                <PinOff />
                                             </IconButton>
                                             <IconButton
                                                 size="small"
@@ -135,8 +149,9 @@ export const DraggableRecipesProvider: FC = ({ children }) => {
                                                 <TouchIcon />
                                             </IconButton>
                                         </div>
-
-                                        <SelectedRecipe recipeName={recipeName} />
+                                        <div className={classes.recipeContainer}>
+                                            <SelectedRecipe recipeName={recipeName} />
+                                        </div>
                                     </Paper>
                                 </BadgeWrapper>
                             </Grow>

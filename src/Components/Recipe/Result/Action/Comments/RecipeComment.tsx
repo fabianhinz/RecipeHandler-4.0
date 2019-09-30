@@ -3,9 +3,9 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
 import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
 import React, { FC } from 'react'
 
-import { FirebaseService } from '../../../firebase'
-import { Comment, RecipeDocument } from '../../../model/model'
-import { BadgeWrapper } from '../../Shared/BadgeWrapper'
+import { FirebaseService } from '../../../../../firebase'
+import { Comment, RecipeDocument } from '../../../../../model/model'
+import { BadgeWrapper } from '../../../../Shared/BadgeWrapper'
 
 const useStyles = makeStyles(theme =>
     createStyles({

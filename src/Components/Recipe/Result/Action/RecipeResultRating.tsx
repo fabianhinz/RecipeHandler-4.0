@@ -2,11 +2,11 @@ import { IconButton } from '@material-ui/core/'
 import FavoriteIcon from '@material-ui/icons/FavoriteTwoTone'
 import React, { FC, useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../firebase'
-import { AttachementMetadata, Recipe } from '../../model/model'
-import { BadgeWrapper } from '../Shared/BadgeWrapper'
+import { FirebaseService } from '../../../../firebase'
+import { AttachementMetadata, Recipe } from '../../../../model/model'
+import { BadgeWrapper } from '../../../Shared/BadgeWrapper'
 
-export const RecipeRating: FC<Pick<Recipe<AttachementMetadata>, 'name'>> = ({ name }) => {
+export const RecipeResultRating: FC<Pick<Recipe<AttachementMetadata>, 'name'>> = ({ name }) => {
     const [rating, setRating] = useState(0)
 
     useEffect(() => {
@@ -18,8 +18,7 @@ export const RecipeRating: FC<Pick<Recipe<AttachementMetadata>, 'name'>> = ({ na
             )
     }, [name])
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.stopPropagation()
+    const handleClick = () => {
         FirebaseService.firestore
             .collection('rating')
             .doc(name)

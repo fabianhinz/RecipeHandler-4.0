@@ -2,10 +2,10 @@ import { createStyles, Drawer, Grid, makeStyles, TextField, Typography } from '@
 import React, { FC, useEffect, useState } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
-import { FirebaseService } from '../../../firebase'
-import { ReactComponent as NoCommentsIcon } from '../../../icons/notFound.svg'
-import { Comment, RecipeDocument } from '../../../model/model'
-import { Loading } from '../../Shared/Loading'
+import { FirebaseService } from '../../../../../firebase'
+import { ReactComponent as NoCommentsIcon } from '../../../../../icons/notFound.svg'
+import { Comment, RecipeDocument } from '../../../../../model/model'
+import { Loading } from '../../../../Shared/Loading'
 import { RecipeComment } from './RecipeComment'
 
 const useStyles = makeStyles(theme =>

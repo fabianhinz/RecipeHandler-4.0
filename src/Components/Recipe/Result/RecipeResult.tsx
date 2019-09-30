@@ -15,16 +15,15 @@ import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import { Subtitle } from '../../Shared/Subtitle'
+import { RecipeActions, RecipeResultAction } from './Action/RecipeResultAction'
 import { RecipeResultImg } from './RecipeResultImg'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
-interface RecipeResultProps {
+interface RecipeResultProps extends RecipeActions {
     recipe: Recipe<AttachementMetadata | AttachementData> | null
-    preview?: boolean
-    fromRelated?: boolean
 }
 
-const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) => {
+const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
     const { history } = useRouterContext()
     const { user } = useFirebaseAuthContext()
 
@@ -40,14 +39,22 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
     const breakpoints = (options: {
         ingredient: boolean
     }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        fromRelated ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
+        !actionProps.actionsEnabled ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
 
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Typography variant="h6">{recipe.name}</Typography>
+                <Grid container justify="space-between" alignItems="center">
+                    <Grid item>
+                        <Typography variant="h6">{recipe.name}</Typography>
+                    </Grid>
+                    <RecipeResultAction
+                        name={recipe.name}
+                        actionProps={actionProps}
+                        numberOfComments={recipe.numberOfComments}
+                    />
+                </Grid>
             </Grid>
-
             <Grid item>
                 <CategoryResult categories={recipe.categories} />
             </Grid>
@@ -56,15 +63,13 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
                 <Grid container spacing={2}>
                     {recipe.attachements.map(attachement => (
                         <RecipeResultImg
-                            fromRelated={fromRelated}
+                            actionProps={actionProps}
                             key={attachement.name}
                             attachement={attachement}
                         />
                     ))}
                 </Grid>
             </Grid>
-
-            <Grid item xs={12} />
 
             <Grid {...breakpoints({ ingredient: true })} item>
                 <Subtitle icon={<AssignmentIcon />} text={`Zutaten für ${recipe.amount}`} />
@@ -91,7 +96,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
             </Grid>
 
             <Grid item xs={12}>
-                {user && !preview && (
+                {user && actionProps.actionsEnabled && (
                     <Box textAlign="right">
                         <Button
                             color="primary"
@@ -108,5 +113,5 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, preview, fromRelated }) =
 
 export default memo(
     RecipeResult,
-    (prev, next) => prev.recipe === next.recipe && prev.preview === next.preview
+    (prev, next) => prev.recipe === next.recipe && prev.actionProps === next.actionProps
 )

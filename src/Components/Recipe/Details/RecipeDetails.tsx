@@ -12,7 +12,14 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
     return (
         <Card>
             <CardContent>
-                {recipeDocLoading ? <Loading /> : <RecipeResult recipe={recipeDoc} />}
+                {recipeDocLoading ? (
+                    <Loading />
+                ) : (
+                    <RecipeResult
+                        recipe={recipeDoc}
+                        actionProps={{ draggEnabled: false, actionsEnabled: true }}
+                    />
+                )}
             </CardContent>
         </Card>
     )

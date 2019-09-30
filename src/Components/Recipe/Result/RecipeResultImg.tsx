@@ -8,6 +8,7 @@ import { useAttachementRef } from '../../../hooks/useAttachementRef'
 import { AttachementData, AttachementMetadata } from '../../../model/model'
 import { isData } from '../../../model/modelUtil'
 import { BORDER_RADIUS } from '../../../theme'
+import { RecipeActions } from './Action/RecipeResultAction'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -23,17 +24,16 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface RecipeResultImgProps {
+interface RecipeResultImgProps extends RecipeActions {
     attachement: AttachementData | AttachementMetadata
-    fromRelated?: boolean
 }
 
-export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement, fromRelated }) => {
+export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement, actionProps }) => {
     const classes = useStyles()
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement)
 
-    const breakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = fromRelated
-        ? { xs: 12, md: 6 }
+    const breakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = actionProps.draggEnabled
+        ? { xs: 12 }
         : { xs: 12, sm: 6, md: 4, lg: 3 }
 
     return (

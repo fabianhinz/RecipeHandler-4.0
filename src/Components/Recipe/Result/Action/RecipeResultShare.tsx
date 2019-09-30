@@ -3,14 +3,13 @@ import ShareIcon from '@material-ui/icons/ShareTwoTone'
 import copy from 'clipboard-copy'
 import React, { FC, useState } from 'react'
 
-import { AttachementMetadata, Recipe } from '../../model/model'
-import { PATHS } from '../Routes/Routes'
+import { AttachementMetadata, Recipe } from '../../../../model/model'
+import { PATHS } from '../../../Routes/Routes'
 
-export const RecipeShare: FC<Pick<Recipe<AttachementMetadata>, 'name'>> = ({ name }) => {
+export const RecipeResultShare: FC<Pick<Recipe<AttachementMetadata>, 'name'>> = ({ name }) => {
     const [copied, setCopied] = useState(false)
 
-    const handleCommentClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.stopPropagation()
+    const handleCommentClick = () => {
         copy(`${document.location.origin}${PATHS.details(name)}`).then(() => {
             setCopied(true)
         })

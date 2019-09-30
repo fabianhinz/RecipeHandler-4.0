@@ -13,9 +13,7 @@ import brown from '@material-ui/core/colors/brown'
 import React, { FC, memo } from 'react'
 
 import { AttachementMetadata, Recipe } from '../../../model/model'
-import { RecipeComments } from '../../Recipe/Comments/RecipeComments'
-import { RecipeRating } from '../../Recipe/RecipeRating'
-import { RecipeShare } from '../../Recipe/RecipeShare'
+import { RecipeResultAction } from '../../Recipe/Result/Action/RecipeResultAction'
 import RecipeResult from '../../Recipe/Result/RecipeResult'
 
 const useStyles = makeStyles(theme => {
@@ -61,24 +59,20 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                     </Grid>
                     <Grid item>
                         <Grid container spacing={1}>
-                            <Grid item>
-                                <RecipeShare name={props.recipe.name} />
-                            </Grid>
-                            <Grid item>
-                                <RecipeComments
-                                    numberOfComments={props.recipe.numberOfComments}
-                                    name={props.recipe.name}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <RecipeRating name={props.recipe.name} />
-                            </Grid>
+                            <RecipeResultAction
+                                name={props.recipe.name}
+                                numberOfComments={props.recipe.numberOfComments}
+                                actionProps={{ actionsEnabled: true, draggEnabled: false }}
+                            />
                         </Grid>
                     </Grid>
                 </Grid>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <RecipeResult recipe={props.recipe} />
+                <RecipeResult
+                    actionProps={{ actionsEnabled: false, draggEnabled: false }}
+                    recipe={props.recipe}
+                />
             </ExpansionPanelDetails>
         </ExpansionPanel>
     )
