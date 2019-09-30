@@ -1,16 +1,17 @@
-import React, { useContext, useEffect, useState, FC } from "react";
-import { FirebaseService } from "../../firebase";
+import React, { FC, useContext, useEffect, useState } from 'react'
 
-const Context = React.createContext<{ user: firebase.User | null }>({ user: null });
+import { FirebaseService } from '../../firebase'
 
-export const useFirebaseAuthContext = () => useContext(Context);
+const Context = React.createContext<{ user: firebase.User | null }>({ user: null })
+
+export const useFirebaseAuthContext = () => useContext(Context)
 
 export const FirebaseAuthProvider: FC = ({ children }) => {
-    const [user, setUser] = useState<firebase.User | null>(null);
+    const [user, setUser] = useState<firebase.User | null>(null)
 
     useEffect(() => {
-        return FirebaseService.auth.onAuthStateChanged(setUser);
-    }, []);
+        return FirebaseService.auth.onAuthStateChanged(setUser)
+    }, [])
 
-    return <Context.Provider value={{ user }}>{children}</Context.Provider>;
-};
+    return <Context.Provider value={{ user }}>{children}</Context.Provider>
+}

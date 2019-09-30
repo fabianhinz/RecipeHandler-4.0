@@ -1,32 +1,33 @@
-import React from "react";
-import { Box, Slide, Card, CardContent } from "@material-ui/core";
-import { FirebaseService } from "../firebase";
-import { ReactComponent as ErrorIcon } from "../icons/error.svg";
+import { Box, Card, CardContent, Slide } from '@material-ui/core'
+import React from 'react'
+
+import { FirebaseService } from '../firebase'
+import { ReactComponent as ErrorIcon } from '../icons/error.svg'
 
 interface ErrorBoundaryState {
-    error: Error | null;
-    errorInfo: React.ErrorInfo | null;
+    error: Error | null
+    errorInfo: React.ErrorInfo | null
 }
 
 export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
     state = {
         error: null,
-        errorInfo: null
-    };
+        errorInfo: null,
+    }
 
     public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
         this.setState({
             error,
-            errorInfo
-        });
+            errorInfo,
+        })
 
-        if (process.env.NODE_ENV !== "production") return;
+        if (process.env.NODE_ENV !== 'production') return
 
-        FirebaseService.firestore.collection("errors").add({
+        FirebaseService.firestore.collection('errors').add({
             error: error.toString(),
             componentStack: errorInfo.componentStack,
-            timestamp: FirebaseService.createTimestampFromDate(new Date())
-        });
+            timestamp: FirebaseService.createTimestampFromDate(new Date()),
+        })
     }
 
     public render() {
@@ -48,6 +49,6 @@ export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
                     this.props.children
                 )}
             </>
-        );
+        )
     }
 }

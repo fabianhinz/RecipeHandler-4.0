@@ -1,105 +1,106 @@
-import React, { FC, useState, memo } from "react";
 import {
     Avatar,
-    Grid,
     Box,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    IconButton,
+    List,
     ListItem,
-    ListItemText,
     ListItemAvatar,
     ListItemIcon,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    List,
-    IconButton,
-    Dialog
-} from "@material-ui/core";
-import { Loading } from "../Shared/Loading";
-import { useCategoriesCollectionContext } from "../Provider/CategoriesCollectionProvider";
+    ListItemText,
+} from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import {
-    Pizza,
-    BreadSliceOutline,
-    Cupcake,
+    AvTimer,
+    Barley,
     Beer,
-    Pasta,
+    Bowl,
+    BreadSliceOutline,
     CakeVariant,
     Cookie,
-    Leaf,
-    Bowl,
+    Cow,
+    Cupcake,
+    EggEaster,
+    FilterVariant,
+    Fish,
     GlassCocktail,
     KettleOutline,
-    Fish,
-    Cow,
-    Barley,
-    EggEaster,
-    AvTimer,
-    FilterVariant
-} from "mdi-material-ui";
-import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
-import { SlideUp } from "../Shared/Transitions";
-import { useBreakpointsContext } from "../Provider/BreakpointsProvider";
-import CloseIcon from "@material-ui/icons/CloseTwoTone";
+    Leaf,
+    Pasta,
+    Pizza,
+} from 'mdi-material-ui'
+import React, { FC, memo, useState } from 'react'
+
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { useCategoriesCollectionContext } from '../Provider/CategoriesCollectionProvider'
+import { Loading } from '../Shared/Loading'
+import { SlideUp } from '../Shared/Transitions'
 
 export const iconFromCategory = (category: string) => {
     switch (category) {
-        case "Beilage":
-            return <Pizza />;
-        case "Brot":
-            return <BreadSliceOutline />;
-        case "Dessert":
-            return <Cupcake />;
-        case "Getränke":
-            return <Beer />;
-        case "Hauptgericht":
-            return <Pasta />;
-        case "Kuchen":
-            return <CakeVariant />;
-        case "Plätzchen":
-            return <Cookie />;
-        case "Salat":
-            return <Leaf />;
-        case "Suppe":
-            return <Bowl />;
-        case "Alkohol":
-            return <GlassCocktail />;
-        case "Alkoholfrei":
-            return <KettleOutline />;
-        case "Fisch":
-            return <Fish />;
-        case "Fleisch":
-            return <Cow />;
-        case "Vegan":
-            return <Barley />;
-        case "Vegetarisch":
-            return <EggEaster />;
+        case 'Beilage':
+            return <Pizza />
+        case 'Brot':
+            return <BreadSliceOutline />
+        case 'Dessert':
+            return <Cupcake />
+        case 'Getränke':
+            return <Beer />
+        case 'Hauptgericht':
+            return <Pasta />
+        case 'Kuchen':
+            return <CakeVariant />
+        case 'Plätzchen':
+            return <Cookie />
+        case 'Salat':
+            return <Leaf />
+        case 'Suppe':
+            return <Bowl />
+        case 'Alkohol':
+            return <GlassCocktail />
+        case 'Alkoholfrei':
+            return <KettleOutline />
+        case 'Fisch':
+            return <Fish />
+        case 'Fleisch':
+            return <Cow />
+        case 'Vegan':
+            return <Barley />
+        case 'Vegetarisch':
+            return <EggEaster />
         default:
-            return <AvTimer />;
+            return <AvTimer />
     }
-};
+}
 
 interface CategoryDialogProps extends CategoryWrapperProps {
-    categories: Array<string>;
-    type: string;
+    categories: Array<string>
+    type: string
 }
 
 const CategoryDialog: FC<CategoryDialogProps> = ({
     onCategoryChange,
     selectedCategories,
     type,
-    categories
+    categories,
 }) => {
-    const [dialog, setDialog] = useState(false);
-    const { isDialogFullscreen } = useBreakpointsContext();
+    const [dialog, setDialog] = useState(false)
+    const { isDialogFullscreen } = useBreakpointsContext()
 
-    const selectedHasType = selectedCategories.has(type);
-    const selectedCategory = selectedCategories.get(type) as string;
+    const selectedHasType = selectedCategories.has(type)
+    const selectedCategory = selectedCategories.get(type) as string
 
-    const handleDialogChange = () => setDialog(previous => !previous);
+    const handleDialogChange = () => setDialog(previous => !previous)
 
     const handleCategoryChange = (value: string) => () => {
-        setDialog(false);
-        onCategoryChange(type, value);
-    };
+        setDialog(false)
+        onCategoryChange(type, value)
+    }
 
     return (
         <>
@@ -115,7 +116,7 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
                 </ListItemIcon>
                 <ListItemText
                     primary={type}
-                    secondary={selectedHasType ? selectedCategory : "Auswählen (optional)"}
+                    secondary={selectedHasType ? selectedCategory : 'Auswählen (optional)'}
                 />
             </ListItem>
 
@@ -125,8 +126,7 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
                 open={dialog}
                 onClose={handleDialogChange}
                 maxWidth="sm"
-                fullWidth
-            >
+                fullWidth>
                 <DialogTitle>{type} auswählen</DialogTitle>
                 <DialogContent>
                     <List>
@@ -134,8 +134,7 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
                             <ListItem
                                 onClick={handleCategoryChange(category)}
                                 button
-                                key={category}
-                            >
+                                key={category}>
                                 <ListItemAvatar>
                                     <Avatar>{iconFromCategory(category)}</Avatar>
                                 </ListItemAvatar>
@@ -149,33 +148,31 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
                         flexGrow={1}
                         display="flex"
                         justifyContent="space-evenly"
-                        alignItems="center"
-                    >
+                        alignItems="center">
                         <IconButton onClick={handleDialogChange}>
                             <CloseIcon />
                         </IconButton>
                         <IconButton
                             onClick={handleCategoryChange(selectedCategory)}
-                            disabled={!selectedHasType}
-                        >
+                            disabled={!selectedHasType}>
                             <DeleteIcon />
                         </IconButton>
                     </Box>
                 </DialogActions>
             </Dialog>
         </>
-    );
-};
+    )
+}
 
 interface CategoryWrapperProps {
-    selectedCategories: Map<string, string>;
-    onCategoryChange: (type: string, value: string) => void;
+    selectedCategories: Map<string, string>
+    onCategoryChange: (type: string, value: string) => void
 }
 
 const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedCategories }) => {
-    const { categoriesCollection } = useCategoriesCollectionContext();
+    const { categoriesCollection } = useCategoriesCollectionContext()
 
-    if (Object.keys(categoriesCollection).length === 0) return <Loading />;
+    if (Object.keys(categoriesCollection).length === 0) return <Loading />
 
     return (
         <Grid container spacing={2}>
@@ -190,12 +187,12 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
                 </Grid>
             ))}
         </Grid>
-    );
-};
+    )
+}
 
 export default memo(
     CategoryWrapper,
     (prev, next) =>
         prev.onCategoryChange === next.onCategoryChange &&
         prev.selectedCategories === next.selectedCategories
-);
+)

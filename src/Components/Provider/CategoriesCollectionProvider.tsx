@@ -1,27 +1,28 @@
-import React, { useContext, useEffect, useState, FC } from "react";
-import { FirebaseService } from "../../firebase";
-import { Categories } from "../../model/model";
+import React, { FC, useContext, useEffect, useState } from 'react'
 
-type CategoriesCollection = { categoriesCollection: Categories<Array<string>> };
+import { FirebaseService } from '../../firebase'
+import { Categories } from '../../model/model'
 
-const Context = React.createContext<CategoriesCollection | null>(null);
+type CategoriesCollection = { categoriesCollection: Categories<Array<string>> }
 
-export const useCategoriesCollectionContext = () => useContext(Context) as CategoriesCollection;
+const Context = React.createContext<CategoriesCollection | null>(null)
+
+export const useCategoriesCollectionContext = () => useContext(Context) as CategoriesCollection
 
 export const CategoriesCollectionProvider: FC = ({ children }) => {
-    const [categories, setCategories] = useState<Categories<Array<string>>>({});
+    const [categories, setCategories] = useState<Categories<Array<string>>>({})
 
     useEffect(() => {
         FirebaseService.firestore
-            .collection("categories")
-            .doc("static")
+            .collection('categories')
+            .doc('static')
             .get()
             .then(documentSnapshot =>
                 setCategories(documentSnapshot.data() as Categories<Array<string>>)
-            );
-    }, []);
+            )
+    }, [])
 
     return (
         <Context.Provider value={{ categoriesCollection: categories }}>{children}</Context.Provider>
-    );
-};
+    )
+}
