@@ -1,25 +1,26 @@
-import React, { FC } from "react";
-import { Grid } from "@material-ui/core";
-import { RecipeResultPin } from "./RecipeResultPin";
-import { RecipeResultShare } from "./RecipeResultShare";
-import { RecipeComments } from "./Comments/RecipeComments";
-import { RecipeResultRating } from "./RecipeResultRating";
+import { Grid } from '@material-ui/core'
+import React, { FC } from 'react'
+
+import { RecipeComments } from './Comments/RecipeComments'
+import { RecipeResultPin } from './RecipeResultPin'
+import { RecipeResultRating } from './RecipeResultRating'
+import { RecipeResultShare } from './RecipeResultShare'
 
 interface RecipeResultActionProps {
-    name: string;
-    source: "fromCreate" | "fromDraggable" | "fromExpansionSummary" | "fromRecentlyAdded";
-    numberOfComments: number;
+    name: string
+    source: 'fromCreate' | 'fromDraggable' | 'fromExpansionSummary' | 'fromRecentlyAdded'
+    numberOfComments: number
 }
 
 export const RecipeResultAction: FC<RecipeResultActionProps> = ({
     name,
     source,
-    numberOfComments
+    numberOfComments,
 }) => {
     return (
         <Grid item>
             <Grid container>
-                {source !== "fromDraggable" && source !== "fromCreate" && (
+                {source !== 'fromDraggable' && source !== 'fromCreate' && (
                     <Grid item>
                         <RecipeResultPin name={name} />
                     </Grid>
@@ -35,5 +36,5 @@ export const RecipeResultAction: FC<RecipeResultActionProps> = ({
                 </Grid>
             </Grid>
         </Grid>
-    );
-};
+    )
+}

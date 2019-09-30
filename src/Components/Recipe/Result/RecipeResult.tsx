@@ -1,31 +1,32 @@
-import AssignmentIcon from "@material-ui/icons/AssignmentTwoTone";
-import BookIcon from "@material-ui/icons/BookTwoTone";
-import LabelIcon from "@material-ui/icons/LabelTwoTone";
-import React, { FC, memo } from "react";
-import ReactMarkdown from "react-markdown";
-import { RecipeResultImg } from "./RecipeResultImg";
-import { Grid, Typography, Box, Slide, Button } from "@material-ui/core";
-import { Recipe, AttachementData, AttachementMetadata } from "../../../model/model";
-import { Subtitle } from "../../Shared/Subtitle";
-import { CategoryResult } from "../../Category/CategoryResult";
-import { ReactComponent as NotFoundIcon } from "../../../icons/notFound.svg";
-import { useRouterContext } from "../../Provider/RouterProvider";
-import { useFirebaseAuthContext } from "../../Provider/FirebaseAuthProvider";
-import { PATHS } from "../../Routes/Routes";
-import { FirebaseService } from "../../../firebase";
-import { RecipeResultRelated } from "./RecipeResultRelated";
-import { RecipeResultAction } from "./Action/RecipeResultAction";
-import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import { GridSize } from "@material-ui/core/Grid";
+import { Box, Button, Grid, Slide, Typography } from '@material-ui/core'
+import { GridSize } from '@material-ui/core/Grid'
+import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
+import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
+import BookIcon from '@material-ui/icons/BookTwoTone'
+import LabelIcon from '@material-ui/icons/LabelTwoTone'
+import React, { FC, memo } from 'react'
+import ReactMarkdown from 'react-markdown'
+
+import { FirebaseService } from '../../../firebase'
+import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
+import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
+import { CategoryResult } from '../../Category/CategoryResult'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { useRouterContext } from '../../Provider/RouterProvider'
+import { PATHS } from '../../Routes/Routes'
+import { Subtitle } from '../../Shared/Subtitle'
+import { RecipeResultAction } from './Action/RecipeResultAction'
+import { RecipeResultImg } from './RecipeResultImg'
+import { RecipeResultRelated } from './RecipeResultRelated'
 
 interface RecipeResultProps {
-    recipe: Recipe<AttachementMetadata | AttachementData> | null;
-    source: "fromCreate" | "fromDraggable" | "fromExpansionSummary" | "fromRecentlyAdded";
+    recipe: Recipe<AttachementMetadata | AttachementData> | null
+    source: 'fromCreate' | 'fromDraggable' | 'fromExpansionSummary' | 'fromRecentlyAdded'
 }
 
 const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
-    const { history } = useRouterContext();
-    const { user } = useFirebaseAuthContext();
+    const { history } = useRouterContext()
+    const { user } = useFirebaseAuthContext()
 
     if (!recipe)
         return (
@@ -34,12 +35,12 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
                     <NotFoundIcon width={200} />
                 </Slide>
             </Box>
-        );
+        )
 
     const breakpoints = (options: {
-        ingredient: boolean;
+        ingredient: boolean
     }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        source === "fromDraggable" ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 };
+        source === 'fromDraggable' ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
 
     return (
         <Grid container spacing={2}>
@@ -48,7 +49,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
                     <Grid item>
                         <Typography variant="h6">{recipe.name}</Typography>
                     </Grid>
-                    {source !== "fromExpansionSummary" && source !== "fromCreate" && (
+                    {source !== 'fromExpansionSummary' && source !== 'fromCreate' && (
                         <RecipeResultAction
                             name={recipe.name}
                             source={source}
@@ -65,7 +66,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
                 <Grid container spacing={2}>
                     {recipe.attachements.map(attachement => (
                         <RecipeResultImg
-                            fromDraggable={source === "fromDraggable"}
+                            fromDraggable={source === 'fromDraggable'}
                             key={attachement.name}
                             attachement={attachement}
                         />
@@ -92,7 +93,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
 
             <Grid item xs={12}>
                 <Typography variant="caption">
-                    Erstellt am:{" "}
+                    Erstellt am:{' '}
                     {FirebaseService.createDateFromTimestamp(
                         recipe.createdDate
                     ).toLocaleDateString()}
@@ -100,23 +101,22 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, source }) => {
             </Grid>
 
             <Grid item xs={12}>
-                {user && source !== "fromCreate" && (
+                {user && source !== 'fromCreate' && (
                     <Box textAlign="right">
                         <Button
                             color="primary"
                             variant="contained"
-                            onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}
-                        >
+                            onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}>
                             Bearbeiten
                         </Button>
                     </Box>
                 )}
             </Grid>
         </Grid>
-    );
-};
+    )
+}
 
 export default memo(
     RecipeResult,
     (prev, next) => prev.recipe === next.recipe && prev.source === next.source
-);
+)

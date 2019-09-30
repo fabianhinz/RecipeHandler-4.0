@@ -1,39 +1,40 @@
-import React, { FC } from "react";
 import {
-    Grid,
-    Typography,
-    makeStyles,
-    createStyles,
     Avatar,
+    CardActionArea,
+    createStyles,
+    Grid,
+    makeStyles,
     Paper,
-    CardActionArea
-} from "@material-ui/core";
-import { Recipe, AttachementMetadata } from "../../../model/model";
-import { useRouterContext } from "../../Provider/RouterProvider";
-import { useAttachementRef } from "../../../hooks/useAttachementRef";
-import Skeleton from "@material-ui/lab/Skeleton";
-import { PATHS } from "../../Routes/Routes";
+    Typography,
+} from '@material-ui/core'
+import Skeleton from '@material-ui/lab/Skeleton'
+import React, { FC } from 'react'
+
+import { useAttachementRef } from '../../../hooks/useAttachementRef'
+import { AttachementMetadata, Recipe } from '../../../model/model'
+import { useRouterContext } from '../../Provider/RouterProvider'
+import { PATHS } from '../../Routes/Routes'
 
 const useStyles = makeStyles(theme =>
     createStyles({
         avatar: {
             width: 80,
             height: 80,
-            fontSize: theme.typography.pxToRem(40)
+            fontSize: theme.typography.pxToRem(40),
         },
         paper: {
-            padding: theme.spacing(2)
-        }
+            padding: theme.spacing(2),
+        },
     })
-);
+)
 
 export const HomeRecentlyAddedCard: FC<{
-    recipe: Recipe<AttachementMetadata>;
-    skeleton: boolean;
+    recipe: Recipe<AttachementMetadata>
+    skeleton: boolean
 }> = ({ recipe, skeleton }) => {
-    const { attachementRef, attachementRefLoading } = useAttachementRef(recipe.attachements[0]);
-    const { history } = useRouterContext();
-    const classes = useStyles();
+    const { attachementRef, attachementRefLoading } = useAttachementRef(recipe.attachements[0])
+    const { history } = useRouterContext()
+    const classes = useStyles()
 
     return (
         <Grid xs={12} sm={6} lg={4} item>
@@ -46,8 +47,7 @@ export const HomeRecentlyAddedCard: FC<{
                             ) : (
                                 <Avatar
                                     className={classes.avatar}
-                                    src={attachementRef.smallDataUrl}
-                                >
+                                    src={attachementRef.smallDataUrl}>
                                     {recipe.name.slice(0, 1).toUpperCase()}
                                 </Avatar>
                             )}
@@ -64,7 +64,7 @@ export const HomeRecentlyAddedCard: FC<{
                                         {recipe.name}
                                     </Typography>
                                     <Typography noWrap color="textSecondary">
-                                        Erstellt am{" "}
+                                        Erstellt am{' '}
                                         {recipe.createdDate.toDate().toLocaleDateString()}
                                     </Typography>
                                 </>
@@ -74,5 +74,5 @@ export const HomeRecentlyAddedCard: FC<{
                 </Paper>
             </CardActionArea>
         </Grid>
-    );
-};
+    )
+}

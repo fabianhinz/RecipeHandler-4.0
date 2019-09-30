@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 export const useTransition = () => {
-    const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = useState(true)
 
     const componentTransition = (callback: () => void) => {
-        setVisible(false);
-        setTimeout(callback, 200);
-    };
+        setVisible(false)
+        setTimeout(callback, 200)
+    }
 
-    return { componentVisible: visible, componentTransition };
-};
+    return { componentVisible: visible, componentTransition }
+}

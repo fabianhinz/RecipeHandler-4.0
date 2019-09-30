@@ -1,12 +1,13 @@
-import React, { FC } from "react";
-import RecipeResult from "../Result/RecipeResult";
-import { Card, CardContent } from "@material-ui/core";
-import { Loading } from "../../Shared/Loading";
-import { useRecipeDoc } from "../../../hooks/useRecipeDoc";
-import { RouteWithRecipeName } from "../../../model/model";
+import { Card, CardContent } from '@material-ui/core'
+import React, { FC } from 'react'
+
+import { useRecipeDoc } from '../../../hooks/useRecipeDoc'
+import { RouteWithRecipeName } from '../../../model/model'
+import { Loading } from '../../Shared/Loading'
+import RecipeResult from '../Result/RecipeResult'
 
 const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
-    const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps });
+    const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps })
 
     return (
         <Card>
@@ -18,7 +19,7 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
                 )}
             </CardContent>
         </Card>
-    );
-};
+    )
+}
 
-export default RecipeDetails;
+export default RecipeDetails

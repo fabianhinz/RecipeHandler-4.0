@@ -1,30 +1,31 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
-import "firebase/storage";
+import 'firebase/firestore'
+import 'firebase/auth'
+import 'firebase/storage'
+
+import firebase from 'firebase/app'
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDfKo9psV6Err683fvtIkdkXX8A-Gep1zs",
-    authDomain: "recipehandler.firebaseapp.com",
-    databaseURL: "https://recipehandler.firebaseio.com",
-    projectId: "recipehandler",
-    storageBucket: "recipehandler.appspot.com",
-    messagingSenderId: "363099897269",
-    appId: "1:363099897269:web:7086b238a86f56c9546dfc"
-};
+    apiKey: 'AIzaSyDfKo9psV6Err683fvtIkdkXX8A-Gep1zs',
+    authDomain: 'recipehandler.firebaseapp.com',
+    databaseURL: 'https://recipehandler.firebaseio.com',
+    projectId: 'recipehandler',
+    storageBucket: 'recipehandler.appspot.com',
+    messagingSenderId: '363099897269',
+    appId: '1:363099897269:web:7086b238a86f56c9546dfc',
+}
 
-firebase.initializeApp(firebaseConfig);
-firebase.firestore().enablePersistence({ synchronizeTabs: true });
+firebase.initializeApp(firebaseConfig)
+firebase.firestore().enablePersistence({ synchronizeTabs: true })
 
-const firestore = firebase.firestore();
-const storage = firebase.storage();
-const storageRef = storage.ref();
-const auth = firebase.auth();
+const firestore = firebase.firestore()
+const storage = firebase.storage()
+const storageRef = storage.ref()
+const auth = firebase.auth()
 
-const createTimestampFromDate = (date: Date) => firebase.firestore.Timestamp.fromDate(date);
+const createTimestampFromDate = (date: Date) => firebase.firestore.Timestamp.fromDate(date)
 const createDateFromTimestamp = (timestamp: firebase.firestore.Timestamp) =>
-    new firebase.firestore.Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
-const incrementBy = (value: number) => firebase.firestore.FieldValue.increment(value);
+    new firebase.firestore.Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate()
+const incrementBy = (value: number) => firebase.firestore.FieldValue.increment(value)
 
 export const FirebaseService = {
     firestore,
@@ -33,5 +34,5 @@ export const FirebaseService = {
     auth,
     createTimestampFromDate,
     createDateFromTimestamp,
-    incrementBy
-};
+    incrementBy,
+}

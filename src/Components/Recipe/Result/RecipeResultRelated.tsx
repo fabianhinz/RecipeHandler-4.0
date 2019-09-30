@@ -1,32 +1,33 @@
-import React, { FC } from "react";
-import { Grid, Chip, Box, makeStyles, createStyles } from "@material-ui/core";
-import LinkIcon from "@material-ui/icons/LinkTwoTone";
-import { CategoryBase } from "../../Category/CategoryBase";
-import { useDraggableRecipesContext } from "../../Provider/DraggableRecipesProvider";
-import { useRouterContext } from "../../Provider/RouterProvider";
-import { PATHS } from "../../Routes/Routes";
-import clsx from "clsx";
-import { useBreakpointsContext } from "../../Provider/BreakpointsProvider";
+import { Box, Chip, createStyles, Grid, makeStyles } from '@material-ui/core'
+import LinkIcon from '@material-ui/icons/LinkTwoTone'
+import clsx from 'clsx'
+import React, { FC } from 'react'
+
+import { CategoryBase } from '../../Category/CategoryBase'
+import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
+import { useDraggableRecipesContext } from '../../Provider/DraggableRecipesProvider'
+import { useRouterContext } from '../../Provider/RouterProvider'
+import { PATHS } from '../../Routes/Routes'
 
 const useStyles = makeStyles(theme =>
     createStyles({
         selectedChip: {
-            boxShadow: theme.shadows[8]
-        }
+            boxShadow: theme.shadows[8],
+        },
     })
-);
+)
 
 export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => {
-    const { handleDraggableChange, draggableContains } = useDraggableRecipesContext();
-    const { isMobile } = useBreakpointsContext();
-    const { history } = useRouterContext();
+    const { handleDraggableChange, draggableContains } = useDraggableRecipesContext()
+    const { isMobile } = useBreakpointsContext()
+    const { history } = useRouterContext()
 
-    const classes = useStyles();
+    const classes = useStyles()
 
     const handleRecipeClick = (recipeName: string) => () => {
-        if (isMobile) history.push(PATHS.details(recipeName));
-        else handleDraggableChange(recipeName);
-    };
+        if (isMobile) history.push(PATHS.details(recipeName))
+        else handleDraggableChange(recipeName)
+    }
 
     return (
         <Box position="relative">
@@ -46,5 +47,5 @@ export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ rel
                 ))}
             </Grid>
         </Box>
-    );
-};
+    )
+}

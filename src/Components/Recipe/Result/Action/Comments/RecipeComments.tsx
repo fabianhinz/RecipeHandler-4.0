@@ -1,21 +1,22 @@
-import React, { FC, useState } from "react";
-import CommentIcon from "@material-ui/icons/CommentTwoTone";
-import { IconButton } from "@material-ui/core";
-import { RecipeDocument } from "../../../../../model/model";
-import { BadgeWrapper } from "../../../../Shared/BadgeWrapper";
-import { RecipeCommentsDrawer } from "./RecipeCommentsDrawer";
+import { IconButton } from '@material-ui/core'
+import CommentIcon from '@material-ui/icons/CommentTwoTone'
+import React, { FC, useState } from 'react'
+
+import { RecipeDocument } from '../../../../../model/model'
+import { BadgeWrapper } from '../../../../Shared/BadgeWrapper'
+import { RecipeCommentsDrawer } from './RecipeCommentsDrawer'
 
 const stopPropagation = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLDivElement>
-) => event.stopPropagation();
+) => event.stopPropagation()
 
-export const RecipeComments: FC<Pick<RecipeDocument, "name" | "numberOfComments">> = ({
+export const RecipeComments: FC<Pick<RecipeDocument, 'name' | 'numberOfComments'>> = ({
     name,
-    numberOfComments
+    numberOfComments,
 }) => {
-    const [drawer, setDrawer] = useState(false);
+    const [drawer, setDrawer] = useState(false)
 
-    const handleDrawerChange = () => setDrawer(previous => !previous);
+    const handleDrawerChange = () => setDrawer(previous => !previous)
 
     return (
         <div onClick={stopPropagation} onFocus={stopPropagation}>
@@ -27,5 +28,5 @@ export const RecipeComments: FC<Pick<RecipeDocument, "name" | "numberOfComments"
 
             <RecipeCommentsDrawer name={name} open={drawer} onClose={handleDrawerChange} />
         </div>
-    );
-};
+    )
+}
