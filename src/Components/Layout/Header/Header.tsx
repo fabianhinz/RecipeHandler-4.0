@@ -5,6 +5,7 @@ import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { HeaderLoginDialog } from './HeaderLoginDialog'
 import { HeaderNavigation } from './HeaderNavigation'
 import { useHeaderReducer } from './HeaderReducer'
+import { HeaderTrials } from './HeaderTrials'
 
 interface HeaderProps {
     onThemeChange: () => void
@@ -30,6 +31,8 @@ export const Header: FC<HeaderProps> = props => {
                 password={state.password}
                 dispatch={dispatch}
             />
+
+            <HeaderTrials />
         </>
     )
 }

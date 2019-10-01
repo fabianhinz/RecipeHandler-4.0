@@ -27,6 +27,13 @@ const sharedTheme: Partial<ThemeOptions> = {
                 borderRadius: BORDER_RADIUS,
             },
         },
+        MuiCardContent: {
+            root: {
+                '&:last-child': {
+                    paddingBottom: 'inherhit',
+                },
+            },
+        },
         MuiChip: {
             root: {
                 cursor: 'pointer',

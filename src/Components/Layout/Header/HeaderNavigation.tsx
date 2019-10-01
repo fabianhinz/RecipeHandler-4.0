@@ -1,10 +1,11 @@
 import { IconButton } from '@material-ui/core'
-import AccountIcon from '@material-ui/icons/AccountCircleTwoTone'
-import AddIcon from '@material-ui/icons/AddCircleTwoTone'
-import HomeIcon from '@material-ui/icons/HomeTwoTone'
-import BrightnessIcon from '@material-ui/icons/SettingsBrightnessTwoTone'
+import AccountIcon from '@material-ui/icons/AccountCircleOutlined'
+import AddIcon from '@material-ui/icons/AddCircleOutline'
+import HomeIcon from '@material-ui/icons/HomeOutlined'
+import BrightnessIcon from '@material-ui/icons/SettingsBrightnessOutlined'
 import { createStyles, makeStyles } from '@material-ui/styles'
 import clsx from 'clsx'
+import { LightbulbOutline } from 'mdi-material-ui'
 import React, { FC } from 'react'
 
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -50,6 +51,10 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({
 
             <IconButton onClick={onThemeChange}>
                 <BrightnessIcon />
+            </IconButton>
+
+            <IconButton>
+                <LightbulbOutline />
             </IconButton>
 
             {user && (
