@@ -48,8 +48,9 @@ export const HomeRecentlyAdded = () => {
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
+        const limit = isMobile ? 3 : 6
+
         if (debouncedSearchValue.length > 0) {
-            const limit = isMobile ? 3 : 6
             return query
                 .where('name', '>=', debouncedSearchValue)
                 .limit(limit)
@@ -61,7 +62,6 @@ export const HomeRecentlyAdded = () => {
                     error => console.error(error)
                 )
         } else {
-            const limit = isMobile ? 3 : 6
             return query
                 .orderBy('createdDate', 'desc')
                 .limit(limit)
