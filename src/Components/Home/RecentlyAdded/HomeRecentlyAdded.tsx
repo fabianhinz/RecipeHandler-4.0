@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react'
 import { FirebaseService } from '../../../firebase'
 import useDebounce from '../../../hooks/useDebounce'
 import { RecipeDocument } from '../../../model/model'
+import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { HomeRecentlyAddedCard } from './HomeRecentlyAddedCard'
 
 const useStyles = makeStyles(() =>
@@ -29,6 +30,7 @@ export const HomeRecentlyAdded = () => {
     const [searchDrawer, setSearchDrawer] = useState(false)
     const [searchValue, setSearchValue] = useState('')
     const [skeleton, setSkeleton] = useState(false)
+    const { isMobile } = useBreakpointsContext()
 
     const debouncedSearchValue = useDebounce(searchValue, 500)
 
@@ -47,9 +49,10 @@ export const HomeRecentlyAdded = () => {
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
         if (debouncedSearchValue.length > 0) {
+            const limit = isMobile ? 3 : 6
             return query
                 .where('name', '>=', debouncedSearchValue)
-                .limit(6)
+                .limit(limit)
                 .onSnapshot(
                     querySnapshot => {
                         setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
@@ -58,9 +61,10 @@ export const HomeRecentlyAdded = () => {
                     error => console.error(error)
                 )
         } else {
+            const limit = isMobile ? 3 : 6
             return query
                 .orderBy('createdDate', 'desc')
-                .limit(6)
+                .limit(limit)
                 .onSnapshot(
                     querySnapshot => {
                         setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
@@ -68,7 +72,7 @@ export const HomeRecentlyAdded = () => {
                     error => console.error(error)
                 )
         }
-    }, [debouncedSearchValue])
+    }, [debouncedSearchValue, isMobile])
 
     return (
         <>
