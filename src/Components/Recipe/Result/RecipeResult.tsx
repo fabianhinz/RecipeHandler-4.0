@@ -39,9 +39,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
     const breakpoints = (options: {
         ingredient: boolean
     }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        !actionProps.actionsEnabled && actionProps.draggEnabled
-            ? { xs: 12 }
-            : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
+        actionProps.draggEnabled ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
 
     return (
         <Grid container spacing={2}>
