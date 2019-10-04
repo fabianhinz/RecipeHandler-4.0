@@ -45,3 +45,9 @@ export interface Comment {
     dislikes: number
     likes: number
 }
+
+export interface Trial {
+    fullPath: string
+    name: string
+    createdDate: firebase.firestore.Timestamp
+}

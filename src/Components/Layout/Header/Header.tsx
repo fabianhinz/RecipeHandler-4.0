@@ -5,7 +5,7 @@ import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { HeaderLoginDialog } from './HeaderLoginDialog'
 import { HeaderNavigation } from './HeaderNavigation'
 import { useHeaderReducer } from './HeaderReducer'
-import { HeaderTrials } from './HeaderTrials'
+import { HeaderTrials } from './Trials/HeaderTrials'
 
 interface HeaderProps {
     onThemeChange: () => void
