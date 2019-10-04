@@ -53,7 +53,7 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({
                 <BrightnessIcon />
             </IconButton>
 
-            <IconButton>
+            <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
                 <LightbulbOutline />
             </IconButton>
 

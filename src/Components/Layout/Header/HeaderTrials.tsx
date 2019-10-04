@@ -2,83 +2,141 @@ import {
     Backdrop,
     Box,
     Card,
-    CardContent,
     CardHeader,
     CardMedia,
     Container,
     createStyles,
-    Fade,
-    GridList,
-    GridListTile,
-    GridListTileBar,
+    Fab,
+    IconButton,
     makeStyles,
-    Typography,
+    MobileStepper,
 } from '@material-ui/core'
-import React, { FC } from 'react'
+import AddIcon from '@material-ui/icons/Add'
+import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
+import StarsIcon from '@material-ui/icons/StarsTwoTone'
+import compressImage from 'browser-image-compression'
+import React, { FC, useCallback, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+import SwipeableViews from 'react-swipeable-views'
 
-import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
+import { BORDER_RADIUS } from '../../../theme'
+import { readDocumentAsync } from '../../Recipe/Create/Attachements/RecipeCreateAttachements'
+import { HeaderState } from './HeaderReducer'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        gridList: {
-            // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-            transform: 'translateZ(0)',
-        },
         backdrop: {
             zIndex: theme.zIndex.drawer - 1,
+        },
+        mobileStepper: {
+            borderRadius: BORDER_RADIUS,
+        },
+        cardMedia: {
+            height: 0,
+            paddingTop: '56.25%', // 16:9,
         },
     })
 )
 
-export const HeaderTrials: FC = () => {
-    const { isMobile, isDialogFullscreen, isDrawerBottom } = useBreakpointsContext()
+interface Trial {
+    fullPath: string
+    title: string
+    createdDate: Date
+}
+
+export const HeaderTrials: FC<HeaderState<'trialsOpen'>> = ({ trialsOpen }) => {
+    const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
+    const [activeTrial, setActiveTrial] = useState(0)
     const classes = useStyles()
+
+    const onDrop = useCallback(async (acceptedFiles: File[]) => {
+        const newTrials: Map<string, Trial> = new Map()
+
+        for (const file of acceptedFiles) {
+            const compressedFile: Blob = await compressImage(file, {
+                maxSizeMB: 0.5,
+                useWebWorker: false,
+                maxWidthOrHeight: 3840,
+                maxIteration: 5,
+            })
+            const dataUrl: string = await readDocumentAsync(compressedFile)
+
+            newTrials.set(file.name, {
+                title: file.name,
+                fullPath: dataUrl,
+                createdDate: new Date(),
+            })
+        }
+        setTrials(previous => new Map([...previous, ...newTrials]))
+    }, [])
+
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop,
+        accept: 'image/jpeg, image/png',
+        noDragEventsBubbling: true,
+        noDrag: true,
+    })
+
     return (
-        <Fade in>
-            <Backdrop open className={classes.backdrop}>
-                <Container maxWidth="lg">
-                    {[
-                        {
-                            img: 'https://picsum.photos/800?random=1',
-                            title: 'test1',
-                            createdDate: new Date().toLocaleDateString(),
-                            description:
-                                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
-                        },
-                        {
-                            img: 'https://picsum.photos/800?random=2',
-                            title: 'test2',
-                            createdDate: new Date().toLocaleDateString(),
-                            description:
-                                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
-                        },
-                        {
-                            img: 'https://picsum.photos/800?random=3',
-                            title: 'test3',
-                            createdDate: new Date().toLocaleDateString(),
-                            description:
-                                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
-                        },
-                        {
-                            img: 'https://picsum.photos/800?random=4',
-                            title: 'test4',
-                            createdDate: new Date().toLocaleDateString(),
-                            description:
-                                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
-                        },
-                    ].map(trial => (
-                        <Card key={trial.title} raised>
-                            <CardHeader title={trial.title} subheader={trial.createdDate} />
-                            <CardContent>
-                                <CardMedia image={trial.img} />
-                                <Typography variant="body2" color="textSecondary">
-                                    {trial.description}
-                                </Typography>
-                            </CardContent>
+        <Backdrop open={trialsOpen} className={classes.backdrop}>
+            <Container maxWidth="sm">
+                <SwipeableViews
+                    index={activeTrial}
+                    onChangeIndex={index => setActiveTrial(index)}
+                    enableMouseEvents>
+                    {[...trials.values()].map(trial => (
+                        <Card key={trial.title}>
+                            <CardHeader
+                                title={trial.title}
+                                subheader={trial.createdDate.toLocaleTimeString()}
+                                action={
+                                    <>
+                                        <IconButton>
+                                            <StarsIcon />
+                                        </IconButton>
+                                        <IconButton>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </>
+                                }
+                            />
+                            <CardMedia className={classes.cardMedia} image={trial.fullPath} />
                         </Card>
                     ))}
-                </Container>
-            </Backdrop>
-        </Fade>
+                </SwipeableViews>
+                <MobileStepper
+                    className={classes.mobileStepper}
+                    steps={trials.size}
+                    position="static"
+                    variant="dots"
+                    activeStep={activeTrial}
+                    nextButton={
+                        <IconButton
+                            onClick={() => setActiveTrial(prev => ++prev)}
+                            disabled={activeTrial === trials.size - 1}>
+                            <KeyboardArrowRight />
+                        </IconButton>
+                    }
+                    backButton={
+                        <IconButton
+                            onClick={() => setActiveTrial(prev => --prev)}
+                            disabled={activeTrial === 0}>
+                            <KeyboardArrowLeft />
+                        </IconButton>
+                    }
+                />
+                <Box flexGrow={1} display="flex" justifyContent="center" marginTop={2}>
+                    <div {...getRootProps}>
+                        <Fab size="small" color="secondary">
+                            <div {...getInputProps} />
+
+                            <AddIcon />
+                        </Fab>
+                    </div>
+                </Box>
+            </Container>
+        </Backdrop>
     )
 }

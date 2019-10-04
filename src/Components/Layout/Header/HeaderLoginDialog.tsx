@@ -15,7 +15,7 @@ import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { SlideUp } from '../../Shared/Transitions'
 import { HeaderChangeKey, HeaderDispatch, HeaderState } from './HeaderReducer'
 
-type HeaderLoginDialogProps = HeaderState<'email' | 'dialog' | 'password'> & HeaderDispatch
+type HeaderLoginDialogProps = HeaderState<'email' | 'dialogOpen' | 'password'> & HeaderDispatch
 
 export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...props }) => {
     const { user } = useFirebaseAuthContext()
@@ -46,7 +46,7 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
             TransitionComponent={SlideUp}
             fullWidth
             maxWidth="xs"
-            open={props.dialog}
+            open={props.dialogOpen}
             onClose={handleDialogChange}>
             {user ? (
                 <>

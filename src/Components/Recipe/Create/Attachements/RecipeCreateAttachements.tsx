@@ -10,7 +10,7 @@ import RecipeCreateAttachementsCard, {
     AttachementsCardChangeHandler,
 } from './RecipeCreateAttachementsCard'
 
-const readDocumentAsync = (document: Blob) =>
+export const readDocumentAsync = (document: Blob) =>
     new Promise<string>((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = () => resolve(reader.result as string)

@@ -26,13 +26,13 @@ export const Header: FC<HeaderProps> = props => {
             </Drawer>
 
             <HeaderLoginDialog
-                dialog={state.dialog}
+                dialogOpen={state.dialogOpen}
                 email={state.email}
                 password={state.password}
                 dispatch={dispatch}
             />
 
-            <HeaderTrials />
+            <HeaderTrials trialsOpen={state.trialsOpen} />
         </>
     )
 }
