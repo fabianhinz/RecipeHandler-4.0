@@ -18,6 +18,7 @@ import SwipeableViews from 'react-swipeable-views'
 import { FirebaseService } from '../../../../firebase'
 import { ReactComponent as NotFoundIcon } from '../../../../icons/notFound.svg'
 import { Trial } from '../../../../model/model'
+import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../../../Recipe/Create/Attachements/RecipeCreateAttachements'
 import { SlideUp } from '../../../Shared/Transitions'
 import { HeaderDispatch, HeaderState } from '../HeaderReducer'
@@ -34,6 +35,7 @@ const useStyles = makeStyles(theme =>
             overflow: 'unset',
         },
         fabContainer: {
+            outline: 'none',
             position: 'absolute',
             top: -25,
             left: 0,
@@ -51,6 +53,7 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
     const [activeTrial, setActiveTrial] = useState(0)
     const classes = useStyles()
 
+    const { user } = useFirebaseAuthContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     useEffect(() => {
@@ -127,6 +130,7 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
     return (
         <Dialog
             open={trialsOpen}
+            keepMounted
             onClose={() => dispatch({ type: 'trialsChange' })}
             maxWidth="md"
             fullWidth
@@ -141,6 +145,7 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
                         <HeaderTrialsCard
                             trial={trial}
                             onTrialDeleted={handleTrialDeleted(index)}
+                            dispatch={dispatch}
                             key={trial.name}
                         />
                     ))}
@@ -161,15 +166,16 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
                     />
                 </DialogActions>
             )}
-
-            <div className={classes.fabContainer} {...getRootProps()}>
-                <Tooltip title="Idee(n) hinzufügen">
-                    <Fab color="primary">
-                        <input {...getInputProps()} />
-                        <AddIcon />
-                    </Fab>
-                </Tooltip>
-            </div>
+            {user && (
+                <div className={classes.fabContainer} {...getRootProps()}>
+                    <Tooltip title="Idee(n) hinzufügen">
+                        <Fab color="primary">
+                            <input {...getInputProps()} />
+                            <AddIcon />
+                        </Fab>
+                    </Tooltip>
+                </div>
+            )}
         </Dialog>
     )
 }

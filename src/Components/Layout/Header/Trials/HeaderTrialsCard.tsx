@@ -12,30 +12,42 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, useEffect, useState } from 'react'
 
 import { FirebaseService } from '../../../../firebase'
-import { getRefPaths } from '../../../../hooks/useAttachementRef'
+import { getFileExtension, getRefPaths } from '../../../../hooks/useAttachementRef'
 import { Trial } from '../../../../model/model'
+import { useRouterContext } from '../../../Provider/RouterProvider'
+import { PATHS } from '../../../Routes/Routes'
+import { HeaderDispatch } from '../HeaderReducer'
 
 const useStyles = makeStyles(theme =>
     createStyles({
         cardMedia: {
-            height: 0,
-            paddingTop: '56.25%', // 16:9,
+            width: '100%',
+            height: '100vh',
         },
         card: {
             boxShadow: 'unset',
             height: '100%',
+            cursor: 'move',
         },
     })
 )
 
-interface HeaderTrialsCardProps {
+interface HeaderTrialsCardProps extends HeaderDispatch {
     trial: Trial
     onTrialDeleted: () => void
 }
 
-export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial, onTrialDeleted }) => {
+export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({
+    trial,
+    onTrialDeleted,
+    dispatch,
+}) => {
     const [dataUrl, setDataUrl] = useState<string | null>()
     const classes = useStyles()
+
+    const potentialRecipe = trial.name.replace(`.${getFileExtension(trial.name)}`, '')
+
+    const { history } = useRouterContext()
 
     useEffect(() => {
         FirebaseService.storageRef
@@ -59,16 +71,22 @@ export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial, onTrialDele
         await FirebaseService.storageRef.child(mediumPath).delete()
     }
 
+    const handleStarsBtnClick = () => {
+        dispatch({ type: 'trialsChange' })
+        history.push(PATHS.recipeEdit(potentialRecipe), {
+            recipe: { name: potentialRecipe },
+        })
+    }
     return (
         <Card className={classes.card} key={trial.name}>
             <CardHeader
-                title={trial.name}
+                title={potentialRecipe}
                 subheader={FirebaseService.createDateFromTimestamp(
                     trial.createdDate
                 ).toLocaleDateString()}
                 action={
                     <>
-                        <IconButton>
+                        <IconButton onClick={handleStarsBtnClick}>
                             <StarsIcon />
                         </IconButton>
                         <IconButton onClick={handleDeleteBtnClick}>

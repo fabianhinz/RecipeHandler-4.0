@@ -53,17 +53,16 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({
                 <BrightnessIcon />
             </IconButton>
 
+            <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
+                <LightbulbOutline />
+            </IconButton>
+
             {user && (
-                <>
-                    <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
-                        <LightbulbOutline />
+                <Navigate to={PATHS.recipeCreate}>
+                    <IconButton>
+                        <AddIcon />
                     </IconButton>
-                    <Navigate to={PATHS.recipeCreate}>
-                        <IconButton>
-                            <AddIcon />
-                        </IconButton>
-                    </Navigate>
-                </>
+                </Navigate>
             )}
 
             <IconButton onClick={() => dispatch({ type: 'dialogChange' })}>
