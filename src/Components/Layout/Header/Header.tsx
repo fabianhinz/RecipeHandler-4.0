@@ -32,7 +32,7 @@ export const Header: FC<HeaderProps> = props => {
                 dispatch={dispatch}
             />
 
-            <HeaderTrials trialsOpen={state.trialsOpen} />
+            <HeaderTrials trialsOpen={state.trialsOpen} dispatch={dispatch} />
         </>
     )
 }

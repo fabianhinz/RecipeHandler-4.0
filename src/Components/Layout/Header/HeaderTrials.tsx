@@ -1,11 +1,12 @@
 import {
-    Backdrop,
     Box,
     Card,
     CardHeader,
     CardMedia,
-    Container,
     createStyles,
+    Dialog,
+    DialogActions,
+    DialogContent,
     Fab,
     IconButton,
     makeStyles,
@@ -17,60 +18,120 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
 import StarsIcon from '@material-ui/icons/StarsTwoTone'
 import compressImage from 'browser-image-compression'
-import React, { FC, useCallback, useState } from 'react'
+import { useSnackbar } from 'notistack'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import SwipeableViews from 'react-swipeable-views'
 
-import { BORDER_RADIUS } from '../../../theme'
+import { FirebaseService } from '../../../firebase'
+import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { readDocumentAsync } from '../../Recipe/Create/Attachements/RecipeCreateAttachements'
-import { HeaderState } from './HeaderReducer'
+import { SlideUp } from '../../Shared/Transitions'
+import { HeaderDispatch, HeaderState } from './HeaderReducer'
 
 const useStyles = makeStyles(theme =>
     createStyles({
         backdrop: {
             zIndex: theme.zIndex.drawer - 1,
         },
-        mobileStepper: {
-            borderRadius: BORDER_RADIUS,
-        },
         cardMedia: {
             height: 0,
             paddingTop: '56.25%', // 16:9,
+        },
+        dialogPaper: {
+            position: 'relative',
+            overflow: 'unset',
+        },
+        fabContainer: {
+            position: 'absolute',
+            top: -25,
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+        },
+        mobileStepper: {
+            flexGrow: 1,
+            background: 'unset',
         },
     })
 )
 
 interface Trial {
     fullPath: string
-    title: string
-    createdDate: Date
+    name: string
+    createdDate: firebase.firestore.Timestamp
 }
 
-export const HeaderTrials: FC<HeaderState<'trialsOpen'>> = ({ trialsOpen }) => {
+type HeaderTrialsProps = HeaderState<'trialsOpen'> & HeaderDispatch
+
+export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) => {
     const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
     const [activeTrial, setActiveTrial] = useState(0)
     const classes = useStyles()
 
-    const onDrop = useCallback(async (acceptedFiles: File[]) => {
-        const newTrials: Map<string, Trial> = new Map()
+    // const { isDialogFullscreen } = useBreakpointsContext()
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
-        for (const file of acceptedFiles) {
-            const compressedFile: Blob = await compressImage(file, {
-                maxSizeMB: 0.5,
-                useWebWorker: false,
-                maxWidthOrHeight: 3840,
-                maxIteration: 5,
-            })
-            const dataUrl: string = await readDocumentAsync(compressedFile)
+    useEffect(() => {
+        if (!trialsOpen) return
+        return FirebaseService.firestore
+            .collection('trials')
+            .orderBy('createdDate', 'desc')
+            .onSnapshot(querySnapshot =>
+                setTrials(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as Trial])))
+            )
+    }, [trialsOpen])
 
-            newTrials.set(file.name, {
-                title: file.name,
-                fullPath: dataUrl,
-                createdDate: new Date(),
+    const onDrop = useCallback(
+        async (acceptedFiles: File[]) => {
+            const snackKey = enqueueSnackbar('Dateien werden verarbeitet und hochgeladen', {
+                variant: 'info',
             })
-        }
-        setTrials(previous => new Map([...previous, ...newTrials]))
-    }, [])
+
+            for (const file of acceptedFiles) {
+                const potentialDublicate = await FirebaseService.firestore
+                    .collection('trials')
+                    .doc(file.name)
+                    .get()
+
+                if (potentialDublicate.exists) {
+                    enqueueSnackbar(`Eine Datei mit dem Namen ${file.name} existiert bereits`, {
+                        variant: 'info',
+                    })
+                    continue
+                }
+                const compressedFile: Blob = await compressImage(file, {
+                    maxSizeMB: 0.5,
+                    useWebWorker: false,
+                    maxWidthOrHeight: 3840,
+                    maxIteration: 5,
+                })
+                const dataUrl: string = await readDocumentAsync(compressedFile)
+
+                try {
+                    const uploadTask = await FirebaseService.storageRef
+                        .child(`trials/${file.name}`)
+                        .putString(dataUrl, 'data_url')
+
+                    const fullPath = await uploadTask.ref.getDownloadURL()
+
+                    await FirebaseService.firestore
+                        .collection('trials')
+                        .doc(file.name)
+                        .set({
+                            name: file.name,
+                            fullPath,
+                            createdDate: FirebaseService.createTimestampFromDate(new Date()),
+                        })
+                } catch (e) {
+                    enqueueSnackbar(e.message, { variant: 'error' })
+                }
+            }
+            closeSnackbar(snackKey as string)
+        },
+        [closeSnackbar, enqueueSnackbar]
+    )
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop,
@@ -80,17 +141,25 @@ export const HeaderTrials: FC<HeaderState<'trialsOpen'>> = ({ trialsOpen }) => {
     })
 
     return (
-        <Backdrop open={trialsOpen} className={classes.backdrop}>
-            <Container maxWidth="sm">
+        <Dialog
+            open={trialsOpen}
+            onClose={() => dispatch({ type: 'trialsChange' })}
+            maxWidth="sm"
+            fullWidth
+            TransitionComponent={SlideUp}
+            PaperProps={{ className: classes.dialogPaper }}>
+            <DialogContent>
                 <SwipeableViews
                     index={activeTrial}
                     onChangeIndex={index => setActiveTrial(index)}
                     enableMouseEvents>
                     {[...trials.values()].map(trial => (
-                        <Card key={trial.title}>
+                        <Card key={trial.name}>
                             <CardHeader
-                                title={trial.title}
-                                subheader={trial.createdDate.toLocaleTimeString()}
+                                title={trial.name}
+                                subheader={FirebaseService.createDateFromTimestamp(
+                                    trial.createdDate
+                                ).toLocaleDateString()}
                                 action={
                                     <>
                                         <IconButton>
@@ -102,15 +171,23 @@ export const HeaderTrials: FC<HeaderState<'trialsOpen'>> = ({ trialsOpen }) => {
                                     </>
                                 }
                             />
+
                             <CardMedia className={classes.cardMedia} image={trial.fullPath} />
                         </Card>
                     ))}
                 </SwipeableViews>
+                {trials.size === 0 && (
+                    <Box display="flex" justifyContent="center">
+                        <NotFoundIcon width={200} />
+                    </Box>
+                )}
+            </DialogContent>
+            <DialogActions>
                 <MobileStepper
                     className={classes.mobileStepper}
                     steps={trials.size}
                     position="static"
-                    variant="dots"
+                    variant="text"
                     activeStep={activeTrial}
                     nextButton={
                         <IconButton
@@ -127,16 +204,13 @@ export const HeaderTrials: FC<HeaderState<'trialsOpen'>> = ({ trialsOpen }) => {
                         </IconButton>
                     }
                 />
-                <Box flexGrow={1} display="flex" justifyContent="center" marginTop={2}>
-                    <div {...getRootProps}>
-                        <Fab size="small" color="secondary">
-                            <div {...getInputProps} />
-
-                            <AddIcon />
-                        </Fab>
-                    </div>
-                </Box>
-            </Container>
-        </Backdrop>
+            </DialogActions>
+            <div className={classes.fabContainer} {...getRootProps()}>
+                <Fab color="primary">
+                    <input {...getInputProps()} />
+                    <AddIcon />
+                </Fab>
+            </div>
+        </Dialog>
     )
 }
