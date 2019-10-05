@@ -13,15 +13,19 @@ export interface AttachementMetadata extends Attachement {
     fullPath: string
 }
 
-export interface Recipe<T extends Attachement> {
+export interface CommentsDocument {
     name: string
+    numberOfComments: number
+}
+
+export interface Recipe<T extends Attachement> extends CommentsDocument {
     createdDate: firebase.firestore.Timestamp
     categories: Categories<string>
     attachements: Array<T>
     ingredients: string
     amount: number
     description: string
-    numberOfComments: number
+
     relatedRecipes: Array<string>
 }
 
@@ -46,8 +50,11 @@ export interface Comment {
     likes: number
 }
 
-export interface Trial {
+export interface Trial extends CommentsDocument {
     fullPath: string
-    name: string
     createdDate: firebase.firestore.Timestamp
+}
+
+export interface CommentsCollections {
+    collection: 'recipes' | 'trials'
 }

@@ -2,13 +2,14 @@ import { IconButton } from '@material-ui/core'
 import CommentIcon from '@material-ui/icons/CommentTwoTone'
 import React, { FC, useState } from 'react'
 
-import { RecipeDocument } from '../../../../../model/model'
-import { BadgeWrapper } from '../../../../Shared/BadgeWrapper'
-import { RecipeCommentsDrawer } from './RecipeCommentsDrawer'
+import { CommentsCollections, CommentsDocument } from '../../../model/model'
+import { BadgeWrapper } from '../BadgeWrapper'
+import { CommentsDrawer } from './CommentsDrawer'
 
-export const RecipeComments: FC<Pick<RecipeDocument, 'name' | 'numberOfComments'>> = ({
+export const Comments: FC<CommentsDocument & CommentsCollections> = ({
     name,
     numberOfComments,
+    collection,
 }) => {
     const [drawer, setDrawer] = useState(false)
 
@@ -22,7 +23,12 @@ export const RecipeComments: FC<Pick<RecipeDocument, 'name' | 'numberOfComments'
                 </BadgeWrapper>
             </IconButton>
 
-            <RecipeCommentsDrawer name={name} open={drawer} onClose={handleDrawerChange} />
+            <CommentsDrawer
+                collection={collection}
+                name={name}
+                open={drawer}
+                onClose={handleDrawerChange}
+            />
         </div>
     )
 }

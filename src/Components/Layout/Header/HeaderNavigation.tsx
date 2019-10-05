@@ -1,4 +1,4 @@
-import { IconButton } from '@material-ui/core'
+import { IconButton, Tooltip, Zoom } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleOutlined'
 import AddIcon from '@material-ui/icons/AddCircleOutline'
 import HomeIcon from '@material-ui/icons/HomeOutlined'
@@ -41,33 +41,48 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({
     const { user } = useFirebaseAuthContext()
     const classes = useStyles()
 
+    const placement = drawerRight ? 'left' : 'top'
+
     return (
         <div className={clsx(classes.container, drawerRight && classes.drawerRight)}>
             <Navigate to={PATHS.home}>
-                <IconButton>
-                    <HomeIcon />
-                </IconButton>
+                <Tooltip TransitionComponent={Zoom} title="Startseite" placement={placement}>
+                    <IconButton>
+                        <HomeIcon />
+                    </IconButton>
+                </Tooltip>
             </Navigate>
 
-            <IconButton onClick={onThemeChange}>
-                <BrightnessIcon />
-            </IconButton>
+            <Tooltip TransitionComponent={Zoom} title="Theme wechseln" placement={placement}>
+                <IconButton onClick={onThemeChange}>
+                    <BrightnessIcon />
+                </IconButton>
+            </Tooltip>
 
-            <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
-                <LightbulbOutline />
-            </IconButton>
+            <Tooltip TransitionComponent={Zoom} title="Versuchskaninchen" placement={placement}>
+                <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
+                    <LightbulbOutline />
+                </IconButton>
+            </Tooltip>
 
             {user && (
                 <Navigate to={PATHS.recipeCreate}>
-                    <IconButton>
-                        <AddIcon />
-                    </IconButton>
+                    <Tooltip
+                        TransitionComponent={Zoom}
+                        title="Rezept anlegen"
+                        placement={placement}>
+                        <IconButton>
+                            <AddIcon />
+                        </IconButton>
+                    </Tooltip>
                 </Navigate>
             )}
 
-            <IconButton onClick={() => dispatch({ type: 'dialogChange' })}>
-                <AccountIcon />
-            </IconButton>
+            <Tooltip TransitionComponent={Zoom} title="Einloggen" placement={placement}>
+                <IconButton onClick={() => dispatch({ type: 'dialogChange' })}>
+                    <AccountIcon />
+                </IconButton>
+            </Tooltip>
         </div>
     )
 }

@@ -1,29 +1,32 @@
 import {
+    AppBar,
     Box,
     createStyles,
     Dialog,
-    DialogActions,
-    DialogContent,
     Fab,
+    Grid,
+    IconButton,
     makeStyles,
-    Tooltip,
+    Toolbar,
+    Typography,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
+import CloseIcon from '@material-ui/icons/Close'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import SwipeableViews from 'react-swipeable-views'
 
 import { FirebaseService } from '../../../../firebase'
-import { ReactComponent as NotFoundIcon } from '../../../../icons/notFound.svg'
+import { getFileExtension } from '../../../../hooks/useAttachementRef'
+import { ReactComponent as TrialIcon } from '../../../../icons/logo.svg'
 import { Trial } from '../../../../model/model'
+import { useBreakpointsContext } from '../../../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../../../Recipe/Create/Attachements/RecipeCreateAttachements'
 import { SlideUp } from '../../../Shared/Transitions'
 import { HeaderDispatch, HeaderState } from '../HeaderReducer'
 import { HeaderTrialsCard } from './HeaderTrialsCard'
-import { HeaderTrialsStepper } from './HeaderTrialsStepper'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -32,16 +35,12 @@ const useStyles = makeStyles(theme =>
         },
         dialogPaper: {
             position: 'relative',
-            overflow: 'unset',
         },
         fabContainer: {
             outline: 'none',
             position: 'absolute',
-            top: -25,
-            left: 0,
-            right: 0,
-            display: 'flex',
-            justifyContent: 'center',
+            bottom: -25,
+            right: theme.spacing(3),
         },
     })
 )
@@ -50,9 +49,10 @@ type HeaderTrialsProps = HeaderState<'trialsOpen'> & HeaderDispatch
 
 export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) => {
     const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
-    const [activeTrial, setActiveTrial] = useState(0)
+    const [, setActiveTrial] = useState(0)
     const classes = useStyles()
 
+    const { isDialogFullscreen } = useBreakpointsContext()
     const { user } = useFirebaseAuthContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
@@ -73,9 +73,10 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
             })
 
             for (const file of acceptedFiles) {
+                const name = file.name.replace(`.${getFileExtension(file.name)}`, '')
                 const potentialDublicate = await FirebaseService.firestore
                     .collection('trials')
-                    .doc(file.name)
+                    .doc(name)
                     .get()
 
                 if (potentialDublicate.exists) {
@@ -101,10 +102,11 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
 
                     await FirebaseService.firestore
                         .collection('trials')
-                        .doc(file.name)
+                        .doc(name)
                         .set({
-                            name: file.name,
+                            name,
                             fullPath,
+                            numberOfComments: 0,
                             createdDate: FirebaseService.createTimestampFromDate(new Date()),
                         })
                 } catch (e) {
@@ -134,47 +136,44 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
             onClose={() => dispatch({ type: 'trialsChange' })}
             maxWidth="md"
             fullWidth
+            fullScreen={isDialogFullscreen}
             TransitionComponent={SlideUp}
             PaperProps={{ className: classes.dialogPaper }}>
-            <DialogContent>
-                <SwipeableViews
-                    index={activeTrial}
-                    onChangeIndex={index => setActiveTrial(index)}
-                    enableMouseEvents>
-                    {[...trials.values()].map((trial, index) => (
-                        <HeaderTrialsCard
-                            trial={trial}
-                            onTrialDeleted={handleTrialDeleted(index)}
-                            dispatch={dispatch}
-                            key={trial.name}
-                        />
-                    ))}
-                </SwipeableViews>
-                {trials.size === 0 && (
-                    <Box display="flex" justifyContent="center" padding={4}>
-                        <NotFoundIcon width={200} />
-                    </Box>
-                )}
-            </DialogContent>
-            {trials.size > 0 && (
-                <DialogActions>
-                    <HeaderTrialsStepper
-                        steps={trials.size}
-                        activeStep={activeTrial}
-                        onNext={() => setActiveTrial(prev => ++prev)}
-                        onPrevious={() => setActiveTrial(prev => --prev)}
-                    />
-                </DialogActions>
-            )}
-            {user && (
-                <div className={classes.fabContainer} {...getRootProps()}>
-                    <Tooltip title="Idee(n) hinzufügen">
-                        <Fab color="primary">
+            <AppBar color="default" position="sticky">
+                <Toolbar>
+                    <IconButton edge="start" onClick={() => dispatch({ type: 'trialsChange' })}>
+                        <CloseIcon />
+                    </IconButton>
+                    <Typography variant="h6">Versuchskaninchen</Typography>
+                </Toolbar>
+                {user && (
+                    <div className={classes.fabContainer} {...getRootProps()}>
+                        <Fab color="secondary">
                             <input {...getInputProps()} />
                             <AddIcon />
                         </Fab>
-                    </Tooltip>
-                </div>
+                    </div>
+                )}
+            </AppBar>
+            {trials.size > 0 && (
+                <Box padding={4}>
+                    <Grid container spacing={4}>
+                        {[...trials.values()].map((trial, index) => (
+                            <HeaderTrialsCard
+                                trial={trial}
+                                onTrialDeleted={handleTrialDeleted(index)}
+                                dispatch={dispatch}
+                                key={trial.name}
+                            />
+                        ))}
+                    </Grid>
+                </Box>
+            )}
+
+            {trials.size === 0 && (
+                <Box display="flex" justifyContent="center" padding={4}>
+                    <TrialIcon width={200} />
+                </Box>
             )}
         </Dialog>
     )

@@ -11,6 +11,7 @@
 -   https://www.flaticon.com/packs/technology-of-the-future-13
 -   https://www.flaticon.com/packs/seo-and-online-marketing-4
 -   https://www.flaticon.com/packs/emoticons-31
+-   https://www.flaticon.com/packs/bakery-31
 
 ## may wanna use this
 
