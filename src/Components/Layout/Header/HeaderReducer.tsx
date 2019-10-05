@@ -1,7 +1,8 @@
 import { Dispatch, Reducer, useReducer } from 'react'
 
 interface State {
-    dialog: boolean
+    dialogOpen: boolean
+    trialsOpen: boolean
     email: string
     password: string
 }
@@ -15,20 +16,24 @@ type Action =
           value: string
       }
     | { type: 'dialogChange' }
+    | { type: 'trialsChange' }
 
 const reducer: Reducer<State, Action> = (state, action) => {
     switch (action.type) {
         case 'textFieldChange':
             return { ...state, [action.key]: action.value }
         case 'dialogChange':
-            return { ...state, dialog: !state.dialog }
+            return { ...state, dialogOpen: !state.dialogOpen }
+        case 'trialsChange':
+            return { ...state, trialsOpen: !state.trialsOpen }
     }
 }
 
 const initialState: State = {
-    dialog: false,
+    dialogOpen: false,
     email: '',
     password: '',
+    trialsOpen: false,
 }
 
 export const useHeaderReducer = () => {

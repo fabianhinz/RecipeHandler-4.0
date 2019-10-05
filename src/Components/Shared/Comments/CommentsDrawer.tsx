@@ -2,11 +2,15 @@ import { createStyles, Drawer, Grid, makeStyles, TextField, Typography } from '@
 import React, { FC, useEffect, useState } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
-import { FirebaseService } from '../../../../../firebase'
-import { ReactComponent as NoCommentsIcon } from '../../../../../icons/notFound.svg'
-import { Comment, RecipeDocument } from '../../../../../model/model'
-import { Loading } from '../../../../Shared/Loading'
-import { RecipeComment } from './RecipeComment'
+import { FirebaseService } from '../../../firebase'
+import { ReactComponent as NoCommentsIcon } from '../../../icons/notFound.svg'
+import {
+    Comment as CommentModel,
+    CommentsCollections,
+    CommentsDocument,
+} from '../../../model/model'
+import { Loading } from '../Loading'
+import { Comment } from './Comment'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -39,13 +43,13 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface RecipeCommentsDrawerProps extends Pick<RecipeDocument, 'name'> {
+interface CommentsDrawerProps extends Pick<CommentsDocument, 'name'>, CommentsCollections {
     open: boolean
     onClose: () => void
 }
 
-export const RecipeCommentsDrawer: FC<RecipeCommentsDrawerProps> = ({ open, onClose, name }) => {
-    const [comments, setComments] = useState<Array<Comment>>([])
+export const CommentsDrawer: FC<CommentsDrawerProps> = ({ open, onClose, name, collection }) => {
+    const [comments, setComments] = useState<Array<CommentModel>>([])
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
     const [inputDisabled, setInputDisabled] = useState(false)
@@ -59,26 +63,26 @@ export const RecipeCommentsDrawer: FC<RecipeCommentsDrawerProps> = ({ open, onCl
         setLoading(true)
 
         return FirebaseService.firestore
-            .collection('recipes')
+            .collection(collection)
             .doc(name)
             .collection('comments')
             .orderBy('createdDate', 'desc')
             .onSnapshot(querySnapshot => {
                 setComments(
                     querySnapshot.docs.map(
-                        doc => ({ documentId: doc.id, ...doc.data() } as Comment)
+                        doc => ({ documentId: doc.id, ...doc.data() } as CommentModel)
                     )
                 )
                 setLoading(false)
             })
-    }, [name, open])
+    }, [collection, name, open])
 
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         setInputDisabled(true)
         event.preventDefault()
         if (input.length === 0) return
 
-        const recipeRef = FirebaseService.firestore.collection('recipes').doc(name)
+        const recipeRef = FirebaseService.firestore.collection(collection).doc(name)
 
         await recipeRef.collection('comments').add({
             comment: input,
@@ -117,7 +121,8 @@ export const RecipeCommentsDrawer: FC<RecipeCommentsDrawerProps> = ({ open, onCl
                                 container
                                 spacing={1}>
                                 {comments.map(comment => (
-                                    <RecipeComment
+                                    <Comment
+                                        collection={collection}
                                         key={comment.documentId}
                                         name={name}
                                         comment={comment}

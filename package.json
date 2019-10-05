@@ -12,6 +12,7 @@
         "@types/react-dom": "16.9.0",
         "@types/react-dropzone": "^5.1.0",
         "@types/react-router-dom": "^4.3.5",
+        "@types/react-swipeable-views": "^0.13.0",
         "browser-image-compression": "^1.0.6",
         "clipboard-copy": "^3.1.0",
         "clsx": "^1.0.4",
@@ -30,6 +31,7 @@
         "react-perfect-scrollbar": "^1.5.3",
         "react-router-dom": "^5.0.1",
         "react-scripts": "3.1.1",
+        "react-swipeable-views": "^0.13.3",
         "typeface-roboto": "0.0.75",
         "typescript": "3.6.2"
     },

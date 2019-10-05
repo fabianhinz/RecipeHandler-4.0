@@ -1,7 +1,7 @@
 import { Grid } from '@material-ui/core'
 import React, { FC } from 'react'
 
-import { RecipeComments } from './Comments/RecipeComments'
+import { Comments } from '../../../Shared/Comments/Comments'
 import { RecipeResultPin } from './RecipeResultPin'
 import { RecipeResultRating } from './RecipeResultRating'
 import { RecipeResultShare } from './RecipeResultShare'
@@ -34,7 +34,11 @@ export const RecipeResultAction: FC<RecipeResultActionProps> = ({
                             <RecipeResultShare name={name} />
                         </Grid>
                         <Grid>
-                            <RecipeComments numberOfComments={numberOfComments} name={name} />
+                            <Comments
+                                collection="recipes"
+                                numberOfComments={numberOfComments}
+                                name={name}
+                            />
                         </Grid>
                         <Grid>
                             <RecipeResultRating name={name} />

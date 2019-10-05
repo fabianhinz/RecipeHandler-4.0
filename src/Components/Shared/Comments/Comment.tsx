@@ -3,9 +3,9 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
 import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
 import React, { FC } from 'react'
 
-import { FirebaseService } from '../../../../../firebase'
-import { Comment, RecipeDocument } from '../../../../../model/model'
-import { BadgeWrapper } from '../../../../Shared/BadgeWrapper'
+import { FirebaseService } from '../../../firebase'
+import { Comment as CommentModel, CommentsCollections, RecipeDocument } from '../../../model/model'
+import { BadgeWrapper } from '../BadgeWrapper'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -20,19 +20,19 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface RecipeCommentProps extends Pick<RecipeDocument, 'name'> {
-    comment: Comment
+interface CommentProps extends Pick<RecipeDocument, 'name'>, CommentsCollections {
+    comment: CommentModel
 }
 
-export const RecipeComment: FC<RecipeCommentProps> = ({ comment, name }) => {
+export const Comment: FC<CommentProps> = ({ comment, name, collection }) => {
     const classes = useStyles()
 
     const handleThumbClick = (
         documentId: string,
-        type: keyof Pick<Comment, 'dislikes' | 'likes'>
+        type: keyof Pick<CommentModel, 'dislikes' | 'likes'>
     ) => () => {
         FirebaseService.firestore
-            .collection('recipes')
+            .collection(collection)
             .doc(name)
             .collection('comments')
             .doc(documentId)
