@@ -45,13 +45,15 @@ type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> & {
 
 type Hits = Array<Hit>
 
-const getHighlightResult = (recipeHit: Hit) => {
+const getHighlightResult = (recipeHit: Hit, searchValue: string) => {
     const description = recipeHit._highlightResult.description.value
     const ingridients = recipeHit._highlightResult.ingredients.value
 
+    const searchValueLength = searchValue.length
     const descriptionIndices = new Array<number>()
     const ingredientsIndices = new Array<number>()
     const displayResults = new Array<string>()
+    const displayResultsNice = new Array<string>()
     let startIndex = 0
 
     while (startIndex > -1) {
@@ -83,24 +85,28 @@ const getHighlightResult = (recipeHit: Hit) => {
             break
         }
     }
-    displayResults.push('Zutaten:\n')
+
+    displayResults.push('**Zutaten:**')
     ingredientsIndices.forEach(index => {
         const start = index - 20 > 0 ? index - 20 : 0
         const end = index + 20 < ingridients.length - 1 ? index + 20 : ingridients.length - 1
-        displayResults.push('...' + ingridients.substr(start, end - start) + '...\n')
+        displayResults.push('...' + ingridients.substr(start, end - start) + '...')
     })
 
-    displayResults.push('Beschreibung:\n')
+    displayResults.push('**Beschreibung:**')
     descriptionIndices.forEach(index => {
-        const start = index - 20 > 0 ? index - 20 : 0
-        const end = index + 20 < description.length - 1 ? index + 20 : description.length - 1
-        displayResults.push('...' + description.substr(start, end - start) + '...\n')
+        const start = index - 30 > 0 ? index - 20 : 0
+        const end = index + 37 < description.length - 1 ? index + 27 : description.length - 1
+        displayResults.push('... ' + description.substr(start, end - start) + ' ...')
     })
 
-    return displayResults
+    displayResults.forEach(recipeFragment => {
+        let recipeFragmentNice = recipeFragment.replace(/<\/?em>/gi, '')
+        recipeFragmentNice = recipeFragmentNice.replace(searchValue, `\`${searchValue}\``)
+        displayResultsNice.push(recipeFragmentNice)
+    })
 
-    // ingridients.replace('<em>', '')
-    // description.replace('<em>', '')
+    return displayResultsNice
 }
 
 export const HomeRecentlyAdded = () => {
@@ -189,13 +195,14 @@ export const HomeRecentlyAdded = () => {
                                             onClick={() =>
                                                 history.push(PATHS.details(recipeHit.name))
                                             }>
-                                            <CardHeader
-                                                title={recipeHit._highlightResult.name.value}
-                                            />
+                                            <CardHeader title={recipeHit.name} />
                                         </CardActionArea>
                                         <CardContent>
-                                            {getHighlightResult(recipeHit).map(recipeFragment => (
-                                                <Typography>{recipeFragment}</Typography>
+                                            {getHighlightResult(
+                                                recipeHit,
+                                                debouncedSearchValue
+                                            ).map(recipeFragment => (
+                                                <ReactMarkdown>{recipeFragment}</ReactMarkdown>
                                             ))}
                                         </CardContent>
                                     </Card>
