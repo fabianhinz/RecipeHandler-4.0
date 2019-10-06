@@ -11,6 +11,7 @@ import {
 import SearchIcon from '@material-ui/icons/SearchTwoTone'
 import React, { useEffect, useState } from 'react'
 
+import { index } from '../../../algolia'
 import { FirebaseService } from '../../../firebase'
 import useDebounce from '../../../hooks/useDebounce'
 import { RecipeDocument } from '../../../model/model'
@@ -44,6 +45,12 @@ export const HomeRecentlyAdded = () => {
     }, [debouncedSearchValue, searchValue])
 
     useEffect(() => {
+        index.search(debouncedSearchValue).then(({ hits }) => {
+            console.log(hits)
+        })
+
+        console.log('+1')
+
         let query:
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
