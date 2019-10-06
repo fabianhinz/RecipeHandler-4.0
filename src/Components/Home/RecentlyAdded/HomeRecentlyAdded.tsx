@@ -1,9 +1,5 @@
 import {
     Box,
-    Card,
-    CardActionArea,
-    CardContent,
-    CardHeader,
     createStyles,
     Divider,
     Drawer,
@@ -12,10 +8,9 @@ import {
     InputBase,
     List,
     ListItem,
-    ListSubheader,
+    ListItemText,
     makeStyles,
     Tooltip,
-    Typography,
 } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/SearchTwoTone'
 import React, { useEffect, useState } from 'react'
@@ -32,11 +27,9 @@ import { HomeRecentlyAddedCard } from './HomeRecentlyAddedCard'
 
 const useStyles = makeStyles(() =>
     createStyles({
-        root: {
-            background: 'none',
-        },
         highlight: {
-            background: 'fff2ac',
+            color: 'black',
+            backgroundColor: 'orange',
         },
     })
 )
@@ -56,13 +49,12 @@ const getHighlightedDescription = (description: string) => {
     const displayResults = new Array<string>()
     const displayResultsNice = new Array<string>()
 
-    displayResults.push('...')
     descriptionArray.forEach(step => {
         if (step.indexOf('<em>') !== -1) {
+            displayResults.push('...')
             displayResults.push(step)
         }
     })
-    displayResults.push('...')
 
     displayResults.forEach(recipeFragment => {
         displayResultsNice.push(recipeFragment.replace(/<\/?em>/gi, ''))
@@ -77,13 +69,12 @@ const getHighlightedIngredients = (ingredients: string) => {
     const displayResults = new Array<string>()
     const displayResultsNice = new Array<string>()
 
-    displayResults.push('...')
     ingredientsArray.forEach(ingredient => {
         if (ingredient.indexOf('<em>') !== -1) {
+            displayResults.push('...')
             displayResults.push(ingredient)
         }
     })
-    displayResults.push('...')
 
     displayResults.forEach(recipeFragment => {
         displayResultsNice.push(recipeFragment.replace(/<\/?em>/gi, ''))
@@ -99,9 +90,10 @@ export const HomeRecentlyAdded = () => {
     const [algoliaHits, setAlgoliaHits] = useState<Hits>([])
     const { isMobile } = useBreakpointsContext()
 
+    const classes = useStyles()
+
     const debouncedSearchValue = useDebounce(searchValue, 500)
     const { history } = useRouterContext()
-    const classes = useStyles()
 
     const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous)
 
@@ -148,11 +140,7 @@ export const HomeRecentlyAdded = () => {
                 </Grid>
             </Box>
 
-            <Drawer
-                BackdropProps={{ classes }}
-                open={searchDrawer}
-                onClose={handleSearchDrawerChange}
-                anchor="top">
+            <Drawer open={searchDrawer} onClose={handleSearchDrawerChange} anchor="top">
                 <Box padding={2} display="flex" alignItems="center">
                     <Box marginRight={1}>
                         <SearchIcon />
@@ -168,81 +156,44 @@ export const HomeRecentlyAdded = () => {
 
                 <Divider />
 
-                {/* {algoliaHits.length > 0 && (
+                {algoliaHits.length > 0 && (
                     <List>
                         {algoliaHits.map(recipeHit => (
-                            <ListItem onClick={() => history.push(PATHS.details(recipeHit.name))}>
-                                <ListSubheader>{recipeHit.name}</ListSubheader>
-                                <ListSubheader>Zutaten:</ListSubheader>
-                                {getHighlightedIngredients(
-                                    recipeHit._highlightResult.ingredients.value
-                                ).map(recipeFragment => (
-                                    <ListItem>
-                                        <Highlighter
-                                            searchWords={[debouncedSearchValue]}
-                                            textToHighlight={recipeFragment}
-                                        />
-                                    </ListItem>
-                                ))}
-                                <ListSubheader>Beschreibung:</ListSubheader>
-                                {getHighlightedDescription(
-                                    recipeHit._highlightResult.description.value
-                                ).map(recipeFragment => (
-                                    <ListItem>
-                                        <Highlighter
-                                            searchWords={[debouncedSearchValue]}
-                                            textToHighlight={recipeFragment}
-                                        />
-                                    </ListItem>
-                                ))}
+                            <ListItem
+                                button
+                                onClick={() => history.push(PATHS.details(recipeHit.name))}
+                                key={recipeHit.name}>
+                                <ListItemText
+                                    primary={recipeHit.name}
+                                    secondary={
+                                        <>
+                                            <b>Zutaten:</b>{' '}
+                                            {getHighlightedIngredients(
+                                                recipeHit._highlightResult.ingredients.value
+                                            ).map((recipeFragment, index) => (
+                                                <Highlighter
+                                                    searchWords={[debouncedSearchValue]}
+                                                    textToHighlight={recipeFragment}
+                                                    key={index}
+                                                />
+                                            ))}
+                                            <br />
+                                            <b>Beschreibung:</b>{' '}
+                                            {getHighlightedDescription(
+                                                recipeHit._highlightResult.description.value
+                                            ).map((recipeFragment, index) => (
+                                                <Highlighter
+                                                    searchWords={[debouncedSearchValue]}
+                                                    textToHighlight={recipeFragment}
+                                                    key={index}
+                                                />
+                                            ))}
+                                        </>
+                                    }
+                                />
                             </ListItem>
                         ))}
                     </List>
-                )} */}
-
-                {algoliaHits.length > 0 && (
-                    <Box padding={2}>
-                        <Grid container spacing={2}>
-                            {algoliaHits.map(recipeHit => (
-                                <Grid item xs={12} md={6} lg={4} key={recipeHit.name}>
-                                    <Card>
-                                        <CardActionArea
-                                            onClick={() =>
-                                                history.push(PATHS.details(recipeHit.name))
-                                            }>
-                                            <CardHeader title={recipeHit.name} />
-                                        </CardActionArea>
-                                        <CardContent>
-                                            <Typography variant="subtitle2">Zutaten:</Typography>
-                                            {getHighlightedIngredients(
-                                                recipeHit._highlightResult.ingredients.value
-                                            ).map(recipeFragment => (
-                                                <ul className={classes.highlight}>
-                                                    <Highlighter
-                                                        searchWords={[debouncedSearchValue]}
-                                                        textToHighlight={recipeFragment}
-                                                    />
-                                                </ul>
-                                            ))}
-                                            <Typography variant="subtitle2">
-                                                Beschreibung:
-                                            </Typography>
-                                            {getHighlightedDescription(
-                                                recipeHit._highlightResult.description.value
-                                            ).map(recipeFragment => (
-                                                <ul className={classes.highlight}>
-                                                    <Highlighter
-                                                        searchWords={[debouncedSearchValue]}
-                                                        textToHighlight={recipeFragment}
-                                                    />
-                                                </ul>
-                                            ))}
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Box>
                 )}
             </Drawer>
         </>
