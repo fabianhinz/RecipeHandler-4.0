@@ -1,6 +1,10 @@
 import {
     Box,
+    Card,
+    CardActionArea,
+    CardHeader,
     createStyles,
+    Divider,
     Drawer,
     Fab,
     Grid,
@@ -16,6 +20,8 @@ import { FirebaseService } from '../../../firebase'
 import useDebounce from '../../../hooks/useDebounce'
 import { RecipeDocument } from '../../../model/model'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
+import { useRouterContext } from '../../Provider/RouterProvider'
+import { PATHS } from '../../Routes/Routes'
 import { HomeRecentlyAddedCard } from './HomeRecentlyAddedCard'
 
 const useStyles = makeStyles(() =>
@@ -26,31 +32,30 @@ const useStyles = makeStyles(() =>
     })
 )
 
+type Hits = Array<
+    Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> & {
+        _highlightResult: {
+            name: { value: string }
+            description: { value: string }
+            ingredients: { value: string }
+        }
+    }
+>
+
 export const HomeRecentlyAdded = () => {
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
     const [searchDrawer, setSearchDrawer] = useState(false)
     const [searchValue, setSearchValue] = useState('')
-    const [skeleton, setSkeleton] = useState(false)
+    const [algoliaHits, setAlgoliaHits] = useState<Hits>([])
     const { isMobile } = useBreakpointsContext()
 
     const debouncedSearchValue = useDebounce(searchValue, 500)
-
+    const { history } = useRouterContext()
     const classes = useStyles()
 
     const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous)
 
     useEffect(() => {
-        if (searchValue !== debouncedSearchValue) setSkeleton(true)
-        else setSkeleton(false)
-    }, [debouncedSearchValue, searchValue])
-
-    useEffect(() => {
-        index.search(debouncedSearchValue).then(({ hits }) => {
-            console.log(hits)
-        })
-
-        console.log('+1')
-
         let query:
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
@@ -58,27 +63,20 @@ export const HomeRecentlyAdded = () => {
         const limit = isMobile ? 3 : 6
 
         if (debouncedSearchValue.length > 0) {
-            return query
-                .where('name', '>=', debouncedSearchValue)
-                .limit(limit)
-                .onSnapshot(
-                    querySnapshot => {
-                        setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
-                        setSkeleton(false)
-                    },
-                    error => console.error(error)
-                )
+            index.search(debouncedSearchValue).then(({ hits }) => setAlgoliaHits(hits))
         } else {
-            return query
-                .orderBy('createdDate', 'desc')
-                .limit(limit)
-                .onSnapshot(
-                    querySnapshot => {
-                        setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
-                    },
-                    error => console.error(error)
-                )
+            setAlgoliaHits([])
         }
+
+        return query
+            .orderBy('createdDate', 'desc')
+            .limit(limit)
+            .onSnapshot(
+                querySnapshot => {
+                    setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
+                },
+                error => console.error(error)
+            )
     }, [debouncedSearchValue, isMobile])
 
     return (
@@ -95,11 +93,7 @@ export const HomeRecentlyAdded = () => {
                 </Box>
                 <Grid container spacing={2}>
                     {recipes.map(recipe => (
-                        <HomeRecentlyAddedCard
-                            skeleton={skeleton}
-                            key={recipe.name}
-                            recipe={recipe}
-                        />
+                        <HomeRecentlyAddedCard skeleton={false} key={recipe.name} recipe={recipe} />
                     ))}
                 </Grid>
             </Box>
@@ -116,11 +110,40 @@ export const HomeRecentlyAdded = () => {
                     <InputBase
                         autoFocus
                         fullWidth
-                        placeholder="Nach Rezeptnamen suchen"
+                        placeholder="Rezepte durchsuchen"
                         value={searchValue}
                         onChange={e => setSearchValue(e.target.value)}
                     />
                 </Box>
+
+                <Divider />
+
+                {algoliaHits.length > 0 && (
+                    <Box padding={2}>
+                        <Grid container spacing={2}>
+                            {algoliaHits.map(recipeHit => (
+                                <Grid item xs={12} md={6} lg={4} key={recipeHit.name}>
+                                    <Card>
+                                        <CardActionArea
+                                            onClick={() =>
+                                                history.push(PATHS.details(recipeHit.name))
+                                            }>
+                                            <CardHeader title={recipeHit.name} />
+                                        </CardActionArea>
+                                        {/* <CardContent>
+                                        <ReactMarkdown
+                                            source={recipeHit._highlightResult.ingredients.value}
+                                        />
+                                        <ReactMarkdown
+                                            source={recipeHit._highlightResult.description.value}
+                                        />
+                                    </CardContent> */}
+                                    </Card>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Box>
+                )}
             </Drawer>
         </>
     )
