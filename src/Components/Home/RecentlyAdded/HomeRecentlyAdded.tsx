@@ -10,13 +10,16 @@ import {
     Fab,
     Grid,
     InputBase,
+    List,
+    ListItem,
+    ListSubheader,
     makeStyles,
     Tooltip,
     Typography,
 } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/SearchTwoTone'
 import React, { useEffect, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
+import Highlighter from 'react-highlight-words'
 
 import { index } from '../../../algolia'
 import { FirebaseService } from '../../../firebase'
@@ -32,6 +35,9 @@ const useStyles = makeStyles(() =>
         root: {
             background: 'none',
         },
+        highlight: {
+            background: 'fff2ac',
+        },
     })
 )
 
@@ -45,65 +51,42 @@ type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> & {
 
 type Hits = Array<Hit>
 
-const getHighlightResult = (recipeHit: Hit, searchValue: string) => {
-    const description = recipeHit._highlightResult.description.value
-    const ingridients = recipeHit._highlightResult.ingredients.value
-
-    const searchValueLength = searchValue.length
-    const descriptionIndices = new Array<number>()
-    const ingredientsIndices = new Array<number>()
+const getHighlightedDescription = (description: string) => {
+    const descriptionArray = description.split(/1\.|- |\*{1,}|#{1,}/gi)
     const displayResults = new Array<string>()
     const displayResultsNice = new Array<string>()
-    let startIndex = 0
 
-    while (startIndex > -1) {
-        if (startIndex >= description.length) {
-            break
+    displayResults.push('...')
+    descriptionArray.forEach(step => {
+        if (step.indexOf('<em>') !== -1) {
+            displayResults.push(step)
         }
-        startIndex =
-            description.indexOf('<em>', startIndex) > -1
-                ? description.indexOf('<em>', startIndex) + 4
-                : -1
-        if (startIndex > 3) {
-            descriptionIndices.push(startIndex - 4)
-        } else {
-            break
-        }
-    }
-    startIndex = 0
-    while (startIndex > -1) {
-        if (startIndex >= ingridients.length) {
-            break
-        }
-        startIndex =
-            ingridients.indexOf('<em>', startIndex) > -1
-                ? ingridients.indexOf('<em>', startIndex) + 4
-                : -1
-        if (startIndex > 3) {
-            ingredientsIndices.push(startIndex - 4)
-        } else {
-            break
-        }
-    }
-
-    displayResults.push('**Zutaten:**')
-    ingredientsIndices.forEach(index => {
-        const start = index - 20 > 0 ? index - 20 : 0
-        const end = index + 20 < ingridients.length - 1 ? index + 20 : ingridients.length - 1
-        displayResults.push('...' + ingridients.substr(start, end - start) + '...')
     })
-
-    displayResults.push('**Beschreibung:**')
-    descriptionIndices.forEach(index => {
-        const start = index - 30 > 0 ? index - 20 : 0
-        const end = index + 37 < description.length - 1 ? index + 27 : description.length - 1
-        displayResults.push('... ' + description.substr(start, end - start) + ' ...')
-    })
+    displayResults.push('...')
 
     displayResults.forEach(recipeFragment => {
-        let recipeFragmentNice = recipeFragment.replace(/<\/?em>/gi, '')
-        recipeFragmentNice = recipeFragmentNice.replace(searchValue, `\`${searchValue}\``)
-        displayResultsNice.push(recipeFragmentNice)
+        displayResultsNice.push(recipeFragment.replace(/<\/?em>/gi, ''))
+    })
+
+    return displayResultsNice
+}
+
+const getHighlightedIngredients = (ingredients: string) => {
+    const ingredientsArray = ingredients.split('- ')
+
+    const displayResults = new Array<string>()
+    const displayResultsNice = new Array<string>()
+
+    displayResults.push('...')
+    ingredientsArray.forEach(ingredient => {
+        if (ingredient.indexOf('<em>') !== -1) {
+            displayResults.push(ingredient)
+        }
+    })
+    displayResults.push('...')
+
+    displayResults.forEach(recipeFragment => {
+        displayResultsNice.push(recipeFragment.replace(/<\/?em>/gi, ''))
     })
 
     return displayResultsNice
@@ -185,6 +168,38 @@ export const HomeRecentlyAdded = () => {
 
                 <Divider />
 
+                {/* {algoliaHits.length > 0 && (
+                    <List>
+                        {algoliaHits.map(recipeHit => (
+                            <ListItem onClick={() => history.push(PATHS.details(recipeHit.name))}>
+                                <ListSubheader>{recipeHit.name}</ListSubheader>
+                                <ListSubheader>Zutaten:</ListSubheader>
+                                {getHighlightedIngredients(
+                                    recipeHit._highlightResult.ingredients.value
+                                ).map(recipeFragment => (
+                                    <ListItem>
+                                        <Highlighter
+                                            searchWords={[debouncedSearchValue]}
+                                            textToHighlight={recipeFragment}
+                                        />
+                                    </ListItem>
+                                ))}
+                                <ListSubheader>Beschreibung:</ListSubheader>
+                                {getHighlightedDescription(
+                                    recipeHit._highlightResult.description.value
+                                ).map(recipeFragment => (
+                                    <ListItem>
+                                        <Highlighter
+                                            searchWords={[debouncedSearchValue]}
+                                            textToHighlight={recipeFragment}
+                                        />
+                                    </ListItem>
+                                ))}
+                            </ListItem>
+                        ))}
+                    </List>
+                )} */}
+
                 {algoliaHits.length > 0 && (
                     <Box padding={2}>
                         <Grid container spacing={2}>
@@ -198,11 +213,29 @@ export const HomeRecentlyAdded = () => {
                                             <CardHeader title={recipeHit.name} />
                                         </CardActionArea>
                                         <CardContent>
-                                            {getHighlightResult(
-                                                recipeHit,
-                                                debouncedSearchValue
+                                            <Typography variant="subtitle2">Zutaten:</Typography>
+                                            {getHighlightedIngredients(
+                                                recipeHit._highlightResult.ingredients.value
                                             ).map(recipeFragment => (
-                                                <ReactMarkdown>{recipeFragment}</ReactMarkdown>
+                                                <ul className={classes.highlight}>
+                                                    <Highlighter
+                                                        searchWords={[debouncedSearchValue]}
+                                                        textToHighlight={recipeFragment}
+                                                    />
+                                                </ul>
+                                            ))}
+                                            <Typography variant="subtitle2">
+                                                Beschreibung:
+                                            </Typography>
+                                            {getHighlightedDescription(
+                                                recipeHit._highlightResult.description.value
+                                            ).map(recipeFragment => (
+                                                <ul className={classes.highlight}>
+                                                    <Highlighter
+                                                        searchWords={[debouncedSearchValue]}
+                                                        textToHighlight={recipeFragment}
+                                                    />
+                                                </ul>
                                             ))}
                                         </CardContent>
                                     </Card>
