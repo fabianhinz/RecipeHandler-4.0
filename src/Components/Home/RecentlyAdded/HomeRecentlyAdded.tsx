@@ -46,8 +46,8 @@ type Hits = Array<Hit>
 
 const getHighlightedDescription = (description: string) => {
     const descriptionArray = description.split(/1\.|- |\*{1,}|#{1,}/gi)
-    const displayResults = new Array<string>()
-    const displayResultsNice = new Array<string>()
+    const displayResults: Array<string> = []
+    const displayResultsNice: Array<string> = []
 
     descriptionArray.forEach(step => {
         if (step.indexOf('<em>') !== -1) {
@@ -66,8 +66,8 @@ const getHighlightedDescription = (description: string) => {
 const getHighlightedIngredients = (ingredients: string) => {
     const ingredientsArray = ingredients.split('- ')
 
-    const displayResults = new Array<string>()
-    const displayResultsNice = new Array<string>()
+    const displayResults: Array<string> = []
+    const displayResultsNice: Array<string> = []
 
     ingredientsArray.forEach(ingredient => {
         if (ingredient.indexOf('<em>') !== -1) {
