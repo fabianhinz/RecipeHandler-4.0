@@ -2,6 +2,7 @@ import {
     Box,
     Card,
     CardActionArea,
+    CardContent,
     CardHeader,
     createStyles,
     Divider,
@@ -11,9 +12,11 @@ import {
     InputBase,
     makeStyles,
     Tooltip,
+    Typography,
 } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/SearchTwoTone'
 import React, { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 import { index } from '../../../algolia'
 import { FirebaseService } from '../../../firebase'
@@ -32,15 +35,73 @@ const useStyles = makeStyles(() =>
     })
 )
 
-type Hits = Array<
-    Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> & {
-        _highlightResult: {
-            name: { value: string }
-            description: { value: string }
-            ingredients: { value: string }
+type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> & {
+    _highlightResult: {
+        name: { value: string }
+        description: { value: string }
+        ingredients: { value: string }
+    }
+}
+
+type Hits = Array<Hit>
+
+const getHighlightResult = (recipeHit: Hit) => {
+    const description = recipeHit._highlightResult.description.value
+    const ingridients = recipeHit._highlightResult.ingredients.value
+
+    const descriptionIndices = new Array<number>()
+    const ingredientsIndices = new Array<number>()
+    const displayResults = new Array<string>()
+    let startIndex = 0
+
+    while (startIndex > -1) {
+        if (startIndex >= description.length) {
+            break
+        }
+        startIndex =
+            description.indexOf('<em>', startIndex) > -1
+                ? description.indexOf('<em>', startIndex) + 4
+                : -1
+        if (startIndex > 3) {
+            descriptionIndices.push(startIndex - 4)
+        } else {
+            break
         }
     }
->
+    startIndex = 0
+    while (startIndex > -1) {
+        if (startIndex >= ingridients.length) {
+            break
+        }
+        startIndex =
+            ingridients.indexOf('<em>', startIndex) > -1
+                ? ingridients.indexOf('<em>', startIndex) + 4
+                : -1
+        if (startIndex > 3) {
+            ingredientsIndices.push(startIndex - 4)
+        } else {
+            break
+        }
+    }
+    displayResults.push('Zutaten:\n')
+    ingredientsIndices.forEach(index => {
+        const start = index - 20 > 0 ? index - 20 : 0
+        const end = index + 20 < ingridients.length - 1 ? index + 20 : ingridients.length - 1
+        displayResults.push('...' + ingridients.substr(start, end - start) + '...\n')
+    })
+
+    displayResults.push('Beschreibung:\n')
+    descriptionIndices.forEach(index => {
+        const start = index - 20 > 0 ? index - 20 : 0
+        const end = index + 20 < description.length - 1 ? index + 20 : description.length - 1
+        displayResults.push('...' + description.substr(start, end - start) + '...\n')
+    })
+
+    return displayResults
+
+    // ingridients.replace('<em>', '')
+    // description.replace('<em>', '')
+}
 
 export const HomeRecentlyAdded = () => {
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
@@ -128,16 +189,15 @@ export const HomeRecentlyAdded = () => {
                                             onClick={() =>
                                                 history.push(PATHS.details(recipeHit.name))
                                             }>
-                                            <CardHeader title={recipeHit.name} />
+                                            <CardHeader
+                                                title={recipeHit._highlightResult.name.value}
+                                            />
                                         </CardActionArea>
-                                        {/* <CardContent>
-                                        <ReactMarkdown
-                                            source={recipeHit._highlightResult.ingredients.value}
-                                        />
-                                        <ReactMarkdown
-                                            source={recipeHit._highlightResult.description.value}
-                                        />
-                                    </CardContent> */}
+                                        <CardContent>
+                                            {getHighlightResult(recipeHit).map(recipeFragment => (
+                                                <Typography>{recipeFragment}</Typography>
+                                            ))}
+                                        </CardContent>
                                     </Card>
                                 </Grid>
                             ))}
