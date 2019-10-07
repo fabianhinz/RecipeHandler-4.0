@@ -5,6 +5,7 @@ import {
     Drawer,
     Fab,
     Grid,
+    InputAdornment,
     InputBase,
     List,
     ListItem,
@@ -19,17 +20,20 @@ import Highlighter from 'react-highlight-words'
 import { index } from '../../../algolia'
 import { FirebaseService } from '../../../firebase'
 import useDebounce from '../../../hooks/useDebounce'
+import { ReactComponent as AlgoliaIcon } from '../../../icons/algolia.svg'
+import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { RecipeDocument } from '../../../model/model'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
+import { Loading } from '../../Shared/Loading'
 import { HomeRecentlyAddedCard } from './HomeRecentlyAddedCard'
 
 const useStyles = makeStyles(() =>
     createStyles({
-        highlight: {
-            color: 'black',
-            backgroundColor: 'orange',
+        list: {
+            maxHeight: '100%',
+            overflowY: 'auto',
         },
     })
 )
@@ -88,6 +92,7 @@ export const HomeRecentlyAdded = () => {
     const [searchDrawer, setSearchDrawer] = useState(false)
     const [searchValue, setSearchValue] = useState('')
     const [algoliaHits, setAlgoliaHits] = useState<Hits>([])
+    const [loading, setLoading] = useState(false)
     const { isMobile } = useBreakpointsContext()
 
     const classes = useStyles()
@@ -105,9 +110,13 @@ export const HomeRecentlyAdded = () => {
         const limit = isMobile ? 3 : 6
 
         if (debouncedSearchValue.length > 0) {
-            index.search(debouncedSearchValue).then(({ hits }) => setAlgoliaHits(hits))
+            index.search(debouncedSearchValue).then(({ hits }) => {
+                setAlgoliaHits(hits)
+                setLoading(false)
+            })
         } else {
             setAlgoliaHits([])
+            setLoading(false)
         }
 
         return query
@@ -150,14 +159,27 @@ export const HomeRecentlyAdded = () => {
                         fullWidth
                         placeholder="Rezepte durchsuchen"
                         value={searchValue}
-                        onChange={e => setSearchValue(e.target.value)}
+                        onChange={e => {
+                            setLoading(true)
+                            setSearchValue(e.target.value)
+                        }}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://www.algolia.com/docsearch">
+                                    <AlgoliaIcon />
+                                </a>
+                            </InputAdornment>
+                        }
                     />
                 </Box>
 
                 <Divider />
 
                 {algoliaHits.length > 0 && (
-                    <List>
+                    <List className={classes.list}>
                         {algoliaHits.map(recipeHit => (
                             <ListItem
                                 button
@@ -194,6 +216,14 @@ export const HomeRecentlyAdded = () => {
                             </ListItem>
                         ))}
                     </List>
+                )}
+
+                {loading && <Loading />}
+
+                {!loading && algoliaHits.length === 0 && searchValue.length > 0 && (
+                    <Box padding={2} display="flex" justifyContent="center">
+                        <NotFoundIcon width={150} />
+                    </Box>
                 )}
             </Drawer>
         </>
