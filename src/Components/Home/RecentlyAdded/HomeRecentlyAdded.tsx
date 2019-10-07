@@ -1,5 +1,6 @@
 import {
     Box,
+    CircularProgress,
     createStyles,
     Divider,
     Drawer,
@@ -26,7 +27,6 @@ import { RecipeDocument } from '../../../model/model'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
-import { Loading } from '../../Shared/Loading'
 import { HomeRecentlyAddedCard } from './HomeRecentlyAddedCard'
 
 const useStyles = makeStyles(() =>
@@ -150,10 +150,7 @@ export const HomeRecentlyAdded = () => {
             </Box>
 
             <Drawer open={searchDrawer} onClose={handleSearchDrawerChange} anchor="top">
-                <Box padding={2} display="flex" alignItems="center">
-                    <Box marginRight={1}>
-                        <SearchIcon />
-                    </Box>
+                <Box padding={2}>
                     <InputBase
                         autoFocus
                         fullWidth
@@ -163,6 +160,15 @@ export const HomeRecentlyAdded = () => {
                             setLoading(true)
                             setSearchValue(e.target.value)
                         }}
+                        startAdornment={
+                            <InputAdornment position="start">
+                                {loading ? (
+                                    <CircularProgress thickness={8} size={24} />
+                                ) : (
+                                    <SearchIcon />
+                                )}
+                            </InputAdornment>
+                        }
                         endAdornment={
                             <InputAdornment position="end">
                                 <a
@@ -217,8 +223,6 @@ export const HomeRecentlyAdded = () => {
                         ))}
                     </List>
                 )}
-
-                {loading && <Loading />}
 
                 {!loading && algoliaHits.length === 0 && searchValue.length > 0 && (
                     <Box padding={2} display="flex" justifyContent="center">
