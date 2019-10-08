@@ -12,7 +12,6 @@ import {
     ListItem,
     ListItemText,
     makeStyles,
-    Tooltip,
 } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/SearchTwoTone'
 import React, { useEffect, useState } from 'react'
@@ -134,13 +133,9 @@ export const HomeRecentlyAdded = () => {
         <>
             <Box marginBottom={2}>
                 <Box marginBottom={2} display="flex" justifyContent="space-evenly">
-                    <Tooltip title="Kürzlich hinzugefügte einschränken">
-                        <div>
-                            <Fab onClick={handleSearchDrawerChange} size="small" color="primary">
-                                <SearchIcon />
-                            </Fab>
-                        </div>
-                    </Tooltip>
+                    <Fab onClick={handleSearchDrawerChange} size="small" color="primary">
+                        <SearchIcon />
+                    </Fab>
                 </Box>
                 <Grid container spacing={2}>
                     {recipes.map(recipe => (

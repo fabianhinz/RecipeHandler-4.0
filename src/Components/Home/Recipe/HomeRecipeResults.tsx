@@ -5,7 +5,6 @@ import {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     Grid,
-    Hidden,
     makeStyles,
     Typography,
 } from '@material-ui/core'
@@ -43,22 +42,20 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                     spacing={2}
                     justify="space-between"
                     alignItems="center">
-                    <Grid item>
-                        <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12} sm={6}>
+                        <Grid container spacing={2} alignItems="center" wrap="nowrap">
                             <Grid item>
                                 <Avatar className={classes.avatar}>
                                     {props.recipe.name.slice(0, 1).toUpperCase()}
                                 </Avatar>
                             </Grid>
-                            <Hidden xsDown>
-                                <Grid item>
-                                    <Typography>{props.recipe.name}</Typography>
-                                </Grid>
-                            </Hidden>
+                            <Grid item zeroMinWidth>
+                                <Typography noWrap>{props.recipe.name}</Typography>
+                            </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item>
-                        <Grid container spacing={1}>
+                    <Grid item xs={12} sm={6}>
+                        <Grid container spacing={1} justify="flex-end">
                             <RecipeResultAction
                                 name={props.recipe.name}
                                 numberOfComments={props.recipe.numberOfComments}
