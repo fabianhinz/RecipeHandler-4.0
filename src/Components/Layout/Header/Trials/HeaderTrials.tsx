@@ -146,7 +146,7 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
                     </IconButton>
                     <Typography variant="h6">Versuchskaninchen</Typography>
                 </Toolbar>
-                {user && (
+                {user && !user.isAnonymous && (
                     <div className={classes.fabContainer} {...getRootProps()}>
                         <Fab color="secondary">
                             <input {...getInputProps()} />
