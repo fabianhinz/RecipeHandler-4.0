@@ -92,7 +92,7 @@ export const HomeRecentlyAdded = () => {
     const [searchValue, setSearchValue] = useState('')
     const [algoliaHits, setAlgoliaHits] = useState<Hits>([])
     const [loading, setLoading] = useState(false)
-    const { isMobile } = useBreakpointsContext()
+    const { isMobile, isHighRes } = useBreakpointsContext()
 
     const classes = useStyles()
 
@@ -106,7 +106,7 @@ export const HomeRecentlyAdded = () => {
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
-        const limit = isMobile ? 3 : 6
+        const limit = isMobile ? 3 : isHighRes ? 12 : 6
 
         if (debouncedSearchValue.length > 0) {
             index.search(debouncedSearchValue).then(({ hits }) => {
@@ -127,7 +127,7 @@ export const HomeRecentlyAdded = () => {
                 },
                 error => console.error(error)
             )
-    }, [debouncedSearchValue, isMobile])
+    }, [debouncedSearchValue, isHighRes, isMobile])
 
     return (
         <>
