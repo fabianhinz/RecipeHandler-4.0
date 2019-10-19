@@ -1,5 +1,5 @@
 import { useSnackbar } from 'notistack'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { FirebaseService } from '../firebase'
 import { AttachementData, AttachementMetadata } from '../model/model'
