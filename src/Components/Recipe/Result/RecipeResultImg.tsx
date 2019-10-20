@@ -1,4 +1,4 @@
-import { createStyles, Grid, makeStyles, Tooltip } from '@material-ui/core'
+import { Card, CardMedia, createStyles, Grid, makeStyles, Tooltip } from '@material-ui/core'
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import Skeleton from '@material-ui/lab/Skeleton'
@@ -7,19 +7,13 @@ import React, { FC } from 'react'
 import { useAttachementRef } from '../../../hooks/useAttachementRef'
 import { AttachementData, AttachementMetadata } from '../../../model/model'
 import { isData } from '../../../model/modelUtil'
-import { BORDER_RADIUS } from '../../../theme'
 import { RecipeActions } from './Action/RecipeResultAction'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        img: {
-            borderRadius: BORDER_RADIUS,
-            width: '100%',
-        },
-        progress: {
-            flexGrow: 1,
-            borderRadius: 16,
-            height: theme.spacing(1),
+        cardMedia: {
+            height: 0,
+            paddingTop: '56.25%', // 16:9,
         },
     })
 )
@@ -39,15 +33,23 @@ export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement, actionP
     return (
         <Grid {...breakpoints} item>
             <Tooltip title={attachement.name}>
-                {attachementRefLoading ? (
-                    <Skeleton className={classes.img} variant="rect" height={200} />
-                ) : isData(attachement) ? (
-                    <img className={classes.img} src={attachement.dataUrl} alt="" width="100%" />
-                ) : (
-                    <a href={attachementRef.fullDataUrl} rel="noreferrer noopener" target="_blank">
-                        <img className={classes.img} src={attachementRef.mediumDataUrl} alt="" />
-                    </a>
-                )}
+                <Card elevation={0}>
+                    {attachementRefLoading ? (
+                        <Skeleton className={classes.cardMedia} variant="rect" />
+                    ) : isData(attachement) ? (
+                        <CardMedia className={classes.cardMedia} image={attachement.dataUrl} />
+                    ) : (
+                        <a
+                            href={attachementRef.fullDataUrl}
+                            rel="noreferrer noopener"
+                            target="_blank">
+                            <CardMedia
+                                className={classes.cardMedia}
+                                image={attachementRef.mediumDataUrl}
+                            />
+                        </a>
+                    )}
+                </Card>
             </Tooltip>
         </Grid>
     )
