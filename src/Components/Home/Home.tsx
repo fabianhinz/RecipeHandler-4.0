@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FirebaseService } from '../../firebase'
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import { RecipeDocument } from '../../model/model'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { HomeCategory } from './HomeCategory'
 import { HomeRecentlyAdded } from './RecentlyAdded/HomeRecentlyAdded'
 import { HomeRecipe } from './Recipe/HomeRecipe'
@@ -15,6 +16,7 @@ const Home = () => {
     const [lastRecipeName, setLastRecipeName] = useState('')
     const [pagination, setPagination] = useState(false)
 
+    const { isHighRes } = useBreakpointsContext()
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
 
     const handleCategoryChange = (type: string, value: string) => {
@@ -28,13 +30,15 @@ const Home = () => {
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
+        let limit = isHighRes ? 8 : 4
+
         if (selectedCategories.size === 0) {
             setPagination(true)
 
             return query
                 .orderBy('name', 'asc')
                 .startAfter(lastRecipeName)
-                .limit(4)
+                .limit(limit)
                 .onSnapshot(querySnapshot => {
                     const changes: ChangesRecord = {
                         added: new Map(),
@@ -66,7 +70,7 @@ const Home = () => {
                 error => console.error(error)
             )
         }
-    }, [lastRecipeName, selectedCategories, selectedCategories.size])
+    }, [isHighRes, lastRecipeName, selectedCategories, selectedCategories.size])
 
     return (
         <>
