@@ -7,11 +7,14 @@ import {
     Paper,
     Typography,
 } from '@material-ui/core'
+import { GridSize } from '@material-ui/core/Grid'
+import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC } from 'react'
 
 import { useAttachementRef } from '../../../hooks/useAttachementRef'
 import { AttachementMetadata, Recipe } from '../../../model/model'
+import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 
@@ -33,11 +36,16 @@ export const HomeRecentlyAddedCard: FC<{
     skeleton: boolean
 }> = ({ recipe, skeleton }) => {
     const { attachementRef, attachementRefLoading } = useAttachementRef(recipe.attachements[0])
+    const { isHighRes } = useBreakpointsContext()
     const { history } = useRouterContext()
     const classes = useStyles()
 
+    const gridProps: Partial<Record<Breakpoint, boolean | GridSize>> = isHighRes
+        ? { xs: 12, sm: 6, lg: 4, xl: 3 }
+        : { xs: 12, sm: 6, lg: 4 }
+
     return (
-        <Grid xs={12} sm={6} lg={4} item>
+        <Grid {...gridProps} item>
             <CardActionArea onClick={() => history.push(PATHS.details(recipe.name), { recipe })}>
                 <Paper className={classes.paper}>
                     <Grid container wrap="nowrap" spacing={2} alignItems="center">

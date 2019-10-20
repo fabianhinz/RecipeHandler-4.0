@@ -1,4 +1,3 @@
-import { Container } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 import { SnackbarProvider } from 'notistack'
@@ -14,6 +13,7 @@ import { CategoriesCollectionProvider } from './Provider/CategoriesCollectionPro
 import { DraggableRecipesProvider } from './Provider/DraggableRecipesProvider'
 import { FirebaseAuthProvider } from './Provider/FirebaseAuthProvider'
 import { RouterProvider } from './Provider/RouterProvider'
+import { Container } from './Shared/Container'
 
 // ? Wrapper component for all Provider under "./Provider"
 const RecipesProvider: FC = ({ children }) => (
@@ -56,7 +56,7 @@ const App: FC = () => {
                             horizontal: 'left',
                         }}>
                         <RecipesProvider>
-                            <Container maxWidth="lg">
+                            <Container>
                                 <Header onThemeChange={handleThemeChange} />
                                 <Main />
                             </Container>

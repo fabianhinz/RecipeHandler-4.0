@@ -31,9 +31,13 @@ const getResizedImages = async (fullPath: string) => {
     const { smallPath, mediumPath } = getRefPaths(fullPath)
     const urls: Omit<State, 'base'> = { ...initialDataUrls }
 
-    urls.fullDataUrl = await FirebaseService.storage.ref(fullPath).getDownloadURL()
-    urls.mediumDataUrl = await FirebaseService.storage.ref(mediumPath).getDownloadURL()
-    urls.smallDataUrl = await FirebaseService.storage.ref(smallPath).getDownloadURL()
+    try {
+        urls.fullDataUrl = await FirebaseService.storage.ref(fullPath).getDownloadURL()
+        urls.mediumDataUrl = await FirebaseService.storage.ref(mediumPath).getDownloadURL()
+        urls.smallDataUrl = await FirebaseService.storage.ref(smallPath).getDownloadURL()
+    } catch (e) {
+        // ? happens after creating an attachement. catch it and move on....
+    }
 
     return urls
 }
@@ -51,12 +55,18 @@ export const useAttachementRef = (attachement: AttachementMetadata | Attachement
     const { enqueueSnackbar } = useSnackbar()
 
     useEffect(() => {
+        let mounted = true
         if (!isMetadata(attachement)) return setAttachementRefLoading(false)
 
         getResizedImages(attachement.fullPath).then(urls => {
+            if (!mounted) return
             setAttachementRef(previous => ({ ...previous, ...urls }))
             setAttachementRefLoading(false)
         })
+
+        return () => {
+            mounted = false
+        }
     }, [attachement, enqueueSnackbar])
 
     return { attachementRef, attachementRefLoading }
