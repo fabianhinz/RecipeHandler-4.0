@@ -65,7 +65,7 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({
                 </IconButton>
             </Tooltip>
 
-            {user && (
+            {user && !user.isAnonymous && (
                 <Navigate to={PATHS.recipeCreate}>
                     <Tooltip
                         TransitionComponent={Zoom}
