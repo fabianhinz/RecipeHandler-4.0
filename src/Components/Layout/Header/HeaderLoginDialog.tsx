@@ -48,7 +48,7 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
             maxWidth="xs"
             open={props.dialogOpen}
             onClose={handleDialogChange}>
-            {user ? (
+            {user && !user.isAnonymous ? (
                 <>
                     <DialogContent>
                         <Typography variant="subtitle1">
