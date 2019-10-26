@@ -177,6 +177,9 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             size="small">
                             <AddIcon />
                         </IconButton>
+                        <Box marginLeft={0.5} marginRight={0.5} width={25} textAlign="center">
+                            <Typography variant="h6">Person/en</Typography>
+                        </Box>
                     </Box>
                 </Subtitle>
                 <TextField

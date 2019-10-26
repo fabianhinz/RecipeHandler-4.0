@@ -72,7 +72,10 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
             </Grid>
 
             <Grid {...breakpoints({ ingredient: true })} item>
-                <Subtitle icon={<AssignmentIcon />} text={`Zutaten für ${recipe.amount}`} />
+                <Subtitle
+                    icon={<AssignmentIcon />}
+                    text={`Zutaten für ${recipe.amount} Person/en`}
+                />
                 <ReactMarkdown source={recipe.ingredients} />
             </Grid>
 
