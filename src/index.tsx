@@ -2,12 +2,18 @@ import 'typeface-roboto'
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
 import React from 'react'
+import { CookiesProvider } from 'react-cookie'
 import ReactDOM from 'react-dom'
 
 import App from './Components/App'
 import * as serviceWorker from './serviceWorker'
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(
+    <CookiesProvider>
+        <App />
+    </CookiesProvider>,
+    document.getElementById('root')
+)
 
 // ? source: https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications#notifications_api
 if ('Notification' in window && navigator.serviceWorker) {

@@ -99,7 +99,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
             </Grid>
 
             <Grid item xs={12}>
-                {user && !actionProps.draggEnabled && (
+                {user && !user.isAnonymous && !actionProps.draggEnabled && (
                     <Box textAlign="right">
                         <Button
                             color="primary"
