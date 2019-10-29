@@ -4,7 +4,7 @@ import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
-import React, { FC, memo } from 'react'
+import React, { memo } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 import { FirebaseService } from '../../../firebase'
@@ -23,7 +23,7 @@ interface RecipeResultProps extends RecipeActions {
     recipe: Recipe<AttachementMetadata | AttachementData> | null
 }
 
-const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
+const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
     const { history } = useRouterContext()
     const { user } = useFirebaseAuthContext()
 
@@ -39,7 +39,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
     const breakpoints = (options: {
         ingredient: boolean
     }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        actionProps.draggEnabled ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
+        actionProps.dragEnabled ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
 
     return (
         <Grid container spacing={2}>
@@ -50,7 +50,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
                     </Grid>
                     <RecipeResultAction
                         name={recipe.name}
-                        actionProps={actionProps}
+                        {...actionProps}
                         numberOfComments={recipe.numberOfComments}
                     />
                 </Grid>
@@ -63,7 +63,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
                 <Grid container spacing={2}>
                     {recipe.attachements.map(attachement => (
                         <RecipeResultImg
-                            actionProps={actionProps}
+                            {...actionProps}
                             key={attachement.name}
                             attachement={attachement}
                         />
@@ -99,7 +99,7 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
             </Grid>
 
             <Grid item xs={12}>
-                {user && !user.isAnonymous && !actionProps.draggEnabled && (
+                {user && !user.isAnonymous && actionProps.editEnabled && (
                     <Box textAlign="right">
                         <Button
                             color="primary"
@@ -116,5 +116,9 @@ const RecipeResult: FC<RecipeResultProps> = ({ recipe, actionProps }) => {
 
 export default memo(
     RecipeResult,
-    (prev, next) => prev.recipe === next.recipe && prev.actionProps === next.actionProps
+    (prev, next) =>
+        prev.recipe === next.recipe &&
+        prev.actionsEnabled === next.actionsEnabled &&
+        prev.dragEnabled === next.dragEnabled &&
+        prev.editEnabled === next.editEnabled
 )

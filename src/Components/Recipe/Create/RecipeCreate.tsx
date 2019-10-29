@@ -259,7 +259,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     <Divider />
                     <CardContent>
                         <RecipeResult
-                            actionProps={{ actionsEnabled: false, draggEnabled: false }}
                             recipe={{
                                 name: state.name,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),

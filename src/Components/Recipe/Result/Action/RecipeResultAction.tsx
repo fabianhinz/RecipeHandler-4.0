@@ -1,12 +1,17 @@
 import { Grid } from '@material-ui/core'
 import React, { FC } from 'react'
 
+import { useBreakpointsContext } from '../../../Provider/BreakpointsProvider'
 import { Comments } from '../../../Shared/Comments/Comments'
 import { RecipeResultPin } from './RecipeResultPin'
 import { RecipeResultRating } from './RecipeResultRating'
 import { RecipeResultShare } from './RecipeResultShare'
 
-export type RecipeActions = { actionProps: { draggEnabled: boolean; actionsEnabled: boolean } }
+export type RecipeActions = {
+    dragEnabled?: boolean
+    actionsEnabled?: boolean
+    editEnabled?: boolean
+}
 
 interface RecipeResultActionProps extends RecipeActions {
     name: string
@@ -20,16 +25,20 @@ const stopPropagation = (
 export const RecipeResultAction: FC<RecipeResultActionProps> = ({
     name,
     numberOfComments,
-    actionProps,
+    actionsEnabled,
 }) => {
+    const { isMobile } = useBreakpointsContext()
+
     return (
         <>
-            {actionProps.actionsEnabled && (
+            {actionsEnabled && (
                 <Grid item onClick={stopPropagation} onFocus={stopPropagation}>
                     <Grid container>
-                        <Grid item>
-                            <RecipeResultPin name={name} />
-                        </Grid>
+                        {!isMobile && (
+                            <Grid item>
+                                <RecipeResultPin name={name} />
+                            </Grid>
+                        )}
                         <Grid item>
                             <RecipeResultShare name={name} />
                         </Grid>
