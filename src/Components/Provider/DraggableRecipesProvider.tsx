@@ -64,18 +64,7 @@ const useStyles = makeStyles(theme =>
 
 const SelectedRecipe: FC<{ recipeName: string | null }> = ({ recipeName }) => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ recipeName })
-    return (
-        <>
-            {recipeDocLoading ? (
-                <Loading />
-            ) : (
-                <RecipeResult
-                    actionProps={{ actionsEnabled: false, draggEnabled: true }}
-                    recipe={recipeDoc}
-                />
-            )}
-        </>
-    )
+    return <>{recipeDocLoading ? <Loading /> : <RecipeResult dragEnabled recipe={recipeDoc} />}</>
 }
 
 export const DraggableRecipesProvider: FC = ({ children }) => {

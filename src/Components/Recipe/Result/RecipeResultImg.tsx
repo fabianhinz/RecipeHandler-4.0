@@ -2,7 +2,7 @@ import { Card, CardMedia, createStyles, Grid, makeStyles, Tooltip } from '@mater
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import Skeleton from '@material-ui/lab/Skeleton'
-import React, { FC } from 'react'
+import React from 'react'
 
 import { useAttachementRef } from '../../../hooks/useAttachementRef'
 import { AttachementData, AttachementMetadata } from '../../../model/model'
@@ -22,11 +22,11 @@ interface RecipeResultImgProps extends RecipeActions {
     attachement: AttachementData | AttachementMetadata
 }
 
-export const RecipeResultImg: FC<RecipeResultImgProps> = ({ attachement, actionProps }) => {
+export const RecipeResultImg = ({ attachement, ...actionProps }: RecipeResultImgProps) => {
     const classes = useStyles()
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement)
 
-    const breakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = actionProps.draggEnabled
+    const breakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = actionProps.dragEnabled
         ? { xs: 12 }
         : { xs: 12, sm: 6, md: 4, lg: 3 }
 

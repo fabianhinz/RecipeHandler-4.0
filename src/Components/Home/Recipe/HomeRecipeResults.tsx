@@ -9,7 +9,7 @@ import {
     Typography,
 } from '@material-ui/core'
 import brown from '@material-ui/core/colors/brown'
-import React, { FC, memo } from 'react'
+import React, { memo } from 'react'
 
 import { AttachementMetadata, Recipe } from '../../../model/model'
 import { RecipeResultAction } from '../../Recipe/Result/Action/RecipeResultAction'
@@ -30,7 +30,7 @@ interface HomeRecipeResultsProps {
     recipe: Recipe<AttachementMetadata>
 }
 
-const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
+const HomeRecipeResults = ({ recipe }: HomeRecipeResultsProps) => {
     const classes = useStyles()
 
     return (
@@ -46,30 +46,27 @@ const HomeRecipeResults: FC<HomeRecipeResultsProps> = props => {
                         <Grid container spacing={2} alignItems="center" wrap="nowrap">
                             <Grid item>
                                 <Avatar className={classes.avatar}>
-                                    {props.recipe.name.slice(0, 1).toUpperCase()}
+                                    {recipe.name.slice(0, 1).toUpperCase()}
                                 </Avatar>
                             </Grid>
                             <Grid item zeroMinWidth>
-                                <Typography noWrap>{props.recipe.name}</Typography>
+                                <Typography noWrap>{recipe.name}</Typography>
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Grid container spacing={1} justify="flex-end">
                             <RecipeResultAction
-                                name={props.recipe.name}
-                                numberOfComments={props.recipe.numberOfComments}
-                                actionProps={{ actionsEnabled: true, draggEnabled: false }}
+                                name={recipe.name}
+                                numberOfComments={recipe.numberOfComments}
+                                actionsEnabled
                             />
                         </Grid>
                     </Grid>
                 </Grid>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <RecipeResult
-                    actionProps={{ actionsEnabled: false, draggEnabled: false }}
-                    recipe={props.recipe}
-                />
+                <RecipeResult editEnabled recipe={recipe} />
             </ExpansionPanelDetails>
         </ExpansionPanel>
     )
