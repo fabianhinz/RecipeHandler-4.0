@@ -8,7 +8,7 @@ import { RecipeResultRating } from './RecipeResultRating'
 import { RecipeResultShare } from './RecipeResultShare'
 
 export type RecipeActions = {
-    dragEnabled?: boolean
+    pinned?: boolean
     actionsEnabled?: boolean
     editEnabled?: boolean
 }
@@ -27,7 +27,7 @@ export const RecipeResultAction: FC<RecipeResultActionProps> = ({
     numberOfComments,
     actionsEnabled,
 }) => {
-    const { isMobile } = useBreakpointsContext()
+    const { isLowRes: isMobile } = useBreakpointsContext()
 
     return (
         <>

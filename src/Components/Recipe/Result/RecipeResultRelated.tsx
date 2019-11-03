@@ -5,7 +5,7 @@ import React, { FC } from 'react'
 
 import { CategoryBase } from '../../Category/CategoryBase'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
-import { useDraggableRecipesContext } from '../../Provider/DraggableRecipesProvider'
+import { usePinnedRecipesContext } from '../../Provider/PinnedRecipesProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 
@@ -18,15 +18,15 @@ const useStyles = makeStyles(theme =>
 )
 
 export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => {
-    const { handleDraggableChange, draggableContains } = useDraggableRecipesContext()
-    const { isMobile } = useBreakpointsContext()
+    const { handlePinnedChange, pinnedContains } = usePinnedRecipesContext()
+    const { isLowRes: isMobile } = useBreakpointsContext()
     const { history } = useRouterContext()
 
     const classes = useStyles()
 
     const handleRecipeClick = (recipeName: string) => () => {
         if (isMobile) history.push(PATHS.details(recipeName))
-        else handleDraggableChange(recipeName)
+        else handlePinnedChange(recipeName)
     }
 
     return (
@@ -36,9 +36,7 @@ export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ rel
                     <Grid key={recipeName} item>
                         <CategoryBase onClick={handleRecipeClick(recipeName)}>
                             <Chip
-                                className={clsx(
-                                    draggableContains(recipeName) && classes.selectedChip
-                                )}
+                                className={clsx(pinnedContains(recipeName) && classes.selectedChip)}
                                 icon={<LinkIcon />}
                                 label={recipeName}
                             />

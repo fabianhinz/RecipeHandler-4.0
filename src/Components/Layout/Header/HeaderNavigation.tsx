@@ -4,7 +4,6 @@ import AddIcon from '@material-ui/icons/AddCircleOutline'
 import HomeIcon from '@material-ui/icons/HomeOutlined'
 import BrightnessIcon from '@material-ui/icons/SettingsBrightnessOutlined'
 import { createStyles, makeStyles } from '@material-ui/styles'
-import clsx from 'clsx'
 import { LightbulbOutline } from 'mdi-material-ui'
 import React, { FC } from 'react'
 
@@ -14,7 +13,6 @@ import { PATHS } from '../../Routes/Routes'
 import { HeaderDispatch } from './HeaderReducer'
 
 interface HeaderNavigationProps extends HeaderDispatch {
-    drawerRight: boolean
     onThemeChange: () => void
 }
 
@@ -27,39 +25,30 @@ const useStyles = makeStyles(theme =>
             alignItems: 'center',
             justifyContent: 'center',
         },
-        drawerRight: {
-            flexDirection: 'column',
-        },
     })
 )
 
-export const HeaderNavigation: FC<HeaderNavigationProps> = ({
-    onThemeChange,
-    dispatch,
-    drawerRight,
-}) => {
+export const HeaderNavigation: FC<HeaderNavigationProps> = ({ onThemeChange, dispatch }) => {
     const { user } = useFirebaseAuthContext()
     const classes = useStyles()
 
-    const placement = drawerRight ? 'left' : 'top'
-
     return (
-        <div className={clsx(classes.container, drawerRight && classes.drawerRight)}>
+        <div className={classes.container}>
             <Navigate to={PATHS.home}>
-                <Tooltip TransitionComponent={Zoom} title="Startseite" placement={placement}>
+                <Tooltip TransitionComponent={Zoom} title="Startseite">
                     <IconButton>
                         <HomeIcon />
                     </IconButton>
                 </Tooltip>
             </Navigate>
 
-            <Tooltip TransitionComponent={Zoom} title="Theme wechseln" placement={placement}>
+            <Tooltip TransitionComponent={Zoom} title="Theme wechseln">
                 <IconButton onClick={onThemeChange}>
                     <BrightnessIcon />
                 </IconButton>
             </Tooltip>
 
-            <Tooltip TransitionComponent={Zoom} title="Versuchskaninchen" placement={placement}>
+            <Tooltip TransitionComponent={Zoom} title="Versuchskaninchen">
                 <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
                     <LightbulbOutline />
                 </IconButton>
@@ -67,10 +56,7 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({
 
             {user && !user.isAnonymous && (
                 <Navigate to={PATHS.recipeCreate}>
-                    <Tooltip
-                        TransitionComponent={Zoom}
-                        title="Rezept anlegen"
-                        placement={placement}>
+                    <Tooltip TransitionComponent={Zoom} title="Rezept anlegen">
                         <IconButton>
                             <AddIcon />
                         </IconButton>
@@ -78,7 +64,7 @@ export const HeaderNavigation: FC<HeaderNavigationProps> = ({
                 </Navigate>
             )}
 
-            <Tooltip TransitionComponent={Zoom} title="Einloggen" placement={placement}>
+            <Tooltip TransitionComponent={Zoom} title="Einloggen">
                 <IconButton onClick={() => dispatch({ type: 'dialogChange' })}>
                     <AccountIcon />
                 </IconButton>

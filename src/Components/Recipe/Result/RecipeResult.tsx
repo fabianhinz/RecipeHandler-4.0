@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Slide, Typography } from '@material-ui/core'
+import { Box, Button, createStyles, Grid, makeStyles, Slide, Typography } from '@material-ui/core'
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
@@ -23,9 +23,19 @@ interface RecipeResultProps extends RecipeActions {
     recipe: Recipe<AttachementMetadata | AttachementData> | null
 }
 
+const useStyles = makeStyles(() =>
+    createStyles({
+        recipeContainer: {
+            overflowX: 'hidden',
+        },
+    })
+)
+
 const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
     const { history } = useRouterContext()
     const { user } = useFirebaseAuthContext()
+
+    const classes = useStyles()
 
     if (!recipe)
         return (
@@ -39,10 +49,10 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
     const breakpoints = (options: {
         ingredient: boolean
     }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        actionProps.dragEnabled ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
+        actionProps.pinned ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} className={classes.recipeContainer}>
             <Grid item xs={12}>
                 <Grid container justify="space-between" alignItems="center">
                     <Grid item>
@@ -119,6 +129,6 @@ export default memo(
     (prev, next) =>
         prev.recipe === next.recipe &&
         prev.actionsEnabled === next.actionsEnabled &&
-        prev.dragEnabled === next.dragEnabled &&
+        prev.pinned === next.pinned &&
         prev.editEnabled === next.editEnabled
 )

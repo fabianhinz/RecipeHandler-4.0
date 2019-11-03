@@ -92,7 +92,7 @@ export const HomeRecentlyAdded = () => {
     const [searchValue, setSearchValue] = useState('')
     const [algoliaHits, setAlgoliaHits] = useState<Hits>([])
     const [loading, setLoading] = useState(false)
-    const { isMobile, isHighRes } = useBreakpointsContext()
+    const { isLowRes: isMobile, isHighRes } = useBreakpointsContext()
 
     const classes = useStyles()
 

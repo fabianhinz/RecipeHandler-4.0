@@ -26,7 +26,7 @@ export const RecipeResultImg = ({ attachement, ...actionProps }: RecipeResultImg
     const classes = useStyles()
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement)
 
-    const breakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = actionProps.dragEnabled
+    const breakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = actionProps.pinned
         ? { xs: 12 }
         : { xs: 12, sm: 6, md: 4, lg: 3 }
 

@@ -1,17 +1,14 @@
 import {
-    AppBar,
     Box,
     createStyles,
     Dialog,
+    DialogContent,
+    DialogTitle,
     Fab,
     Grid,
-    IconButton,
     makeStyles,
-    Toolbar,
-    Typography,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import CloseIcon from '@material-ui/icons/Close'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
@@ -24,6 +21,7 @@ import { Trial } from '../../../../model/model'
 import { useBreakpointsContext } from '../../../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../../../Recipe/Create/Attachements/RecipeCreateAttachements'
+import { Loading } from '../../../Shared/Loading'
 import { SlideUp } from '../../../Shared/Transitions'
 import { HeaderDispatch, HeaderState } from '../HeaderReducer'
 import { HeaderTrialsCard } from './HeaderTrialsCard'
@@ -39,8 +37,11 @@ const useStyles = makeStyles(theme =>
         fabContainer: {
             outline: 'none',
             position: 'absolute',
-            bottom: -25,
+            bottom: theme.spacing(3),
             right: theme.spacing(3),
+        },
+        dialogTitle: {
+            textAlign: 'center',
         },
     })
 )
@@ -49,7 +50,7 @@ type HeaderTrialsProps = HeaderState<'trialsOpen'> & HeaderDispatch
 
 export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) => {
     const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
-    const [, setActiveTrial] = useState(0)
+    const [loading, setLoading] = useState(false)
     const classes = useStyles()
 
     const { isDialogFullscreen } = useBreakpointsContext()
@@ -58,12 +59,15 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
 
     useEffect(() => {
         if (!trialsOpen) return
+
+        setLoading(true)
         return FirebaseService.firestore
             .collection('trials')
             .orderBy('createdDate', 'desc')
-            .onSnapshot(querySnapshot =>
+            .onSnapshot(querySnapshot => {
                 setTrials(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as Trial])))
-            )
+                setLoading(false)
+            })
     }, [trialsOpen])
 
     const onDrop = useCallback(
@@ -125,10 +129,6 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
         noDrag: true,
     })
 
-    const handleTrialDeleted = (index: number) => () => {
-        if (index === trials.size - 1 && index > 0) setActiveTrial(prev => --prev)
-    }
-
     return (
         <Dialog
             open={trialsOpen}
@@ -139,42 +139,38 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
             fullScreen={isDialogFullscreen}
             TransitionComponent={SlideUp}
             PaperProps={{ className: classes.dialogPaper }}>
-            <AppBar color="default" position="sticky">
-                <Toolbar>
-                    <IconButton edge="start" onClick={() => dispatch({ type: 'trialsChange' })}>
-                        <CloseIcon />
-                    </IconButton>
-                    <Typography variant="h6">Versuchskaninchen</Typography>
-                </Toolbar>
+            <DialogTitle className={classes.dialogTitle}>Versuchskaninchen</DialogTitle>
+
+            <DialogContent dividers>
+                {loading ? (
+                    <Loading />
+                ) : trials.size === 0 ? (
+                    <Box display="flex" justifyContent="center" padding={4}>
+                        <TrialIcon width={200} />
+                    </Box>
+                ) : (
+                    <Box padding={2}>
+                        <Grid container spacing={4}>
+                            {[...trials.values()].map(trial => (
+                                <HeaderTrialsCard
+                                    trial={trial}
+                                    dispatch={dispatch}
+                                    key={trial.name}
+                                />
+                            ))}
+                        </Grid>
+                    </Box>
+                )}
+
                 {user && !user.isAnonymous && (
                     <div className={classes.fabContainer} {...getRootProps()}>
-                        <Fab color="secondary">
+                        <Fab color="primary">
                             <input {...getInputProps()} />
                             <AddIcon />
                         </Fab>
                     </div>
                 )}
-            </AppBar>
-            {trials.size > 0 && (
-                <Box padding={4}>
-                    <Grid container spacing={4}>
-                        {[...trials.values()].map((trial, index) => (
-                            <HeaderTrialsCard
-                                trial={trial}
-                                onTrialDeleted={handleTrialDeleted(index)}
-                                dispatch={dispatch}
-                                key={trial.name}
-                            />
-                        ))}
-                    </Grid>
-                </Box>
-            )}
-
-            {trials.size === 0 && (
-                <Box display="flex" justifyContent="center" padding={4}>
-                    <TrialIcon width={200} />
-                </Box>
-            )}
+            </DialogContent>
         </Dialog>
     )
 }
