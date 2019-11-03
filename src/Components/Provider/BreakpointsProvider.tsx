@@ -3,9 +3,9 @@ import React, { FC, useContext } from 'react'
 
 type Breakpoints = {
     isDrawerBottom: boolean
-    isDraggableRecipes: boolean
+    isPinnable: boolean
     isDialogFullscreen: boolean
-    isMobile: boolean
+    isLowRes: boolean
     isHighRes: boolean
 }
 
@@ -15,14 +15,14 @@ export const useBreakpointsContext = () => useContext(Context) as Breakpoints
 
 export const BreakpointsProvider: FC = ({ children }) => {
     const isDrawerBottom = useMediaQuery('(max-width: 1400px)')
-    const isDraggableRecipes = useMediaQuery('(min-width: 768px)')
+    const isPinnable = useMediaQuery('(min-width: 768px)')
     const isDialogFullscreen = useMediaQuery('(max-width: 768px)')
-    const isMobile = useMediaQuery('(max-width: 599px)')
+    const isLowRes = useMediaQuery('(max-width: 599px)')
     const isHighRes = useMediaQuery('(min-width: 2560px)')
 
     return (
         <Context.Provider
-            value={{ isDrawerBottom, isDraggableRecipes, isDialogFullscreen, isMobile, isHighRes }}>
+            value={{ isDrawerBottom, isPinnable, isDialogFullscreen, isLowRes, isHighRes }}>
             {children}
         </Context.Provider>
     )

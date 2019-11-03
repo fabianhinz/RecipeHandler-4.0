@@ -11,8 +11,8 @@ import { Header } from './Layout/Header/Header'
 import { Main } from './Layout/Main'
 import { BreakpointsProvider } from './Provider/BreakpointsProvider'
 import { CategoriesCollectionProvider } from './Provider/CategoriesCollectionProvider'
-import { DraggableRecipesProvider } from './Provider/DraggableRecipesProvider'
 import { FirebaseAuthProvider } from './Provider/FirebaseAuthProvider'
+import { PinnedRecipesProvider } from './Provider/PinnedRecipesProvider'
 import { RouterProvider } from './Provider/RouterProvider'
 import { Container } from './Shared/Container'
 
@@ -22,7 +22,7 @@ const RecipesProvider: FC = ({ children }) => (
         <BreakpointsProvider>
             <FirebaseAuthProvider>
                 <CategoriesCollectionProvider>
-                    <DraggableRecipesProvider>{children}</DraggableRecipesProvider>
+                    <PinnedRecipesProvider>{children}</PinnedRecipesProvider>
                 </CategoriesCollectionProvider>
             </FirebaseAuthProvider>
         </BreakpointsProvider>

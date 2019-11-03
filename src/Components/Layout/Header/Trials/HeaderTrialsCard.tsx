@@ -21,10 +21,9 @@ const useStyles = makeStyles(theme =>
 
 interface HeaderTrialsCardProps extends HeaderDispatch {
     trial: Trial
-    onTrialDeleted: () => void
 }
 
-export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial, onTrialDeleted }) => {
+export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
     const [fullDataUrl, setFullDataUrl] = useState<string | null>()
     const classes = useStyles()
 
@@ -38,8 +37,6 @@ export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial, onTrialDele
     }, [trial.fullPath])
 
     const handleDeleteBtnClick = async () => {
-        onTrialDeleted()
-
         // ! this does not delete the comments collection --> should use https://firebase.google.com/docs/firestore/solutions/delete-collections
         const { smallPath, mediumPath } = getRefPaths(trial.fullPath)
         await FirebaseService.firestore
