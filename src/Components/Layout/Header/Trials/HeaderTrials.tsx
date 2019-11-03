@@ -2,13 +2,16 @@ import {
     Box,
     createStyles,
     Dialog,
+    DialogActions,
     DialogContent,
     DialogTitle,
     Fab,
     Grid,
+    IconButton,
     makeStyles,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
+import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
@@ -37,8 +40,8 @@ const useStyles = makeStyles(theme =>
         fabContainer: {
             outline: 'none',
             position: 'absolute',
-            bottom: theme.spacing(3),
             right: theme.spacing(3),
+            bottom: theme.spacing(5),
         },
         dialogTitle: {
             textAlign: 'center',
@@ -149,8 +152,8 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
                         <TrialIcon width={200} />
                     </Box>
                 ) : (
-                    <Box padding={2}>
-                        <Grid container spacing={4}>
+                    <Box paddingTop={1} paddingBottom={1}>
+                        <Grid container spacing={3}>
                             {[...trials.values()].map(trial => (
                                 <HeaderTrialsCard
                                     trial={trial}
@@ -171,6 +174,13 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
                     </div>
                 )}
             </DialogContent>
+            <DialogActions>
+                <Box flexGrow={1} display="flex" justifyContent="space-evenly" alignItems="center">
+                    <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+            </DialogActions>
         </Dialog>
     )
 }

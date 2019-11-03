@@ -25,6 +25,7 @@ export const Comments: FC<CommentsDocument & CommentsCollections> = ({
 
             <CommentsDrawer
                 collection={collection}
+                numberOfComments={numberOfComments}
                 name={name}
                 open={drawer}
                 onClose={handleDrawerChange}

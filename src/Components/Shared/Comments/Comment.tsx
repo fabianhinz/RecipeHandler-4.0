@@ -5,6 +5,7 @@ import React, { FC } from 'react'
 
 import { FirebaseService } from '../../../firebase'
 import { Comment as CommentModel, CommentsCollections, RecipeDocument } from '../../../model/model'
+import { BORDER_RADIUS_HUGE } from '../../../theme'
 import { BadgeWrapper } from '../BadgeWrapper'
 
 const useStyles = makeStyles(theme =>
@@ -14,7 +15,7 @@ const useStyles = makeStyles(theme =>
             background: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,
             padding: theme.spacing(1),
-            borderRadius: 16,
+            borderRadius: BORDER_RADIUS_HUGE,
             marginBottom: theme.spacing(0.5),
         },
     })

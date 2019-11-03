@@ -69,6 +69,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                 if (activeIndex > 0) setActiveIndex(prev => --prev)
                 previous.delete(recipeName)
             } else {
+                if (previous.size !== 0) setActiveIndex(prev => ++prev)
                 previous.add(recipeName)
             }
             return new Set(previous)
