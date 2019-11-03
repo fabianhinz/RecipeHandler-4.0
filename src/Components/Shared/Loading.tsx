@@ -1,7 +1,7 @@
 import { Box, createStyles, LinearProgress, makeStyles } from '@material-ui/core'
 import React from 'react'
 
-import { BORDER_RADIUS } from '../../theme'
+import { BORDER_RADIUS, BORDER_RADIUS_HUGE } from '../../theme'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme =>
         },
         progress: {
             flexGrow: 1,
-            borderRadius: 16,
+            borderRadius: BORDER_RADIUS_HUGE,
             height: theme.spacing(1),
         },
     })

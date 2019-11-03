@@ -1,4 +1,5 @@
 import { createStyles, Drawer, Grid, makeStyles, TextField, Typography } from '@material-ui/core'
+import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, useEffect, useState } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
@@ -9,7 +10,8 @@ import {
     CommentsCollections,
     CommentsDocument,
 } from '../../../model/model'
-import { Loading } from '../Loading'
+import { BORDER_RADIUS_HUGE } from '../../../theme'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { Comment } from './Comment'
 
 const useStyles = makeStyles(theme =>
@@ -40,23 +42,33 @@ const useStyles = makeStyles(theme =>
         scrollbar: {
             padding: theme.spacing(1),
         },
+        skeleton: {
+            borderRadius: BORDER_RADIUS_HUGE,
+        },
     })
 )
 
 interface CommentsDrawerProps extends Pick<CommentsDocument, 'name'>, CommentsCollections {
     open: boolean
     onClose: () => void
+    numberOfComments: number
 }
 
-export const CommentsDrawer: FC<CommentsDrawerProps> = ({ open, onClose, name, collection }) => {
+export const CommentsDrawer: FC<CommentsDrawerProps> = ({
+    open,
+    onClose,
+    name,
+    collection,
+    numberOfComments,
+}) => {
     const [comments, setComments] = useState<Array<CommentModel>>([])
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
     const [inputDisabled, setInputDisabled] = useState(false)
-
-    const classes = useStyles()
-
     const [scrollbarRef, setScrollbarRef] = useState<HTMLElement>()
+
+    const { user } = useFirebaseAuthContext()
+    const classes = useStyles()
 
     useEffect(() => {
         if (!open) return
@@ -111,8 +123,6 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({ open, onClose, name, c
                             containerRef={setScrollbarRef}
                             className={classes.scrollbar}
                             options={{ suppressScrollX: true }}>
-                            {loading && <Loading />}
-
                             <Grid
                                 className={classes.commentsContainer}
                                 alignItems="flex-end"
@@ -120,14 +130,27 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({ open, onClose, name, c
                                 wrap="nowrap"
                                 container
                                 spacing={1}>
-                                {comments.map(comment => (
-                                    <Comment
-                                        collection={collection}
-                                        key={comment.documentId}
-                                        name={name}
-                                        comment={comment}
-                                    />
-                                ))}
+                                {loading
+                                    ? new Array(numberOfComments)
+                                          .fill(1)
+                                          .map((_skeleton, index) => (
+                                              <Grid item key={index}>
+                                                  <Skeleton
+                                                      className={classes.skeleton}
+                                                      width={200}
+                                                      height={60}
+                                                      variant="text"
+                                                  />
+                                              </Grid>
+                                          ))
+                                    : comments.map(comment => (
+                                          <Comment
+                                              collection={collection}
+                                              key={comment.documentId}
+                                              name={name}
+                                              comment={comment}
+                                          />
+                                      ))}
                             </Grid>
                         </PerfectScrollbar>
                     </Grid>
@@ -139,7 +162,7 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({ open, onClose, name, c
                                 variant="filled"
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
-                                autoFocus
+                                autoFocus={user && !user.isAnonymous ? true : false}
                                 fullWidth
                                 label="Ergänzende Hinweise und Meinungen"
                             />
@@ -150,6 +173,7 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({ open, onClose, name, c
                 <Typography className={classes.recipe} variant="h5">
                     {name}
                 </Typography>
+
                 {comments.length === 0 && (
                     <NoCommentsIcon className={classes.noCommentsIcon} width={200} />
                 )}

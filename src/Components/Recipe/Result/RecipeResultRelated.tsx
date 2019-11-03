@@ -19,13 +19,13 @@ const useStyles = makeStyles(theme =>
 
 export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => {
     const { handlePinnedChange, pinnedContains } = usePinnedRecipesContext()
-    const { isLowRes: isMobile } = useBreakpointsContext()
+    const { isLowRes } = useBreakpointsContext()
     const { history } = useRouterContext()
 
     const classes = useStyles()
 
     const handleRecipeClick = (recipeName: string) => () => {
-        if (isMobile) history.push(PATHS.details(recipeName))
+        if (isLowRes) history.push(PATHS.details(recipeName))
         else handlePinnedChange(recipeName)
     }
 

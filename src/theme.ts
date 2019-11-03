@@ -2,6 +2,7 @@ import { createMuiTheme, responsiveFontSizes } from '@material-ui/core'
 import { ThemeOptions } from '@material-ui/core/styles/createMuiTheme'
 
 export const BORDER_RADIUS = 10
+export const BORDER_RADIUS_HUGE = 16
 
 const sharedTheme: Partial<ThemeOptions> = {
     overrides: {

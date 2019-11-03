@@ -27,14 +27,14 @@ export const RecipeResultAction: FC<RecipeResultActionProps> = ({
     numberOfComments,
     actionsEnabled,
 }) => {
-    const { isLowRes: isMobile } = useBreakpointsContext()
+    const { isLowRes } = useBreakpointsContext()
 
     return (
         <>
             {actionsEnabled && (
                 <Grid item onClick={stopPropagation} onFocus={stopPropagation}>
                     <Grid container>
-                        {!isMobile && (
+                        {!isLowRes && (
                             <Grid item>
                                 <RecipeResultPin name={name} />
                             </Grid>

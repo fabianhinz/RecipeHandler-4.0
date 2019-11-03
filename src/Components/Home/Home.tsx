@@ -5,6 +5,7 @@ import { useCategorySelect } from '../../hooks/useCategorySelect'
 import { RecipeDocument } from '../../model/model'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { HomeCategory } from './HomeCategory'
+import { HomeSearch } from './HomeSearch/HomeSearch'
 import { HomeRecentlyAdded } from './RecentlyAdded/HomeRecentlyAdded'
 import { HomeRecipe } from './Recipe/HomeRecipe'
 
@@ -74,6 +75,7 @@ const Home = () => {
 
     return (
         <>
+            <HomeSearch />
             <HomeRecentlyAdded />
             <HomeCategory
                 selectedCategories={selectedCategories}

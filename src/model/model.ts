@@ -58,3 +58,13 @@ export interface Trial extends CommentsDocument {
 export interface CommentsCollections {
     collection: 'recipes' | 'trials'
 }
+
+export type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> & {
+    _highlightResult: {
+        name: { value: string }
+        description: { value: string }
+        ingredients: { value: string }
+    }
+}
+
+export type Hits = Array<Hit>
