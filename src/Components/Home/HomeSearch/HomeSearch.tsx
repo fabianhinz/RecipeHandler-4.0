@@ -1,4 +1,13 @@
-import { Box, createStyles, Divider, Drawer, Fab, List, makeStyles } from '@material-ui/core'
+import {
+    Box,
+    createStyles,
+    Divider,
+    Drawer,
+    Fab,
+    List,
+    makeStyles,
+    Typography,
+} from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/SearchTwoTone'
 import React, { useEffect, useState } from 'react'
 
@@ -22,6 +31,7 @@ export const HomeSearch = () => {
     const [searchDrawer, setSearchDrawer] = useState(false)
     const [searchValue, setSearchValue] = useState('')
     const [algoliaHits, setAlgoliaHits] = useState<Hits>([])
+    const [error, setError] = useState<any>(null)
     const [loading, setLoading] = useState(false)
 
     const classes = useStyles()
@@ -31,10 +41,17 @@ export const HomeSearch = () => {
 
     useEffect(() => {
         if (debouncedSearchValue.length > 0) {
-            index.search(debouncedSearchValue).then(({ hits }) => {
-                setAlgoliaHits(hits)
-                setLoading(false)
-            })
+            index
+                .search(debouncedSearchValue)
+                .then(({ hits }) => {
+                    setError(null)
+                    setAlgoliaHits(hits)
+                    setLoading(false)
+                })
+                .catch(error => {
+                    setError(error)
+                    setLoading(false)
+                })
         } else {
             setAlgoliaHits([])
             setLoading(false)
@@ -79,6 +96,12 @@ export const HomeSearch = () => {
                     <Box padding={2} display="flex" justifyContent="center">
                         <NotFoundIcon width={150} />
                     </Box>
+                )}
+
+                {!loading && error && (
+                    <Typography gutterBottom align="center" variant="h6">
+                        Fehler beim Abruf der Daten
+                    </Typography>
                 )}
             </Drawer>
         </>

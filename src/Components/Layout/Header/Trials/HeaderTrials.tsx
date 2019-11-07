@@ -14,7 +14,7 @@ import AddIcon from '@material-ui/icons/Add'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 import { FirebaseService } from '../../../../firebase'
@@ -34,14 +34,14 @@ const useStyles = makeStyles(theme =>
         backdrop: {
             zIndex: theme.zIndex.drawer - 1,
         },
-        dialogPaper: {
+        dialogActions: {
             position: 'relative',
         },
         fabContainer: {
             outline: 'none',
             position: 'absolute',
             right: theme.spacing(3),
-            bottom: theme.spacing(5),
+            top: -28,
         },
         dialogTitle: {
             textAlign: 'center',
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme =>
 
 type HeaderTrialsProps = HeaderState<'trialsOpen'> & HeaderDispatch
 
-export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) => {
+const HeaderTrials = ({ trialsOpen, dispatch }: HeaderTrialsProps) => {
     const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
     const [loading, setLoading] = useState(false)
     const classes = useStyles()
@@ -140,8 +140,7 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
             maxWidth="md"
             fullWidth
             fullScreen={isDialogFullscreen}
-            TransitionComponent={SlideUp}
-            PaperProps={{ className: classes.dialogPaper }}>
+            TransitionComponent={SlideUp}>
             <DialogTitle className={classes.dialogTitle}>Versuchskaninchen</DialogTitle>
 
             <DialogContent dividers>
@@ -164,23 +163,25 @@ export const HeaderTrials: FC<HeaderTrialsProps> = ({ trialsOpen, dispatch }) =>
                         </Grid>
                     </Box>
                 )}
-
-                {user && !user.isAnonymous && (
-                    <div className={classes.fabContainer} {...getRootProps()}>
-                        <Fab color="primary">
-                            <input {...getInputProps()} />
-                            <AddIcon />
-                        </Fab>
-                    </div>
-                )}
             </DialogContent>
-            <DialogActions>
+            <DialogActions className={classes.dialogActions}>
                 <Box flexGrow={1} display="flex" justifyContent="space-evenly" alignItems="center">
                     <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
                         <CloseIcon />
                     </IconButton>
                 </Box>
+
+                {user && !user.isAnonymous && (
+                    <div className={classes.fabContainer} {...getRootProps()}>
+                        <Fab color="secondary">
+                            <input {...getInputProps()} />
+                            <AddIcon />
+                        </Fab>
+                    </div>
+                )}
             </DialogActions>
         </Dialog>
     )
 }
+
+export default memo(HeaderTrials, (prev, next) => prev.trialsOpen === next.trialsOpen)

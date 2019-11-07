@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
-import React, { FC, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
 import { useRecipeDoc } from '../../hooks/useRecipeDoc'
@@ -31,7 +31,7 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ recipeName })
 
     return (
-        <Box padding={2} paddingBottom={6}>
+        <Box padding={2} paddingTop={1}>
             <Box display="flex" justifyContent="center">
                 <RecipeResultPin name={recipeName} />
             </Box>
@@ -42,9 +42,6 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        dummy: {
-            width: 320,
-        },
         paper: {
             width: 320,
             position: 'fixed',
@@ -52,7 +49,8 @@ const useStyles = makeStyles(theme =>
             overflow: 'auto',
             top: 0,
             left: 0,
-            zIndex: theme.zIndex.drawer - 1,
+            zIndex: theme.zIndex.drawer + 1,
+            boxShadow: theme.shadows[8],
         },
     })
 )
@@ -62,6 +60,28 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
     const [activeIndex, setActiveIndex] = useState(0)
 
     const classes = useStyles()
+
+    const handleKeyDown = useCallback(
+        event => {
+            const { code } = event
+            if (
+                code === 'ArrowRight' &&
+                activeIndex !== pinnedRecipes.size - 1 &&
+                pinnedRecipes.size > 0
+            ) {
+                setActiveIndex(prev => ++prev)
+            }
+            if (code === 'ArrowLeft' && activeIndex !== 0) {
+                setActiveIndex(prev => --prev)
+            }
+        },
+        [activeIndex, pinnedRecipes.size]
+    )
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown)
+        return () => document.removeEventListener('keydown', handleKeyDown)
+    }, [handleKeyDown])
 
     const handlePinnedChange = (recipeName: string) => {
         setPinnedRecipes(previous => {

@@ -122,7 +122,7 @@ export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props
                 <Grid item xs={12}>
                     <Box display="flex" justifyContent="flex-end">
                         <div {...getRootProps()} className={classes.rootProps}>
-                            <Button variant="contained" color="secondary">
+                            <Button variant="contained" color="primary">
                                 <input {...getInputProps()} />
                                 hinzufügen
                             </Button>
