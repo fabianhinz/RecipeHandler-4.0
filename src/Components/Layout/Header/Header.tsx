@@ -1,22 +1,35 @@
 import { Drawer } from '@material-ui/core'
-import React, { FC } from 'react'
+import { createStyles, makeStyles } from '@material-ui/styles'
+import React from 'react'
 
-import { HeaderLoginDialog } from './HeaderLoginDialog'
-import { HeaderNavigation } from './HeaderNavigation'
+import HeaderLoginDialog from './HeaderLoginDialog'
+import HeaderNavigation from './HeaderNavigation'
 import { useHeaderReducer } from './HeaderReducer'
-import { HeaderTrials } from './Trials/HeaderTrials'
+import HeaderTrials from './Trials/HeaderTrials'
 
 interface HeaderProps {
     onThemeChange: () => void
 }
 
-export const Header: FC<HeaderProps> = props => {
+const useStyles = makeStyles(theme =>
+    createStyles({
+        drawerPaper: {
+            overflowY: 'unset',
+        },
+    })
+)
+
+export const Header = ({ onThemeChange }: HeaderProps) => {
     const { state, dispatch } = useHeaderReducer()
+    const classes = useStyles()
 
     return (
         <>
-            <Drawer variant="permanent" anchor="bottom">
-                <HeaderNavigation dispatch={dispatch} onThemeChange={props.onThemeChange} />
+            <Drawer
+                PaperProps={{ classes: { root: classes.drawerPaper } }}
+                variant="permanent"
+                anchor="bottom">
+                <HeaderNavigation dispatch={dispatch} onThemeChange={onThemeChange} />
             </Drawer>
 
             <HeaderLoginDialog

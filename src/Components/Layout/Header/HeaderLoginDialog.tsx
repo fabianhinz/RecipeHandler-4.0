@@ -8,7 +8,7 @@ import {
     Typography,
 } from '@material-ui/core'
 import { useSnackbar } from 'notistack'
-import React, { ChangeEvent, FC } from 'react'
+import React, { ChangeEvent, memo } from 'react'
 
 import { FirebaseService } from '../../../firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -17,7 +17,7 @@ import { HeaderChangeKey, HeaderDispatch, HeaderState } from './HeaderReducer'
 
 type HeaderLoginDialogProps = HeaderState<'email' | 'dialogOpen' | 'password'> & HeaderDispatch
 
-export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...props }) => {
+const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
     const { user } = useFirebaseAuthContext()
 
     const { enqueueSnackbar } = useSnackbar()
@@ -99,3 +99,11 @@ export const HeaderLoginDialog: FC<HeaderLoginDialogProps> = ({ dispatch, ...pro
         </Dialog>
     )
 }
+
+export default memo(
+    HeaderLoginDialog,
+    (prev, next) =>
+        prev.dialogOpen === next.dialogOpen &&
+        prev.email === next.email &&
+        prev.password === next.password
+)

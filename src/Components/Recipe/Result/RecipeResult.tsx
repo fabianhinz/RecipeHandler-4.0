@@ -108,8 +108,8 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
                 </Typography>
             </Grid>
 
-            <Grid item xs={12}>
-                {user && !user.isAnonymous && actionProps.editEnabled && (
+            {user && !user.isAnonymous && actionProps.editEnabled && (
+                <Grid item xs={12}>
                     <Box textAlign="right">
                         <Button
                             color="primary"
@@ -118,8 +118,8 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
                             Bearbeiten
                         </Button>
                     </Box>
-                )}
-            </Grid>
+                </Grid>
+            )}
         </Grid>
     )
 }
