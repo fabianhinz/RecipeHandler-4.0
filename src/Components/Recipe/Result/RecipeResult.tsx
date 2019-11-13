@@ -1,4 +1,4 @@
-import { Box, Button, createStyles, Grid, makeStyles, Slide, Typography } from '@material-ui/core'
+import { Box, createStyles, Grid, makeStyles, Slide, Typography } from '@material-ui/core'
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
@@ -11,9 +11,6 @@ import { FirebaseService } from '../../../firebase'
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
 import { CategoryResult } from '../../Category/CategoryResult'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import { useRouterContext } from '../../Provider/RouterProvider'
-import { PATHS } from '../../Routes/Routes'
 import { Subtitle } from '../../Shared/Subtitle'
 import { RecipeActions, RecipeResultAction } from './Action/RecipeResultAction'
 import { RecipeResultImg } from './RecipeResultImg'
@@ -32,9 +29,6 @@ const useStyles = makeStyles(() =>
 )
 
 const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
-    const { history } = useRouterContext()
-    const { user } = useFirebaseAuthContext()
-
     const classes = useStyles()
 
     if (!recipe)
@@ -107,19 +101,6 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
                     ).toLocaleDateString()}
                 </Typography>
             </Grid>
-
-            {user && !user.isAnonymous && actionProps.editEnabled && (
-                <Grid item xs={12}>
-                    <Box textAlign="right">
-                        <Button
-                            color="primary"
-                            variant="contained"
-                            onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}>
-                            Bearbeiten
-                        </Button>
-                    </Box>
-                </Grid>
-            )}
         </Grid>
     )
 }
@@ -129,6 +110,5 @@ export default memo(
     (prev, next) =>
         prev.recipe === next.recipe &&
         prev.actionsEnabled === next.actionsEnabled &&
-        prev.pinned === next.pinned &&
-        prev.editEnabled === next.editEnabled
+        prev.pinned === next.pinned
 )

@@ -62,17 +62,22 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
     const classes = useStyles()
 
     const handleKeyDown = useCallback(
-        event => {
-            const { code } = event
+        (event: KeyboardEvent) => {
+            const target: Element = event.target as Element
             if (
-                code === 'ArrowRight' &&
-                activeIndex !== pinnedRecipes.size - 1 &&
-                pinnedRecipes.size > 0
+                'input'.toUpperCase() !== target.tagName &&
+                'textarea'.toUpperCase() !== target.tagName
             ) {
-                setActiveIndex(prev => ++prev)
-            }
-            if (code === 'ArrowLeft' && activeIndex !== 0) {
-                setActiveIndex(prev => --prev)
+                if (
+                    event.code === 'ArrowRight' &&
+                    activeIndex !== pinnedRecipes.size - 1 &&
+                    pinnedRecipes.size > 0
+                ) {
+                    setActiveIndex(prev => ++prev)
+                }
+                if (event.code === 'ArrowLeft' && activeIndex !== 0) {
+                    setActiveIndex(prev => --prev)
+                }
             }
         },
         [activeIndex, pinnedRecipes.size]
@@ -89,7 +94,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                 if (activeIndex > 0) setActiveIndex(prev => --prev)
                 previous.delete(recipeName)
             } else {
-                if (previous.size !== 0) setActiveIndex(prev => ++prev)
+                if (previous.size !== 0) setActiveIndex(previous.size)
                 previous.add(recipeName)
             }
             return new Set(previous)

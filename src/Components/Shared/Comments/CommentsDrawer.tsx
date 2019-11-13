@@ -11,7 +11,6 @@ import {
     CommentsDocument,
 } from '../../../model/model'
 import { BORDER_RADIUS_HUGE } from '../../../theme'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { Comment } from './Comment'
 
 const useStyles = makeStyles(theme =>
@@ -67,7 +66,6 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({
     const [inputDisabled, setInputDisabled] = useState(false)
     const [scrollbarRef, setScrollbarRef] = useState<HTMLElement>()
 
-    const { user } = useFirebaseAuthContext()
     const classes = useStyles()
 
     useEffect(() => {
@@ -162,7 +160,6 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({
                                 variant="filled"
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
-                                autoFocus={user && !user.isAnonymous ? true : false}
                                 fullWidth
                                 label="Ergänzende Hinweise und Meinungen"
                             />

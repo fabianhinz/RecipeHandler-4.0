@@ -1,5 +1,4 @@
-import { Drawer } from '@material-ui/core'
-import { createStyles, makeStyles } from '@material-ui/styles'
+import { createStyles, Drawer, makeStyles } from '@material-ui/core'
 import React from 'react'
 
 import HeaderLoginDialog from './HeaderLoginDialog'
@@ -15,6 +14,8 @@ const useStyles = makeStyles(theme =>
     createStyles({
         drawerPaper: {
             overflowY: 'unset',
+            paddingTop: theme.spacing(1),
+            paddingBottom: theme.spacing(1),
         },
     })
 )

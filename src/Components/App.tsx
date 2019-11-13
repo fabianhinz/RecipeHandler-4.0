@@ -1,5 +1,5 @@
 import CssBaseline from '@material-ui/core/CssBaseline'
-import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
@@ -29,23 +29,23 @@ const RecipesProvider: FC = ({ children }) => (
     </RouterProvider>
 )
 
-const themeCookie = { deps: ['theme-pref'], name: 'theme-pref' }
+const THEME_COOKIE = { deps: ['theme-pref'], name: 'theme-pref' }
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
 
-    const [cookies, setCookie] = useCookies(themeCookie.deps)
+    const [cookies, setCookie] = useCookies(THEME_COOKIE.deps)
 
     const handleThemeChange = () => {
         if (theme.palette.type === 'light') {
-            setCookie(themeCookie.name, 'dark', { maxAge: 31536000 })
+            setCookie(THEME_COOKIE.name, 'dark', { maxAge: 31536000 })
         } else {
-            setCookie(themeCookie.name, 'light', { maxAge: 31536000 })
+            setCookie(THEME_COOKIE.name, 'light', { maxAge: 31536000 })
         }
     }
 
     useEffect(() => {
-        const cookie: undefined | 'dark' | 'light' = cookies[themeCookie.name]
+        const cookie: undefined | 'dark' | 'light' = cookies[THEME_COOKIE.name]
         if (!cookie) return
 
         const metaThemeColor = document.getElementsByName('theme-color')[0]

@@ -10,7 +10,6 @@ import { RecipeResultShare } from './RecipeResultShare'
 export type RecipeActions = {
     pinned?: boolean
     actionsEnabled?: boolean
-    editEnabled?: boolean
 }
 
 interface RecipeResultActionProps extends RecipeActions {

@@ -66,7 +66,7 @@ const HomeRecipeResults = ({ recipe }: HomeRecipeResultsProps) => {
                 </Grid>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <RecipeResult editEnabled recipe={recipe} />
+                <RecipeResult recipe={recipe} />
             </ExpansionPanelDetails>
         </ExpansionPanel>
     )
