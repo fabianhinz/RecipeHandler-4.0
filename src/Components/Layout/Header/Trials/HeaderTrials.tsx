@@ -21,11 +21,10 @@ import { FirebaseService } from '../../../../firebase'
 import { getFileExtension } from '../../../../hooks/useAttachementRef'
 import { ReactComponent as TrialIcon } from '../../../../icons/logo.svg'
 import { Trial } from '../../../../model/model'
-import { useBreakpointsContext } from '../../../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../../../Recipe/Create/Attachements/RecipeCreateAttachements'
 import { Loading } from '../../../Shared/Loading'
-import { SlideUp } from '../../../Shared/Transitions'
+import { GrowIn } from '../../../Shared/Transitions'
 import { HeaderDispatch, HeaderState } from '../HeaderReducer'
 import { HeaderTrialsCard } from './HeaderTrialsCard'
 
@@ -40,7 +39,7 @@ const useStyles = makeStyles(theme =>
         fabContainer: {
             outline: 'none',
             position: 'absolute',
-            right: theme.spacing(3),
+            right: theme.spacing(2),
             top: -28,
         },
         dialogTitle: {
@@ -56,7 +55,6 @@ const HeaderTrials = ({ trialsOpen, dispatch }: HeaderTrialsProps) => {
     const [loading, setLoading] = useState(false)
     const classes = useStyles()
 
-    const { isDialogFullscreen } = useBreakpointsContext()
     const { user } = useFirebaseAuthContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
@@ -137,15 +135,13 @@ const HeaderTrials = ({ trialsOpen, dispatch }: HeaderTrialsProps) => {
             open={trialsOpen}
             keepMounted
             onClose={() => dispatch({ type: 'trialsChange' })}
-            maxWidth="md"
-            fullWidth
-            fullScreen={isDialogFullscreen}
-            TransitionComponent={SlideUp}>
+            fullScreen
+            TransitionComponent={GrowIn}>
             <DialogTitle className={classes.dialogTitle}>Versuchskaninchen</DialogTitle>
 
             <DialogContent dividers>
                 {loading ? (
-                    <Loading />
+                    <Loading variant="circular" />
                 ) : trials.size === 0 ? (
                     <Box display="flex" justifyContent="center" padding={4}>
                         <TrialIcon width={200} />

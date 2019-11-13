@@ -1,4 +1,4 @@
-import { Box, createStyles, LinearProgress, makeStyles } from '@material-ui/core'
+import { Box, CircularProgress, createStyles, LinearProgress, makeStyles } from '@material-ui/core'
 import React from 'react'
 
 import { BORDER_RADIUS, BORDER_RADIUS_HUGE } from '../../theme'
@@ -17,7 +17,11 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-export const Loading = () => {
+interface Props {
+    variant: 'linear' | 'circular'
+}
+
+export const Loading = ({ variant }: Props) => {
     const classes = useStyles()
 
     return (
@@ -27,7 +31,11 @@ export const Loading = () => {
             display="flex"
             justifyContent="center"
             alignItems="center">
-            <LinearProgress className={classes.progress} color="primary" variant="query" />
+            {variant === 'linear' ? (
+                <LinearProgress className={classes.progress} color="primary" variant="query" />
+            ) : (
+                <CircularProgress disableShrink size={50} thickness={4} />
+            )}
         </Box>
     )
 }

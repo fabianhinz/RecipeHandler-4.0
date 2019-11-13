@@ -51,7 +51,7 @@ export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
     }
 
     return (
-        <Grid item xs={12} md={6} key={trial.name}>
+        <Grid item xs={12} md={6} lg={4} xl={3} key={trial.name}>
             <Card raised>
                 {fullDataUrl ? (
                     <a href={fullDataUrl} rel="noreferrer noopener" target="_blank">
@@ -61,7 +61,7 @@ export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
                     <Skeleton height={200} width="100%" />
                 )}
                 {user && (
-                    <Box display="flex" justifyContent="space-evenly">
+                    <Box padding={1} display="flex" justifyContent="space-evenly">
                         <Comments
                             collection="trials"
                             numberOfComments={trial.numberOfComments}

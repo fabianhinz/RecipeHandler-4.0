@@ -13,11 +13,13 @@ import LightThemeIcon from '@material-ui/icons/BrightnessHighRounded'
 import DarkThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 import EditIcon from '@material-ui/icons/Edit'
 import HomeIcon from '@material-ui/icons/HomeRounded'
+import clsx from 'clsx'
 import { Lightbulb } from 'mdi-material-ui'
 import React, { memo } from 'react'
 import { Route, Switch } from 'react-router-dom'
 
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { usePinnedRecipesContext } from '../../Provider/PinnedRecipesProvider'
 import { Navigate } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
 import { HeaderDispatch } from './HeaderReducer'
@@ -38,18 +40,22 @@ const useStyles = makeStyles(theme =>
         addBtn: {
             position: 'absolute',
             top: -36,
-            right: theme.spacing(3),
+            right: theme.spacing(2),
+        },
+        pinnedRecipes: {
+            marginLeft: theme.spacing(40),
         },
     })
 )
 
 const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) => {
     const { user } = useFirebaseAuthContext()
+    const { pinned } = usePinnedRecipesContext()
     const theme = useTheme()
     const classes = useStyles()
 
     return (
-        <div className={classes.container}>
+        <div className={clsx(classes.container, pinned && classes.pinnedRecipes)}>
             <Hidden smDown>
                 <Navigate to={PATHS.home}>
                     <Button size="large" startIcon={<HomeIcon />}>

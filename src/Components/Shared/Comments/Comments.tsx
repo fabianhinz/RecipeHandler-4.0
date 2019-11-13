@@ -16,7 +16,7 @@ export const Comments: FC<CommentsDocument & CommentsCollections> = ({
     const handleDrawerChange = () => setDrawer(previous => !previous)
 
     return (
-        <div>
+        <>
             <IconButton onClick={handleDrawerChange}>
                 <BadgeWrapper badgeContent={numberOfComments}>
                     <CommentIcon />
@@ -30,6 +30,6 @@ export const Comments: FC<CommentsDocument & CommentsCollections> = ({
                 open={drawer}
                 onClose={handleDrawerChange}
             />
-        </div>
+        </>
     )
 }

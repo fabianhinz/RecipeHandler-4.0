@@ -19,22 +19,18 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
 
     return (
         <Box marginBottom={2}>
-            <div>
-                {props.recipes.map(recipe => (
-                    <HomeRecipeResults key={recipe.name} recipe={recipe} />
-                ))}
-            </div>
+            {props.recipes.map(recipe => (
+                <HomeRecipeResults key={recipe.name} recipe={recipe} />
+            ))}
 
             <Box marginTop={2} display="flex" justifyContent="space-evenly">
-                <div>
-                    <Fab
-                        disabled={props.expandDisabled}
-                        size="small"
-                        color="primary"
-                        onClick={handleExpandClick}>
-                        <ExpandIcon />
-                    </Fab>
-                </div>
+                <Fab
+                    disabled={props.expandDisabled}
+                    size="small"
+                    color="primary"
+                    onClick={handleExpandClick}>
+                    <ExpandIcon />
+                </Fab>
             </Box>
         </Box>
     )

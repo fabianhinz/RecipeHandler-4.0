@@ -13,7 +13,7 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
         <Card>
             <CardContent>
                 {recipeDocLoading ? (
-                    <Loading />
+                    <Loading variant="linear" />
                 ) : (
                     <RecipeResult recipe={recipeDoc} actionsEnabled />
                 )}

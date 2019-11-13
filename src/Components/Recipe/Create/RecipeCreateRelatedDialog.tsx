@@ -81,7 +81,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             fullWidth>
             <DialogTitle>Passende Rezepte auswählen</DialogTitle>
             <DialogContent>
-                {recipes.length === 0 && <Loading />}
+                {recipes.length === 0 && <Loading variant="circular" />}
                 <List>
                     {recipes
                         .filter(recipe => recipe.name !== currentRecipeName)

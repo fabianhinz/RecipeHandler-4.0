@@ -54,7 +54,7 @@ const renderRoute = ({ path, Component, Background }: AppRoute) => (
         path={path}
         exact
         render={routeProps => (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<Loading variant="linear" />}>
                 <Component {...routeProps} />
                 <Background />
             </Suspense>
