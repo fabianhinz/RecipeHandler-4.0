@@ -22,7 +22,9 @@ export const Container = ({ children }: Props) => {
 
     return (
         <MuiContainer
-            className={clsx(pinnedContext && pinnedContext.pinned && classes.pinnedContainer)}
+            className={clsx(
+                !isHighRes && pinnedContext && pinnedContext.pinned && classes.pinnedContainer
+            )}
             maxWidth={isHighRes ? 'xl' : 'lg'}>
             {children}
         </MuiContainer>
