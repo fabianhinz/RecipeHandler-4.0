@@ -42,7 +42,7 @@ const HomeRecipeResults = ({ recipe }: HomeRecipeResultsProps) => {
                     spacing={2}
                     justify="space-between"
                     alignItems="center">
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={8}>
                         <Grid container spacing={2} alignItems="center" wrap="nowrap">
                             <Grid item>
                                 <Avatar className={classes.avatar}>
@@ -54,7 +54,7 @@ const HomeRecipeResults = ({ recipe }: HomeRecipeResultsProps) => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={4}>
                         <Grid container spacing={1} justify="flex-end">
                             <RecipeResultAction
                                 name={recipe.name}

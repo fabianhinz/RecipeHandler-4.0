@@ -1,4 +1,3 @@
-import { Grid } from '@material-ui/core'
 import React, { FC } from 'react'
 
 import { useBreakpointsContext } from '../../../Provider/BreakpointsProvider'
@@ -31,28 +30,16 @@ export const RecipeResultAction: FC<RecipeResultActionProps> = ({
     return (
         <>
             {actionsEnabled && (
-                <Grid item onClick={stopPropagation} onFocus={stopPropagation}>
-                    <Grid container>
-                        {!isLowRes && (
-                            <Grid item>
-                                <RecipeResultPin name={name} />
-                            </Grid>
-                        )}
-                        <Grid item>
-                            <RecipeResultShare name={name} />
-                        </Grid>
-                        <Grid>
-                            <Comments
-                                collection="recipes"
-                                numberOfComments={numberOfComments}
-                                name={name}
-                            />
-                        </Grid>
-                        <Grid>
-                            <RecipeResultRating name={name} />
-                        </Grid>
-                    </Grid>
-                </Grid>
+                <div onClick={stopPropagation} onFocus={stopPropagation}>
+                    {!isLowRes && <RecipeResultPin name={name} />}
+                    <RecipeResultShare name={name} />
+                    <Comments
+                        collection="recipes"
+                        numberOfComments={numberOfComments}
+                        name={name}
+                    />
+                    <RecipeResultRating name={name} />
+                </div>
             )}
         </>
     )

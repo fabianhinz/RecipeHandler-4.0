@@ -15,6 +15,7 @@ import React, { FC } from 'react'
 import { useAttachementRef } from '../../../hooks/useAttachementRef'
 import { AttachementMetadata, Recipe } from '../../../model/model'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
+import { usePinnedRecipesContext } from '../../Provider/PinnedRecipesProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 
@@ -38,11 +39,13 @@ export const HomeRecentlyAddedCard: FC<{
     const { attachementRef, attachementRefLoading } = useAttachementRef(recipe.attachements[0])
     const { isHighRes } = useBreakpointsContext()
     const { history } = useRouterContext()
+    const { pinned } = usePinnedRecipesContext()
+
     const classes = useStyles()
 
     const gridProps: Partial<Record<Breakpoint, boolean | GridSize>> = isHighRes
-        ? { xs: 12, sm: 6, lg: 4, xl: 3 }
-        : { xs: 12, sm: 6, lg: 4 }
+        ? { xs: 12, sm: pinned ? 12 : 6, lg: 4, xl: 3 }
+        : { xs: 12, sm: pinned ? 12 : 6, lg: 4 }
 
     return (
         <Grid {...gridProps} item>

@@ -1,9 +1,14 @@
+import { createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useState } from 'react'
 
 import { FirebaseService } from '../../firebase'
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import { RecipeDocument } from '../../model/model'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { Navigate } from '../Routes/Navigate'
+import { PATHS } from '../Routes/Routes'
 import { HomeCategory } from './HomeCategory'
 import { HomeSearch } from './HomeSearch/HomeSearch'
 import { HomeRecentlyAdded } from './RecentlyAdded/HomeRecentlyAdded'
@@ -12,13 +17,27 @@ import { HomeRecipe } from './Recipe/HomeRecipe'
 type DocumentId = string
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>
 
+const useStyles = makeStyles(theme =>
+    createStyles({
+        fab: {
+            zIndex: theme.zIndex.drawer + 1,
+            position: 'fixed',
+            right: theme.spacing(2),
+            bottom: theme.spacing(4.5),
+        },
+    })
+)
+
 const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
     const [lastRecipeName, setLastRecipeName] = useState('')
     const [pagination, setPagination] = useState(false)
 
+    const classes = useStyles()
+
     const { isHighRes } = useBreakpointsContext()
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
+    const { user } = useFirebaseAuthContext()
 
     const handleCategoryChange = (type: string, value: string) => {
         setLastRecipeName('')
@@ -86,6 +105,16 @@ const Home = () => {
                 onExpandClick={setLastRecipeName}
                 expandDisabled={!pagination}
             />
+
+            {user && !user.isAnonymous && (
+                <Navigate to={PATHS.recipeCreate}>
+                    <Zoom in>
+                        <Fab className={classes.fab} color="secondary">
+                            <AddIcon />
+                        </Fab>
+                    </Zoom>
+                </Navigate>
+            )}
         </>
     )
 }

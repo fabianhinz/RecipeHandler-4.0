@@ -36,11 +36,7 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
             <Box display="flex" justifyContent="center">
                 <RecipeResultPin name={recipeName} />
             </Box>
-            {recipeDocLoading ? (
-                <Loading variant="linear" />
-            ) : (
-                <RecipeResult pinned recipe={recipeDoc} />
-            )}
+            {recipeDocLoading ? <Loading /> : <RecipeResult pinned recipe={recipeDoc} />}
         </Box>
     )
 }

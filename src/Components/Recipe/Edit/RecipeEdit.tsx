@@ -14,7 +14,7 @@ const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {
             {recipeDocLoading ? (
                 <Card>
                     <CardContent>
-                        <Loading variant="linear" />
+                        <Loading />
                     </CardContent>
                 </Card>
             ) : (

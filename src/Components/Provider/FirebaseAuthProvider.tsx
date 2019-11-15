@@ -41,7 +41,7 @@ export const FirebaseAuthProvider: FC = ({ children }) => {
             ) : (
                 <Container>
                     <Box marginTop={3} marginBottom={3}>
-                        <Loading variant="linear" />
+                        <Loading />
                     </Box>
                 </Container>
             )}

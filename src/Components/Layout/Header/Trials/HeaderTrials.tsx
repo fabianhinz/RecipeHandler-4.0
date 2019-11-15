@@ -22,9 +22,9 @@ import { getFileExtension } from '../../../../hooks/useAttachementRef'
 import { ReactComponent as TrialIcon } from '../../../../icons/logo.svg'
 import { Trial } from '../../../../model/model'
 import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
-import { readDocumentAsync } from '../../../Recipe/Create/Attachements/RecipeCreateAttachements'
+import { readDocumentAsync } from '../../../Recipe/Create/Attachements/useAttachementDropzone'
 import { Loading } from '../../../Shared/Loading'
-import { GrowIn } from '../../../Shared/Transitions'
+import { SlideUp } from '../../../Shared/Transitions'
 import { HeaderDispatch, HeaderState } from '../HeaderReducer'
 import { HeaderTrialsCard } from './HeaderTrialsCard'
 
@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme =>
             outline: 'none',
             position: 'absolute',
             right: theme.spacing(2),
-            top: -28,
+            bottom: theme.spacing(4.5),
         },
         dialogTitle: {
             textAlign: 'center',
@@ -136,12 +136,12 @@ const HeaderTrials = ({ trialsOpen, dispatch }: HeaderTrialsProps) => {
             keepMounted
             onClose={() => dispatch({ type: 'trialsChange' })}
             fullScreen
-            TransitionComponent={GrowIn}>
+            TransitionComponent={SlideUp}>
             <DialogTitle className={classes.dialogTitle}>Versuchskaninchen</DialogTitle>
 
             <DialogContent dividers>
                 {loading ? (
-                    <Loading variant="circular" />
+                    <Loading />
                 ) : trials.size === 0 ? (
                     <Box display="flex" justifyContent="center" padding={4}>
                         <TrialIcon width={200} />

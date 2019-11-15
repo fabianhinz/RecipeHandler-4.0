@@ -15,8 +15,6 @@ const useStyles = makeStyles(theme =>
         drawerPaper: {
             overflowY: 'unset',
             height: theme.spacing(8),
-            paddingTop: theme.spacing(1),
-            paddingBottom: theme.spacing(1),
         },
     })
 )
