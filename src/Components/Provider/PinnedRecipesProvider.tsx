@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core'
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
+import clsx from 'clsx'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
@@ -41,10 +42,12 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
     )
 }
 
+export const PINNED_WIDTH = 320
+
 const useStyles = makeStyles(theme =>
     createStyles({
         paper: {
-            width: theme.spacing(40),
+            width: PINNED_WIDTH,
             position: 'fixed',
             height: '100vh',
             overflow: 'auto',
@@ -52,6 +55,9 @@ const useStyles = makeStyles(theme =>
             left: 0,
             zIndex: theme.zIndex.drawer + 1,
             boxShadow: theme.shadows[8],
+        },
+        pinnedWidth: {
+            marginLeft: PINNED_WIDTH,
         },
     })
 )
@@ -62,7 +68,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
 
     const classes = useStyles()
 
-    const { isLowRes } = useBreakpointsContext()
+    const { isPinnable } = useBreakpointsContext()
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
@@ -94,7 +100,8 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
     const handlePinnedChange = (recipeName: string) => {
         setPinnedRecipes(previous => {
             if (previous.has(recipeName)) {
-                if (activeIndex > 0) setActiveIndex(prev => --prev)
+                if (activeIndex > 0 && activeIndex === previous.size - 1)
+                    setActiveIndex(prev => --prev)
                 previous.delete(recipeName)
             } else {
                 if (previous.size !== 0) setActiveIndex(previous.size)
@@ -104,7 +111,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
         })
     }
 
-    const pinned = pinnedRecipes.size > 0 && !isLowRes
+    const pinned = pinnedRecipes.size > 0 && isPinnable
 
     return (
         <Context.Provider
@@ -144,7 +151,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                     </SwipeableViews>
                 </Paper>
             </Slide>
-            <Box marginLeft={pinned ? 40 : 0}>{children}</Box>
+            <div className={clsx(pinned && classes.pinnedWidth)}>{children}</div>
         </Context.Provider>
     )
 }

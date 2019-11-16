@@ -16,7 +16,7 @@ import { Lightbulb } from 'mdi-material-ui'
 import React, { memo } from 'react'
 
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import { usePinnedRecipesContext } from '../../Provider/PinnedRecipesProvider'
+import { PINNED_WIDTH, usePinnedRecipesContext } from '../../Provider/PinnedRecipesProvider'
 import { Navigate } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
 import { HeaderDispatch } from './HeaderReducer'
@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme =>
             paddingRight: theme.spacing(5),
         },
         pinnedRecipes: {
-            marginLeft: theme.spacing(40),
+            marginLeft: PINNED_WIDTH,
         },
     })
 )
@@ -62,7 +62,7 @@ const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) =>
             <Hidden smDown>
                 <Navigate to={PATHS.home}>
                     <Button size="large" startIcon={<HomeIcon />}>
-                        Startseite
+                        Start
                     </Button>
                 </Navigate>
 
@@ -70,7 +70,7 @@ const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) =>
                     size="large"
                     startIcon={<Lightbulb />}
                     onClick={() => dispatch({ type: 'trialsChange' })}>
-                    Merkzettel
+                    Ideen
                 </Button>
 
                 <Button
@@ -86,7 +86,7 @@ const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) =>
                         theme.palette.type === 'dark' ? <DarkThemeIcon /> : <LightThemeIcon />
                     }
                     onClick={onThemeChange}>
-                    Theme
+                    Design
                 </Button>
             </Hidden>
 

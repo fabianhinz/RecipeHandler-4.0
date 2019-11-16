@@ -10,7 +10,6 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { Navigate } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
 import { HomeCategory } from './HomeCategory'
-import { HomeSearch } from './HomeSearch/HomeSearch'
 import { HomeRecentlyAdded } from './RecentlyAdded/HomeRecentlyAdded'
 import { HomeRecipe } from './Recipe/HomeRecipe'
 
@@ -94,7 +93,6 @@ const Home = () => {
 
     return (
         <>
-            <HomeSearch />
             <HomeRecentlyAdded />
             <HomeCategory
                 selectedCategories={selectedCategories}

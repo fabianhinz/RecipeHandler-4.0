@@ -59,7 +59,6 @@ const HomeRecipeResults = ({ recipe }: HomeRecipeResultsProps) => {
                             <RecipeResultAction
                                 name={recipe.name}
                                 numberOfComments={recipe.numberOfComments}
-                                actionsEnabled
                             />
                         </Grid>
                     </Grid>

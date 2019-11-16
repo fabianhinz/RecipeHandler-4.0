@@ -1,3 +1,4 @@
+import { Grid } from '@material-ui/core'
 import React, { FC } from 'react'
 
 import { useBreakpointsContext } from '../../../Provider/BreakpointsProvider'
@@ -8,10 +9,10 @@ import { RecipeResultShare } from './RecipeResultShare'
 
 export type RecipeActions = {
     pinned?: boolean
-    actionsEnabled?: boolean
+    actions?: boolean
 }
 
-interface RecipeResultActionProps extends RecipeActions {
+interface RecipeResultActionProps {
     name: string
     numberOfComments: number
 }
@@ -20,27 +21,26 @@ const stopPropagation = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLDivElement>
 ) => event.stopPropagation()
 
-export const RecipeResultAction: FC<RecipeResultActionProps> = ({
-    name,
-    numberOfComments,
-    actionsEnabled,
-}) => {
-    const { isLowRes } = useBreakpointsContext()
+export const RecipeResultAction: FC<RecipeResultActionProps> = ({ name, numberOfComments }) => {
+    const { isPinnable } = useBreakpointsContext()
 
     return (
-        <>
-            {actionsEnabled && (
-                <div onClick={stopPropagation} onFocus={stopPropagation}>
-                    {!isLowRes && <RecipeResultPin name={name} />}
-                    <RecipeResultShare name={name} />
-                    <Comments
-                        collection="recipes"
-                        numberOfComments={numberOfComments}
-                        name={name}
-                    />
-                    <RecipeResultRating name={name} />
-                </div>
-            )}
-        </>
+        <Grid
+            justify="flex-end"
+            container
+            spacing={1}
+            onClick={stopPropagation}
+            onFocus={stopPropagation}>
+            <Grid item>{isPinnable && <RecipeResultPin name={name} />}</Grid>
+            <Grid item>
+                <RecipeResultShare name={name} />
+            </Grid>
+            <Grid item>
+                <Comments collection="recipes" numberOfComments={numberOfComments} name={name} />
+            </Grid>
+            <Grid item>
+                <RecipeResultRating name={name} />
+            </Grid>
+        </Grid>
     )
 }

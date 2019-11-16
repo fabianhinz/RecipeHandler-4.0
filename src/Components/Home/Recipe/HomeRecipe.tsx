@@ -19,9 +19,11 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
 
     return (
         <Box marginBottom={2}>
-            {props.recipes.map(recipe => (
-                <HomeRecipeResults key={recipe.name} recipe={recipe} />
-            ))}
+            <div>
+                {props.recipes.map(recipe => (
+                    <HomeRecipeResults key={recipe.name} recipe={recipe} />
+                ))}
+            </div>
 
             <Box marginTop={2} display="flex" justifyContent="space-evenly">
                 <Fab

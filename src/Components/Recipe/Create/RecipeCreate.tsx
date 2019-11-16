@@ -162,7 +162,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     className={classes.cardHeader}
                 />
                 <CardContent>
-                    <Subtitle firstChild icon={<MenuIcon />} text="Kategorien" />
+                    <Subtitle noMargin icon={<MenuIcon />} text="Kategorien" />
                     <CategoryWrapper
                         selectedCategories={selectedCategories}
                         onCategoryChange={setSelectedCategories}

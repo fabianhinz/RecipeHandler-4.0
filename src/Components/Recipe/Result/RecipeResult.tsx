@@ -1,8 +1,19 @@
-import { Box, createStyles, Grid, makeStyles, Slide, Typography } from '@material-ui/core'
+import {
+    Box,
+    Card,
+    CardContent,
+    createStyles,
+    Divider,
+    Grid,
+    makeStyles,
+    Slide,
+    Typography,
+} from '@material-ui/core'
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
+import CameraIcon from '@material-ui/icons/CameraTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { memo } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -20,10 +31,15 @@ interface RecipeResultProps extends RecipeActions {
     recipe: Recipe<AttachementMetadata | AttachementData> | null
 }
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         recipeContainer: {
             overflowX: 'hidden',
+        },
+        openSans: {
+            fontFamily: "'Open Sans', sans-serif",
+            fontSize: '1rem',
+            lineHeight: '1.5rem',
         },
     })
 )
@@ -40,67 +56,188 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
             </Box>
         )
 
-    const breakpoints = (options: {
-        ingredient: boolean
-    }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        actionProps.pinned ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
+    const breakpoints = (): Partial<Record<Breakpoint, boolean | GridSize>> =>
+        actionProps.pinned ? { xs: 12 } : { xs: 12, md: 6, lg: 4 }
 
     return (
-        <Grid container spacing={2} className={classes.recipeContainer}>
+        <Grid container spacing={4} className={classes.recipeContainer} alignContent="stretch">
             <Grid item xs={12}>
-                <Grid container justify="space-between" alignItems="center">
-                    <Grid item>
-                        <Typography variant="h6">{recipe.name}</Typography>
+                <Grid container spacing={2} justify="space-between" alignItems="center">
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h4">{recipe.name}</Typography>
+                        <Typography variant="caption">
+                            Erstellt am{' '}
+                            {FirebaseService.createDateFromTimestamp(
+                                recipe.createdDate
+                            ).toLocaleDateString()}
+                        </Typography>
                     </Grid>
-                    <RecipeResultAction
-                        name={recipe.name}
-                        {...actionProps}
-                        numberOfComments={recipe.numberOfComments}
-                    />
-                </Grid>
-            </Grid>
-            <Grid item>
-                <CategoryResult categories={recipe.categories} />
-            </Grid>
-
-            <Grid item xs={12}>
-                <Grid container spacing={2}>
-                    {recipe.attachements.map(attachement => (
-                        <RecipeResultImg
-                            {...actionProps}
-                            key={attachement.name}
-                            attachement={attachement}
-                        />
-                    ))}
+                    <Grid item xs={12} md={6}>
+                        {actionProps.actions && (
+                            <RecipeResultAction
+                                name={recipe.name}
+                                numberOfComments={recipe.numberOfComments}
+                            />
+                        )}
+                    </Grid>
+                    <Grid item xs={12}>
+                        <CategoryResult categories={recipe.categories} />
+                    </Grid>
                 </Grid>
             </Grid>
 
-            <Grid {...breakpoints({ ingredient: true })} item>
-                <Subtitle
-                    icon={<AssignmentIcon />}
-                    text={`Zutaten für ${recipe.amount} Person/en`}
-                />
-                <ReactMarkdown source={recipe.ingredients} />
-            </Grid>
-
-            <Grid {...breakpoints({ ingredient: false })} item>
-                <Subtitle icon={<BookIcon />} text="Beschreibung" />
-                <ReactMarkdown source={recipe.description} />
-            </Grid>
-
             <Grid item xs={12}>
-                <Subtitle icon={<LabelIcon />} text="Passt gut zu" />
-                <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+                <Divider />
             </Grid>
 
-            <Grid item xs={12}>
-                <Typography variant="caption">
-                    Erstellt am:{' '}
-                    {FirebaseService.createDateFromTimestamp(
-                        recipe.createdDate
-                    ).toLocaleDateString()}
-                </Typography>
-            </Grid>
+            {recipe.attachements.length > 0 && (
+                <Grid {...breakpoints()} item>
+                    <Card
+                        style={{
+                            maxHeight: 500,
+                            height: '100%',
+                            overflowY: 'auto',
+                        }}>
+                        <Card
+                            raised
+                            style={{
+                                position: 'sticky',
+                                borderRadius: 24,
+                                zIndex: 1,
+                                backgroundColor: '#A5D6A7',
+                                color: '#000',
+                                top: 16,
+                                padding: '0px 8px',
+                                margin: '0 auto',
+                                width: 'fit-content',
+                            }}>
+                            <Subtitle noMargin icon={<CameraIcon />} text={'Bilder'} />
+                        </Card>
+                        <CardContent style={{ paddingTop: 32 }}>
+                            <Grid container spacing={2}>
+                                {recipe.attachements.map(attachement => (
+                                    <RecipeResultImg
+                                        {...actionProps}
+                                        key={attachement.name}
+                                        attachement={attachement}
+                                    />
+                                ))}
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            )}
+
+            {recipe.ingredients.length > 0 && (
+                <Grid {...breakpoints()} item>
+                    <Card
+                        style={{
+                            maxHeight: 500,
+                            height: '100%',
+                            overflowY: 'auto',
+                        }}>
+                        <Card
+                            raised
+                            style={{
+                                position: 'sticky',
+                                borderRadius: 24,
+                                zIndex: 1,
+                                backgroundColor: '#A5D6A7',
+                                color: '#000',
+                                top: 16,
+                                left: 0,
+                                right: 0,
+                                padding: '0px 8px',
+                                margin: '0 auto',
+                                width: 'fit-content',
+                            }}>
+                            <Subtitle
+                                noMargin
+                                icon={<AssignmentIcon />}
+                                text={
+                                    <>
+                                        Zutaten für {recipe.amount}{' '}
+                                        {recipe.amount < 2 ? 'Person' : 'Personen'}
+                                    </>
+                                }
+                            />
+                        </Card>
+                        <CardContent style={{ paddingTop: 32 }}>
+                            <ReactMarkdown
+                                className={classes.openSans}
+                                source={recipe.ingredients}
+                            />
+                        </CardContent>
+                    </Card>
+                </Grid>
+            )}
+
+            {recipe.description.length > 0 && (
+                <Grid {...breakpoints()} item>
+                    <Card
+                        style={{
+                            maxHeight: 500,
+                            height: '100%',
+                            overflowY: 'auto',
+                        }}>
+                        <Card
+                            raised
+                            style={{
+                                position: 'sticky',
+                                borderRadius: 24,
+                                zIndex: 1,
+                                backgroundColor: '#A5D6A7',
+                                color: '#000',
+                                top: 16,
+                                left: 0,
+                                right: 0,
+                                padding: '0px 8px',
+                                margin: '0 auto',
+                                width: 'fit-content',
+                            }}>
+                            <Subtitle noMargin icon={<BookIcon />} text="Beschreibung" />
+                        </Card>
+                        <CardContent style={{ paddingTop: 32 }}>
+                            <ReactMarkdown
+                                className={classes.openSans}
+                                source={recipe.description}
+                            />
+                        </CardContent>
+                    </Card>
+                </Grid>
+            )}
+
+            {recipe.relatedRecipes.length > 0 && (
+                <Grid {...breakpoints()} item>
+                    <Card
+                        style={{
+                            maxHeight: 500,
+                            height: '100%',
+                            overflowY: 'scroll',
+                        }}>
+                        <Card
+                            raised
+                            style={{
+                                position: 'sticky',
+                                borderRadius: 24,
+                                zIndex: 1,
+                                backgroundColor: '#A5D6A7',
+                                color: '#000',
+                                top: 16,
+                                left: 0,
+                                right: 0,
+                                padding: '0px 8px',
+                                margin: '0 auto',
+                                width: 'fit-content',
+                            }}>
+                            <Subtitle noMargin icon={<LabelIcon />} text="Passt gut zu" />
+                        </Card>
+                        <CardContent style={{ paddingTop: 32 }}>
+                            <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+                        </CardContent>
+                    </Card>
+                </Grid>
+            )}
         </Grid>
     )
 }
@@ -108,7 +245,5 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
 export default memo(
     RecipeResult,
     (prev, next) =>
-        prev.recipe === next.recipe &&
-        prev.actionsEnabled === next.actionsEnabled &&
-        prev.pinned === next.pinned
+        prev.recipe === next.recipe && prev.actions === next.actions && prev.pinned === next.pinned
 )

@@ -1,4 +1,4 @@
-import { Card, CardContent, createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
+import { createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
 import React, { FC } from 'react'
 
@@ -28,15 +28,8 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
 
     return (
         <>
-            <Card>
-                <CardContent>
-                    {recipeDocLoading ? (
-                        <Loading />
-                    ) : (
-                        <RecipeResult recipe={recipeDoc} actionsEnabled />
-                    )}
-                </CardContent>
-            </Card>
+            {recipeDocLoading ? <Loading /> : <RecipeResult recipe={recipeDoc} actions />}
+
             {recipeDoc && user && !user.isAnonymous && (
                 <Navigate to={PATHS.recipeEdit(recipeDoc.name)}>
                     <Zoom in>
