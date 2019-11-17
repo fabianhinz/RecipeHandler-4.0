@@ -1,12 +1,9 @@
 import {
     Box,
     Card,
-    CardActions,
     CardContent,
     CardHeader,
-    Collapse,
     createStyles,
-    Divider,
     IconButton,
     makeStyles,
     TextField,
@@ -17,7 +14,6 @@ import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import CameraIcon from '@material-ui/icons/CameraTwoTone'
 import SpeedDialIcon from '@material-ui/icons/ClassRounded'
-import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import MenuIcon from '@material-ui/icons/MenuBookTwoTone'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
@@ -36,7 +32,6 @@ import { FirebaseService } from '../../../services/firebase'
 import CategoryWrapper from '../../Category/CategoryWrapper'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
-import { Navigate } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeResult from '../Result/RecipeResult'
@@ -142,113 +137,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
     return (
         <>
-            <Card>
-                <CardHeader
-                    title={
-                        <TextField
-                            margin="none"
-                            fullWidth
-                            disabled={props.edit}
-                            className={classes.textFieldName}
-                            label="Name"
-                            value={state.name}
-                            placeholder="Bitte eintragen"
-                            onChange={handleTextFieldChange('name')}
-                        />
-                    }
-                    subheader="Ein Rezept sollte mindestens einen Namen und Kategorie aufweißen. Nach
-                        erfolgter Speicherung ist die Änderung des Rezeptnamens nicht mehr
-                        möglich"
-                    className={classes.cardHeader}
-                />
-                <CardContent>
-                    <Subtitle noMargin icon={<MenuIcon />} text="Kategorien" />
-                    <CategoryWrapper
-                        selectedCategories={selectedCategories}
-                        onCategoryChange={setSelectedCategories}
-                    />
-
-                    <Subtitle icon={<CameraIcon />} text="Bilder" />
-                    <RecipeCreateAttachements
-                        onAttachements={handleAttachementsDrop}
-                        onDeleteAttachement={handleDeleteAttachement}
-                        onRemoveAttachement={handleRemoveAttachement}
-                        onSaveAttachement={handleSaveAttachement}
-                        attachements={state.attachements}
-                    />
-
-                    <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
-                        {/* ToDo extract */}
-                        <Box display="flex" alignItems="center">
-                            <IconButton
-                                onClick={() => dispatch({ type: 'decreaseAmount' })}
-                                size="small">
-                                <RemoveIcon />
-                            </IconButton>
-                            <Box marginLeft={0.5} marginRight={0.5} width={25} textAlign="center">
-                                <Typography variant="h6">{state.amount}</Typography>
-                            </Box>
-                            <IconButton
-                                onClick={() => dispatch({ type: 'increaseAmount' })}
-                                size="small">
-                                <AddIcon />
-                            </IconButton>
-                            <Box marginLeft={0.5} marginRight={0.5} width={25} textAlign="center">
-                                <Typography variant="h5">
-                                    {state.amount < 2 ? 'Person' : 'Personen'}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Subtitle>
-                    <TextField
-                        label="optional"
-                        value={state.ingredients}
-                        onChange={handleTextFieldChange('ingredients')}
-                        fullWidth
-                        rowsMax={10}
-                        multiline
-                        variant="filled"
-                        margin="dense"
-                    />
-
-                    <Subtitle icon={<BookIcon />} text="Beschreibung" />
-                    <TextField
-                        label="optional"
-                        value={state.description}
-                        rowsMax={10}
-                        onChange={handleTextFieldChange('description')}
-                        fullWidth
-                        multiline
-                        variant="filled"
-                        margin="dense"
-                    />
-
-                    <Subtitle icon={<LabelIcon />} text="Passt gut zu" />
-                    <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
-                </CardContent>
-
-                <Divider />
-
-                <CardActions>
-                    <Box
-                        flexGrow={1}
-                        display="flex"
-                        justifyContent="space-evenly"
-                        alignItems="center">
-                        <IconButton onClick={() => dispatch({ type: 'previewChange' })}>
-                            <EyeIcon />
-                        </IconButton>
-                        <Navigate to={PATHS.home}>
-                            <IconButton>
-                                <CloseIcon />
-                            </IconButton>
-                        </Navigate>
-                    </Box>
-                </CardActions>
-            </Card>
-
-            {/* ToDo extract */}
-            <Collapse in={state.preview} timeout="auto" mountOnEnter unmountOnExit>
+            {state.preview ? (
                 <RecipeResult
                     variant="preview"
                     recipe={{
@@ -263,7 +152,104 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         relatedRecipes: state.relatedRecipes,
                     }}
                 />
-            </Collapse>
+            ) : (
+                <Card>
+                    {!state.preview && (
+                        <CardHeader
+                            title={
+                                <TextField
+                                    margin="none"
+                                    fullWidth
+                                    disabled={props.edit}
+                                    className={classes.textFieldName}
+                                    label="Name"
+                                    value={state.name}
+                                    placeholder="Bitte eintragen"
+                                    onChange={handleTextFieldChange('name')}
+                                />
+                            }
+                            subheader="Ein Rezept sollte mindestens einen Namen und Kategorie aufweißen. Nach
+                                    erfolgter Speicherung ist die Änderung des Rezeptnamens nicht mehr
+                                    möglich"
+                            className={classes.cardHeader}
+                        />
+                    )}
+
+                    <CardContent>
+                        <Subtitle noMargin icon={<MenuIcon />} text="Kategorien" />
+                        <CategoryWrapper
+                            selectedCategories={selectedCategories}
+                            onCategoryChange={setSelectedCategories}
+                        />
+
+                        <Subtitle icon={<CameraIcon />} text="Bilder" />
+                        <RecipeCreateAttachements
+                            onAttachements={handleAttachementsDrop}
+                            onDeleteAttachement={handleDeleteAttachement}
+                            onRemoveAttachement={handleRemoveAttachement}
+                            onSaveAttachement={handleSaveAttachement}
+                            attachements={state.attachements}
+                        />
+
+                        <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
+                            {/* ToDo extract */}
+                            <Box display="flex" alignItems="center">
+                                <IconButton
+                                    onClick={() => dispatch({ type: 'decreaseAmount' })}
+                                    size="small">
+                                    <RemoveIcon />
+                                </IconButton>
+                                <Box
+                                    marginLeft={0.5}
+                                    marginRight={0.5}
+                                    width={25}
+                                    textAlign="center">
+                                    <Typography variant="h6">{state.amount}</Typography>
+                                </Box>
+                                <IconButton
+                                    onClick={() => dispatch({ type: 'increaseAmount' })}
+                                    size="small">
+                                    <AddIcon />
+                                </IconButton>
+                                <Box
+                                    marginLeft={0.5}
+                                    marginRight={0.5}
+                                    width={25}
+                                    textAlign="center">
+                                    <Typography variant="h5">
+                                        {state.amount < 2 ? 'Person' : 'Personen'}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Subtitle>
+                        <TextField
+                            label="optional"
+                            value={state.ingredients}
+                            onChange={handleTextFieldChange('ingredients')}
+                            fullWidth
+                            rowsMax={10}
+                            multiline
+                            variant="filled"
+                            margin="dense"
+                        />
+
+                        <Subtitle icon={<BookIcon />} text="Beschreibung" />
+                        <TextField
+                            label="optional"
+                            value={state.description}
+                            rowsMax={10}
+                            onChange={handleTextFieldChange('description')}
+                            fullWidth
+                            multiline
+                            variant="filled"
+                            margin="dense"
+                        />
+
+                        <Subtitle icon={<LabelIcon />} text="Passt gut zu" />
+                        <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                    </CardContent>
+                </Card>
+            )}
 
             <RecipeCreateRelatedDialog
                 defaultValues={state.relatedRecipes}
@@ -285,18 +271,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 icon={<SpeedDialIcon />}
                 openIcon={<SpeedDialIcon />}>
                 <SpeedDialAction
-                    icon={<SaveIcon />}
-                    onClick={handleSaveClick}
-                    tooltipTitle="Rezept speichern"
-                    FabProps={{ size: 'medium' }}
-                />
-                <SpeedDialAction
-                    onClick={() => dispatch({ type: 'openRelatedRecipesDialog' })}
-                    tooltipTitle="Passt gut zu bearbeiten"
-                    FabProps={{ size: 'medium' }}
-                    icon={<SwapIcon />}
-                />
-                <SpeedDialAction
                     {...dropzoneProps.getRootProps()}
                     icon={
                         <>
@@ -306,6 +280,24 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     }
                     FabProps={{ size: 'medium' }}
                     tooltipTitle="Bild hinzufügen"
+                />
+                <SpeedDialAction
+                    onClick={() => dispatch({ type: 'openRelatedRecipesDialog' })}
+                    tooltipTitle="Passt gut zu bearbeiten"
+                    FabProps={{ size: 'medium' }}
+                    icon={<SwapIcon />}
+                />
+                <SpeedDialAction
+                    icon={<EyeIcon />}
+                    onClick={() => dispatch({ type: 'previewChange' })}
+                    tooltipTitle="Vorschau umschalten"
+                    FabProps={{ size: 'medium' }}
+                />
+                <SpeedDialAction
+                    icon={<SaveIcon />}
+                    onClick={handleSaveClick}
+                    tooltipTitle="Rezept speichern"
+                    FabProps={{ size: 'medium' }}
                 />
             </SpeedDial>
         </>

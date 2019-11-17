@@ -137,7 +137,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                             ).toLocaleDateString()}
                         </Typography>
                     </Grid>
-                    {variant !== 'pinned' && (
+                    {variant !== 'pinned' && variant !== 'preview' && (
                         <Grid item xs={4}>
                             <RecipeResultAction
                                 name={recipe.name}
