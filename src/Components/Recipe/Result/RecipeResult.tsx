@@ -54,6 +54,9 @@ const useStyles = makeStyles(theme =>
             width: '100%',
             borderRadius: BORDER_RADIUS,
         },
+        actionArea: {
+            borderRadius: '50%',
+        },
     })
 )
 
@@ -74,10 +77,13 @@ const AttachementPreview = ({ attachement, onSelect }: AttachementPreviewProps) 
             {attachementRefLoading ? (
                 <Skeleton variant="circle" className={classes.attachementPreview} />
             ) : (
-                <CardActionArea onClick={() => onSelect(attachementRef.mediumDataUrl)}>
+                <CardActionArea
+                    onClick={() => onSelect(attachementRef.mediumDataUrl)}
+                    className={classes.actionArea}>
                     <Avatar
                         className={classes.attachementPreview}
-                        src={attachementRef.smallDataUrl}></Avatar>
+                        src={attachementRef.smallDataUrl}
+                    />
                 </CardActionArea>
             )}
         </Grid>
