@@ -52,7 +52,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                 <>
                     <DialogContent>
                         <Typography variant="subtitle1">
-                            Angemeldet als {user.email}. Rezepte können nun bearbeitet und erstellt
+                            Angemeldet als {user.email}. Rezepte können nun angeleget und bearbeitet
                             werden.
                         </Typography>
                     </DialogContent>
