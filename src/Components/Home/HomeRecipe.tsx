@@ -19,17 +19,19 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
 
     return (
         <Box marginBottom={2}>
-            <Card>
-                <CardContent>
-                    <Grid container spacing={2}>
-                        {props.recipes.map(recipe => (
-                            <Grid xs={12} item key={recipe.name}>
-                                <RecipeResult variant="summary" recipe={recipe} />
-                            </Grid>
-                        ))}
-                    </Grid>
-                </CardContent>
-            </Card>
+            {props.recipes.length > 0 && (
+                <Card>
+                    <CardContent>
+                        <Grid container spacing={2}>
+                            {props.recipes.map(recipe => (
+                                <Grid xs={12} item key={recipe.name}>
+                                    <RecipeResult variant="summary" recipe={recipe} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </CardContent>
+                </Card>
+            )}
 
             <Box marginTop={2} display="flex" justifyContent="space-evenly">
                 <Fab
