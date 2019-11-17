@@ -16,7 +16,9 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => (
     <Grid container spacing={2} justify="space-between" alignItems="center">
         <Grid item xs={variant === 'pinned' ? 12 : 8}>
             <Navigate to={PATHS.details(recipe.name)}>
-                <Typography variant="h5">{recipe.name}</Typography>
+                <Typography display="inline" variant="h5">
+                    {recipe.name}
+                </Typography>
             </Navigate>
             <Typography color="textSecondary">
                 Zuletzt geändert am{' '}
