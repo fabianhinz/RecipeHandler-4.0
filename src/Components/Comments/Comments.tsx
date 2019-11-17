@@ -2,8 +2,8 @@ import { IconButton } from '@material-ui/core'
 import CommentIcon from '@material-ui/icons/CommentTwoTone'
 import React, { FC, useState } from 'react'
 
-import { CommentsCollections, CommentsDocument } from '../../../model/model'
-import { BadgeWrapper } from '../BadgeWrapper'
+import { CommentsCollections, CommentsDocument } from '../../model/model'
+import { BadgeWrapper } from '../Shared/BadgeWrapper'
 import { CommentsDrawer } from './CommentsDrawer'
 
 export const Comments: FC<CommentsDocument & CommentsCollections> = ({

@@ -3,12 +3,11 @@ import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../../../firebase'
-import { getRefPaths } from '../../../../hooks/useAttachementRef'
-import { Trial } from '../../../../model/model'
-import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
-import { Comments } from '../../../Shared/Comments/Comments'
-import { HeaderDispatch } from '../HeaderReducer'
+import { getRefPaths } from '../../hooks/useAttachementRef'
+import { Trial } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
+import { Comments } from '../Comments/Comments'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -19,11 +18,11 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface HeaderTrialsCardProps extends HeaderDispatch {
+interface HeaderTrialsCardProps {
     trial: Trial
 }
 
-export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
+const TrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
     const [fullDataUrl, setFullDataUrl] = useState<string | null>()
     const classes = useStyles()
 
@@ -77,3 +76,5 @@ export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
         </Grid>
     )
 }
+
+export default TrialsCard

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { FirebaseService } from '../firebase'
 import { AttachementMetadata, Recipe, RouteWithRecipeName } from '../model/model'
+import { FirebaseService } from '../services/firebase'
 
 type RecipesCollectionState = { loading: boolean; recipe: Recipe<AttachementMetadata> | null }
 

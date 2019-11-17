@@ -15,7 +15,7 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, memo, useState } from 'react'
 
 import { getFileExtension, useAttachementRef } from '../../../../hooks/useAttachementRef'
-import { TRANSITION_DURATION,useTransition } from '../../../../hooks/useTransition'
+import { TRANSITION_DURATION, useTransition } from '../../../../hooks/useTransition'
 import { AttachementData, AttachementMetadata } from '../../../../model/model'
 import { isData, isMetadata } from '../../../../model/modelUtil'
 

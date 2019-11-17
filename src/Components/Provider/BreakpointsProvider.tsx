@@ -15,7 +15,7 @@ export const useBreakpointsContext = () => useContext(Context) as Breakpoints
 
 export const BreakpointsProvider: FC = ({ children }) => {
     const isDrawerBottom = useMediaQuery('(max-width: 1400px)')
-    const isPinnable = useMediaQuery('(min-width: 768px)')
+    const isPinnable = useMediaQuery('(min-width: 1024px)')
     const isDialogFullscreen = useMediaQuery('(max-width: 768px)')
     const isLowRes = useMediaQuery('(max-width: 599px)')
     const isHighRes = useMediaQuery('(min-width: 2560px)')

@@ -3,14 +3,10 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, useEffect, useState } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
-import { FirebaseService } from '../../../firebase'
-import { ReactComponent as NoCommentsIcon } from '../../../icons/notFound.svg'
-import {
-    Comment as CommentModel,
-    CommentsCollections,
-    CommentsDocument,
-} from '../../../model/model'
-import { BORDER_RADIUS_HUGE } from '../../../theme'
+import { ReactComponent as NoCommentsIcon } from '../../icons/notFound.svg'
+import { Comment as CommentModel, CommentsCollections, CommentsDocument } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
+import { BORDER_RADIUS_HUGE } from '../../theme'
 import { Comment } from './Comment'
 
 const useStyles = makeStyles(theme =>

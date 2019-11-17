@@ -28,7 +28,7 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
 
     return (
         <>
-            {recipeDocLoading ? <Loading /> : <RecipeResult recipe={recipeDoc} actions />}
+            {recipeDocLoading ? <Loading /> : <RecipeResult variant="details" recipe={recipeDoc} />}
 
             {recipeDoc && user && !user.isAnonymous && (
                 <Navigate to={PATHS.recipeEdit(recipeDoc.name)}>

@@ -2,16 +2,15 @@ import { createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../firebase'
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import { RecipeDocument } from '../../model/model'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import RecentlyAdded from '../RecentlyAdded/RecentlyAdded'
 import { Navigate } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
 import { HomeCategory } from './HomeCategory'
-import { HomeRecentlyAdded } from './RecentlyAdded/HomeRecentlyAdded'
-import { HomeRecipe } from './Recipe/HomeRecipe'
+import { HomeRecipe } from './HomeRecipe'
 
 type DocumentId = string
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>
@@ -34,7 +33,6 @@ const Home = () => {
 
     const classes = useStyles()
 
-    const { isHighRes } = useBreakpointsContext()
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
     const { user } = useFirebaseAuthContext()
 
@@ -49,15 +47,13 @@ const Home = () => {
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
-        let limit = isHighRes ? 8 : 4
-
         if (selectedCategories.size === 0) {
             setPagination(true)
 
             return query
                 .orderBy('name', 'asc')
                 .startAfter(lastRecipeName)
-                .limit(limit)
+                .limit(4)
                 .onSnapshot(querySnapshot => {
                     const changes: ChangesRecord = {
                         added: new Map(),
@@ -89,11 +85,11 @@ const Home = () => {
                 error => console.error(error)
             )
         }
-    }, [isHighRes, lastRecipeName, selectedCategories, selectedCategories.size])
+    }, [lastRecipeName, selectedCategories, selectedCategories.size])
 
     return (
         <>
-            <HomeRecentlyAdded />
+            <RecentlyAdded />
             <HomeCategory
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}

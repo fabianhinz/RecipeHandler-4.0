@@ -10,7 +10,7 @@ import {
 import { useSnackbar } from 'notistack'
 import React, { ChangeEvent, memo } from 'react'
 
-import { FirebaseService } from '../../../firebase'
+import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { SlideUp } from '../../Shared/Transitions'
 import { HeaderChangeKey, HeaderDispatch, HeaderState } from './HeaderReducer'

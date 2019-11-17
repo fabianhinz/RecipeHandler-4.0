@@ -2,7 +2,7 @@ import { CircularProgress, InputAdornment, InputBase } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/SearchTwoTone'
 import React from 'react'
 
-import { ReactComponent as AlgoliaIcon } from '../../../icons/algolia.svg'
+import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
 
 interface Props {
     searchValue: string
@@ -10,7 +10,7 @@ interface Props {
     onChange: (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
 }
 
-export const HomeSearchInput = ({ searchValue, loading, onChange }: Props) => {
+const SearchInput = ({ searchValue, loading, onChange }: Props) => {
     return (
         <InputBase
             autoFocus
@@ -36,3 +36,5 @@ export const HomeSearchInput = ({ searchValue, loading, onChange }: Props) => {
         />
     )
 }
+
+export default SearchInput

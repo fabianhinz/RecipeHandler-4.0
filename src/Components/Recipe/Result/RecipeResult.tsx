@@ -16,23 +16,24 @@ import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
+import ZoomInIcon from '@material-ui/icons/ZoomInRounded'
 import { Skeleton } from '@material-ui/lab'
 import React, { memo, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
-import { FirebaseService } from '../../../firebase'
 import { useAttachementRef } from '../../../hooks/useAttachementRef'
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
+import { FirebaseService } from '../../../services/firebase'
 import { BORDER_RADIUS } from '../../../theme'
 import { CategoryResult } from '../../Category/CategoryResult'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { Subtitle } from '../../Shared/Subtitle'
-import { RecipeActions, RecipeResultAction } from './Action/RecipeResultAction'
+import { RecipeResultAction, RecipeVariants } from './Action/RecipeResultAction'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
-interface RecipeResultProps extends RecipeActions {
+interface RecipeResultProps extends RecipeVariants {
     recipe: Recipe<AttachementMetadata | AttachementData> | null
 }
 
@@ -41,17 +42,18 @@ const useStyles = makeStyles(theme =>
         recipeContainer: {
             overflowX: 'hidden',
         },
-        openSans: {
-            fontFamily: "'Open Sans', sans-serif",
+        markdown: {
             fontSize: '1rem',
             lineHeight: '1.5rem',
         },
         attachementPreview: {
             width: 200,
             height: 200,
+            boxShadow: theme.shadows[1],
         },
         attachement: {
             width: '100%',
+            boxShadow: theme.shadows[1],
             borderRadius: BORDER_RADIUS,
         },
         actionArea: {
@@ -60,8 +62,8 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const getGridBreakpoints = (pinned?: boolean): Partial<Record<Breakpoint, boolean | GridSize>> =>
-    pinned ? { xs: 12 } : { xs: 12, lg: 6, xl: 4 }
+const getGridBreakpoints = (fullWidth?: boolean): Partial<Record<Breakpoint, boolean | GridSize>> =>
+    fullWidth ? { xs: 12 } : { xs: 12, lg: 6, xl: 4 }
 
 interface AttachementPreviewProps {
     attachement: AttachementMetadata | AttachementData
@@ -82,7 +84,7 @@ const AttachementPreview = ({ attachement, onSelect }: AttachementPreviewProps) 
                     className={classes.actionArea}>
                     <Avatar
                         className={classes.attachementPreview}
-                        src={attachementRef.smallDataUrl}
+                        src={attachementRef.mediumDataUrl}
                     />
                 </CardActionArea>
             )}
@@ -92,7 +94,7 @@ const AttachementPreview = ({ attachement, onSelect }: AttachementPreviewProps) 
 
 type MediumDataUrl = string
 
-const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
+const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
     const [selectedAttachement, setSelectedAttachement] = useState<MediumDataUrl | null>(null)
     const { location } = useRouterContext()
     const classes = useStyles()
@@ -115,12 +117,19 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
         else setSelectedAttachement(attachement)
     }
 
+    const cardElevation = variant === 'pinned' ? 0 : 1
+    const cardMaxHeight = variant === 'pinned' ? 'unset' : 425
+
     return (
-        <Grid container spacing={4} className={classes.recipeContainer} alignContent="stretch">
+        <Grid
+            container
+            spacing={variant === 'pinned' ? 2 : 4}
+            className={classes.recipeContainer}
+            alignContent="stretch">
             <Grid item xs={12}>
                 <Grid container spacing={2} justify="space-between" alignItems="center">
-                    <Grid item xs={12} md={6}>
-                        <Typography variant="h4">{recipe.name}</Typography>
+                    <Grid item xs={variant === 'pinned' ? 12 : 8}>
+                        <Typography variant="h5">{recipe.name}</Typography>
                         <Typography variant="caption">
                             Erstellt am{' '}
                             {FirebaseService.createDateFromTimestamp(
@@ -128,14 +137,14 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
                             ).toLocaleDateString()}
                         </Typography>
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                        {actionProps.actions && (
+                    {variant !== 'pinned' && (
+                        <Grid item xs={4}>
                             <RecipeResultAction
                                 name={recipe.name}
                                 numberOfComments={recipe.numberOfComments}
                             />
-                        )}
-                    </Grid>
+                        </Grid>
+                    )}
                     <Grid item xs={12}>
                         <CategoryResult categories={recipe.categories} />
                     </Grid>
@@ -146,179 +155,147 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
                 <Divider />
             </Grid>
 
-            <Grid item xs={12}>
-                <Grid container spacing={4}>
-                    <Grid item xs={12}>
-                        <PerfectScrollbar
-                            style={{ paddingRight: 8 }}
-                            options={{ suppressScrollY: true }}>
-                            <Grid wrap="nowrap" container spacing={2}>
-                                {recipe.attachements.map(attachement => (
-                                    <AttachementPreview
-                                        onSelect={handleAttachementSelect}
-                                        attachement={attachement}
-                                        key={attachement.name}
-                                    />
-                                ))}
-                            </Grid>
-                        </PerfectScrollbar>
-                    </Grid>
+            {variant !== 'summary' && (
+                <>
+                    {variant !== 'pinned' && (
+                        <Grid item xs={12}>
+                            <Grid container spacing={4}>
+                                <Grid item xs={12}>
+                                    <PerfectScrollbar
+                                        style={{ paddingRight: 8 }}
+                                        options={{ suppressScrollY: true }}>
+                                        <Grid
+                                            wrap="nowrap"
+                                            container
+                                            spacing={2}
+                                            justify="flex-start">
+                                            {recipe.attachements.map(attachement => (
+                                                <AttachementPreview
+                                                    onSelect={handleAttachementSelect}
+                                                    attachement={attachement}
+                                                    key={attachement.name}
+                                                />
+                                            ))}
+                                        </Grid>
+                                    </PerfectScrollbar>
+                                </Grid>
 
-                    {selectedAttachement && (
-                        <Grid {...getGridBreakpoints(actionProps.pinned)} item>
-                            <img src={selectedAttachement} alt="" className={classes.attachement} />
+                                {selectedAttachement && (
+                                    <Grid {...getGridBreakpoints()} item>
+                                        <img
+                                            src={selectedAttachement}
+                                            alt=""
+                                            className={classes.attachement}
+                                        />
+                                    </Grid>
+                                )}
+                            </Grid>
                         </Grid>
                     )}
-                </Grid>
-            </Grid>
-
-            {/* {recipe.attachements.length > 0 && (
-                <Grid {...breakpoints()} item>
-                    <Card
-                        style={{
-                            maxHeight: 500,
-                            height: '100%',
-                            overflowY: 'auto',
-                        }}>
-                        <Card
-                            raised
-                            style={{
-                                position: 'sticky',
-                                borderRadius: 24,
-                                zIndex: 1,
-                                backgroundColor: '#A5D6A7',
-                                color: '#000',
-                                top: 16,
-                                padding: '0px 8px',
-                                margin: '0 auto',
-                                width: 'fit-content',
-                            }}>
-                            <Subtitle noMargin icon={<CameraIcon />} text={'Bilder'} />
-                        </Card>
-                        <CardContent style={{ paddingTop: 32 }}>
-                            <Grid container spacing={2}>
-                                {recipe.attachements.map(attachement => (
-                                    <RecipeResultImg
-                                        {...actionProps}
-                                        key={attachement.name}
-                                        attachement={attachement}
+                    {recipe.ingredients.length > 0 && (
+                        <Grid {...getGridBreakpoints(variant === 'pinned')} item>
+                            <Card
+                                elevation={cardElevation}
+                                style={{
+                                    maxHeight: cardMaxHeight,
+                                    height: '100%',
+                                    overflowY: 'auto',
+                                }}>
+                                <Card
+                                    style={{
+                                        position: 'sticky',
+                                        top: 0,
+                                        zIndex: 1,
+                                        backgroundColor: '#A5D6A7',
+                                        color: '#000',
+                                        padding: '0px 8px',
+                                    }}>
+                                    <Subtitle
+                                        noMargin
+                                        icon={<AssignmentIcon />}
+                                        text={
+                                            <>
+                                                Zutaten für {recipe.amount}{' '}
+                                                {recipe.amount < 2 ? 'Person' : 'Personen'}
+                                            </>
+                                        }
                                     />
-                                ))}
-                            </Grid>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            )} */}
-
-            {recipe.ingredients.length > 0 && (
-                <Grid {...getGridBreakpoints(actionProps.pinned)} item>
-                    <Card
-                        style={{
-                            maxHeight: 500,
-                            height: '100%',
-                            overflowY: 'auto',
-                        }}>
+                                </Card>
+                                <CardContent
+                                    style={
+                                        variant === 'pinned' ? { padding: 0, paddingTop: 16 } : {}
+                                    }>
+                                    <ReactMarkdown
+                                        className={classes.markdown}
+                                        source={recipe.ingredients}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    )}
+                    {recipe.description.length > 0 && (
+                        <Grid {...getGridBreakpoints(variant === 'pinned')} item>
+                            <Card
+                                elevation={cardElevation}
+                                style={{
+                                    maxHeight: cardMaxHeight,
+                                    height: '100%',
+                                    overflowY: 'auto',
+                                }}>
+                                <Card
+                                    style={{
+                                        position: 'sticky',
+                                        top: 0,
+                                        zIndex: 1,
+                                        backgroundColor: '#A5D6A7',
+                                        color: '#000',
+                                        padding: '0px 8px',
+                                    }}>
+                                    <Subtitle noMargin icon={<BookIcon />} text="Beschreibung" />
+                                </Card>
+                                <CardContent
+                                    style={
+                                        variant === 'pinned' ? { padding: 0, paddingTop: 16 } : {}
+                                    }>
+                                    <ReactMarkdown
+                                        className={classes.markdown}
+                                        source={recipe.description}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    )}
+                    <Grid {...getGridBreakpoints(variant === 'pinned')} item>
                         <Card
-                            raised
+                            elevation={cardElevation}
                             style={{
-                                position: 'sticky',
-                                borderRadius: 24,
-                                zIndex: 1,
-                                backgroundColor: '#A5D6A7',
-                                color: '#000',
-                                top: 16,
-                                left: 0,
-                                right: 0,
-                                padding: '0px 8px',
-                                margin: '0 auto',
-                                width: 'fit-content',
+                                maxHeight: cardMaxHeight,
+                                height: '100%',
+                                overflowY: 'scroll',
                             }}>
-                            <Subtitle
-                                noMargin
-                                icon={<AssignmentIcon />}
-                                text={
-                                    <>
-                                        Zutaten für {recipe.amount}{' '}
-                                        {recipe.amount < 2 ? 'Person' : 'Personen'}
-                                    </>
-                                }
-                            />
+                            <Card
+                                style={{
+                                    position: 'sticky',
+                                    top: 0,
+                                    zIndex: 1,
+                                    backgroundColor: '#A5D6A7',
+                                    color: '#000',
+                                    padding: '0px 8px',
+                                }}>
+                                <Subtitle noMargin icon={<LabelIcon />} text="Passt gut zu" />
+                            </Card>
+                            <CardContent
+                                style={variant === 'pinned' ? { padding: 0, paddingTop: 16 } : {}}>
+                                <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+                                {recipe.relatedRecipes.length === 0 && (
+                                    <Box display="flex" justifyContent="center">
+                                        <NotFoundIcon width={200} />
+                                    </Box>
+                                )}
+                            </CardContent>
                         </Card>
-                        <CardContent style={{ paddingTop: 32 }}>
-                            <ReactMarkdown
-                                className={classes.openSans}
-                                source={recipe.ingredients}
-                            />
-                        </CardContent>
-                    </Card>
-                </Grid>
-            )}
-
-            {recipe.description.length > 0 && (
-                <Grid {...getGridBreakpoints(actionProps.pinned)} item>
-                    <Card
-                        style={{
-                            maxHeight: 500,
-                            height: '100%',
-                            overflowY: 'auto',
-                        }}>
-                        <Card
-                            raised
-                            style={{
-                                position: 'sticky',
-                                borderRadius: 24,
-                                zIndex: 1,
-                                backgroundColor: '#A5D6A7',
-                                color: '#000',
-                                top: 16,
-                                left: 0,
-                                right: 0,
-                                padding: '0px 8px',
-                                margin: '0 auto',
-                                width: 'fit-content',
-                            }}>
-                            <Subtitle noMargin icon={<BookIcon />} text="Beschreibung" />
-                        </Card>
-                        <CardContent style={{ paddingTop: 32 }}>
-                            <ReactMarkdown
-                                className={classes.openSans}
-                                source={recipe.description}
-                            />
-                        </CardContent>
-                    </Card>
-                </Grid>
-            )}
-
-            {recipe.relatedRecipes.length > 0 && (
-                <Grid {...getGridBreakpoints(actionProps.pinned)} item>
-                    <Card
-                        style={{
-                            maxHeight: 500,
-                            height: '100%',
-                            overflowY: 'scroll',
-                        }}>
-                        <Card
-                            raised
-                            style={{
-                                position: 'sticky',
-                                borderRadius: 24,
-                                zIndex: 1,
-                                backgroundColor: '#A5D6A7',
-                                color: '#000',
-                                top: 16,
-                                left: 0,
-                                right: 0,
-                                padding: '0px 8px',
-                                margin: '0 auto',
-                                width: 'fit-content',
-                            }}>
-                            <Subtitle noMargin icon={<LabelIcon />} text="Passt gut zu" />
-                        </Card>
-                        <CardContent style={{ paddingTop: 32 }}>
-                            <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
-                        </CardContent>
-                    </Card>
-                </Grid>
+                    </Grid>
+                </>
             )}
         </Grid>
     )
@@ -326,6 +303,5 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
 
 export default memo(
     RecipeResult,
-    (prev, next) =>
-        prev.recipe === next.recipe && prev.actions === next.actions && prev.pinned === next.pinned
+    (prev, next) => prev.recipe === next.recipe && prev.variant === next.variant
 )

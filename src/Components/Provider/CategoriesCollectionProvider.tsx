@@ -1,7 +1,7 @@
 import React, { FC, useContext, useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../firebase'
 import { Categories } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
 
 type CategoriesCollection = {
     categoriesCollection: Categories<Array<string>>

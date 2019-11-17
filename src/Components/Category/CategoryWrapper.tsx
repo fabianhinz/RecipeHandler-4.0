@@ -85,6 +85,19 @@ interface CategoryDialogProps extends CategoryWrapperProps {
     type: string
 }
 
+const useStyles = makeStyles(theme =>
+    createStyles({
+        skeletonContainer: {
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(2),
+        },
+        avatarSelected: {
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.getContrastText(theme.palette.secondary.main),
+        },
+    })
+)
+
 const CategoryDialog: FC<CategoryDialogProps> = ({
     onCategoryChange,
     selectedCategories,
@@ -93,6 +106,8 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
 }) => {
     const [dialog, setDialog] = useState(false)
     const { isDialogFullscreen } = useBreakpointsContext()
+
+    const classes = useStyles()
 
     const selectedHasType = selectedCategories.has(type)
     const selectedCategory = selectedCategories.get(type) as string
@@ -109,7 +124,9 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
             <ListItem button onClick={handleDialogChange}>
                 <ListItemIcon>
                     {selectedHasType ? (
-                        <Avatar>{iconFromCategory(selectedCategory)}</Avatar>
+                        <Avatar className={classes.avatarSelected}>
+                            {iconFromCategory(selectedCategory)}
+                        </Avatar>
                     ) : (
                         <Avatar>
                             <FilterVariant />
@@ -172,15 +189,6 @@ interface CategoryWrapperProps {
 }
 
 const SKELETON_CATEGORIES = ['art', 'ernährung', 'zeit']
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        skeletonContainer: {
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2),
-        },
-    })
-)
 
 const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedCategories }) => {
     const { categoriesCollection, categoriesLoading } = useCategoriesCollectionContext()

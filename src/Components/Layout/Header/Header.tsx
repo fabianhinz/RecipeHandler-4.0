@@ -1,10 +1,10 @@
 import { createStyles, Drawer, makeStyles } from '@material-ui/core'
 import React from 'react'
 
+import Trials from '../../Trials/Trials'
 import HeaderLoginDialog from './HeaderLoginDialog'
 import HeaderNavigation from './HeaderNavigation'
 import { useHeaderReducer } from './HeaderReducer'
-import HeaderTrials from './Trials/HeaderTrials'
 
 interface HeaderProps {
     onThemeChange: () => void
@@ -39,7 +39,7 @@ export const Header = ({ onThemeChange }: HeaderProps) => {
                 dispatch={dispatch}
             />
 
-            <HeaderTrials trialsOpen={state.trialsOpen} dispatch={dispatch} />
+            <Trials open={state.trialsOpen} onClose={() => dispatch({ type: 'trialsChange' })} />
         </>
     )
 }

@@ -1,9 +1,9 @@
-import { Box, Fab } from '@material-ui/core'
+import { Box, Card, CardContent, Fab, Grid } from '@material-ui/core'
 import ExpandIcon from '@material-ui/icons/ExpandMoreTwoTone'
 import React from 'react'
 
-import { AttachementMetadata, Recipe } from '../../../model/model'
-import HomeRecipeResults from './HomeRecipeResults'
+import { AttachementMetadata, Recipe } from '../../model/model'
+import RecipeResult from '../Recipe/Result/RecipeResult'
 
 interface HomeRecipeProps {
     recipes: Array<Recipe<AttachementMetadata>>
@@ -19,11 +19,17 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
 
     return (
         <Box marginBottom={2}>
-            <div>
-                {props.recipes.map(recipe => (
-                    <HomeRecipeResults key={recipe.name} recipe={recipe} />
-                ))}
-            </div>
+            <Card>
+                <CardContent>
+                    <Grid container spacing={2}>
+                        {props.recipes.map(recipe => (
+                            <Grid xs={12} item key={recipe.name}>
+                                <RecipeResult variant="summary" recipe={recipe} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </CardContent>
+            </Card>
 
             <Box marginTop={2} display="flex" justifyContent="space-evenly">
                 <Fab

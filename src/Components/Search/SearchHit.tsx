@@ -2,9 +2,9 @@ import { ListItem, ListItemText } from '@material-ui/core'
 import React from 'react'
 import Highlighter from 'react-highlight-words'
 
-import { Hit } from '../../../model/model'
-import { useRouterContext } from '../../Provider/RouterProvider'
-import { PATHS } from '../../Routes/Routes'
+import { Hit } from '../../model/model'
+import { useRouterContext } from '../Provider/RouterProvider'
+import { PATHS } from '../Routes/Routes'
 
 const getHighlightedDescription = (description: string) => {
     const descriptionArray = description.split(/1\.|- |\*{1,}|#{1,}/gi)
@@ -51,7 +51,7 @@ interface Props {
     debouncedSearchValue: string
 }
 
-export const HomeSearchHit = ({ recipeHit, debouncedSearchValue, onHitSelect }: Props) => {
+const SearchHit = ({ recipeHit, debouncedSearchValue, onHitSelect }: Props) => {
     const { history } = useRouterContext()
 
     const handleListItemClick = () => {
@@ -92,3 +92,5 @@ export const HomeSearchHit = ({ recipeHit, debouncedSearchValue, onHitSelect }: 
         </ListItem>
     )
 }
+
+export default SearchHit

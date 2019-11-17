@@ -29,10 +29,10 @@ import { useSnackbar } from 'notistack'
 import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router'
 
-import { FirebaseService } from '../../../firebase'
 import { getRefPaths } from '../../../hooks/useAttachementRef'
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
 import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
+import { FirebaseService } from '../../../services/firebase'
 import CategoryWrapper from '../../Category/CategoryWrapper'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
@@ -194,7 +194,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                                 <AddIcon />
                             </IconButton>
                             <Box marginLeft={0.5} marginRight={0.5} width={25} textAlign="center">
-                                <Typography variant="h6">
+                                <Typography variant="h5">
                                     {state.amount < 2 ? 'Person' : 'Personen'}
                                 </Typography>
                             </Box>
@@ -245,31 +245,25 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         </Navigate>
                     </Box>
                 </CardActions>
-
-                {/* ToDo extract */}
-                <Collapse in={state.preview} timeout="auto" mountOnEnter unmountOnExit>
-                    <>
-                        <Divider />
-                        <CardContent>
-                            <RecipeResult
-                                recipe={{
-                                    name: state.name,
-                                    createdDate: FirebaseService.createTimestampFromDate(
-                                        new Date()
-                                    ),
-                                    numberOfComments: 0,
-                                    categories: state.categories,
-                                    attachements: state.attachements,
-                                    ingredients: state.ingredients,
-                                    amount: state.amount,
-                                    description: state.description,
-                                    relatedRecipes: state.relatedRecipes,
-                                }}
-                            />
-                        </CardContent>
-                    </>
-                </Collapse>
             </Card>
+
+            {/* ToDo extract */}
+            <Collapse in={state.preview} timeout="auto" mountOnEnter unmountOnExit>
+                <RecipeResult
+                    variant="preview"
+                    recipe={{
+                        name: state.name,
+                        createdDate: FirebaseService.createTimestampFromDate(new Date()),
+                        numberOfComments: 0,
+                        categories: state.categories,
+                        attachements: state.attachements,
+                        ingredients: state.ingredients,
+                        amount: state.amount,
+                        description: state.description,
+                        relatedRecipes: state.relatedRecipes,
+                    }}
+                />
+            </Collapse>
 
             <RecipeCreateRelatedDialog
                 defaultValues={state.relatedRecipes}

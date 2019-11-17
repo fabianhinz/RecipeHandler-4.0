@@ -11,12 +11,12 @@ import {
 import SearchIcon from '@material-ui/icons/SearchTwoTone'
 import React, { useEffect, useState } from 'react'
 
-import { index } from '../../../algolia'
-import useDebounce from '../../../hooks/useDebounce'
-import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
-import { Hits } from '../../../model/model'
-import { HomeSearchHit } from './HomeSearchHit'
-import { HomeSearchInput } from './HomeSearchInput'
+import useDebounce from '../../hooks/useDebounce'
+import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
+import { Hits } from '../../model/model'
+import { index } from '../../services/algolia'
+import SearchHit from './SearchHit'
+import SearchInput from './SearchInput'
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -27,7 +27,7 @@ const useStyles = makeStyles(() =>
     })
 )
 
-export const HomeSearch = () => {
+const Search = () => {
     const [searchDrawer, setSearchDrawer] = useState(false)
     const [searchValue, setSearchValue] = useState('')
     const [algoliaHits, setAlgoliaHits] = useState<Hits>([])
@@ -68,7 +68,7 @@ export const HomeSearch = () => {
 
             <Drawer open={searchDrawer} onClose={handleSearchDrawerChange} anchor="top">
                 <Box padding={2}>
-                    <HomeSearchInput
+                    <SearchInput
                         searchValue={searchValue}
                         loading={loading}
                         onChange={e => {
@@ -83,7 +83,7 @@ export const HomeSearch = () => {
                 {algoliaHits.length > 0 && (
                     <List className={classes.list}>
                         {algoliaHits.map(recipeHit => (
-                            <HomeSearchHit
+                            <SearchHit
                                 key={recipeHit.name}
                                 recipeHit={recipeHit}
                                 onHitSelect={handleSearchDrawerChange}
@@ -108,3 +108,5 @@ export const HomeSearch = () => {
         </>
     )
 }
+
+export default Search

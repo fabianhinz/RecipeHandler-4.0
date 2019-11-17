@@ -1,33 +1,18 @@
-import { Box, createStyles, LinearProgress, makeStyles } from '@material-ui/core'
+import { createStyles, LinearProgress, makeStyles } from '@material-ui/core'
 import React from 'react'
 
-import { BORDER_RADIUS, BORDER_RADIUS_HUGE } from '../../theme'
-
-const useStyles = makeStyles(theme =>
+const useStyles = makeStyles(() =>
     createStyles({
-        img: {
-            borderRadius: BORDER_RADIUS,
-            width: '100%',
-        },
         progress: {
-            flexGrow: 1,
-            borderRadius: BORDER_RADIUS_HUGE,
-            height: theme.spacing(1),
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
         },
     })
 )
 
 export const Loading = () => {
     const classes = useStyles()
-
-    return (
-        <Box
-            height="100%"
-            minHeight={50}
-            display="flex"
-            justifyContent="center"
-            alignItems="center">
-            <LinearProgress className={classes.progress} color="primary" variant="query" />
-        </Box>
-    )
+    return <LinearProgress className={classes.progress} />
 }

@@ -1,12 +1,12 @@
 import { Box, Grid } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../../firebase'
-import { RecipeDocument } from '../../../model/model'
-import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
-import { HomeRecentlyAddedCard } from './HomeRecentlyAddedCard'
+import { RecipeDocument } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import RecentlyAddedCard from './RecentlyAddedCard'
 
-export const HomeRecentlyAdded = () => {
+const RecentlyAdded = () => {
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
     const { isLowRes, isHighRes } = useBreakpointsContext()
 
@@ -32,9 +32,11 @@ export const HomeRecentlyAdded = () => {
         <Box marginBottom={2}>
             <Grid container spacing={2}>
                 {recipes.map(recipe => (
-                    <HomeRecentlyAddedCard skeleton={false} key={recipe.name} recipe={recipe} />
+                    <RecentlyAddedCard skeleton={false} key={recipe.name} recipe={recipe} />
                 ))}
             </Grid>
         </Box>
     )
 }
+
+export default RecentlyAdded

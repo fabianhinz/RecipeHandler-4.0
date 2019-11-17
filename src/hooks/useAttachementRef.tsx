@@ -1,9 +1,9 @@
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 
-import { FirebaseService } from '../firebase'
 import { AttachementData, AttachementMetadata } from '../model/model'
 import { isMetadata } from '../model/modelUtil'
+import { FirebaseService } from '../services/firebase'
 
 interface State {
     base: Omit<AttachementData, 'dataUrl'>

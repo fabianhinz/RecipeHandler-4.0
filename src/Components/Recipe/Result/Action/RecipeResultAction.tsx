@@ -1,16 +1,13 @@
 import { Grid } from '@material-ui/core'
 import React, { FC } from 'react'
 
+import { Comments } from '../../../Comments/Comments'
 import { useBreakpointsContext } from '../../../Provider/BreakpointsProvider'
-import { Comments } from '../../../Shared/Comments/Comments'
 import { RecipeResultPin } from './RecipeResultPin'
 import { RecipeResultRating } from './RecipeResultRating'
 import { RecipeResultShare } from './RecipeResultShare'
 
-export type RecipeActions = {
-    pinned?: boolean
-    actions?: boolean
-}
+export type RecipeVariants = { variant: 'summary' | 'details' | 'pinned' | 'preview' }
 
 interface RecipeResultActionProps {
     name: string

@@ -59,7 +59,7 @@ const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) =>
                 pinned && classes.pinnedRecipes,
                 isMobilePadding && user && !user.isAnonymous && classes.mobilePadding
             )}>
-            <Hidden smDown>
+            <Hidden mdDown>
                 <Navigate to={PATHS.home}>
                     <Button size="large" startIcon={<HomeIcon />}>
                         Start
@@ -90,7 +90,7 @@ const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) =>
                 </Button>
             </Hidden>
 
-            <Hidden mdUp>
+            <Hidden lgUp>
                 <Navigate to={PATHS.home}>
                     <IconButton>
                         <HomeIcon />

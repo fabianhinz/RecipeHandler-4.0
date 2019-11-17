@@ -10,9 +10,9 @@ interface SubtitleProps {
 export const Subtitle: FC<SubtitleProps> = ({ icon, text, children, noMargin }) => (
     <Box marginTop={noMargin ? 0 : 2} paddingBottom={1} paddingTop={1}>
         <Grid container spacing={1} alignItems="flex-end">
-            {icon && <Grid item>{icon}</Grid>}
+            <Grid item>{icon}</Grid>
             <Grid item>
-                <Typography variant="h6">{text}</Typography>
+                <Typography variant="h5">{text}</Typography>
             </Grid>
             {children && <Grid item>{children}</Grid>}
         </Grid>

@@ -1,9 +1,9 @@
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 
-import { FirebaseService } from '../../../firebase'
 import { AttachementMetadata } from '../../../model/model'
 import { isData } from '../../../model/modelUtil'
+import { FirebaseService } from '../../../services/firebase'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import { RecipeCreateState } from './RecipeCreateReducer'

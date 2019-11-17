@@ -1,14 +1,4 @@
-import {
-    Box,
-    createStyles,
-    IconButton,
-    makeStyles,
-    MobileStepper,
-    Paper,
-    Slide,
-} from '@material-ui/core'
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
+import { Box, createStyles, makeStyles, Paper, Slide } from '@material-ui/core'
 import clsx from 'clsx'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
@@ -33,28 +23,31 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ recipeName })
 
     return (
-        <Box padding={2} paddingTop={1}>
+        <Box padding={2}>
             <Box display="flex" justifyContent="center">
                 <RecipeResultPin name={recipeName} />
             </Box>
-            {recipeDocLoading ? <Loading /> : <RecipeResult pinned recipe={recipeDoc} />}
+            {recipeDocLoading ? <Loading /> : <RecipeResult variant="pinned" recipe={recipeDoc} />}
         </Box>
     )
 }
 
-export const PINNED_WIDTH = 320
+export const PINNED_WIDTH = 425
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        paper: {
+        pinnedContainer: {
             width: PINNED_WIDTH,
             position: 'fixed',
             height: '100vh',
-            overflow: 'auto',
+            overflowY: 'auto',
             top: 0,
             left: 0,
             zIndex: theme.zIndex.drawer + 1,
             boxShadow: theme.shadows[8],
+        },
+        recipePadding: {
+            padding: theme.spacing(2),
         },
         pinnedWidth: {
             marginLeft: PINNED_WIDTH,
@@ -121,27 +114,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                 pinned,
             }}>
             <Slide in={pinned} direction="right">
-                <Paper className={classes.paper}>
-                    <MobileStepper
-                        steps={pinnedRecipes.size}
-                        activeStep={activeIndex}
-                        position="static"
-                        variant="dots"
-                        nextButton={
-                            <IconButton
-                                onClick={() => setActiveIndex(prev => ++prev)}
-                                disabled={activeIndex === pinnedRecipes.size - 1}>
-                                <KeyboardArrowRight />
-                            </IconButton>
-                        }
-                        backButton={
-                            <IconButton
-                                onClick={() => setActiveIndex(prev => --prev)}
-                                disabled={activeIndex === 0}>
-                                <KeyboardArrowLeft />
-                            </IconButton>
-                        }
-                    />
+                <Paper className={classes.pinnedContainer}>
                     <SwipeableViews
                         index={activeIndex}
                         onChangeIndex={index => setActiveIndex(index)}>

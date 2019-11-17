@@ -21,8 +21,8 @@ import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import SaveIcon from '@material-ui/icons/SaveTwoTone'
 import React, { FC, useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../../firebase'
 import { RecipeDocument } from '../../../model/model'
+import { FirebaseService } from '../../../services/firebase'
 import { iconFromCategory } from '../../Category/CategoryWrapper'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { Loading } from '../../Shared/Loading'
@@ -73,6 +73,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
 
     return (
         <Dialog
+            keepMounted
             fullScreen={isDialogFullscreen}
             TransitionComponent={SlideUp}
             open={open}

@@ -3,10 +3,11 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
 import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
 import React, { FC } from 'react'
 
-import { FirebaseService } from '../../../firebase'
-import { Comment as CommentModel, CommentsCollections, RecipeDocument } from '../../../model/model'
-import { BORDER_RADIUS_HUGE } from '../../../theme'
-import { BadgeWrapper } from '../BadgeWrapper'
+import { Comment as CommentModel } from '../../model/model'
+import { CommentsCollections, RecipeDocument } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
+import { BORDER_RADIUS_HUGE } from '../../theme'
+import { BadgeWrapper } from '../Shared/BadgeWrapper'
 
 const useStyles = makeStyles(theme =>
     createStyles({

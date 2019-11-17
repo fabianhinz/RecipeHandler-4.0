@@ -10,14 +10,14 @@ import {
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import Skeleton from '@material-ui/lab/Skeleton'
-import React, { FC } from 'react'
+import React from 'react'
 
-import { useAttachementRef } from '../../../hooks/useAttachementRef'
-import { AttachementMetadata, Recipe } from '../../../model/model'
-import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
-import { usePinnedRecipesContext } from '../../Provider/PinnedRecipesProvider'
-import { useRouterContext } from '../../Provider/RouterProvider'
-import { PATHS } from '../../Routes/Routes'
+import { useAttachementRef } from '../../hooks/useAttachementRef'
+import { AttachementMetadata, Recipe } from '../../model/model'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
+import { useRouterContext } from '../Provider/RouterProvider'
+import { PATHS } from '../Routes/Routes'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -32,10 +32,12 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-export const HomeRecentlyAddedCard: FC<{
+interface Props {
     recipe: Recipe<AttachementMetadata>
     skeleton: boolean
-}> = ({ recipe, skeleton }) => {
+}
+
+const RecentlyAddedCard = ({ recipe, skeleton }: Props) => {
     const { attachementRef, attachementRefLoading } = useAttachementRef(recipe.attachements[0])
     const { isHighRes } = useBreakpointsContext()
     const { history } = useRouterContext()
@@ -87,3 +89,5 @@ export const HomeRecentlyAddedCard: FC<{
         </Grid>
     )
 }
+
+export default RecentlyAddedCard
