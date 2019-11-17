@@ -86,6 +86,7 @@ export const HomeSearch = () => {
                             <HomeSearchHit
                                 key={recipeHit.name}
                                 recipeHit={recipeHit}
+                                onHitSelect={handleSearchDrawerChange}
                                 debouncedSearchValue={debouncedSearchValue}
                             />
                         ))}

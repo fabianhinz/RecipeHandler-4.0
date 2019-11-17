@@ -15,7 +15,7 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, memo, useState } from 'react'
 
 import { getFileExtension, useAttachementRef } from '../../../../hooks/useAttachementRef'
-import { useTransition } from '../../../../hooks/useTransition'
+import { TRANSITION_DURATION,useTransition } from '../../../../hooks/useTransition'
 import { AttachementData, AttachementMetadata } from '../../../../model/model'
 import { isData, isMetadata } from '../../../../model/modelUtil'
 
@@ -65,7 +65,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
 
     return (
         <Grid xs={12} sm={6} md={4} lg={3} item>
-            <Zoom in={componentVisible} mountOnEnter timeout={200}>
+            <Zoom in={componentVisible} mountOnEnter timeout={TRANSITION_DURATION}>
                 <Card raised onClick={e => e.stopPropagation()}>
                     {attachementRefLoading ? (
                         <Skeleton variant="rect" className={classes.cardMedia} />

@@ -47,17 +47,20 @@ const getHighlightedIngredients = (ingredients: string) => {
 
 interface Props {
     recipeHit: Hit
+    onHitSelect: () => void
     debouncedSearchValue: string
 }
 
-export const HomeSearchHit = ({ recipeHit, debouncedSearchValue }: Props) => {
+export const HomeSearchHit = ({ recipeHit, debouncedSearchValue, onHitSelect }: Props) => {
     const { history } = useRouterContext()
 
+    const handleListItemClick = () => {
+        onHitSelect()
+        history.push(PATHS.details(recipeHit.name))
+    }
+
     return (
-        <ListItem
-            button
-            onClick={() => history.push(PATHS.details(recipeHit.name))}
-            key={recipeHit.name}>
+        <ListItem button onClick={handleListItemClick} key={recipeHit.name}>
             <ListItemText
                 primary={recipeHit.name}
                 secondary={

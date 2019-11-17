@@ -1,6 +1,8 @@
 import {
+    Avatar,
     Box,
     Card,
+    CardActionArea,
     CardContent,
     createStyles,
     Divider,
@@ -13,18 +15,21 @@ import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
-import CameraIcon from '@material-ui/icons/CameraTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
-import React, { memo } from 'react'
+import { Skeleton } from '@material-ui/lab'
+import React, { memo, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import PerfectScrollbar from 'react-perfect-scrollbar'
 
 import { FirebaseService } from '../../../firebase'
+import { useAttachementRef } from '../../../hooks/useAttachementRef'
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
+import { BORDER_RADIUS } from '../../../theme'
 import { CategoryResult } from '../../Category/CategoryResult'
+import { useRouterContext } from '../../Provider/RouterProvider'
 import { Subtitle } from '../../Shared/Subtitle'
 import { RecipeActions, RecipeResultAction } from './Action/RecipeResultAction'
-import { RecipeResultImg } from './RecipeResultImg'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
 interface RecipeResultProps extends RecipeActions {
@@ -41,11 +46,54 @@ const useStyles = makeStyles(theme =>
             fontSize: '1rem',
             lineHeight: '1.5rem',
         },
+        attachementPreview: {
+            width: 200,
+            height: 200,
+        },
+        attachement: {
+            width: '100%',
+            borderRadius: BORDER_RADIUS,
+        },
     })
 )
 
-const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
+const getGridBreakpoints = (pinned?: boolean): Partial<Record<Breakpoint, boolean | GridSize>> =>
+    pinned ? { xs: 12 } : { xs: 12, lg: 6, xl: 4 }
+
+interface AttachementPreviewProps {
+    attachement: AttachementMetadata | AttachementData
+    onSelect: (dataUrl: MediumDataUrl) => void
+}
+
+const AttachementPreview = ({ attachement, onSelect }: AttachementPreviewProps) => {
+    const { attachementRef, attachementRefLoading } = useAttachementRef(attachement)
     const classes = useStyles()
+
+    return (
+        <Grid item>
+            {attachementRefLoading ? (
+                <Skeleton variant="circle" className={classes.attachementPreview} />
+            ) : (
+                <CardActionArea onClick={() => onSelect(attachementRef.mediumDataUrl)}>
+                    <Avatar
+                        className={classes.attachementPreview}
+                        src={attachementRef.smallDataUrl}></Avatar>
+                </CardActionArea>
+            )}
+        </Grid>
+    )
+}
+
+type MediumDataUrl = string
+
+const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
+    const [selectedAttachement, setSelectedAttachement] = useState<MediumDataUrl | null>(null)
+    const { location } = useRouterContext()
+    const classes = useStyles()
+
+    useEffect(() => {
+        setSelectedAttachement(null)
+    }, [location.pathname])
 
     if (!recipe)
         return (
@@ -56,8 +104,10 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
             </Box>
         )
 
-    const breakpoints = (): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        actionProps.pinned ? { xs: 12 } : { xs: 12, md: 6, lg: 4 }
+    const handleAttachementSelect = (attachement: MediumDataUrl) => {
+        if (selectedAttachement === attachement) setSelectedAttachement(null)
+        else setSelectedAttachement(attachement)
+    }
 
     return (
         <Grid container spacing={4} className={classes.recipeContainer} alignContent="stretch">
@@ -90,7 +140,33 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
                 <Divider />
             </Grid>
 
-            {recipe.attachements.length > 0 && (
+            <Grid item xs={12}>
+                <Grid container spacing={4}>
+                    <Grid item xs={12}>
+                        <PerfectScrollbar
+                            style={{ paddingRight: 8 }}
+                            options={{ suppressScrollY: true }}>
+                            <Grid wrap="nowrap" container spacing={2}>
+                                {recipe.attachements.map(attachement => (
+                                    <AttachementPreview
+                                        onSelect={handleAttachementSelect}
+                                        attachement={attachement}
+                                        key={attachement.name}
+                                    />
+                                ))}
+                            </Grid>
+                        </PerfectScrollbar>
+                    </Grid>
+
+                    {selectedAttachement && (
+                        <Grid {...getGridBreakpoints(actionProps.pinned)} item>
+                            <img src={selectedAttachement} alt="" className={classes.attachement} />
+                        </Grid>
+                    )}
+                </Grid>
+            </Grid>
+
+            {/* {recipe.attachements.length > 0 && (
                 <Grid {...breakpoints()} item>
                     <Card
                         style={{
@@ -126,10 +202,10 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
                         </CardContent>
                     </Card>
                 </Grid>
-            )}
+            )} */}
 
             {recipe.ingredients.length > 0 && (
-                <Grid {...breakpoints()} item>
+                <Grid {...getGridBreakpoints(actionProps.pinned)} item>
                     <Card
                         style={{
                             maxHeight: 500,
@@ -173,7 +249,7 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
             )}
 
             {recipe.description.length > 0 && (
-                <Grid {...breakpoints()} item>
+                <Grid {...getGridBreakpoints(actionProps.pinned)} item>
                     <Card
                         style={{
                             maxHeight: 500,
@@ -208,7 +284,7 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
             )}
 
             {recipe.relatedRecipes.length > 0 && (
-                <Grid {...breakpoints()} item>
+                <Grid {...getGridBreakpoints(actionProps.pinned)} item>
                     <Card
                         style={{
                             maxHeight: 500,
