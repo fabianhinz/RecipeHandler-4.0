@@ -30,6 +30,7 @@ const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
     const [lastRecipeName, setLastRecipeName] = useState('')
     const [pagination, setPagination] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     const classes = useStyles()
 
@@ -42,6 +43,7 @@ const Home = () => {
     }
 
     useEffect(() => {
+        setLoading(true)
         // ? constructing the query with both where and orderBy clauses requires multiple indexes
         let query:
             | firebase.firestore.CollectionReference
@@ -69,18 +71,19 @@ const Home = () => {
                         changes.removed.forEach((_v, key) => recipes.delete(key))
                         return new Map([...recipes, ...changes.added, ...changes.modified])
                     })
+                    setLoading(false)
                 })
         } else {
             setPagination(false)
             selectedCategories.forEach(
                 (value, type) => (query = query.where(`categories.${type}`, '==', value))
             )
-
             return query.onSnapshot(
                 querySnapshot => {
                     const added: Map<DocumentId, RecipeDocument> = new Map()
                     querySnapshot.docs.map(doc => added.set(doc.id, doc.data() as RecipeDocument))
                     setPagedRecipes(added)
+                    setLoading(false)
                 },
                 error => console.error(error)
             )
@@ -95,6 +98,7 @@ const Home = () => {
                 onCategoryChange={handleCategoryChange}
             />
             <HomeRecipe
+                skeletons={loading}
                 recipes={[...pagedRecipes.values()]}
                 onExpandClick={setLastRecipeName}
                 expandDisabled={!pagination}

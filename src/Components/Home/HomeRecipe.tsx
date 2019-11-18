@@ -8,6 +8,7 @@ import RecipeResult from '../Recipe/Result/RecipeResult'
 
 interface HomeRecipeProps {
     recipes: Array<Recipe<AttachementMetadata>>
+    skeletons: boolean
     expandDisabled: boolean
     onExpandClick: (lastRecipeName: string) => void
 }
@@ -28,7 +29,8 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
                                 <RecipeResult variant="summary" recipe={recipe} />
                             </Grid>
                         ))}
-                        {props.recipes.length === 0 &&
+                        {props.skeletons &&
+                            props.recipes.length === 0 &&
                             new Array(4).fill(1).map((_skeleton, index) => (
                                 <Grid xs={12} item key={index}>
                                     <Grid

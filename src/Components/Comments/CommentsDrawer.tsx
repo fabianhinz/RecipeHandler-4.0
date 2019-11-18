@@ -23,7 +23,7 @@ import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS_HUGE } from '../../theme'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { SlideUp } from '../Shared/Transitions'
-import { Comment } from './Comment'
+import Comment from './Comment'
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -150,7 +150,7 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({
                     fullWidth
                     label="Ergänzende Hinweise und Meinungen"
                 />
-                <IconButton onClick={handleSave}>
+                <IconButton onClick={handleSave} disabled={input.length === 0}>
                     <SaveIcon />
                 </IconButton>
                 <IconButton onClick={onClose}>

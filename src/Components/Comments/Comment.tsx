@@ -1,7 +1,7 @@
 import { Box, createStyles, Grid, IconButton, makeStyles, Typography } from '@material-ui/core'
 import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
 import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
-import React, { FC } from 'react'
+import React, { memo } from 'react'
 
 import { Comment as CommentModel } from '../../model/model'
 import { CommentsCollections, RecipeDocument } from '../../model/model'
@@ -26,7 +26,7 @@ interface CommentProps extends Pick<RecipeDocument, 'name'>, CommentsCollections
     comment: CommentModel
 }
 
-export const Comment: FC<CommentProps> = ({ comment, name, collection }) => {
+const Comment = ({ comment, name, collection }: CommentProps) => {
     const classes = useStyles()
 
     const handleThumbClick = (
@@ -75,3 +75,11 @@ export const Comment: FC<CommentProps> = ({ comment, name, collection }) => {
         </Grid>
     )
 }
+
+export default memo(
+    Comment,
+    (prev, next) =>
+        prev.collection === next.collection &&
+        prev.comment === next.comment &&
+        prev.name === next.name
+)
