@@ -54,7 +54,7 @@ interface Props {
 
 const Trials = ({ open, onClose }: Props) => {
     const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
@@ -63,14 +63,16 @@ const Trials = ({ open, onClose }: Props) => {
     useEffect(() => {
         if (!open) return
 
-        setLoading(true)
-        return FirebaseService.firestore
-            .collection('trials')
-            .orderBy('createdDate', 'desc')
-            .onSnapshot(querySnapshot => {
-                setTrials(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as Trial])))
-                setLoading(false)
-            })
+        // give the ui some time to breathe
+        setTimeout(() => {
+            return FirebaseService.firestore
+                .collection('trials')
+                .orderBy('createdDate', 'desc')
+                .onSnapshot(querySnapshot => {
+                    setTrials(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as Trial])))
+                    setLoading(false)
+                })
+        }, 200)
     }, [open])
 
     const onDrop = useCallback(
