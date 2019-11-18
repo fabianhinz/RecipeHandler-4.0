@@ -11,11 +11,13 @@ import {
     makeStyles,
     TextField,
 } from '@material-ui/core'
+import Paper, { PaperProps } from '@material-ui/core/Paper'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import SaveIcon from '@material-ui/icons/SaveTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
 import clsx from 'clsx'
 import React, { FC, useEffect, useState } from 'react'
+import Draggable from 'react-draggable'
 
 import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { Comment as CommentModel, CommentsCollections, CommentsDocument } from '../../model/model'
@@ -36,8 +38,19 @@ const useStyles = makeStyles(() =>
         dialogContentMaxHeigth: {
             maxHeight: '50vh',
         },
+        dialogTitle: {
+            cursor: 'move',
+        },
     })
 )
+
+const DraggablePaper = (props: PaperProps) => {
+    return (
+        <Draggable handle=".dragghandler">
+            <Paper {...props} />
+        </Draggable>
+    )
+}
 
 interface CommentsDrawerProps extends Pick<CommentsDocument, 'name'>, CommentsCollections {
     open: boolean
@@ -99,13 +112,15 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({
 
     return (
         <Dialog
+            PaperComponent={DraggablePaper}
+            BackdropProps={{ invisible: true }}
             fullScreen={isDialogFullscreen}
             TransitionComponent={SlideUp}
             open={open}
             onClose={onClose}
             maxWidth="sm"
             fullWidth>
-            <DialogTitle>{name}</DialogTitle>
+            <DialogTitle className={clsx(classes.dialogTitle, 'dragghandler')}>{name}</DialogTitle>
             <DialogContent
                 className={clsx(
                     classes.dialogContent,
