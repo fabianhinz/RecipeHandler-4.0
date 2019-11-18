@@ -158,6 +158,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         <CardHeader
                             title={
                                 <TextField
+                                    variant="outlined"
                                     margin="none"
                                     fullWidth
                                     disabled={props.edit}
@@ -227,9 +228,9 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             value={state.ingredients}
                             onChange={handleTextFieldChange('ingredients')}
                             fullWidth
-                            rowsMax={10}
+                            rows={10}
                             multiline
-                            variant="filled"
+                            variant="outlined"
                             margin="dense"
                         />
 
@@ -237,11 +238,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         <TextField
                             label="optional"
                             value={state.description}
-                            rowsMax={10}
+                            rows={10}
                             onChange={handleTextFieldChange('description')}
                             fullWidth
                             multiline
-                            variant="filled"
+                            variant="outlined"
                             margin="dense"
                         />
 

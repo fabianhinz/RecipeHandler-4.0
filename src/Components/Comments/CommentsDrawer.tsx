@@ -142,7 +142,6 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({
             </DialogContent>
             <DialogActions>
                 <TextField
-                    color="secondary"
                     disabled={inputDisabled}
                     variant="outlined"
                     value={input}

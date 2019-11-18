@@ -80,6 +80,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
                     <CardHeader
                         title={
                             <TextField
+                                variant="outlined"
                                 margin="dense"
                                 label="Name"
                                 value={name}
