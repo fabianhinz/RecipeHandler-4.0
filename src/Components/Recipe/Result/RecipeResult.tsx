@@ -1,4 +1,4 @@
-import { Box, createStyles, Divider, Grid, makeStyles, Slide } from '@material-ui/core'
+import { Box, createStyles, Divider, Grid, Grow, makeStyles } from '@material-ui/core'
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
@@ -49,10 +49,10 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
     if (!recipe)
         return (
-            <Box display="flex" justifyContent="center">
-                <Slide in direction="down" timeout={500}>
+            <Box display="flex" justifyContent="center" marginTop={4}>
+                <Grow in timeout={500}>
                     <NotFoundIcon width={200} />
-                </Slide>
+                </Grow>
             </Box>
         )
 
@@ -131,7 +131,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 />
             </Grid>
 
-            {recipe.relatedRecipes.length > 0 && (
+            {recipe.relatedRecipes.length > 0 && variant !== 'pinned' && (
                 <Grid {...breakpoints} item>
                     <RecipeCard
                         variant={variant}

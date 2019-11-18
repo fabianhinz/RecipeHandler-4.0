@@ -37,6 +37,14 @@ interface Props {
     skeleton: boolean
 }
 
+export const recentlyAddedGridProps = (
+    isHighRes?: boolean,
+    pinned?: boolean
+): Partial<Record<Breakpoint, boolean | GridSize>> =>
+    isHighRes
+        ? { xs: 12, sm: pinned ? 12 : 6, lg: 4, xl: 3 }
+        : { xs: 12, sm: pinned ? 12 : 6, lg: 4 }
+
 const RecentlyAddedCard = ({ recipe, skeleton }: Props) => {
     const { attachementRef, attachementRefLoading } = useAttachementRef(recipe.attachements[0])
     const { isHighRes } = useBreakpointsContext()
@@ -45,12 +53,8 @@ const RecentlyAddedCard = ({ recipe, skeleton }: Props) => {
 
     const classes = useStyles()
 
-    const gridProps: Partial<Record<Breakpoint, boolean | GridSize>> = isHighRes
-        ? { xs: 12, sm: pinned ? 12 : 6, lg: 4, xl: 3 }
-        : { xs: 12, sm: pinned ? 12 : 6, lg: 4 }
-
     return (
-        <Grid {...gridProps} item>
+        <Grid {...recentlyAddedGridProps(isHighRes, pinned)} item>
             <CardActionArea onClick={() => history.push(PATHS.details(recipe.name), { recipe })}>
                 <Paper className={classes.paper}>
                     <Grid container wrap="nowrap" spacing={2} alignItems="center">
