@@ -1,8 +1,9 @@
-import { Box, Card, CardContent, Fab, Grid } from '@material-ui/core'
+import { Box, Card, CardContent, Fab, Grid, Grow } from '@material-ui/core'
 import ExpandIcon from '@material-ui/icons/ExpandMoreTwoTone'
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 
+import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { AttachementMetadata, Recipe } from '../../model/model'
 import RecipeResult from '../Recipe/Result/RecipeResult'
 
@@ -44,6 +45,15 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
                                     </Grid>
                                 </Grid>
                             ))}
+                        {!props.skeletons && props.recipes.length === 0 && (
+                            <Grid item xs={12}>
+                                <Box display="flex" justifyContent="center">
+                                    <Grow in timeout={500}>
+                                        <NotFoundIcon width={200} />
+                                    </Grow>
+                                </Box>
+                            </Grid>
+                        )}
                     </Grid>
                 </CardContent>
             </Card>
