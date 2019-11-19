@@ -4,7 +4,7 @@ import React, { FC, useState } from 'react'
 
 import { CommentsCollections, CommentsDocument } from '../../model/model'
 import { BadgeWrapper } from '../Shared/BadgeWrapper'
-import { CommentsDrawer } from './CommentsDrawer'
+import { CommentsDialog } from './CommentsDialog'
 
 export const Comments: FC<CommentsDocument & CommentsCollections> = ({
     name,
@@ -23,7 +23,7 @@ export const Comments: FC<CommentsDocument & CommentsCollections> = ({
                 </BadgeWrapper>
             </IconButton>
 
-            <CommentsDrawer
+            <CommentsDialog
                 collection={collection}
                 numberOfComments={numberOfComments}
                 name={name}

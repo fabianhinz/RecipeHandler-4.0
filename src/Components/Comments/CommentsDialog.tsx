@@ -52,13 +52,13 @@ const DraggablePaper = (props: PaperProps) => {
     )
 }
 
-interface CommentsDrawerProps extends Pick<CommentsDocument, 'name'>, CommentsCollections {
+interface CommentsDialogProps extends Pick<CommentsDocument, 'name'>, CommentsCollections {
     open: boolean
     onClose: () => void
     numberOfComments: number
 }
 
-export const CommentsDrawer: FC<CommentsDrawerProps> = ({
+export const CommentsDialog: FC<CommentsDialogProps> = ({
     open,
     onClose,
     name,
