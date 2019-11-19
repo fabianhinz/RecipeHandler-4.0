@@ -8,7 +8,7 @@ import React, { memo, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
-import { AttachementData, AttachementMetadata, MediumDataUrl, Recipe } from '../../../model/model'
+import { AttachementData, AttachementMetadata, DataUrl, Recipe } from '../../../model/model'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
@@ -39,7 +39,7 @@ export const recipeResultBreakpoints = (
     fullWidth ? { xs: 12 } : { xs: 12, lg: 6, xl: 4 }
 
 const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
-    const [selectedAttachement, setSelectedAttachement] = useState<MediumDataUrl | null>(null)
+    const [selectedAttachement, setSelectedAttachement] = useState<DataUrl | null>(null)
     const { location } = useRouterContext()
     const classes = useStyles()
 
@@ -71,7 +71,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
     const breakpoints = recipeResultBreakpoints(variant === 'pinned')
 
-    const handleAttachementSelect = (attachement: MediumDataUrl) => {
+    const handleAttachementSelect = (attachement: DataUrl) => {
         if (selectedAttachement === attachement) setSelectedAttachement(null)
         else setSelectedAttachement(attachement)
     }

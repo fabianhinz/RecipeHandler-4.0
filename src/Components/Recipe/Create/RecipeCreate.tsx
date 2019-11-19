@@ -82,10 +82,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     const classes = useStyles()
 
     useEffect(() => {
-        setSpeedDialOpen(false)
-    }, [state.relatedRecipesDialog])
-
-    useEffect(() => {
         dispatch({ type: 'attachementsDrop', newAttachements: attachements })
     }, [attachements, dispatch])
 

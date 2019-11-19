@@ -135,8 +135,8 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                               <Grid item key={index}>
                                   <Skeleton
                                       className={classes.skeleton}
-                                      width={250}
-                                      height={100}
+                                      width={180}
+                                      height={60}
                                       variant="text"
                                   />
                               </Grid>

@@ -69,4 +69,4 @@ export type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> &
 
 export type Hits = Array<Hit>
 
-export type MediumDataUrl = string
+export type DataUrl = string

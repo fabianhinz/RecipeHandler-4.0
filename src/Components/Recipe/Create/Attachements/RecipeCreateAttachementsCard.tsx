@@ -57,15 +57,13 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
 }) => {
     const [name, setName] = useState<string>(attachement.name)
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement)
-    const { componentVisible, componentTransition } = useTransition()
+    const { transition, transitionChange } = useTransition()
     const classes = useStyles()
 
-    const handleDeleteClick = () => {
-        if (isMetadata(attachement)) {
-            componentTransition(() => onDeleteAttachement(attachement.name, attachement.fullPath))
-        } else {
-            componentTransition(() => onRemoveAttachement(attachement.name))
-        }
+    const handleDeleteClick = async () => {
+        await transitionChange()
+        if (isMetadata(attachement)) onDeleteAttachement(attachement.name, attachement.fullPath)
+        else onRemoveAttachement(attachement.name)
     }
 
     const handleSaveClick = () =>
@@ -76,7 +74,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
 
     return (
         <Grid item>
-            <Zoom in={componentVisible} mountOnEnter timeout={TRANSITION_DURATION}>
+            <Zoom in={transition} mountOnEnter timeout={TRANSITION_DURATION}>
                 <Card onClick={e => e.stopPropagation()}>
                     <CardContent>
                         <Chip label={`${(attachement.size / 1000000).toFixed(1)} MB`} />

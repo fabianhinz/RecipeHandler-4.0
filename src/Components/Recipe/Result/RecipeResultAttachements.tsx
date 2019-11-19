@@ -1,21 +1,30 @@
 import {
     Avatar,
+    Backdrop,
     CardActionArea,
     createStyles,
     Grid,
     makeStyles,
+    Slide,
     Typography,
+    useMediaQuery,
 } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 
 import { useAttachementRef } from '../../../hooks/useAttachementRef'
-import { AttachementData, AttachementMetadata, MediumDataUrl } from '../../../model/model'
+import { AttachementData, AttachementMetadata, DataUrl } from '../../../model/model'
 import { BORDER_RADIUS } from '../../../theme'
-import { recipeResultBreakpoints } from './RecipeResult'
 
 const useStyles = makeStyles(theme =>
     createStyles({
+        backdrop: {
+            paddingBottom: theme.spacing(8),
+            paddingTop: theme.spacing(8),
+            zIndex: theme.zIndex.drawer - 1,
+            display: 'flex',
+            justifyContent: 'center',
+        },
         attachementPreviewGrid: {
             overflowX: 'auto',
         },
@@ -25,9 +34,23 @@ const useStyles = makeStyles(theme =>
             boxShadow: theme.shadows[1],
         },
         attachement: {
-            width: '100%',
-            boxShadow: theme.shadows[1],
+            [theme.breakpoints.only('xs')]: {
+                width: '90%',
+            },
+            [theme.breakpoints.only('sm')]: {
+                width: '80%',
+            },
+            [theme.breakpoints.only('md')]: {
+                width: '70%',
+            },
+            [theme.breakpoints.only('lg')]: {
+                width: '60%',
+            },
+            [theme.breakpoints.up('xl')]: {
+                width: '50%',
+            },
             borderRadius: BORDER_RADIUS,
+            cursor: 'pointer',
         },
         actionArea: {
             borderRadius: '50%',
@@ -37,11 +60,12 @@ const useStyles = makeStyles(theme =>
 
 interface AttachementPreviewProps {
     attachement: AttachementMetadata | AttachementData
-    onSelect: (dataUrl: MediumDataUrl) => void
+    onSelect: (dataUrl: DataUrl) => void
 }
 
 const AttachementPreview = ({ attachement, onSelect }: AttachementPreviewProps) => {
     const { attachementRef, attachementRefLoading } = useAttachementRef(attachement)
+    const loadHighRes = useMediaQuery('(min-width: 2000px)')
     const classes = useStyles()
 
     return (
@@ -50,7 +74,11 @@ const AttachementPreview = ({ attachement, onSelect }: AttachementPreviewProps) 
                 <Skeleton variant="circle" className={classes.attachementPreview} />
             ) : (
                 <CardActionArea
-                    onClick={() => onSelect(attachementRef.mediumDataUrl)}
+                    onClick={() =>
+                        onSelect(
+                            loadHighRes ? attachementRef.fullDataUrl : attachementRef.mediumDataUrl
+                        )
+                    }
                     className={classes.actionArea}>
                     <Avatar
                         className={classes.attachementPreview}
@@ -64,9 +92,9 @@ const AttachementPreview = ({ attachement, onSelect }: AttachementPreviewProps) 
 }
 
 interface RecipeResultAttachementsProps {
-    selectedAttachement: MediumDataUrl | null
+    selectedAttachement: DataUrl | null
     attachements: (AttachementMetadata | AttachementData)[]
-    onSelect: (dataUrl: MediumDataUrl) => void
+    onSelect: (dataUrl: DataUrl) => void
 }
 
 const RecipeResultAttachements = ({
@@ -95,11 +123,18 @@ const RecipeResultAttachements = ({
                 </Grid>
             </Grid>
 
-            {selectedAttachement && (
-                <Grid {...recipeResultBreakpoints()} item>
-                    <img src={selectedAttachement} alt="" className={classes.attachement} />
-                </Grid>
-            )}
+            <Slide direction="up" in={selectedAttachement !== null}>
+                <Backdrop open className={classes.backdrop}>
+                    {selectedAttachement && (
+                        <img
+                            onClick={() => onSelect(selectedAttachement as string)}
+                            src={selectedAttachement}
+                            className={classes.attachement}
+                            alt="selected"
+                        />
+                    )}
+                </Backdrop>
+            </Slide>
         </Grid>
     )
 }
