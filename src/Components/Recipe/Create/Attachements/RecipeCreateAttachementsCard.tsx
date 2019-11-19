@@ -1,12 +1,14 @@
 import {
+    Avatar,
     Card,
-    CardHeader,
-    CardMedia,
+    CardContent,
+    Chip,
     createStyles,
+    Divider,
     Grid,
     IconButton,
+    InputBase,
     makeStyles,
-    TextField,
     Zoom,
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
@@ -19,12 +21,21 @@ import { TRANSITION_DURATION, useTransition } from '../../../../hooks/useTransit
 import { AttachementData, AttachementMetadata } from '../../../../model/model'
 import { isData, isMetadata } from '../../../../model/modelUtil'
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles(theme => {
     return createStyles({
-        // source: https://material-ui.com/components/cards/#cards
-        cardMedia: {
-            height: 0,
-            paddingTop: '56.25%', // 16:9,
+        attachement: {
+            width: 200,
+            height: 200,
+            boxShadow: theme.shadows[1],
+        },
+        actions: {
+            flexGrow: 1,
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+        },
+        divider: {
+            margin: `${theme.spacing(2)}px 0px`,
         },
     })
 })
@@ -64,43 +75,43 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
         })
 
     return (
-        <Grid xs={12} sm={6} md={4} lg={3} item>
+        <Grid item>
             <Zoom in={componentVisible} mountOnEnter timeout={TRANSITION_DURATION}>
-                <Card raised onClick={e => e.stopPropagation()}>
-                    {attachementRefLoading ? (
-                        <Skeleton variant="rect" className={classes.cardMedia} />
-                    ) : isMetadata(attachement) ? (
-                        <CardMedia
-                            className={classes.cardMedia}
-                            image={attachementRef.mediumDataUrl}
-                        />
-                    ) : (
-                        <CardMedia className={classes.cardMedia} image={attachement.dataUrl} />
-                    )}
-                    <CardHeader
-                        title={
-                            <TextField
-                                variant="outlined"
-                                margin="dense"
-                                label="Name"
-                                value={name}
-                                onChange={event => setName(event.target.value)}
+                <Card onClick={e => e.stopPropagation()}>
+                    <CardContent>
+                        <Chip label={`${(attachement.size / 1000000).toFixed(1)} MB`} />
+
+                        {attachementRefLoading ? (
+                            <Skeleton variant="circle" className={classes.attachement} />
+                        ) : isMetadata(attachement) ? (
+                            <Avatar
+                                className={classes.attachement}
+                                src={attachementRef.mediumDataUrl}
                             />
-                        }
-                        subheader={`${(attachement.size / 1000000).toFixed(1)} MB`}
-                        action={
-                            <>
-                                <IconButton
-                                    disabled={attachement.name === name || name.length === 0}
-                                    onClick={handleSaveClick}>
-                                    <SaveIcon />
-                                </IconButton>
-                                <IconButton onClick={handleDeleteClick}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </>
-                        }
-                    />
+                        ) : (
+                            <Avatar className={classes.attachement} src={attachement.dataUrl} />
+                        )}
+
+                        <Divider className={classes.divider} />
+
+                        <InputBase
+                            margin="dense"
+                            fullWidth
+                            value={name}
+                            onChange={event => setName(event.target.value)}
+                        />
+
+                        <div className={classes.actions}>
+                            <IconButton
+                                disabled={attachement.name === name || name.length === 0}
+                                onClick={handleSaveClick}>
+                                <SaveIcon />
+                            </IconButton>
+                            <IconButton onClick={handleDeleteClick}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </div>
+                    </CardContent>
                 </Card>
             </Zoom>
         </Grid>

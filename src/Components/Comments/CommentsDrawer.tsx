@@ -120,7 +120,10 @@ export const CommentsDrawer: FC<CommentsDrawerProps> = ({
             onClose={onClose}
             maxWidth="sm"
             fullWidth>
-            <DialogTitle className={clsx(classes.dialogTitle, 'dragghandler')}>{name}</DialogTitle>
+            <DialogTitle
+                className={clsx(classes.dialogTitle, !isDialogFullscreen && 'dragghandler')}>
+                {name}
+            </DialogTitle>
             <DialogContent
                 className={clsx(
                     classes.dialogContent,

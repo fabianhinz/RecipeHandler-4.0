@@ -1,4 +1,11 @@
-import { Avatar, CardActionArea, createStyles, Grid, makeStyles } from '@material-ui/core'
+import {
+    Avatar,
+    CardActionArea,
+    createStyles,
+    Grid,
+    makeStyles,
+    Typography,
+} from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 
@@ -10,7 +17,7 @@ import { recipeResultBreakpoints } from './RecipeResult'
 const useStyles = makeStyles(theme =>
     createStyles({
         attachementPreviewGrid: {
-            overflowY: 'auto',
+            overflowX: 'auto',
         },
         attachementPreview: {
             width: 200,
@@ -47,8 +54,9 @@ const AttachementPreview = ({ attachement, onSelect }: AttachementPreviewProps) 
                     className={classes.actionArea}>
                     <Avatar
                         className={classes.attachementPreview}
-                        src={attachementRef.mediumDataUrl}
-                    />
+                        src={attachementRef.mediumDataUrl}>
+                        <Typography variant="h1">?</Typography>
+                    </Avatar>
                 </CardActionArea>
             )}
         </Grid>

@@ -8,10 +8,7 @@ import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import { RecipeCreateState } from './RecipeCreateReducer'
 
-export const useRecipeCreateService = (
-    state: RecipeCreateState,
-    editedRecipe: boolean | undefined
-) => {
+export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean | undefined) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
     const { history } = useRouterContext()

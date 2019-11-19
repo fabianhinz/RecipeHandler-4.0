@@ -1,4 +1,3 @@
-import { Card, CardContent } from '@material-ui/core'
 import React, { FC } from 'react'
 
 import { useRecipeDoc } from '../../../hooks/useRecipeDoc'
@@ -12,11 +11,7 @@ const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {
     return (
         <>
             {recipeDocLoading ? (
-                <Card>
-                    <CardContent>
-                        <Loading />
-                    </CardContent>
-                </Card>
+                <Loading />
             ) : (
                 <RecipeCreate {...routeProps} recipe={recipeDoc} edit />
             )}

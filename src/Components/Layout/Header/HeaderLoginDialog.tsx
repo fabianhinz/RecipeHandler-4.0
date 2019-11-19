@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme =>
             height: '100%',
         },
         dialogPaper: {
-            paddingTop: theme.spacing(1),
+            paddingTop: theme.spacing(3),
             overflowY: 'unset',
         },
     })
@@ -124,7 +124,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
 
             {loading && (
                 <div className={classes.progressContainer}>
-                    <CircularProgress disableShrink size={60} thickness={5.4} />
+                    <CircularProgress color="secondary" disableShrink size={60} thickness={5.4} />
                 </div>
             )}
 

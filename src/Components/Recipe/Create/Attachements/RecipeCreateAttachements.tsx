@@ -1,28 +1,28 @@
-import { Box, Grid } from '@material-ui/core'
+import { createStyles, Grid, makeStyles } from '@material-ui/core'
 import React, { FC } from 'react'
 
-import { ReactComponent as NotFoundIcon } from '../../../../icons/notFound.svg'
 import { AttachementData, AttachementMetadata } from '../../../../model/model'
 import RecipeCreateAttachementsCard, {
     AttachementsCardChangeHandler,
 } from './RecipeCreateAttachementsCard'
 
 interface RecipeCreateAttachementsProps extends AttachementsCardChangeHandler {
-    onAttachements: (newFiles: Array<AttachementData>) => void
     attachements: Array<AttachementData | AttachementMetadata>
 }
 
+const useStyles = makeStyles(() =>
+    createStyles({
+        gridContainer: {
+            overflowX: 'auto',
+        },
+    })
+)
+
 export const RecipeCreateAttachements: FC<RecipeCreateAttachementsProps> = props => {
+    const classes = useStyles()
+
     return (
-        <Grid
-            container
-            spacing={2}
-            justify={props.attachements.length === 0 ? 'center' : 'flex-start'}>
-            {props.attachements.length === 0 && (
-                <Box flexGrow={1} display="flex" justifyContent="center">
-                    <NotFoundIcon width={150} />
-                </Box>
-            )}
+        <Grid className={classes.gridContainer} wrap="nowrap" container spacing={2}>
             {props.attachements.map(attachement => (
                 <RecipeCreateAttachementsCard
                     key={attachement.name}

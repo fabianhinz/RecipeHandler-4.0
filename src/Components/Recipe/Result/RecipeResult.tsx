@@ -100,42 +100,51 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 </Grid>
             )}
 
-            <Grid {...breakpoints} item>
-                <RecipeCard
-                    variant={variant}
-                    header={
-                        <Subtitle
-                            noMargin
-                            icon={<AssignmentIcon />}
-                            text={
-                                <>
-                                    Zutaten für {recipe.amount}{' '}
-                                    {recipe.amount < 2 ? 'Person' : 'Personen'}
-                                </>
-                            }
-                        />
-                    }
-                    content={
-                        <ReactMarkdown className={classes.markdown} source={recipe.ingredients} />
-                    }
-                />
-            </Grid>
+            {recipe.ingredients.length > 0 && (
+                <Grid {...breakpoints} item>
+                    <RecipeCard
+                        variant={variant}
+                        header={
+                            <Subtitle
+                                icon={<AssignmentIcon />}
+                                text={
+                                    <>
+                                        Zutaten für {recipe.amount}{' '}
+                                        {recipe.amount < 2 ? 'Person' : 'Personen'}
+                                    </>
+                                }
+                            />
+                        }
+                        content={
+                            <ReactMarkdown
+                                className={classes.markdown}
+                                source={recipe.ingredients}
+                            />
+                        }
+                    />
+                </Grid>
+            )}
 
-            <Grid {...breakpoints} item>
-                <RecipeCard
-                    variant={variant}
-                    header={<Subtitle noMargin icon={<BookIcon />} text="Beschreibung" />}
-                    content={
-                        <ReactMarkdown className={classes.markdown} source={recipe.description} />
-                    }
-                />
-            </Grid>
+            {recipe.description.length > 0 && (
+                <Grid {...breakpoints} item>
+                    <RecipeCard
+                        variant={variant}
+                        header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
+                        content={
+                            <ReactMarkdown
+                                className={classes.markdown}
+                                source={recipe.description}
+                            />
+                        }
+                    />
+                </Grid>
+            )}
 
             {recipe.relatedRecipes.length > 0 && variant !== 'pinned' && (
                 <Grid {...breakpoints} item>
                     <RecipeCard
                         variant={variant}
-                        header={<Subtitle noMargin icon={<LabelIcon />} text="Passt gut zu" />}
+                        header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
                         content={<RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />}
                     />
                 </Grid>
