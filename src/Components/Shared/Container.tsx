@@ -1,30 +1,12 @@
-import { Container as MuiContainer, createStyles, makeStyles } from '@material-ui/core'
-import clsx from 'clsx'
+import { Container as MuiContainer } from '@material-ui/core'
 import React from 'react'
 
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
 
 type Props = { children: React.ReactNode }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        pinnedContainer: {
-            marginLeft: 320,
-        },
-    })
-)
-
 export const Container = ({ children }: Props) => {
     const { isHighRes } = useBreakpointsContext()
-    const pinnedContext = usePinnedRecipesContext()
-    const classes = useStyles()
 
-    return (
-        <MuiContainer
-            className={clsx(pinnedContext && pinnedContext.pinned && classes.pinnedContainer)}
-            maxWidth={isHighRes ? 'xl' : 'lg'}>
-            {children}
-        </MuiContainer>
-    )
+    return <MuiContainer maxWidth={isHighRes ? 'xl' : 'lg'}>{children}</MuiContainer>
 }

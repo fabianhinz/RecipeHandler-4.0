@@ -1,12 +1,13 @@
 import { Box, createStyles, Grid, IconButton, makeStyles, Typography } from '@material-ui/core'
 import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
 import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
-import React, { FC } from 'react'
+import React, { memo } from 'react'
 
-import { FirebaseService } from '../../../firebase'
-import { Comment as CommentModel, CommentsCollections, RecipeDocument } from '../../../model/model'
-import { BORDER_RADIUS_HUGE } from '../../../theme'
-import { BadgeWrapper } from '../BadgeWrapper'
+import { Comment as CommentModel } from '../../model/model'
+import { CommentsCollections, RecipeDocument } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
+import { BORDER_RADIUS_HUGE } from '../../theme'
+import { BadgeWrapper } from '../Shared/BadgeWrapper'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -25,7 +26,32 @@ interface CommentProps extends Pick<RecipeDocument, 'name'>, CommentsCollections
     comment: CommentModel
 }
 
-export const Comment: FC<CommentProps> = ({ comment, name, collection }) => {
+const includesUrl = (value: string) => value.includes('http://') || value.includes('https://')
+
+const getCommentTypography = (comment: string): React.ReactNode => {
+    if (!includesUrl(comment)) return comment
+    const complexComment: Array<any> = []
+
+    comment.split(' ').forEach(value => {
+        if (includesUrl(value))
+            complexComment.push(
+                <a href={value} target="_blank" rel="noopener noreferrer">
+                    Link
+                </a>
+            )
+        else complexComment.push(<>{value}</>)
+    })
+
+    return (
+        <>
+            {complexComment.map((value, index) => (
+                <span key={index}>{value} </span>
+            ))}
+        </>
+    )
+}
+
+const Comment = ({ comment, name, collection }: CommentProps) => {
     const classes = useStyles()
 
     const handleThumbClick = (
@@ -46,7 +72,7 @@ export const Comment: FC<CommentProps> = ({ comment, name, collection }) => {
                 <Typography variant="caption">
                     {FirebaseService.createDateFromTimestamp(comment.createdDate).toLocaleString()}
                 </Typography>
-                <Typography>{comment.comment}</Typography>
+                <Typography>{getCommentTypography(comment.comment)}</Typography>
             </div>
 
             <Box marginBottom={1} display="flex" justifyContent="flex-end">
@@ -74,3 +100,11 @@ export const Comment: FC<CommentProps> = ({ comment, name, collection }) => {
         </Grid>
     )
 }
+
+export default memo(
+    Comment,
+    (prev, next) =>
+        prev.collection === next.collection &&
+        prev.comment === next.comment &&
+        prev.name === next.name
+)

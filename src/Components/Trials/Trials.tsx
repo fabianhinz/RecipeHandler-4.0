@@ -17,17 +17,15 @@ import { useSnackbar } from 'notistack'
 import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
-import { FirebaseService } from '../../../../firebase'
-import { getFileExtension } from '../../../../hooks/useAttachementRef'
-import { ReactComponent as TrialIcon } from '../../../../icons/logo.svg'
-import { Trial } from '../../../../model/model'
-import { useBreakpointsContext } from '../../../Provider/BreakpointsProvider'
-import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
-import { readDocumentAsync } from '../../../Recipe/Create/Attachements/RecipeCreateAttachements'
-import { Loading } from '../../../Shared/Loading'
-import { SlideUp } from '../../../Shared/Transitions'
-import { HeaderDispatch, HeaderState } from '../HeaderReducer'
-import { HeaderTrialsCard } from './HeaderTrialsCard'
+import { getFileExtension } from '../../hooks/useAttachementRef'
+import { ReactComponent as TrialIcon } from '../../icons/logo.svg'
+import { Trial } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { readDocumentAsync } from '../Recipe/Create/Attachements/useAttachementDropzone'
+import { Loading } from '../Shared/Loading'
+import { SlideUp } from '../Shared/Transitions'
+import TrialsCard from './TrialsCard'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -40,8 +38,8 @@ const useStyles = makeStyles(theme =>
         fabContainer: {
             outline: 'none',
             position: 'absolute',
-            right: theme.spacing(3),
-            top: -28,
+            right: theme.spacing(2),
+            bottom: theme.spacing(4.5),
         },
         dialogTitle: {
             textAlign: 'center',
@@ -49,29 +47,33 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-type HeaderTrialsProps = HeaderState<'trialsOpen'> & HeaderDispatch
+interface Props {
+    open: boolean
+    onClose: () => void
+}
 
-const HeaderTrials = ({ trialsOpen, dispatch }: HeaderTrialsProps) => {
+const Trials = ({ open, onClose }: Props) => {
     const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const classes = useStyles()
 
-    const { isDialogFullscreen } = useBreakpointsContext()
     const { user } = useFirebaseAuthContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     useEffect(() => {
-        if (!trialsOpen) return
+        if (!open) return
 
-        setLoading(true)
-        return FirebaseService.firestore
-            .collection('trials')
-            .orderBy('createdDate', 'desc')
-            .onSnapshot(querySnapshot => {
-                setTrials(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as Trial])))
-                setLoading(false)
-            })
-    }, [trialsOpen])
+        // give the ui some time to breathe
+        setTimeout(() => {
+            return FirebaseService.firestore
+                .collection('trials')
+                .orderBy('createdDate', 'desc')
+                .onSnapshot(querySnapshot => {
+                    setTrials(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as Trial])))
+                    setLoading(false)
+                })
+        }, 200)
+    }, [open])
 
     const onDrop = useCallback(
         async (acceptedFiles: File[]) => {
@@ -133,14 +135,7 @@ const HeaderTrials = ({ trialsOpen, dispatch }: HeaderTrialsProps) => {
     })
 
     return (
-        <Dialog
-            open={trialsOpen}
-            keepMounted
-            onClose={() => dispatch({ type: 'trialsChange' })}
-            maxWidth="md"
-            fullWidth
-            fullScreen={isDialogFullscreen}
-            TransitionComponent={SlideUp}>
+        <Dialog open={open} keepMounted onClose={onClose} fullScreen TransitionComponent={SlideUp}>
             <DialogTitle className={classes.dialogTitle}>Versuchskaninchen</DialogTitle>
 
             <DialogContent dividers>
@@ -154,11 +149,7 @@ const HeaderTrials = ({ trialsOpen, dispatch }: HeaderTrialsProps) => {
                     <Box paddingTop={1} paddingBottom={1}>
                         <Grid container spacing={3}>
                             {[...trials.values()].map(trial => (
-                                <HeaderTrialsCard
-                                    trial={trial}
-                                    dispatch={dispatch}
-                                    key={trial.name}
-                                />
+                                <TrialsCard trial={trial} key={trial.name} />
                             ))}
                         </Grid>
                     </Box>
@@ -166,7 +157,7 @@ const HeaderTrials = ({ trialsOpen, dispatch }: HeaderTrialsProps) => {
             </DialogContent>
             <DialogActions className={classes.dialogActions}>
                 <Box flexGrow={1} display="flex" justifyContent="space-evenly" alignItems="center">
-                    <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
+                    <IconButton onClick={onClose}>
                         <CloseIcon />
                     </IconButton>
                 </Box>
@@ -184,4 +175,7 @@ const HeaderTrials = ({ trialsOpen, dispatch }: HeaderTrialsProps) => {
     )
 }
 
-export default memo(HeaderTrials, (prev, next) => prev.trialsOpen === next.trialsOpen)
+export default memo(
+    Trials,
+    (prev, next) => prev.open === next.open && prev.onClose === next.onClose
+)

@@ -1,8 +1,6 @@
-import { Box } from '@material-ui/core'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../firebase'
-import { Container } from '../Shared/Container'
+import { FirebaseService } from '../../services/firebase'
 import { Loading } from '../Shared/Loading'
 
 const Context = React.createContext<{ user: firebase.User | null }>({
@@ -34,17 +32,5 @@ export const FirebaseAuthProvider: FC = ({ children }) => {
         return FirebaseService.auth.onAuthStateChanged(handleAuthStateChange)
     }, [handleAuthStateChange])
 
-    return (
-        <Context.Provider value={{ user }}>
-            {user ? (
-                children
-            ) : (
-                <Container>
-                    <Box marginTop={3} marginBottom={3}>
-                        <Loading />
-                    </Box>
-                </Container>
-            )}
-        </Context.Provider>
-    )
+    return <Context.Provider value={{ user }}>{user ? children : <Loading />}</Context.Provider>
 }

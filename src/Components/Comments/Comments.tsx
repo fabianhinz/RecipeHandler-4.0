@@ -2,9 +2,9 @@ import { IconButton } from '@material-ui/core'
 import CommentIcon from '@material-ui/icons/CommentTwoTone'
 import React, { FC, useState } from 'react'
 
-import { CommentsCollections, CommentsDocument } from '../../../model/model'
-import { BadgeWrapper } from '../BadgeWrapper'
-import { CommentsDrawer } from './CommentsDrawer'
+import { CommentsCollections, CommentsDocument } from '../../model/model'
+import { BadgeWrapper } from '../Shared/BadgeWrapper'
+import { CommentsDialog } from './CommentsDialog'
 
 export const Comments: FC<CommentsDocument & CommentsCollections> = ({
     name,
@@ -16,20 +16,20 @@ export const Comments: FC<CommentsDocument & CommentsCollections> = ({
     const handleDrawerChange = () => setDrawer(previous => !previous)
 
     return (
-        <div>
+        <>
             <IconButton onClick={handleDrawerChange}>
                 <BadgeWrapper badgeContent={numberOfComments}>
                     <CommentIcon />
                 </BadgeWrapper>
             </IconButton>
 
-            <CommentsDrawer
+            <CommentsDialog
                 collection={collection}
                 numberOfComments={numberOfComments}
                 name={name}
                 open={drawer}
                 onClose={handleDrawerChange}
             />
-        </div>
+        </>
     )
 }

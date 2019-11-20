@@ -1,20 +1,17 @@
-import { Box, Grid, Typography } from '@material-ui/core'
+import { Box, Typography } from '@material-ui/core'
 import React, { FC } from 'react'
 
 interface SubtitleProps {
-    firstChild?: boolean
     icon?: JSX.Element
-    text: string
+    text: React.ReactNode
 }
 
-export const Subtitle: FC<SubtitleProps> = ({ icon, text, children, firstChild }) => (
-    <Box marginTop={firstChild ? 0 : 2} paddingBottom={1} paddingTop={1}>
-        <Grid container spacing={1} alignItems="flex-end">
-            {icon && <Grid item>{icon}</Grid>}
-            <Grid item>
-                <Typography variant="h6">{text}</Typography>
-            </Grid>
-            {children && <Grid item>{children}</Grid>}
-        </Grid>
+export const Subtitle: FC<SubtitleProps> = ({ icon, text, children }) => (
+    <Box paddingBottom={1} paddingTop={1} display="flex" alignItems="center">
+        {icon}
+        <Box marginRight={1} />
+        <Typography variant="h5">{text}</Typography>
+        <Box marginRight={1} />
+        {children && children}
     </Box>
 )

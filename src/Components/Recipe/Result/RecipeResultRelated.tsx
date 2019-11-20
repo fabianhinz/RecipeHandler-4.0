@@ -1,49 +1,56 @@
-import { Box, Chip, createStyles, Grid, makeStyles } from '@material-ui/core'
-import LinkIcon from '@material-ui/icons/LinkTwoTone'
-import clsx from 'clsx'
+import {
+    Avatar,
+    createStyles,
+    Divider,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemSecondaryAction,
+    ListItemText,
+    makeStyles,
+} from '@material-ui/core'
+import brown from '@material-ui/core/colors/brown'
 import React, { FC } from 'react'
 
-import { CategoryBase } from '../../Category/CategoryBase'
-import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
-import { usePinnedRecipesContext } from '../../Provider/PinnedRecipesProvider'
-import { useRouterContext } from '../../Provider/RouterProvider'
-import { PATHS } from '../../Routes/Routes'
+import { RecipeResultPin } from './Action/RecipeResultPin'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        selectedChip: {
-            boxShadow: theme.shadows[8],
+const useStyles = makeStyles(theme => {
+    const background = theme.palette.type === 'light' ? brown[200] : brown[400]
+
+    return createStyles({
+        avatar: {
+            background,
+            color: theme.palette.getContrastText(background),
+        },
+        notFound: {
+            flexGrow: 1,
+            display: 'flex',
+            justifyContent: 'center',
         },
     })
-)
+})
 
 export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => {
-    const { handlePinnedChange, pinnedContains } = usePinnedRecipesContext()
-    const { isLowRes } = useBreakpointsContext()
-    const { history } = useRouterContext()
-
     const classes = useStyles()
 
-    const handleRecipeClick = (recipeName: string) => () => {
-        if (isLowRes) history.push(PATHS.details(recipeName))
-        else handlePinnedChange(recipeName)
-    }
-
     return (
-        <Box position="relative">
-            <Grid container spacing={2} alignItems="center">
-                {relatedRecipes.map(recipeName => (
-                    <Grid key={recipeName} item>
-                        <CategoryBase onClick={handleRecipeClick(recipeName)}>
-                            <Chip
-                                className={clsx(pinnedContains(recipeName) && classes.selectedChip)}
-                                icon={<LinkIcon />}
-                                label={recipeName}
-                            />
-                        </CategoryBase>
-                    </Grid>
-                ))}
-            </Grid>
-        </Box>
+        <List>
+            {relatedRecipes.map((recipeName, index) => (
+                <div key={recipeName}>
+                    <ListItem>
+                        <ListItemAvatar>
+                            <Avatar className={classes.avatar}>
+                                {recipeName.slice(0, 1).toUpperCase()}
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={recipeName} />
+                        <ListItemSecondaryAction>
+                            <RecipeResultPin name={recipeName} />
+                        </ListItemSecondaryAction>
+                    </ListItem>
+                    {index !== relatedRecipes.length - 1 && <Divider />}
+                </div>
+            ))}
+        </List>
     )
 }

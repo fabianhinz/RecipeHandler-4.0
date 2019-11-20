@@ -6,6 +6,7 @@ import { iconFromCategory } from './CategoryWrapper'
 
 interface CategoryResultProps {
     categories: Categories<string>
+    fullWidth?: boolean
 }
 
 export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => (

@@ -20,8 +20,11 @@ const useStyles = makeStyles(theme =>
             [theme.breakpoints.only('md')]: {
                 width: 300,
             },
-            [theme.breakpoints.up('lg')]: {
+            [theme.breakpoints.only('lg')]: {
                 width: 400,
+            },
+            [theme.breakpoints.up('xl')]: {
+                width: 500,
             },
         },
     })

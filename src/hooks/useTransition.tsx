@@ -1,12 +1,15 @@
 import { useState } from 'react'
 
+export const TRANSITION_DURATION = 250
+
 export const useTransition = () => {
-    const [visible, setVisible] = useState(true)
+    const [transition, setTransition] = useState(true)
 
-    const componentTransition = (callback: () => void) => {
-        setVisible(false)
-        setTimeout(callback, 200)
-    }
+    const transitionChange = async () =>
+        new Promise(resolve => {
+            setTransition(false)
+            setTimeout(resolve, TRANSITION_DURATION)
+        })
 
-    return { componentVisible: visible, componentTransition }
+    return { transition, transitionChange }
 }

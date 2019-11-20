@@ -1,24 +1,41 @@
+import { createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../firebase'
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import { RecipeDocument } from '../../model/model'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { FirebaseService } from '../../services/firebase'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import RecentlyAdded from '../RecentlyAdded/RecentlyAdded'
+import { Navigate } from '../Routes/Navigate'
+import { PATHS } from '../Routes/Routes'
 import { HomeCategory } from './HomeCategory'
-import { HomeSearch } from './HomeSearch/HomeSearch'
-import { HomeRecentlyAdded } from './RecentlyAdded/HomeRecentlyAdded'
-import { HomeRecipe } from './Recipe/HomeRecipe'
+import { HomeRecipe } from './HomeRecipe'
 
 type DocumentId = string
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>
+
+const useStyles = makeStyles(theme =>
+    createStyles({
+        fab: {
+            zIndex: theme.zIndex.drawer + 1,
+            position: 'fixed',
+            right: theme.spacing(2),
+            bottom: theme.spacing(4.5),
+        },
+    })
+)
 
 const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
     const [lastRecipeName, setLastRecipeName] = useState('')
     const [pagination, setPagination] = useState(false)
+    const [loading, setLoading] = useState(true)
 
-    const { isHighRes } = useBreakpointsContext()
+    const classes = useStyles()
+
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
+    const { user } = useFirebaseAuthContext()
 
     const handleCategoryChange = (type: string, value: string) => {
         setLastRecipeName('')
@@ -26,12 +43,11 @@ const Home = () => {
     }
 
     useEffect(() => {
+        setLoading(true)
         // ? constructing the query with both where and orderBy clauses requires multiple indexes
         let query:
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
-
-        let limit = isHighRes ? 8 : 4
 
         if (selectedCategories.size === 0) {
             setPagination(true)
@@ -39,7 +55,7 @@ const Home = () => {
             return query
                 .orderBy('name', 'asc')
                 .startAfter(lastRecipeName)
-                .limit(limit)
+                .limit(4)
                 .onSnapshot(querySnapshot => {
                     const changes: ChangesRecord = {
                         added: new Map(),
@@ -55,37 +71,48 @@ const Home = () => {
                         changes.removed.forEach((_v, key) => recipes.delete(key))
                         return new Map([...recipes, ...changes.added, ...changes.modified])
                     })
+                    setLoading(false)
                 })
         } else {
             setPagination(false)
             selectedCategories.forEach(
                 (value, type) => (query = query.where(`categories.${type}`, '==', value))
             )
-
             return query.onSnapshot(
                 querySnapshot => {
                     const added: Map<DocumentId, RecipeDocument> = new Map()
                     querySnapshot.docs.map(doc => added.set(doc.id, doc.data() as RecipeDocument))
                     setPagedRecipes(added)
+                    setLoading(false)
                 },
                 error => console.error(error)
             )
         }
-    }, [isHighRes, lastRecipeName, selectedCategories, selectedCategories.size])
+    }, [lastRecipeName, selectedCategories, selectedCategories.size])
 
     return (
         <>
-            <HomeSearch />
-            <HomeRecentlyAdded />
+            <RecentlyAdded />
             <HomeCategory
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}
             />
             <HomeRecipe
+                skeletons={loading}
                 recipes={[...pagedRecipes.values()]}
                 onExpandClick={setLastRecipeName}
                 expandDisabled={!pagination}
             />
+
+            {user && !user.isAnonymous && (
+                <Navigate to={PATHS.recipeCreate}>
+                    <Zoom in>
+                        <Fab className={classes.fab} color="secondary">
+                            <AddIcon />
+                        </Fab>
+                    </Zoom>
+                </Navigate>
+            )}
         </>
     )
 }

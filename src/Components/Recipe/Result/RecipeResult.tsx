@@ -1,25 +1,23 @@
-import { Box, Button, createStyles, Grid, makeStyles, Slide, Typography } from '@material-ui/core'
+import { Box, createStyles, Divider, Grid, Grow, makeStyles } from '@material-ui/core'
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
-import React, { memo } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
-import { FirebaseService } from '../../../firebase'
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
-import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
-import { CategoryResult } from '../../Category/CategoryResult'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { AttachementData, AttachementMetadata, DataUrl, Recipe } from '../../../model/model'
 import { useRouterContext } from '../../Provider/RouterProvider'
-import { PATHS } from '../../Routes/Routes'
 import { Subtitle } from '../../Shared/Subtitle'
-import { RecipeActions, RecipeResultAction } from './Action/RecipeResultAction'
-import { RecipeResultImg } from './RecipeResultImg'
+import RecipeCard from '../RecipeCard'
+import { RecipeVariants } from './Action/RecipeResultAction'
+import RecipeResultAttachements from './RecipeResultAttachements'
+import RecipeResultHeader from './RecipeResultHeader'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
-interface RecipeResultProps extends RecipeActions {
+interface RecipeResultProps extends RecipeVariants {
     recipe: Recipe<AttachementMetadata | AttachementData> | null
 }
 
@@ -28,96 +26,127 @@ const useStyles = makeStyles(() =>
         recipeContainer: {
             overflowX: 'hidden',
         },
+        markdown: {
+            fontSize: '1rem',
+            lineHeight: '1.5rem',
+        },
     })
 )
 
-const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
-    const { history } = useRouterContext()
-    const { user } = useFirebaseAuthContext()
+export const recipeResultBreakpoints = (
+    fullWidth?: boolean
+): Partial<Record<Breakpoint, boolean | GridSize>> =>
+    fullWidth ? { xs: 12 } : { xs: 12, lg: 6, xl: 4 }
 
+const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
+    const [selectedAttachement, setSelectedAttachement] = useState<DataUrl | null>(null)
+    const { location } = useRouterContext()
     const classes = useStyles()
+
+    useEffect(() => {
+        setSelectedAttachement(null)
+    }, [location.pathname])
 
     if (!recipe)
         return (
-            <Box display="flex" justifyContent="center">
-                <Slide in direction="down" timeout={500}>
+            <Box display="flex" justifyContent="center" marginTop={4}>
+                <Grow in timeout={500}>
                     <NotFoundIcon width={200} />
-                </Slide>
+                </Grow>
             </Box>
         )
 
-    const breakpoints = (options: {
-        ingredient: boolean
-    }): Partial<Record<Breakpoint, boolean | GridSize>> =>
-        actionProps.pinned ? { xs: 12 } : { xs: 12, md: 6, lg: options.ingredient ? 4 : 6 }
+    if (variant === 'summary')
+        return (
+            <Grid container spacing={4} className={classes.recipeContainer} alignContent="stretch">
+                <Grid item xs={12}>
+                    <RecipeResultHeader recipe={recipe} variant={variant} />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Divider />
+                </Grid>
+            </Grid>
+        )
+
+    const breakpoints = recipeResultBreakpoints(variant === 'pinned')
+
+    const handleAttachementSelect = (attachement: DataUrl) => {
+        if (selectedAttachement === attachement) setSelectedAttachement(null)
+        else setSelectedAttachement(attachement)
+    }
 
     return (
-        <Grid container spacing={2} className={classes.recipeContainer}>
+        <Grid
+            container
+            spacing={variant === 'pinned' ? 2 : 4}
+            className={classes.recipeContainer}
+            alignContent="stretch">
             <Grid item xs={12}>
-                <Grid container justify="space-between" alignItems="center">
-                    <Grid item>
-                        <Typography variant="h6">{recipe.name}</Typography>
-                    </Grid>
-                    <RecipeResultAction
-                        name={recipe.name}
-                        {...actionProps}
-                        numberOfComments={recipe.numberOfComments}
+                <RecipeResultHeader recipe={recipe} variant={variant} />
+            </Grid>
+
+            <Grid item xs={12}>
+                <Divider />
+            </Grid>
+
+            {variant !== 'pinned' && (
+                <Grid item xs={12}>
+                    <RecipeResultAttachements
+                        attachements={recipe.attachements}
+                        selectedAttachement={selectedAttachement}
+                        onSelect={handleAttachementSelect}
                     />
                 </Grid>
-            </Grid>
-            <Grid item>
-                <CategoryResult categories={recipe.categories} />
-            </Grid>
+            )}
 
-            <Grid item xs={12}>
-                <Grid container spacing={2}>
-                    {recipe.attachements.map(attachement => (
-                        <RecipeResultImg
-                            {...actionProps}
-                            key={attachement.name}
-                            attachement={attachement}
-                        />
-                    ))}
+            {recipe.ingredients.length > 0 && (
+                <Grid {...breakpoints} item>
+                    <RecipeCard
+                        variant={variant}
+                        header={
+                            <Subtitle
+                                icon={<AssignmentIcon />}
+                                text={
+                                    <>
+                                        Zutaten für {recipe.amount}{' '}
+                                        {recipe.amount < 2 ? 'Person' : 'Personen'}
+                                    </>
+                                }
+                            />
+                        }
+                        content={
+                            <ReactMarkdown
+                                className={classes.markdown}
+                                source={recipe.ingredients}
+                            />
+                        }
+                    />
                 </Grid>
-            </Grid>
+            )}
 
-            <Grid {...breakpoints({ ingredient: true })} item>
-                <Subtitle
-                    icon={<AssignmentIcon />}
-                    text={`Zutaten für ${recipe.amount} Person/en`}
-                />
-                <ReactMarkdown source={recipe.ingredients} />
-            </Grid>
+            {recipe.description.length > 0 && (
+                <Grid {...breakpoints} item>
+                    <RecipeCard
+                        variant={variant}
+                        header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
+                        content={
+                            <ReactMarkdown
+                                className={classes.markdown}
+                                source={recipe.description}
+                            />
+                        }
+                    />
+                </Grid>
+            )}
 
-            <Grid {...breakpoints({ ingredient: false })} item>
-                <Subtitle icon={<BookIcon />} text="Beschreibung" />
-                <ReactMarkdown source={recipe.description} />
-            </Grid>
-
-            <Grid item xs={12}>
-                <Subtitle icon={<LabelIcon />} text="Passt gut zu" />
-                <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
-            </Grid>
-
-            <Grid item xs={12}>
-                <Typography variant="caption">
-                    Erstellt am:{' '}
-                    {FirebaseService.createDateFromTimestamp(
-                        recipe.createdDate
-                    ).toLocaleDateString()}
-                </Typography>
-            </Grid>
-
-            {user && !user.isAnonymous && actionProps.editEnabled && (
-                <Grid item xs={12}>
-                    <Box textAlign="right">
-                        <Button
-                            color="primary"
-                            variant="contained"
-                            onClick={() => history.push(PATHS.recipeEdit(recipe.name), { recipe })}>
-                            Bearbeiten
-                        </Button>
-                    </Box>
+            {recipe.relatedRecipes.length > 0 && variant !== 'pinned' && (
+                <Grid {...breakpoints} item>
+                    <RecipeCard
+                        variant={variant}
+                        header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
+                        content={<RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />}
+                    />
                 </Grid>
             )}
         </Grid>
@@ -126,9 +155,5 @@ const RecipeResult = ({ recipe, ...actionProps }: RecipeResultProps) => {
 
 export default memo(
     RecipeResult,
-    (prev, next) =>
-        prev.recipe === next.recipe &&
-        prev.actionsEnabled === next.actionsEnabled &&
-        prev.pinned === next.pinned &&
-        prev.editEnabled === next.editEnabled
+    (prev, next) => prev.recipe === next.recipe && prev.variant === next.variant
 )

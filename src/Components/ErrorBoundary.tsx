@@ -1,8 +1,8 @@
 import { Box, Card, CardContent, Slide } from '@material-ui/core'
 import React from 'react'
 
-import { FirebaseService } from '../firebase'
 import { ReactComponent as ErrorIcon } from '../icons/error.svg'
+import { FirebaseService } from '../services/firebase'
 
 interface ErrorBoundaryState {
     error: Error | null

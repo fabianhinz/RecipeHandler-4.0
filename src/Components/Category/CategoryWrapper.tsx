@@ -1,6 +1,7 @@
 import {
     Avatar,
     Box,
+    createStyles,
     Dialog,
     DialogActions,
     DialogContent,
@@ -12,9 +13,11 @@ import {
     ListItemAvatar,
     ListItemIcon,
     ListItemText,
+    makeStyles,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
+import Skeleton from '@material-ui/lab/Skeleton'
 import {
     AvTimer,
     Barley,
@@ -38,7 +41,6 @@ import React, { FC, memo, useState } from 'react'
 
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useCategoriesCollectionContext } from '../Provider/CategoriesCollectionProvider'
-import { Loading } from '../Shared/Loading'
 import { SlideUp } from '../Shared/Transitions'
 
 export const iconFromCategory = (category: string) => {
@@ -83,6 +85,19 @@ interface CategoryDialogProps extends CategoryWrapperProps {
     type: string
 }
 
+const useStyles = makeStyles(theme =>
+    createStyles({
+        skeletonContainer: {
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(2),
+        },
+        avatarSelected: {
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.getContrastText(theme.palette.secondary.main),
+        },
+    })
+)
+
 const CategoryDialog: FC<CategoryDialogProps> = ({
     onCategoryChange,
     selectedCategories,
@@ -91,6 +106,8 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
 }) => {
     const [dialog, setDialog] = useState(false)
     const { isDialogFullscreen } = useBreakpointsContext()
+
+    const classes = useStyles()
 
     const selectedHasType = selectedCategories.has(type)
     const selectedCategory = selectedCategories.get(type) as string
@@ -107,7 +124,9 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
             <ListItem button onClick={handleDialogChange}>
                 <ListItemIcon>
                     {selectedHasType ? (
-                        <Avatar>{iconFromCategory(selectedCategory)}</Avatar>
+                        <Avatar className={classes.avatarSelected}>
+                            {iconFromCategory(selectedCategory)}
+                        </Avatar>
                     ) : (
                         <Avatar>
                             <FilterVariant />
@@ -169,10 +188,11 @@ interface CategoryWrapperProps {
     onCategoryChange: (type: string, value: string) => void
 }
 
-const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedCategories }) => {
-    const { categoriesCollection } = useCategoriesCollectionContext()
+const SKELETON_CATEGORIES = ['art', 'ernährung', 'zeit']
 
-    if (Object.keys(categoriesCollection).length === 0) return <Loading />
+const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedCategories }) => {
+    const { categoriesCollection, categoriesLoading } = useCategoriesCollectionContext()
+    const classes = useStyles()
 
     return (
         <Grid container spacing={2}>
@@ -186,6 +206,24 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
                     />
                 </Grid>
             ))}
+            {categoriesLoading &&
+                SKELETON_CATEGORIES.map(dummy => (
+                    <Grid key={dummy} item xs={12} md={4}>
+                        <Grid
+                            className={classes.skeletonContainer}
+                            container
+                            spacing={1}
+                            alignItems="center">
+                            <Grid item xs={2}>
+                                <Skeleton variant="circle" width={40} height={40} />
+                            </Grid>
+                            <Grid item xs={10}>
+                                <Skeleton variant="text" width="30%" />
+                                <Skeleton variant="text" width="60%" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                ))}
         </Grid>
     )
 }

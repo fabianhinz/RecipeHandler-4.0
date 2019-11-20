@@ -3,12 +3,11 @@ import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../../../firebase'
-import { getRefPaths } from '../../../../hooks/useAttachementRef'
-import { Trial } from '../../../../model/model'
-import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
-import { Comments } from '../../../Shared/Comments/Comments'
-import { HeaderDispatch } from '../HeaderReducer'
+import { getRefPaths } from '../../hooks/useAttachementRef'
+import { Trial } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
+import { Comments } from '../Comments/Comments'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -19,11 +18,11 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface HeaderTrialsCardProps extends HeaderDispatch {
+interface HeaderTrialsCardProps {
     trial: Trial
 }
 
-export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
+const TrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
     const [fullDataUrl, setFullDataUrl] = useState<string | null>()
     const classes = useStyles()
 
@@ -51,7 +50,7 @@ export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
     }
 
     return (
-        <Grid item xs={12} md={6} key={trial.name}>
+        <Grid item xs={12} md={6} lg={4} xl={3} key={trial.name}>
             <Card raised>
                 {fullDataUrl ? (
                     <a href={fullDataUrl} rel="noreferrer noopener" target="_blank">
@@ -61,7 +60,7 @@ export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
                     <Skeleton height={200} width="100%" />
                 )}
                 {user && (
-                    <Box display="flex" justifyContent="space-evenly">
+                    <Box padding={1} display="flex" justifyContent="space-evenly">
                         <Comments
                             collection="trials"
                             numberOfComments={trial.numberOfComments}
@@ -77,3 +76,5 @@ export const HeaderTrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
         </Grid>
     )
 }
+
+export default TrialsCard

@@ -1,17 +1,14 @@
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 
-import { FirebaseService } from '../../../firebase'
 import { AttachementMetadata } from '../../../model/model'
 import { isData } from '../../../model/modelUtil'
+import { FirebaseService } from '../../../services/firebase'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import { RecipeCreateState } from './RecipeCreateReducer'
 
-export const useRecipeCreateService = (
-    state: RecipeCreateState,
-    editedRecipe: boolean | undefined
-) => {
+export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean | undefined) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
     const { history } = useRouterContext()

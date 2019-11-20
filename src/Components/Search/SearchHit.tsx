@@ -2,9 +2,9 @@ import { ListItem, ListItemText } from '@material-ui/core'
 import React from 'react'
 import Highlighter from 'react-highlight-words'
 
-import { Hit } from '../../../model/model'
-import { useRouterContext } from '../../Provider/RouterProvider'
-import { PATHS } from '../../Routes/Routes'
+import { Hit } from '../../model/model'
+import { useRouterContext } from '../Provider/RouterProvider'
+import { PATHS } from '../Routes/Routes'
 
 const getHighlightedDescription = (description: string) => {
     const descriptionArray = description.split(/1\.|- |\*{1,}|#{1,}/gi)
@@ -47,17 +47,20 @@ const getHighlightedIngredients = (ingredients: string) => {
 
 interface Props {
     recipeHit: Hit
+    onHitSelect: () => void
     debouncedSearchValue: string
 }
 
-export const HomeSearchHit = ({ recipeHit, debouncedSearchValue }: Props) => {
+const SearchHit = ({ recipeHit, debouncedSearchValue, onHitSelect }: Props) => {
     const { history } = useRouterContext()
 
+    const handleListItemClick = () => {
+        onHitSelect()
+        history.push(PATHS.details(recipeHit.name))
+    }
+
     return (
-        <ListItem
-            button
-            onClick={() => history.push(PATHS.details(recipeHit.name))}
-            key={recipeHit.name}>
+        <ListItem button onClick={handleListItemClick} key={recipeHit.name}>
             <ListItemText
                 primary={recipeHit.name}
                 secondary={
@@ -89,3 +92,5 @@ export const HomeSearchHit = ({ recipeHit, debouncedSearchValue }: Props) => {
         </ListItem>
     )
 }
+
+export default SearchHit

@@ -10,13 +10,14 @@ import {
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import Skeleton from '@material-ui/lab/Skeleton'
-import React, { FC } from 'react'
+import React from 'react'
 
-import { useAttachementRef } from '../../../hooks/useAttachementRef'
-import { AttachementMetadata, Recipe } from '../../../model/model'
-import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
-import { useRouterContext } from '../../Provider/RouterProvider'
-import { PATHS } from '../../Routes/Routes'
+import { useAttachementRef } from '../../hooks/useAttachementRef'
+import { AttachementMetadata, Recipe } from '../../model/model'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
+import { useRouterContext } from '../Provider/RouterProvider'
+import { PATHS } from '../Routes/Routes'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -31,21 +32,29 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-export const HomeRecentlyAddedCard: FC<{
+interface Props {
     recipe: Recipe<AttachementMetadata>
     skeleton: boolean
-}> = ({ recipe, skeleton }) => {
+}
+
+export const recentlyAddedGridProps = (
+    isHighRes?: boolean,
+    pinned?: boolean
+): Partial<Record<Breakpoint, boolean | GridSize>> =>
+    isHighRes
+        ? { xs: 12, sm: pinned ? 12 : 6, lg: 4, xl: 3 }
+        : { xs: 12, sm: pinned ? 12 : 6, lg: 4 }
+
+const RecentlyAddedCard = ({ recipe, skeleton }: Props) => {
     const { attachementRef, attachementRefLoading } = useAttachementRef(recipe.attachements[0])
     const { isHighRes } = useBreakpointsContext()
     const { history } = useRouterContext()
+    const { pinned } = usePinnedRecipesContext()
+
     const classes = useStyles()
 
-    const gridProps: Partial<Record<Breakpoint, boolean | GridSize>> = isHighRes
-        ? { xs: 12, sm: 6, lg: 4, xl: 3 }
-        : { xs: 12, sm: 6, lg: 4 }
-
     return (
-        <Grid {...gridProps} item>
+        <Grid {...recentlyAddedGridProps(isHighRes, pinned)} item>
             <CardActionArea onClick={() => history.push(PATHS.details(recipe.name), { recipe })}>
                 <Paper className={classes.paper}>
                     <Grid container wrap="nowrap" spacing={2} alignItems="center">
@@ -72,7 +81,7 @@ export const HomeRecentlyAddedCard: FC<{
                                         {recipe.name}
                                     </Typography>
                                     <Typography noWrap color="textSecondary">
-                                        Erstellt am{' '}
+                                        Zuletzt geändert am{' '}
                                         {recipe.createdDate.toDate().toLocaleDateString()}
                                     </Typography>
                                 </>
@@ -84,3 +93,5 @@ export const HomeRecentlyAddedCard: FC<{
         </Grid>
     )
 }
+
+export default RecentlyAddedCard

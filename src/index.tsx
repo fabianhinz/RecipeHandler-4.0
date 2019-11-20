@@ -1,5 +1,4 @@
 import 'typeface-roboto'
-import 'react-perfect-scrollbar/dist/css/styles.css'
 
 import React from 'react'
 import { CookiesProvider } from 'react-cookie'

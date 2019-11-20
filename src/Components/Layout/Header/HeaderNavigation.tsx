@@ -1,12 +1,22 @@
-import { createStyles, Fab, IconButton, makeStyles, Tooltip, Zoom } from '@material-ui/core'
-import AccountIcon from '@material-ui/icons/AccountCircleOutlined'
-import AddIcon from '@material-ui/icons/Add'
-import HomeIcon from '@material-ui/icons/HomeOutlined'
-import BrightnessIcon from '@material-ui/icons/SettingsBrightnessOutlined'
-import { LightbulbOutline } from 'mdi-material-ui'
+import {
+    Button,
+    createStyles,
+    Hidden,
+    IconButton,
+    makeStyles,
+    useMediaQuery,
+    useTheme,
+} from '@material-ui/core'
+import AccountIcon from '@material-ui/icons/AccountCircleRounded'
+import LightThemeIcon from '@material-ui/icons/BrightnessHighRounded'
+import DarkThemeIcon from '@material-ui/icons/BrightnessLowRounded'
+import HomeIcon from '@material-ui/icons/HomeRounded'
+import clsx from 'clsx'
+import { Lightbulb } from 'mdi-material-ui'
 import React, { memo } from 'react'
 
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { PINNED_WIDTH, usePinnedRecipesContext } from '../../Provider/PinnedRecipesProvider'
 import { Navigate } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
 import { HeaderDispatch } from './HeaderReducer'
@@ -22,57 +32,80 @@ const useStyles = makeStyles(theme =>
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'space-evenly',
         },
-        addBtn: {
-            position: 'absolute',
-            top: -28,
-            right: theme.spacing(3),
+        mobilePadding: {
+            paddingRight: theme.spacing(5),
+        },
+        pinnedRecipes: {
+            marginLeft: PINNED_WIDTH,
         },
     })
 )
 
 const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) => {
     const { user } = useFirebaseAuthContext()
+    const { pinned } = usePinnedRecipesContext()
+
+    const isMobilePadding = useMediaQuery('(max-width: 550px)')
+
+    const theme = useTheme()
     const classes = useStyles()
 
     return (
-        <div className={classes.container}>
-            <Navigate to={PATHS.home}>
-                <Tooltip TransitionComponent={Zoom} title="Startseite">
+        <div
+            className={clsx(
+                classes.container,
+                pinned && classes.pinnedRecipes,
+                isMobilePadding && user && !user.isAnonymous && classes.mobilePadding
+            )}>
+            <Hidden mdDown>
+                <Navigate to={PATHS.home}>
+                    <Button size="large" startIcon={<HomeIcon />}>
+                        Start
+                    </Button>
+                </Navigate>
+
+                <Button
+                    size="large"
+                    startIcon={<Lightbulb />}
+                    onClick={() => dispatch({ type: 'trialsChange' })}>
+                    Ideen
+                </Button>
+
+                <Button
+                    size="large"
+                    startIcon={<AccountIcon />}
+                    onClick={() => dispatch({ type: 'dialogChange' })}>
+                    {user!.isAnonymous ? 'Einloggen' : 'Account'}
+                </Button>
+
+                <Button
+                    size="large"
+                    startIcon={
+                        theme.palette.type === 'dark' ? <DarkThemeIcon /> : <LightThemeIcon />
+                    }
+                    onClick={onThemeChange}>
+                    Design
+                </Button>
+            </Hidden>
+
+            <Hidden lgUp>
+                <Navigate to={PATHS.home}>
                     <IconButton>
                         <HomeIcon />
                     </IconButton>
-                </Tooltip>
-            </Navigate>
-
-            <Tooltip TransitionComponent={Zoom} title="Theme wechseln">
-                <IconButton onClick={onThemeChange}>
-                    <BrightnessIcon />
-                </IconButton>
-            </Tooltip>
-
-            <Tooltip TransitionComponent={Zoom} title="Versuchskaninchen">
+                </Navigate>
                 <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
-                    <LightbulbOutline />
+                    <Lightbulb />
                 </IconButton>
-            </Tooltip>
-
-            <Tooltip TransitionComponent={Zoom} title="Einloggen">
                 <IconButton onClick={() => dispatch({ type: 'dialogChange' })}>
                     <AccountIcon />
                 </IconButton>
-            </Tooltip>
-
-            {user && !user.isAnonymous && (
-                <div className={classes.addBtn}>
-                    <Navigate to={PATHS.recipeCreate}>
-                        <Fab color="secondary">
-                            <AddIcon />
-                        </Fab>
-                    </Navigate>
-                </div>
-            )}
+                <IconButton onClick={onThemeChange}>
+                    {theme.palette.type === 'dark' ? <DarkThemeIcon /> : <LightThemeIcon />}
+                </IconButton>
+            </Hidden>
         </div>
     )
 }
