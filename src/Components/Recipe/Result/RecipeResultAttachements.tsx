@@ -5,12 +5,13 @@ import {
     createStyles,
     Grid,
     makeStyles,
+    Modal,
     Slide,
     Typography,
     useMediaQuery,
 } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { useAttachementRef } from '../../../hooks/useAttachementRef'
 import { AttachementData, AttachementMetadata, DataUrl } from '../../../model/model'
@@ -21,7 +22,7 @@ const useStyles = makeStyles(theme =>
         backdrop: {
             paddingBottom: theme.spacing(8),
             paddingTop: theme.spacing(8),
-            zIndex: theme.zIndex.drawer - 1,
+            zIndex: theme.zIndex.modal,
             display: 'flex',
             justifyContent: 'center',
         },
@@ -35,19 +36,19 @@ const useStyles = makeStyles(theme =>
         },
         attachement: {
             [theme.breakpoints.only('xs')]: {
-                width: '90%',
+                maxWidth: '90%',
             },
             [theme.breakpoints.only('sm')]: {
-                width: '80%',
+                maxWidth: '80%',
             },
             [theme.breakpoints.only('md')]: {
-                width: '70%',
+                maxWidth: '70%',
             },
             [theme.breakpoints.only('lg')]: {
-                width: '60%',
+                maxWidth: '60%',
             },
             [theme.breakpoints.up('xl')]: {
-                width: '50%',
+                maxHeight: '60%',
             },
             borderRadius: BORDER_RADIUS,
             cursor: 'pointer',
@@ -103,6 +104,12 @@ const RecipeResultAttachements = ({
     onSelect,
 }: RecipeResultAttachementsProps) => {
     const classes = useStyles()
+
+    useEffect(() => {
+        const root = document.getElementsByTagName('html')[0]
+        if (selectedAttachement) root.setAttribute('style', 'overflow: hidden;')
+        if (!selectedAttachement) root.removeAttribute('style')
+    }, [selectedAttachement])
 
     return (
         <Grid container spacing={4}>
