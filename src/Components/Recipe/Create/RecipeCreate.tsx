@@ -160,7 +160,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         <Grid container>
                             <Grid item xs={12}>
                                 <InputBase
-                                    autoFocus
                                     disabled={props.edit}
                                     className={classes.textFieldName}
                                     value={state.name}

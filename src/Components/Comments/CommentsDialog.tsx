@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core'
 import Paper, { PaperProps } from '@material-ui/core/Paper'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import ScrollToLatestIcon from '@material-ui/icons/ExpandMoreTwoTone'
 import SaveIcon from '@material-ui/icons/SaveTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
 import clsx from 'clsx'
@@ -58,6 +59,18 @@ interface CommentsDialogProps extends Pick<CommentsDocument, 'name'>, CommentsCo
     numberOfComments: number
 }
 
+const SCROLL_TO_ID = 'scrollTo'
+
+const scrollToLatest = () => {
+    // ? source: https://stackoverflow.com/a/52138511
+    const element = document.getElementById(SCROLL_TO_ID)
+    if (!element) return
+    element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+    })
+}
+
 export const CommentsDialog: FC<CommentsDialogProps> = ({
     open,
     onClose,
@@ -97,17 +110,22 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
         if (input.length === 0) return
         setInputDisabled(true)
 
-        const recipeRef = FirebaseService.firestore.collection(collection).doc(name)
-        await recipeRef.collection('comments').add({
-            comment: input,
-            likes: 0,
-            dislikes: 0,
-            createdDate: FirebaseService.createTimestampFromDate(new Date()),
-        })
-        await recipeRef.update({ numberOfComments: ++comments.length })
+        try {
+            const recipeRef = FirebaseService.firestore.collection(collection).doc(name)
+            await recipeRef.collection('comments').add({
+                comment: input,
+                likes: 0,
+                dislikes: 0,
+                createdDate: FirebaseService.createTimestampFromDate(new Date()),
+            })
+            await recipeRef.update({ numberOfComments: ++comments.length })
 
-        setInput('')
-        setInputDisabled(false)
+            setInput('')
+            setInputDisabled(false)
+            setTimeout(scrollToLatest, 500)
+        } catch {
+            setInputDisabled(false)
+        }
     }
 
     return (
@@ -150,6 +168,8 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                               />
                           ))}
                 </Grid>
+                <div id={SCROLL_TO_ID} />
+
                 {comments.length === 0 && !loading && (
                     <Box display="flex" justifyContent="center">
                         <Grow in timeout={500}>
@@ -159,20 +179,35 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 )}
             </DialogContent>
             <DialogActions>
-                <TextField
-                    disabled={inputDisabled}
-                    variant="outlined"
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    fullWidth
-                    label="Ergänzende Hinweise und Meinungen"
-                />
-                <IconButton onClick={handleSave} disabled={input.length === 0}>
-                    <SaveIcon />
-                </IconButton>
-                <IconButton onClick={onClose}>
-                    <CloseIcon />
-                </IconButton>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <TextField
+                            InputProps={{
+                                endAdornment: (
+                                    <IconButton onClick={scrollToLatest}>
+                                        <ScrollToLatestIcon />
+                                    </IconButton>
+                                ),
+                            }}
+                            disabled={inputDisabled}
+                            variant="outlined"
+                            value={input}
+                            fullWidth
+                            onChange={e => setInput(e.target.value)}
+                            label="Kommentar hinzufügen"
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Grid container justify="space-evenly">
+                            <IconButton onClick={onClose}>
+                                <CloseIcon />
+                            </IconButton>
+                            <IconButton onClick={handleSave} disabled={input.length === 0}>
+                                <SaveIcon />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </DialogActions>
         </Dialog>
     )

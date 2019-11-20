@@ -2,6 +2,7 @@ import { Box, createStyles, Grid, IconButton, makeStyles, Typography } from '@ma
 import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
 import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
 import React, { memo } from 'react'
+import { Link } from 'react-router-dom'
 
 import { Comment as CommentModel } from '../../model/model'
 import { CommentsCollections, RecipeDocument } from '../../model/model'
@@ -26,6 +27,8 @@ interface CommentProps extends Pick<RecipeDocument, 'name'>, CommentsCollections
     comment: CommentModel
 }
 
+const isLink = new RegExp('(www|http:|https:)+[^s]+[w]')
+
 const Comment = ({ comment, name, collection }: CommentProps) => {
     const classes = useStyles()
 
@@ -47,7 +50,15 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
                 <Typography variant="caption">
                     {FirebaseService.createDateFromTimestamp(comment.createdDate).toLocaleString()}
                 </Typography>
-                <Typography>{comment.comment}</Typography>
+                <Typography>
+                    {isLink.test(comment.comment) ? (
+                        <a href={comment.comment} target="_blank" rel="noopener noreferrer">
+                            Link
+                        </a>
+                    ) : (
+                        comment.comment
+                    )}
+                </Typography>
             </div>
 
             <Box marginBottom={1} display="flex" justifyContent="flex-end">

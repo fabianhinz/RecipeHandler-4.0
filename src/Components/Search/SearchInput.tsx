@@ -13,7 +13,6 @@ interface Props {
 const SearchInput = ({ searchValue, loading, onChange }: Props) => {
     return (
         <InputBase
-            autoFocus
             fullWidth
             placeholder="Rezepte durchsuchen"
             value={searchValue}
