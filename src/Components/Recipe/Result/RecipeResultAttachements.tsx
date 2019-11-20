@@ -5,7 +5,6 @@ import {
     createStyles,
     Grid,
     makeStyles,
-    Modal,
     Slide,
     Typography,
     useMediaQuery,

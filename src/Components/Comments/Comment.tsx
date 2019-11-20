@@ -2,7 +2,6 @@ import { Box, createStyles, Grid, IconButton, makeStyles, Typography } from '@ma
 import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
 import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
 import React, { memo } from 'react'
-import { Link } from 'react-router-dom'
 
 import { Comment as CommentModel } from '../../model/model'
 import { CommentsCollections, RecipeDocument } from '../../model/model'
@@ -27,7 +26,30 @@ interface CommentProps extends Pick<RecipeDocument, 'name'>, CommentsCollections
     comment: CommentModel
 }
 
-const isLink = new RegExp('(www|http:|https:)+[^s]+[w]')
+const includesUrl = (value: string) => value.includes('http://') || value.includes('https://')
+
+const getCommentTypography = (comment: string): React.ReactNode => {
+    if (!includesUrl(comment)) return comment
+    const complexComment: Array<any> = []
+
+    comment.split(' ').forEach(value => {
+        if (includesUrl(value))
+            complexComment.push(
+                <a href={value} target="_blank" rel="noopener noreferrer">
+                    Link
+                </a>
+            )
+        else complexComment.push(<>{value}</>)
+    })
+
+    return (
+        <>
+            {complexComment.map((value, index) => (
+                <span key={index}>{value} </span>
+            ))}
+        </>
+    )
+}
 
 const Comment = ({ comment, name, collection }: CommentProps) => {
     const classes = useStyles()
@@ -50,15 +72,7 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
                 <Typography variant="caption">
                     {FirebaseService.createDateFromTimestamp(comment.createdDate).toLocaleString()}
                 </Typography>
-                <Typography>
-                    {isLink.test(comment.comment) ? (
-                        <a href={comment.comment} target="_blank" rel="noopener noreferrer">
-                            Link
-                        </a>
-                    ) : (
-                        comment.comment
-                    )}
-                </Typography>
+                <Typography>{getCommentTypography(comment.comment)}</Typography>
             </div>
 
             <Box marginBottom={1} display="flex" justifyContent="flex-end">
