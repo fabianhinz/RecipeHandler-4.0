@@ -2,17 +2,24 @@ import { Card, CardContent, createStyles, makeStyles } from '@material-ui/core'
 import clsx from 'clsx'
 import React from 'react'
 
+import { BORDER_RADIUS_HUGE } from '../../theme'
 import { RecipeVariants } from './Result/Action/RecipeResultAction'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         root: {
             height: '100%',
         },
         header: {
-            backgroundColor: '#A5D6A7',
-            color: '#000',
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.getContrastText(theme.palette.primary.main),
             padding: '0px 8px',
+            borderRadius: 0,
+            boxShadow: theme.shadows[0],
+        },
+        pinnedHeader: {
+            boxShadow: theme.shadows[1],
+            borderRadius: BORDER_RADIUS_HUGE,
         },
         pinnedContent: {
             padding: 0,
@@ -32,7 +39,7 @@ const RecipeCard = ({ variant, header, content }: Props) => {
 
     return (
         <Card className={classes.root} elevation={pinned ? 0 : 1}>
-            <Card className={classes.header}>{header}</Card>
+            <Card className={clsx(classes.header, pinned && classes.pinnedHeader)}>{header}</Card>
             <CardContent className={clsx(pinned && classes.pinnedContent)}>{content}</CardContent>
         </Card>
     )
