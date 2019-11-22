@@ -21,7 +21,7 @@ import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
 import { SpeedDial, SpeedDialAction } from '@material-ui/lab'
 import { useSnackbar } from 'notistack'
 import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react'
-import { RouteComponentProps } from 'react-router'
+import { Prompt, RouteComponentProps } from 'react-router'
 
 import { getRefPaths } from '../../../hooks/useAttachementRef'
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
@@ -135,6 +135,12 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         event: ChangeEvent<HTMLInputElement>
     ) => {
         dispatch({ type: 'textFieldChange', key, value: event.target.value })
+    }
+
+    const warnOnLocationChange = () => {
+        if (props.recipe) return true
+        else if (state.name.length !== 0) return true
+        else return false
     }
 
     return (
@@ -288,6 +294,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 onClose={relatedRecipes =>
                     dispatch({ type: 'relatedRecipesChange', relatedRecipes })
                 }
+            />
+
+            <Prompt
+                when={warnOnLocationChange()}
+                message="Nicht gespeicherte Änderungen gehen verloren. Trotzdem die Seite verlassen?"
             />
 
             {/* ToDo extract */}
