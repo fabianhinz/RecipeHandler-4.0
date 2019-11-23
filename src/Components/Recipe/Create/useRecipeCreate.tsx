@@ -10,6 +10,7 @@ import { RecipeCreateState } from './RecipeCreateReducer'
 
 export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean | undefined) => {
     const [loading, setLoading] = useState(false)
+    const [changesSaved, setChangesSaved] = useState(false)
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
     const { history } = useRouterContext()
 
@@ -134,8 +135,9 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
         enqueueSnackbar(`${state.name} gespeichert`, {
             variant: 'success',
         })
+        setChangesSaved(true)
         history.push(PATHS.home)
     }
 
-    return { validate, uploadAttachments, saveRecipeDocument, loading }
+    return { validate, uploadAttachments, saveRecipeDocument, loading, changesSaved }
 }

@@ -42,6 +42,9 @@ const useStyles = makeStyles(() =>
         dialogTitle: {
             cursor: 'move',
         },
+        form: {
+            flexGrow: 1,
+        },
     })
 )
 
@@ -106,7 +109,8 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
             })
     }, [collection, name, open])
 
-    const handleSave = async () => {
+    const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
         if (input.length === 0) return
         setInputDisabled(true)
 
@@ -179,35 +183,38 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 )}
             </DialogContent>
             <DialogActions>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            InputProps={{
-                                endAdornment: (
-                                    <IconButton onClick={scrollToLatest}>
-                                        <ScrollToLatestIcon />
-                                    </IconButton>
-                                ),
-                            }}
-                            disabled={inputDisabled}
-                            variant="outlined"
-                            value={input}
-                            fullWidth
-                            onChange={e => setInput(e.target.value)}
-                            label="Kommentar hinzufügen"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Grid container justify="space-evenly">
-                            <IconButton onClick={onClose}>
-                                <CloseIcon />
-                            </IconButton>
-                            <IconButton onClick={handleSave} disabled={input.length === 0}>
-                                <SaveIcon />
-                            </IconButton>
+                <form className={classes.form} onSubmit={handleFormSubmit}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                helperText={inputDisabled ? 'Wird gespeichert' : ''}
+                                InputProps={{
+                                    endAdornment: (
+                                        <IconButton onClick={scrollToLatest}>
+                                            <ScrollToLatestIcon />
+                                        </IconButton>
+                                    ),
+                                }}
+                                disabled={inputDisabled}
+                                variant="outlined"
+                                value={input}
+                                fullWidth
+                                onChange={e => setInput(e.target.value)}
+                                label="Kommentar hinzufügen"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Grid container justify="space-evenly">
+                                <IconButton onClick={onClose}>
+                                    <CloseIcon />
+                                </IconButton>
+                                <IconButton type="submit">
+                                    <SaveIcon />
+                                </IconButton>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
+                </form>
             </DialogActions>
         </Dialog>
     )

@@ -138,8 +138,8 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     }
 
     const warnOnLocationChange = () => {
-        if (props.recipe) return true
-        else if (state.name.length !== 0) return true
+        if (props.recipe && !recipeCreateService.changesSaved) return true
+        else if (state.name.length !== 0 && !recipeCreateService.changesSaved) return true
         else return false
     }
 
@@ -166,6 +166,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         <Grid container>
                             <Grid item xs={12}>
                                 <InputBase
+                                    autoFocus
                                     disabled={props.edit}
                                     className={classes.textFieldName}
                                     value={state.name}
