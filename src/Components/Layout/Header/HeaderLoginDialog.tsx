@@ -155,6 +155,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                 <form onSubmit={handleLogin}>
                     <DialogContent>
                         <TextField
+                            autoFocus
                             helperText={errors.email && 'ungültige Email'}
                             error={errors.email}
                             autoComplete="username"
