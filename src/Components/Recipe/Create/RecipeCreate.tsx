@@ -22,10 +22,11 @@ import { SpeedDial, SpeedDialAction } from '@material-ui/lab'
 import { useSnackbar } from 'notistack'
 import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
+import { createWorker } from 'tesseract.js'
 
 import { getRefPaths } from '../../../hooks/useAttachementRef'
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
-import { AttachementMetadata, Recipe } from '../../../model/model'
+import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import CategoryWrapper from '../../Category/CategoryWrapper'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -80,6 +81,35 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
     const classes = useStyles()
+
+    const ocr = useCallback(async () => {
+        if (attachements.length === 0) return
+
+        console.time('tesseract')
+        const worker = createWorker({
+            logger: m => console.log(m),
+        })
+
+        await worker.load()
+        await worker.loadLanguage('deu')
+        await worker.initialize('deu')
+
+        try {
+            const {
+                data: { text },
+            } = await worker.recognize(attachements[0].dataUrl)
+            console.log(text)
+        } catch (e) {
+            console.error(e)
+        }
+
+        console.timeEnd('tesseract')
+        worker.terminate()
+    }, [attachements])
+
+    useEffect(() => {
+        ocr()
+    }, [attachements, ocr])
 
     useEffect(() => {
         dispatch({ type: 'attachementsDrop', newAttachements: attachements })
