@@ -168,9 +168,22 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     }
 
     const warnOnLocationChange = () => {
-        if (props.recipe && !recipeCreateService.changesSaved) return true
-        else if (state.name.length !== 0 && !recipeCreateService.changesSaved) return true
-        else return false
+        if (props.recipe && !recipeCreateService.changesSaved) {
+            return true
+        } else if (
+            (state.name.length > 0 ||
+                Object.keys(state.categories).length > 0 ||
+                state.attachements.length > 0 ||
+                state.amount > 1 ||
+                state.ingredients.length > 0 ||
+                state.description.length > 0 ||
+                state.relatedRecipes.length > 0) &&
+            !recipeCreateService.changesSaved
+        )
+            return true
+        else {
+            return false
+        }
     }
 
     return (
