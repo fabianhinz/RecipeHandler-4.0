@@ -6,14 +6,15 @@ import {
     Grid,
     makeStyles,
     Slide,
-    Typography,
     useMediaQuery,
 } from '@material-ui/core'
+import BugIcon from '@material-ui/icons/BugReport'
 import { Skeleton } from '@material-ui/lab'
 import React, { useEffect } from 'react'
 
 import { useAttachementRef } from '../../../hooks/useAttachementRef'
 import { AttachementData, AttachementMetadata, DataUrl } from '../../../model/model'
+import { isMetadata } from '../../../model/modelUtil'
 import { BORDER_RADIUS } from '../../../theme'
 
 const useStyles = makeStyles(theme =>
@@ -24,6 +25,7 @@ const useStyles = makeStyles(theme =>
             zIndex: theme.zIndex.modal,
             display: 'flex',
             justifyContent: 'center',
+            cursor: 'pointer',
         },
         attachementPreviewGrid: {
             overflowX: 'auto',
@@ -50,7 +52,6 @@ const useStyles = makeStyles(theme =>
                 maxHeight: '60%',
             },
             borderRadius: BORDER_RADIUS,
-            cursor: 'pointer',
         },
         actionArea: {
             borderRadius: '50%',
@@ -74,16 +75,24 @@ const AttachementPreview = ({ attachement, onSelect }: AttachementPreviewProps) 
                 <Skeleton variant="circle" className={classes.attachementPreview} />
             ) : (
                 <CardActionArea
-                    onClick={() =>
-                        onSelect(
-                            loadHighRes ? attachementRef.fullDataUrl : attachementRef.mediumDataUrl
-                        )
-                    }
+                    onClick={() => {
+                        if (isMetadata(attachement))
+                            onSelect(
+                                loadHighRes
+                                    ? attachementRef.fullDataUrl
+                                    : attachementRef.mediumDataUrl
+                            )
+                        else onSelect(attachement.dataUrl)
+                    }}
                     className={classes.actionArea}>
                     <Avatar
                         className={classes.attachementPreview}
-                        src={attachementRef.mediumDataUrl}>
-                        <Typography variant="h1">?</Typography>
+                        src={
+                            isMetadata(attachement)
+                                ? attachementRef.mediumDataUrl
+                                : attachement.dataUrl
+                        }>
+                        <BugIcon fontSize="large" />
                     </Avatar>
                 </CardActionArea>
             )}
@@ -129,11 +138,15 @@ const RecipeResultAttachements = ({
                 </Grid>
             </Grid>
 
-            <Slide direction="up" in={selectedAttachement !== null}>
-                <Backdrop open className={classes.backdrop}>
+            <Slide
+                direction="up"
+                in={selectedAttachement !== null && selectedAttachement.length > 0}>
+                <Backdrop
+                    open
+                    onClick={() => onSelect(selectedAttachement as string)}
+                    className={classes.backdrop}>
                     {selectedAttachement && (
                         <img
-                            onClick={() => onSelect(selectedAttachement as string)}
                             src={selectedAttachement}
                             className={classes.attachement}
                             alt="selected"

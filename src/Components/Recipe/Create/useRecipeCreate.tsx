@@ -55,8 +55,14 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
         })
 
         if (state.storageDeleteRefs) {
-            for (const ref of state.storageDeleteRefs) {
-                await ref.delete()
+            try {
+                for (const ref of state.storageDeleteRefs) {
+                    await ref.delete()
+                }
+            } catch (e) {
+                // ? possible exeption is 'storage/object-not-found'
+                // we don't care, move on
+                console.log(e)
             }
         }
 

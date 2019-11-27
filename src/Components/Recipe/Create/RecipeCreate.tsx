@@ -129,6 +129,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
         const attachmentMetadata = await recipeCreateService.uploadAttachments()
         await recipeCreateService.saveRecipeDocument(attachmentMetadata)
+
         // eslint-disable-next-line prettier/prettier
     },[recipeCreateService, selectedCategories] )
 
