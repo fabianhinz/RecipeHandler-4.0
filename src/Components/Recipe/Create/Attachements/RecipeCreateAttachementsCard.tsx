@@ -11,6 +11,7 @@ import {
     makeStyles,
     Zoom,
 } from '@material-ui/core'
+import BugIcon from '@material-ui/icons/BugReport'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import SaveIcon from '@material-ui/icons/SaveTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
@@ -84,8 +85,9 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
                         ) : isMetadata(attachement) ? (
                             <Avatar
                                 className={classes.attachement}
-                                src={attachementRef.mediumDataUrl}
-                            />
+                                src={attachementRef.mediumDataUrl}>
+                                <BugIcon fontSize="large" />
+                            </Avatar>
                         ) : (
                             <Avatar className={classes.attachement} src={attachement.dataUrl} />
                         )}

@@ -122,7 +122,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 dislikes: 0,
                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
             })
-            await recipeRef.update({ numberOfComments: ++comments.length })
+            await recipeRef.update({ numberOfComments: FirebaseService.incrementBy(1) })
 
             setInput('')
             setInputDisabled(false)
