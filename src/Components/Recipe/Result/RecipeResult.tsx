@@ -5,11 +5,11 @@ import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { memo, useEffect, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
 
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachementData, AttachementMetadata, DataUrl, Recipe } from '../../../model/model'
 import { useRouterContext } from '../../Provider/RouterProvider'
+import Markdown from '../../Shared/Markdown'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
 import { RecipeVariants } from './Action/RecipeResultAction'
@@ -21,14 +21,10 @@ interface RecipeResultProps extends RecipeVariants {
     recipe: Recipe<AttachementMetadata | AttachementData> | null
 }
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         recipeContainer: {
             overflowX: 'hidden',
-        },
-        markdown: {
-            fontSize: '1rem',
-            lineHeight: '1.5rem',
         },
     })
 )
@@ -115,12 +111,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                                 }
                             />
                         }
-                        content={
-                            <ReactMarkdown
-                                className={classes.markdown}
-                                source={recipe.ingredients}
-                            />
-                        }
+                        content={<Markdown source={recipe.ingredients} />}
                     />
                 </Grid>
             )}
@@ -130,12 +121,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                     <RecipeCard
                         variant={variant}
                         header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
-                        content={
-                            <ReactMarkdown
-                                className={classes.markdown}
-                                source={recipe.description}
-                            />
-                        }
+                        content={<Markdown source={recipe.description} />}
                     />
                 </Grid>
             )}
