@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme =>
             zIndex: -1,
         },
         iconBackground: {
-            opacity: 0.25,
+            opacity: 0.3,
             width: '50%',
         },
     })
