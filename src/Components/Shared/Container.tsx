@@ -3,10 +3,14 @@ import React from 'react'
 
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 
-type Props = { children: React.ReactNode }
+type Props = { children: React.ReactNode; className?: string }
 
-export const Container = ({ children }: Props) => {
+export const Container = ({ children, className }: Props) => {
     const { isHighRes } = useBreakpointsContext()
 
-    return <MuiContainer maxWidth={isHighRes ? 'xl' : 'lg'}>{children}</MuiContainer>
+    return (
+        <MuiContainer className={className} maxWidth={isHighRes ? 'xl' : 'lg'}>
+            {children}
+        </MuiContainer>
+    )
 }
