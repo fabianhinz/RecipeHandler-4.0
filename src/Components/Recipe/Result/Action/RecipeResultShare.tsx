@@ -9,8 +9,8 @@ import { PATHS } from '../../../Routes/Routes'
 export const RecipeResultShare: FC<Pick<Recipe<AttachementMetadata>, 'name'>> = ({ name }) => {
     const [copied, setCopied] = useState(false)
 
-    const handleCommentClick = () => {
-        copy(`${document.location.origin}${PATHS.details(name)}`).then(() => {
+    const handleShareBtnClick = () => {
+        copy(encodeURI(`${document.location.origin}${PATHS.details(name)}`)).then(() => {
             setCopied(true)
         })
     }
@@ -20,7 +20,7 @@ export const RecipeResultShare: FC<Pick<Recipe<AttachementMetadata>, 'name'>> = 
             onMouseOut={() => setCopied(false)}
             open={copied}
             title="In der Zwischenablage gespeichert">
-            <IconButton onClick={handleCommentClick}>
+            <IconButton onClick={handleShareBtnClick}>
                 <ShareIcon />
             </IconButton>
         </Tooltip>
