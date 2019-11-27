@@ -1,29 +1,24 @@
 import { createStyles, makeStyles } from '@material-ui/core'
 import React, { FC } from 'react'
 
+import { Container } from './Container'
+
 const useStyles = makeStyles(theme =>
     createStyles({
         backgroundContainer: {
             position: 'fixed',
-            right: theme.spacing(3),
-            left: theme.spacing(3),
-            bottom: theme.spacing(12),
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             zIndex: -1,
         },
-        icon: {
-            opacity: 0.8,
-            [theme.breakpoints.down('sm')]: {
-                display: 'none',
-            },
-            [theme.breakpoints.only('md')]: {
-                width: 300,
-            },
-            [theme.breakpoints.only('lg')]: {
-                width: 400,
-            },
-            [theme.breakpoints.up('xl')]: {
-                width: 500,
-            },
+        iconBackground: {
+            opacity: 0.25,
+            width: '50%',
         },
     })
 )
@@ -36,8 +31,8 @@ export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon }) => {
     const classes = useStyles()
 
     return (
-        <div className={classes.backgroundContainer}>
-            <Icon className={classes.icon} />
-        </div>
+        <Container className={classes.backgroundContainer}>
+            <Icon className={classes.iconBackground} />
+        </Container>
     )
 }
