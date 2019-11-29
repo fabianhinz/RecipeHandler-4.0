@@ -14,6 +14,7 @@ import { CategoriesCollectionProvider } from './Provider/CategoriesCollectionPro
 import { FirebaseAuthProvider } from './Provider/FirebaseAuthProvider'
 import { PinnedRecipesProvider } from './Provider/PinnedRecipesProvider'
 import { RouterProvider } from './Provider/RouterProvider'
+import { useScrollbar } from './Provider/ScrollbarProvider'
 import { Container } from './Shared/Container'
 
 // ? Wrapper component for all Provider under "./Provider"
@@ -33,7 +34,7 @@ const THEME_COOKIE = { deps: ['theme-pref'], name: 'theme-pref' }
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
-
+    const { setScrollbar } = useScrollbar()
     const [cookies, setCookie] = useCookies(THEME_COOKIE.deps)
 
     const handleThemeChange = () => {
@@ -52,12 +53,14 @@ const App: FC = () => {
 
         if (cookie === 'dark') {
             setTheme(responsiveDarkTheme)
+            setScrollbar('dark')
             metaThemeColor.setAttribute('content', '#424242')
         } else if (cookie === 'light') {
             setTheme(responsiveLightTheme)
+            setScrollbar('light')
             metaThemeColor.setAttribute('content', '#FFFFFF')
         }
-    }, [cookies])
+    }, [cookies, setScrollbar])
 
     return (
         <ErrorBoundary>

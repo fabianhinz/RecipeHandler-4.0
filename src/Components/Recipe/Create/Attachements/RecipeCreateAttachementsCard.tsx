@@ -6,10 +6,10 @@ import {
     createStyles,
     Divider,
     Grid,
+    Grow,
     IconButton,
     InputBase,
     makeStyles,
-    Zoom,
 } from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
@@ -75,7 +75,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
 
     return (
         <Grid item>
-            <Zoom in={transition} mountOnEnter timeout={TRANSITION_DURATION}>
+            <Grow in={transition} mountOnEnter timeout={TRANSITION_DURATION}>
                 <Card onClick={e => e.stopPropagation()}>
                     <CardContent>
                         <Chip label={`${(attachement.size / 1000000).toFixed(1)} MB`} />
@@ -113,7 +113,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
                         </div>
                     </CardContent>
                 </Card>
-            </Zoom>
+            </Grow>
         </Grid>
     )
 }
