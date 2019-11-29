@@ -5,15 +5,12 @@ import { CookiesProvider } from 'react-cookie'
 import ReactDOM from 'react-dom'
 
 import App from './Components/App'
-import ScrollbarProvider from './Components/Provider/ScrollbarProvider'
 import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
-    <ScrollbarProvider>
-        <CookiesProvider>
-            <App />
-        </CookiesProvider>
-    </ScrollbarProvider>,
+    <CookiesProvider>
+        <App />
+    </CookiesProvider>,
     document.getElementById('root')
 )
 

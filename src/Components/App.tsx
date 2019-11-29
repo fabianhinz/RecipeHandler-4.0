@@ -14,8 +14,8 @@ import { CategoriesCollectionProvider } from './Provider/CategoriesCollectionPro
 import { FirebaseAuthProvider } from './Provider/FirebaseAuthProvider'
 import { PinnedRecipesProvider } from './Provider/PinnedRecipesProvider'
 import { RouterProvider } from './Provider/RouterProvider'
-import { useScrollbar } from './Provider/ScrollbarProvider'
 import { Container } from './Shared/Container'
+import Scrollbar from './Shared/Scrollbar'
 
 // ? Wrapper component for all Provider under "./Provider"
 const RecipesProvider: FC = ({ children }) => (
@@ -34,7 +34,6 @@ const THEME_COOKIE = { deps: ['theme-pref'], name: 'theme-pref' }
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
-    const { setScrollbar } = useScrollbar()
     const [cookies, setCookie] = useCookies(THEME_COOKIE.deps)
 
     const handleThemeChange = () => {
@@ -53,14 +52,12 @@ const App: FC = () => {
 
         if (cookie === 'dark') {
             setTheme(responsiveDarkTheme)
-            setScrollbar('dark')
             metaThemeColor.setAttribute('content', '#424242')
         } else if (cookie === 'light') {
             setTheme(responsiveLightTheme)
-            setScrollbar('light')
             metaThemeColor.setAttribute('content', '#FFFFFF')
         }
-    }, [cookies, setScrollbar])
+    }, [cookies])
 
     return (
         <ErrorBoundary>
@@ -74,10 +71,12 @@ const App: FC = () => {
                             horizontal: 'left',
                         }}>
                         <RecipesProvider>
-                            <Container>
-                                <Header onThemeChange={handleThemeChange} />
-                                <Main />
-                            </Container>
+                            <Scrollbar>
+                                <Container>
+                                    <Header onThemeChange={handleThemeChange} />
+                                    <Main />
+                                </Container>
+                            </Scrollbar>
                         </RecipesProvider>
                     </SnackbarProvider>
                 </ThemeProvider>
