@@ -15,7 +15,6 @@ import { FirebaseAuthProvider } from './Provider/FirebaseAuthProvider'
 import { PinnedRecipesProvider } from './Provider/PinnedRecipesProvider'
 import { RouterProvider } from './Provider/RouterProvider'
 import { Container } from './Shared/Container'
-import Scrollbar from './Shared/Scrollbar'
 
 // ? Wrapper component for all Provider under "./Provider"
 const RecipesProvider: FC = ({ children }) => (
@@ -71,12 +70,10 @@ const App: FC = () => {
                             horizontal: 'left',
                         }}>
                         <RecipesProvider>
-                            <Scrollbar>
-                                <Container>
-                                    <Header onThemeChange={handleThemeChange} />
-                                    <Main />
-                                </Container>
-                            </Scrollbar>
+                            <Container>
+                                <Header onThemeChange={handleThemeChange} />
+                                <Main />
+                            </Container>
                         </RecipesProvider>
                     </SnackbarProvider>
                 </ThemeProvider>
