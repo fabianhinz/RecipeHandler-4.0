@@ -4,11 +4,11 @@ import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 
 import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
-import { AttachementMetadata, Recipe } from '../../model/model'
+import { AttachmentMetadata, Recipe } from '../../model/model'
 import RecipeResult from '../Recipe/Result/RecipeResult'
 
 interface HomeRecipeProps {
-    recipes: Array<Recipe<AttachementMetadata>>
+    recipes: Array<Recipe<AttachmentMetadata>>
     skeletons: boolean
     expandDisabled: boolean
     onExpandClick: (lastRecipeName: string) => void

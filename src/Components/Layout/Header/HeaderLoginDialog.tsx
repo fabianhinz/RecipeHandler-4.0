@@ -1,7 +1,6 @@
 import {
     Avatar,
     Box,
-    CircularProgress,
     createStyles,
     Dialog,
     DialogActions,
@@ -18,8 +17,8 @@ import React, { ChangeEvent, memo, useEffect, useState } from 'react'
 
 import { ReactComponent as FirebaseIcon } from '../../../icons/firebase.svg'
 import { FirebaseService } from '../../../services/firebase'
-import { BORDER_RADIUS } from '../../../theme'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import Progress from '../../Shared/Progress'
 import { SlideUp } from '../../Shared/Transitions'
 import { HeaderChangeKey, HeaderDispatch, HeaderState } from './HeaderReducer'
 
@@ -39,18 +38,6 @@ const useStyles = makeStyles(theme =>
             margin: '0 auto',
             boxShadow: theme.shadows[8],
             zIndex: 3,
-        },
-        progressContainer: {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: BORDER_RADIUS,
-            zIndex: 2,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
         },
         dialogPaper: {
             paddingTop: theme.spacing(3),
@@ -122,11 +109,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                 <FirebaseIcon height="100%" />
             </Avatar>
 
-            {loading && (
-                <div className={classes.progressContainer}>
-                    <CircularProgress color="secondary" disableShrink size={60} thickness={5.4} />
-                </div>
-            )}
+            {loading && <Progress variant="cover" />}
 
             {user && !user.isAnonymous ? (
                 <DialogContent>

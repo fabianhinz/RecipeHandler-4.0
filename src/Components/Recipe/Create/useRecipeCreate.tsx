@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 
-import { AttachementMetadata } from '../../../model/model'
+import { AttachmentMetadata } from '../../../model/model'
 import { isData } from '../../../model/modelUtil'
 import { FirebaseService } from '../../../services/firebase'
 import { useRouterContext } from '../../Provider/RouterProvider'
@@ -67,16 +67,16 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
         }
 
         const uploadTasks: Array<PromiseLike<any>> = []
-        const oldMetadata: Array<AttachementMetadata> = []
-        for (const attachement of state.attachements) {
-            if (!isData(attachement)) {
-                // ? old Metadata indicates that those attachements are already uploaded
-                oldMetadata.push(attachement)
+        const oldMetadata: Array<AttachmentMetadata> = []
+        for (const attachment of state.attachments) {
+            if (!isData(attachment)) {
+                // ? old Metadata indicates that those attachments are already uploaded
+                oldMetadata.push(attachment)
                 continue
             }
             const uploadTask = FirebaseService.storageRef
-                .child(`recipes/${state.name}/${attachement.name}`)
-                .putString(attachement.dataUrl, 'data_url')
+                .child(`recipes/${state.name}/${attachment.name}`)
+                .putString(attachment.dataUrl, 'data_url')
                 .catch(error =>
                     enqueueSnackbar(error.message, {
                         variant: 'error',
@@ -86,7 +86,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
         }
 
         const finishedTasks = await Promise.all(uploadTasks)
-        const newMetadata: Array<AttachementMetadata> = []
+        const newMetadata: Array<AttachmentMetadata> = []
         finishedTasks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
             // ? on "storage/unauthorized" snapshot is not of type "object"
             if (typeof snapshot !== 'object') return
@@ -104,8 +104,8 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
     }
 
     const saveRecipeDocument = async (args: {
-        newMetadata: Array<AttachementMetadata>
-        oldMetadata: Array<AttachementMetadata>
+        newMetadata: Array<AttachmentMetadata>
+        oldMetadata: Array<AttachmentMetadata>
     }) => {
         setLoading(true)
         const { oldMetadata, newMetadata } = args
@@ -122,7 +122,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
                 ingredients: state.ingredients,
                 amount: state.amount,
                 description: state.description,
-                attachements: [...oldMetadata, ...newMetadata],
+                attachments: [...oldMetadata, ...newMetadata],
                 numberOfComments: state.numberOfComments,
                 categories: state.categories,
                 relatedRecipes: state.relatedRecipes,

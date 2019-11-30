@@ -1,62 +1,77 @@
 import {
-    Avatar,
-    Box,
     Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     Grid,
-    Hidden,
     IconButton,
     List,
     ListItem,
     ListItemIcon,
-    ListItemSecondaryAction,
     ListItemText,
-    Tooltip,
+    TextField,
+    Typography,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import SaveIcon from '@material-ui/icons/SaveTwoTone'
 import React, { FC, useEffect, useState } from 'react'
 
+import useDebounce from '../../../hooks/useDebounce'
 import { RecipeDocument } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
-import { iconFromCategory } from '../../Category/CategoryWrapper'
+import { CategoryResult } from '../../Category/CategoryResult'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
-import { Loading } from '../../Shared/Loading'
+import Progress from '../../Shared/Progress'
 import { SlideUp } from '../../Shared/Transitions'
 
 interface RecipeCreateRelatedDialogProps {
     defaultValues: Array<string>
     currentRecipeName: string
     open: boolean
-    onClose: (relatedRecipes: Array<string>) => void
+    onSave: (relatedRecipes: Array<string>) => void
+    onClose: () => void
 }
 
 export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
     onClose,
+    onSave,
     open,
     currentRecipeName,
     defaultValues,
 }) => {
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
     const [selected, setSelected] = useState<Set<string>>(new Set(defaultValues))
+    const [searchValue, setSearchValue] = useState('')
+    const [loading, setLoading] = useState(false)
 
+    const debouncedSearchValue = useDebounce(searchValue, 500)
     const { isDialogFullscreen } = useBreakpointsContext()
 
     useEffect(() => {
         if (!open) return
 
+        let mounted = true
+        setLoading(true)
+
         FirebaseService.firestore
             .collection('recipes')
-            .orderBy('createdDate', 'desc')
+            .where('name', '>=', debouncedSearchValue)
+            .orderBy('name', 'asc')
+            .limit(10)
             .get()
-            .then(querySnapshot =>
-                setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
-            )
-    }, [open])
+            .then(querySnapshot => {
+                if (mounted) {
+                    setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
+                    setLoading(false)
+                }
+            })
+
+        return () => {
+            mounted = false
+        }
+    }, [open, debouncedSearchValue])
 
     const handleSelectedChange = (recipeName: string) => {
         if (selected.has(recipeName)) selected.delete(recipeName)
@@ -64,11 +79,9 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
         setSelected(new Set(selected))
     }
 
-    const handleClose = () => onClose([...selected.values()])
-
     const handleCancelBtnClick = () => {
         setSelected(new Set(defaultValues))
-        onClose(defaultValues)
+        onClose()
     }
 
     return (
@@ -77,12 +90,12 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             fullScreen={isDialogFullscreen}
             TransitionComponent={SlideUp}
             open={open}
-            onClose={handleClose}
+            onClose={onClose}
             maxWidth="sm"
             fullWidth>
             <DialogTitle>Passende Rezepte auswählen</DialogTitle>
             <DialogContent>
-                {recipes.length === 0 && <Loading />}
+                {loading && <Progress variant="cover" />}
                 <List>
                     {recipes
                         .filter(recipe => recipe.name !== currentRecipeName)
@@ -101,45 +114,55 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={recipe.name}
-                                    secondary={FirebaseService.createDateFromTimestamp(
-                                        recipe.createdDate
-                                    ).toLocaleString()}
+                                    secondaryTypographyProps={{ component: 'div' }}
+                                    secondary={
+                                        <>
+                                            <Typography gutterBottom color="textSecondary">
+                                                {FirebaseService.createDateFromTimestamp(
+                                                    recipe.createdDate
+                                                ).toLocaleString()}
+                                            </Typography>
+                                            <CategoryResult categories={recipe.categories} />
+                                        </>
+                                    }
                                 />
-                                <Hidden xsDown>
-                                    <ListItemSecondaryAction onClick={e => e.stopPropagation()}>
-                                        <Grid container spacing={1}>
-                                            {Object.keys(recipe.categories).map(category => (
-                                                <Grid item key={category}>
-                                                    <Tooltip title={recipe.categories[category]}>
-                                                        <Avatar>
-                                                            {iconFromCategory(
-                                                                recipe.categories[category]
-                                                            )}
-                                                        </Avatar>
-                                                    </Tooltip>
-                                                </Grid>
-                                            ))}
-                                        </Grid>
-                                    </ListItemSecondaryAction>
-                                </Hidden>
                             </ListItem>
                         ))}
                 </List>
             </DialogContent>
             <DialogActions>
-                <Box flexGrow={1} display="flex" justifyContent="space-evenly" alignItems="center">
-                    <IconButton onClick={handleCancelBtnClick}>
-                        <CloseIcon />
-                    </IconButton>
-                    <IconButton onClick={handleClose}>
-                        <SaveIcon />
-                    </IconButton>
-                    <IconButton
-                        onClick={() => setSelected(new Set([]))}
-                        disabled={selected.size === 0}>
-                        <DeleteIcon />
-                    </IconButton>
-                </Box>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <Typography color="textSecondary">
+                            Die Auswahl ist auf zehn Rezepte limitiert. Durch optionale Eingabe im
+                            Textfeld wird die Auswahl auf passende Rezeptnamen eingeschränkt.
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            value={searchValue}
+                            onChange={e => setSearchValue(e.target.value)}
+                            label="Nach Rezept filtern"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Grid container justify="space-evenly">
+                            <IconButton onClick={handleCancelBtnClick}>
+                                <CloseIcon />
+                            </IconButton>
+                            <IconButton onClick={() => onSave([...selected.values()])}>
+                                <SaveIcon />
+                            </IconButton>
+                            <IconButton
+                                onClick={() => setSelected(new Set([]))}
+                                disabled={selected.size === 0}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </DialogActions>
         </Dialog>
     )

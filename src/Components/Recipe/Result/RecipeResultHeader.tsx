@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@material-ui/core'
 import React from 'react'
 
-import { AttachementData, AttachementMetadata, Recipe } from '../../../model/model'
+import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { CategoryResult } from '../../Category/CategoryResult'
 import { Navigate } from '../../Routes/Navigate'
@@ -9,7 +9,7 @@ import { PATHS } from '../../Routes/Routes'
 import { RecipeResultAction, RecipeVariants } from './Action/RecipeResultAction'
 
 interface Props extends RecipeVariants {
-    recipe: Recipe<AttachementMetadata | AttachementData>
+    recipe: Recipe<AttachmentMetadata | AttachmentData>
 }
 
 const RecipeResultHeader = ({ recipe, variant }: Props) => (

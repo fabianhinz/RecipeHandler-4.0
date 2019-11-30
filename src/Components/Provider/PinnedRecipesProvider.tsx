@@ -4,9 +4,10 @@ import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
 import { useRecipeDoc } from '../../hooks/useRecipeDoc'
+import { BORDER_RADIUS } from '../../theme'
 import { RecipeResultPin } from '../Recipe/Result/Action/RecipeResultPin'
 import RecipeResult from '../Recipe/Result/RecipeResult'
-import { Loading } from '../Shared/Loading'
+import Progress from '../Shared/Progress'
 import { useBreakpointsContext } from './BreakpointsProvider'
 
 type PinnedRecipesState = {
@@ -27,7 +28,11 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
             <Box display="flex" justifyContent="center">
                 <RecipeResultPin name={recipeName} />
             </Box>
-            {recipeDocLoading ? <Loading /> : <RecipeResult variant="pinned" recipe={recipeDoc} />}
+            {recipeDocLoading ? (
+                <Progress variant="cover" />
+            ) : (
+                <RecipeResult variant="pinned" recipe={recipeDoc} />
+            )}
         </Box>
     )
 }
@@ -45,6 +50,7 @@ const useStyles = makeStyles(theme =>
             left: 0,
             zIndex: theme.zIndex.drawer + 1,
             boxShadow: theme.shadows[8],
+            borderRadius: `0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px 0`,
         },
         recipePadding: {
             padding: theme.spacing(2),

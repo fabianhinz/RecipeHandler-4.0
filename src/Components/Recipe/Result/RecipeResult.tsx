@@ -4,21 +4,20 @@ import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo } from 'react'
 
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
-import { AttachementData, AttachementMetadata, DataUrl, Recipe } from '../../../model/model'
-import { useRouterContext } from '../../Provider/RouterProvider'
+import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import Markdown from '../../Shared/Markdown'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
 import { RecipeVariants } from './Action/RecipeResultAction'
-import RecipeResultAttachements from './RecipeResultAttachements'
+import RecipeResultAttachments from './RecipeResultAttachments'
 import RecipeResultHeader from './RecipeResultHeader'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
 interface RecipeResultProps extends RecipeVariants {
-    recipe: Recipe<AttachementMetadata | AttachementData> | null
+    recipe: Recipe<AttachmentMetadata | AttachmentData> | null
 }
 
 const useStyles = makeStyles(theme =>
@@ -35,13 +34,7 @@ export const recipeResultBreakpoints = (
     fullWidth ? { xs: 12 } : { xs: 12, lg: 6, xl: 4 }
 
 const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
-    const [selectedAttachement, setSelectedAttachement] = useState<DataUrl | null>(null)
-    const { location } = useRouterContext()
     const classes = useStyles()
-
-    useEffect(() => {
-        setSelectedAttachement(null)
-    }, [location.pathname])
 
     if (!recipe)
         return (
@@ -67,11 +60,6 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
     const breakpoints = recipeResultBreakpoints(variant === 'pinned')
 
-    const handleAttachementSelect = (attachement: DataUrl) => {
-        if (selectedAttachement === attachement) setSelectedAttachement(null)
-        else setSelectedAttachement(attachement)
-    }
-
     return (
         <Grid
             container
@@ -88,11 +76,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
             {variant !== 'pinned' && (
                 <Grid item xs={12}>
-                    <RecipeResultAttachements
-                        attachements={recipe.attachements}
-                        selectedAttachement={selectedAttachement}
-                        onSelect={handleAttachementSelect}
-                    />
+                    <RecipeResultAttachments attachments={recipe.attachments} />
                 </Grid>
             )}
 
