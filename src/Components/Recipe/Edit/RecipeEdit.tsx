@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 
 import { useRecipeDoc } from '../../../hooks/useRecipeDoc'
 import { RouteWithRecipeName } from '../../../model/model'
-import { Loading } from '../../Shared/Loading'
+import Progress from '../../Shared/Progress'
 import RecipeCreate from '../Create/RecipeCreate'
 
 const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {
@@ -11,7 +11,7 @@ const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {
     return (
         <>
             {recipeDocLoading ? (
-                <Loading />
+                <Progress variant="fixed" />
             ) : (
                 <RecipeCreate {...routeProps} recipe={recipeDoc} edit />
             )}

@@ -7,7 +7,7 @@ import { ReactComponent as EditIcon } from '../../icons/edit.svg'
 import { ReactComponent as HomeIcon } from '../../icons/home.svg'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { BackgroundIcon } from '../Shared/BackgroundIcon'
-import { Loading } from '../Shared/Loading'
+import Progress from '../Shared/Progress'
 
 export const PATHS = {
     home: '/',
@@ -54,7 +54,7 @@ const renderRoute = ({ path, Component, Background }: AppRoute) => (
         path={path}
         exact
         render={routeProps => (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<Progress variant="fixed" />}>
                 <Component {...routeProps} />
                 <Background />
             </Suspense>

@@ -23,7 +23,7 @@ import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../Recipe/Create/Attachements/useAttachementDropzone'
-import { Loading } from '../Shared/Loading'
+import Progress from '../Shared/Progress'
 import { SlideUp } from '../Shared/Transitions'
 import TrialsCard from './TrialsCard'
 
@@ -140,7 +140,7 @@ const Trials = ({ open, onClose }: Props) => {
 
             <DialogContent dividers>
                 {loading ? (
-                    <Loading />
+                    <Progress variant="fixed" />
                 ) : trials.size === 0 ? (
                     <Box display="flex" justifyContent="center" padding={4}>
                         <TrialIcon width={200} />

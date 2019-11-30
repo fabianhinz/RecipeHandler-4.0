@@ -1,20 +1,16 @@
 import {
-    Avatar,
     Box,
     Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Grid,
-    Hidden,
     IconButton,
     List,
     ListItem,
     ListItemIcon,
-    ListItemSecondaryAction,
     ListItemText,
-    Tooltip,
+    Typography,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
@@ -23,9 +19,9 @@ import React, { FC, useEffect, useState } from 'react'
 
 import { RecipeDocument } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
-import { iconFromCategory } from '../../Category/CategoryWrapper'
+import { CategoryResult } from '../../Category/CategoryResult'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
-import { Loading } from '../../Shared/Loading'
+import Progress from '../../Shared/Progress'
 import { SlideUp } from '../../Shared/Transitions'
 
 interface RecipeCreateRelatedDialogProps {
@@ -82,7 +78,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             fullWidth>
             <DialogTitle>Passende Rezepte auswählen</DialogTitle>
             <DialogContent>
-                {recipes.length === 0 && <Loading />}
+                {recipes.length === 0 && <Progress variant="cover" />}
                 <List>
                     {recipes
                         .filter(recipe => recipe.name !== currentRecipeName)
@@ -101,27 +97,18 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={recipe.name}
-                                    secondary={FirebaseService.createDateFromTimestamp(
-                                        recipe.createdDate
-                                    ).toLocaleString()}
+                                    secondaryTypographyProps={{ component: 'div' }}
+                                    secondary={
+                                        <>
+                                            <Typography gutterBottom color="textSecondary">
+                                                {FirebaseService.createDateFromTimestamp(
+                                                    recipe.createdDate
+                                                ).toLocaleString()}
+                                            </Typography>
+                                            <CategoryResult categories={recipe.categories} />
+                                        </>
+                                    }
                                 />
-                                <Hidden xsDown>
-                                    <ListItemSecondaryAction onClick={e => e.stopPropagation()}>
-                                        <Grid container spacing={1}>
-                                            {Object.keys(recipe.categories).map(category => (
-                                                <Grid item key={category}>
-                                                    <Tooltip title={recipe.categories[category]}>
-                                                        <Avatar>
-                                                            {iconFromCategory(
-                                                                recipe.categories[category]
-                                                            )}
-                                                        </Avatar>
-                                                    </Tooltip>
-                                                </Grid>
-                                            ))}
-                                        </Grid>
-                                    </ListItemSecondaryAction>
-                                </Hidden>
                             </ListItem>
                         ))}
                 </List>

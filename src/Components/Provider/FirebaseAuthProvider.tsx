@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
 import { FirebaseService } from '../../services/firebase'
-import { Loading } from '../Shared/Loading'
+import Progress from '../Shared/Progress'
 
 const Context = React.createContext<{ user: firebase.User | null }>({
     user: null,
@@ -32,5 +32,9 @@ export const FirebaseAuthProvider: FC = ({ children }) => {
         return FirebaseService.auth.onAuthStateChanged(handleAuthStateChange)
     }, [handleAuthStateChange])
 
-    return <Context.Provider value={{ user }}>{user ? children : <Loading />}</Context.Provider>
+    return (
+        <Context.Provider value={{ user }}>
+            {user ? children : <Progress variant="fixed" />}
+        </Context.Provider>
+    )
 }
