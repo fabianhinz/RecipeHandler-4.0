@@ -7,7 +7,7 @@ import { RouteWithRecipeName } from '../../../model/model'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { Navigate } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
-import { Loading } from '../../Shared/Loading'
+import Progress from '../../Shared/Progress'
 import RecipeResult from '../Result/RecipeResult'
 
 const useStyles = makeStyles(theme =>
@@ -28,7 +28,11 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
 
     return (
         <>
-            {recipeDocLoading ? <Loading /> : <RecipeResult variant="details" recipe={recipeDoc} />}
+            {recipeDocLoading ? (
+                <Progress variant="fixed" />
+            ) : (
+                <RecipeResult variant="details" recipe={recipeDoc} />
+            )}
 
             {recipeDoc && user && !user.isAnonymous && (
                 <Navigate to={PATHS.recipeEdit(recipeDoc.name)}>

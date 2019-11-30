@@ -14,6 +14,7 @@ import { CategoriesCollectionProvider } from './Provider/CategoriesCollectionPro
 import { FirebaseAuthProvider } from './Provider/FirebaseAuthProvider'
 import { PinnedRecipesProvider } from './Provider/PinnedRecipesProvider'
 import { RouterProvider } from './Provider/RouterProvider'
+import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import { Container } from './Shared/Container'
 
 // ? Wrapper component for all Provider under "./Provider"
@@ -22,7 +23,9 @@ const RecipesProvider: FC = ({ children }) => (
         <BreakpointsProvider>
             <FirebaseAuthProvider>
                 <CategoriesCollectionProvider>
-                    <PinnedRecipesProvider>{children}</PinnedRecipesProvider>
+                    <SelectedAttachementProvider>
+                        <PinnedRecipesProvider>{children}</PinnedRecipesProvider>
+                    </SelectedAttachementProvider>
                 </CategoriesCollectionProvider>
             </FirebaseAuthProvider>
         </BreakpointsProvider>
@@ -33,7 +36,6 @@ const THEME_COOKIE = { deps: ['theme-pref'], name: 'theme-pref' }
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
-
     const [cookies, setCookie] = useCookies(THEME_COOKIE.deps)
 
     const handleThemeChange = () => {

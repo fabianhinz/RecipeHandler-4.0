@@ -3,7 +3,7 @@ import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, useEffect, useState } from 'react'
 
-import { getRefPaths } from '../../hooks/useAttachementRef'
+import { DataUrls, getRefPaths, getResizedImages } from '../../hooks/useAttachmentRef'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { Comments } from '../Comments/Comments'
@@ -23,16 +23,13 @@ interface HeaderTrialsCardProps {
 }
 
 const TrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
-    const [fullDataUrl, setFullDataUrl] = useState<string | null>()
+    const [dataUrls, setDataUrls] = useState<DataUrls | null>()
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
 
     useEffect(() => {
-        FirebaseService.storageRef
-            .child(trial.fullPath)
-            .getDownloadURL()
-            .then(url => setFullDataUrl(url))
+        getResizedImages(trial.fullPath).then(setDataUrls)
     }, [trial.fullPath])
 
     const handleDeleteBtnClick = async () => {
@@ -52,12 +49,12 @@ const TrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
     return (
         <Grid item xs={12} md={6} lg={4} xl={3} key={trial.name}>
             <Card raised>
-                {fullDataUrl ? (
-                    <a href={fullDataUrl} rel="noreferrer noopener" target="_blank">
-                        <CardMedia image={fullDataUrl} className={classes.img} />
+                {dataUrls ? (
+                    <a href={dataUrls.fullDataUrl} rel="noreferrer noopener" target="_blank">
+                        <CardMedia image={dataUrls.mediumDataUrl} className={classes.img} />
                     </a>
                 ) : (
-                    <Skeleton height={200} width="100%" />
+                    <Skeleton height={250} width="100%" />
                 )}
                 {user && (
                     <Box padding={1} display="flex" justifyContent="space-evenly">

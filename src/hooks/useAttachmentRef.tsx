@@ -1,15 +1,18 @@
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 
-import { AttachementData, AttachementMetadata } from '../model/model'
+import { AttachmentData, AttachmentMetadata } from '../model/model'
 import { isMetadata } from '../model/modelUtil'
 import { FirebaseService } from '../services/firebase'
 
-interface State {
-    base: Omit<AttachementData, 'dataUrl'>
+export interface DataUrls {
     fullDataUrl: string
     mediumDataUrl: string
     smallDataUrl: string
+}
+
+interface State extends DataUrls {
+    base: Omit<AttachmentData, 'dataUrl'>
 }
 
 const initialDataUrls = { fullDataUrl: '', mediumDataUrl: '', smallDataUrl: '' }
@@ -27,7 +30,7 @@ export const getRefPaths = (fullPath: string) => {
     }
 }
 
-const getResizedImages = async (fullPath: string) => {
+export const getResizedImages = async (fullPath: string) => {
     const { smallPath, mediumPath } = getRefPaths(fullPath)
     const urls: Omit<State, 'base'> = { ...initialDataUrls }
 
@@ -36,38 +39,38 @@ const getResizedImages = async (fullPath: string) => {
         urls.mediumDataUrl = await FirebaseService.storage.ref(mediumPath).getDownloadURL()
         urls.smallDataUrl = await FirebaseService.storage.ref(smallPath).getDownloadURL()
     } catch (e) {
-        // ? happens after creating an attachement. catch it and move on....
+        // ? happens after creating an attachment. catch it and move on....
     }
 
     return urls
 }
 
-export const useAttachementRef = (attachement: AttachementMetadata | AttachementData) => {
-    const [attachementRef, setAttachementRef] = useState<State>({
+export const useAttachmentRef = (attachment: AttachmentMetadata | AttachmentData) => {
+    const [attachmentRef, setAttachmentRef] = useState<State>({
         base: {
-            name: attachement && attachement.name,
-            size: attachement && attachement.size,
+            name: attachment && attachment.name,
+            size: attachment && attachment.size,
         },
         ...initialDataUrls,
     })
-    const [attachementRefLoading, setAttachementRefLoading] = useState(true)
+    const [attachmentRefLoading, setAttachmentRefLoading] = useState(true)
 
     const { enqueueSnackbar } = useSnackbar()
 
     useEffect(() => {
         let mounted = true
-        if (!isMetadata(attachement)) return setAttachementRefLoading(false)
+        if (!isMetadata(attachment)) return setAttachmentRefLoading(false)
 
-        getResizedImages(attachement.fullPath).then(urls => {
+        getResizedImages(attachment.fullPath).then(urls => {
             if (!mounted) return
-            setAttachementRef(previous => ({ ...previous, ...urls }))
-            setAttachementRefLoading(false)
+            setAttachmentRef(previous => ({ ...previous, ...urls }))
+            setAttachmentRefLoading(false)
         })
 
         return () => {
             mounted = false
         }
-    }, [attachement, enqueueSnackbar])
+    }, [attachment, enqueueSnackbar])
 
-    return { attachementRef, attachementRefLoading }
+    return { attachmentRef, attachmentRefLoading }
 }
