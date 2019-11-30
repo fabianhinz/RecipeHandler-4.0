@@ -1,11 +1,11 @@
 import { Reducer, useReducer } from 'react'
 
-import { AttachementData, AttachementMetadata, Categories, Recipe } from '../../../model/model'
+import { AttachmentData, AttachmentMetadata, Categories, Recipe } from '../../../model/model'
 
 export interface RecipeCreateState {
     name: string
     categories: Categories<string>
-    attachements: Array<AttachementData | AttachementMetadata>
+    attachments: Array<AttachmentData | AttachmentMetadata>
     ingredients: string
     amount: number
     description: string
@@ -17,20 +17,20 @@ export interface RecipeCreateState {
 }
 
 export type CreateChangeKey = keyof Pick<RecipeCreateState, 'ingredients' | 'description' | 'name'>
-export type AttachementName = { old: string; new: string }
+export type AttachmentName = { old: string; new: string }
 
 type Action =
-    | { type: 'loadState'; recipe: Recipe<AttachementMetadata> }
+    | { type: 'loadState'; recipe: Recipe<AttachmentMetadata> }
     | {
           type: 'textFieldChange'
           key: CreateChangeKey
           value: string
       }
     | { type: 'previewChange' }
-    | { type: 'attachementsDrop'; newAttachements: Array<AttachementData | AttachementMetadata> }
-    | { type: 'removeAttachement'; name: string }
+    | { type: 'attachmentsDrop'; newAttachments: Array<AttachmentData | AttachmentMetadata> }
+    | { type: 'removeAttachment'; name: string }
     | { type: 'categoriesChange'; selectedCategories: Map<string, string> }
-    | { type: 'attachementNameChange'; name: AttachementName }
+    | { type: 'attachmentNameChange'; name: AttachmentName }
     | { type: 'increaseAmount' }
     | { type: 'decreaseAmount' }
     | { type: 'storageDeleteRefsChange'; refs: Array<firebase.storage.Reference> }
@@ -46,13 +46,13 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
             return { ...state, [action.key]: action.value }
         case 'previewChange':
             return { ...state, preview: !state.preview }
-        case 'attachementsDrop':
-            return { ...state, attachements: [...state.attachements, ...action.newAttachements] }
-        case 'removeAttachement':
+        case 'attachmentsDrop':
+            return { ...state, attachments: [...state.attachments, ...action.newAttachments] }
+        case 'removeAttachment':
             return {
                 ...state,
-                attachements: state.attachements.filter(
-                    attachement => attachement.name !== action.name
+                attachments: state.attachments.filter(
+                    attachment => attachment.name !== action.name
                 ),
             }
         case 'categoriesChange': {
@@ -62,10 +62,10 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
             })
             return { ...state, categories }
         }
-        case 'attachementNameChange': {
+        case 'attachmentNameChange': {
             const { name } = action
-            state.attachements.forEach(attachement => {
-                if (attachement.name === name.old) attachement.name = name.new
+            state.attachments.forEach(attachment => {
+                if (attachment.name === name.old) attachment.name = name.new
             })
             return { ...state }
         }
@@ -96,7 +96,7 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
 const initialState: RecipeCreateState = {
     name: '',
     categories: {},
-    attachements: [],
+    attachments: [],
     ingredients: '',
     amount: 1,
     description: '',
@@ -107,7 +107,7 @@ const initialState: RecipeCreateState = {
     relatedRecipesDialog: false,
 }
 
-export const useRecipeCreateReducer = (recipe?: Recipe<AttachementMetadata> | null) => {
+export const useRecipeCreateReducer = (recipe?: Recipe<AttachmentMetadata> | null) => {
     const [state, dispatch] = useReducer(reducer, { ...initialState, ...recipe })
     return { state, dispatch }
 }

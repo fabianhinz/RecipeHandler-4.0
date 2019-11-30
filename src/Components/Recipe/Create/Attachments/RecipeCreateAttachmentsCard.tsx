@@ -17,14 +17,14 @@ import SaveIcon from '@material-ui/icons/SaveTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, memo, useState } from 'react'
 
-import { getFileExtension, useAttachementRef } from '../../../../hooks/useAttachementRef'
+import { getFileExtension, useAttachmentRef } from '../../../../hooks/useAttachmentRef'
 import { TRANSITION_DURATION, useTransition } from '../../../../hooks/useTransition'
-import { AttachementData, AttachementMetadata } from '../../../../model/model'
+import { AttachmentData, AttachmentMetadata } from '../../../../model/model'
 import { isData, isMetadata } from '../../../../model/modelUtil'
 
 const useStyles = makeStyles(theme => {
     return createStyles({
-        attachement: {
+        attachment: {
             width: 200,
             height: 200,
             boxShadow: theme.shadows[1],
@@ -40,37 +40,37 @@ const useStyles = makeStyles(theme => {
         },
     })
 })
-export interface AttachementsCardChangeHandler {
-    onDeleteAttachement: (name: string, fullPath: string) => void
-    onRemoveAttachement: (attachementName: string) => void
-    onSaveAttachement: (name: { old: string; new: string }) => void
+export interface AttachmentsCardChangeHandler {
+    onDeleteAttachment: (name: string, fullPath: string) => void
+    onRemoveAttachment: (attachmentName: string) => void
+    onSaveAttachment: (name: { old: string; new: string }) => void
 }
 
-interface RecipeCreateAttachementsCardProps extends AttachementsCardChangeHandler {
-    attachement: AttachementData | AttachementMetadata
+interface RecipeCreateAttachmentsCardProps extends AttachmentsCardChangeHandler {
+    attachment: AttachmentData | AttachmentMetadata
 }
 
-const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
-    attachement,
-    onRemoveAttachement,
-    onDeleteAttachement,
-    onSaveAttachement,
+const RecipeCreateAttachmentsCard: FC<RecipeCreateAttachmentsCardProps> = ({
+    attachment,
+    onRemoveAttachment,
+    onDeleteAttachment,
+    onSaveAttachment,
 }) => {
-    const [name, setName] = useState<string>(attachement.name)
-    const { attachementRef, attachementRefLoading } = useAttachementRef(attachement)
+    const [name, setName] = useState<string>(attachment.name)
+    const { attachmentRef, attachmentRefLoading } = useAttachmentRef(attachment)
     const { transition, transitionChange } = useTransition()
     const classes = useStyles()
 
     const handleDeleteClick = async () => {
         await transitionChange()
-        if (isMetadata(attachement)) onDeleteAttachement(attachement.name, attachement.fullPath)
-        else onRemoveAttachement(attachement.name)
+        if (isMetadata(attachment)) onDeleteAttachment(attachment.name, attachment.fullPath)
+        else onRemoveAttachment(attachment.name)
     }
 
     const handleSaveClick = () =>
-        onSaveAttachement({
-            old: attachement.name,
-            new: `${name}.${getFileExtension(attachement.name)}`,
+        onSaveAttachment({
+            old: attachment.name,
+            new: `${name}.${getFileExtension(attachment.name)}`,
         })
 
     return (
@@ -78,18 +78,18 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
             <Grow in={transition} mountOnEnter timeout={TRANSITION_DURATION}>
                 <Card onClick={e => e.stopPropagation()}>
                     <CardContent>
-                        <Chip label={`${(attachement.size / 1000000).toFixed(1)} MB`} />
+                        <Chip label={`${(attachment.size / 1000000).toFixed(1)} MB`} />
 
-                        {attachementRefLoading ? (
-                            <Skeleton variant="circle" className={classes.attachement} />
-                        ) : isMetadata(attachement) ? (
+                        {attachmentRefLoading ? (
+                            <Skeleton variant="circle" className={classes.attachment} />
+                        ) : isMetadata(attachment) ? (
                             <Avatar
-                                className={classes.attachement}
-                                src={attachementRef.mediumDataUrl}>
+                                className={classes.attachment}
+                                src={attachmentRef.mediumDataUrl}>
                                 <BugIcon fontSize="large" />
                             </Avatar>
                         ) : (
-                            <Avatar className={classes.attachement} src={attachement.dataUrl} />
+                            <Avatar className={classes.attachment} src={attachment.dataUrl} />
                         )}
 
                         <Divider className={classes.divider} />
@@ -103,7 +103,7 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
 
                         <div className={classes.actions}>
                             <IconButton
-                                disabled={attachement.name === name || name.length === 0}
+                                disabled={attachment.name === name || name.length === 0}
                                 onClick={handleSaveClick}>
                                 <SaveIcon />
                             </IconButton>
@@ -118,17 +118,17 @@ const RecipeCreateAttachementsCard: FC<RecipeCreateAttachementsCardProps> = ({
     )
 }
 
-export default memo(RecipeCreateAttachementsCard, (prev, next) => {
-    let sameAttachement = true
-    if (isData(prev.attachement) && isData(next.attachement)) {
-        sameAttachement = prev.attachement.dataUrl === next.attachement.dataUrl
+export default memo(RecipeCreateAttachmentsCard, (prev, next) => {
+    let sameAttachment = true
+    if (isData(prev.attachment) && isData(next.attachment)) {
+        sameAttachment = prev.attachment.dataUrl === next.attachment.dataUrl
     }
-    if (isMetadata(prev.attachement) && isMetadata(next.attachement)) {
-        sameAttachement = prev.attachement.fullPath === next.attachement.fullPath
+    if (isMetadata(prev.attachment) && isMetadata(next.attachment)) {
+        sameAttachment = prev.attachment.fullPath === next.attachment.fullPath
     }
     return (
-        sameAttachement &&
-        prev.attachement.name === next.attachement.name &&
-        prev.onSaveAttachement === next.onSaveAttachement
+        sameAttachment &&
+        prev.attachment.name === next.attachment.name &&
+        prev.onSaveAttachment === next.onSaveAttachment
     )
 })

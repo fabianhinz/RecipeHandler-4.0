@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-import { AttachementMetadata, Recipe } from '../model/model'
+import { AttachmentMetadata, Recipe } from '../model/model'
 
-export const useCategorySelect = (recipe?: Recipe<AttachementMetadata> | null) => {
+export const useCategorySelect = (recipe?: Recipe<AttachmentMetadata> | null) => {
     const [state, setState] = useState<Map<string, string>>(() => {
         if (!recipe || !recipe.categories) return new Map()
         return new Map(Object.keys(recipe.categories).map(type => [type, recipe.categories[type]]))

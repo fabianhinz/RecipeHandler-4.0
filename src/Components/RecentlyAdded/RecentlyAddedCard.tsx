@@ -12,8 +12,8 @@ import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import Skeleton from '@material-ui/lab/Skeleton'
 import React from 'react'
 
-import { useAttachementRef } from '../../hooks/useAttachementRef'
-import { AttachementMetadata, Recipe } from '../../model/model'
+import { useAttachmentRef } from '../../hooks/useAttachmentRef'
+import { AttachmentMetadata, Recipe } from '../../model/model'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
 import { useRouterContext } from '../Provider/RouterProvider'
@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme =>
 )
 
 interface Props {
-    recipe: Recipe<AttachementMetadata>
+    recipe: Recipe<AttachmentMetadata>
     skeleton: boolean
 }
 
@@ -46,7 +46,7 @@ export const recentlyAddedGridProps = (
         : { xs: 12, sm: pinned ? 12 : 6, lg: 4 }
 
 const RecentlyAddedCard = ({ recipe, skeleton }: Props) => {
-    const { attachementRef, attachementRefLoading } = useAttachementRef(recipe.attachements[0])
+    const { attachmentRef, attachmentRefLoading } = useAttachmentRef(recipe.attachments[0])
     const { isHighRes } = useBreakpointsContext()
     const { history } = useRouterContext()
     const { pinned } = usePinnedRecipesContext()
@@ -59,12 +59,10 @@ const RecentlyAddedCard = ({ recipe, skeleton }: Props) => {
                 <Paper className={classes.paper}>
                     <Grid container wrap="nowrap" spacing={2} alignItems="center">
                         <Grid item>
-                            {attachementRefLoading || skeleton ? (
+                            {attachmentRefLoading || skeleton ? (
                                 <Skeleton variant="circle" width={80} height={80} />
                             ) : (
-                                <Avatar
-                                    className={classes.avatar}
-                                    src={attachementRef.smallDataUrl}>
+                                <Avatar className={classes.avatar} src={attachmentRef.smallDataUrl}>
                                     {recipe.name.slice(0, 1).toUpperCase()}
                                 </Avatar>
                             )}

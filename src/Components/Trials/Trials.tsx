@@ -17,12 +17,12 @@ import { useSnackbar } from 'notistack'
 import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
-import { getFileExtension } from '../../hooks/useAttachementRef'
+import { getFileExtension } from '../../hooks/useAttachmentRef'
 import { ReactComponent as TrialIcon } from '../../icons/logo.svg'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { readDocumentAsync } from '../Recipe/Create/Attachements/useAttachementDropzone'
+import { readDocumentAsync } from '../Recipe/Create/Attachments/useAttachmentDropzone'
 import Progress from '../Shared/Progress'
 import { SlideUp } from '../Shared/Transitions'
 import TrialsCard from './TrialsCard'
@@ -140,7 +140,7 @@ const Trials = ({ open, onClose }: Props) => {
 
             <DialogContent dividers>
                 {loading ? (
-                    <Progress variant="fixed" />
+                    <Progress variant="cover" />
                 ) : trials.size === 0 ? (
                     <Box display="flex" justifyContent="center" padding={4}>
                         <TrialIcon width={200} />

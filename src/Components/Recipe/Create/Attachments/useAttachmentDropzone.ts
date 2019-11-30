@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack'
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
-import { AttachementData, AttachementMetadata } from '../../../../model/model'
+import { AttachmentData, AttachmentMetadata } from '../../../../model/model'
 
 export const readDocumentAsync = (document: Blob) =>
     new Promise<string>((resolve, reject) => {
@@ -13,10 +13,10 @@ export const readDocumentAsync = (document: Blob) =>
         reader.readAsDataURL(document)
     })
 
-export const useAttachementDropzone = (
-    currentAttachements: Array<AttachementData | AttachementMetadata>
+export const useAttachmentDropzone = (
+    currentAttachments: Array<AttachmentData | AttachmentMetadata>
 ) => {
-    const [attachements, setAttachements] = useState<Array<AttachementData>>([])
+    const [attachments, setAttachments] = useState<Array<AttachmentData>>([])
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     const onDrop = useCallback(
@@ -35,8 +35,8 @@ export const useAttachementDropzone = (
                 variant: 'info',
             })
 
-            const newAttachements: Array<AttachementData> = []
-            const uniqueNames = new Set(currentAttachements.map(({ name }) => name))
+            const newAttachments: Array<AttachmentData> = []
+            const uniqueNames = new Set(currentAttachments.map(({ name }) => name))
             for (const file of acceptedFiles) {
                 // filenames are our keys, react will warn about duplicate keys
                 if (uniqueNames.has(file.name)) continue
@@ -49,16 +49,16 @@ export const useAttachementDropzone = (
                     maxIteration: 5,
                 })
                 const dataUrl: string = await readDocumentAsync(compressedFile)
-                newAttachements.push({
+                newAttachments.push({
                     name: file.name,
                     dataUrl,
                     size: compressedFile.size,
                 })
             }
-            setAttachements(newAttachements)
+            setAttachments(newAttachments)
             closeSnackbar(loadingKey as string)
         },
-        [closeSnackbar, currentAttachements, enqueueSnackbar]
+        [closeSnackbar, currentAttachments, enqueueSnackbar]
     )
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -69,6 +69,6 @@ export const useAttachementDropzone = (
 
     return {
         dropzoneProps: { getRootProps, getInputProps },
-        attachements,
+        attachments,
     }
 }

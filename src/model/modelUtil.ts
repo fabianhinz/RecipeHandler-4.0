@@ -1,13 +1,13 @@
-import { AttachementData, AttachementMetadata } from './model'
+import { AttachmentData, AttachmentMetadata } from './model'
 
 export const isData = (
-    attachement: AttachementData | AttachementMetadata
-): attachement is AttachementData => {
-    return attachement && (attachement as AttachementData).dataUrl !== undefined
+    attachment: AttachmentData | AttachmentMetadata
+): attachment is AttachmentData => {
+    return attachment && (attachment as AttachmentData).dataUrl !== undefined
 }
 
 export const isMetadata = (
-    attachement: AttachementData | AttachementMetadata
-): attachement is AttachementMetadata => {
-    return attachement && (attachement as AttachementMetadata).fullPath !== undefined
+    attachment: AttachmentData | AttachmentMetadata
+): attachment is AttachmentMetadata => {
+    return attachment && (attachment as AttachmentMetadata).fullPath !== undefined
 }

@@ -14,6 +14,7 @@ import { CategoriesCollectionProvider } from './Provider/CategoriesCollectionPro
 import { FirebaseAuthProvider } from './Provider/FirebaseAuthProvider'
 import { PinnedRecipesProvider } from './Provider/PinnedRecipesProvider'
 import { RouterProvider } from './Provider/RouterProvider'
+import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import { Container } from './Shared/Container'
 
 // ? Wrapper component for all Provider under "./Provider"
@@ -22,7 +23,9 @@ const RecipesProvider: FC = ({ children }) => (
         <BreakpointsProvider>
             <FirebaseAuthProvider>
                 <CategoriesCollectionProvider>
-                    <PinnedRecipesProvider>{children}</PinnedRecipesProvider>
+                    <SelectedAttachementProvider>
+                        <PinnedRecipesProvider>{children}</PinnedRecipesProvider>
+                    </SelectedAttachementProvider>
                 </CategoriesCollectionProvider>
             </FirebaseAuthProvider>
         </BreakpointsProvider>

@@ -2,11 +2,11 @@ import { IconButton } from '@material-ui/core/'
 import FavoriteIcon from '@material-ui/icons/FavoriteTwoTone'
 import React, { FC, useEffect, useState } from 'react'
 
-import { AttachementMetadata, Recipe } from '../../../../model/model'
+import { AttachmentMetadata, Recipe } from '../../../../model/model'
 import { FirebaseService } from '../../../../services/firebase'
 import { BadgeWrapper } from '../../../Shared/BadgeWrapper'
 
-export const RecipeResultRating: FC<Pick<Recipe<AttachementMetadata>, 'name'>> = ({ name }) => {
+export const RecipeResultRating: FC<Pick<Recipe<AttachmentMetadata>, 'name'>> = ({ name }) => {
     const [rating, setRating] = useState(0)
 
     useEffect(() => {

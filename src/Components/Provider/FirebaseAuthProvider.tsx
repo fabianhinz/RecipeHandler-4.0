@@ -20,11 +20,7 @@ export const FirebaseAuthProvider: FC = ({ children }) => {
             const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
             const userShapshot = await userDocRef.get()
 
-            if (userShapshot.exists) {
-                userDocRef.update({ numberOfLogins: FirebaseService.incrementBy(1) })
-            } else {
-                userDocRef.set({ numberOfLogins: 1, email: user.email })
-            }
+            if (!userShapshot.exists) userDocRef.set({ metadata: user.metadata })
         } else FirebaseService.auth.signInAnonymously()
     }, [])
 
