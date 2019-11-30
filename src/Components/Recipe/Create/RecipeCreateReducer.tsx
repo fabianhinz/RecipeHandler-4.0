@@ -36,6 +36,7 @@ type Action =
     | { type: 'storageDeleteRefsChange'; refs: Array<firebase.storage.Reference> }
     | { type: 'relatedRecipesChange'; relatedRecipes: Array<string> }
     | { type: 'openRelatedRecipesDialog' }
+    | { type: 'closeRelatedRecipesDialog' }
 
 const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
     switch (action.type) {
@@ -89,6 +90,9 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
         }
         case 'openRelatedRecipesDialog': {
             return { ...state, relatedRecipesDialog: true }
+        }
+        case 'closeRelatedRecipesDialog': {
+            return { ...state, relatedRecipesDialog: false }
         }
     }
 }

@@ -306,9 +306,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 defaultValues={state.relatedRecipes}
                 currentRecipeName={state.name}
                 open={state.relatedRecipesDialog}
-                onClose={relatedRecipes =>
+                onSave={relatedRecipes =>
                     dispatch({ type: 'relatedRecipesChange', relatedRecipes })
                 }
+                onClose={() => dispatch({ type: 'closeRelatedRecipesDialog' })}
             />
 
             <Prompt
@@ -335,7 +336,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         </>
                     }
                     FabProps={{ size: 'medium' }}
-                    tooltipTitle="Bild hinzufügen"
+                    tooltipTitle="Bilder hinzufügen"
                 />
                 <SpeedDialAction
                     onClick={() => dispatch({ type: 'openRelatedRecipesDialog' })}
@@ -346,7 +347,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 <SpeedDialAction
                     icon={<EyeIcon />}
                     onClick={() => dispatch({ type: 'previewChange' })}
-                    tooltipTitle="Vorschau umschalten"
+                    tooltipTitle="Rezeptvorschau"
                     FabProps={{ size: 'medium' }}
                 />
                 <SpeedDialAction
