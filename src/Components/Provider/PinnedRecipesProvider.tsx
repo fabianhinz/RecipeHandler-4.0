@@ -67,7 +67,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
 
     const classes = useStyles()
 
-    const { isDesktopPinnable } = useBreakpointsContext()
+    const { isDesktopPinnable, isMobilePinnable } = useBreakpointsContext()
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
@@ -111,6 +111,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
     }
 
     const pinnedOnDesktop = pinnedRecipes.size > 0 && isDesktopPinnable
+    const pinnedOnMobile = pinnedRecipes.size > 0 && isMobilePinnable
 
     return (
         <Context.Provider
@@ -119,7 +120,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                 pinnedContains: (recipeName: string) => pinnedRecipes.has(recipeName),
                 pinnedOnDesktop,
             }}>
-            <Slide in={pinnedOnDesktop} direction="right">
+            <Slide in={pinnedOnDesktop || pinnedOnMobile} direction="right">
                 <Paper className={classes.pinnedContainer}>
                     <SwipeableViews
                         index={activeIndex}
