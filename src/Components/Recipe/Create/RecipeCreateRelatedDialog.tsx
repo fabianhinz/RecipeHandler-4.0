@@ -1,26 +1,29 @@
 import {
-    Checkbox,
+    createStyles,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    Divider,
     Grid,
     IconButton,
     List,
     ListItem,
-    ListItemIcon,
     ListItemText,
+    makeStyles,
     TextField,
     Typography,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import SaveIcon from '@material-ui/icons/SaveTwoTone'
+import clsx from 'clsx'
 import React, { FC, useEffect, useState } from 'react'
 
 import useDebounce from '../../../hooks/useDebounce'
 import { RecipeDocument } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
+import { BORDER_RADIUS_HUGE } from '../../../theme'
 import { CategoryResult } from '../../Category/CategoryResult'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import Progress from '../../Shared/Progress'
@@ -32,6 +35,34 @@ interface RecipeCreateRelatedDialogProps {
     open: boolean
     onSave: (relatedRecipes: Array<string>) => void
     onClose: () => void
+}
+
+const useStyles = makeStyles(theme =>
+    createStyles({
+        listItem: {
+            borderRadius: BORDER_RADIUS_HUGE,
+        },
+        selectedListItem: {
+            backgroundColor:
+                theme.palette.type === 'dark'
+                    ? 'rgb(183, 222, 184, 0.25)'
+                    : 'rgb(115, 149, 116, 0.25)',
+            '&:hover': {
+                backgroundColor:
+                    theme.palette.type === 'dark'
+                        ? 'rgb(183, 222, 184, 0.35)'
+                        : 'rgb(115, 149, 116, 0.35)',
+            },
+        },
+        divider: {
+            margin: theme.spacing(1),
+        },
+    })
+)
+
+const endAt = (debouncedSearchValue: string) => {
+    // https://stackoverflow.com/a/57290806
+    return debouncedSearchValue.replace(/.$/, c => String.fromCharCode(c.charCodeAt(0) + 1))
 }
 
 export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
@@ -46,32 +77,39 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
     const [searchValue, setSearchValue] = useState('')
     const [loading, setLoading] = useState(false)
 
+    const classes = useStyles()
+
     const debouncedSearchValue = useDebounce(searchValue, 500)
     const { isDialogFullscreen } = useBreakpointsContext()
+
+    const handleSnapshot = (querySnapshot: firebase.firestore.QuerySnapshot) => {
+        setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
+        setLoading(false)
+    }
 
     useEffect(() => {
         if (!open) return
 
-        let mounted = true
+        let query:
+            | firebase.firestore.CollectionReference
+            | firebase.firestore.Query = FirebaseService.firestore.collection('recipes').limit(10)
+
         setLoading(true)
 
-        FirebaseService.firestore
-            .collection('recipes')
-            .where('name', '>=', debouncedSearchValue)
-            .orderBy('name', 'asc')
-            .limit(10)
-            .get()
-            .then(querySnapshot => {
-                if (mounted) {
-                    setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
-                    setLoading(false)
-                }
-            })
-
-        return () => {
-            mounted = false
-        }
-    }, [open, debouncedSearchValue])
+        if (defaultValues.length === 0 && debouncedSearchValue.length === 0)
+            return query.orderBy('createdDate', 'desc').onSnapshot(handleSnapshot)
+        else if (debouncedSearchValue.length > 0)
+            return query
+                .orderBy('name', 'asc')
+                .where('name', '>=', debouncedSearchValue)
+                .where('name', '<', endAt(debouncedSearchValue))
+                .onSnapshot(handleSnapshot)
+        else
+            return query
+                .orderBy('name', 'asc')
+                .startAt(defaultValues.sort()[0])
+                .onSnapshot(handleSnapshot)
+    }, [open, debouncedSearchValue, defaultValues])
 
     const handleSelectedChange = (recipeName: string) => {
         if (selected.has(recipeName)) selected.delete(recipeName)
@@ -93,53 +131,48 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             onClose={onClose}
             maxWidth="sm"
             fullWidth>
-            <DialogTitle>Passende Rezepte auswählen</DialogTitle>
+            <DialogTitle>Passt gut zu</DialogTitle>
             <DialogContent>
                 {loading && <Progress variant="cover" />}
                 <List>
                     {recipes
                         .filter(recipe => recipe.name !== currentRecipeName)
-                        .map(recipe => (
-                            <ListItem
-                                onClick={() => handleSelectedChange(recipe.name)}
-                                key={recipe.name}
-                                button>
-                                <ListItemIcon>
-                                    <Checkbox
-                                        color="primary"
-                                        checked={selected.has(recipe.name)}
-                                        edge="start"
-                                        disableRipple
+                        .map((recipe, index) => (
+                            <div key={recipe.name}>
+                                <ListItem
+                                    onClick={() => handleSelectedChange(recipe.name)}
+                                    className={clsx(
+                                        classes.listItem,
+                                        selected.has(recipe.name) && classes.selectedListItem
+                                    )}
+                                    button>
+                                    <ListItemText
+                                        primary={recipe.name}
+                                        secondaryTypographyProps={{ component: 'div' }}
+                                        secondary={
+                                            <>
+                                                <Typography gutterBottom color="textSecondary">
+                                                    {FirebaseService.createDateFromTimestamp(
+                                                        recipe.createdDate
+                                                    ).toLocaleString()}
+                                                </Typography>
+                                                <CategoryResult categories={recipe.categories} />
+                                            </>
+                                        }
                                     />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary={recipe.name}
-                                    secondaryTypographyProps={{ component: 'div' }}
-                                    secondary={
-                                        <>
-                                            <Typography gutterBottom color="textSecondary">
-                                                {FirebaseService.createDateFromTimestamp(
-                                                    recipe.createdDate
-                                                ).toLocaleString()}
-                                            </Typography>
-                                            <CategoryResult categories={recipe.categories} />
-                                        </>
-                                    }
-                                />
-                            </ListItem>
+                                </ListItem>
+                                {index !== recipes.length - 1 && (
+                                    <Divider className={classes.divider} variant="middle" />
+                                )}
+                            </div>
                         ))}
                 </List>
             </DialogContent>
             <DialogActions>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Typography color="textSecondary">
-                            Die Auswahl ist auf zehn Rezepte limitiert. Durch optionale Eingabe im
-                            Textfeld wird die Auswahl auf passende Rezeptnamen eingeschränkt.
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={12}>
                         <TextField
+                            helperText="Groß- und Kleinschreibung beachten"
                             value={searchValue}
                             onChange={e => setSearchValue(e.target.value)}
                             label="Nach Rezept filtern"
