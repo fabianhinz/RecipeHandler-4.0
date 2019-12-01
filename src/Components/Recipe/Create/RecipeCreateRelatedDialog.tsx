@@ -4,15 +4,12 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Divider,
     Grid,
     IconButton,
     List,
     ListItem,
-    ListItemText,
     makeStyles,
     TextField,
-    Typography,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
@@ -23,11 +20,11 @@ import React, { FC, useEffect, useState } from 'react'
 import useDebounce from '../../../hooks/useDebounce'
 import { RecipeDocument } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
-import { BORDER_RADIUS_HUGE } from '../../../theme'
-import { CategoryResult } from '../../Category/CategoryResult'
+import { BORDER_RADIUS } from '../../../theme'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import Progress from '../../Shared/Progress'
 import { SlideUp } from '../../Shared/Transitions'
+import RecipeResultHeader from '../Result/RecipeResultHeader'
 
 interface RecipeCreateRelatedDialogProps {
     defaultValues: Array<string>
@@ -39,8 +36,17 @@ interface RecipeCreateRelatedDialogProps {
 
 const useStyles = makeStyles(theme =>
     createStyles({
+        list: {
+            transform: 'translateZ(0)',
+        },
         listItem: {
-            borderRadius: BORDER_RADIUS_HUGE,
+            borderRadius: 0,
+            '&:first-child': {
+                borderRadius: `${BORDER_RADIUS}px ${BORDER_RADIUS}px 0 0`,
+            },
+            '&:last-child': {
+                borderRadius: `0 0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px `,
+            },
         },
         selectedListItem: {
             backgroundColor:
@@ -53,9 +59,6 @@ const useStyles = makeStyles(theme =>
                         ? 'rgb(183, 222, 184, 0.35)'
                         : 'rgb(115, 149, 116, 0.35)',
             },
-        },
-        divider: {
-            margin: theme.spacing(1),
         },
     })
 )
@@ -82,11 +85,6 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
     const debouncedSearchValue = useDebounce(searchValue, 500)
     const { isDialogFullscreen } = useBreakpointsContext()
 
-    const handleSnapshot = (querySnapshot: firebase.firestore.QuerySnapshot) => {
-        setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
-        setLoading(false)
-    }
-
     useEffect(() => {
         if (!open) return
 
@@ -95,6 +93,15 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes').limit(10)
 
         setLoading(true)
+
+        const handleSnapshot = (querySnapshot: firebase.firestore.QuerySnapshot) => {
+            setRecipes(
+                querySnapshot.docs
+                    .map(doc => doc.data() as RecipeDocument)
+                    .filter(recipe => recipe.name !== currentRecipeName)
+            )
+            setLoading(false)
+        }
 
         if (defaultValues.length === 0 && debouncedSearchValue.length === 0)
             return query.orderBy('createdDate', 'desc').onSnapshot(handleSnapshot)
@@ -109,7 +116,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
                 .orderBy('name', 'asc')
                 .startAt(defaultValues.sort()[0])
                 .onSnapshot(handleSnapshot)
-    }, [open, debouncedSearchValue, defaultValues])
+    }, [open, debouncedSearchValue, defaultValues, currentRecipeName])
 
     const handleSelectedChange = (recipeName: string) => {
         if (selected.has(recipeName)) selected.delete(recipeName)
@@ -131,47 +138,29 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             onClose={onClose}
             maxWidth="sm"
             fullWidth>
-            <DialogTitle>Passt gut zu</DialogTitle>
+            <DialogTitle>Passende Rezepte auswählen</DialogTitle>
             <DialogContent>
                 {loading && <Progress variant="cover" />}
                 <List>
-                    {recipes
-                        .filter(recipe => recipe.name !== currentRecipeName)
-                        .map((recipe, index) => (
-                            <div key={recipe.name}>
-                                <ListItem
-                                    onClick={() => handleSelectedChange(recipe.name)}
-                                    className={clsx(
-                                        classes.listItem,
-                                        selected.has(recipe.name) && classes.selectedListItem
-                                    )}
-                                    button>
-                                    <ListItemText
-                                        primary={recipe.name}
-                                        secondaryTypographyProps={{ component: 'div' }}
-                                        secondary={
-                                            <>
-                                                <Typography gutterBottom color="textSecondary">
-                                                    {FirebaseService.createDateFromTimestamp(
-                                                        recipe.createdDate
-                                                    ).toLocaleString()}
-                                                </Typography>
-                                                <CategoryResult categories={recipe.categories} />
-                                            </>
-                                        }
-                                    />
-                                </ListItem>
-                                {index !== recipes.length - 1 && (
-                                    <Divider className={classes.divider} variant="middle" />
-                                )}
-                            </div>
-                        ))}
+                    {recipes.map(recipe => (
+                        <ListItem
+                            key={recipe.name}
+                            onClick={() => handleSelectedChange(recipe.name)}
+                            className={clsx(
+                                classes.listItem,
+                                selected.has(recipe.name) && classes.selectedListItem
+                            )}
+                            button>
+                            <RecipeResultHeader variant="related" recipe={recipe} />
+                        </ListItem>
+                    ))}
                 </List>
             </DialogContent>
             <DialogActions>
-                <Grid container spacing={2}>
+                <Grid container>
                     <Grid item xs={12}>
                         <TextField
+                            margin="normal"
                             helperText="Groß- und Kleinschreibung beachten"
                             value={searchValue}
                             onChange={e => setSearchValue(e.target.value)}

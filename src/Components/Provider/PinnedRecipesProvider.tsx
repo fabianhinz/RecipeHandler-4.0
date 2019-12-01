@@ -1,4 +1,6 @@
-import { Box, createStyles, makeStyles, Paper, Slide } from '@material-ui/core'
+import { Box, createStyles, IconButton, makeStyles, Paper, Slide } from '@material-ui/core'
+import ChevronLeft from '@material-ui/icons/ChevronLeft'
+import ChevronRight from '@material-ui/icons/ChevronRight'
 import clsx from 'clsx'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
@@ -13,7 +15,7 @@ import { useBreakpointsContext } from './BreakpointsProvider'
 type PinnedRecipesState = {
     pinnedContains: (recipeName: string) => boolean
     handlePinnedChange: (recipeName: string) => void
-    pinned: boolean
+    pinnedOnDesktop: boolean
 }
 
 const Context = React.createContext<PinnedRecipesState | null>(null)
@@ -42,7 +44,7 @@ export const PINNED_WIDTH = 425
 const useStyles = makeStyles(theme =>
     createStyles({
         pinnedContainer: {
-            width: PINNED_WIDTH,
+            width: (props: any) => (props.pinnedOnMobile ? '100vw' : PINNED_WIDTH),
             position: 'fixed',
             height: '100vh',
             overflowY: 'auto',
@@ -58,16 +60,25 @@ const useStyles = makeStyles(theme =>
         pinnedWidth: {
             marginLeft: PINNED_WIDTH,
         },
+        drawerLike: {
+            zIndex: theme.zIndex.drawer + 2,
+            position: 'fixed',
+            top: '50%',
+            transform: 'translateY(-50%)',
+        },
     })
 )
 
 export const PinnedRecipesProvider: FC = ({ children }) => {
     const [pinnedRecipes, setPinnedRecipes] = useState<Set<string>>(new Set())
     const [activeIndex, setActiveIndex] = useState(0)
+    const [drawerLike, setDrawerLike] = useState(false)
 
-    const classes = useStyles()
+    const { isDesktopPinnable, isMobilePinnable } = useBreakpointsContext()
 
-    const { isPinnable } = useBreakpointsContext()
+    const pinnedOnDesktop = pinnedRecipes.size > 0 && isDesktopPinnable
+    const pinnedOnMobile = pinnedRecipes.size > 0 && isMobilePinnable
+    const classes = useStyles({ pinnedOnMobile })
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
@@ -96,6 +107,12 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [handleKeyDown])
 
+    useEffect(() => {
+        const root = document.getElementsByTagName('html')[0]
+        if (drawerLike) root.setAttribute('style', 'overflow: hidden;')
+        if (!drawerLike) root.removeAttribute('style')
+    }, [drawerLike])
+
     const handlePinnedChange = (recipeName: string) => {
         setPinnedRecipes(previous => {
             if (previous.has(recipeName)) {
@@ -110,16 +127,25 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
         })
     }
 
-    const pinned = pinnedRecipes.size > 0 && isPinnable
-
     return (
         <Context.Provider
             value={{
                 handlePinnedChange,
                 pinnedContains: (recipeName: string) => pinnedRecipes.has(recipeName),
-                pinned,
+                pinnedOnDesktop,
             }}>
-            <Slide in={pinned} direction="right">
+            <Slide in={pinnedOnMobile} direction="right">
+                <IconButton
+                    onClick={() => setDrawerLike(prev => !prev)}
+                    className={classes.drawerLike}>
+                    {drawerLike ? (
+                        <ChevronLeft fontSize="large" />
+                    ) : (
+                        <ChevronRight fontSize="large" />
+                    )}
+                </IconButton>
+            </Slide>
+            <Slide in={pinnedOnDesktop || drawerLike} direction="right">
                 <Paper className={classes.pinnedContainer}>
                     <SwipeableViews
                         index={activeIndex}
@@ -130,7 +156,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                     </SwipeableViews>
                 </Paper>
             </Slide>
-            <div className={clsx(pinned && classes.pinnedWidth)}>{children}</div>
+            <div className={clsx(pinnedOnDesktop && classes.pinnedWidth)}>{children}</div>
         </Context.Provider>
     )
 }
