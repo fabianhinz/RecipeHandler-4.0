@@ -18,6 +18,9 @@ const useStyles = makeStyles(theme =>
         },
         iconBackground: {
             opacity: 0.3,
+            [theme.breakpoints.down('xs')]: {
+                width: '80%',
+            },
             width: '50%',
         },
     })

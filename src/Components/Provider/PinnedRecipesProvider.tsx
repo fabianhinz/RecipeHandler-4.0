@@ -1,4 +1,4 @@
-import { Box, createStyles, IconButton, makeStyles, Paper, Slide } from '@material-ui/core'
+import { Box, Button, createStyles, makeStyles, Paper, Slide } from '@material-ui/core'
 import ChevronLeft from '@material-ui/icons/ChevronLeft'
 import ChevronRight from '@material-ui/icons/ChevronRight'
 import clsx from 'clsx'
@@ -6,7 +6,7 @@ import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
 import { useRecipeDoc } from '../../hooks/useRecipeDoc'
-import { BORDER_RADIUS } from '../../theme'
+import { BORDER_RADIUS, BORDER_RADIUS_HUGE } from '../../theme'
 import { RecipeResultPin } from '../Recipe/Result/Action/RecipeResultPin'
 import RecipeResult from '../Recipe/Result/RecipeResult'
 import Progress from '../Shared/Progress'
@@ -26,7 +26,7 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ recipeName })
 
     return (
-        <Box padding={2}>
+        <Box padding={2} paddingTop={3}>
             <Box display="flex" justifyContent="center">
                 <RecipeResultPin name={recipeName} />
             </Box>
@@ -50,21 +50,18 @@ const useStyles = makeStyles(theme =>
             overflowY: 'auto',
             top: 0,
             left: 0,
-            zIndex: theme.zIndex.drawer + 1,
+            zIndex: theme.zIndex.modal - 1,
             boxShadow: theme.shadows[8],
             borderRadius: `0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px 0`,
-        },
-        recipePadding: {
-            padding: theme.spacing(2),
         },
         pinnedWidth: {
             marginLeft: PINNED_WIDTH,
         },
         drawerLike: {
-            zIndex: theme.zIndex.drawer + 2,
+            borderRadius: `0 ${BORDER_RADIUS_HUGE}px ${BORDER_RADIUS_HUGE}px 0`,
+            zIndex: theme.zIndex.modal,
             position: 'fixed',
-            top: '50%',
-            transform: 'translateY(-50%)',
+            top: theme.spacing(3),
         },
     })
 )
@@ -139,15 +136,21 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                 pinnedOnDesktop,
             }}>
             <Slide in={pinnedOnMobile} direction="right">
-                <IconButton
+                <Button
+                    variant="contained"
+                    endIcon={
+                        <>
+                            {drawerLike ? (
+                                <ChevronLeft fontSize="large" />
+                            ) : (
+                                <ChevronRight fontSize="large" />
+                            )}
+                        </>
+                    }
                     onClick={() => setDrawerLike(prev => !prev)}
                     className={classes.drawerLike}>
-                    {drawerLike ? (
-                        <ChevronLeft fontSize="large" />
-                    ) : (
-                        <ChevronRight fontSize="large" />
-                    )}
-                </IconButton>
+                    {activeIndex + 1} / {pinnedRecipes.size}
+                </Button>
             </Slide>
             <Slide in={pinnedOnDesktop || drawerLike} direction="right">
                 <Paper className={classes.pinnedContainer}>
