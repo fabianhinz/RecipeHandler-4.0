@@ -1,6 +1,7 @@
 import {
     Avatar,
     Box,
+    Button,
     createStyles,
     Dialog,
     DialogActions,
@@ -43,45 +44,77 @@ const useStyles = makeStyles(theme =>
             paddingTop: theme.spacing(3),
             overflowY: 'unset',
         },
+        form: {
+            overflowY: 'auto',
+            maxHeight: '100%',
+        },
     })
 )
 
 const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
-    const [errors, setErrors] = useState<{ email: boolean; password: boolean }>({
-        email: false,
-        password: false,
-    })
+    const [passwordRepeatValue, setPasswordRepeatValue] = useState('')
     const [loading, setLoading] = useState(false)
+    const [newUser, setNewUser] = useState(false)
+
     const { user } = useFirebaseAuthContext()
     const classes = useStyles()
     const { enqueueSnackbar } = useSnackbar()
 
     useEffect(() => {
-        if (user || errors.email || errors.password) setLoading(false)
-    }, [user, errors])
-
-    useEffect(() => {
-        if (user && !user.isAnonymous) setErrors({ email: false, password: false })
+        setLoading(false)
     }, [user])
 
-    const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleAuthError = (error: { code: string }) => {
+        let snackbarMessage: string | null = null
+        switch (error.code) {
+            case 'auth/invalid-email': {
+                snackbarMessage = 'ungültige Email Adresse'
+                break
+            }
+            case 'auth/wrong-password': {
+                snackbarMessage = 'falsches Passwort'
+                break
+            }
+            case 'auth/weak-password': {
+                snackbarMessage = 'Passwort zu schwach'
+                break
+            }
+            case 'auth/user-not-found': {
+                snackbarMessage = 'Benutzer nicht gefunden'
+                setNewUser(true)
+                break
+            }
+            case 'app/passwords-not-equal': {
+                snackbarMessage = 'Passwörter stimmen nicht überein'
+                break
+            }
+            default:
+                snackbarMessage = 'unbekannter Fehler aufgetreten'
+        }
+        enqueueSnackbar(snackbarMessage, { variant: 'error' })
+    }
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         setLoading(true)
         event.preventDefault()
-        FirebaseService.auth
-            .signInWithEmailAndPassword(props.email, props.password)
-            .catch(error => {
-                // eslint-disable-next-line no-empty
-                switch (error.code) {
-                    case 'auth/invalid-email': {
-                        setErrors({ email: true, password: false })
-                        break
-                    }
-                    case 'auth/wrong-password': {
-                        setErrors({ password: true, email: false })
-                        break
-                    }
-                }
-            })
+
+        if (newUser) {
+            if (props.password === passwordRepeatValue)
+                FirebaseService.auth
+                    .createUserWithEmailAndPassword(props.email, props.password)
+                    .then(() => setNewUser(false))
+                    .catch(error => handleAuthError(error))
+                    .finally(() => setLoading(false))
+            else {
+                handleAuthError({ code: 'app/passwords-not-equal' })
+                setLoading(false)
+            }
+        } else {
+            FirebaseService.auth
+                .signInWithEmailAndPassword(props.email, props.password)
+                .catch(error => handleAuthError(error))
+                .finally(() => setLoading(false))
+        }
     }
 
     const handleLogout = () => {
@@ -91,11 +124,16 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
             .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
     }
 
-    const handleDialogChange = () => dispatch({ type: 'dialogChange' })
+    const handleDialogChange = () => {
+        setNewUser(false)
+        dispatch({ type: 'dialogChange' })
+    }
 
     const handleTextFieldChange = (key: HeaderChangeKey) => (
         event: ChangeEvent<HTMLInputElement>
-    ) => dispatch({ type: 'textFieldChange', key, value: event.target.value })
+    ) => {
+        dispatch({ type: 'textFieldChange', key, value: event.target.value })
+    }
 
     return (
         <Dialog
@@ -115,7 +153,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                 <DialogContent>
                     <DialogContent>
                         <Typography color="textPrimary">
-                            Angemeldet als {user.email}. Rezepte können nun angeleget und bearbeitet
+                            Angemeldet als {user.email}. Rezepte können nun angelegt und bearbeitet
                             werden.
                         </Typography>
                     </DialogContent>
@@ -125,56 +163,78 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                             display="flex"
                             justifyContent="space-evenly"
                             alignItems="center">
-                            <IconButton onClick={handleDialogChange}>
-                                <CloseIcon />
-                            </IconButton>
-                            <IconButton onClick={handleLogout}>
-                                <AccountIcon />
-                            </IconButton>
+                            <Button startIcon={<CloseIcon />} onClick={handleDialogChange}>
+                                Schließen
+                            </Button>
+
+                            <Button
+                                color="secondary"
+                                startIcon={<AccountIcon />}
+                                onClick={handleLogout}>
+                                ausloggen
+                            </Button>
                         </Box>
                     </DialogActions>
                 </DialogContent>
             ) : (
-                <form onSubmit={handleLogin}>
-                    <DialogContent>
-                        <TextField
-                            autoFocus
-                            helperText={errors.email && 'ungültige Email'}
-                            error={errors.email}
-                            autoComplete="username"
-                            onChange={handleTextFieldChange('email')}
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            label="Email"
-                        />
-                        <TextField
-                            helperText={errors.password && 'ungültiges Passwort'}
-                            error={errors.password}
-                            autoComplete="current-password"
-                            onChange={handleTextFieldChange('password')}
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            type="password"
-                            label="Passwort"
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Box
-                            flexGrow={1}
-                            display="flex"
-                            justifyContent="space-evenly"
-                            alignItems="center">
-                            <IconButton onClick={handleDialogChange}>
-                                <CloseIcon />
-                            </IconButton>
-                            <IconButton type="submit">
-                                <AccountIcon />
-                            </IconButton>
-                        </Box>
-                    </DialogActions>
-                </form>
+                <>
+                    <form className={classes.form} onSubmit={handleSubmit}>
+                        <DialogContent>
+                            {newUser && (
+                                <Typography align="center" color="textSecondary">
+                                    Daten vervollständigen um Benutzer anzulegen
+                                </Typography>
+                            )}
+
+                            <TextField
+                                autoFocus
+                                autoComplete="username"
+                                value={props.email}
+                                onChange={handleTextFieldChange('email')}
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                label="Email"
+                            />
+                            <TextField
+                                autoComplete="current-password"
+                                value={props.password}
+                                onChange={handleTextFieldChange('password')}
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                type="password"
+                                label="Passwort"
+                            />
+                            {newUser && (
+                                <TextField
+                                    onChange={e => setPasswordRepeatValue(e.target.value)}
+                                    value={passwordRepeatValue}
+                                    variant="outlined"
+                                    margin="normal"
+                                    fullWidth
+                                    type="password"
+                                    label="Passwort wiederholen"
+                                />
+                            )}
+                        </DialogContent>
+                        <DialogActions>
+                            <Box
+                                flexGrow={1}
+                                display="flex"
+                                justifyContent="space-evenly"
+                                alignItems="center">
+                                <Button startIcon={<CloseIcon />} onClick={handleDialogChange}>
+                                    Schließen
+                                </Button>
+
+                                <Button color="secondary" startIcon={<AccountIcon />} type="submit">
+                                    {newUser ? 'registrieren' : 'einloggen'}
+                                </Button>
+                            </Box>
+                        </DialogActions>
+                    </form>
+                </>
             )}
         </Dialog>
     )

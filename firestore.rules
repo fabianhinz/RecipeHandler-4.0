@@ -2,21 +2,40 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
   	function isAdmin() {
-      return request.auth.uid == "cR9Rb3Z6xSgYfGlQepkEzYedYdF3";
+      	return request.auth.uid == "fY6g8kg5RmYuhvoTC6rlkzES89h1";
+    }
+    
+    function isEditor() {
+      	return exists(/databases/$(database)/documents/editors/$(request.auth.uid));
     }
   
   	match /errors/{error} {
-    		allow read, write;
+        allow write;
+    }
+    
+    match /editors/{userId} {
+        allow write: if isAdmin();
     }
   
   	match /users/{userId} {
-        allow read, update, delete: if request.auth.uid == userId || isAdmin();
-      	allow create: if request.auth.uid != null;
+        allow write: if request.auth.uid != null && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+    
+    match /recipes/{document=**} {
+        allow create: if isAdmin() || isEditor();
+        allow update, delete: if isAdmin() || (resource.data.editor == request.auth.uid && isEditor());
+    }
+    
+    match /rating/{recipe} {
+        allow write: if isEditor();
+    }
+    
+    match /trials/{trial} {
+        allow write: if isEditor();
     }
     
     match /{document=**} {
         allow read: if request.auth.uid != null;
-        allow write: if isAdmin();
     }
   }
 }

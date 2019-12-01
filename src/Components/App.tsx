@@ -69,8 +69,8 @@ const App: FC = () => {
                     <SnackbarProvider
                         preventDuplicate
                         anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
+                            vertical: 'top',
+                            horizontal: 'center',
                         }}>
                         <RecipesProvider>
                             <Container>

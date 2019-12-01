@@ -1,6 +1,7 @@
 import React, { FC, lazy, LazyExoticComponent, Suspense } from 'react'
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
+import { ReactComponent as AdminIcon } from '../../icons/admin.svg'
 import { ReactComponent as CreateIcon } from '../../icons/create.svg'
 import { ReactComponent as DetailsIcon } from '../../icons/details.svg'
 import { ReactComponent as EditIcon } from '../../icons/edit.svg'
@@ -11,6 +12,7 @@ import Progress from '../Shared/Progress'
 
 export const PATHS = {
     home: '/',
+    admin: '/admin',
     details: (name = ':name') => `/recipe/details/${name}`,
     recipeCreate: '/recipe/create',
     recipeEdit: (name = ':name') => `/recipe/edit/${name}`,
@@ -48,6 +50,14 @@ const securedRoutes: AppRoute[] = [
     },
 ]
 
+const adminRoutes: AppRoute[] = [
+    {
+        path: PATHS.admin,
+        Component: lazy(() => import('../Admin/Admin')),
+        Background: () => <BackgroundIcon Icon={AdminIcon} />,
+    },
+]
+
 const renderRoute = ({ path, Component, Background }: AppRoute) => (
     <Route
         key={path}
@@ -68,7 +78,12 @@ export const Routes: FC = () => {
     return (
         <Switch>
             {anonymousRoutes.map(renderRoute)}
-            {user && !user.isAnonymous && securedRoutes.map(renderRoute)}
+            {user && !user.isAnonymous && (
+                <>
+                    {securedRoutes.map(renderRoute)}
+                    {adminRoutes.map(renderRoute)}
+                </>
+            )}
             <Route render={() => <Redirect to="/" />} />
         </Switch>
     )
