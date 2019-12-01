@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme =>
 
 const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) => {
     const { user } = useFirebaseAuthContext()
-    const { pinned } = usePinnedRecipesContext()
+    const { pinnedOnDesktop } = usePinnedRecipesContext()
 
     const isMobilePadding = useMediaQuery('(max-width: 550px)')
 
@@ -56,7 +56,7 @@ const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) =>
         <div
             className={clsx(
                 classes.container,
-                pinned && classes.pinnedRecipes,
+                pinnedOnDesktop && classes.pinnedRecipes,
                 isMobilePadding && user && !user.isAnonymous && classes.mobilePadding
             )}>
             <Hidden mdDown>

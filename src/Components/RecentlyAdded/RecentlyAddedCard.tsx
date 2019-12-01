@@ -49,12 +49,12 @@ const RecentlyAddedCard = ({ recipe, skeleton }: Props) => {
     const { attachmentRef, attachmentRefLoading } = useAttachmentRef(recipe.attachments[0])
     const { isHighRes } = useBreakpointsContext()
     const { history } = useRouterContext()
-    const { pinned } = usePinnedRecipesContext()
+    const { pinnedOnDesktop } = usePinnedRecipesContext()
 
     const classes = useStyles()
 
     return (
-        <Grid {...recentlyAddedGridProps(isHighRes, pinned)} item>
+        <Grid {...recentlyAddedGridProps(isHighRes, pinnedOnDesktop)} item>
             <CardActionArea onClick={() => history.push(PATHS.details(recipe.name), { recipe })}>
                 <Paper className={classes.paper}>
                     <Grid container wrap="nowrap" spacing={2} alignItems="center">
