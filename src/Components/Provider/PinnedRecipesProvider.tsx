@@ -103,6 +103,10 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
     )
 
     useEffect(() => {
+        if (drawerLike && pinnedRecipes.size === 0) setDrawerLike(false)
+    }, [drawerLike, pinnedRecipes])
+
+    useEffect(() => {
         document.addEventListener('keydown', handleKeyDown)
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [handleKeyDown])
