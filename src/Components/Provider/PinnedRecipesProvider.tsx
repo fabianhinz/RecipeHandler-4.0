@@ -13,7 +13,7 @@ import { useBreakpointsContext } from './BreakpointsProvider'
 type PinnedRecipesState = {
     pinnedContains: (recipeName: string) => boolean
     handlePinnedChange: (recipeName: string) => void
-    pinned: boolean
+    pinnedOnDesktop: boolean
 }
 
 const Context = React.createContext<PinnedRecipesState | null>(null)
@@ -67,7 +67,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
 
     const classes = useStyles()
 
-    const { isPinnable } = useBreakpointsContext()
+    const { isDesktopPinnable } = useBreakpointsContext()
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
@@ -110,16 +110,16 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
         })
     }
 
-    const pinned = pinnedRecipes.size > 0 && isPinnable
+    const pinnedOnDesktop = pinnedRecipes.size > 0 && isDesktopPinnable
 
     return (
         <Context.Provider
             value={{
                 handlePinnedChange,
                 pinnedContains: (recipeName: string) => pinnedRecipes.has(recipeName),
-                pinned,
+                pinnedOnDesktop,
             }}>
-            <Slide in={pinned} direction="right">
+            <Slide in={pinnedOnDesktop} direction="right">
                 <Paper className={classes.pinnedContainer}>
                     <SwipeableViews
                         index={activeIndex}
@@ -130,7 +130,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                     </SwipeableViews>
                 </Paper>
             </Slide>
-            <div className={clsx(pinned && classes.pinnedWidth)}>{children}</div>
+            <div className={clsx(pinnedOnDesktop && classes.pinnedWidth)}>{children}</div>
         </Context.Provider>
     )
 }

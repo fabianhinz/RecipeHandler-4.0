@@ -11,7 +11,7 @@ import RecentlyAddedCard, { recentlyAddedGridProps } from './RecentlyAddedCard'
 const RecentlyAdded = () => {
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
     const { isLowRes, isHighRes } = useBreakpointsContext()
-    const { pinned } = usePinnedRecipesContext()
+    const { pinnedOnDesktop } = usePinnedRecipesContext()
 
     const limit = isLowRes ? 3 : isHighRes ? 12 : 6
 
@@ -39,7 +39,10 @@ const RecentlyAdded = () => {
                 ))}
                 {recipes.length === 0 &&
                     new Array(limit).fill(1).map((_skeleton, index) => (
-                        <Grid {...recentlyAddedGridProps(isHighRes, pinned)} item key={index}>
+                        <Grid
+                            {...recentlyAddedGridProps(isHighRes, pinnedOnDesktop)}
+                            item
+                            key={index}>
                             <Grid container spacing={2} justify="space-between" alignItems="center">
                                 <Grid xs={12} item>
                                     <Card>

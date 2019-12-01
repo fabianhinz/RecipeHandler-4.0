@@ -184,9 +184,10 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
             </DialogContent>
             <DialogActions>
                 <form className={classes.form} onSubmit={handleFormSubmit}>
-                    <Grid container spacing={2}>
+                    <Grid container>
                         <Grid item xs={12}>
                             <TextField
+                                margin="normal"
                                 helperText={inputDisabled ? 'Wird gespeichert' : ''}
                                 InputProps={{
                                     endAdornment: (
