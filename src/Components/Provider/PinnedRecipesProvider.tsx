@@ -1,4 +1,6 @@
-import { Box, createStyles, makeStyles, Paper, Slide } from '@material-ui/core'
+import { Box, createStyles, IconButton, makeStyles, Paper, Slide } from '@material-ui/core'
+import ChevronLeft from '@material-ui/icons/ChevronLeft'
+import ChevronRight from '@material-ui/icons/ChevronRight'
 import clsx from 'clsx'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
@@ -42,7 +44,7 @@ export const PINNED_WIDTH = 425
 const useStyles = makeStyles(theme =>
     createStyles({
         pinnedContainer: {
-            width: PINNED_WIDTH,
+            width: (props: any) => (props.pinnedOnMobile ? '100vw' : PINNED_WIDTH),
             position: 'fixed',
             height: '100vh',
             overflowY: 'auto',
@@ -58,16 +60,25 @@ const useStyles = makeStyles(theme =>
         pinnedWidth: {
             marginLeft: PINNED_WIDTH,
         },
+        drawerLike: {
+            zIndex: theme.zIndex.drawer + 2,
+            position: 'fixed',
+            top: '50%',
+            transform: 'translateY(-50%)',
+        },
     })
 )
 
 export const PinnedRecipesProvider: FC = ({ children }) => {
     const [pinnedRecipes, setPinnedRecipes] = useState<Set<string>>(new Set())
     const [activeIndex, setActiveIndex] = useState(0)
-
-    const classes = useStyles()
+    const [drawerLike, setDrawerLike] = useState(false)
 
     const { isDesktopPinnable, isMobilePinnable } = useBreakpointsContext()
+
+    const pinnedOnDesktop = pinnedRecipes.size > 0 && isDesktopPinnable
+    const pinnedOnMobile = pinnedRecipes.size > 0 && isMobilePinnable
+    const classes = useStyles({ pinnedOnMobile })
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
@@ -96,6 +107,12 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [handleKeyDown])
 
+    useEffect(() => {
+        const root = document.getElementsByTagName('html')[0]
+        if (drawerLike) root.setAttribute('style', 'overflow: hidden;')
+        if (!drawerLike) root.removeAttribute('style')
+    }, [drawerLike])
+
     const handlePinnedChange = (recipeName: string) => {
         setPinnedRecipes(previous => {
             if (previous.has(recipeName)) {
@@ -110,9 +127,6 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
         })
     }
 
-    const pinnedOnDesktop = pinnedRecipes.size > 0 && isDesktopPinnable
-    const pinnedOnMobile = pinnedRecipes.size > 0 && isMobilePinnable
-
     return (
         <Context.Provider
             value={{
@@ -120,7 +134,18 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                 pinnedContains: (recipeName: string) => pinnedRecipes.has(recipeName),
                 pinnedOnDesktop,
             }}>
-            <Slide in={pinnedOnDesktop || pinnedOnMobile} direction="right">
+            <Slide in={pinnedOnMobile} direction="right">
+                <IconButton
+                    onClick={() => setDrawerLike(prev => !prev)}
+                    className={classes.drawerLike}>
+                    {drawerLike ? (
+                        <ChevronLeft fontSize="large" />
+                    ) : (
+                        <ChevronRight fontSize="large" />
+                    )}
+                </IconButton>
+            </Slide>
+            <Slide in={pinnedOnDesktop || drawerLike} direction="right">
                 <Paper className={classes.pinnedContainer}>
                     <SwipeableViews
                         index={activeIndex}
