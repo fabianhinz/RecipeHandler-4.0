@@ -68,9 +68,10 @@ const App: FC = () => {
                     <CssBaseline />
                     <SnackbarProvider
                         preventDuplicate
+                        autoHideDuration={3000}
                         anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
+                            vertical: 'bottom',
+                            horizontal: 'left',
                         }}>
                         <RecipesProvider>
                             <Container>

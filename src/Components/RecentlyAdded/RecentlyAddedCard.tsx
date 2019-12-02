@@ -78,7 +78,7 @@ const RecentlyAddedCard = ({ recipe, skeleton }: Props) => {
                                     <Typography noWrap variant="subtitle1">
                                         {recipe.name}
                                     </Typography>
-                                    <Typography noWrap color="textSecondary">
+                                    <Typography color="textSecondary">
                                         Zuletzt geändert am{' '}
                                         {recipe.createdDate.toDate().toLocaleDateString()}
                                     </Typography>

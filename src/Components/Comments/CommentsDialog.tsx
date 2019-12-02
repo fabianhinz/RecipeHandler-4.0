@@ -25,6 +25,7 @@ import { Comment as CommentModel, CommentsCollections, CommentsDocument } from '
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS_HUGE } from '../../theme'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { SlideUp } from '../Shared/Transitions'
 import Comment from './Comment'
 
@@ -87,6 +88,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
     const [inputDisabled, setInputDisabled] = useState(false)
 
     const { isDialogFullscreen } = useBreakpointsContext()
+    const { editor } = useFirebaseAuthContext()
 
     const classes = useStyles()
 
@@ -117,7 +119,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
         try {
             const recipeRef = FirebaseService.firestore.collection(collection).doc(name)
             await recipeRef.collection('comments').add({
-                comment: input,
+                comment: `${editor!.username}: ${input}`,
                 likes: 0,
                 dislikes: 0,
                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
@@ -183,39 +185,41 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 )}
             </DialogContent>
             <DialogActions>
-                <form className={classes.form} onSubmit={handleFormSubmit}>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <TextField
-                                margin="normal"
-                                helperText={inputDisabled ? 'Wird gespeichert' : ''}
-                                InputProps={{
-                                    endAdornment: (
-                                        <IconButton onClick={scrollToLatest}>
-                                            <ScrollToLatestIcon />
-                                        </IconButton>
-                                    ),
-                                }}
-                                disabled={inputDisabled}
-                                variant="outlined"
-                                value={input}
-                                fullWidth
-                                onChange={e => setInput(e.target.value)}
-                                label="Kommentar hinzufügen"
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Grid container justify="space-evenly">
-                                <IconButton onClick={onClose}>
-                                    <CloseIcon />
-                                </IconButton>
-                                <IconButton type="submit">
-                                    <SaveIcon />
-                                </IconButton>
+                {editor && (
+                    <form className={classes.form} onSubmit={handleFormSubmit}>
+                        <Grid container>
+                            <Grid item xs={12}>
+                                <TextField
+                                    margin="normal"
+                                    helperText={inputDisabled ? 'Wird gespeichert' : ''}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <IconButton onClick={scrollToLatest}>
+                                                <ScrollToLatestIcon />
+                                            </IconButton>
+                                        ),
+                                    }}
+                                    disabled={inputDisabled}
+                                    variant="outlined"
+                                    value={input}
+                                    fullWidth
+                                    onChange={e => setInput(e.target.value)}
+                                    label="Kommentar hinzufügen"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Grid container justify="space-evenly">
+                                    <IconButton onClick={onClose}>
+                                        <CloseIcon />
+                                    </IconButton>
+                                    <IconButton type="submit">
+                                        <SaveIcon />
+                                    </IconButton>
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </form>
+                    </form>
+                )}
             </DialogActions>
         </Dialog>
     )

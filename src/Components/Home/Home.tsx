@@ -3,7 +3,7 @@ import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
-import { RecipeDocument } from '../../model/model'
+import { DocumentId, RecipeDocument } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import RecentlyAdded from '../RecentlyAdded/RecentlyAdded'
@@ -12,7 +12,6 @@ import { PATHS } from '../Routes/Routes'
 import { HomeCategory } from './HomeCategory'
 import { HomeRecipe } from './HomeRecipe'
 
-type DocumentId = string
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>
 
 const useStyles = makeStyles(theme =>

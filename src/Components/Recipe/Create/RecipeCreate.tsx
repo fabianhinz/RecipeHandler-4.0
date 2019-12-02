@@ -75,7 +75,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
     const recipeCreateService = useRecipeCreate(state, props.edit)
     const { selectedCategories, setSelectedCategories } = useCategorySelect(props.recipe)
-    const { user } = useFirebaseAuthContext()
+    const { user, editor } = useFirebaseAuthContext()
     const { history } = useRouterContext()
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
@@ -99,9 +99,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
         const attachmentMetadata = await recipeCreateService.uploadAttachments()
         await recipeCreateService.saveRecipeDocument(attachmentMetadata)
-
-        // eslint-disable-next-line prettier/prettier
-    },[recipeCreateService, selectedCategories] )
+    }, [recipeCreateService, selectedCategories])
 
     const handleRemoveAttachment = (name: string) => {
         dispatch({ type: 'removeAttachment', name })
@@ -172,6 +170,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         amount: state.amount,
                         description: state.description,
                         relatedRecipes: state.relatedRecipes,
+                        editor,
                     }}
                 />
             ) : (

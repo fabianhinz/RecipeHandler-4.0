@@ -1,26 +1,39 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
+import { Editor } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import Progress from '../Shared/Progress'
 
-const Context = React.createContext<{ user: firebase.User | null }>({
+const Context = React.createContext<{
+    user: firebase.User | null
+    editor: Editor | null
+}>({
     user: null,
+    editor: null,
 })
 
 export const useFirebaseAuthContext = () => useContext(Context)
 
 export const FirebaseAuthProvider: FC = ({ children }) => {
     const [user, setUser] = useState<firebase.User | null>(null)
+    const [editor, setEditor] = useState<Editor | null>(null)
 
-    const handleAuthStateChange = useCallback(async (user: firebase.User | null) => {
+    const handleAuthStateChange = useCallback((user: firebase.User | null) => {
         if (user) {
             setUser(user)
             if (user.isAnonymous) return
+            // only registered users have a username
 
-            const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
-            const userShapshot = await userDocRef.get()
-
-            if (!userShapshot.exists) userDocRef.set({ email: user.email })
+            FirebaseService.firestore
+                .collection('users')
+                .doc(user.uid)
+                .get()
+                .then(doc =>
+                    setEditor({
+                        username: (doc.data() as Pick<Editor, 'username'>).username,
+                        uid: user.uid,
+                    })
+                )
         } else FirebaseService.auth.signInAnonymously()
     }, [])
 
@@ -29,7 +42,7 @@ export const FirebaseAuthProvider: FC = ({ children }) => {
     }, [handleAuthStateChange])
 
     return (
-        <Context.Provider value={{ user }}>
+        <Context.Provider value={{ user, editor }}>
             {user ? children : <Progress variant="fixed" />}
         </Context.Provider>
     )

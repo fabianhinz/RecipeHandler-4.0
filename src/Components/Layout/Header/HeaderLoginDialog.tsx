@@ -6,7 +6,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    IconButton,
     makeStyles,
     TextField,
     Typography,
@@ -52,11 +51,12 @@ const useStyles = makeStyles(theme =>
 )
 
 const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
-    const [passwordRepeatValue, setPasswordRepeatValue] = useState('')
+    const [passwordRepeat, setPasswordRepeat] = useState('')
+    const [username, setUsername] = useState('')
     const [loading, setLoading] = useState(false)
     const [newUser, setNewUser] = useState(false)
 
-    const { user } = useFirebaseAuthContext()
+    const { user, editor } = useFirebaseAuthContext()
     const classes = useStyles()
     const { enqueueSnackbar } = useSnackbar()
 
@@ -88,10 +88,14 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                 snackbarMessage = 'Passwörter stimmen nicht überein'
                 break
             }
+            case 'app/username-empty': {
+                snackbarMessage = 'Benutzername nicht angeben'
+                break
+            }
             default:
                 snackbarMessage = 'unbekannter Fehler aufgetreten'
         }
-        enqueueSnackbar(snackbarMessage, { variant: 'error' })
+        enqueueSnackbar(snackbarMessage, { variant: 'warning' })
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -99,14 +103,23 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
         event.preventDefault()
 
         if (newUser) {
-            if (props.password === passwordRepeatValue)
+            if (props.password === passwordRepeat && username.length > 0) {
                 FirebaseService.auth
                     .createUserWithEmailAndPassword(props.email, props.password)
-                    .then(() => setNewUser(false))
+                    .then(createdUser => {
+                        setNewUser(false)
+                        // save the username - this allows admins to enable/disable editors by username
+                        FirebaseService.firestore
+                            .collection('users')
+                            .doc(createdUser.user!.uid)
+                            .set({ username })
+                    })
                     .catch(error => handleAuthError(error))
                     .finally(() => setLoading(false))
-            else {
-                handleAuthError({ code: 'app/passwords-not-equal' })
+            } else {
+                if (props.password !== passwordRepeat)
+                    handleAuthError({ code: 'app/passwords-not-equal' })
+                if (username.length === 0) handleAuthError({ code: 'app/username-empty' })
                 setLoading(false)
             }
         } else {
@@ -124,10 +137,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
             .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
     }
 
-    const handleDialogChange = () => {
-        setNewUser(false)
-        dispatch({ type: 'dialogChange' })
-    }
+    const handleDialogChange = () => dispatch({ type: 'dialogChange' })
 
     const handleTextFieldChange = (key: HeaderChangeKey) => (
         event: ChangeEvent<HTMLInputElement>
@@ -149,12 +159,13 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
 
             {loading && <Progress variant="cover" />}
 
-            {user && !user.isAnonymous ? (
+            {user && !user.isAnonymous && editor ? (
                 <DialogContent>
                     <DialogContent>
-                        <Typography color="textPrimary">
-                            Angemeldet als {user.email}. Rezepte können nun angelegt und bearbeitet
-                            werden.
+                        <Typography align="justify" color="textPrimary">
+                            Willkommen zurück {editor.username}. Sofern entsprechende Berechtigungen
+                            gegeben worden sind, können Rezepte angelegt und bearbeitet werden.
+                            Zurzeit ist lediglich die Bearbeitung eigener Rezepte freigeschalten.
                         </Typography>
                     </DialogContent>
                     <DialogActions>
@@ -182,7 +193,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                         <DialogContent>
                             {newUser && (
                                 <Typography align="center" color="textSecondary">
-                                    Daten vervollständigen um Benutzer anzulegen
+                                    Daten vervollständigen um neuen Benutzer anzulegen
                                 </Typography>
                             )}
 
@@ -207,15 +218,26 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                                 label="Passwort"
                             />
                             {newUser && (
-                                <TextField
-                                    onChange={e => setPasswordRepeatValue(e.target.value)}
-                                    value={passwordRepeatValue}
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    type="password"
-                                    label="Passwort wiederholen"
-                                />
+                                <>
+                                    <TextField
+                                        onChange={e => setPasswordRepeat(e.target.value)}
+                                        value={passwordRepeat}
+                                        variant="outlined"
+                                        margin="normal"
+                                        fullWidth
+                                        type="password"
+                                        label="Passwort wiederholen"
+                                    />
+                                    <TextField
+                                        helperText="Rezepte weisen ihren Ersteller anhand des Benutzernamens aus"
+                                        onChange={e => setUsername(e.target.value)}
+                                        value={username}
+                                        variant="outlined"
+                                        margin="normal"
+                                        fullWidth
+                                        label="Benutzername"
+                                    />
+                                </>
                             )}
                         </DialogContent>
                         <DialogActions>

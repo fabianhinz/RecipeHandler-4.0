@@ -4,18 +4,19 @@ import { useState } from 'react'
 import { AttachmentMetadata } from '../../../model/model'
 import { isData } from '../../../model/modelUtil'
 import { FirebaseService } from '../../../services/firebase'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import { RecipeCreateState } from './RecipeCreateReducer'
 
 export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean | undefined) => {
-    const [loading, setLoading] = useState(false)
     const [changesSaved, setChangesSaved] = useState(false)
+
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
     const { history } = useRouterContext()
+    const { editor } = useFirebaseAuthContext()
 
     const validate = async (selectedCategories: Map<string, string>) => {
-        setLoading(true)
         let valid = true
         if (selectedCategories.size === 0 || state.name.length === 0) {
             enqueueSnackbar(
@@ -43,12 +44,10 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
             valid = false
         }
 
-        setLoading(false)
         return valid
     }
 
     const uploadAttachments = async () => {
-        setLoading(true)
         const attachmentSnackbar = enqueueSnackbar('Bilder werden verarbeitet', {
             persist: true,
             variant: 'info',
@@ -99,7 +98,6 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
         })
 
         closeSnackbar(attachmentSnackbar as string)
-        setLoading(false)
         return { newMetadata, oldMetadata }
     }
 
@@ -107,43 +105,48 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
         newMetadata: Array<AttachmentMetadata>
         oldMetadata: Array<AttachmentMetadata>
     }) => {
-        setLoading(true)
         const { oldMetadata, newMetadata } = args
 
         const saveSnackbar = enqueueSnackbar('Rezept wird gespeichert', {
             persist: true,
             variant: 'info',
         })
-        await FirebaseService.firestore
-            .collection('recipes')
-            .doc(state.name)
-            .set({
-                name: state.name,
-                ingredients: state.ingredients,
-                amount: state.amount,
-                description: state.description,
-                attachments: [...oldMetadata, ...newMetadata],
-                numberOfComments: state.numberOfComments,
-                categories: state.categories,
-                relatedRecipes: state.relatedRecipes,
-                createdDate: FirebaseService.createTimestampFromDate(new Date()),
-            })
 
-        if (!editedRecipe) {
+        try {
             await FirebaseService.firestore
-                .collection('rating')
+                .collection('recipes')
                 .doc(state.name)
-                .set({ value: 0 })
-        }
+                .set({
+                    name: state.name,
+                    ingredients: state.ingredients,
+                    amount: state.amount,
+                    description: state.description,
+                    attachments: [...oldMetadata, ...newMetadata],
+                    numberOfComments: state.numberOfComments,
+                    categories: state.categories,
+                    relatedRecipes: state.relatedRecipes,
+                    createdDate: FirebaseService.createTimestampFromDate(new Date()),
+                    editor,
+                })
 
-        setLoading(false)
-        closeSnackbar(saveSnackbar as string)
-        enqueueSnackbar(`${state.name} gespeichert`, {
-            variant: 'success',
-        })
-        setChangesSaved(true)
-        history.push(PATHS.home)
+            if (!editedRecipe) {
+                await FirebaseService.firestore
+                    .collection('rating')
+                    .doc(state.name)
+                    .set({ value: 0 })
+            }
+
+            enqueueSnackbar(`${state.name} gespeichert`, {
+                variant: 'success',
+            })
+            setChangesSaved(true)
+            history.push(PATHS.home)
+        } catch {
+            enqueueSnackbar('fehlende Berechtigungen', { variant: 'error' })
+        } finally {
+            closeSnackbar(saveSnackbar as string)
+        }
     }
 
-    return { validate, uploadAttachments, saveRecipeDocument, loading, changesSaved }
+    return { validate, uploadAttachments, saveRecipeDocument, changesSaved }
 }
