@@ -18,7 +18,8 @@ service cloud.firestore {
     }
   
   	match /users/{userId} {
-        allow write: if request.auth.uid != null && request.auth.token.firebase.sign_in_provider == 'password';
+        allow delete: if isAdmin();
+        allow create, update: if request.auth.uid != null && request.auth.token.firebase.sign_in_provider == 'password';
     }
     
     match /recipes/{document=**} {
