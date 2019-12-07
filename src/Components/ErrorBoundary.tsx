@@ -9,7 +9,7 @@ interface ErrorBoundaryState {
     errorInfo: React.ErrorInfo | null
 }
 
-export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
+class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
     state = {
         error: null,
         errorInfo: null,
@@ -52,3 +52,5 @@ export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
         )
     }
 }
+
+export default ErrorBoundary

@@ -15,15 +15,17 @@ import clsx from 'clsx'
 import { Lightbulb } from 'mdi-material-ui'
 import React, { memo } from 'react'
 
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import { PINNED_WIDTH, usePinnedRecipesContext } from '../../Provider/PinnedRecipesProvider'
-import { Navigate } from '../../Routes/Navigate'
-import { PATHS } from '../../Routes/Routes'
-import { HeaderDispatch } from './HeaderReducer'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { PINNED_WIDTH, usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
+import { Navigate } from './Navigate'
+import { PATHS } from './Routes'
 
-interface HeaderNavigationProps extends HeaderDispatch {
+interface Props {
     onThemeChange: () => void
+    onOpenTrialsDialog: () => void
+    onOpenUserDialog: () => void
 }
+
 const useStyles = makeStyles(theme =>
     createStyles({
         container: {
@@ -43,7 +45,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) => {
+const Navigation = ({ onThemeChange, onOpenTrialsDialog, onOpenUserDialog }: Props) => {
     const { user } = useFirebaseAuthContext()
     const { pinnedOnDesktop } = usePinnedRecipesContext()
 
@@ -66,17 +68,11 @@ const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) =>
                     </Button>
                 </Navigate>
 
-                <Button
-                    size="large"
-                    startIcon={<Lightbulb />}
-                    onClick={() => dispatch({ type: 'trialsChange' })}>
+                <Button size="large" startIcon={<Lightbulb />} onClick={onOpenTrialsDialog}>
                     Ideen
                 </Button>
 
-                <Button
-                    size="large"
-                    startIcon={<AccountIcon />}
-                    onClick={() => dispatch({ type: 'dialogChange' })}>
+                <Button size="large" startIcon={<AccountIcon />} onClick={onOpenUserDialog}>
                     {user!.isAnonymous ? 'Einloggen' : 'Account'}
                 </Button>
 
@@ -96,10 +92,10 @@ const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) =>
                         <HomeIcon />
                     </IconButton>
                 </Navigate>
-                <IconButton onClick={() => dispatch({ type: 'trialsChange' })}>
+                <IconButton onClick={onOpenTrialsDialog}>
                     <Lightbulb />
                 </IconButton>
-                <IconButton onClick={() => dispatch({ type: 'dialogChange' })}>
+                <IconButton onClick={onOpenUserDialog}>
                     <AccountIcon />
                 </IconButton>
                 <IconButton onClick={onThemeChange}>
@@ -110,4 +106,4 @@ const HeaderNavigation = ({ dispatch, onThemeChange }: HeaderNavigationProps) =>
     )
 }
 
-export default memo(HeaderNavigation)
+export default memo(Navigation)

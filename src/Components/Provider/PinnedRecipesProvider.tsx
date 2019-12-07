@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-export const PinnedRecipesProvider: FC = ({ children }) => {
+const PinnedRecipesProvider: FC = ({ children }) => {
     const [pinnedRecipes, setPinnedRecipes] = useState<Set<string>>(new Set())
     const [activeIndex, setActiveIndex] = useState(0)
     const [drawerLike, setDrawerLike] = useState(false)
@@ -164,3 +164,5 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
         </Context.Provider>
     )
 }
+
+export default PinnedRecipesProvider

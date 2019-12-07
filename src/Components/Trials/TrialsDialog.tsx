@@ -52,7 +52,7 @@ interface Props {
     onClose: () => void
 }
 
-const Trials = ({ open, onClose }: Props) => {
+const TrialsDialog = ({ open, onClose }: Props) => {
     const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
     const [loading, setLoading] = useState(true)
     const classes = useStyles()
@@ -175,7 +175,4 @@ const Trials = ({ open, onClose }: Props) => {
     )
 }
 
-export default memo(
-    Trials,
-    (prev, next) => prev.open === next.open && prev.onClose === next.onClose
-)
+export default memo(TrialsDialog, (prev, next) => prev.open === next.open)

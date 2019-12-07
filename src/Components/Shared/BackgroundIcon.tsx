@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core'
 import React, { FC } from 'react'
 
-import { Container } from './Container'
+import Container from './Container'
 
 const useStyles = makeStyles(theme =>
     createStyles({

@@ -12,17 +12,16 @@ import {
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import clsx from 'clsx'
 import { useSnackbar } from 'notistack'
-import React, { ChangeEvent, memo, useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 
-import { ReactComponent as FirebaseIcon } from '../../../icons/firebase.svg'
-import { FirebaseService } from '../../../services/firebase'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import Progress from '../../Shared/Progress'
-import { SlideUp } from '../../Shared/Transitions'
-import { HeaderChangeKey, HeaderDispatch, HeaderState } from './HeaderReducer'
-
-type HeaderLoginDialogProps = HeaderState<'email' | 'dialogOpen' | 'password'> & HeaderDispatch
+import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
+import { FirebaseService } from '../../services/firebase'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import Progress from '../Shared/Progress'
+import { SlideUp } from '../Shared/Transitions'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -31,13 +30,15 @@ const useStyles = makeStyles(theme =>
             padding: theme.spacing(1),
             width: theme.spacing(8),
             height: theme.spacing(8),
-            position: 'absolute',
-            top: theme.spacing(-4),
             right: 0,
             left: 0,
             margin: '0 auto',
             boxShadow: theme.shadows[8],
             zIndex: 3,
+        },
+        absoluteAvatar: {
+            position: 'absolute',
+            top: theme.spacing(-4),
         },
         dialogPaper: {
             paddingTop: theme.spacing(3),
@@ -50,15 +51,24 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
+interface Props {
+    open: boolean
+    onClose: () => void
+}
+
+const UserDialog = ({ open, onClose }: Props) => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const [passwordRepeat, setPasswordRepeat] = useState('')
     const [username, setUsername] = useState('')
     const [loading, setLoading] = useState(false)
     const [newUser, setNewUser] = useState(false)
 
-    const { user, editor } = useFirebaseAuthContext()
     const classes = useStyles()
+
     const { enqueueSnackbar } = useSnackbar()
+    const { user, editor } = useFirebaseAuthContext()
+    const { isDialogFullscreen } = useBreakpointsContext()
 
     useEffect(() => {
         setLoading(false)
@@ -103,9 +113,9 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
         event.preventDefault()
 
         if (newUser) {
-            if (props.password === passwordRepeat && username.length > 0) {
+            if (password === passwordRepeat && username.length > 0) {
                 FirebaseService.auth
-                    .createUserWithEmailAndPassword(props.email, props.password)
+                    .createUserWithEmailAndPassword(email, password)
                     .then(createdUser => {
                         setNewUser(false)
                         // save the username - this allows admins to enable/disable editors by username
@@ -117,14 +127,14 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                     .catch(error => handleAuthError(error))
                     .finally(() => setLoading(false))
             } else {
-                if (props.password !== passwordRepeat)
+                if (password !== passwordRepeat)
                     handleAuthError({ code: 'app/passwords-not-equal' })
                 if (username.length === 0) handleAuthError({ code: 'app/username-empty' })
                 setLoading(false)
             }
         } else {
             FirebaseService.auth
-                .signInWithEmailAndPassword(props.email, props.password)
+                .signInWithEmailAndPassword(email, password)
                 .catch(error => handleAuthError(error))
                 .finally(() => setLoading(false))
         }
@@ -137,35 +147,32 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
             .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
     }
 
-    const handleDialogChange = () => dispatch({ type: 'dialogChange' })
-
-    const handleTextFieldChange = (key: HeaderChangeKey) => (
-        event: ChangeEvent<HTMLInputElement>
-    ) => {
-        dispatch({ type: 'textFieldChange', key, value: event.target.value })
-    }
-
     return (
         <Dialog
             TransitionComponent={SlideUp}
             PaperProps={{ className: classes.dialogPaper }}
+            fullScreen={isDialogFullscreen}
             fullWidth
-            maxWidth="xs"
-            open={props.dialogOpen}
-            onClose={handleDialogChange}>
-            <Avatar className={classes.firebaseAvatar}>
+            maxWidth="sm"
+            open={open}
+            onClose={onClose}>
+            <Avatar
+                className={clsx(
+                    classes.firebaseAvatar,
+                    !isDialogFullscreen && classes.absoluteAvatar
+                )}>
                 <FirebaseIcon height="100%" />
             </Avatar>
 
             {loading && <Progress variant="cover" />}
 
             {user && !user.isAnonymous && editor ? (
-                <DialogContent>
+                <>
                     <DialogContent>
                         <Typography align="justify" color="textPrimary">
-                            Willkommen zurück {editor.username}. Sofern entsprechende Berechtigungen
-                            gegeben worden sind, können Rezepte angelegt und bearbeitet werden.
-                            Zurzeit ist lediglich die Bearbeitung eigener Rezepte freigeschalten.
+                            Willkommen zurück {editor.username}. Sofern berechtigt können Rezepte
+                            angelegt und bearbeitet werden. Zurzeit ist lediglich die Bearbeitung
+                            eigener Rezepte freigeschalten.
                         </Typography>
                     </DialogContent>
                     <DialogActions>
@@ -174,7 +181,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                             display="flex"
                             justifyContent="space-evenly"
                             alignItems="center">
-                            <Button startIcon={<CloseIcon />} onClick={handleDialogChange}>
+                            <Button startIcon={<CloseIcon />} onClick={onClose}>
                                 Schließen
                             </Button>
 
@@ -186,7 +193,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                             </Button>
                         </Box>
                     </DialogActions>
-                </DialogContent>
+                </>
             ) : (
                 <>
                     <form className={classes.form} onSubmit={handleSubmit}>
@@ -200,8 +207,8 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                             <TextField
                                 autoFocus
                                 autoComplete="username"
-                                value={props.email}
-                                onChange={handleTextFieldChange('email')}
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
                                 variant="outlined"
                                 margin="normal"
                                 fullWidth
@@ -209,8 +216,8 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                             />
                             <TextField
                                 autoComplete="current-password"
-                                value={props.password}
-                                onChange={handleTextFieldChange('password')}
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
                                 variant="outlined"
                                 margin="normal"
                                 fullWidth
@@ -246,7 +253,7 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
                                 display="flex"
                                 justifyContent="space-evenly"
                                 alignItems="center">
-                                <Button startIcon={<CloseIcon />} onClick={handleDialogChange}>
+                                <Button startIcon={<CloseIcon />} onClick={onClose}>
                                     Schließen
                                 </Button>
 
@@ -262,10 +269,4 @@ const HeaderLoginDialog = ({ dispatch, ...props }: HeaderLoginDialogProps) => {
     )
 }
 
-export default memo(
-    HeaderLoginDialog,
-    (prev, next) =>
-        prev.dialogOpen === next.dialogOpen &&
-        prev.email === next.email &&
-        prev.password === next.password
-)
+export default memo(UserDialog, (prev, next) => prev.open === next.open)

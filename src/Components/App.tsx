@@ -6,16 +6,16 @@ import { useCookies } from 'react-cookie'
 import { BrowserRouter } from 'react-router-dom'
 
 import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
-import { ErrorBoundary } from './ErrorBoundary'
-import { Header } from './Layout/Header/Header'
-import { Main } from './Layout/Main'
-import { BreakpointsProvider } from './Provider/BreakpointsProvider'
-import { CategoriesCollectionProvider } from './Provider/CategoriesCollectionProvider'
-import { FirebaseAuthProvider } from './Provider/FirebaseAuthProvider'
-import { PinnedRecipesProvider } from './Provider/PinnedRecipesProvider'
-import { RouterProvider } from './Provider/RouterProvider'
+import ErrorBoundary from './ErrorBoundary'
+import Footer from './Footer'
+import Main from './Main'
+import BreakpointsProvider from './Provider/BreakpointsProvider'
+import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
+import FirebaseAuthProvider from './Provider/FirebaseAuthProvider'
+import PinnedRecipesProvider from './Provider/PinnedRecipesProvider'
+import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
-import { Container } from './Shared/Container'
+import Container from './Shared/Container'
 
 // ? Wrapper component for all Provider under "./Provider"
 const RecipesProvider: FC = ({ children }) => (
@@ -37,7 +37,7 @@ const THEME_COOKIE = { deps: ['theme-pref'], name: 'theme-pref' }
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
     const [cookies, setCookie] = useCookies(THEME_COOKIE.deps)
-
+    // ToDo save theme settings for each user in the firestore users collection
     const handleThemeChange = () => {
         if (theme.palette.type === 'light') {
             setCookie(THEME_COOKIE.name, 'dark', { maxAge: 31536000 })
@@ -75,8 +75,8 @@ const App: FC = () => {
                         }}>
                         <RecipesProvider>
                             <Container>
-                                <Header onThemeChange={handleThemeChange} />
                                 <Main />
+                                <Footer onThemeChange={handleThemeChange} />
                             </Container>
                         </RecipesProvider>
                     </SnackbarProvider>

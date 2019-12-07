@@ -14,7 +14,7 @@ const Context = React.createContext<{
 
 export const useFirebaseAuthContext = () => useContext(Context)
 
-export const FirebaseAuthProvider: FC = ({ children }) => {
+const FirebaseAuthProvider: FC = ({ children }) => {
     const [user, setUser] = useState<firebase.User | null>(null)
     const [editor, setEditor] = useState<Editor | null>(null)
 
@@ -47,3 +47,5 @@ export const FirebaseAuthProvider: FC = ({ children }) => {
         </Context.Provider>
     )
 }
+
+export default FirebaseAuthProvider
