@@ -13,7 +13,7 @@ interface Props extends RecipeVariants {
 }
 
 const RecipeResultHeader = ({ recipe, variant }: Props) => (
-    <Grid container spacing={1} justify="space-between" alignItems="center">
+    <Grid container spacing={2} justify="space-between" alignItems="center">
         <Grid item xs={variant === 'pinned' ? 12 : 7}>
             {variant === 'related' ? (
                 <Typography display="inline" variant="h5">

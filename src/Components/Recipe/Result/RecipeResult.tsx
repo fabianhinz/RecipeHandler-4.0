@@ -48,7 +48,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
 
     if (variant === 'summary')
         return (
-            <Grid container spacing={4} className={classes.recipeContainer} alignContent="stretch">
+            <Grid container spacing={2} className={classes.recipeContainer} alignContent="stretch">
                 <Grid item xs={12}>
                     <RecipeResultHeader recipe={recipe} variant={variant} />
                 </Grid>
@@ -123,10 +123,10 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                 </Grid>
             )}
 
-            <Grid item xs={12} container justify="flex-end">
+            <Grid item xs={12} container justify="center">
                 <Chip
-                    onClick={() => console.log('tbd')}
                     variant="outlined"
+                    onClick={() => console.log('tbd')}
                     avatar={<Avatar>{recipe.editor.username.slice(0, 1)}</Avatar>}
                     label={recipe.editor.username}
                 />
