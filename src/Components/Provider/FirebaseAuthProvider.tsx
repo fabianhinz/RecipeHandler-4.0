@@ -1,14 +1,16 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
-import { Editor } from '../../model/model'
+import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import Progress from '../Shared/Progress'
 
 const Context = React.createContext<{
-    user: firebase.User | null
-    editor: Editor | null
+    anonymousUser: boolean
+    firebaseUser: firebase.User | null
+    editor: User | null
 }>({
-    user: null,
+    anonymousUser: false,
+    firebaseUser: null,
     editor: null,
 })
 
@@ -16,7 +18,7 @@ export const useFirebaseAuthContext = () => useContext(Context)
 
 const FirebaseAuthProvider: FC = ({ children }) => {
     const [user, setUser] = useState<firebase.User | null>(null)
-    const [editor, setEditor] = useState<Editor | null>(null)
+    const [editor, setEditor] = useState<User | null>(null)
 
     const handleAuthStateChange = useCallback((user: firebase.User | null) => {
         if (user) {
@@ -30,7 +32,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
                 .get()
                 .then(doc =>
                     setEditor({
-                        ...(doc.data() as Omit<Editor, 'uid'>),
+                        ...(doc.data() as Omit<User, 'uid'>),
                         uid: user.uid,
                     })
                 )
@@ -42,7 +44,12 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     }, [handleAuthStateChange])
 
     return (
-        <Context.Provider value={{ user, editor }}>
+        <Context.Provider
+            value={{
+                firebaseUser: user,
+                editor,
+                anonymousUser: user && user.isAnonymous ? true : false,
+            }}>
             {user ? children : <Progress variant="fixed" />}
         </Context.Provider>
     )

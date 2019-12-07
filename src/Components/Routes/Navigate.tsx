@@ -34,11 +34,11 @@ interface NavigateFabProps {
 
 export const NavigateFab = ({ to, icon }: NavigateFabProps) => {
     const classes = useStyles()
-    const { user } = useFirebaseAuthContext()
+    const { anonymousUser } = useFirebaseAuthContext()
 
     return (
         <>
-            {user && !user.isAnonymous && (
+            {!anonymousUser && (
                 <Navigate to={to}>
                     <Zoom in>
                         <Fab className={classes.fab} color="secondary">

@@ -63,12 +63,12 @@ const renderRoute = ({ path, Component, Background }: AppRoute) => (
 )
 
 export const Routes: FC = () => {
-    const { user } = useFirebaseAuthContext()
+    const { anonymousUser } = useFirebaseAuthContext()
 
     return (
         <Switch>
             {anonymousRoutes.map(renderRoute)}
-            {user && !user.isAnonymous && securedRoutes.map(renderRoute)}
+            {!anonymousUser && securedRoutes.map(renderRoute)}
             <Route render={() => <Redirect to="/" />} />
         </Switch>
     )

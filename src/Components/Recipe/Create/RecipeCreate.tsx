@@ -75,7 +75,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
     const recipeCreateService = useRecipeCreate(state, props.edit)
     const { selectedCategories, setSelectedCategories } = useCategorySelect(props.recipe)
-    const { user, editor } = useFirebaseAuthContext()
+    const { firebaseUser, editor } = useFirebaseAuthContext()
     const { history } = useRouterContext()
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
@@ -86,8 +86,8 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     }, [attachments, dispatch])
 
     useEffect(() => {
-        if (!user) history.push(PATHS.home)
-    }, [history, user])
+        if (!firebaseUser) history.push(PATHS.home)
+    }, [history, firebaseUser])
 
     useEffect(() => {
         dispatch({ type: 'categoriesChange', selectedCategories })

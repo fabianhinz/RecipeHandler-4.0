@@ -26,7 +26,7 @@ export interface Recipe<T extends Attachment> extends CommentsDocument {
     ingredients: string
     amount: number
     description: string
-    editor: Editor
+    editor: RecipeEditor
     relatedRecipes: Array<string>
 }
 
@@ -74,7 +74,9 @@ export type DataUrl = string
 
 export type DocumentId = string
 
-export type Editor = {
+export type RecipeEditor = Pick<User, 'uid' | 'username'>
+
+export type User = {
     uid: string
     username: string
     muiTheme: PaletteType

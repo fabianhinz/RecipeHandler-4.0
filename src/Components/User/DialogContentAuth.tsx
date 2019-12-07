@@ -7,12 +7,14 @@ import {
     makeStyles,
     TextField,
     Typography,
+    useTheme,
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import { useSnackbar } from 'notistack'
 import React, { useState } from 'react'
 
+import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { UserDialogContentProps } from './UserDialog'
 
@@ -34,6 +36,7 @@ const DialogContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
     const [username, setUsername] = useState('')
     const [newUser, setNewUser] = useState(false)
 
+    const theme = useTheme()
     const { enqueueSnackbar } = useSnackbar()
 
     const classes = useStyles()
@@ -88,7 +91,12 @@ const DialogContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
                         FirebaseService.firestore
                             .collection('users')
                             .doc(createdUser.user!.uid)
-                            .set({ username })
+                            .set({
+                                username,
+                                admin: false,
+                                muiTheme: theme.palette.type,
+                                showAllRecipes: true,
+                            } as Omit<User, 'uid'>)
                     })
                     .catch(error => handleAuthError(error))
                     .finally(() => onDialogLoading(false))

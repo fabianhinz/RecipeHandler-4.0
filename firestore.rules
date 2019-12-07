@@ -32,7 +32,7 @@ service cloud.firestore {
         allow write: if isAdmin() || isEditor();
     }
     
-    match /trials/{trial} {
+    match /trials/{document=**} {
         allow write: if isAdmin() || isEditor();
     }
     

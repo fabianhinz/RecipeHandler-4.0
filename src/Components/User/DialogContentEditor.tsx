@@ -4,13 +4,13 @@ import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import { useSnackbar } from 'notistack'
 import React from 'react'
 
-import { Editor } from '../../model/model'
+import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import DialogContentAdmin from './DialogContentAdmin'
 import { UserDialogContentProps } from './UserDialog'
 
 interface Props extends UserDialogContentProps {
-    editor: Editor
+    editor: User
 }
 
 const DialogContentEditor = ({ editor, onDialogLoading, onDialogClose }: Props) => {
