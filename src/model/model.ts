@@ -1,3 +1,4 @@
+import { PaletteType } from '@material-ui/core'
 import { RouteComponentProps } from 'react-router'
 
 export interface Attachment {
@@ -73,4 +74,10 @@ export type DataUrl = string
 
 export type DocumentId = string
 
-export type Editor = { uid: string; username: string }
+export type Editor = {
+    uid: string
+    username: string
+    muiTheme: PaletteType
+    showAllRecipes: boolean
+    admin?: boolean
+}

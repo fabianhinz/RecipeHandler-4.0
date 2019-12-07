@@ -22,7 +22,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
         if (user) {
             setUser(user)
             if (user.isAnonymous) return
-            // only registered users have a username
+            // only registered users have a additional props
 
             FirebaseService.firestore
                 .collection('users')
@@ -30,7 +30,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
                 .get()
                 .then(doc =>
                     setEditor({
-                        username: (doc.data() as Pick<Editor, 'username'>).username,
+                        ...(doc.data() as Omit<Editor, 'uid'>),
                         uid: user.uid,
                     })
                 )
