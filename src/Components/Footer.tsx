@@ -5,7 +5,7 @@ import Navigation from './Routes/Navigation'
 import TrialsDialog from './Trials/TrialsDialog'
 import UserDialog from './User/UserDialog'
 
-interface HeaderProps {
+interface Props {
     onThemeChange: () => void
 }
 
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const Footer = ({ onThemeChange }: HeaderProps) => {
+const Footer = ({ onThemeChange }: Props) => {
     const [userDialogOpen, setUserDialogOpen] = useState(false)
     const [trialsDialogOpen, setTrialsDialogOpen] = useState(false)
 

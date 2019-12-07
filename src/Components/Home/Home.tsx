@@ -1,29 +1,16 @@
-import { createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import { DocumentId, RecipeDocument } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import RecentlyAdded from '../RecentlyAdded/RecentlyAdded'
-import { Navigate } from '../Routes/Navigate'
+import { NavigateFab } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
 import { HomeCategory } from './HomeCategory'
 import { HomeRecipe } from './HomeRecipe'
 
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        fab: {
-            zIndex: theme.zIndex.drawer + 1,
-            position: 'fixed',
-            right: theme.spacing(2),
-            bottom: theme.spacing(4.5),
-        },
-    })
-)
 
 const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
@@ -31,10 +18,7 @@ const Home = () => {
     const [pagination, setPagination] = useState(false)
     const [loading, setLoading] = useState(true)
 
-    const classes = useStyles()
-
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
-    const { user } = useFirebaseAuthContext()
 
     const handleCategoryChange = (type: string, value: string) => {
         setLastRecipeName('')
@@ -103,15 +87,7 @@ const Home = () => {
                 expandDisabled={!pagination}
             />
 
-            {user && !user.isAnonymous && (
-                <Navigate to={PATHS.recipeCreate}>
-                    <Zoom in>
-                        <Fab className={classes.fab} color="secondary">
-                            <AddIcon />
-                        </Fab>
-                    </Zoom>
-                </Navigate>
-            )}
+            <NavigateFab to={PATHS.recipeCreate} icon={<AddIcon />} />
         </>
     )
 }

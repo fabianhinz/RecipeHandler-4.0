@@ -1,7 +1,7 @@
 import { Box, Card, CardMedia, createStyles, Grid, IconButton, makeStyles } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
-import React, { FC, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { DataUrls, getRefPaths, getResizedImages } from '../../hooks/useAttachmentRef'
 import { Trial } from '../../model/model'
@@ -18,11 +18,11 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface HeaderTrialsCardProps {
+interface Props {
     trial: Trial
 }
 
-const TrialsCard: FC<HeaderTrialsCardProps> = ({ trial }) => {
+const TrialsCard = ({ trial }: Props) => {
     const [dataUrls, setDataUrls] = useState<DataUrls | null>()
     const classes = useStyles()
 

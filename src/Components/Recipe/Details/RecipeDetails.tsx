@@ -1,30 +1,15 @@
-import { createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
 import React, { FC } from 'react'
 
 import { useRecipeDoc } from '../../../hooks/useRecipeDoc'
 import { RouteWithRecipeName } from '../../../model/model'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import { Navigate } from '../../Routes/Navigate'
+import { NavigateFab } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
 import Progress from '../../Shared/Progress'
 import RecipeResult from '../Result/RecipeResult'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        fab: {
-            zIndex: theme.zIndex.drawer + 1,
-            position: 'fixed',
-            right: theme.spacing(2),
-            bottom: theme.spacing(4.5),
-        },
-    })
-)
-
 const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps })
-    const { user } = useFirebaseAuthContext()
-    const classes = useStyles()
 
     return (
         <>
@@ -34,15 +19,7 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
                 <RecipeResult variant="details" recipe={recipeDoc} />
             )}
 
-            {recipeDoc && user && !user.isAnonymous && (
-                <Navigate to={PATHS.recipeEdit(recipeDoc.name)}>
-                    <Zoom in>
-                        <Fab className={classes.fab} color="secondary">
-                            <EditIcon />
-                        </Fab>
-                    </Zoom>
-                </Navigate>
-            )}
+            {recipeDoc && <NavigateFab to={PATHS.recipeEdit(recipeDoc.name)} icon={<EditIcon />} />}
         </>
     )
 }
