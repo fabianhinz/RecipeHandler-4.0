@@ -157,7 +157,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
     return (
         <>
-            {state.preview ? (
+            {state.preview && editor ? (
                 <RecipeResult
                     variant="preview"
                     recipe={{

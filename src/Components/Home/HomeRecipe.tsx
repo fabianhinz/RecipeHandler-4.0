@@ -25,9 +25,15 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
             <Card>
                 <CardContent>
                     <Grid container spacing={2}>
-                        {props.recipes.map(recipe => (
+                        {props.recipes.map((recipe, index) => (
                             <Grid xs={12} item key={recipe.name}>
-                                <RecipeResult variant="summary" recipe={recipe} />
+                                <RecipeResult
+                                    variant="summary"
+                                    recipe={recipe}
+                                    divider={
+                                        recipe.name !== props.recipes[props.recipes.length - 1].name
+                                    }
+                                />
                             </Grid>
                         ))}
                         {props.skeletons &&

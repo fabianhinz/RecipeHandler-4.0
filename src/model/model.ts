@@ -25,7 +25,7 @@ export interface Recipe<T extends Attachment> extends CommentsDocument {
     ingredients: string
     amount: number
     description: string
-    editor: Editor | null
+    editor: Editor
     relatedRecipes: Array<string>
 }
 

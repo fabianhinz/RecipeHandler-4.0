@@ -13,8 +13,8 @@ interface Props extends RecipeVariants {
 }
 
 const RecipeResultHeader = ({ recipe, variant }: Props) => (
-    <Grid container spacing={2} justify="space-between" alignItems="center">
-        <Grid item xs={variant === 'pinned' ? 12 : 8}>
+    <Grid container spacing={1} justify="space-between" alignItems="center">
+        <Grid item xs={variant === 'pinned' ? 12 : 7}>
             {variant === 'related' ? (
                 <Typography display="inline" variant="h5">
                     {recipe.name}
@@ -26,14 +26,13 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => (
                     </Typography>
                 </Navigate>
             )}
-
             <Typography color="textSecondary">
                 Zuletzt geändert am{' '}
                 {FirebaseService.createDateFromTimestamp(recipe.createdDate).toLocaleDateString()}
             </Typography>
         </Grid>
         {variant !== 'pinned' && variant !== 'preview' && variant !== 'related' && (
-            <Grid item xs={4}>
+            <Grid item xs={5}>
                 <RecipeResultAction name={recipe.name} numberOfComments={recipe.numberOfComments} />
             </Grid>
         )}
