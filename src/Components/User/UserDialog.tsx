@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme =>
         },
         dialogPaper: {
             paddingTop: (props: { isDialogFullscreen: boolean }) =>
-                props.isDialogFullscreen ? theme.spacing(1) : theme.spacing(4),
+                props.isDialogFullscreen ? theme.spacing(2) : theme.spacing(4),
             overflowY: 'unset',
         },
     })

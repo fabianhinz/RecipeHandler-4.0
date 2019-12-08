@@ -21,8 +21,10 @@ import { UserDialogContentProps } from './UserDialog'
 const useStyles = makeStyles(() =>
     createStyles({
         form: {
+            display: 'flex',
+            flexDirection: 'column',
             overflowY: 'auto',
-            maxHeight: '100%',
+            height: '100%',
         },
     })
 )
