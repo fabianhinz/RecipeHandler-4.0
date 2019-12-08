@@ -2,8 +2,8 @@ service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
         allow read: if request.auth.uid != null;
-        allow write: if request.auth.uid == "fY6g8kg5RmYuhvoTC6rlkzES89h1";
-        // allow write: if request.auth.uid != null && request.auth.token.firebase.sign_in_provider == 'password';
+        // limit access to our function
+        allow write: if false;
     }
   }
 }

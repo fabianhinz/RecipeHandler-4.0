@@ -2,6 +2,7 @@ import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/performance'
+import 'firebase/functions'
 
 import firebase from 'firebase/app'
 
@@ -17,6 +18,8 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig)
 firebase.firestore().enablePersistence({ synchronizeTabs: true })
+const functions = firebase.functions()
+functions.useFunctionsEmulator('http://localhost:5000')
 
 const firestore = firebase.firestore()
 const storage = firebase.storage()
@@ -38,4 +41,5 @@ export const FirebaseService = {
     createDateFromTimestamp,
     incrementBy,
     performance,
+    functions,
 }
