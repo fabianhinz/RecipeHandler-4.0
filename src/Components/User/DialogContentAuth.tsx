@@ -12,7 +12,7 @@ import {
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import { useSnackbar } from 'notistack'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -42,6 +42,10 @@ const DialogContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
     const { enqueueSnackbar } = useSnackbar()
 
     const classes = useStyles()
+
+    useEffect(() => {
+        onDialogLoading(false)
+    }, [onDialogLoading])
 
     const handleAuthError = (error: { code: string }) => {
         let snackbarMessage: string | null = null

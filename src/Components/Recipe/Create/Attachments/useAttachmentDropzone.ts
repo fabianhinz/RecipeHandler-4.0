@@ -18,9 +18,17 @@ export type DropzoneProps = Record<
     Pick<DropzoneState, 'getInputProps' | 'getRootProps'>
 >
 
-export const useAttachmentDropzone = (
-    currentAttachments: Array<AttachmentData | AttachmentMetadata>
-) => {
+interface Options {
+    currentAttachments?: Array<AttachmentData | AttachmentMetadata>
+    attachmentLimit: number
+    attachmentMaxWidth: number
+}
+
+export const useAttachmentDropzone = ({
+    currentAttachments,
+    attachmentLimit,
+    attachmentMaxWidth,
+}: Options) => {
     const [attachments, setAttachments] = useState<Array<AttachmentData>>([])
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
@@ -31,8 +39,8 @@ export const useAttachmentDropzone = (
                     variant: 'error',
                 })
 
-            if (acceptedFiles.length > 10)
-                return enqueueSnackbar('Mehr als 10 Bilder pro Rezept sind nicht möglich', {
+            if (acceptedFiles.length > attachmentLimit)
+                return enqueueSnackbar(`Maximal zulässige Anzahl an Bildern überschritten`, {
                     variant: 'warning',
                 })
 
@@ -41,7 +49,9 @@ export const useAttachmentDropzone = (
             })
 
             const newAttachments: Array<AttachmentData> = []
-            const uniqueNames = new Set(currentAttachments.map(({ name }) => name))
+            const uniqueNames = new Set(
+                currentAttachments ? currentAttachments.map(({ name }) => name) : []
+            )
             for (const file of acceptedFiles) {
                 // filenames are our keys, react will warn about duplicate keys
                 if (uniqueNames.has(file.name)) continue
@@ -50,7 +60,7 @@ export const useAttachmentDropzone = (
                 const compressedFile: Blob = await compressImage(file, {
                     maxSizeMB: 0.5,
                     useWebWorker: false,
-                    maxWidthOrHeight: 3840,
+                    maxWidthOrHeight: attachmentMaxWidth,
                     maxIteration: 5,
                 })
                 const dataUrl: string = await readDocumentAsync(compressedFile)
@@ -63,7 +73,7 @@ export const useAttachmentDropzone = (
             setAttachments(newAttachments)
             closeSnackbar(loadingKey as string)
         },
-        [closeSnackbar, currentAttachments, enqueueSnackbar]
+        [attachmentLimit, attachmentMaxWidth, closeSnackbar, currentAttachments, enqueueSnackbar]
     )
 
     const { getRootProps, getInputProps } = useDropzone({

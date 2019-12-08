@@ -5,8 +5,6 @@ import React, { FC, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { BrowserRouter } from 'react-router-dom'
 
-import { AttachmentData, Recipe } from '../model/model'
-import { FirebaseService } from '../services/firebase'
 import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import ErrorBoundary from './ErrorBoundary'
 import Footer from './Footer'
@@ -47,16 +45,6 @@ const App: FC = () => {
             setCookie(THEME_COOKIE.name, 'light', { maxAge: 31536000 })
         }
     }
-
-    useEffect(() => {
-        const uploadAttachments = FirebaseService.functions.httpsCallable('uploadAttachments')
-        uploadAttachments({
-            attachments: [
-                { dataUrl: '', name: 'first', size: 1 },
-                { dataUrl: '', name: 'second', size: 2 },
-            ],
-        } as Pick<Recipe<AttachmentData>, 'attachments'>).then(result => console.log(result))
-    }, [])
 
     useEffect(() => {
         const cookie: undefined | 'dark' | 'light' = cookies[THEME_COOKIE.name]

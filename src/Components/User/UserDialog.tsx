@@ -1,6 +1,6 @@
 import { Avatar, createStyles, Dialog, makeStyles } from '@material-ui/core'
 import clsx from 'clsx'
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useState } from 'react'
 
 import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
@@ -52,10 +52,6 @@ const UserDialog = ({ open, onClose }: Props) => {
     const { isDialogFullscreen } = useBreakpointsContext()
 
     const classes = useStyles({ isDialogFullscreen })
-
-    useEffect(() => {
-        setLoading(false)
-    }, [user])
 
     return (
         <Dialog

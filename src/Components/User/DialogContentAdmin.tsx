@@ -1,12 +1,12 @@
 import {
     Avatar,
-    DialogContent,
     List,
     ListItem,
     ListItemAvatar,
     ListItemSecondaryAction,
     ListItemText,
     Switch,
+    Typography,
 } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 
@@ -29,12 +29,12 @@ const DialogContentAdmin = ({ onDialogLoading }: Props) => {
     }, [])
 
     useEffect(() => {
-        return FirebaseService.firestore
-            .collection('users')
-            .onSnapshot(querySnapshot =>
-                setUsers(querySnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() } as User)))
-            )
-    }, [])
+        onDialogLoading(true)
+        return FirebaseService.firestore.collection('users').onSnapshot(querySnapshot => {
+            setUsers(querySnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() } as User)))
+            onDialogLoading(false)
+        })
+    }, [onDialogLoading])
 
     const handleSwitchChange = (uid: string) => () => {
         if (editors.has(uid)) editorsCollection.doc(uid).delete()
@@ -42,7 +42,8 @@ const DialogContentAdmin = ({ onDialogLoading }: Props) => {
     }
 
     return (
-        <DialogContent>
+        <>
+            <Typography variant="h5">Editoren</Typography>
             <List>
                 {users.map(({ uid, username }) => (
                     <ListItem key={uid}>
@@ -60,7 +61,7 @@ const DialogContentAdmin = ({ onDialogLoading }: Props) => {
                     </ListItem>
                 ))}
             </List>
-        </DialogContent>
+        </>
     )
 }
 

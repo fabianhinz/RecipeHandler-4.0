@@ -42,8 +42,8 @@
 	},
 	"scripts": {
 		"dev:install": "npm install",
-        "dev:cra": "react-scripts start",
-        "exploreChunks": "npx source-map-explorer build/static/js/*.js",
+		"dev:cra": "react-scripts start",
+		"exploreChunks": "npx source-map-explorer build/static/js/*.js",
 		"start": "run-s dev:*",
 		"build:cra": "react-scripts build",
 		"build": "run-s dev:install build:cra",

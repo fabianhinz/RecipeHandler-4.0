@@ -38,7 +38,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     const { selectedCategories, setSelectedCategories } = useCategorySelect(props.recipe)
     const { user } = useFirebaseAuthContext()
     const { history } = useRouterContext()
-    const { attachments, dropzoneProps } = useAttachmentDropzone(state.attachments)
+    const { attachments, dropzoneProps } = useAttachmentDropzone({
+        currentAttachments: state.attachments,
+        attachmentMaxWidth: 3840,
+        attachmentLimit: 5,
+    })
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
