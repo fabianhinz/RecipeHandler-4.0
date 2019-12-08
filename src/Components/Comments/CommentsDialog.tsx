@@ -34,12 +34,6 @@ const useStyles = makeStyles(() =>
         skeleton: {
             borderRadius: BORDER_RADIUS_HUGE,
         },
-        dialogContent: {
-            minHeight: 208,
-        },
-        dialogContentMaxHeigth: {
-            maxHeight: '50vh',
-        },
         dialogTitle: {
             cursor: 'move',
         },
@@ -148,11 +142,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 className={clsx(classes.dialogTitle, !isDialogFullscreen && 'dragghandler')}>
                 {name}
             </DialogTitle>
-            <DialogContent
-                className={clsx(
-                    classes.dialogContent,
-                    !isDialogFullscreen && classes.dialogContentMaxHeigth
-                )}>
+            <DialogContent>
                 <Grid alignItems="flex-end" direction="column" wrap="nowrap" container spacing={1}>
                     {loading
                         ? new Array(numberOfComments).fill(1).map((_skeleton, index) => (
