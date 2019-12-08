@@ -1,7 +1,7 @@
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
 import { useCallback, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { DropzoneState, useDropzone } from 'react-dropzone'
 
 import { AttachmentData, AttachmentMetadata } from '../../../../model/model'
 
@@ -12,6 +12,11 @@ export const readDocumentAsync = (document: Blob) =>
         reader.onerror = reject
         reader.readAsDataURL(document)
     })
+
+export type DropzoneProps = Record<
+    'dropzoneProps',
+    Pick<DropzoneState, 'getInputProps' | 'getRootProps'>
+>
 
 export const useAttachmentDropzone = (
     currentAttachments: Array<AttachmentData | AttachmentMetadata>
