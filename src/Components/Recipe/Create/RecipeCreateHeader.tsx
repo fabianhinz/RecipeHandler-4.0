@@ -1,5 +1,5 @@
 import { createStyles, Grid, InputBase, makeStyles, Typography } from '@material-ui/core'
-import React from 'react'
+import React, { useState } from 'react'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -14,10 +14,11 @@ const useStyles = makeStyles(theme =>
 interface Props {
     inputDisabled?: boolean
     name: string
-    onNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onNameChange: (value: string) => void
 }
 
 const RecipeCreateHeader = ({ inputDisabled, name, onNameChange }: Props) => {
+    const [value, setValue] = useState(name)
     const classes = useStyles()
 
     return (
@@ -27,9 +28,10 @@ const RecipeCreateHeader = ({ inputDisabled, name, onNameChange }: Props) => {
                     autoFocus
                     disabled={inputDisabled}
                     className={classes.textFieldName}
-                    value={name}
+                    value={value}
                     placeholder="Name"
-                    onChange={onNameChange}
+                    onChange={e => setValue(e.target.value)}
+                    onBlur={() => onNameChange(value)}
                 />
             </Grid>
             <Grid item xs={12}>

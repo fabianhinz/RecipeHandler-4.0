@@ -1,7 +1,7 @@
 import { Grid } from '@material-ui/core'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import { useSnackbar } from 'notistack'
-import React, { ChangeEvent, FC, useCallback, useEffect } from 'react'
+import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
 
 import { getRefPaths } from '../../../hooks/useAttachmentRef'
@@ -93,10 +93,8 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         await recipeCreateService.saveRecipeDocument(attachmentMetadata)
     }, [recipeCreateService, selectedCategories])
 
-    const handleTextFieldChange = (key: CreateChangeKey) => (
-        event: ChangeEvent<HTMLInputElement>
-    ) => {
-        dispatch({ type: 'textFieldChange', key, value: event.target.value })
+    const handleTextFieldChange = (key: CreateChangeKey) => (value: string) => {
+        dispatch({ type: 'textFieldChange', key, value })
     }
 
     const warnOnLocationChange = () => {

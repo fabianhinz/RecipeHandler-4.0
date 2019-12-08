@@ -1,32 +1,37 @@
 import { TextField } from '@material-ui/core'
 import BookIcon from '@material-ui/icons/BookTwoTone'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
 
 interface Props {
     description: string
-    onDescriptionChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onDescriptionChange: (value: string) => void
 }
 
-const RecipeCreateDescription = ({ description, onDescriptionChange }: Props) => (
-    <RecipeCard
-        variant="preview"
-        header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
-        content={
-            <TextField
-                label="optional"
-                value={description}
-                rows={15}
-                onChange={onDescriptionChange}
-                fullWidth
-                multiline
-                variant="outlined"
-                margin="dense"
-            />
-        }
-    />
-)
+const RecipeCreateDescription = ({ description, onDescriptionChange }: Props) => {
+    const [value, setValue] = useState(description)
+
+    return (
+        <RecipeCard
+            variant="preview"
+            header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
+            content={
+                <TextField
+                    label="optional"
+                    value={value}
+                    rows={15}
+                    onChange={e => setValue(e.target.value)}
+                    onBlur={() => onDescriptionChange(value)}
+                    fullWidth
+                    multiline
+                    variant="outlined"
+                    margin="dense"
+                />
+            }
+        />
+    )
+}
 
 export default RecipeCreateDescription

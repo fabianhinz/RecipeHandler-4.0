@@ -2,7 +2,7 @@ import { Box, createStyles, IconButton, makeStyles, TextField, Typography } from
 import AddIcon from '@material-ui/icons/AddCircle'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
@@ -20,7 +20,7 @@ interface Props {
     onDecreaseAmount: () => void
     onIncreaseAmount: () => void
     ingredients: string
-    onIngredientsChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onIngredientsChange: (value: string) => void
 }
 
 const RecipeCreateIngredients = ({
@@ -30,6 +30,7 @@ const RecipeCreateIngredients = ({
     ingredients,
     onIngredientsChange,
 }: Props) => {
+    const [value, setValue] = useState(ingredients)
     const classes = useStyles()
 
     return (
@@ -64,8 +65,9 @@ const RecipeCreateIngredients = ({
             content={
                 <TextField
                     label="optional"
-                    value={ingredients}
-                    onChange={onIngredientsChange}
+                    value={value}
+                    onChange={e => setValue(e.target.value)}
+                    onBlur={() => onIngredientsChange(value)}
                     fullWidth
                     rows={15}
                     multiline
