@@ -82,7 +82,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
     const [inputDisabled, setInputDisabled] = useState(false)
 
     const { isDialogFullscreen } = useBreakpointsContext()
-    const { editor } = useFirebaseAuthContext()
+    const { user } = useFirebaseAuthContext()
 
     const classes = useStyles()
 
@@ -113,7 +113,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
         try {
             const recipeRef = FirebaseService.firestore.collection(collection).doc(name)
             await recipeRef.collection('comments').add({
-                comment: `${editor!.username}: ${input}`,
+                comment: `${user!.username}: ${input}`,
                 likes: 0,
                 dislikes: 0,
                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
@@ -175,7 +175,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 )}
             </DialogContent>
             <DialogActions>
-                {editor && (
+                {user && (
                     <form className={classes.form} onSubmit={handleFormSubmit}>
                         <Grid container>
                             <Grid item xs={12}>

@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme =>
 )
 
 const Navigation = ({ onThemeChange, onOpenTrialsDialog, onOpenUserDialog }: Props) => {
-    const { anonymousUser } = useFirebaseAuthContext()
+    const { user } = useFirebaseAuthContext()
     const { pinnedOnDesktop } = usePinnedRecipesContext()
 
     const isMobilePadding = useMediaQuery('(max-width: 550px)')
@@ -59,7 +59,7 @@ const Navigation = ({ onThemeChange, onOpenTrialsDialog, onOpenUserDialog }: Pro
             className={clsx(
                 classes.container,
                 pinnedOnDesktop && classes.pinnedRecipes,
-                isMobilePadding && !anonymousUser && classes.mobilePadding
+                isMobilePadding && user && classes.mobilePadding
             )}>
             <Hidden mdDown>
                 <Navigate to={PATHS.home}>
@@ -73,7 +73,7 @@ const Navigation = ({ onThemeChange, onOpenTrialsDialog, onOpenUserDialog }: Pro
                 </Button>
 
                 <Button size="large" startIcon={<AccountIcon />} onClick={onOpenUserDialog}>
-                    {anonymousUser ? 'Einloggen' : 'Account'}
+                    {!user ? 'Einloggen' : 'Account'}
                 </Button>
 
                 <Button

@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 
-import { AttachmentMetadata } from '../../../model/model'
+import { AttachmentMetadata, Recipe } from '../../../model/model'
 import { isData } from '../../../model/modelUtil'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -14,7 +14,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
     const { history } = useRouterContext()
-    const { editor } = useFirebaseAuthContext()
+    const { user } = useFirebaseAuthContext()
 
     const validate = async (selectedCategories: Map<string, string>) => {
         let valid = true
@@ -126,8 +126,8 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
                     categories: state.categories,
                     relatedRecipes: state.relatedRecipes,
                     createdDate: FirebaseService.createTimestampFromDate(new Date()),
-                    editor,
-                })
+                    editor: { uid: user!.uid, username: user!.username },
+                } as Recipe<AttachmentMetadata>)
 
             if (!editedRecipe) {
                 await FirebaseService.firestore

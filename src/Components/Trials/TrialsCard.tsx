@@ -26,7 +26,7 @@ const TrialsCard = ({ trial }: Props) => {
     const [dataUrls, setDataUrls] = useState<DataUrls | null>()
     const classes = useStyles()
 
-    const { anonymousUser } = useFirebaseAuthContext()
+    const { user } = useFirebaseAuthContext()
 
     useEffect(() => {
         getResizedImages(trial.fullPath).then(setDataUrls)
@@ -56,7 +56,7 @@ const TrialsCard = ({ trial }: Props) => {
                 ) : (
                     <Skeleton height={250} width="100%" />
                 )}
-                {!anonymousUser && (
+                {user && (
                     <Box padding={1} display="flex" justifyContent="space-evenly">
                         <Comments
                             collection="trials"

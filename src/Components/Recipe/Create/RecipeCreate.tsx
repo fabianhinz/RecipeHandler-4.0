@@ -36,7 +36,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
     const recipeCreateService = useRecipeCreate(state, props.edit)
     const { selectedCategories, setSelectedCategories } = useCategorySelect(props.recipe)
-    const { firebaseUser, editor } = useFirebaseAuthContext()
+    const { user } = useFirebaseAuthContext()
     const { history } = useRouterContext()
     const { attachments, dropzoneProps } = useAttachmentDropzone(state.attachments)
 
@@ -53,8 +53,8 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     }, [selectedCategories])
 
     useEffect(() => {
-        if (!firebaseUser) history.push(PATHS.home)
-    }, [history, firebaseUser])
+        if (!user) history.push(PATHS.home)
+    }, [history, user])
 
     const handleRemoveAttachment = (name: string) => {
         dispatch({ type: 'removeAttachment', name })
@@ -120,7 +120,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
     return (
         <>
-            {state.preview && editor ? (
+            {state.preview && user ? (
                 <RecipeResult
                     variant="preview"
                     recipe={{
@@ -133,7 +133,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         amount: state.amount,
                         description: state.description,
                         relatedRecipes: state.relatedRecipes,
-                        editor,
+                        editor: { uid: user.uid, username: user.username },
                     }}
                 />
             ) : (

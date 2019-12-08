@@ -48,14 +48,14 @@ export interface UserDialogContentProps {
 const UserDialog = ({ open, onClose }: Props) => {
     const [loading, setLoading] = useState(false)
 
-    const { anonymousUser, editor } = useFirebaseAuthContext()
+    const { user } = useFirebaseAuthContext()
     const { isDialogFullscreen } = useBreakpointsContext()
 
     const classes = useStyles({ isDialogFullscreen })
 
     useEffect(() => {
         setLoading(false)
-    }, [anonymousUser])
+    }, [user])
 
     return (
         <Dialog
@@ -78,9 +78,9 @@ const UserDialog = ({ open, onClose }: Props) => {
 
             {loading && <Progress variant="cover" />}
 
-            {!anonymousUser && editor ? (
+            {user ? (
                 <DialogContentEditor
-                    editor={editor}
+                    user={user}
                     onDialogClose={onClose}
                     onDialogLoading={setLoading}
                 />

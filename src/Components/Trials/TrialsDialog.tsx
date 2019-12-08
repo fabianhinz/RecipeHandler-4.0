@@ -57,7 +57,7 @@ const TrialsDialog = ({ open, onClose }: Props) => {
     const [loading, setLoading] = useState(true)
     const classes = useStyles()
 
-    const { anonymousUser } = useFirebaseAuthContext()
+    const { user } = useFirebaseAuthContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     useEffect(() => {
@@ -162,7 +162,7 @@ const TrialsDialog = ({ open, onClose }: Props) => {
                     </IconButton>
                 </Box>
 
-                {!anonymousUser && (
+                {user && (
                     <div className={classes.fabContainer} {...getRootProps()}>
                         <Fab color="secondary">
                             <input {...getInputProps()} />

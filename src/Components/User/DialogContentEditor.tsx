@@ -10,10 +10,10 @@ import DialogContentAdmin from './DialogContentAdmin'
 import { UserDialogContentProps } from './UserDialog'
 
 interface Props extends UserDialogContentProps {
-    editor: User
+    user: User
 }
 
-const DialogContentEditor = ({ editor, onDialogLoading, onDialogClose }: Props) => {
+const DialogContentEditor = ({ user, onDialogLoading, onDialogClose }: Props) => {
     const { enqueueSnackbar } = useSnackbar()
 
     const handleLogout = () => {
@@ -24,14 +24,14 @@ const DialogContentEditor = ({ editor, onDialogLoading, onDialogClose }: Props) 
     }
     return (
         <>
-            {editor.admin ? (
+            {user.admin ? (
                 <DialogContentAdmin onDialogLoading={onDialogLoading} />
             ) : (
                 <DialogContent>
                     <Typography align="justify" color="textPrimary">
-                        Willkommen zurück {editor.username}. Sofern berechtigt können Rezepte
-                        angelegt und bearbeitet werden. Zurzeit ist lediglich die Bearbeitung
-                        eigener Rezepte freigeschalten.
+                        Willkommen zurück {user.username}. Sofern berechtigt können Rezepte angelegt
+                        und bearbeitet werden. Zurzeit ist lediglich die Bearbeitung eigener Rezepte
+                        freigeschalten.
                     </Typography>
                 </DialogContent>
             )}
