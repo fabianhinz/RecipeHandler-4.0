@@ -3,6 +3,7 @@ import React, { FC } from 'react'
 
 import { useRecipeDoc } from '../../../hooks/useRecipeDoc'
 import { RouteWithRecipeName } from '../../../model/model'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { NavigateFab } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
 import Progress from '../../Shared/Progress'
@@ -10,6 +11,7 @@ import RecipeResult from '../Result/RecipeResult'
 
 const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps })
+    const { user } = useFirebaseAuthContext()
 
     return (
         <>
@@ -19,7 +21,9 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
                 <RecipeResult variant="details" recipe={recipeDoc} />
             )}
 
-            {recipeDoc && <NavigateFab to={PATHS.recipeEdit(recipeDoc.name)} icon={<EditIcon />} />}
+            {recipeDoc && user && (user.uid === recipeDoc.editor.uid || user.admin) && (
+                <NavigateFab to={PATHS.recipeEdit(recipeDoc.name)} icon={<EditIcon />} />
+            )}
         </>
     )
 }
