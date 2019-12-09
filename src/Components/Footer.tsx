@@ -1,4 +1,4 @@
-import { createStyles, Drawer, makeStyles } from '@material-ui/core'
+import { AppBar, createStyles, makeStyles } from '@material-ui/core'
 import React, { useState } from 'react'
 
 import AccountDialog from './Account/AccountDialog'
@@ -7,8 +7,10 @@ import TrialsDialog from './Trials/TrialsDialog'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        drawerPaper: {
-            overflowY: 'unset',
+        appbar: {
+            position: 'fixed',
+            bottom: 0,
+            top: 'auto',
             height: theme.spacing(8),
         },
     })
@@ -22,15 +24,12 @@ const Footer = () => {
 
     return (
         <>
-            <Drawer
-                PaperProps={{ classes: { root: classes.drawerPaper } }}
-                variant="permanent"
-                anchor="bottom">
+            <AppBar className={classes.appbar} color="default">
                 <Navigation
                     onOpenTrialsDialog={() => setTrialsDialogOpen(true)}
                     onOpenUserDialog={() => setUserDialogOpen(true)}
                 />
-            </Drawer>
+            </AppBar>
 
             <AccountDialog open={userDialogOpen} onClose={() => setUserDialogOpen(false)} />
             <TrialsDialog open={trialsDialogOpen} onClose={() => setTrialsDialogOpen(false)} />
