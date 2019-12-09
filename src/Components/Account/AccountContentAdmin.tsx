@@ -6,7 +6,6 @@ import {
     ListItemSecondaryAction,
     ListItemText,
     Switch,
-    Typography,
 } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 
