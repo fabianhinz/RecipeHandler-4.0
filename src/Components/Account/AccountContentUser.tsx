@@ -21,7 +21,7 @@ import LightThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import { Account, AccountMultiple, CameraImage } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -53,7 +53,6 @@ interface Props extends AccountContentProps {
 }
 
 const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => {
-    const [observedUser, setObservedUser] = useState<User>()
     const { enqueueSnackbar } = useSnackbar()
     const { attachments, dropzoneProps } = useAttachmentDropzone({
         attachmentMaxWidth: 1920,
@@ -70,17 +69,6 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
         if (attachments.length > 0) userDoc().update({ profilePicture: attachments[0].dataUrl })
     }, [attachments, userDoc])
 
-    useEffect(() => {
-        onDialogLoading(true)
-        return userDoc().onSnapshot(docSnapshot => {
-            setObservedUser({
-                uid: docSnapshot.id,
-                ...(docSnapshot.data() as Omit<User, 'uid'>),
-            })
-            onDialogLoading(false)
-        })
-    }, [onDialogLoading, user.uid, userDoc])
-
     const handleLogout = () => {
         onDialogLoading(true)
         FirebaseService.auth
@@ -89,14 +77,13 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
     }
 
     const handleUserDocClick = (key: keyof Pick<User, 'muiTheme' | 'showAllRecipes'>) => () => {
-        if (!observedUser) return
         switch (key) {
             case 'muiTheme': {
-                userDoc().update({ [key]: observedUser.muiTheme === 'dark' ? 'light' : 'dark' })
+                userDoc().update({ [key]: user.muiTheme === 'dark' ? 'light' : 'dark' })
                 break
             }
             case 'showAllRecipes': {
-                userDoc().update({ [key]: !observedUser.showAllRecipes })
+                userDoc().update({ [key]: !user.showAllRecipes })
                 break
             }
         }
@@ -117,68 +104,58 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
                         </>
                     )}
 
-                    {observedUser && (
-                        <Grid item xs>
-                            <Grid container spacing={2} alignItems="center">
-                                <Grid item xs={12}>
-                                    <Typography variant="h5">{observedUser.username}</Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={4} md={12}>
-                                    <Grid container justify="center">
-                                        <CardActionArea
-                                            className={classes.actionArea}
-                                            {...dropzoneProps.getRootProps()}>
-                                            <Avatar
-                                                className={classes.avatar}
-                                                src={observedUser.profilePicture}>
-                                                <CameraImage fontSize="large" />
-                                            </Avatar>
-                                            <input {...dropzoneProps.getInputProps()} />
-                                        </CardActionArea>
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={12} sm={8} md={12}>
-                                    <List>
-                                        <ListItem
-                                            button
-                                            onClick={handleUserDocClick('showAllRecipes')}>
-                                            <ListItemIcon>
-                                                {observedUser.showAllRecipes ? (
-                                                    <AccountMultiple />
-                                                ) : (
-                                                    <Account />
-                                                )}
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary="Rezeptanzeige"
-                                                secondary={
-                                                    observedUser.showAllRecipes ? 'Alle' : 'Eigene'
-                                                }
-                                            />
-                                        </ListItem>
-
-                                        <ListItem button onClick={handleUserDocClick('muiTheme')}>
-                                            <ListItemIcon>
-                                                {observedUser.muiTheme === 'dark' ? (
-                                                    <DarkThemeIcon />
-                                                ) : (
-                                                    <LightThemeIcon />
-                                                )}
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary="Design"
-                                                secondary={
-                                                    observedUser.muiTheme === 'dark'
-                                                        ? 'Dunkel'
-                                                        : 'Hell'
-                                                }
-                                            />
-                                        </ListItem>
-                                    </List>
+                    <Grid item xs>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={12}>
+                                <Typography variant="h5">{user.username}</Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={12}>
+                                <Grid container justify="center">
+                                    <CardActionArea
+                                        className={classes.actionArea}
+                                        {...dropzoneProps.getRootProps()}>
+                                        <Avatar
+                                            className={classes.avatar}
+                                            src={user.profilePicture}>
+                                            <CameraImage fontSize="large" />
+                                        </Avatar>
+                                        <input {...dropzoneProps.getInputProps()} />
+                                    </CardActionArea>
                                 </Grid>
                             </Grid>
+                            <Grid item xs={12} sm={8} md={12}>
+                                <List>
+                                    <ListItem button onClick={handleUserDocClick('showAllRecipes')}>
+                                        <ListItemIcon>
+                                            {user.showAllRecipes ? (
+                                                <AccountMultiple />
+                                            ) : (
+                                                <Account />
+                                            )}
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary="Rezeptanzeige"
+                                            secondary={user.showAllRecipes ? 'Alle' : 'Eigene'}
+                                        />
+                                    </ListItem>
+
+                                    <ListItem button onClick={handleUserDocClick('muiTheme')}>
+                                        <ListItemIcon>
+                                            {user.muiTheme === 'dark' ? (
+                                                <DarkThemeIcon />
+                                            ) : (
+                                                <LightThemeIcon />
+                                            )}
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary="Design"
+                                            secondary={user.muiTheme === 'dark' ? 'Dunkel' : 'Hell'}
+                                        />
+                                    </ListItem>
+                                </List>
+                            </Grid>
                         </Grid>
-                    )}
+                    </Grid>
                 </Grid>
             </DialogContent>
 

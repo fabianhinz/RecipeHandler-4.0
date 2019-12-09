@@ -1,16 +1,22 @@
 import 'typeface-roboto'
 
 import React from 'react'
-import { CookiesProvider } from 'react-cookie'
 import ReactDOM from 'react-dom'
+import { BrowserRouter } from 'react-router-dom'
 
 import App from './Components/App'
+import ErrorBoundary from './Components/ErrorBoundary'
+import FirebaseAuthProvider from './Components/Provider/FirebaseAuthProvider'
 import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
-    <CookiesProvider>
-        <App />
-    </CookiesProvider>,
+    <ErrorBoundary>
+        <BrowserRouter>
+            <FirebaseAuthProvider>
+                <App />
+            </FirebaseAuthProvider>
+        </BrowserRouter>
+    </ErrorBoundary>,
     document.getElementById('root')
 )
 
