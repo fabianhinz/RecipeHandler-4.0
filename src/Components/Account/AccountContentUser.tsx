@@ -66,8 +66,15 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
     ])
 
     useEffect(() => {
-        if (attachments.length > 0) userDoc().update({ profilePicture: attachments[0].dataUrl })
-    }, [attachments, userDoc])
+        if (attachments.length > 0) {
+            const { dataUrl, size } = attachments[0]
+            if (size > 500000) {
+                enqueueSnackbar('Maximale Größe überschritten (500kb)', { variant: 'warning' })
+            } else {
+                userDoc().update({ profilePicture: dataUrl })
+            }
+        }
+    }, [attachments, enqueueSnackbar, userDoc])
 
     const handleLogout = () => {
         onDialogLoading(true)
