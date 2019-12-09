@@ -1,9 +1,9 @@
 import { createStyles, Drawer, makeStyles } from '@material-ui/core'
 import React, { useState } from 'react'
 
+import AccountDialog from './Account/AccountDialog'
 import Navigation from './Routes/Navigation'
 import TrialsDialog from './Trials/TrialsDialog'
-import UserDialog from './User/UserDialog'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -32,7 +32,7 @@ const Footer = () => {
                 />
             </Drawer>
 
-            <UserDialog open={userDialogOpen} onClose={() => setUserDialogOpen(false)} />
+            <AccountDialog open={userDialogOpen} onClose={() => setUserDialogOpen(false)} />
             <TrialsDialog open={trialsDialogOpen} onClose={() => setTrialsDialogOpen(false)} />
         </>
     )

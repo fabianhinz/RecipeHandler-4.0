@@ -16,7 +16,7 @@ import React, { useEffect, useState } from 'react'
 
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { UserDialogContentProps } from './UserDialog'
+import { AccountContentProps } from './AccountDialog'
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -29,9 +29,9 @@ const useStyles = makeStyles(() =>
     })
 )
 
-interface Props extends UserDialogContentProps {}
+interface Props extends AccountContentProps {}
 
-const DialogContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
+const AccountContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [passwordRepeat, setPasswordRepeat] = useState('')
@@ -187,4 +187,4 @@ const DialogContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
     )
 }
 
-export default DialogContentAuth
+export default AccountContentAuth

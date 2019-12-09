@@ -26,8 +26,8 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useAttachmentDropzone } from '../Recipe/Create/Attachments/useAttachmentDropzone'
-import DialogContentAdmin from './DialogContentAdmin'
-import { UserDialogContentProps } from './UserDialog'
+import AccountContentAdmin from './AccountContentAdmin'
+import { AccountContentProps } from './AccountDialog'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -48,11 +48,11 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface Props extends UserDialogContentProps {
+interface Props extends AccountContentProps {
     user: User
 }
 
-const DialogContentEditor = ({ user, onDialogLoading, onDialogClose }: Props) => {
+const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => {
     const [observedUser, setObservedUser] = useState<User>()
     const { enqueueSnackbar } = useSnackbar()
     const { attachments, dropzoneProps } = useAttachmentDropzone({
@@ -109,7 +109,7 @@ const DialogContentEditor = ({ user, onDialogLoading, onDialogClose }: Props) =>
                     {user.admin && (
                         <>
                             <Grid item xs={12}>
-                                <DialogContentAdmin onDialogLoading={onDialogLoading} />
+                                <AccountContentAdmin onDialogLoading={onDialogLoading} />
                             </Grid>
                             <Grid item xs>
                                 <Divider />
@@ -197,4 +197,4 @@ const DialogContentEditor = ({ user, onDialogLoading, onDialogClose }: Props) =>
     )
 }
 
-export default DialogContentEditor
+export default AccountContentUser

@@ -45,7 +45,7 @@ const Navigation = ({ onOpenTrialsDialog, onOpenUserDialog }: Props) => {
     const { user } = useFirebaseAuthContext()
     const { pinnedOnDesktop } = usePinnedRecipesContext()
 
-    const isMobilePadding = useMediaQuery('(max-width: 550px)')
+    const isMobilePadding = useMediaQuery('(max-width: 425px)')
 
     const classes = useStyles()
 
@@ -56,7 +56,7 @@ const Navigation = ({ onOpenTrialsDialog, onOpenUserDialog }: Props) => {
                 pinnedOnDesktop && classes.pinnedRecipes,
                 isMobilePadding && user && classes.mobilePadding
             )}>
-            <Hidden mdDown>
+            <Hidden xsDown>
                 <Navigate to={PATHS.home}>
                     <Button size="large" startIcon={<HomeIcon />}>
                         Start
@@ -72,7 +72,7 @@ const Navigation = ({ onOpenTrialsDialog, onOpenUserDialog }: Props) => {
                 </Button>
             </Hidden>
 
-            <Hidden lgUp>
+            <Hidden smUp>
                 <Navigate to={PATHS.home}>
                     <IconButton>
                         <HomeIcon />

@@ -12,13 +12,13 @@ import React, { useEffect, useState } from 'react'
 
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { UserDialogContentProps } from './UserDialog'
+import { AccountContentProps } from './AccountDialog'
 
 const editorsCollection = FirebaseService.firestore.collection('editors')
 
-type Props = Pick<UserDialogContentProps, 'onDialogLoading'>
+type Props = Pick<AccountContentProps, 'onDialogLoading'>
 
-const DialogContentAdmin = ({ onDialogLoading }: Props) => {
+const AccountContentAdmin = ({ onDialogLoading }: Props) => {
     const [users, setUsers] = useState<Array<User>>([])
     const [editors, setEditors] = useState<Set<string>>(new Set())
 
@@ -65,4 +65,4 @@ const DialogContentAdmin = ({ onDialogLoading }: Props) => {
     )
 }
 
-export default DialogContentAdmin
+export default AccountContentAdmin

@@ -7,8 +7,8 @@ import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import Progress from '../Shared/Progress'
 import { SlideUp } from '../Shared/Transitions'
-import DialogContentAuth from './DialogContentAuth'
-import DialogContentEditor from './DialogContentEditor'
+import AccountContentAuth from './AccountContentAuth'
+import AccountContentUser from './AccountContentUser'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -40,12 +40,12 @@ interface Props {
     onClose: () => void
 }
 
-export interface UserDialogContentProps {
+export interface AccountContentProps {
     onDialogClose: () => void
     onDialogLoading: (loading: boolean) => void
 }
 
-const UserDialog = ({ open, onClose }: Props) => {
+const AccountDialog = ({ open, onClose }: Props) => {
     const [loading, setLoading] = useState(false)
 
     const { user } = useFirebaseAuthContext()
@@ -75,16 +75,16 @@ const UserDialog = ({ open, onClose }: Props) => {
             {loading && <Progress variant="cover" />}
 
             {user ? (
-                <DialogContentEditor
+                <AccountContentUser
                     user={user}
                     onDialogClose={onClose}
                     onDialogLoading={setLoading}
                 />
             ) : (
-                <DialogContentAuth onDialogClose={onClose} onDialogLoading={setLoading} />
+                <AccountContentAuth onDialogClose={onClose} onDialogLoading={setLoading} />
             )}
         </Dialog>
     )
 }
 
-export default memo(UserDialog, (prev, next) => prev.open === next.open)
+export default memo(AccountDialog, (prev, next) => prev.open === next.open)
