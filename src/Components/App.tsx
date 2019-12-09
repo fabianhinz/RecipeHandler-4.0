@@ -12,6 +12,7 @@ import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import PinnedRecipesProvider from './Provider/PinnedRecipesProvider'
 import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
+import UsersProvider from './Provider/UsersProvider'
 import Container from './Shared/Container'
 
 const App: FC = () => {
@@ -43,18 +44,20 @@ const App: FC = () => {
                     horizontal: 'left',
                 }}>
                 <RouterProvider>
-                    <BreakpointsProvider>
-                        <CategoriesCollectionProvider>
-                            <SelectedAttachementProvider>
-                                <PinnedRecipesProvider>
-                                    <Container>
-                                        <Main />
-                                        <Footer />
-                                    </Container>
-                                </PinnedRecipesProvider>
-                            </SelectedAttachementProvider>
-                        </CategoriesCollectionProvider>
-                    </BreakpointsProvider>
+                    <UsersProvider>
+                        <BreakpointsProvider>
+                            <CategoriesCollectionProvider>
+                                <SelectedAttachementProvider>
+                                    <PinnedRecipesProvider>
+                                        <Container>
+                                            <Main />
+                                            <Footer />
+                                        </Container>
+                                    </PinnedRecipesProvider>
+                                </SelectedAttachementProvider>
+                            </CategoriesCollectionProvider>
+                        </BreakpointsProvider>
+                    </UsersProvider>
                 </RouterProvider>
             </SnackbarProvider>
         </ThemeProvider>

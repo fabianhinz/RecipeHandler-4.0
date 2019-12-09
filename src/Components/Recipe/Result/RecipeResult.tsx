@@ -1,4 +1,4 @@
-import { Avatar, Box, Chip, createStyles, Divider, Grid, Grow, makeStyles } from '@material-ui/core'
+import { Box, createStyles, Divider, Grid, Grow, makeStyles } from '@material-ui/core'
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
@@ -8,6 +8,7 @@ import React, { memo } from 'react'
 
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
+import AccountChip from '../../Account/AccountChip'
 import Markdown from '../../Shared/Markdown'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
@@ -124,12 +125,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
             )}
 
             <Grid item xs={12} container justify="center">
-                <Chip
-                    variant="outlined"
-                    onClick={() => console.log('tbd')}
-                    avatar={<Avatar>{recipe.editor.username.slice(0, 1)}</Avatar>}
-                    label={recipe.editor.username}
-                />
+                <AccountChip uid={recipe.editorUid} />
             </Grid>
         </Grid>
     )

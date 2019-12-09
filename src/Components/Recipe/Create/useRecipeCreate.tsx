@@ -134,7 +134,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
                     categories: state.categories,
                     relatedRecipes: state.relatedRecipes,
                     createdDate: FirebaseService.createTimestampFromDate(new Date()),
-                    editor: { uid: user!.uid, username: user!.username },
+                    editorUid: user!.uid,
                 } as Recipe<AttachmentMetadata>)
 
             if (!editedRecipe) {

@@ -26,7 +26,7 @@ export interface Recipe<T extends Attachment> extends CommentsDocument {
     ingredients: string
     amount: number
     description: string
-    editor: RecipeEditor
+    editorUid: string
     relatedRecipes: Array<string>
 }
 
@@ -73,8 +73,6 @@ export type Hits = Array<Hit>
 export type DataUrl = string
 
 export type DocumentId = string
-
-export type RecipeEditor = Pick<User, 'uid' | 'username'>
 
 export type User = {
     uid: string

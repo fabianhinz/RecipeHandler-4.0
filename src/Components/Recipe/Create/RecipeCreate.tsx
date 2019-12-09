@@ -135,7 +135,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         amount: state.amount,
                         description: state.description,
                         relatedRecipes: state.relatedRecipes,
-                        editor: { uid: user.uid, username: user.username },
+                        editorUid: user.uid,
                     }}
                 />
             ) : (

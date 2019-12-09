@@ -21,7 +21,7 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
                 <RecipeResult variant="details" recipe={recipeDoc} />
             )}
 
-            {recipeDoc && user && (user.uid === recipeDoc.editor.uid || user.admin) && (
+            {recipeDoc && user && (user.uid === recipeDoc.editorUid || user.admin) && (
                 <NavigateFab to={PATHS.recipeEdit(recipeDoc.name)} icon={<EditIcon />} />
             )}
         </>
