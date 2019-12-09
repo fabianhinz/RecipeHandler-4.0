@@ -5,11 +5,8 @@ import {
     IconButton,
     makeStyles,
     useMediaQuery,
-    useTheme,
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
-import LightThemeIcon from '@material-ui/icons/BrightnessHighRounded'
-import DarkThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 import HomeIcon from '@material-ui/icons/HomeRounded'
 import clsx from 'clsx'
 import { Lightbulb } from 'mdi-material-ui'
@@ -21,7 +18,6 @@ import { Navigate } from './Navigate'
 import { PATHS } from './Routes'
 
 interface Props {
-    onThemeChange: () => void
     onOpenTrialsDialog: () => void
     onOpenUserDialog: () => void
 }
@@ -45,13 +41,12 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const Navigation = ({ onThemeChange, onOpenTrialsDialog, onOpenUserDialog }: Props) => {
+const Navigation = ({ onOpenTrialsDialog, onOpenUserDialog }: Props) => {
     const { user } = useFirebaseAuthContext()
     const { pinnedOnDesktop } = usePinnedRecipesContext()
 
     const isMobilePadding = useMediaQuery('(max-width: 550px)')
 
-    const theme = useTheme()
     const classes = useStyles()
 
     return (
@@ -75,15 +70,6 @@ const Navigation = ({ onThemeChange, onOpenTrialsDialog, onOpenUserDialog }: Pro
                 <Button size="large" startIcon={<AccountIcon />} onClick={onOpenUserDialog}>
                     {!user ? 'Einloggen' : 'Account'}
                 </Button>
-
-                <Button
-                    size="large"
-                    startIcon={
-                        theme.palette.type === 'dark' ? <DarkThemeIcon /> : <LightThemeIcon />
-                    }
-                    onClick={onThemeChange}>
-                    Design
-                </Button>
             </Hidden>
 
             <Hidden lgUp>
@@ -97,9 +83,6 @@ const Navigation = ({ onThemeChange, onOpenTrialsDialog, onOpenUserDialog }: Pro
                 </IconButton>
                 <IconButton onClick={onOpenUserDialog}>
                     <AccountIcon />
-                </IconButton>
-                <IconButton onClick={onThemeChange}>
-                    {theme.palette.type === 'dark' ? <DarkThemeIcon /> : <LightThemeIcon />}
                 </IconButton>
             </Hidden>
         </div>

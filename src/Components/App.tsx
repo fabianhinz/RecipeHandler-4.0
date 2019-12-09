@@ -2,7 +2,6 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie'
 import { BrowserRouter } from 'react-router-dom'
 
 import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
@@ -11,7 +10,7 @@ import Footer from './Footer'
 import Main from './Main'
 import BreakpointsProvider from './Provider/BreakpointsProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
-import FirebaseAuthProvider from './Provider/FirebaseAuthProvider'
+import FirebaseAuthProvider, { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import PinnedRecipesProvider from './Provider/PinnedRecipesProvider'
 import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
@@ -32,34 +31,21 @@ const RecipesProvider: FC = ({ children }) => (
     </RouterProvider>
 )
 
-const THEME_COOKIE = { deps: ['theme-pref'], name: 'theme-pref' }
-
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
-    const [cookies, setCookie] = useCookies(THEME_COOKIE.deps)
-    // ToDo save theme settings for each user in the firestore users collection
+
+    // ToDo Provider
     const handleThemeChange = () => {
-        if (theme.palette.type === 'light') {
-            setCookie(THEME_COOKIE.name, 'dark', { maxAge: 31536000 })
-        } else {
-            setCookie(THEME_COOKIE.name, 'light', { maxAge: 31536000 })
-        }
-    }
-
-    useEffect(() => {
-        const cookie: undefined | 'dark' | 'light' = cookies[THEME_COOKIE.name]
-        if (!cookie) return
-
         const metaThemeColor = document.getElementsByName('theme-color')[0]
 
-        if (cookie === 'dark') {
+        if (theme.palette.type === 'light') {
             setTheme(responsiveDarkTheme)
             metaThemeColor.setAttribute('content', '#424242')
-        } else if (cookie === 'light') {
+        } else {
             setTheme(responsiveLightTheme)
             metaThemeColor.setAttribute('content', '#FFFFFF')
         }
-    }, [cookies])
+    }
 
     return (
         <ErrorBoundary>
@@ -76,7 +62,7 @@ const App: FC = () => {
                         <RecipesProvider>
                             <Container>
                                 <Main />
-                                <Footer onThemeChange={handleThemeChange} />
+                                <Footer />
                             </Container>
                         </RecipesProvider>
                     </SnackbarProvider>

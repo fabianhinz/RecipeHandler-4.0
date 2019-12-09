@@ -5,10 +5,6 @@ import Navigation from './Routes/Navigation'
 import TrialsDialog from './Trials/TrialsDialog'
 import UserDialog from './User/UserDialog'
 
-interface Props {
-    onThemeChange: () => void
-}
-
 const useStyles = makeStyles(theme =>
     createStyles({
         drawerPaper: {
@@ -18,7 +14,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const Footer = ({ onThemeChange }: Props) => {
+const Footer = () => {
     const [userDialogOpen, setUserDialogOpen] = useState(false)
     const [trialsDialogOpen, setTrialsDialogOpen] = useState(false)
 
@@ -31,7 +27,6 @@ const Footer = ({ onThemeChange }: Props) => {
                 variant="permanent"
                 anchor="bottom">
                 <Navigation
-                    onThemeChange={onThemeChange}
                     onOpenTrialsDialog={() => setTrialsDialogOpen(true)}
                     onOpenUserDialog={() => setUserDialogOpen(true)}
                 />

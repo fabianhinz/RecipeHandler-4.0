@@ -3,7 +3,6 @@ import {
     Box,
     Button,
     CardActionArea,
-    Checkbox,
     createStyles,
     DialogActions,
     DialogContent,
@@ -17,8 +16,10 @@ import {
     Typography,
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
+import DarkThemeIcon from '@material-ui/icons/BrightnessHighRounded'
+import LightThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
-import { CameraImage } from 'mdi-material-ui'
+import { Account, AccountMultiple, CameraImage } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -70,19 +71,35 @@ const DialogContentEditor = ({ user, onDialogLoading, onDialogClose }: Props) =>
     }, [attachments, userDoc])
 
     useEffect(() => {
-        return userDoc().onSnapshot(docSnapshot =>
+        onDialogLoading(true)
+        return userDoc().onSnapshot(docSnapshot => {
             setObservedUser({
                 uid: docSnapshot.id,
                 ...(docSnapshot.data() as Omit<User, 'uid'>),
             })
-        )
-    }, [user.uid, userDoc])
+            onDialogLoading(false)
+        })
+    }, [onDialogLoading, user.uid, userDoc])
 
     const handleLogout = () => {
         onDialogLoading(true)
         FirebaseService.auth
             .signOut()
             .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
+    }
+
+    const handleUserDocClick = (key: keyof Pick<User, 'muiTheme' | 'showAllRecipes'>) => () => {
+        if (!observedUser) return
+        switch (key) {
+            case 'muiTheme': {
+                userDoc().update({ [key]: observedUser.muiTheme === 'dark' ? 'light' : 'dark' })
+                break
+            }
+            case 'showAllRecipes': {
+                userDoc().update({ [key]: !observedUser.showAllRecipes })
+                break
+            }
+        }
     }
 
     return (
@@ -100,47 +117,68 @@ const DialogContentEditor = ({ user, onDialogLoading, onDialogClose }: Props) =>
                         </>
                     )}
 
-                    <Grid item xs>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid item xs={12}>
-                                <Typography variant="h5">{user.username}</Typography>
-                            </Grid>
-                            <Grid item xs={12} sm={4} md={12}>
-                                <Grid container justify="center">
-                                    <CardActionArea
-                                        className={classes.actionArea}
-                                        {...dropzoneProps.getRootProps()}>
-                                        <Avatar
-                                            className={classes.avatar}
-                                            src={observedUser && observedUser.profilePicture}>
-                                            <CameraImage fontSize="large" />
-                                        </Avatar>
-                                        <input {...dropzoneProps.getInputProps()} />
-                                    </CardActionArea>
+                    {observedUser && (
+                        <Grid item xs>
+                            <Grid container spacing={2} alignItems="center">
+                                <Grid item xs={12}>
+                                    <Typography variant="h5">{observedUser.username}</Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={4} md={12}>
+                                    <Grid container justify="center">
+                                        <CardActionArea
+                                            className={classes.actionArea}
+                                            {...dropzoneProps.getRootProps()}>
+                                            <Avatar
+                                                className={classes.avatar}
+                                                src={observedUser.profilePicture}>
+                                                <CameraImage fontSize="large" />
+                                            </Avatar>
+                                            <input {...dropzoneProps.getInputProps()} />
+                                        </CardActionArea>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12} sm={8} md={12}>
+                                    <List>
+                                        <ListItem
+                                            button
+                                            onClick={handleUserDocClick('showAllRecipes')}>
+                                            <ListItemIcon>
+                                                {observedUser.showAllRecipes ? (
+                                                    <AccountMultiple />
+                                                ) : (
+                                                    <Account />
+                                                )}
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary="Rezeptanzeige"
+                                                secondary={
+                                                    observedUser.showAllRecipes ? 'Alle' : 'Eigene'
+                                                }
+                                            />
+                                        </ListItem>
+
+                                        <ListItem button onClick={handleUserDocClick('muiTheme')}>
+                                            <ListItemIcon>
+                                                {observedUser.muiTheme === 'dark' ? (
+                                                    <DarkThemeIcon />
+                                                ) : (
+                                                    <LightThemeIcon />
+                                                )}
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary="Design"
+                                                secondary={
+                                                    observedUser.muiTheme === 'dark'
+                                                        ? 'Dunkel'
+                                                        : 'Hell'
+                                                }
+                                            />
+                                        </ListItem>
+                                    </List>
                                 </Grid>
                             </Grid>
-                            <Grid item xs={12} sm={8} md={12}>
-                                <List>
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <Checkbox />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary="Rezeptanzeige"
-                                            secondary="Alle anzeigen"
-                                        />
-                                    </ListItem>
-
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <Checkbox />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Design" secondary="Dunkel" />
-                                    </ListItem>
-                                </List>
-                            </Grid>
                         </Grid>
-                    </Grid>
+                    )}
                 </Grid>
             </DialogContent>
 
