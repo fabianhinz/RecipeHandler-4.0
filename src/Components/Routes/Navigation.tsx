@@ -1,11 +1,4 @@
-import {
-    Button,
-    createStyles,
-    Hidden,
-    IconButton,
-    makeStyles,
-    useMediaQuery,
-} from '@material-ui/core'
+import { Button, createStyles, Hidden, IconButton, makeStyles } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import HomeIcon from '@material-ui/icons/HomeRounded'
 import clsx from 'clsx'
@@ -31,9 +24,10 @@ const useStyles = makeStyles(theme =>
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-evenly',
-        },
-        mobilePadding: {
-            paddingRight: theme.spacing(5),
+            [theme.breakpoints.down('sm')]: {
+                paddingLeft: theme.spacing(4),
+                paddingRight: theme.spacing(4),
+            },
         },
         pinnedRecipes: {
             marginLeft: PINNED_WIDTH,
@@ -45,17 +39,10 @@ const Navigation = ({ onOpenTrialsDialog, onOpenUserDialog }: Props) => {
     const { user } = useFirebaseAuthContext()
     const { pinnedOnDesktop } = usePinnedRecipesContext()
 
-    const isMobilePadding = useMediaQuery('(max-width: 425px)')
-
     const classes = useStyles()
 
     return (
-        <div
-            className={clsx(
-                classes.container,
-                pinnedOnDesktop && classes.pinnedRecipes,
-                isMobilePadding && user && classes.mobilePadding
-            )}>
+        <div className={clsx(classes.container, pinnedOnDesktop && classes.pinnedRecipes)}>
             <Hidden xsDown>
                 <Navigate to={PATHS.home}>
                     <Button size="large" startIcon={<HomeIcon />}>
