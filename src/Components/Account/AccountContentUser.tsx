@@ -6,14 +6,14 @@ import {
     createStyles,
     DialogActions,
     DialogContent,
-    Divider,
     Grid,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
     makeStyles,
-    Typography,
+    Tab,
+    Tabs,
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import DarkThemeIcon from '@material-ui/icons/BrightnessHighRounded'
@@ -22,6 +22,7 @@ import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import { Account, AccountMultiple, CameraImage } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useCallback, useEffect } from 'react'
+import SwipeableViews from 'react-swipeable-views'
 
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -45,6 +46,9 @@ const useStyles = makeStyles(theme =>
             borderRadius: '50%',
             width: 'fit-content',
         },
+        swipeableViews: {
+            marginTop: theme.spacing(3),
+        },
     })
 )
 
@@ -58,6 +62,15 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
         attachmentMaxWidth: 1920,
         attachmentLimit: 1,
     })
+    const [value, setValue] = React.useState(0)
+
+    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setValue(newValue)
+    }
+
+    const handleChangeIndex = (index: number) => {
+        setValue(index)
+    }
 
     const classes = useStyles()
 
@@ -99,23 +112,23 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
     return (
         <>
             <DialogContent>
-                <Grid container spacing={2} direction="column" alignContent="stretch">
-                    {user.admin && (
-                        <>
-                            <Grid item xs={12}>
-                                <AccountContentAdmin onDialogLoading={onDialogLoading} />
-                            </Grid>
-                            <Grid item xs>
-                                <Divider />
-                            </Grid>
-                        </>
-                    )}
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    variant="fullWidth">
+                    <Tab label={user.username} />
+                    {user.admin && <Tab label="Editoren" />}
+                </Tabs>
 
-                    <Grid item xs>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid item xs={12}>
-                                <Typography variant="h5">{user.username}</Typography>
-                            </Grid>
+                <SwipeableViews
+                    className={classes.swipeableViews}
+                    disabled
+                    index={value}
+                    onChangeIndex={handleChangeIndex}>
+                    <Box padding={0.5}>
+                        <Grid container spacing={1} alignItems="center">
                             <Grid item xs={12} sm={4} md={12}>
                                 <Grid container justify="center">
                                     <CardActionArea
@@ -162,8 +175,9 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
                                 </List>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </Grid>
+                    </Box>
+                    {user.admin ? <AccountContentAdmin onDialogLoading={onDialogLoading} /> : <></>}
+                </SwipeableViews>
             </DialogContent>
 
             <DialogActions>

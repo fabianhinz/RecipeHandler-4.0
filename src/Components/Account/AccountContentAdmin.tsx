@@ -42,26 +42,23 @@ const AccountContentAdmin = ({ onDialogLoading }: Props) => {
     }
 
     return (
-        <>
-            <Typography variant="h5">Editoren</Typography>
-            <List>
-                {users.map(({ uid, username }) => (
-                    <ListItem key={uid}>
-                        <ListItemAvatar>
-                            <Avatar>{username.slice(0, 1)}</Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={username} secondary="tbd" />
-                        <ListItemSecondaryAction>
-                            <Switch
-                                checked={editors.has(uid)}
-                                onChange={handleSwitchChange(uid)}
-                                edge="end"
-                            />
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                ))}
-            </List>
-        </>
+        <List>
+            {users.map(({ uid, username }) => (
+                <ListItem key={uid}>
+                    <ListItemAvatar>
+                        <Avatar>{username.slice(0, 1)}</Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={username} secondary="tbd" />
+                    <ListItemSecondaryAction>
+                        <Switch
+                            checked={editors.has(uid)}
+                            onChange={handleSwitchChange(uid)}
+                            edge="end"
+                        />
+                    </ListItemSecondaryAction>
+                </ListItem>
+            ))}
+        </List>
     )
 }
 
