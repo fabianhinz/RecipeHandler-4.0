@@ -24,6 +24,9 @@ const useStyles = makeStyles(() =>
             maxHeight: '100%',
             overflowY: 'auto',
         },
+        paper: {
+            paddingTop: 'env(safe-area-inset-top)',
+        },
     })
 )
 
@@ -66,7 +69,11 @@ const Search = () => {
                 </Fab>
             </Box>
 
-            <Drawer open={searchDrawer} onClose={handleSearchDrawerChange} anchor="top">
+            <Drawer
+                open={searchDrawer}
+                PaperProps={{ className: classes.paper }}
+                onClose={handleSearchDrawerChange}
+                anchor="top">
                 <Box padding={2}>
                     <SearchInput
                         searchValue={searchValue}

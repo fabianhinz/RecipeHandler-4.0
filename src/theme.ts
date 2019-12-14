@@ -21,6 +21,10 @@ const sharedTheme: Partial<ThemeOptions> = {
         MuiPaper: {
             rounded: {
                 borderRadius: BORDER_RADIUS,
+                margin:
+                    /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
+                        ? 1
+                        : undefined,
             },
         },
         MuiCard: {
@@ -53,6 +57,16 @@ const sharedTheme: Partial<ThemeOptions> = {
         MuiCardHeader: {
             action: {
                 alignSelf: 'center',
+            },
+        },
+        MuiDialogTitle: {
+            root: {
+                paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
+            },
+        },
+        MuiDialogActions: {
+            root: {
+                paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
             },
         },
     },

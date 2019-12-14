@@ -15,8 +15,13 @@ import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
 import Container from './Shared/Container'
 
+const preferedColorSchemeDark =
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+
 const App: FC = () => {
-    const [theme, setTheme] = useState(responsiveLightTheme)
+    const [theme, setTheme] = useState(
+        preferedColorSchemeDark ? responsiveDarkTheme : responsiveLightTheme
+    )
     const { user } = useFirebaseAuthContext()
 
     useEffect(() => {

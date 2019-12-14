@@ -1,39 +1,12 @@
-import { Avatar, createStyles, Dialog, makeStyles } from '@material-ui/core'
-import clsx from 'clsx'
+import { Dialog, DialogTitle } from '@material-ui/core'
 import React, { memo, useState } from 'react'
 
-import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import Progress from '../Shared/Progress'
 import { SlideUp } from '../Shared/Transitions'
 import AccountContentAuth from './AccountContentAuth'
 import AccountContentUser from './AccountContentUser'
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        firebaseAvatar: {
-            backgroundColor: '#2C384A',
-            padding: theme.spacing(1),
-            width: theme.spacing(8),
-            height: theme.spacing(8),
-            right: 0,
-            left: 0,
-            margin: '0 auto',
-            boxShadow: theme.shadows[8],
-            zIndex: 3,
-        },
-        absoluteAvatar: {
-            position: 'absolute',
-            top: theme.spacing(-4),
-        },
-        dialogPaper: {
-            paddingTop: (props: { isDialogFullscreen: boolean }) =>
-                props.isDialogFullscreen ? theme.spacing(2) : theme.spacing(4),
-            overflowY: 'unset',
-        },
-    })
-)
 
 interface Props {
     open: boolean
@@ -51,28 +24,17 @@ const AccountDialog = ({ open, onClose }: Props) => {
     const { user } = useFirebaseAuthContext()
     const { isDialogFullscreen } = useBreakpointsContext()
 
-    const classes = useStyles({ isDialogFullscreen })
-
     return (
         <Dialog
             TransitionComponent={SlideUp}
-            PaperProps={{
-                className: classes.dialogPaper,
-            }}
             fullScreen={isDialogFullscreen}
             fullWidth
             maxWidth="sm"
             open={open}
             onClose={onClose}>
-            <Avatar
-                className={clsx(
-                    classes.firebaseAvatar,
-                    !isDialogFullscreen && classes.absoluteAvatar
-                )}>
-                <FirebaseIcon height="100%" />
-            </Avatar>
-
             {loading && <Progress variant="cover" />}
+
+            <DialogTitle>Account</DialogTitle>
 
             {user ? (
                 <AccountContentUser

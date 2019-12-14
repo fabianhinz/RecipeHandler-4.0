@@ -57,7 +57,11 @@ const useStyles = makeStyles(theme =>
             left: 0,
             zIndex: theme.zIndex.modal - 1,
             boxShadow: theme.shadows[8],
+            paddingTop: 'env(safe-area-inset-top)',
             borderRadius: `0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px 0`,
+            '@media screen and (orientation: landscape)': {
+                paddingLeft: 'env(safe-area-inset-bottom)',
+            },
         },
         pinnedWidth: {
             marginLeft: PINNED_WIDTH,
@@ -65,7 +69,7 @@ const useStyles = makeStyles(theme =>
         drawerLike: {
             zIndex: theme.zIndex.modal,
             position: 'fixed',
-            top: theme.spacing(3),
+            top: `calc(env(safe-area-inset-top) + ${theme.spacing(3)})`,
             left: theme.spacing(2),
         },
     })

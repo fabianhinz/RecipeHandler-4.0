@@ -1,18 +1,41 @@
+import { Avatar, CircularProgress, createStyles, makeStyles } from '@material-ui/core'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
+import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import Progress from '../Shared/Progress'
 
 const Context = React.createContext<{ user: User | null }>({ user: null })
 
 export const useFirebaseAuthContext = () => useContext(Context)
 
-let userDocUnsubscribe: any = undefined
+const useStyles = makeStyles(theme =>
+    createStyles({
+        avatar: {
+            position: 'relative',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: '#2C384A',
+            padding: theme.spacing(4),
+            width: theme.spacing(8),
+            height: theme.spacing(8),
+            boxShadow: theme.shadows[8],
+        },
+        progress: {
+            position: 'absolute',
+            color: '#ffcd34',
+        },
+    })
+)
 
+let userDocUnsubscribe: any = undefined
+// ToDo implement a nice loading auth animation
 const FirebaseAuthProvider: FC = ({ children }) => {
     const [authReady, setAuthReady] = useState(false)
     const [user, setUser] = useState<User | null>(null)
+
+    const classes = useStyles()
 
     const handleAuthStateChange = useCallback((user: firebase.User | null) => {
         if (user) {
@@ -44,7 +67,14 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
     return (
         <Context.Provider value={{ user }}>
-            {authReady ? children : <Progress variant="fixed" />}
+            {authReady ? (
+                children
+            ) : (
+                <Avatar className={classes.avatar}>
+                    <FirebaseIcon height="100%" />
+                    <CircularProgress size={130} className={classes.progress} />
+                </Avatar>
+            )}
         </Context.Provider>
     )
 }

@@ -18,7 +18,6 @@ interface Props {
 const useStyles = makeStyles(theme =>
     createStyles({
         container: {
-            position: 'relative',
             flexGrow: 1,
             display: 'flex',
             flexDirection: 'row',

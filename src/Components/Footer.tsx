@@ -9,9 +9,19 @@ const useStyles = makeStyles(theme =>
     createStyles({
         appbar: {
             position: 'fixed',
-            bottom: 0,
             top: 'auto',
+            bottom: 'env(safe-area-inset-bottom)',
             height: theme.spacing(8),
+        },
+        safeAreaIos: {
+            zIndex: theme.zIndex.appBar,
+            position: 'fixed',
+            top: 'auto',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 'env(safe-area-inset-bottom)',
+            background: theme.palette.type === 'dark' ? '#212121' : '#fff',
         },
     })
 )
@@ -30,6 +40,7 @@ const Footer = () => {
                     onOpenUserDialog={() => setUserDialogOpen(true)}
                 />
             </AppBar>
+            <div className={classes.safeAreaIos} />
 
             <AccountDialog open={userDialogOpen} onClose={() => setUserDialogOpen(false)} />
             <TrialsDialog open={trialsDialogOpen} onClose={() => setTrialsDialogOpen(false)} />
