@@ -11,11 +11,14 @@ export const useFirebaseAuthContext = () => useContext(Context)
 
 const useStyles = makeStyles(theme =>
     createStyles({
+        root: {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            width: '100vw',
+        },
         avatar: {
-            position: 'relative',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
             backgroundColor: '#2C384A',
             padding: theme.spacing(4),
             width: theme.spacing(8),
@@ -70,10 +73,12 @@ const FirebaseAuthProvider: FC = ({ children }) => {
             {authReady ? (
                 children
             ) : (
-                <Avatar className={classes.avatar}>
-                    <FirebaseIcon height="100%" />
-                    <CircularProgress size={130} className={classes.progress} />
-                </Avatar>
+                <div className={classes.root}>
+                    <Avatar className={classes.avatar}>
+                        <FirebaseIcon height="100%" />
+                        <CircularProgress size={130} className={classes.progress} />
+                    </Avatar>
+                </div>
             )}
         </Context.Provider>
     )
