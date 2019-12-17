@@ -1,16 +1,12 @@
 {
     "editor.tabSize": 4,
     "editor.detectIndentation": false,
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        { "language": "typescript", "autoFix": true },
-        { "language": "typescriptreact", "autoFix": true }
-    ],
-    "eslint.autoFixOnSave": true,
     "eslint.options": {
         "rules": {
             "prettier/prettier": "warn"
         }
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
     }
 }

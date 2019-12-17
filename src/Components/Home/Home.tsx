@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import { DocumentId, RecipeDocument } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import RecentlyAdded from '../RecentlyAdded/RecentlyAdded'
 import { NavigateFab } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
@@ -19,6 +20,7 @@ const Home = () => {
     const [loading, setLoading] = useState(true)
 
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
+    const { user } = useFirebaseAuthContext()
 
     const handleCategoryChange = (type: string, value: string) => {
         setLastRecipeName('')
@@ -75,7 +77,7 @@ const Home = () => {
 
     return (
         <>
-            <RecentlyAdded />
+            {user && user.showRecentlyAdded && <RecentlyAdded />}
             <HomeCategory
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}

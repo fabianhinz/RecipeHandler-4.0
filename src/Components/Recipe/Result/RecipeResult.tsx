@@ -125,7 +125,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
             )}
 
             <Grid item xs={12} container justify="center">
-                <AccountChip uid={recipe.editorUid} />
+                <AccountChip variant="readonly" uid={recipe.editorUid} />
             </Grid>
         </Grid>
     )

@@ -102,6 +102,7 @@ const AccountContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
                                 admin: false,
                                 muiTheme: theme.palette.type,
                                 showAllRecipes: true,
+                                showRecentlyAdded: true,
                             } as Omit<User, 'uid'>)
                     })
                     .catch(error => handleAuthError(error))
