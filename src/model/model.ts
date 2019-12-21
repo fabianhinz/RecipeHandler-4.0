@@ -78,7 +78,7 @@ export type User = {
     uid: string
     username: string
     muiTheme: PaletteType
-    showAllRecipes: boolean
+    selectedUsers: string[]
     showRecentlyAdded: boolean
     admin?: boolean
     profilePicture?: string

@@ -2,21 +2,19 @@ import React, { FC, useContext, useEffect, useState } from 'react'
 
 import { DocumentId, User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from './FirebaseAuthProvider'
 
 const Context = React.createContext<{
     getByUid: (uid: string) => User | undefined
-    otherUserIds: DocumentId[]
+    userIds: DocumentId[]
 }>({
     getByUid: () => undefined,
-    otherUserIds: [],
+    userIds: [],
 })
 
 export const useUsersContext = () => useContext(Context)
 
 const UsersProvider: FC = ({ children }) => {
     const [users, setUsers] = useState<Map<DocumentId, User>>(new Map())
-    const { user } = useFirebaseAuthContext()
 
     useEffect(() => {
         return FirebaseService.firestore
@@ -30,10 +28,7 @@ const UsersProvider: FC = ({ children }) => {
         <Context.Provider
             value={{
                 getByUid: uid => users.get(uid),
-                otherUserIds: [...users.keys()].filter(uid => {
-                    if (user) return uid !== user.uid
-                    else return uid
-                }),
+                userIds: [...users.keys()],
             }}>
             {children}
         </Context.Provider>

@@ -1,6 +1,5 @@
-import { Avatar, Chip } from '@material-ui/core'
+import { Avatar, Chip, createStyles, makeStyles } from '@material-ui/core'
 import { ChipProps } from '@material-ui/core/Chip'
-import FilterIcon from '@material-ui/icons/FilterListRounded'
 import React from 'react'
 
 import { User } from '../../model/model'
@@ -10,17 +9,33 @@ interface Props {
     uid: string
     variant: 'readonly' | 'filter'
     onFilterChange?: (uid: string) => void
+    selected?: boolean
 }
 
-const AccountChip = ({ uid, variant, onFilterChange }: Props) => {
+const useStyles = makeStyles(theme =>
+    createStyles({
+        selectedChip: {
+            color: theme.palette.getContrastText(theme.palette.secondary.main),
+            backgroundColor: theme.palette.secondary.main,
+            '&:hover, &:focus': {
+                backgroundColor: theme.palette.secondary.dark,
+            },
+        },
+    })
+)
+
+const AccountChip = ({ uid, variant, onFilterChange, selected }: Props) => {
     const { getByUid } = useUsersContext()
     const user: User | undefined = getByUid(uid)
+
+    const classes = useStyles()
+
     const variantProps: ChipProps =
         variant === 'filter'
             ? {
+                  onClick: () => onFilterChange && onFilterChange(uid),
                   variant: 'default',
-                  deleteIcon: <FilterIcon />,
-                  onDelete: () => onFilterChange && onFilterChange(uid),
+                  className: selected ? classes.selectedChip : undefined,
               }
             : { variant: 'outlined' }
 

@@ -34,6 +34,9 @@ const Home = () => {
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
+        if (user && user.selectedUsers.length > 0)
+            query = query.where('editorUid', 'in', user.selectedUsers)
+
         if (selectedCategories.size === 0) {
             setPagination(true)
 
@@ -47,6 +50,7 @@ const Home = () => {
                         modified: new Map(),
                         removed: new Map(),
                     }
+
                     querySnapshot
                         .docChanges()
                         .forEach(({ type, doc }) =>
@@ -73,7 +77,7 @@ const Home = () => {
                 error => console.error(error)
             )
         }
-    }, [lastRecipeName, selectedCategories, selectedCategories.size])
+    }, [lastRecipeName, selectedCategories, selectedCategories.size, user])
 
     return (
         <>
