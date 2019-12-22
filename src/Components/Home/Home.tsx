@@ -39,7 +39,8 @@ const Home = () => {
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
-        if (user) query = query.where('editorUid', 'in', user.selectedUsers)
+        if (user && user.selectedUsers.length > 0)
+            query = query.where('editorUid', 'in', user.selectedUsers)
 
         if (selectedCategories.size === 0) {
             setPagination(true)
