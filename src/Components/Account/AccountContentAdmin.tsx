@@ -1,10 +1,12 @@
 import {
     Avatar,
+    createStyles,
     List,
     ListItem,
     ListItemAvatar,
     ListItemSecondaryAction,
     ListItemText,
+    makeStyles,
     Switch,
 } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
@@ -58,14 +60,31 @@ interface UserListItemProps {
     onEditorChange: (uid: string) => () => void
 }
 
+const useStyles = makeStyles(theme =>
+    createStyles({
+        itemAvatar: {
+            minWidth: 66,
+        },
+        avatar: {
+            width: 50,
+            height: 50,
+            margin: '8px 0px',
+        },
+    })
+)
+
 const UserListItem = ({ uid, onEditorChange, editor }: UserListItemProps) => {
     const { getByUid } = useUsersContext()
     const { username, profilePicture, createdDate } = getByUid(uid) as User
 
+    const classes = useStyles()
+
     return (
         <ListItem button onClick={onEditorChange(uid)}>
-            <ListItemAvatar>
-                <Avatar src={profilePicture}>{username.slice(0, 1)}</Avatar>
+            <ListItemAvatar className={classes.itemAvatar}>
+                <Avatar className={classes.avatar} src={profilePicture}>
+                    {username.slice(0, 1)}
+                </Avatar>
             </ListItemAvatar>
             <ListItemText
                 primary={username}
