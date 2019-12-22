@@ -1,7 +1,7 @@
-import { Box, Card, CardContent, Fab, Grid, Grow } from '@material-ui/core'
-import ExpandIcon from '@material-ui/icons/ExpandMoreTwoTone'
+import { Box, Card, CardContent, Grid, Grow } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
 
 import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { AttachmentMetadata, Recipe } from '../../model/model'
@@ -11,14 +11,16 @@ interface HomeRecipeProps {
     recipes: Array<Recipe<AttachmentMetadata>>
     skeletons: boolean
     expandDisabled: boolean
-    onExpandClick: (lastRecipeName: string) => void
+    onLastInView: (lastInView: string) => void
 }
 
 export const HomeRecipe = (props: HomeRecipeProps) => {
-    const handleExpandClick = () => {
+    const [ref, inView] = useInView({ triggerOnce: true })
+
+    useEffect(() => {
         if (props.recipes.length === 0) return
-        props.onExpandClick(props.recipes[props.recipes.length - 1].name)
-    }
+        if (inView) props.onLastInView(props.recipes[props.recipes.length - 1].name)
+    }, [inView, props])
 
     return (
         <Box marginBottom={2}>
@@ -26,7 +28,7 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
                 <CardContent>
                     <Grid container spacing={2}>
                         {props.recipes.map((recipe, index) => (
-                            <Grid xs={12} item key={recipe.name}>
+                            <Grid innerRef={ref} xs={12} item key={recipe.name}>
                                 <RecipeResult
                                     variant="summary"
                                     recipe={recipe}
@@ -63,16 +65,6 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
                     </Grid>
                 </CardContent>
             </Card>
-
-            <Box marginTop={2} display="flex" justifyContent="space-evenly">
-                <Fab
-                    disabled={props.expandDisabled}
-                    size="small"
-                    color="primary"
-                    onClick={handleExpandClick}>
-                    <ExpandIcon />
-                </Fab>
-            </Box>
         </Box>
     )
 }

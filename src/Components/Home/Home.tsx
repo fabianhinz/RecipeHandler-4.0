@@ -27,6 +27,10 @@ const Home = () => {
         setSelectedCategories(type, value)
     }
 
+    const handleLastInViewChange = (lastInView: string) => {
+        if (lastInView !== lastRecipeName) setLastRecipeName(lastInView)
+    }
+
     useEffect(() => {
         setPagedRecipes(new Map())
         setLastRecipeName('')
@@ -87,6 +91,7 @@ const Home = () => {
     return (
         <>
             {user && user.showRecentlyAdded && <RecentlyAdded />}
+
             <HomeCategory
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}
@@ -94,7 +99,7 @@ const Home = () => {
             <HomeRecipe
                 skeletons={loading}
                 recipes={[...pagedRecipes.values()]}
-                onExpandClick={setLastRecipeName}
+                onLastInView={handleLastInViewChange}
                 expandDisabled={!pagination}
             />
 
