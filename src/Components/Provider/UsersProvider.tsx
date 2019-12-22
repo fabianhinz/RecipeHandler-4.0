@@ -19,6 +19,7 @@ const UsersProvider: FC = ({ children }) => {
     useEffect(() => {
         return FirebaseService.firestore
             .collection('users')
+            .orderBy('username', 'asc')
             .onSnapshot(querySnapshot =>
                 setUsers(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as User])))
             )

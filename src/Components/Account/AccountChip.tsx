@@ -12,17 +12,20 @@ interface Props {
     selected?: boolean
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
+const useStyles = makeStyles(theme => {
+    const dark = theme.palette.type === 'dark'
+    return createStyles({
         selectedChip: {
             color: theme.palette.getContrastText(theme.palette.secondary.main),
             backgroundColor: theme.palette.secondary.main,
             '&:hover, &:focus': {
-                backgroundColor: theme.palette.secondary.dark,
+                backgroundColor: dark
+                    ? theme.palette.secondary.light
+                    : theme.palette.secondary.dark,
             },
         },
     })
-)
+})
 
 const AccountChip = ({ uid, variant, onFilterChange, selected }: Props) => {
     const { getByUid } = useUsersContext()

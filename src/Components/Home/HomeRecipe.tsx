@@ -46,7 +46,7 @@ export const HomeRecipe = (props: HomeRecipeProps) => {
                                         justify="space-between"
                                         alignItems="center">
                                         <Grid xs={12} item>
-                                            <Skeleton width="100%" height={120} variant="rect" />
+                                            <Skeleton width="100%" height={140} variant="rect" />
                                         </Grid>
                                     </Grid>
                                 </Grid>

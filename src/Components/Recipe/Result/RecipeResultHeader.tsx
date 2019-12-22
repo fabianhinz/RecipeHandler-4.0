@@ -1,8 +1,9 @@
-import { Grid, Typography } from '@material-ui/core'
+import { Box, Grid, Typography } from '@material-ui/core'
 import React from 'react'
 
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
+import AccountChip from '../../Account/AccountChip'
 import { CategoryResult } from '../../Category/CategoryResult'
 import { Navigate } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
@@ -37,7 +38,10 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => (
             </Grid>
         )}
         <Grid item xs={12}>
-            <CategoryResult categories={recipe.categories} />
+            <Box display="flex" justifyContent="space-between">
+                <CategoryResult categories={recipe.categories} />
+                <AccountChip variant="readonly" uid={recipe.editorUid} />
+            </Box>
         </Grid>
     </Grid>
 )

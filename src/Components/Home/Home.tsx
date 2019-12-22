@@ -28,14 +28,18 @@ const Home = () => {
     }
 
     useEffect(() => {
+        setPagedRecipes(new Map())
+        setLastRecipeName('')
+    }, [user])
+
+    useEffect(() => {
         setLoading(true)
         // ? constructing the query with both where and orderBy clauses requires multiple indexes
         let query:
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
-        if (user && user.selectedUsers.length > 0)
-            query = query.where('editorUid', 'in', user.selectedUsers)
+        if (user) query = query.where('editorUid', 'in', user.selectedUsers)
 
         if (selectedCategories.size === 0) {
             setPagination(true)
@@ -77,7 +81,7 @@ const Home = () => {
                 error => console.error(error)
             )
         }
-    }, [lastRecipeName, selectedCategories, selectedCategories.size, user])
+    }, [lastRecipeName, selectedCategories, user])
 
     return (
         <>

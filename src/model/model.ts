@@ -82,4 +82,5 @@ export type User = {
     showRecentlyAdded: boolean
     admin?: boolean
     profilePicture?: string
+    createdDate: firebase.firestore.Timestamp
 }
