@@ -9,22 +9,11 @@ admin.initializeApp({
 })
 
 const editorsCollection = admin.firestore().collection('editors')
-// const recipesCollection = admin.firestore().collection('recipes')
-// const storage = admin.storage()
+const auth = admin.auth()
 
-interface AttachementData {
-    name: string
-    size: number
-    dataUrl: string
-}
-
-interface Data {
-    attachments: AttachementData[]
-}
-
-export const uploadAttachments = functions
+export const getCustomToken = functions
     .region('europe-west1')
-    .https.onCall(async (data: Data, context) => {
+    .https.onCall(async (_data, context) => {
         if (!context.auth) {
             throw new functions.https.HttpsError('unauthenticated', 'nicht authentifiziert')
         }
@@ -34,5 +23,13 @@ export const uploadAttachments = functions
             throw new functions.https.HttpsError('permission-denied', 'nicht autorisiert')
         }
 
-        return { attachments: data.attachments }
+        try {
+            const customToken = await auth.createCustomToken(editorSnapshot.id, { isEditor: true })
+            return customToken
+        } catch (e) {
+            throw new functions.https.HttpsError(
+                'internal',
+                'custom token konnte nicht erstellt werden'
+            )
+        }
     })

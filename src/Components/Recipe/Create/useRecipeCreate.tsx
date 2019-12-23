@@ -48,14 +48,6 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
     }
 
     const uploadAttachments = async () => {
-        // const uploadAttachments = FirebaseService.functions.httpsCallable('uploadAttachments')
-        // uploadAttachments({
-        //     attachments: [
-        //         { dataUrl: '', name: 'first', size: 1 },
-        //         { dataUrl: '', name: 'second', size: 2 },
-        //     ],
-        // } as Pick<Recipe<AttachmentData>, 'attachments'>).then(result => console.log(result))
-
         const attachmentSnackbar = enqueueSnackbar('Bilder werden verarbeitet', {
             persist: true,
             variant: 'info',

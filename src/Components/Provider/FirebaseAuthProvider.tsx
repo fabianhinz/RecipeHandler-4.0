@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme =>
 )
 
 let userDocUnsubscribe: any = undefined
-// ToDo implement a nice loading auth animation
+
 const FirebaseAuthProvider: FC = ({ children }) => {
     const [authReady, setAuthReady] = useState(false)
     const [user, setUser] = useState<User | null>(null)
@@ -59,6 +59,21 @@ const FirebaseAuthProvider: FC = ({ children }) => {
                 )
         } else FirebaseService.auth.signInAnonymously()
     }, [])
+
+    const signInWithCustomToken = useCallback(async () => {
+        if (!user) return
+        const getCustomToken = FirebaseService.functions.httpsCallable('getCustomToken')
+        try {
+            const response = await getCustomToken(user.uid)
+            FirebaseService.auth.signInWithCustomToken(response.data)
+        } catch (e) {
+            // only editors may recive a custom token, catch and move on for other users
+        }
+    }, [user])
+
+    useEffect(() => {
+        signInWithCustomToken()
+    }, [signInWithCustomToken])
 
     useEffect(() => {
         return userDocUnsubscribe

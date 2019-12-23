@@ -6,8 +6,7 @@ service firebase.storage {
         }
 
         allow read: if request.auth.uid != null;
-        // limit access to our service and admin account(s)
-        allow write: if false || isAdmin();
+        allow write: if isAdmin() || request.auth.token.isEditor;
     }
   }
 }
