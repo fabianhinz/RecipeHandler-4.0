@@ -1,4 +1,4 @@
-import { Dialog } from '@material-ui/core'
+import { Dialog, DialogTitle } from '@material-ui/core'
 import React, { memo, useState } from 'react'
 
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
@@ -33,7 +33,7 @@ const AccountDialog = ({ open, onClose }: Props) => {
             open={open}
             onClose={onClose}>
             {loading && <Progress variant="cover" />}
-
+            <DialogTitle>Account</DialogTitle>
             {user ? (
                 <AccountContentUser
                     user={user}

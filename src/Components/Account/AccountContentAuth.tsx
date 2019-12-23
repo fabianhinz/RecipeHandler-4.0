@@ -103,6 +103,7 @@ const AccountContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
                                 muiTheme: theme.palette.type,
                                 selectedUsers: [],
                                 showRecentlyAdded: true,
+                                notifications: false,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
                             } as Omit<User, 'uid'>)
                     })

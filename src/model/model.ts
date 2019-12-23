@@ -80,6 +80,7 @@ export type User = {
     muiTheme: PaletteType
     selectedUsers: string[]
     showRecentlyAdded: boolean
+    notifications: boolean
     admin?: boolean
     profilePicture?: string
     createdDate: firebase.firestore.Timestamp

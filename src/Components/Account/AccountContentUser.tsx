@@ -21,6 +21,8 @@ import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import DarkThemeIcon from '@material-ui/icons/BrightnessHighRounded'
 import LightThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import NotificationsOffIcon from '@material-ui/icons/NotificationsOffRounded'
+import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
 import TimelapseIcon from '@material-ui/icons/TimelapseRounded'
 import { CameraImage, Settings, ShieldLock } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
@@ -32,9 +34,9 @@ import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useUsersContext } from '../Provider/UsersProvider'
 import { useAttachmentDropzone } from '../Recipe/Create/Attachments/useAttachmentDropzone'
-import AccountChip from './AccountChip'
 import AccountContentAdmin from './AccountContentAdmin'
 import { AccountContentProps } from './AccountDialog'
+import AccountListItem from './AccountListItem'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -55,10 +57,24 @@ const useStyles = makeStyles(theme =>
         swipeableViews: {
             marginTop: theme.spacing(3),
         },
+        dialogContent: {
+            paddingTop: 0,
+            position: 'relative',
+        },
+        tabs: {
+            position: 'sticky',
+            top: 0,
+            backgroundColor: theme.palette.background.paper,
+            zIndex: 1,
+            boxShadow: theme.shadows[1],
+        },
     })
 )
 
-type SettingKeys = keyof Pick<User, 'muiTheme' | 'selectedUsers' | 'showRecentlyAdded'>
+type SettingKeys = keyof Pick<
+    User,
+    'muiTheme' | 'selectedUsers' | 'showRecentlyAdded' | 'notifications'
+>
 
 interface Props extends AccountContentProps {
     user: User
@@ -95,7 +111,7 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
             .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
     }
 
-    const handleUserDocClick = (key: SettingKeys) => (uid?: any) => {
+    const handleUserSettingChange = (key: SettingKeys) => (uid?: any) => {
         switch (key) {
             case 'muiTheme': {
                 userDoc.update({ [key]: user.muiTheme === 'dark' ? 'light' : 'dark' })
@@ -120,13 +136,18 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
                 userDoc.update({ [key]: !user.showRecentlyAdded })
                 break
             }
+            case 'notifications': {
+                userDoc.update({ [key]: !user.notifications })
+                break
+            }
         }
     }
 
     return (
         <>
-            <DialogContent>
+            <DialogContent className={classes.dialogContent}>
                 <Tabs
+                    className={classes.tabs}
                     value={tabValue}
                     onChange={(_event, value) => setTabValue(value)}
                     indicatorColor="primary"
@@ -143,7 +164,7 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
                     <UserSettings
                         user={user}
                         dropzoneProps={dropzoneProps}
-                        onUserDocClick={handleUserDocClick}
+                        onSettingChange={handleUserSettingChange}
                     />
                     {user.admin ? <AccountContentAdmin onDialogLoading={onDialogLoading} /> : <></>}
                 </SwipeableViews>
@@ -172,10 +193,10 @@ interface UserSettingsProps {
         getRootProps: (props?: DropzoneRootProps | undefined) => DropzoneRootProps
         getInputProps: (props?: DropzoneInputProps | undefined) => DropzoneInputProps
     }
-    onUserDocClick: (key: SettingKeys) => (uid?: any) => void
+    onSettingChange: (key: SettingKeys) => (uid?: any) => void
 }
 
-const UserSettings = ({ user, dropzoneProps, onUserDocClick }: UserSettingsProps) => {
+const UserSettings = ({ user, dropzoneProps, onSettingChange }: UserSettingsProps) => {
     const { userIds } = useUsersContext()
     const classes = useStyles()
 
@@ -198,7 +219,7 @@ const UserSettings = ({ user, dropzoneProps, onUserDocClick }: UserSettingsProps
                 <Grid item xs={12} sm={8} md={12}>
                     <List>
                         <ListSubheader>Einstellungen</ListSubheader>
-                        <ListItem button onClick={onUserDocClick('muiTheme')}>
+                        <ListItem button onClick={onSettingChange('muiTheme')}>
                             <ListItemIcon>
                                 {user.muiTheme === 'dark' ? <DarkThemeIcon /> : <LightThemeIcon />}
                             </ListItemIcon>
@@ -208,7 +229,7 @@ const UserSettings = ({ user, dropzoneProps, onUserDocClick }: UserSettingsProps
                             />
                         </ListItem>
                         <Divider />
-                        <ListItem button onClick={onUserDocClick('showRecentlyAdded')}>
+                        <ListItem button onClick={onSettingChange('showRecentlyAdded')}>
                             <ListItemIcon>
                                 <TimelapseIcon />
                             </ListItemIcon>
@@ -221,28 +242,30 @@ const UserSettings = ({ user, dropzoneProps, onUserDocClick }: UserSettingsProps
                                 }
                             />
                         </ListItem>
-
-                        <ListSubheader>Rezeptanzeige</ListSubheader>
-                        <ListItem>
+                        <Divider />
+                        <ListItem button onClick={onSettingChange('notifications')}>
+                            <ListItemIcon>
+                                {user.notifications ? (
+                                    <NotificationsIcon />
+                                ) : (
+                                    <NotificationsOffIcon />
+                                )}
+                            </ListItemIcon>
                             <ListItemText
-                                primary={
-                                    <Grid container spacing={1}>
-                                        {userIds.map(id => (
-                                            <Grid item key={id}>
-                                                <AccountChip
-                                                    variant="filter"
-                                                    selected={user.selectedUsers.some(
-                                                        selectedId => selectedId === id
-                                                    )}
-                                                    onFilterChange={onUserDocClick('selectedUsers')}
-                                                    uid={id}
-                                                />
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                }
+                                primary="Benachrichtigungen"
+                                secondary={user.notifications ? 'aktiviert' : 'deaktiviert'}
                             />
                         </ListItem>
+
+                        <ListSubheader>Rezeptanzeige</ListSubheader>
+                        {userIds.map(id => (
+                            <AccountListItem
+                                key={id}
+                                uid={id}
+                                checked={user.selectedUsers.some(selectedId => selectedId === id)}
+                                onChange={onSettingChange('selectedUsers')}
+                            />
+                        ))}
                     </List>
                 </Grid>
             </Grid>
