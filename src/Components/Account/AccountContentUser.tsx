@@ -163,6 +163,7 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
                     animateHeight
                     className={classes.swipeableViews}
                     index={tabValue}
+                    disabled={!user.admin}
                     onChangeIndex={index => setTabValue(index)}>
                     <UserSettings
                         user={user}

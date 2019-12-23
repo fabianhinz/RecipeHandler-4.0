@@ -23,10 +23,14 @@ service cloud.firestore {
         allow delete: if isAdmin();
     }
     
-    match /recipes/{document=**} {
+    match /recipes/{recipeName} {
         allow create: if isAdmin() || isEditor();
-        allow update: if isAdmin() || (resource.data.editor.uid == request.auth.uid && isEditor());
+        allow update: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
         allow delete: if isAdmin();
+    }
+    
+    match /recipes/{recipeName}/comments/{commentId} {
+        allow write: if isAdmin() || isEditor();
     }
     
     match /rating/{recipe} {

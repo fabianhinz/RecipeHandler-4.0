@@ -111,14 +111,16 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
         setInputDisabled(true)
 
         try {
-            const recipeRef = FirebaseService.firestore.collection(collection).doc(name)
-            await recipeRef.collection('comments').add({
-                comment: `${user!.username}: ${input}`,
-                likes: 0,
-                dislikes: 0,
-                createdDate: FirebaseService.createTimestampFromDate(new Date()),
-            })
-            await recipeRef.update({ numberOfComments: FirebaseService.incrementBy(1) })
+            await FirebaseService.firestore
+                .collection(collection)
+                .doc(name)
+                .collection('comments')
+                .add({
+                    comment: `${user!.username}: ${input}`,
+                    likes: 0,
+                    dislikes: 0,
+                    createdDate: FirebaseService.createTimestampFromDate(new Date()),
+                })
 
             setInput('')
             setInputDisabled(false)

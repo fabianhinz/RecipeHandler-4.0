@@ -141,7 +141,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
             })
             setChangesSaved(true)
             history.push(PATHS.home)
-        } catch {
+        } catch (e) {
             enqueueSnackbar('fehlende Berechtigungen', { variant: 'error' })
         } finally {
             closeSnackbar(saveSnackbar as string)

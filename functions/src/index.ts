@@ -33,3 +33,25 @@ export const getCustomToken = functions
             )
         }
     })
+
+export const handleNumberOfCommentsRecipes = functions
+    .region('europe-west1')
+    .firestore.document('recipes/{recipeName}/comments/{commentId}')
+    .onWrite((change, context) => {
+        admin
+            .firestore()
+            .collection('recipes')
+            .doc(context.params.recipeName)
+            .update({ numberOfComments: admin.firestore.FieldValue.increment(1) })
+    })
+
+export const handleNumberOfCommentsTrials = functions
+    .region('europe-west1')
+    .firestore.document('trials/{trialId}/comments/{commentId}')
+    .onWrite((change, context) => {
+        admin
+            .firestore()
+            .collection('trials')
+            .doc(context.params.trialId)
+            .update({ numberOfComments: admin.firestore.FieldValue.increment(1) })
+    })
