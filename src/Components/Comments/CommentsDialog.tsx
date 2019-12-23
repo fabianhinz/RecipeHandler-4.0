@@ -175,9 +175,9 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 )}
             </DialogContent>
             <DialogActions>
-                {user && (
-                    <form className={classes.form} onSubmit={handleFormSubmit}>
-                        <Grid container>
+                <form className={classes.form} onSubmit={handleFormSubmit}>
+                    <Grid container>
+                        {user && (
                             <Grid item xs={12}>
                                 <TextField
                                     margin="normal"
@@ -197,19 +197,21 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                                     label="Kommentar hinzufügen"
                                 />
                             </Grid>
-                            <Grid item xs={12}>
-                                <Grid container justify="space-evenly">
-                                    <IconButton onClick={onClose}>
-                                        <CloseIcon />
-                                    </IconButton>
+                        )}
+                        <Grid item xs={12}>
+                            <Grid container justify="space-evenly">
+                                <IconButton onClick={onClose}>
+                                    <CloseIcon />
+                                </IconButton>
+                                {user && (
                                     <IconButton type="submit">
                                         <SaveIcon />
                                     </IconButton>
-                                </Grid>
+                                )}
                             </Grid>
                         </Grid>
-                    </form>
-                )}
+                    </Grid>
+                </form>
             </DialogActions>
         </Dialog>
     )

@@ -135,7 +135,7 @@ const TrialsDialog = ({ open, onClose }: Props) => {
     })
 
     return (
-        <Dialog open={open} keepMounted onClose={onClose} fullScreen TransitionComponent={SlideUp}>
+        <Dialog open={open} onClose={onClose} fullScreen TransitionComponent={SlideUp}>
             <DialogTitle className={classes.dialogTitle}>Versuchskaninchen</DialogTitle>
 
             <DialogContent dividers>
@@ -148,8 +148,8 @@ const TrialsDialog = ({ open, onClose }: Props) => {
                 ) : (
                     <Box paddingTop={1} paddingBottom={1}>
                         <Grid container spacing={3}>
-                            {[...trials.values()].map(trial => (
-                                <TrialsCard trial={trial} key={trial.name} />
+                            {[...trials.values()].map((trial, index) => (
+                                <TrialsCard index={index} trial={trial} key={trial.name} />
                             ))}
                         </Grid>
                     </Box>

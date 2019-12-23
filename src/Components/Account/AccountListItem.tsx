@@ -5,6 +5,7 @@ import {
     ListItemAvatar,
     ListItemSecondaryAction,
     ListItemText,
+    ListItemTextProps,
     makeStyles,
     Switch,
 } from '@material-ui/core'
@@ -18,6 +19,7 @@ interface Props {
     uid: string
     checked: boolean
     onChange: (uid: string) => void
+    showCreatedDate?: boolean
 }
 
 const useStyles = makeStyles(() =>
@@ -33,11 +35,15 @@ const useStyles = makeStyles(() =>
     })
 )
 
-const AccountListItem = ({ uid, onChange, checked }: Props) => {
+const AccountListItem = ({ uid, onChange, checked, showCreatedDate }: Props) => {
     const { getByUid } = useUsersContext()
     const { username, profilePicture, createdDate } = getByUid(uid) as User
 
     const classes = useStyles()
+
+    const textProps: Pick<ListItemTextProps, 'secondary'> = showCreatedDate
+        ? { secondary: FirebaseService.createDateFromTimestamp(createdDate).toLocaleString() }
+        : {}
 
     return (
         <ListItem>
@@ -46,10 +52,7 @@ const AccountListItem = ({ uid, onChange, checked }: Props) => {
                     {username.slice(0, 1)}
                 </Avatar>
             </ListItemAvatar>
-            <ListItemText
-                primary={username}
-                secondary={FirebaseService.createDateFromTimestamp(createdDate).toLocaleString()}
-            />
+            <ListItemText primary={username} {...textProps} />
             <ListItemSecondaryAction>
                 <Switch checked={checked} onChange={() => onChange(uid)} edge="start" />
             </ListItemSecondaryAction>

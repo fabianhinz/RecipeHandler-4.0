@@ -34,6 +34,7 @@ const AccountContentAdmin = ({ onDialogLoading }: Props) => {
                 <AccountListItem
                     key={uid}
                     uid={uid}
+                    showCreatedDate
                     checked={editors.has(uid)}
                     onChange={handleEditorChange}
                 />

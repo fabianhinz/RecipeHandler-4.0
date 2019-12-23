@@ -32,7 +32,7 @@ interface RecipeCreateRelatedDialogProps {
     onSave: (relatedRecipes: Array<string>) => void
     onClose: () => void
 }
-
+// ToDo change color scheme
 const useStyles = makeStyles(theme =>
     createStyles({
         recipeHeader: {
@@ -45,22 +45,13 @@ const useStyles = makeStyles(theme =>
                 borderRadius: `0 0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px `,
             },
             '&:hover': {
-                backgroundColor:
-                    theme.palette.type === 'dark'
-                        ? 'rgb(183, 222, 184, 0.25)'
-                        : 'rgb(115, 149, 116, 0.25)',
+                backgroundColor: 'rgb(129, 199, 132, 0.25)',
             },
         },
         selectedRecipeHeader: {
-            backgroundColor:
-                theme.palette.type === 'dark'
-                    ? 'rgb(183, 222, 184, 0.25)'
-                    : 'rgb(115, 149, 116, 0.25)',
+            backgroundColor: 'rgb(129, 199, 132, 0.25)',
             '&:hover': {
-                backgroundColor:
-                    theme.palette.type === 'dark'
-                        ? 'rgb(183, 222, 184, 0.35)'
-                        : 'rgb(115, 149, 116, 0.35)',
+                backgroundColor: 'rgb(129, 199, 132, 0.35)',
             },
         },
     })
@@ -134,7 +125,6 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
 
     return (
         <Dialog
-            keepMounted
             fullScreen={isDialogFullscreen}
             TransitionComponent={SlideUp}
             open={open}

@@ -72,8 +72,8 @@ const sharedTheme: Partial<ThemeOptions> = {
     },
 }
 
-const PRIMARY_COLOR = '#A5D6A7'
-const SECONDARY_COLOR = '#FFCC80'
+export const PRIMARY_COLOR = '#81c784'
+export const SECONDARY_COLOR = '#ffb74d'
 
 const darkTheme = createMuiTheme({
     palette: {

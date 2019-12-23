@@ -62,11 +62,13 @@ const useStyles = makeStyles(theme =>
             position: 'relative',
         },
         tabs: {
-            position: 'sticky',
-            top: 0,
-            backgroundColor: theme.palette.background.paper,
-            zIndex: 1,
-            boxShadow: theme.shadows[1],
+            [theme.breakpoints.up('md')]: {
+                position: 'sticky',
+                top: 0,
+                backgroundColor: theme.palette.background.paper,
+                zIndex: 1,
+                boxShadow: theme.shadows[1],
+            },
         },
     })
 )
@@ -158,6 +160,7 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
                 </Tabs>
 
                 <SwipeableViews
+                    animateHeight
                     className={classes.swipeableViews}
                     index={tabValue}
                     onChangeIndex={index => setTabValue(index)}>
@@ -203,7 +206,7 @@ const UserSettings = ({ user, dropzoneProps, onSettingChange }: UserSettingsProp
     return (
         <Box padding={1}>
             <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} sm={4} md={12}>
+                <Grid item xs={12}>
                     <Grid container justify="center">
                         <CardActionArea
                             className={classes.actionArea}
@@ -216,7 +219,7 @@ const UserSettings = ({ user, dropzoneProps, onSettingChange }: UserSettingsProp
                     </Grid>
                 </Grid>
 
-                <Grid item xs={12} sm={8} md={12}>
+                <Grid item xs={12}>
                     <List>
                         <ListSubheader>Einstellungen</ListSubheader>
                         <ListItem button onClick={onSettingChange('muiTheme')}>

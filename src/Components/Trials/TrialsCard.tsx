@@ -1,9 +1,18 @@
-import { Box, Card, CardMedia, createStyles, Grid, IconButton, makeStyles } from '@material-ui/core'
+import {
+    Box,
+    Card,
+    CardMedia,
+    createStyles,
+    Grid,
+    Grow,
+    IconButton,
+    makeStyles,
+} from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
-import Skeleton from '@material-ui/lab/Skeleton'
 import React, { useEffect, useState } from 'react'
 
 import { DataUrls, getRefPaths, getResizedImages } from '../../hooks/useAttachmentRef'
+import { TRANSITION_DURATION } from '../../hooks/useTransition'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { Comments } from '../Comments/Comments'
@@ -20,9 +29,10 @@ const useStyles = makeStyles(theme =>
 
 interface Props {
     trial: Trial
+    index: number
 }
 
-const TrialsCard = ({ trial }: Props) => {
+const TrialsCard = ({ trial, index }: Props) => {
     const [dataUrls, setDataUrls] = useState<DataUrls | null>()
     const classes = useStyles()
 
@@ -48,28 +58,28 @@ const TrialsCard = ({ trial }: Props) => {
 
     return (
         <Grid item xs={12} md={6} lg={4} xl={3} key={trial.name}>
-            <Card raised>
-                {dataUrls ? (
-                    <a href={dataUrls.fullDataUrl} rel="noreferrer noopener" target="_blank">
-                        <CardMedia image={dataUrls.mediumDataUrl} className={classes.img} />
-                    </a>
-                ) : (
-                    <Skeleton height={250} width="100%" />
-                )}
-                {user && (
-                    <Box padding={1} display="flex" justifyContent="space-evenly">
-                        <Comments
-                            collection="trials"
-                            numberOfComments={trial.numberOfComments}
-                            name={trial.name}
-                        />
+            <Grow in={dataUrls ? true : false} mountOnEnter timeout={TRANSITION_DURATION * index}>
+                <Card raised>
+                    {dataUrls && (
+                        <a href={dataUrls.fullDataUrl} rel="noreferrer noopener" target="_blank">
+                            <CardMedia image={dataUrls.mediumDataUrl} className={classes.img} />
+                        </a>
+                    )}
+                    {user && (
+                        <Box padding={1} display="flex" justifyContent="space-evenly">
+                            <Comments
+                                collection="trials"
+                                numberOfComments={trial.numberOfComments}
+                                name={trial.name}
+                            />
 
-                        <IconButton onClick={handleDeleteBtnClick}>
-                            <DeleteIcon />
-                        </IconButton>
-                    </Box>
-                )}
-            </Card>
+                            <IconButton onClick={handleDeleteBtnClick}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </Box>
+                    )}
+                </Card>
+            </Grow>
         </Grid>
     )
 }
