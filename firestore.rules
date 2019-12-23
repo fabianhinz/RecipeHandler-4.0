@@ -18,14 +18,15 @@ service cloud.firestore {
     }
   
   	match /users/{userId} {
-        allow delete: if isAdmin();
         allow create: if request.auth.uid != null && request.auth.token.firebase.sign_in_provider == 'password';
         allow update: if request.auth.uid == userId;
+        allow delete: if isAdmin();
     }
     
     match /recipes/{document=**} {
         allow create: if isAdmin() || isEditor();
-        allow update, delete: if isAdmin() || (resource.data.editor.uid == request.auth.uid && isEditor());
+        allow update: if isAdmin() || (resource.data.editor.uid == request.auth.uid && isEditor());
+        allow delete: if isAdmin();
     }
     
     match /rating/{recipe} {
