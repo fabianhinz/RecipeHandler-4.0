@@ -19,17 +19,12 @@ const preferedColorSchemeDark =
     window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 
 const App: FC = () => {
-    const [theme, setTheme] = useState(
-        preferedColorSchemeDark ? responsiveDarkTheme : responsiveLightTheme
-    )
+    const [theme, setTheme] = useState(responsiveLightTheme)
     const { user } = useFirebaseAuthContext()
 
     useEffect(() => {
-        if (!user) return
-        const { muiTheme } = user
         const metaThemeColor = document.getElementsByName('theme-color')[0]
-
-        if (muiTheme === 'dark') {
+        if ((user && user.muiTheme === 'dark') || (!user && preferedColorSchemeDark)) {
             setTheme(responsiveDarkTheme)
             metaThemeColor.setAttribute('content', '#424242')
         } else {

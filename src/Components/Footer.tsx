@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme =>
             left: 0,
             right: 0,
             height: 'env(safe-area-inset-bottom)',
-            background: theme.palette.type === 'dark' ? '#212121' : '#fff',
+            background: theme.palette.type === 'dark' ? '#212121' : '#f5f5f5',
         },
     })
 )

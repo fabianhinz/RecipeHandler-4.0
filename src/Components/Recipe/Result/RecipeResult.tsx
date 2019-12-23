@@ -8,6 +8,7 @@ import React, { memo } from 'react'
 
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
+import AccountChip from '../../Account/AccountChip'
 import Markdown from '../../Shared/Markdown'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
@@ -122,6 +123,10 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                     />
                 </Grid>
             )}
+
+            <Grid item xs={12} container justify="center">
+                <AccountChip variant="readonly" uid={recipe.editorUid} />
+            </Grid>
         </Grid>
     )
 }

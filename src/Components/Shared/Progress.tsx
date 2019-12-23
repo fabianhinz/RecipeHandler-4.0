@@ -7,7 +7,7 @@ const useStyles = makeStyles(() =>
     createStyles({
         linearProgress: {
             position: 'fixed',
-            bottom: 0,
+            top: 0,
             left: 0,
             width: '100vw',
         },

@@ -19,7 +19,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 firebase.firestore().enablePersistence({ synchronizeTabs: true })
 const functions = firebase.functions()
-functions.useFunctionsEmulator('http://localhost:5000')
+
+if (process.env.NODE_ENV !== 'production') functions.useFunctionsEmulator('http://localhost:5000')
 
 const firestore = firebase.firestore()
 const storage = firebase.storage()
