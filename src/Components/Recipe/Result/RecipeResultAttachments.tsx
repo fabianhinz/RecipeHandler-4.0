@@ -100,11 +100,12 @@ const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) 
                     {attachments.map(attachment => (
                         <AttachmentPreview attachment={attachment} key={attachment.name} />
                     ))}
-                    <Grid item>
+                    {/* Not ready */}
+                    {/* <Grid item>
                         <CardActionArea className={classes.actionArea}>
                             <Avatar className={classes.addAvatar}>+</Avatar>
                         </CardActionArea>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </Grid>
         </Grid>

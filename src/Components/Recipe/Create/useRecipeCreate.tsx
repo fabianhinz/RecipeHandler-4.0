@@ -9,7 +9,7 @@ import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import { RecipeCreateState } from './RecipeCreateReducer'
 
-export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean | undefined) => {
+export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean) => {
     const [changesSaved, setChangesSaved] = useState(false)
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
@@ -126,7 +126,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe: boolean 
                     categories: state.categories,
                     relatedRecipes: state.relatedRecipes,
                     createdDate: FirebaseService.createTimestampFromDate(new Date()),
-                    editorUid: user!.uid,
+                    editorUid: state.editorUid || user!.uid,
                 } as Recipe<AttachmentMetadata>)
 
             if (!editedRecipe) {

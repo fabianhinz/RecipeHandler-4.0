@@ -32,7 +32,6 @@
 		"react-draggable": "^4.0.3",
 		"react-dropzone": "^10.1.8",
 		"react-highlight-words": "^0.16.0",
-		"react-intersection-observer": "^8.25.2",
 		"react-markdown": "^4.2.2",
 		"react-router-dom": "^5.0.1",
 		"react-scripts": "^3.3.0",

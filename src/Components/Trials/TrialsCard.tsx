@@ -64,7 +64,12 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     return (
         <Grid item xs={12} md={6} lg={4} xl={3} key={trial.name}>
-            <Grow in={dataUrls ? true : false} timeout={{ enter: TRANSITION_DURATION * index }}>
+            <Grow
+                in={dataUrls ? true : false}
+                timeout={{
+                    enter: index === 0 ? TRANSITION_DURATION : TRANSITION_DURATION * index,
+                    exit: TRANSITION_DURATION,
+                }}>
                 <Card raised>
                     {dataUrls && (
                         <a href={dataUrls.fullDataUrl} rel="noreferrer noopener" target="_blank">

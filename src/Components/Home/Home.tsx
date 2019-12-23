@@ -16,7 +16,6 @@ type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentI
 const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
     const [lastRecipeName, setLastRecipeName] = useState('')
-    const [pagination, setPagination] = useState(false)
     const [loading, setLoading] = useState(true)
 
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
@@ -27,9 +26,19 @@ const Home = () => {
         setSelectedCategories(type, value)
     }
 
-    const handleLastInViewChange = (lastInView: string) => {
-        if (lastInView !== lastRecipeName) setLastRecipeName(lastInView)
-    }
+    useEffect(() => {
+        const trigger = document.getElementById('intersection-observer-trigger')
+        if (!trigger) return
+
+        const observer = new IntersectionObserver(entries => {
+            const [lastRecipeTrigger] = entries
+            if (lastRecipeTrigger.isIntersecting && pagedRecipes.size > 0)
+                setLastRecipeName([...pagedRecipes.values()].pop()!.name)
+        })
+        observer.observe(trigger)
+
+        return () => observer.unobserve(trigger)
+    }, [pagedRecipes])
 
     useEffect(() => {
         setPagedRecipes(new Map())
@@ -47,8 +56,6 @@ const Home = () => {
             query = query.where('editorUid', 'in', user.selectedUsers)
 
         if (selectedCategories.size === 0) {
-            setPagination(true)
-
             return query
                 .orderBy('name', 'asc')
                 .startAfter(lastRecipeName)
@@ -72,7 +79,6 @@ const Home = () => {
                     setLoading(false)
                 })
         } else {
-            setPagination(false)
             selectedCategories.forEach(
                 (value, type) => (query = query.where(`categories.${type}`, '==', value))
             )
@@ -96,12 +102,8 @@ const Home = () => {
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}
             />
-            <HomeRecipe
-                skeletons={loading}
-                recipes={[...pagedRecipes.values()]}
-                onLastInView={handleLastInViewChange}
-                expandDisabled={!pagination}
-            />
+            <HomeRecipe skeletons={loading} recipes={[...pagedRecipes.values()]} />
+            <div id="intersection-observer-trigger" />
 
             <NavigateFab to={PATHS.recipeCreate} icon={<AddIcon />} />
         </>
