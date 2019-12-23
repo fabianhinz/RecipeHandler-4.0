@@ -18,7 +18,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig)
 firebase.firestore().enablePersistence({ synchronizeTabs: true })
-const functions = firebase.functions()
+const functions = firebase.app().functions('europe-west1')
 
 if (process.env.NODE_ENV !== 'production') functions.useFunctionsEmulator('http://localhost:5000')
 
