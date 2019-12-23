@@ -6,6 +6,7 @@ import { BORDER_RADIUS } from '../../theme'
 const useStyles = makeStyles(() =>
     createStyles({
         linearProgress: {
+            height: 6,
             position: 'fixed',
             top: 0,
             left: 0,
