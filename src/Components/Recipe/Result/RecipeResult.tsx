@@ -78,7 +78,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                 <Divider />
             </Grid>
 
-            {variant !== 'pinned' && recipe.attachments.length > 0 && (
+            {variant !== 'pinned' && (
                 <Grid item xs={12}>
                     <RecipeResultAttachments attachments={recipe.attachments} />
                 </Grid>

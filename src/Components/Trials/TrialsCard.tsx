@@ -39,7 +39,13 @@ const TrialsCard = ({ trial, index }: Props) => {
     const { user } = useFirebaseAuthContext()
 
     useEffect(() => {
-        getResizedImages(trial.fullPath).then(setDataUrls)
+        let mounted = true
+        getResizedImages(trial.fullPath).then(urls => {
+            if (mounted) setDataUrls(urls)
+        })
+        return () => {
+            mounted = false
+        }
     }, [trial.fullPath])
 
     const handleDeleteBtnClick = async () => {
@@ -58,7 +64,7 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     return (
         <Grid item xs={12} md={6} lg={4} xl={3} key={trial.name}>
-            <Grow in={dataUrls ? true : false} mountOnEnter timeout={TRANSITION_DURATION * index}>
+            <Grow in={dataUrls ? true : false} timeout={{ enter: TRANSITION_DURATION * index }}>
                 <Card raised>
                     {dataUrls && (
                         <a href={dataUrls.fullDataUrl} rel="noreferrer noopener" target="_blank">

@@ -90,7 +90,7 @@ const Home = () => {
 
     return (
         <>
-            {user && user.showRecentlyAdded && <RecentlyAdded />}
+            {user && !user.showRecentlyAdded ? <></> : <RecentlyAdded />}
 
             <HomeCategory
                 selectedCategories={selectedCategories}
