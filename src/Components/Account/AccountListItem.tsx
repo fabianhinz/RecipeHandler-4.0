@@ -3,7 +3,6 @@ import {
     createStyles,
     ListItem,
     ListItemAvatar,
-    ListItemIcon,
     ListItemSecondaryAction,
     ListItemText,
     ListItemTextProps,
@@ -24,7 +23,7 @@ interface Props {
     variant: 'user' | 'admin'
 }
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         itemAvatar: {
             minWidth: 66,
@@ -33,6 +32,13 @@ const useStyles = makeStyles(() =>
             width: 50,
             height: 50,
             margin: '8px 0px',
+        },
+        itemTextPrimary: {
+            display: 'flex',
+            alignItems: 'center',
+        },
+        itemTextPrimaryIcon: {
+            marginLeft: theme.spacing(1),
         },
     })
 )
@@ -50,17 +56,26 @@ const AccountListItem = ({ uid, onChange, checked, variant }: Props) => {
 
     return (
         <ListItem>
-            {variant === 'admin' && (
-                <ListItemIcon>
-                    {emailVerified ? <EmailIcon color="primary" /> : <EmailIcon color="error" />}
-                </ListItemIcon>
-            )}
             <ListItemAvatar className={classes.itemAvatar}>
                 <Avatar className={classes.avatar} src={profilePicture}>
                     {username.slice(0, 1)}
                 </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={username} {...textProps} />
+            <ListItemText
+                primary={
+                    <div className={classes.itemTextPrimary}>
+                        {username}
+                        {variant === 'admin' && (
+                            <EmailIcon
+                                className={classes.itemTextPrimaryIcon}
+                                color={emailVerified ? 'primary' : 'error'}
+                            />
+                        )}
+                    </div>
+                }
+                primaryTypographyProps={{ component: 'div' }}
+                {...textProps}
+            />
             <ListItemSecondaryAction>
                 <Switch checked={checked} onChange={() => onChange(uid)} edge="start" />
             </ListItemSecondaryAction>
