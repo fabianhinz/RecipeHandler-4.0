@@ -28,7 +28,7 @@ export const HomeRecipe = ({ recipes, skeletons }: HomeRecipeProps) => (
 
                     {skeletons &&
                         recipes.length === 0 &&
-                        new Array(4).fill(1).map((_skeleton, index) => (
+                        new Array(8).fill(1).map((_skeleton, index) => (
                             <Grid xs={12} item key={index}>
                                 <Grid
                                     container

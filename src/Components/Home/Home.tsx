@@ -59,7 +59,7 @@ const Home = () => {
             return query
                 .orderBy('name', 'asc')
                 .startAfter(lastRecipeName)
-                .limit(4)
+                .limit(8)
                 .onSnapshot(querySnapshot => {
                     const changes: ChangesRecord = {
                         added: new Map(),
