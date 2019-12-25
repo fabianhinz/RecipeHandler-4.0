@@ -3,12 +3,14 @@ import {
     createStyles,
     ListItem,
     ListItemAvatar,
+    ListItemIcon,
     ListItemSecondaryAction,
     ListItemText,
     ListItemTextProps,
     makeStyles,
     Switch,
 } from '@material-ui/core'
+import EmailIcon from '@material-ui/icons/EmailRounded'
 import React from 'react'
 
 import { User } from '../../model/model'
@@ -19,7 +21,7 @@ interface Props {
     uid: string
     checked: boolean
     onChange: (uid: string) => void
-    showCreatedDate?: boolean
+    variant: 'user' | 'admin'
 }
 
 const useStyles = makeStyles(() =>
@@ -35,18 +37,24 @@ const useStyles = makeStyles(() =>
     })
 )
 
-const AccountListItem = ({ uid, onChange, checked, showCreatedDate }: Props) => {
+const AccountListItem = ({ uid, onChange, checked, variant }: Props) => {
     const { getByUid } = useUsersContext()
-    const { username, profilePicture, createdDate } = getByUid(uid) as User
+    const { username, profilePicture, createdDate, emailVerified } = getByUid(uid) as User
 
     const classes = useStyles()
 
-    const textProps: Pick<ListItemTextProps, 'secondary'> = showCreatedDate
-        ? { secondary: FirebaseService.createDateFromTimestamp(createdDate).toLocaleString() }
-        : {}
+    const textProps: Pick<ListItemTextProps, 'secondary'> =
+        variant === 'admin'
+            ? { secondary: FirebaseService.createDateFromTimestamp(createdDate).toLocaleString() }
+            : {}
 
     return (
         <ListItem>
+            {variant === 'admin' && (
+                <ListItemIcon>
+                    {emailVerified ? <EmailIcon color="primary" /> : <EmailIcon color="error" />}
+                </ListItemIcon>
+            )}
             <ListItemAvatar className={classes.itemAvatar}>
                 <Avatar className={classes.avatar} src={profilePicture}>
                     {username.slice(0, 1)}

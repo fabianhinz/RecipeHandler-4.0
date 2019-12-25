@@ -40,23 +40,23 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
     const classes = useStyles()
 
-    const handleAuthStateChange = useCallback((user: firebase.User | null) => {
+    const handleAuthStateChange = useCallback(async (user: firebase.User | null) => {
         if (user) {
             setAuthReady(true)
             if (user.isAnonymous) {
                 setUser(null)
                 return
             }
+            const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
+            await userDocRef.update({ emailVerified: user.emailVerified })
+
             // only registered users have a additional props
-            userDocUnsubscribe = FirebaseService.firestore
-                .collection('users')
-                .doc(user.uid)
-                .onSnapshot(doc =>
-                    setUser({
-                        ...(doc.data() as Omit<User, 'uid'>),
-                        uid: user.uid,
-                    })
-                )
+            userDocUnsubscribe = userDocRef.onSnapshot(doc =>
+                setUser({
+                    ...(doc.data() as Omit<User, 'uid'>),
+                    uid: user.uid,
+                })
+            )
         } else FirebaseService.auth.signInAnonymously()
     }, [])
 

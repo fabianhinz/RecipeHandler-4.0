@@ -91,12 +91,15 @@ const AccountContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
             if (password === passwordRepeat && username.length > 0) {
                 FirebaseService.auth
                     .createUserWithEmailAndPassword(email, password)
-                    .then(createdUser => {
+                    .then(value => {
                         setNewUser(false)
+                        const { user } = value
+
+                        if (!user) return
                         // save the username - this allows admins to enable/disable editors by username
                         FirebaseService.firestore
                             .collection('users')
-                            .doc(createdUser.user!.uid)
+                            .doc(user.uid)
                             .set({
                                 username,
                                 admin: false,
@@ -106,6 +109,8 @@ const AccountContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
                                 notifications: false,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
                             } as Omit<User, 'uid'>)
+                        // send a verification email to the newly created user
+                        user.sendEmailVerification({ url: 'https://recipehandler.web.app/' })
                     })
                     .catch(error => handleAuthError(error))
                     .finally(() => onDialogLoading(false))

@@ -83,5 +83,6 @@ export type User = {
     notifications: boolean
     admin?: boolean
     profilePicture?: string
+    emailVerified?: boolean
     createdDate: firebase.firestore.Timestamp
 }

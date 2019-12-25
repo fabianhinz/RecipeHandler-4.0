@@ -32,6 +32,7 @@ import SwipeableViews from 'react-swipeable-views'
 
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
 import { useAttachmentDropzone } from '../Recipe/Create/Attachments/useAttachmentDropzone'
 import AccountContentAdmin from './AccountContentAdmin'
@@ -90,6 +91,7 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
     })
     const { enqueueSnackbar } = useSnackbar()
     const classes = useStyles()
+    const { isDialogFullscreen } = useBreakpointsContext()
 
     const userDoc = useMemo(() => FirebaseService.firestore.collection('users').doc(user.uid), [
         user.uid,
@@ -160,7 +162,7 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
                 </Tabs>
 
                 <SwipeableViews
-                    animateHeight
+                    animateHeight={!isDialogFullscreen}
                     className={classes.swipeableViews}
                     index={tabValue}
                     disabled={!user.admin}
@@ -266,6 +268,7 @@ const UserSettings = ({ user, dropzoneProps, onSettingChange }: UserSettingsProp
                             <AccountListItem
                                 key={id}
                                 uid={id}
+                                variant="user"
                                 checked={user.selectedUsers.some(selectedId => selectedId === id)}
                                 onChange={onSettingChange('selectedUsers')}
                             />
