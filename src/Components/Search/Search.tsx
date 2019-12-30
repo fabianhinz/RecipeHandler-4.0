@@ -18,14 +18,20 @@ import { index } from '../../services/algolia'
 import SearchHit from './SearchHit'
 import SearchInput from './SearchInput'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
-        list: {
-            maxHeight: '100%',
-            overflowY: 'auto',
-        },
         paper: {
             paddingTop: 'env(safe-area-inset-top)',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            maxHeight: '100%',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+        },
+        searchContainer: {
+            position: 'sticky',
+            top: 0,
+            zIndex: 1,
+            backgroundColor: theme.palette.background.paper,
         },
     })
 )
@@ -74,7 +80,7 @@ const Search = () => {
                 PaperProps={{ className: classes.paper }}
                 onClose={handleSearchDrawerChange}
                 anchor="top">
-                <Box padding={2}>
+                <div className={classes.searchContainer}>
                     <SearchInput
                         searchValue={searchValue}
                         loading={loading}
@@ -83,12 +89,12 @@ const Search = () => {
                             setSearchValue(e.target.value)
                         }}
                     />
-                </Box>
 
-                <Divider />
+                    <Divider />
+                </div>
 
                 {algoliaHits.length > 0 && (
-                    <List className={classes.list}>
+                    <List>
                         {algoliaHits.map(recipeHit => (
                             <SearchHit
                                 key={recipeHit.name}
