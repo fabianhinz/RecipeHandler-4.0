@@ -1,5 +1,14 @@
+import * as algoliasearch from 'algoliasearch'
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
+
+const ALGOLIA_ID = functions.config().algolia.app
+const ALGOLIA_ADMIN_KEY = functions.config().algolia.adminkey
+const RECIPE_PATH = 'recipes/{recipeId}'
+
+const ALGOLIA_INDEX_NAME = 'recipes'
+const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
+const index = client.initIndex(ALGOLIA_INDEX_NAME)
 
 const serviceAccount = require('../recipehandler-service-account.json')
 
@@ -10,6 +19,35 @@ admin.initializeApp({
 
 const editorsCollection = admin.firestore().collection('editors')
 const auth = admin.auth()
+
+interface Recipe {
+    description: string
+    ingredients: string
+    name: string
+}
+
+export const addToAlgolia = functions
+    .region('europe-west1')
+    .firestore.document(RECIPE_PATH)
+    .onCreate(snapshot => {
+        const { description, ingredients, name } = snapshot.data() as Recipe
+        const objectID = snapshot.id
+        return index.addObject({ description, ingredients, name, objectID })
+    })
+
+export const updateAlgolia = functions
+    .region('europe-west1')
+    .firestore.document(RECIPE_PATH)
+    .onUpdate(change => {
+        const { description, ingredients, name } = change.after.data() as Recipe
+        const objectID = change.after.id
+        return index.saveObject({ description, ingredients, name, objectID })
+    })
+
+export const deleteFromAlgolia = functions
+    .region('europe-west1')
+    .firestore.document(RECIPE_PATH)
+    .onDelete(snapshot => index.deleteObject(snapshot.id))
 
 export const getCustomToken = functions
     .region('europe-west1')
@@ -37,7 +75,7 @@ export const getCustomToken = functions
 export const handleNumberOfCommentsRecipes = functions
     .region('europe-west1')
     .firestore.document('recipes/{recipeName}/comments/{commentId}')
-    .onWrite((change, context) => {
+    .onCreate((_change, context) => {
         admin
             .firestore()
             .collection('recipes')
@@ -48,7 +86,7 @@ export const handleNumberOfCommentsRecipes = functions
 export const handleNumberOfCommentsTrials = functions
     .region('europe-west1')
     .firestore.document('trials/{trialId}/comments/{commentId}')
-    .onWrite((change, context) => {
+    .onCreate((_change, context) => {
         admin
             .firestore()
             .collection('trials')
