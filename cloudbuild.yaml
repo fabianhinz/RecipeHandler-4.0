@@ -2,6 +2,9 @@ steps:
 - name: 'gcr.io/cloud-builders/npm'
   args: [ 'install' ]
 - name: 'gcr.io/cloud-builders/npm'
+  dir: 'functions'
+  args: [ 'install' ]
+- name: 'gcr.io/cloud-builders/npm'
   args: [ 'run', 'build' ]
 - name: 'gcr.io/recipehandler/firebase'
   args: [ 'deploy', '-m', '$SHORT_SHA']

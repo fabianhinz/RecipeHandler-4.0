@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme =>
     createStyles({
         paper: {
             paddingTop: 'env(safe-area-inset-top)',
-            paddingBottom: 'env(safe-area-inset-bottom)',
             maxHeight: '100%',
             overflowY: 'auto',
             overflowX: 'hidden',
