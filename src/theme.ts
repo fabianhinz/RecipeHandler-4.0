@@ -21,6 +21,10 @@ const sharedTheme: Partial<ThemeOptions> = {
         MuiPaper: {
             rounded: {
                 borderRadius: BORDER_RADIUS,
+                margin:
+                    /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
+                        ? 1
+                        : undefined,
             },
         },
         MuiCard: {
@@ -33,14 +37,6 @@ const sharedTheme: Partial<ThemeOptions> = {
                 '&:last-child': {
                     paddingBottom: 'inherhit',
                 },
-            },
-        },
-        MuiChip: {
-            root: {
-                cursor: 'pointer',
-            },
-            sizeSmall: {
-                cursor: 'auto',
             },
         },
         MuiOutlinedInput: {
@@ -63,11 +59,21 @@ const sharedTheme: Partial<ThemeOptions> = {
                 alignSelf: 'center',
             },
         },
+        MuiDialogTitle: {
+            root: {
+                paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
+            },
+        },
+        MuiDialogActions: {
+            root: {
+                paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
+            },
+        },
     },
 }
 
-const PRIMARY_COLOR = '#A5D6A7'
-const SECONDARY_COLOR = '#FFCC80'
+export const PRIMARY_COLOR = '#81c784'
+export const SECONDARY_COLOR = '#ffb74d'
 
 const darkTheme = createMuiTheme({
     palette: {

@@ -1,38 +1,22 @@
-import { createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
-import { RecipeDocument } from '../../model/model'
+import { DocumentId, RecipeDocument } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import RecentlyAdded from '../RecentlyAdded/RecentlyAdded'
-import { Navigate } from '../Routes/Navigate'
+import { NavigateFab } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
 import { HomeCategory } from './HomeCategory'
 import { HomeRecipe } from './HomeRecipe'
 
-type DocumentId = string
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        fab: {
-            zIndex: theme.zIndex.drawer + 1,
-            position: 'fixed',
-            right: theme.spacing(2),
-            bottom: theme.spacing(4.5),
-        },
-    })
-)
 
 const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
     const [lastRecipeName, setLastRecipeName] = useState('')
-    const [pagination, setPagination] = useState(false)
     const [loading, setLoading] = useState(true)
-
-    const classes = useStyles()
 
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
     const { user } = useFirebaseAuthContext()
@@ -43,25 +27,46 @@ const Home = () => {
     }
 
     useEffect(() => {
+        const trigger = document.getElementById('intersection-observer-trigger')
+        if (!trigger) return
+
+        const observer = new IntersectionObserver(entries => {
+            const [lastRecipeTrigger] = entries
+            if (lastRecipeTrigger.isIntersecting && pagedRecipes.size > 0)
+                setLastRecipeName([...pagedRecipes.values()].pop()!.name)
+        })
+        observer.observe(trigger)
+
+        return () => observer.unobserve(trigger)
+    }, [pagedRecipes])
+
+    useEffect(() => {
+        setPagedRecipes(new Map())
+        setLastRecipeName('')
+    }, [user])
+
+    useEffect(() => {
         setLoading(true)
         // ? constructing the query with both where and orderBy clauses requires multiple indexes
         let query:
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
 
-        if (selectedCategories.size === 0) {
-            setPagination(true)
+        if (user && user.selectedUsers.length > 0)
+            query = query.where('editorUid', 'in', user.selectedUsers)
 
+        if (selectedCategories.size === 0) {
             return query
                 .orderBy('name', 'asc')
                 .startAfter(lastRecipeName)
-                .limit(4)
+                .limit(8)
                 .onSnapshot(querySnapshot => {
                     const changes: ChangesRecord = {
                         added: new Map(),
                         modified: new Map(),
                         removed: new Map(),
                     }
+
                     querySnapshot
                         .docChanges()
                         .forEach(({ type, doc }) =>
@@ -74,7 +79,6 @@ const Home = () => {
                     setLoading(false)
                 })
         } else {
-            setPagination(false)
             selectedCategories.forEach(
                 (value, type) => (query = query.where(`categories.${type}`, '==', value))
             )
@@ -88,31 +92,20 @@ const Home = () => {
                 error => console.error(error)
             )
         }
-    }, [lastRecipeName, selectedCategories, selectedCategories.size])
+    }, [lastRecipeName, selectedCategories, user])
 
     return (
         <>
-            <RecentlyAdded />
+            {user && !user.showRecentlyAdded ? <></> : <RecentlyAdded />}
+
             <HomeCategory
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}
             />
-            <HomeRecipe
-                skeletons={loading}
-                recipes={[...pagedRecipes.values()]}
-                onExpandClick={setLastRecipeName}
-                expandDisabled={!pagination}
-            />
+            <HomeRecipe skeletons={loading} recipes={[...pagedRecipes.values()]} />
+            <div id="intersection-observer-trigger" />
 
-            {user && !user.isAnonymous && (
-                <Navigate to={PATHS.recipeCreate}>
-                    <Zoom in>
-                        <Fab className={classes.fab} color="secondary">
-                            <AddIcon />
-                        </Fab>
-                    </Zoom>
-                </Navigate>
-            )}
+            <NavigateFab to={PATHS.recipeCreate} icon={<AddIcon />} />
         </>
     )
 }

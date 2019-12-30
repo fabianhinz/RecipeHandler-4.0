@@ -52,7 +52,7 @@ interface Props {
     onClose: () => void
 }
 
-const Trials = ({ open, onClose }: Props) => {
+const TrialsDialog = ({ open, onClose }: Props) => {
     const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
     const [loading, setLoading] = useState(true)
     const classes = useStyles()
@@ -135,7 +135,7 @@ const Trials = ({ open, onClose }: Props) => {
     })
 
     return (
-        <Dialog open={open} keepMounted onClose={onClose} fullScreen TransitionComponent={SlideUp}>
+        <Dialog open={open} onClose={onClose} fullScreen TransitionComponent={SlideUp}>
             <DialogTitle className={classes.dialogTitle}>Versuchskaninchen</DialogTitle>
 
             <DialogContent dividers>
@@ -148,8 +148,8 @@ const Trials = ({ open, onClose }: Props) => {
                 ) : (
                     <Box paddingTop={1} paddingBottom={1}>
                         <Grid container spacing={3}>
-                            {[...trials.values()].map(trial => (
-                                <TrialsCard trial={trial} key={trial.name} />
+                            {[...trials.values()].map((trial, index) => (
+                                <TrialsCard index={index} trial={trial} key={trial.name} />
                             ))}
                         </Grid>
                     </Box>
@@ -162,7 +162,7 @@ const Trials = ({ open, onClose }: Props) => {
                     </IconButton>
                 </Box>
 
-                {user && !user.isAnonymous && (
+                {user && (
                     <div className={classes.fabContainer} {...getRootProps()}>
                         <Fab color="secondary">
                             <input {...getInputProps()} />
@@ -175,7 +175,4 @@ const Trials = ({ open, onClose }: Props) => {
     )
 }
 
-export default memo(
-    Trials,
-    (prev, next) => prev.open === next.open && prev.onClose === next.onClose
-)
+export default memo(TrialsDialog, (prev, next) => prev.open === next.open)

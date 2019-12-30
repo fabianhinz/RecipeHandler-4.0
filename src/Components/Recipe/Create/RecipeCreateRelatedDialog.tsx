@@ -1,4 +1,5 @@
 import {
+    CardActionArea,
     createStyles,
     Dialog,
     DialogActions,
@@ -6,8 +7,6 @@ import {
     DialogTitle,
     Grid,
     IconButton,
-    List,
-    ListItem,
     makeStyles,
     TextField,
 } from '@material-ui/core'
@@ -33,13 +32,11 @@ interface RecipeCreateRelatedDialogProps {
     onSave: (relatedRecipes: Array<string>) => void
     onClose: () => void
 }
-
+// ToDo change color scheme
 const useStyles = makeStyles(theme =>
     createStyles({
-        list: {
-            transform: 'translateZ(0)',
-        },
-        listItem: {
+        recipeHeader: {
+            padding: theme.spacing(2),
             borderRadius: 0,
             '&:first-child': {
                 borderRadius: `${BORDER_RADIUS}px ${BORDER_RADIUS}px 0 0`,
@@ -47,17 +44,14 @@ const useStyles = makeStyles(theme =>
             '&:last-child': {
                 borderRadius: `0 0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px `,
             },
-        },
-        selectedListItem: {
-            backgroundColor:
-                theme.palette.type === 'dark'
-                    ? 'rgb(183, 222, 184, 0.25)'
-                    : 'rgb(115, 149, 116, 0.25)',
             '&:hover': {
-                backgroundColor:
-                    theme.palette.type === 'dark'
-                        ? 'rgb(183, 222, 184, 0.35)'
-                        : 'rgb(115, 149, 116, 0.35)',
+                backgroundColor: 'rgb(129, 199, 132, 0.25)',
+            },
+        },
+        selectedRecipeHeader: {
+            backgroundColor: 'rgb(129, 199, 132, 0.25)',
+            '&:hover': {
+                backgroundColor: 'rgb(129, 199, 132, 0.35)',
             },
         },
     })
@@ -131,7 +125,6 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
 
     return (
         <Dialog
-            keepMounted
             fullScreen={isDialogFullscreen}
             TransitionComponent={SlideUp}
             open={open}
@@ -141,20 +134,17 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             <DialogTitle>Passende Rezepte auswählen</DialogTitle>
             <DialogContent>
                 {loading && <Progress variant="cover" />}
-                <List>
-                    {recipes.map(recipe => (
-                        <ListItem
-                            key={recipe.name}
-                            onClick={() => handleSelectedChange(recipe.name)}
-                            className={clsx(
-                                classes.listItem,
-                                selected.has(recipe.name) && classes.selectedListItem
-                            )}
-                            button>
-                            <RecipeResultHeader variant="related" recipe={recipe} />
-                        </ListItem>
-                    ))}
-                </List>
+                {recipes.map(recipe => (
+                    <CardActionArea
+                        key={recipe.name}
+                        onClick={() => handleSelectedChange(recipe.name)}
+                        className={clsx(
+                            classes.recipeHeader,
+                            selected.has(recipe.name) && classes.selectedRecipeHeader
+                        )}>
+                        <RecipeResultHeader variant="related" recipe={recipe} />
+                    </CardActionArea>
+                ))}
             </DialogContent>
             <DialogActions>
                 <Grid container>

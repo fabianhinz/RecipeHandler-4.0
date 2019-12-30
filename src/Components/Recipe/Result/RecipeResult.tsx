@@ -8,6 +8,7 @@ import React, { memo } from 'react'
 
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
+import AccountChip from '../../Account/AccountChip'
 import Markdown from '../../Shared/Markdown'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
@@ -18,9 +19,10 @@ import { RecipeResultRelated } from './RecipeResultRelated'
 
 interface RecipeResultProps extends RecipeVariants {
     recipe: Recipe<AttachmentMetadata | AttachmentData> | null
+    divider?: boolean
 }
 
-const useStyles = makeStyles(theme =>
+const useStyles = makeStyles(() =>
     createStyles({
         recipeContainer: {
             overflowX: 'hidden',
@@ -33,7 +35,7 @@ export const recipeResultBreakpoints = (
 ): Partial<Record<Breakpoint, boolean | GridSize>> =>
     fullWidth ? { xs: 12 } : { xs: 12, lg: 6, xl: 4 }
 
-const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
+const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
     const classes = useStyles()
 
     if (!recipe)
@@ -47,14 +49,16 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
     if (variant === 'summary')
         return (
-            <Grid container spacing={4} className={classes.recipeContainer} alignContent="stretch">
+            <Grid container spacing={2} className={classes.recipeContainer} alignContent="stretch">
                 <Grid item xs={12}>
                     <RecipeResultHeader recipe={recipe} variant={variant} />
                 </Grid>
 
-                <Grid item xs={12}>
-                    <Divider />
-                </Grid>
+                {divider && (
+                    <Grid item xs={12}>
+                        <Divider />
+                    </Grid>
+                )}
             </Grid>
         )
 
@@ -119,11 +123,18 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                     />
                 </Grid>
             )}
+
+            <Grid item xs={12} container justify="center">
+                <AccountChip variant="readonly" uid={recipe.editorUid} />
+            </Grid>
         </Grid>
     )
 }
 
 export default memo(
     RecipeResult,
-    (prev, next) => prev.recipe === next.recipe && prev.variant === next.variant
+    (prev, next) =>
+        prev.recipe === next.recipe &&
+        prev.variant === next.variant &&
+        prev.divider === next.divider
 )

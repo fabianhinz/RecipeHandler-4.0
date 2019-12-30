@@ -28,6 +28,15 @@ const useStyles = makeStyles(theme =>
         actionArea: {
             borderRadius: '50%',
         },
+        addAvatar: {
+            width: 200,
+            height: 200,
+            fontSize: theme.typography.pxToRem(100),
+            backgroundColor:
+                theme.palette.type === 'dark'
+                    ? 'rgba(117, 117, 117, 0.75)'
+                    : 'rgb(189, 189, 189, 0.75)',
+        },
     })
 )
 
@@ -91,6 +100,12 @@ const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) 
                     {attachments.map(attachment => (
                         <AttachmentPreview attachment={attachment} key={attachment.name} />
                     ))}
+                    {/* Not ready */}
+                    {/* <Grid item>
+                        <CardActionArea className={classes.actionArea}>
+                            <Avatar className={classes.addAvatar}>+</Avatar>
+                        </CardActionArea>
+                    </Grid> */}
                 </Grid>
             </Grid>
         </Grid>

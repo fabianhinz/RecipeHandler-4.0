@@ -4,6 +4,7 @@ import { AttachmentData, AttachmentMetadata, Categories, Recipe } from '../../..
 
 export interface RecipeCreateState {
     name: string
+    editorUid?: string
     categories: Categories<string>
     attachments: Array<AttachmentData | AttachmentMetadata>
     ingredients: string

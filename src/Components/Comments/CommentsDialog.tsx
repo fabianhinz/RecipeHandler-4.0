@@ -25,6 +25,7 @@ import { Comment as CommentModel, CommentsCollections, CommentsDocument } from '
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS_HUGE } from '../../theme'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { SlideUp } from '../Shared/Transitions'
 import Comment from './Comment'
 
@@ -32,12 +33,6 @@ const useStyles = makeStyles(() =>
     createStyles({
         skeleton: {
             borderRadius: BORDER_RADIUS_HUGE,
-        },
-        dialogContent: {
-            minHeight: 208,
-        },
-        dialogContentMaxHeigth: {
-            maxHeight: '50vh',
         },
         dialogTitle: {
             cursor: 'move',
@@ -87,6 +82,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
     const [inputDisabled, setInputDisabled] = useState(false)
 
     const { isDialogFullscreen } = useBreakpointsContext()
+    const { user } = useFirebaseAuthContext()
 
     const classes = useStyles()
 
@@ -115,14 +111,16 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
         setInputDisabled(true)
 
         try {
-            const recipeRef = FirebaseService.firestore.collection(collection).doc(name)
-            await recipeRef.collection('comments').add({
-                comment: input,
-                likes: 0,
-                dislikes: 0,
-                createdDate: FirebaseService.createTimestampFromDate(new Date()),
-            })
-            await recipeRef.update({ numberOfComments: FirebaseService.incrementBy(1) })
+            await FirebaseService.firestore
+                .collection(collection)
+                .doc(name)
+                .collection('comments')
+                .add({
+                    comment: `${user!.username}: ${input}`,
+                    likes: 0,
+                    dislikes: 0,
+                    createdDate: FirebaseService.createTimestampFromDate(new Date()),
+                })
 
             setInput('')
             setInputDisabled(false)
@@ -146,11 +144,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 className={clsx(classes.dialogTitle, !isDialogFullscreen && 'dragghandler')}>
                 {name}
             </DialogTitle>
-            <DialogContent
-                className={clsx(
-                    classes.dialogContent,
-                    !isDialogFullscreen && classes.dialogContentMaxHeigth
-                )}>
+            <DialogContent>
                 <Grid alignItems="flex-end" direction="column" wrap="nowrap" container spacing={1}>
                     {loading
                         ? new Array(numberOfComments).fill(1).map((_skeleton, index) => (
@@ -185,33 +179,37 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
             <DialogActions>
                 <form className={classes.form} onSubmit={handleFormSubmit}>
                     <Grid container>
-                        <Grid item xs={12}>
-                            <TextField
-                                margin="normal"
-                                helperText={inputDisabled ? 'Wird gespeichert' : ''}
-                                InputProps={{
-                                    endAdornment: (
-                                        <IconButton onClick={scrollToLatest}>
-                                            <ScrollToLatestIcon />
-                                        </IconButton>
-                                    ),
-                                }}
-                                disabled={inputDisabled}
-                                variant="outlined"
-                                value={input}
-                                fullWidth
-                                onChange={e => setInput(e.target.value)}
-                                label="Kommentar hinzufügen"
-                            />
-                        </Grid>
+                        {user && (
+                            <Grid item xs={12}>
+                                <TextField
+                                    margin="normal"
+                                    helperText={inputDisabled ? 'Wird gespeichert' : ''}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <IconButton onClick={scrollToLatest}>
+                                                <ScrollToLatestIcon />
+                                            </IconButton>
+                                        ),
+                                    }}
+                                    disabled={inputDisabled}
+                                    variant="outlined"
+                                    value={input}
+                                    fullWidth
+                                    onChange={e => setInput(e.target.value)}
+                                    label="Kommentar hinzufügen"
+                                />
+                            </Grid>
+                        )}
                         <Grid item xs={12}>
                             <Grid container justify="space-evenly">
                                 <IconButton onClick={onClose}>
                                     <CloseIcon />
                                 </IconButton>
-                                <IconButton type="submit">
-                                    <SaveIcon />
-                                </IconButton>
+                                {user && (
+                                    <IconButton type="submit">
+                                        <SaveIcon />
+                                    </IconButton>
+                                )}
                             </Grid>
                         </Grid>
                     </Grid>

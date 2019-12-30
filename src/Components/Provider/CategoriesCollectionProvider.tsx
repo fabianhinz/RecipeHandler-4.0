@@ -12,7 +12,7 @@ const Context = React.createContext<CategoriesCollection | null>(null)
 
 export const useCategoriesCollectionContext = () => useContext(Context) as CategoriesCollection
 
-export const CategoriesCollectionProvider: FC = ({ children }) => {
+const CategoriesCollectionProvider: FC = ({ children }) => {
     const [categories, setCategories] = useState<Categories<Array<string>>>({})
     const [categoriesLoading, setCategoriesLoading] = useState(true)
 
@@ -33,3 +33,5 @@ export const CategoriesCollectionProvider: FC = ({ children }) => {
         </Context.Provider>
     )
 }
+
+export default CategoriesCollectionProvider

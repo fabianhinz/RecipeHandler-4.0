@@ -18,6 +18,7 @@ import {
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
+import clsx from 'clsx'
 import {
     AvTimer,
     Barley,
@@ -155,7 +156,13 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
                                 button
                                 key={category}>
                                 <ListItemAvatar>
-                                    <Avatar>{iconFromCategory(category)}</Avatar>
+                                    <Avatar
+                                        className={clsx(
+                                            category === selectedCategories.get(type) &&
+                                                classes.avatarSelected
+                                        )}>
+                                        {iconFromCategory(category)}
+                                    </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText primary={category} />
                             </ListItem>

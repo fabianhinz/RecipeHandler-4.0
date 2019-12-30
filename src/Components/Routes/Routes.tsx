@@ -68,7 +68,7 @@ export const Routes: FC = () => {
     return (
         <Switch>
             {anonymousRoutes.map(renderRoute)}
-            {user && !user.isAnonymous && securedRoutes.map(renderRoute)}
+            {user && securedRoutes.map(renderRoute)}
             <Route render={() => <Redirect to="/" />} />
         </Switch>
     )

@@ -1,4 +1,10 @@
-import { CircularProgress, InputAdornment, InputBase } from '@material-ui/core'
+import {
+    CircularProgress,
+    createStyles,
+    InputAdornment,
+    InputBase,
+    makeStyles,
+} from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/SearchTwoTone'
 import React from 'react'
 
@@ -10,10 +16,21 @@ interface Props {
     onChange: (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
 }
 
+const useStyles = makeStyles(theme =>
+    createStyles({
+        searchInput: {
+            padding: theme.spacing(2),
+        },
+    })
+)
+
 const SearchInput = ({ searchValue, loading, onChange }: Props) => {
+    const classes = useStyles()
+
     return (
         <InputBase
-            autoFocus
+            className={classes.searchInput}
+            autoFocus={searchValue.length === 0}
             fullWidth
             placeholder="Rezepte durchsuchen"
             value={searchValue}
