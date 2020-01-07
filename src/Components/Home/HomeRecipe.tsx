@@ -18,7 +18,6 @@ import React from 'react'
 
 import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { AttachmentMetadata, Recipe } from '../../model/model'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import RecipeResult from '../Recipe/Result/RecipeResult'
 
 export type OrderByKey = keyof Pick<Recipe<AttachmentMetadata>, 'name' | 'createdDate'>
@@ -43,7 +42,6 @@ const useStyles = makeStyles(() =>
 )
 
 export const HomeRecipe = ({ recipes, skeletons, orderBy, onOrderByChange }: HomeRecipeProps) => {
-    const { isDialogFullscreen } = useBreakpointsContext()
     const classes = useStyles()
 
     const handleOrderByChange = (key: keyof OrderByRecord) => () => {
@@ -70,7 +68,6 @@ export const HomeRecipe = ({ recipes, skeletons, orderBy, onOrderByChange }: Hom
                                 groupedTextHorizontal: classes.groupButton,
                                 groupedTextVertical: classes.groupButton,
                             }}
-                            orientation={isDialogFullscreen ? 'vertical' : 'horizontal'}
                             variant="contained">
                             <Button
                                 onClick={handleOrderByChange('name')}
