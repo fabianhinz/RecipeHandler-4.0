@@ -32,11 +32,14 @@ interface HomeRecipeProps {
 
 const useStyles = makeStyles(() =>
     createStyles({
-        groupButton: {
+        buttonGroupText: {
             '&:not(:first-child), &:not(:last-child)': {
                 borderRight: 'none',
                 borderBottom: 'none',
             },
+        },
+        buttonGroupRoot: {
+            boxShadow: 'none',
         },
     })
 )
@@ -65,8 +68,9 @@ export const HomeRecipe = ({ recipes, skeletons, orderBy, onOrderByChange }: Hom
                     <Box display="flex" justifyContent="center" flexGrow={1}>
                         <ButtonGroup
                             classes={{
-                                groupedTextHorizontal: classes.groupButton,
-                                groupedTextVertical: classes.groupButton,
+                                groupedTextHorizontal: classes.buttonGroupText,
+                                groupedTextVertical: classes.buttonGroupText,
+                                root: classes.buttonGroupRoot,
                             }}
                             variant="contained">
                             <Button
