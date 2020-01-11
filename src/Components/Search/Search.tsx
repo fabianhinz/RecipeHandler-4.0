@@ -26,6 +26,15 @@ const useStyles = makeStyles(theme =>
             overflowY: 'auto',
             overflowX: 'hidden',
         },
+        safeAreaIos: {
+            height: 'env(safe-area-inset-top)',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: theme.zIndex.drawer + 1,
+            background: theme.palette.background.paper,
+        },
         searchContainer: {
             position: 'sticky',
             top: 0,
@@ -79,6 +88,7 @@ const Search = () => {
                 PaperProps={{ className: classes.paper }}
                 onClose={handleSearchDrawerChange}
                 anchor="top">
+                <div className={classes.safeAreaIos} />
                 <div className={classes.searchContainer}>
                     <SearchInput
                         searchValue={searchValue}
