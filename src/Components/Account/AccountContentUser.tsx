@@ -3,11 +3,13 @@ import {
     Box,
     Button,
     CardActionArea,
+    Collapse,
     createStyles,
     DialogActions,
     DialogContent,
     Divider,
     Grid,
+    IconButton,
     List,
     ListItem,
     ListItemIcon,
@@ -16,15 +18,18 @@ import {
     makeStyles,
     Tab,
     Tabs,
+    Typography,
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import DarkThemeIcon from '@material-ui/icons/BrightnessHighRounded'
 import LightThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import InfoIcon from '@material-ui/icons/InfoRounded'
 import NotificationsOffIcon from '@material-ui/icons/NotificationsOffRounded'
 import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
+import SearchIcon from '@material-ui/icons/SearchRounded'
 import TimelapseIcon from '@material-ui/icons/TimelapseRounded'
-import { CameraImage, Settings, ShieldLock } from 'mdi-material-ui'
+import { CameraImage, DatabaseSearch, Settings, ShieldLock } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useMemo, useState } from 'react'
 import { DropzoneInputProps, DropzoneRootProps } from 'react-dropzone'
@@ -71,18 +76,22 @@ const useStyles = makeStyles(theme =>
                 boxShadow: theme.shadows[1],
             },
         },
+        listSubheader: {
+            display: 'flex',
+            justifyContent: 'space-between',
+        },
     })
 )
 
 type SettingKeys = keyof Pick<
     User,
-    'muiTheme' | 'selectedUsers' | 'showRecentlyAdded' | 'notifications'
+    'muiTheme' | 'selectedUsers' | 'showRecentlyAdded' | 'notifications' | 'algoliaAdvancedSyntax'
 >
 
 interface Props extends AccountContentProps {
     user: User
 }
-
+// ! ToDo split into multiple components
 const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => {
     const [tabValue, setTabValue] = useState(0)
     const { attachments, dropzoneProps } = useAttachmentDropzone({
@@ -144,6 +153,9 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
                 userDoc.update({ [key]: !user.notifications })
                 break
             }
+            case 'algoliaAdvancedSyntax': {
+                userDoc.update({ [key]: !user.algoliaAdvancedSyntax })
+            }
         }
     }
 
@@ -203,6 +215,7 @@ interface UserSettingsProps {
 }
 
 const UserSettings = ({ user, dropzoneProps, onSettingChange }: UserSettingsProps) => {
+    const [showInfo, setShowInfo] = useState(false)
     const { userIds } = useUsersContext()
     const classes = useStyles()
 
@@ -224,14 +237,39 @@ const UserSettings = ({ user, dropzoneProps, onSettingChange }: UserSettingsProp
 
                 <Grid item xs={12}>
                     <List>
-                        <ListSubheader>Einstellungen</ListSubheader>
+                        <ListSubheader className={classes.listSubheader}>
+                            Einstellungen
+                            <IconButton onClick={() => setShowInfo(prev => !prev)}>
+                                <InfoIcon />
+                            </IconButton>
+                        </ListSubheader>
                         <ListItem button onClick={onSettingChange('muiTheme')}>
                             <ListItemIcon>
                                 {user.muiTheme === 'dark' ? <DarkThemeIcon /> : <LightThemeIcon />}
                             </ListItemIcon>
                             <ListItemText
                                 primary="Design"
-                                secondary={user.muiTheme === 'dark' ? 'Dunkel' : 'Hell'}
+                                secondaryTypographyProps={{ component: 'div' }}
+                                secondary={
+                                    <>
+                                        <Typography
+                                            gutterBottom
+                                            variant="body2"
+                                            color="textSecondary">
+                                            {user.muiTheme === 'dark' ? 'Dunkel' : 'Hell'}
+                                        </Typography>
+                                        <Collapse in={showInfo}>
+                                            <Typography
+                                                gutterBottom
+                                                variant="body2"
+                                                color="textSecondary">
+                                                Den Augen zu liebe gibt es ein sogenanntes{' '}
+                                                <i>Darktheme</i>. Dem Nutzer zuliebe auch ein{' '}
+                                                <i>Lighttheme</i>.
+                                            </Typography>
+                                        </Collapse>
+                                    </>
+                                }
                             />
                         </ListItem>
                         <Divider />
@@ -241,10 +279,28 @@ const UserSettings = ({ user, dropzoneProps, onSettingChange }: UserSettingsProp
                             </ListItemIcon>
                             <ListItemText
                                 primary="Kürzlich hinzugefügte Rezepte"
+                                secondaryTypographyProps={{ component: 'div' }}
                                 secondary={
-                                    user.showRecentlyAdded
-                                        ? 'werden angezeigt'
-                                        : 'werden ausgeblendet'
+                                    <>
+                                        <Typography
+                                            gutterBottom
+                                            variant="body2"
+                                            color="textSecondary">
+                                            {user.showRecentlyAdded
+                                                ? 'werden angezeigt'
+                                                : 'werden ausgeblendet'}
+                                        </Typography>
+                                        <Collapse in={showInfo}>
+                                            <Typography
+                                                gutterBottom
+                                                variant="body2"
+                                                color="textSecondary">
+                                                Je nach Bildschirmgröße werden die neuesten Rezepte
+                                                unabhängig von Autor oder Filterung durch die
+                                                Kategorien angezeigt.
+                                            </Typography>
+                                        </Collapse>
+                                    </>
                                 }
                             />
                         </ListItem>
@@ -259,7 +315,61 @@ const UserSettings = ({ user, dropzoneProps, onSettingChange }: UserSettingsProp
                             </ListItemIcon>
                             <ListItemText
                                 primary="Benachrichtigungen"
-                                secondary={user.notifications ? 'aktiviert' : 'deaktiviert'}
+                                secondaryTypographyProps={{ component: 'div' }}
+                                secondary={
+                                    <>
+                                        <Typography
+                                            gutterBottom
+                                            variant="body2"
+                                            color="textSecondary">
+                                            {user.notifications ? 'aktiviert' : 'deaktiviert'}
+                                        </Typography>
+                                        <Collapse in={showInfo}>
+                                            <Typography
+                                                gutterBottom
+                                                variant="body2"
+                                                color="textSecondary">
+                                                Sofern <s>unterstützt</s> entwickelt 🤖erhälst du
+                                                Benachrichtigungen zu neuen Kommentaren und
+                                                Rezepten.
+                                            </Typography>
+                                        </Collapse>
+                                    </>
+                                }
+                            />
+                        </ListItem>
+                        <Divider />
+                        <ListItem button onClick={onSettingChange('algoliaAdvancedSyntax')}>
+                            <ListItemIcon>
+                                {user.algoliaAdvancedSyntax ? <DatabaseSearch /> : <SearchIcon />}
+                            </ListItemIcon>
+                            <ListItemText
+                                primary="erweiterte Abfragesyntax"
+                                secondaryTypographyProps={{ component: 'div' }}
+                                secondary={
+                                    <>
+                                        <Typography
+                                            gutterBottom
+                                            variant="body2"
+                                            color="textSecondary">
+                                            {user.algoliaAdvancedSyntax
+                                                ? 'aktiviert'
+                                                : 'deaktiviert'}
+                                        </Typography>
+                                        <Collapse in={showInfo}>
+                                            <Typography
+                                                variant="body2"
+                                                gutterBottom
+                                                color="textSecondary">
+                                                Suchanfragen die mit{' '}
+                                                <b>doppelten Anführungszeichen</b> starten und enden
+                                                werden als ganze Sätze interpretiert. Über den{' '}
+                                                <b>Bindestrich</b> können Wörter explizit aus der
+                                                Suche ausgeschlossen werden.
+                                            </Typography>
+                                        </Collapse>
+                                    </>
+                                }
                             />
                         </ListItem>
 

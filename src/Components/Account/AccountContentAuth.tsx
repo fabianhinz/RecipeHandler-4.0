@@ -108,6 +108,7 @@ const AccountContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
                                 showRecentlyAdded: true,
                                 notifications: false,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
+                                algoliaAdvancedSyntax: false,
                             } as Omit<User, 'uid'>)
                         // send a verification email to the newly created user
                         user.sendEmailVerification({ url: 'https://recipehandler.web.app/' })
