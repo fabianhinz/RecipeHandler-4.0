@@ -91,6 +91,7 @@ const Search = () => {
                 <div className={classes.safeAreaIos} />
                 <div className={classes.searchContainer}>
                     <SearchInput
+                        onSearchBtnClick={() => setSearchDrawer(false)}
                         searchValue={searchValue}
                         loading={loading}
                         onChange={e => {
