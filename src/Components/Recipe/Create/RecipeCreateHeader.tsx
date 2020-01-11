@@ -36,8 +36,8 @@ const RecipeCreateHeader = ({ inputDisabled, name, onNameChange }: Props) => {
             </Grid>
             <Grid item xs={12}>
                 <Typography component="span" color="textSecondary">
-                    Ein Rezept sollte mindestens einen Namen und Kategorie aufweißen. Nach erfolgter
-                    Speicherung ist die Änderung des Rezeptnamens nicht mehr möglich
+                    Ein Rezept sollte mindestens einen Namen und Kategorie aufweisen. Nach erfolgter
+                    Speicherung ist die Änderung des Rezeptnamens nicht mehr möglich.
                 </Typography>
             </Grid>
         </Grid>
