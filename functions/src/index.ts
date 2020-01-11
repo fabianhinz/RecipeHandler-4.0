@@ -93,3 +93,8 @@ export const handleNumberOfCommentsTrials = functions
             .doc(context.params.trialId)
             .update({ numberOfComments: admin.firestore.FieldValue.increment(1) })
     })
+
+export const handleChangelog = functions.region('europe-west1').https.onRequest((req, res) => {
+    console.log(req.body)
+    res.end()
+})
