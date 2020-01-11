@@ -22,7 +22,7 @@ ReactDOM.render(
 
 // ToDo refactor
 // ? source: https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications#notifications_api
-if ('Notification' in window.Notification && navigator.serviceWorker) {
+if ('Notification' in window && navigator.serviceWorker) {
     if (Notification.requestPermission)
         Notification.requestPermission().then(permission => {
             if (permission === 'granted') {
