@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme =>
             zIndex: theme.zIndex.drawer + 1,
             position: 'fixed',
             right: theme.spacing(2),
-            bottom: theme.spacing(4.5),
+            bottom: `calc(env(safe-area-inset-bottom) + ${theme.spacing(4.5)}px)`,
         },
     })
 )
