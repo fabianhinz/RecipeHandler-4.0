@@ -7,6 +7,7 @@ type Breakpoints = {
     isDialogFullscreen: boolean
     isLowRes: boolean
     isHighRes: boolean
+    isMobile: boolean
 }
 
 const Context = React.createContext<Breakpoints | null>(null)
@@ -19,6 +20,7 @@ const BreakpointsProvider: FC = ({ children }) => {
     const isDialogFullscreen = useMediaQuery('(max-width: 1023px)')
     const isLowRes = useMediaQuery('(max-width: 599px)')
     const isHighRes = useMediaQuery('(min-width: 2560px)')
+    const isMobile = useMediaQuery(`(max-width: 425px)`)
 
     return (
         <Context.Provider
@@ -28,6 +30,7 @@ const BreakpointsProvider: FC = ({ children }) => {
                 isDialogFullscreen,
                 isLowRes,
                 isHighRes,
+                isMobile,
             }}>
             {children}
         </Context.Provider>
