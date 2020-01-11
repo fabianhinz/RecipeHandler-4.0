@@ -15,6 +15,7 @@ const Context = React.createContext<Breakpoints | null>(null)
 export const useBreakpointsContext = () => useContext(Context) as Breakpoints
 
 const BreakpointsProvider: FC = ({ children }) => {
+    // ToDo streamline those...
     const isDesktopPinnable = useMediaQuery('(min-width: 1024px)')
     const isMobilePinnable = useMediaQuery('(max-width: 1023px)')
     const isDialogFullscreen = useMediaQuery('(max-width: 1023px)')
