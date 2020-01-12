@@ -25,7 +25,6 @@ const DeviceOrientationProvider: FC = ({ children }) => {
     const [suggestionDialog, setSuggestionDialog] = useState(false)
 
     const landscape = useMediaQuery('(orientation:landscape)')
-    const portrait = useMediaQuery('(orientation:portrait)')
     const { isMobile } = useBreakpointsContext()
 
     useEffect(() => {
@@ -38,12 +37,14 @@ const DeviceOrientationProvider: FC = ({ children }) => {
                     setSuggestionDialog(true)
                 }
             })()
-        if (portrait) setSuggestionDialog(false)
-    }, [landscape, portrait, isMobile])
+        else setSuggestionDialog(false)
+    }, [landscape, isMobile])
 
     return (
         <>
-            <Context.Provider value={{ landscape, portrait }}>{children}</Context.Provider>
+            <Context.Provider value={{ landscape, portrait: !landscape }}>
+                {children}
+            </Context.Provider>
             <Dialog TransitionComponent={SlideUp} open={suggestionDialog}>
                 <DialogContent>
                     <DialogContentText>
