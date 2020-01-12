@@ -6,7 +6,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import Footer from './Footer'
 import Main from './Main'
-import BreakpointsProvider from './Provider/BreakpointsProvider'
+import { useBreakpointsContext } from './Provider/BreakpointsProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
 import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
@@ -22,6 +22,7 @@ const preferedColorSchemeDark =
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
     const { user } = useFirebaseAuthContext()
+    const { isMobile } = useBreakpointsContext()
 
     useEffect(() => {
         const metaThemeColor = document.getElementsByName('theme-color')[0]
@@ -41,26 +42,24 @@ const App: FC = () => {
                 preventDuplicate
                 autoHideDuration={3000}
                 anchorOrigin={{
-                    vertical: 'top',
+                    vertical: isMobile ? 'bottom' : 'top',
                     horizontal: 'right',
                 }}>
                 <RouterProvider>
-                    <BreakpointsProvider>
-                        <DeviceOrientationProvider>
-                            <UsersProvider>
-                                <CategoriesCollectionProvider>
-                                    <SelectedAttachementProvider>
-                                        <PinnedRecipesProvider>
-                                            <Container>
-                                                <Main />
-                                                <Footer />
-                                            </Container>
-                                        </PinnedRecipesProvider>
-                                    </SelectedAttachementProvider>
-                                </CategoriesCollectionProvider>
-                            </UsersProvider>
-                        </DeviceOrientationProvider>
-                    </BreakpointsProvider>
+                    <DeviceOrientationProvider>
+                        <UsersProvider>
+                            <CategoriesCollectionProvider>
+                                <SelectedAttachementProvider>
+                                    <PinnedRecipesProvider>
+                                        <Container>
+                                            <Main />
+                                            <Footer />
+                                        </Container>
+                                    </PinnedRecipesProvider>
+                                </SelectedAttachementProvider>
+                            </CategoriesCollectionProvider>
+                        </UsersProvider>
+                    </DeviceOrientationProvider>
                 </RouterProvider>
             </SnackbarProvider>
         </ThemeProvider>
