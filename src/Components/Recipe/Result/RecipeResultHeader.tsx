@@ -17,21 +17,17 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
     const { isMobile } = useBreakpointsContext()
 
     const minifiedLayout = isMobile && variant === 'summary'
+    const nameLayout = variant === 'pinned' || variant === 'related'
+    const actionsLayout = variant === 'details' || variant === 'summary'
 
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">
-            <Grid item xs={variant === 'pinned' ? 12 : minifiedLayout ? 11 : 7}>
-                {variant === 'related' ? (
+            <Grid item xs={nameLayout ? 12 : minifiedLayout ? 11 : 7}>
+                <Navigate disabled={nameLayout} to={PATHS.details(recipe.name)}>
                     <Typography display="inline" variant="h5">
                         {recipe.name}
                     </Typography>
-                ) : (
-                    <Navigate to={PATHS.details(recipe.name)}>
-                        <Typography display="inline" variant="h5">
-                            {recipe.name}
-                        </Typography>
-                    </Navigate>
-                )}
+                </Navigate>
                 <Typography color="textSecondary">
                     Zuletzt geändert am{' '}
                     {FirebaseService.createDateFromTimestamp(
@@ -39,7 +35,7 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
                     ).toLocaleDateString()}
                 </Typography>
             </Grid>
-            {variant !== 'pinned' && variant !== 'preview' && variant !== 'related' && (
+            {actionsLayout && (
                 <Grid item xs={minifiedLayout ? 1 : 5}>
                     <RecipeResultAction
                         pinOnly={minifiedLayout}

@@ -6,15 +6,18 @@ import { BrowserRouter } from 'react-router-dom'
 
 import App from './Components/App'
 import ErrorBoundary from './Components/ErrorBoundary'
+import BreakpointsProvider from './Components/Provider/BreakpointsProvider'
 import FirebaseAuthProvider from './Components/Provider/FirebaseAuthProvider'
 import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
     <ErrorBoundary>
         <BrowserRouter>
-            <FirebaseAuthProvider>
-                <App />
-            </FirebaseAuthProvider>
+            <BreakpointsProvider>
+                <FirebaseAuthProvider>
+                    <App />
+                </FirebaseAuthProvider>
+            </BreakpointsProvider>
         </BrowserRouter>
     </ErrorBoundary>,
     document.getElementById('root')

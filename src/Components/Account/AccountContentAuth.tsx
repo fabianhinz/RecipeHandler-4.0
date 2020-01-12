@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     createStyles,
     DialogActions,
@@ -108,6 +107,7 @@ const AccountContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
                                 showRecentlyAdded: true,
                                 notifications: false,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
+                                algoliaAdvancedSyntax: false,
                             } as Omit<User, 'uid'>)
                         // send a verification email to the newly created user
                         user.sendEmailVerification({ url: 'https://recipehandler.web.app/' })
@@ -181,15 +181,13 @@ const AccountContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
                 )}
             </DialogContent>
             <DialogActions>
-                <Box flexGrow={1} display="flex" justifyContent="space-evenly" alignItems="center">
-                    <Button startIcon={<CloseIcon />} onClick={onDialogClose}>
-                        Schließen
-                    </Button>
+                <Button startIcon={<CloseIcon />} onClick={onDialogClose}>
+                    Schließen
+                </Button>
 
-                    <Button color="secondary" startIcon={<AccountIcon />} type="submit">
-                        {newUser ? 'registrieren' : 'einloggen'}
-                    </Button>
-                </Box>
+                <Button color="secondary" startIcon={<AccountIcon />} type="submit">
+                    {newUser ? 'registrieren' : 'einloggen'}
+                </Button>
             </DialogActions>
         </form>
     )

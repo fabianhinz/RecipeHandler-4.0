@@ -67,6 +67,7 @@ const sharedTheme: Partial<ThemeOptions> = {
         MuiDialogActions: {
             root: {
                 paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
+                justifyContent: 'space-evenly',
             },
         },
     },

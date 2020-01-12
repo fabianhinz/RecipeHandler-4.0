@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import React, { FC, useMemo, useState } from 'react'
 
 import { Categories } from '../../model/model'
+import { stopPropagationProps } from '../../util/constants'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useCategoriesCollectionContext } from '../Provider/CategoriesCollectionProvider'
 import { iconFromCategory } from './CategoryWrapper'
@@ -57,7 +58,7 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => {
     }
 
     return (
-        <Grid container spacing={1} wrap="nowrap">
+        <Grid container spacing={1} wrap="nowrap" {...stopPropagationProps}>
             {Object.keys(categories).map(type => (
                 <Grid item key={type}>
                     {categories[type].length > 0 && (

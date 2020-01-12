@@ -61,13 +61,13 @@ const SearchInput = ({ searchValue, loading, onChange, onSearchBtnClick }: Props
                 onChange={onChange}
                 startAdornment={
                     <InputAdornment position="start">
-                        {loading ? (
-                            <CircularProgress thickness={8} size={24} />
-                        ) : (
-                            <IconButton onClick={onSearchBtnClick}>
+                        <IconButton onClick={onSearchBtnClick}>
+                            {loading ? (
+                                <CircularProgress thickness={8} size={24} />
+                            ) : (
                                 <SearchIcon />
-                            </IconButton>
-                        )}
+                            )}
+                        </IconButton>
                     </InputAdornment>
                 }
                 endAdornment={

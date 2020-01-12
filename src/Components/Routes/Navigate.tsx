@@ -8,13 +8,18 @@ const style: CSSProperties = { textDecoration: 'none', color: 'inherit' }
 
 interface NavigateProps {
     to: string
+    disabled?: boolean
 }
 
-export const Navigate: FC<NavigateProps> = ({ to, children }) => (
-    <Link to={to} style={style}>
-        {children}
-    </Link>
-)
+export const Navigate: FC<NavigateProps> = ({ to, children, disabled }) => {
+    if (disabled) return <>{children}</>
+    else
+        return (
+            <Link to={to} style={style}>
+                {children}
+            </Link>
+        )
+}
 
 const useStyles = makeStyles(theme =>
     createStyles({

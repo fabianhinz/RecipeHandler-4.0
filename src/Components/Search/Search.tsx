@@ -15,6 +15,7 @@ import useDebounce from '../../hooks/useDebounce'
 import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { Hits } from '../../model/model'
 import { index } from '../../services/algolia'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import SearchHit from './SearchHit'
 import SearchInput from './SearchInput'
 
@@ -53,13 +54,17 @@ const Search = () => {
 
     const classes = useStyles()
     const debouncedSearchValue = useDebounce(searchValue, 500)
+    const { user } = useFirebaseAuthContext()
 
     const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous)
 
     useEffect(() => {
         if (debouncedSearchValue.length > 0) {
             index
-                .search(debouncedSearchValue)
+                .search({
+                    query: debouncedSearchValue,
+                    advancedSyntax: user && user.algoliaAdvancedSyntax ? true : false,
+                })
                 .then(({ hits }) => {
                     setError(null)
                     setAlgoliaHits(hits)
@@ -73,7 +78,7 @@ const Search = () => {
             setAlgoliaHits([])
             setLoading(false)
         }
-    }, [debouncedSearchValue])
+    }, [debouncedSearchValue, user])
 
     return (
         <>

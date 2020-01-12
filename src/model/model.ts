@@ -85,4 +85,5 @@ export type User = {
     profilePicture?: string
     emailVerified?: boolean
     createdDate: firebase.firestore.Timestamp
+    algoliaAdvancedSyntax: boolean
 }
