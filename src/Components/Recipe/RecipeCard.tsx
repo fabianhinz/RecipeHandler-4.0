@@ -16,6 +16,8 @@ const useStyles = makeStyles(theme =>
             padding: '0px 8px',
             borderRadius: 0,
             boxShadow: theme.shadows[0],
+            minHeight: theme.typography.pxToRem(48),
+            display: 'flex',
         },
         pinnedHeader: {
             boxShadow: theme.shadows[1],
@@ -28,7 +30,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface Props extends RecipeVariants {
+interface Props extends Partial<RecipeVariants> {
     header: React.ReactNode
     content: React.ReactNode
 }

@@ -7,12 +7,12 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 const style: CSSProperties = { textDecoration: 'none', color: 'inherit' }
 
 interface NavigateProps {
-    to: string
+    to?: string
     disabled?: boolean
 }
 
 export const Navigate: FC<NavigateProps> = ({ to, children, disabled }) => {
-    if (disabled) return <>{children}</>
+    if (disabled || !to) return <>{children}</>
     else
         return (
             <Link to={to} style={style}>
@@ -32,8 +32,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface NavigateFabProps {
-    to: string
+interface NavigateFabProps extends NavigateProps {
     icon: JSX.Element
 }
 

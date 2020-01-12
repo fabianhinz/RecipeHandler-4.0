@@ -1,27 +1,26 @@
 import { List } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 
+import useProgress from '../../hooks/useProgress'
 import { FirebaseService } from '../../services/firebase'
 import { useUsersContext } from '../Provider/UsersProvider'
-import { AccountContentProps } from './AccountDialog'
 import AccountListItem from './AccountListItem'
 
 const editorsCollection = FirebaseService.firestore.collection('editors')
 
-type Props = Pick<AccountContentProps, 'onDialogLoading'>
-
-const AccountContentAdmin = ({ onDialogLoading }: Props) => {
+const AccountAdmin = () => {
     const [editors, setEditors] = useState<Set<string>>(new Set())
+    const { ProgressComponent, setProgress } = useProgress()
 
     const { userIds } = useUsersContext()
 
     useEffect(() => {
-        onDialogLoading(true)
+        setProgress(true)
         return editorsCollection.onSnapshot(snapshot => {
             setEditors(new Set(snapshot.docs.map(doc => doc.id)))
-            onDialogLoading(false)
+            setProgress(false)
         })
-    }, [onDialogLoading])
+    }, [setProgress])
 
     const handleEditorChange = (uid: string) => {
         if (editors.has(uid)) editorsCollection.doc(uid).delete()
@@ -29,18 +28,22 @@ const AccountContentAdmin = ({ onDialogLoading }: Props) => {
     }
 
     return (
-        <List>
-            {userIds.map(uid => (
-                <AccountListItem
-                    key={uid}
-                    uid={uid}
-                    variant="admin"
-                    checked={editors.has(uid)}
-                    onChange={handleEditorChange}
-                />
-            ))}
-        </List>
+        <>
+            <List>
+                {userIds.map(uid => (
+                    <AccountListItem
+                        key={uid}
+                        uid={uid}
+                        variant="admin"
+                        checked={editors.has(uid)}
+                        onChange={handleEditorChange}
+                    />
+                ))}
+            </List>
+
+            <ProgressComponent />
+        </>
     )
 }
 
-export default AccountContentAdmin
+export default AccountAdmin

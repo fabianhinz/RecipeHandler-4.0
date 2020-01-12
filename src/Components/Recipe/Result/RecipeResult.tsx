@@ -30,7 +30,7 @@ const useStyles = makeStyles(() =>
     })
 )
 
-export const recipeResultBreakpoints = (
+const recipeResultBreakpoints = (
     fullWidth?: boolean
 ): Partial<Record<Breakpoint, boolean | GridSize>> =>
     fullWidth ? { xs: 12 } : { xs: 12, lg: 6, xl: 4 }
@@ -65,11 +65,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
     const breakpoints = recipeResultBreakpoints(variant === 'pinned')
 
     return (
-        <Grid
-            container
-            spacing={variant === 'pinned' ? 2 : 4}
-            className={classes.recipeContainer}
-            alignContent="stretch">
+        <Grid container spacing={variant === 'pinned' ? 2 : 4} className={classes.recipeContainer}>
             <Grid item xs={12}>
                 <RecipeResultHeader recipe={recipe} variant={variant} />
             </Grid>

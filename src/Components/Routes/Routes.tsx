@@ -1,10 +1,12 @@
 import React, { FC, lazy, LazyExoticComponent, Suspense } from 'react'
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
+import { ReactComponent as AccountIcon } from '../../icons/account.svg'
 import { ReactComponent as CreateIcon } from '../../icons/create.svg'
 import { ReactComponent as DetailsIcon } from '../../icons/details.svg'
 import { ReactComponent as EditIcon } from '../../icons/edit.svg'
 import { ReactComponent as HomeIcon } from '../../icons/home.svg'
+import { ReactComponent as TrialIcon } from '../../icons/logo.svg'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { BackgroundIcon } from '../Shared/BackgroundIcon'
 import Progress from '../Shared/Progress'
@@ -14,6 +16,8 @@ export const PATHS = {
     details: (name = ':name') => `/recipe/details/${name}`,
     recipeCreate: '/recipe/create',
     recipeEdit: (name = ':name') => `/recipe/edit/${name}`,
+    trials: '/trials',
+    account: '/account',
 }
 
 interface AppRoute {
@@ -33,6 +37,11 @@ const anonymousRoutes: AppRoute[] = [
         Component: lazy(() => import('../Recipe/Details/RecipeDetails')),
         Background: () => <BackgroundIcon Icon={DetailsIcon} />,
     },
+    {
+        path: PATHS.trials,
+        Component: lazy(() => import('../Trials/Trials')),
+        Background: () => <BackgroundIcon Icon={TrialIcon} />,
+    },
 ]
 
 const securedRoutes: AppRoute[] = [
@@ -45,6 +54,11 @@ const securedRoutes: AppRoute[] = [
         path: PATHS.recipeEdit(),
         Component: lazy(() => import('../Recipe/Edit/RecipeEdit')),
         Background: () => <BackgroundIcon Icon={EditIcon} />,
+    },
+    {
+        path: PATHS.account,
+        Component: lazy(() => import('../Account/AccountUser')),
+        Background: () => <BackgroundIcon Icon={AccountIcon} />,
     },
 ]
 

@@ -52,6 +52,7 @@ export interface Comment {
 }
 
 export interface Trial extends CommentsDocument {
+    editorUid: string
     fullPath: string
     createdDate: firebase.firestore.Timestamp
 }
