@@ -91,6 +91,8 @@ const useStyles = makeStyles(theme =>
         skeletonContainer: {
             paddingLeft: theme.spacing(2),
             paddingRight: theme.spacing(2),
+            paddingTop: theme.spacing(1),
+            paddingBottom: theme.spacing(1),
         },
         avatarSelected: {
             backgroundColor: theme.palette.secondary.main,
@@ -216,10 +218,10 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
                             container
                             spacing={1}
                             alignItems="center">
-                            <Grid item xs={2}>
+                            <Grid item xs="auto">
                                 <Skeleton variant="circle" width={40} height={40} />
                             </Grid>
-                            <Grid item xs={10}>
+                            <Grid item xs={9}>
                                 <Skeleton variant="text" width="30%" />
                                 <Skeleton variant="text" width="60%" />
                             </Grid>

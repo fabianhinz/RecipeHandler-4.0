@@ -1,5 +1,4 @@
 import {
-    CardActionArea,
     createStyles,
     Dialog,
     DialogActions,
@@ -36,8 +35,12 @@ interface RecipeCreateRelatedDialogProps {
 const useStyles = makeStyles(theme =>
     createStyles({
         recipeHeader: {
+            cursor: 'pointer',
             padding: theme.spacing(2),
             borderRadius: 0,
+            transition: theme.transitions.create('background-color', {
+                duration: theme.transitions.duration.short,
+            }),
             '&:first-child': {
                 borderRadius: `${BORDER_RADIUS}px ${BORDER_RADIUS}px 0 0`,
             },
@@ -46,14 +49,14 @@ const useStyles = makeStyles(theme =>
             },
             '@media (pointer: fine)': {
                 '&:hover': {
-                    backgroundColor: 'rgb(129, 199, 132, 0.25)',
+                    backgroundColor: 'rgb(90, 139, 92, 0.15)',
                 },
             },
         },
         selectedRecipeHeader: {
-            backgroundColor: 'rgb(129, 199, 132, 0.25)',
+            backgroundColor: 'rgb(90, 139, 92, 0.3)',
             '&:hover': {
-                backgroundColor: 'rgb(129, 199, 132, 0.35)',
+                backgroundColor: 'rgb(90, 139, 92, 0.45)',
             },
         },
     })
@@ -137,7 +140,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             <DialogContent>
                 {loading && <Progress variant="cover" />}
                 {recipes.map(recipe => (
-                    <CardActionArea
+                    <div
                         key={recipe.name}
                         onClick={() => handleSelectedChange(recipe.name)}
                         className={clsx(
@@ -145,7 +148,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
                             selected.has(recipe.name) && classes.selectedRecipeHeader
                         )}>
                         <RecipeResultHeader variant="related" recipe={recipe} />
-                    </CardActionArea>
+                    </div>
                 ))}
             </DialogContent>
             <DialogActions>
