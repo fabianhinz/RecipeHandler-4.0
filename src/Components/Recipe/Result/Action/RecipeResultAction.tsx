@@ -1,6 +1,7 @@
 import { Grid } from '@material-ui/core'
 import React, { FC } from 'react'
 
+import { stopPropagationProps } from '../../../../util/constants'
 import { Comments } from '../../../Comments/Comments'
 import { RecipeResultPin } from './RecipeResultPin'
 import { RecipeResultRating } from './RecipeResultRating'
@@ -14,21 +15,12 @@ interface RecipeResultActionProps {
     pinOnly: boolean
 }
 
-const stopPropagation = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLDivElement>
-) => event.stopPropagation()
-
 export const RecipeResultAction: FC<RecipeResultActionProps> = ({
     name,
     numberOfComments,
     pinOnly,
 }) => (
-    <Grid
-        justify="flex-end"
-        container
-        spacing={1}
-        onClick={stopPropagation}
-        onFocus={stopPropagation}>
+    <Grid justify="flex-end" container spacing={1} {...stopPropagationProps}>
         <Grid item>
             <RecipeResultPin name={name} />
         </Grid>

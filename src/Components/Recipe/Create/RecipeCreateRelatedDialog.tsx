@@ -44,8 +44,10 @@ const useStyles = makeStyles(theme =>
             '&:last-child': {
                 borderRadius: `0 0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px `,
             },
-            '&:hover': {
-                backgroundColor: 'rgb(129, 199, 132, 0.25)',
+            '@media (pointer: fine)': {
+                '&:hover': {
+                    backgroundColor: 'rgb(129, 199, 132, 0.25)',
+                },
             },
         },
         selectedRecipeHeader: {

@@ -25,7 +25,7 @@ const RecipeCreateHeader = ({ inputDisabled, name, onNameChange }: Props) => {
         <Grid container>
             <Grid item xs={12}>
                 <InputBase
-                    autoFocus
+                    autoFocus={name.length === 0}
                     disabled={inputDisabled}
                     className={classes.textFieldName}
                     value={value}
