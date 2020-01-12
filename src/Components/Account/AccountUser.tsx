@@ -102,13 +102,6 @@ const AccountUser = () => {
         }
     }, [attachments, enqueueSnackbar, userDoc])
 
-    useEffect(() => {
-        if (!user.profilePicture) return
-        Vibrant.from(user.profilePicture)
-            .getPalette()
-            .then(palette => console.log(`rgb(${palette.Muted!.getRgb().join(', ')})`))
-    }, [user])
-
     const handleLogout = () => {
         setProgress(true)
         FirebaseService.auth
