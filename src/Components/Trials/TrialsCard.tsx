@@ -1,6 +1,6 @@
 import {
-    Box,
     Card,
+    CardActionArea,
     CardMedia,
     createStyles,
     Grid,
@@ -16,8 +16,10 @@ import { DataUrls, getRefPaths, getResizedImages } from '../../hooks/useAttachme
 import { TRANSITION_DURATION } from '../../hooks/useTransition'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useSelectedAttachement } from '../Provider/SelectedAttachementProvider'
 import TrialsDeleteAlert from './TrialsDeleteAlert'
 
 const useStyles = makeStyles(theme =>
@@ -25,6 +27,14 @@ const useStyles = makeStyles(theme =>
         img: {
             height: 0,
             paddingTop: '56.25%', // 16:9,
+        },
+        card: {
+            position: 'relative',
+        },
+        actions: {
+            padding: theme.spacing(1),
+            display: 'flex',
+            justifyContent: 'space-evenly',
         },
     })
 )
@@ -41,6 +51,7 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     const { user } = useFirebaseAuthContext()
     const { enqueueSnackbar } = useSnackbar()
+    const { setSelectedAttachment } = useSelectedAttachement()
 
     useEffect(() => {
         let mounted = true
@@ -80,17 +91,16 @@ const TrialsCard = ({ trial, index }: Props) => {
                         enter: index === 0 ? TRANSITION_DURATION : TRANSITION_DURATION * index,
                         exit: TRANSITION_DURATION,
                     }}>
-                    <Card>
+                    <Card className={classes.card}>
+                        <AccountChip uid={trial.editorUid} variant="absolute" />
                         {dataUrls && (
-                            <a
-                                href={dataUrls.fullDataUrl}
-                                rel="noreferrer noopener"
-                                target="_blank">
+                            <CardActionArea
+                                onClick={() => setSelectedAttachment(dataUrls.fullDataUrl)}>
                                 <CardMedia image={dataUrls.mediumDataUrl} className={classes.img} />
-                            </a>
+                            </CardActionArea>
                         )}
                         {user && (
-                            <Box padding={1} display="flex" justifyContent="space-evenly">
+                            <div className={classes.actions}>
                                 <Comments
                                     collection="trials"
                                     numberOfComments={trial.numberOfComments}
@@ -100,13 +110,14 @@ const TrialsCard = ({ trial, index }: Props) => {
                                 <IconButton onClick={() => setDeleteAlert(true)}>
                                     <DeleteIcon />
                                 </IconButton>
-                            </Box>
+                            </div>
                         )}
                     </Card>
                 </Grow>
             </Grid>
             <TrialsDeleteAlert
                 open={deleteAlert}
+                title={trial.name}
                 onAbort={() => setDeleteAlert(false)}
                 onConfirm={handleDeleteBtnClick}
             />

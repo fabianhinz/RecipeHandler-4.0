@@ -1,18 +1,27 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText } from '@material-ui/core'
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 import { SlideUp } from '../Shared/Transitions'
 
 interface Props {
+    title: ReactNode
     open: boolean
     onConfirm: () => void
     onAbort: () => void
 }
 
-const TrialsDeleteAlert = ({ open, onConfirm, onAbort }: Props) => (
+const TrialsDeleteAlert = ({ open, onConfirm, onAbort, title }: Props) => (
     <Dialog open={open} onClose={onAbort} TransitionComponent={SlideUp}>
+        <DialogTitle>{title}</DialogTitle>
         <DialogContent>
             <DialogContentText>
                 Möglicherweise werden Ideen anderer Benutzer gelöscht. Gelöschte Dateien können im

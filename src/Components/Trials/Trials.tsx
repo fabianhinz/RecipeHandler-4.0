@@ -1,5 +1,5 @@
-import { Box, createStyles, Fab, Grid, makeStyles, Typography } from '@material-ui/core'
-import AddIcon from '@material-ui/icons/Add'
+import { Box, createStyles, Fab, Grid, makeStyles, Typography, Zoom } from '@material-ui/core'
+import CameraIcon from '@material-ui/icons/CameraTwoTone'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -7,7 +7,7 @@ import { useDropzone } from 'react-dropzone'
 
 import { getFileExtension } from '../../hooks/useAttachmentRef'
 import { ReactComponent as TrialIcon } from '../../icons/logo.svg'
-import { Trial } from '../../model/model'
+import { Trial, User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../Recipe/Create/Attachments/useAttachmentDropzone'
@@ -37,7 +37,8 @@ const Trials = () => {
     const [loading, setLoading] = useState(true)
     const classes = useStyles()
 
-    const { user } = useFirebaseAuthContext()
+    // ? private route, user is set
+    const { user } = useFirebaseAuthContext() as { user: User }
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     useEffect(
@@ -96,15 +97,16 @@ const Trials = () => {
                             name,
                             fullPath,
                             numberOfComments: 0,
+                            editorUid: user.uid,
                             createdDate: FirebaseService.createTimestampFromDate(new Date()),
-                        })
+                        } as Trial)
                 } catch (e) {
                     enqueueSnackbar(e.message, { variant: 'error' })
                 }
             }
             closeSnackbar(snackKey as string)
         },
-        [closeSnackbar, enqueueSnackbar]
+        [closeSnackbar, enqueueSnackbar, user.uid]
     )
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -137,12 +139,14 @@ const Trials = () => {
             )}
 
             {user && (
-                <div className={classes.fabContainer} {...getRootProps()}>
-                    <Fab color="secondary">
-                        <input {...getInputProps()} />
-                        <AddIcon />
-                    </Fab>
-                </div>
+                <Zoom in>
+                    <div className={classes.fabContainer} {...getRootProps()}>
+                        <Fab color="secondary">
+                            <input {...getInputProps()} />
+                            <CameraIcon />
+                        </Fab>
+                    </div>
+                </Zoom>
             )}
         </>
     )

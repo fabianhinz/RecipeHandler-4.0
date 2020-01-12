@@ -7,7 +7,7 @@ import { useUsersContext } from '../Provider/UsersProvider'
 
 interface Props {
     uid: string
-    variant: 'readonly' | 'filter'
+    variant: 'readonly' | 'filter' | 'absolute'
     onFilterChange?: (uid: string) => void
     selected?: boolean
 }
@@ -23,6 +23,14 @@ const useStyles = makeStyles(theme => {
                     ? theme.palette.secondary.light
                     : theme.palette.secondary.dark,
             },
+        },
+        absolute: {
+            boxShadow: theme.shadows[8],
+            position: 'absolute',
+            left: ' 50%',
+            transform: 'translate(-50%, 0)',
+            zIndex: 1,
+            top: theme.spacing(1),
         },
     })
 })
@@ -40,6 +48,8 @@ const AccountChip = ({ uid, variant, onFilterChange, selected }: Props) => {
                   variant: 'default',
                   className: selected ? classes.selectedChip : undefined,
               }
+            : variant === 'absolute'
+            ? { variant: 'default', className: classes.absolute }
             : { variant: 'outlined' }
 
     return (
