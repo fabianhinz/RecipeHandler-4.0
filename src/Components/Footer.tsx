@@ -1,9 +1,7 @@
 import { AppBar, createStyles, makeStyles } from '@material-ui/core'
-import React, { useState } from 'react'
+import React from 'react'
 
-import AccountDialog from './Account/AccountDialog'
 import Navigation from './Routes/Navigation'
-import TrialsDialog from './Trials/TrialsDialog'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -27,23 +25,14 @@ const useStyles = makeStyles(theme =>
 )
 
 const Footer = () => {
-    const [userDialogOpen, setUserDialogOpen] = useState(false)
-    const [trialsDialogOpen, setTrialsDialogOpen] = useState(false)
-
     const classes = useStyles()
 
     return (
         <>
             <AppBar className={classes.appbar} color="default">
-                <Navigation
-                    onOpenTrialsDialog={() => setTrialsDialogOpen(true)}
-                    onOpenUserDialog={() => setUserDialogOpen(true)}
-                />
+                <Navigation />
             </AppBar>
             <div className={classes.safeAreaIos} />
-
-            <AccountDialog open={userDialogOpen} onClose={() => setUserDialogOpen(false)} />
-            <TrialsDialog open={trialsDialogOpen} onClose={() => setTrialsDialogOpen(false)} />
         </>
     )
 }

@@ -82,7 +82,7 @@ const Search = () => {
 
     return (
         <>
-            <Box marginBottom={2} display="flex" justifyContent="space-evenly">
+            <Box marginBottom={2} display="flex" justifyContent="center">
                 <Fab onClick={handleSearchDrawerChange} size="small" color="primary">
                     <SearchIcon />
                 </Fab>

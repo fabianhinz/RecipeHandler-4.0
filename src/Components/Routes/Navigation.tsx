@@ -3,17 +3,13 @@ import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import HomeIcon from '@material-ui/icons/HomeRounded'
 import clsx from 'clsx'
 import { Lightbulb } from 'mdi-material-ui'
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 
+import AccountAuthentication from '../Account/AccountAuthentication'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PINNED_WIDTH, usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
 import { Navigate } from './Navigate'
 import { PATHS } from './Routes'
-
-interface Props {
-    onOpenTrialsDialog: () => void
-    onOpenUserDialog: () => void
-}
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -34,44 +30,71 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const Navigation = ({ onOpenTrialsDialog, onOpenUserDialog }: Props) => {
+const Navigation = () => {
+    const [authenticationOpen, setAuthenticationOpen] = useState(false)
+
     const { user } = useFirebaseAuthContext()
     const { pinnedOnDesktop } = usePinnedRecipesContext()
 
     const classes = useStyles()
 
     return (
-        <div className={clsx(classes.container, pinnedOnDesktop && classes.pinnedRecipes)}>
-            <Hidden xsDown>
-                <Navigate to={PATHS.home}>
-                    <Button size="large" startIcon={<HomeIcon />}>
-                        Start
-                    </Button>
-                </Navigate>
+        <>
+            <div className={clsx(classes.container, pinnedOnDesktop && classes.pinnedRecipes)}>
+                <Hidden xsDown>
+                    <Navigate to={PATHS.home}>
+                        <Button size="large" startIcon={<HomeIcon />}>
+                            Start
+                        </Button>
+                    </Navigate>
 
-                <Button size="large" startIcon={<Lightbulb />} onClick={onOpenTrialsDialog}>
-                    Ideen
-                </Button>
+                    <Navigate to={PATHS.trials}>
+                        <Button size="large" startIcon={<Lightbulb />}>
+                            Ideen
+                        </Button>
+                    </Navigate>
 
-                <Button size="large" startIcon={<AccountIcon />} onClick={onOpenUserDialog}>
-                    {!user ? 'Einloggen' : 'Account'}
-                </Button>
-            </Hidden>
+                    <Navigate disabled={!user} to={PATHS.account}>
+                        <Button
+                            onClick={() => {
+                                if (!user) setAuthenticationOpen(true)
+                            }}
+                            size="large"
+                            startIcon={<AccountIcon />}>
+                            {!user ? 'Einloggen' : 'Account'}
+                        </Button>
+                    </Navigate>
+                </Hidden>
 
-            <Hidden smUp>
-                <Navigate to={PATHS.home}>
-                    <IconButton>
-                        <HomeIcon />
-                    </IconButton>
-                </Navigate>
-                <IconButton onClick={onOpenTrialsDialog}>
-                    <Lightbulb />
-                </IconButton>
-                <IconButton onClick={onOpenUserDialog}>
-                    <AccountIcon />
-                </IconButton>
-            </Hidden>
-        </div>
+                <Hidden smUp>
+                    <Navigate to={PATHS.home}>
+                        <IconButton>
+                            <HomeIcon />
+                        </IconButton>
+                    </Navigate>
+
+                    <Navigate to={PATHS.trials}>
+                        <IconButton>
+                            <Lightbulb />
+                        </IconButton>
+                    </Navigate>
+
+                    <Navigate disabled={!user} to={PATHS.account}>
+                        <IconButton
+                            onClick={() => {
+                                if (!user) setAuthenticationOpen(true)
+                            }}>
+                            <AccountIcon />
+                        </IconButton>
+                    </Navigate>
+                </Hidden>
+            </div>
+
+            <AccountAuthentication
+                open={authenticationOpen}
+                onClose={() => setAuthenticationOpen(false)}
+            />
+        </>
     )
 }
 

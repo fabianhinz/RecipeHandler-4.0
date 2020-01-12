@@ -1,3 +1,4 @@
+import { Grid } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useState } from 'react'
 
@@ -33,8 +34,10 @@ const Home = () => {
 
         const observer = new IntersectionObserver(entries => {
             const [lastRecipeTrigger] = entries
-            if (lastRecipeTrigger.isIntersecting && pagedRecipes.size > 0)
+            if (lastRecipeTrigger.isIntersecting && pagedRecipes.size > 0) {
+                console.log('new stuff')
                 setLastRecipe([...pagedRecipes.values()].pop()!)
+            }
         })
         observer.observe(trigger)
 
@@ -108,23 +111,35 @@ const Home = () => {
     }, [orderBy, selectedCategories, user])
 
     return (
-        <>
-            {user && !user.showRecentlyAdded ? <></> : <RecentlyAdded />}
+        <Grid container spacing={4}>
+            {user && !user.showRecentlyAdded ? (
+                <></>
+            ) : (
+                <Grid item xs={12}>
+                    <RecentlyAdded />
+                </Grid>
+            )}
 
-            <HomeCategory
-                selectedCategories={selectedCategories}
-                onCategoryChange={handleCategoryChange}
-            />
-            <HomeRecipe
-                orderBy={orderBy}
-                onOrderByChange={setOrderBy}
-                skeletons={loading}
-                recipes={[...pagedRecipes.values()]}
-            />
-            <div id="intersection-observer-trigger" />
+            <Grid item xs={12}>
+                <HomeCategory
+                    selectedCategories={selectedCategories}
+                    onCategoryChange={handleCategoryChange}
+                />
+            </Grid>
+
+            <Grid item xs={12}>
+                <HomeRecipe
+                    orderBy={orderBy}
+                    onOrderByChange={setOrderBy}
+                    skeletons={loading}
+                    recipes={[...pagedRecipes.values()]}
+                />
+                {/* IMPORTANT: the intersection observer trigger must not be moved away from HomeRecipe */}
+                <div id="intersection-observer-trigger" />
+            </Grid>
 
             <NavigateFab to={PATHS.recipeCreate} icon={<AddIcon />} />
-        </>
+        </Grid>
     )
 }
 
