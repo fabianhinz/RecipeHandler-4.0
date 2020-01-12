@@ -189,15 +189,13 @@ const AccountContentUser = ({ user, onDialogLoading, onDialogClose }: Props) => 
             </DialogContent>
 
             <DialogActions>
-                <Box flexGrow={1} display="flex" justifyContent="space-evenly" alignItems="center">
-                    <Button startIcon={<CloseIcon />} onClick={onDialogClose}>
-                        Schließen
-                    </Button>
+                <Button startIcon={<CloseIcon />} onClick={onDialogClose}>
+                    Schließen
+                </Button>
 
-                    <Button color="secondary" startIcon={<AccountIcon />} onClick={handleLogout}>
-                        ausloggen
-                    </Button>
-                </Box>
+                <Button color="secondary" startIcon={<AccountIcon />} onClick={handleLogout}>
+                    ausloggen
+                </Button>
             </DialogActions>
         </>
     )

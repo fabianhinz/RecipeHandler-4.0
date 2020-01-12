@@ -1,6 +1,5 @@
 import {
     Avatar,
-    Box,
     createStyles,
     Dialog,
     DialogActions,
@@ -171,20 +170,14 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
                     </List>
                 </DialogContent>
                 <DialogActions>
-                    <Box
-                        flexGrow={1}
-                        display="flex"
-                        justifyContent="space-evenly"
-                        alignItems="center">
-                        <IconButton onClick={handleDialogChange}>
-                            <CloseIcon />
-                        </IconButton>
-                        <IconButton
-                            onClick={handleCategoryChange(selectedCategory)}
-                            disabled={!selectedHasType}>
-                            <DeleteIcon />
-                        </IconButton>
-                    </Box>
+                    <IconButton onClick={handleDialogChange}>
+                        <CloseIcon />
+                    </IconButton>
+                    <IconButton
+                        onClick={handleCategoryChange(selectedCategory)}
+                        disabled={!selectedHasType}>
+                        <DeleteIcon />
+                    </IconButton>
                 </DialogActions>
             </Dialog>
         </>

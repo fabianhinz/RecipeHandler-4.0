@@ -21,6 +21,7 @@ import { getFileExtension } from '../../hooks/useAttachmentRef'
 import { ReactComponent as TrialIcon } from '../../icons/logo.svg'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../Recipe/Create/Attachments/useAttachmentDropzone'
 import Progress from '../Shared/Progress'
@@ -58,6 +59,7 @@ const TrialsDialog = ({ open, onClose }: Props) => {
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
+    const { isHighRes, isDialogFullscreen } = useBreakpointsContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     useEffect(() => {
@@ -89,9 +91,12 @@ const TrialsDialog = ({ open, onClose }: Props) => {
                     .get()
 
                 if (potentialDublicate.exists) {
-                    enqueueSnackbar(`Eine Datei mit dem Namen ${file.name} existiert bereits`, {
-                        variant: 'info',
-                    })
+                    enqueueSnackbar(
+                        `Ein Versuchskaninchen mit dem Namen ${file.name} existiert bereits`,
+                        {
+                            variant: 'warning',
+                        }
+                    )
                     continue
                 }
                 const compressedFile: Blob = await compressImage(file, {
@@ -135,7 +140,14 @@ const TrialsDialog = ({ open, onClose }: Props) => {
     })
 
     return (
-        <Dialog open={open} onClose={onClose} fullScreen TransitionComponent={SlideUp}>
+        <Dialog
+            maxWidth={isHighRes ? 'xl' : 'lg'}
+            fullWidth
+            open={open}
+            onClose={onClose}
+            fullScreen={isDialogFullscreen}
+            TransitionComponent={SlideUp}
+            keepMounted>
             <DialogTitle className={classes.dialogTitle}>Versuchskaninchen</DialogTitle>
 
             <DialogContent dividers>

@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     createStyles,
     DialogActions,
@@ -182,15 +181,13 @@ const AccountContentAuth = ({ onDialogClose, onDialogLoading }: Props) => {
                 )}
             </DialogContent>
             <DialogActions>
-                <Box flexGrow={1} display="flex" justifyContent="space-evenly" alignItems="center">
-                    <Button startIcon={<CloseIcon />} onClick={onDialogClose}>
-                        Schließen
-                    </Button>
+                <Button startIcon={<CloseIcon />} onClick={onDialogClose}>
+                    Schließen
+                </Button>
 
-                    <Button color="secondary" startIcon={<AccountIcon />} type="submit">
-                        {newUser ? 'registrieren' : 'einloggen'}
-                    </Button>
-                </Box>
+                <Button color="secondary" startIcon={<AccountIcon />} type="submit">
+                    {newUser ? 'registrieren' : 'einloggen'}
+                </Button>
             </DialogActions>
         </form>
     )

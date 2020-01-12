@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     Dialog,
     DialogActions,
@@ -52,14 +51,12 @@ const DeviceOrientationProvider: FC = ({ children }) => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Box flexGrow={1} display="flex" justifyContent="center">
-                        <Button
-                            startIcon={<CloseIcon />}
-                            onClick={() => setSuggestionDialog(false)}
-                            color="secondary">
-                            mir egal, ich weis was ich tue
-                        </Button>
-                    </Box>
+                    <Button
+                        startIcon={<CloseIcon />}
+                        onClick={() => setSuggestionDialog(false)}
+                        color="secondary">
+                        mir egal, ich weis was ich tue
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>
