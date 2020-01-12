@@ -11,13 +11,18 @@ export type RecipeVariants = { variant: 'summary' | 'details' | 'pinned' | 'prev
 interface RecipeResultActionProps {
     name: string
     numberOfComments: number
+    pinOnly: boolean
 }
 
 const stopPropagation = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.FocusEvent<HTMLDivElement>
 ) => event.stopPropagation()
 
-export const RecipeResultAction: FC<RecipeResultActionProps> = ({ name, numberOfComments }) => (
+export const RecipeResultAction: FC<RecipeResultActionProps> = ({
+    name,
+    numberOfComments,
+    pinOnly,
+}) => (
     <Grid
         justify="flex-end"
         container
@@ -27,14 +32,22 @@ export const RecipeResultAction: FC<RecipeResultActionProps> = ({ name, numberOf
         <Grid item>
             <RecipeResultPin name={name} />
         </Grid>
-        <Grid item>
-            <RecipeResultShare name={name} />
-        </Grid>
-        <Grid item>
-            <Comments collection="recipes" numberOfComments={numberOfComments} name={name} />
-        </Grid>
-        <Grid item>
-            <RecipeResultRating name={name} />
-        </Grid>
+        {!pinOnly && (
+            <>
+                <Grid item>
+                    <RecipeResultShare name={name} />
+                </Grid>
+                <Grid item>
+                    <Comments
+                        collection="recipes"
+                        numberOfComments={numberOfComments}
+                        name={name}
+                    />
+                </Grid>
+                <Grid item>
+                    <RecipeResultRating name={name} />
+                </Grid>
+            </>
+        )}
     </Grid>
 )

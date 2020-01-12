@@ -42,6 +42,7 @@ import React, { FC, memo, useState } from 'react'
 
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useCategoriesCollectionContext } from '../Provider/CategoriesCollectionProvider'
+import { useDeviceOrientationContext } from '../Provider/DeviceOrientationProvider'
 import { SlideUp } from '../Shared/Transitions'
 
 export const iconFromCategory = (category: string) => {
@@ -200,11 +201,12 @@ const SKELETON_CATEGORIES = ['art', 'ernährung', 'zeit']
 const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedCategories }) => {
     const { categoriesCollection, categoriesLoading } = useCategoriesCollectionContext()
     const classes = useStyles()
+    const { landscape } = useDeviceOrientationContext()
 
     return (
         <Grid container spacing={2}>
             {Object.keys(categoriesCollection).map(type => (
-                <Grid key={type} item xs={12} md={4}>
+                <Grid key={type} item xs={landscape ? 4 : 12} sm={4}>
                     <CategoryDialog
                         categories={categoriesCollection[type]}
                         onCategoryChange={onCategoryChange}
@@ -215,7 +217,7 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
             ))}
             {categoriesLoading &&
                 SKELETON_CATEGORIES.map(dummy => (
-                    <Grid key={dummy} item xs={12} md={4}>
+                    <Grid key={dummy} item xs={landscape ? 4 : 12} sm={4}>
                         <Grid
                             className={classes.skeletonContainer}
                             container

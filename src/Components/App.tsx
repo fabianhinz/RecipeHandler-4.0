@@ -8,6 +8,7 @@ import Footer from './Footer'
 import Main from './Main'
 import BreakpointsProvider from './Provider/BreakpointsProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
+import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import PinnedRecipesProvider from './Provider/PinnedRecipesProvider'
 import RouterProvider from './Provider/RouterProvider'
@@ -40,24 +41,26 @@ const App: FC = () => {
                 preventDuplicate
                 autoHideDuration={3000}
                 anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
+                    vertical: 'top',
+                    horizontal: 'right',
                 }}>
                 <RouterProvider>
-                    <UsersProvider>
-                        <BreakpointsProvider>
-                            <CategoriesCollectionProvider>
-                                <SelectedAttachementProvider>
-                                    <PinnedRecipesProvider>
-                                        <Container>
-                                            <Main />
-                                            <Footer />
-                                        </Container>
-                                    </PinnedRecipesProvider>
-                                </SelectedAttachementProvider>
-                            </CategoriesCollectionProvider>
-                        </BreakpointsProvider>
-                    </UsersProvider>
+                    <BreakpointsProvider>
+                        <DeviceOrientationProvider>
+                            <UsersProvider>
+                                <CategoriesCollectionProvider>
+                                    <SelectedAttachementProvider>
+                                        <PinnedRecipesProvider>
+                                            <Container>
+                                                <Main />
+                                                <Footer />
+                                            </Container>
+                                        </PinnedRecipesProvider>
+                                    </SelectedAttachementProvider>
+                                </CategoriesCollectionProvider>
+                            </UsersProvider>
+                        </DeviceOrientationProvider>
+                    </BreakpointsProvider>
                 </RouterProvider>
             </SnackbarProvider>
         </ThemeProvider>
