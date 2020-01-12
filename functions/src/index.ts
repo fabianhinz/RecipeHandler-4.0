@@ -95,14 +95,27 @@ export const handleNumberOfCommentsTrials = functions
     })
 
 export const handleChangelog = functions.region('europe-west1').https.onRequest((req, res) => {
-    const { action, pull_request } = req.body
-    const { merge_commit_sha, merged, title, body } = pull_request
-    if (action === 'closed' && merged) {
-        admin
-            .firestore()
-            .collection('changelog')
-            .doc(merge_commit_sha)
-            .set({ id: merge_commit_sha, title, subject: body, complete_information: req.body })
+    if (req.body.pull_request) {
+        const { action, pull_request } = req.body
+        const { merge_commit_sha, merged, title, body } = pull_request
+        if (action === 'closed' && merged) {
+            admin
+                .firestore()
+                .collection('changelog')
+                .doc(merge_commit_sha)
+                .set({ id: merge_commit_sha, title, subject: body, complete_information: req.body })
+        }
+    }
+    if (req.body.issue) {
+        const { action, issue } = req.body
+        const { number, title, body } = issue
+        if (action === 'closed') {
+            admin
+                .firestore()
+                .collection('changelog')
+                .doc(`${number}`)
+                .set({ id: number, title, subject: body, complete_information: req.body })
+        }
     }
     res.end()
 })
