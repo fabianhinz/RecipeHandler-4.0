@@ -37,11 +37,11 @@ const anonymousRoutes: AppRoute[] = [
         Component: lazy(() => import('../Recipe/Details/RecipeDetails')),
         Background: () => <BackgroundIcon Icon={DetailsIcon} />,
     },
-    // {
-    //     path: PATHS.trials,
-    //     Component: lazy(() => import('')),
-    //     Background: () => <BackgroundIcon Icon={TrialIcon} />,
-    // },
+    {
+        path: PATHS.trials,
+        Component: lazy(() => import('../Trials/Trials')),
+        Background: () => <BackgroundIcon Icon={TrialIcon} />,
+    },
 ]
 
 const securedRoutes: AppRoute[] = [

@@ -80,7 +80,7 @@ const TrialsCard = ({ trial, index }: Props) => {
                         enter: index === 0 ? TRANSITION_DURATION : TRANSITION_DURATION * index,
                         exit: TRANSITION_DURATION,
                     }}>
-                    <Card raised>
+                    <Card>
                         {dataUrls && (
                             <a
                                 href={dataUrls.fullDataUrl}

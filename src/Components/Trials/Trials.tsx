@@ -1,31 +1,17 @@
-import {
-    Box,
-    createStyles,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Fab,
-    Grid,
-    IconButton,
-    makeStyles,
-} from '@material-ui/core'
+import { Box, createStyles, Fab, Grid, makeStyles, Typography } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
-import React, { memo, useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 import { getFileExtension } from '../../hooks/useAttachmentRef'
 import { ReactComponent as TrialIcon } from '../../icons/logo.svg'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../Recipe/Create/Attachments/useAttachmentDropzone'
 import Progress from '../Shared/Progress'
-import { SlideUp } from '../Shared/Transitions'
 import TrialsCard from './TrialsCard'
 
 const useStyles = makeStyles(theme =>
@@ -38,44 +24,33 @@ const useStyles = makeStyles(theme =>
         },
         fabContainer: {
             outline: 'none',
-            position: 'absolute',
+            zIndex: theme.zIndex.drawer + 1,
+            position: 'fixed',
             right: theme.spacing(2),
-            bottom: theme.spacing(4.5),
-        },
-        dialogTitle: {
-            textAlign: 'center',
+            bottom: `calc(env(safe-area-inset-bottom) + ${theme.spacing(4.5)}px)`,
         },
     })
 )
 
-interface Props {
-    open: boolean
-    onClose: () => void
-}
-
-const TrialsDialog = ({ open, onClose }: Props) => {
+const Trials = () => {
     const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
     const [loading, setLoading] = useState(true)
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
-    const { isHighRes, isDialogFullscreen } = useBreakpointsContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
-    useEffect(() => {
-        if (!open) return
-
-        // give the ui some time to breathe
-        setTimeout(() => {
-            return FirebaseService.firestore
+    useEffect(
+        () =>
+            FirebaseService.firestore
                 .collection('trials')
                 .orderBy('createdDate', 'desc')
                 .onSnapshot(querySnapshot => {
                     setTrials(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as Trial])))
                     setLoading(false)
-                })
-        }, 200)
-    }, [open])
+                }),
+        []
+    )
 
     const onDrop = useCallback(
         async (acceptedFiles: File[]) => {
@@ -140,51 +115,37 @@ const TrialsDialog = ({ open, onClose }: Props) => {
     })
 
     return (
-        <Dialog
-            maxWidth={isHighRes ? 'xl' : 'lg'}
-            fullWidth
-            open={open}
-            onClose={onClose}
-            fullScreen={isDialogFullscreen}
-            TransitionComponent={SlideUp}
-            keepMounted>
-            <DialogTitle className={classes.dialogTitle}>Versuchskaninchen</DialogTitle>
+        <>
+            <Typography gutterBottom variant="h5" align="center">
+                Versuchskaninchen
+            </Typography>
 
-            <DialogContent dividers>
-                {loading ? (
-                    <Progress variant="cover" />
-                ) : trials.size === 0 ? (
-                    <Box display="flex" justifyContent="center" padding={4}>
-                        <TrialIcon width={200} />
-                    </Box>
-                ) : (
-                    <Box paddingTop={1} paddingBottom={1}>
-                        <Grid container spacing={3}>
-                            {[...trials.values()].map((trial, index) => (
-                                <TrialsCard index={index} trial={trial} key={trial.name} />
-                            ))}
-                        </Grid>
-                    </Box>
-                )}
-            </DialogContent>
-            <DialogActions className={classes.dialogActions}>
-                <Box flexGrow={1} display="flex" justifyContent="space-evenly" alignItems="center">
-                    <IconButton onClick={onClose}>
-                        <CloseIcon />
-                    </IconButton>
+            {loading ? (
+                <Progress variant="fixed" />
+            ) : trials.size === 0 ? (
+                <Box display="flex" justifyContent="center" padding={4}>
+                    <TrialIcon width={200} />
                 </Box>
+            ) : (
+                <Box paddingTop={1} paddingBottom={1}>
+                    <Grid container spacing={4}>
+                        {[...trials.values()].map((trial, index) => (
+                            <TrialsCard index={index} trial={trial} key={trial.name} />
+                        ))}
+                    </Grid>
+                </Box>
+            )}
 
-                {user && (
-                    <div className={classes.fabContainer} {...getRootProps()}>
-                        <Fab color="secondary">
-                            <input {...getInputProps()} />
-                            <AddIcon />
-                        </Fab>
-                    </div>
-                )}
-            </DialogActions>
-        </Dialog>
+            {user && (
+                <div className={classes.fabContainer} {...getRootProps()}>
+                    <Fab color="secondary">
+                        <input {...getInputProps()} />
+                        <AddIcon />
+                    </Fab>
+                </div>
+            )}
+        </>
     )
 }
 
-export default memo(TrialsDialog, (prev, next) => prev.open === next.open)
+export default Trials
