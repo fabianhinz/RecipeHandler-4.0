@@ -5,7 +5,10 @@ import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 
-const Context = React.createContext<{ user: User | null }>({ user: null })
+const Context = React.createContext<{ user: User | null; loginEnabled: boolean }>({
+    user: null,
+    loginEnabled: false,
+})
 
 export const useFirebaseAuthContext = () => useContext(Context)
 
@@ -36,15 +39,17 @@ let userDocUnsubscribe: any = undefined
 
 const FirebaseAuthProvider: FC = ({ children }) => {
     const [authReady, setAuthReady] = useState(false)
+    const [loginEnabled, setLoginEnabled] = useState(false)
     const [user, setUser] = useState<User | null>(null)
 
     const classes = useStyles()
 
     const handleAuthStateChange = useCallback(async (user: firebase.User | null) => {
+        setAuthReady(true)
         if (user) {
             if (user.isAnonymous) {
-                setAuthReady(true)
                 setUser(null)
+                setLoginEnabled(true)
                 return
             }
             const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
@@ -52,11 +57,11 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
             // only registered users have a additional props
             userDocUnsubscribe = userDocRef.onSnapshot(doc => {
-                setAuthReady(true)
                 setUser({
                     ...(doc.data() as Omit<User, 'uid'>),
                     uid: user.uid,
                 })
+                setLoginEnabled(true)
             })
         } else FirebaseService.auth.signInAnonymously()
     }, [])
@@ -85,7 +90,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     }, [handleAuthStateChange])
 
     return (
-        <Context.Provider value={{ user }}>
+        <Context.Provider value={{ user, loginEnabled }}>
             {authReady ? (
                 children
             ) : (

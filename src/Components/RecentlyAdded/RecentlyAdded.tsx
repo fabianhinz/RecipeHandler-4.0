@@ -1,4 +1,4 @@
-import { Box, Card, Grid } from '@material-ui/core'
+import { Card, Grid } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
 

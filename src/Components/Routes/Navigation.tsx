@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme =>
 const Navigation = () => {
     const [authenticationOpen, setAuthenticationOpen] = useState(false)
 
-    const { user } = useFirebaseAuthContext()
+    const { user, loginEnabled } = useFirebaseAuthContext()
     const { pinnedOnDesktop } = usePinnedRecipesContext()
 
     const classes = useStyles()
@@ -56,6 +56,7 @@ const Navigation = () => {
 
                     <Navigate disabled={!user} to={PATHS.account}>
                         <Button
+                            disabled={!loginEnabled}
                             onClick={() => {
                                 if (!user) setAuthenticationOpen(true)
                             }}
@@ -81,6 +82,7 @@ const Navigation = () => {
 
                     <Navigate disabled={!user} to={PATHS.account}>
                         <IconButton
+                            disabled={!loginEnabled}
                             onClick={() => {
                                 if (!user) setAuthenticationOpen(true)
                             }}>
