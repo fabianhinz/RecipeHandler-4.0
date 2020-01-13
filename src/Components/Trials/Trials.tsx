@@ -106,7 +106,7 @@ const Trials = () => {
             }
             closeSnackbar(snackKey as string)
         },
-        [closeSnackbar, enqueueSnackbar, user.uid]
+        [closeSnackbar, enqueueSnackbar, user]
     )
 
     const { getRootProps, getInputProps } = useDropzone({
