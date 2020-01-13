@@ -94,6 +94,10 @@ export const handleNumberOfCommentsTrials = functions
             .update({ numberOfComments: admin.firestore.FieldValue.increment(1) })
     })
 
+interface Label {
+    name: string
+}
+
 export const handleChangelog = functions.region('europe-west1').https.onRequest((req, res) => {
     if (req.body.pull_request) {
         const { action, pull_request } = req.body
@@ -118,11 +122,12 @@ export const handleChangelog = functions.region('europe-west1').https.onRequest(
         const { action, issue } = req.body
         if (action === 'closed') {
             const { number, title, body, labels } = issue
+            const labelNames: Array<string> = labels.map((label: Label) => label.name)
             admin
                 .firestore()
                 .collection('issues')
                 .doc(`${number}`)
-                .set({ number, title, subject: body, labels })
+                .set({ number, title, subject: body, labels: labelNames })
         }
     }
     res.end()
