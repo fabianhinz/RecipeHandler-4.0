@@ -93,3 +93,42 @@ export const handleNumberOfCommentsTrials = functions
             .doc(context.params.trialId)
             .update({ numberOfComments: admin.firestore.FieldValue.increment(1) })
     })
+
+interface Label {
+    name: string
+}
+
+export const handleChangelog = functions.region('europe-west1').https.onRequest((req, res) => {
+    if (req.body.pull_request) {
+        const { action, pull_request } = req.body
+        const { merge_commit_sha, merged, title, body, closed_at, user } = pull_request
+        if (action === 'closed' && merged) {
+            const shortSha = merge_commit_sha ? merge_commit_sha.slice(0, 7) : ''
+            const issueNumbers = body.match(/\d+/g)
+            admin
+                .firestore()
+                .collection('pullrequests')
+                .doc(shortSha)
+                .set({
+                    shortSha,
+                    title,
+                    issueNumbers,
+                    closedAt: closed_at,
+                    creator: user.login,
+                })
+        }
+    }
+    if (req.body.issue) {
+        const { action, issue } = req.body
+        if (action === 'closed') {
+            const { number, title, body, labels } = issue
+            const labelNames: Array<string> = labels.map((label: Label) => label.name)
+            admin
+                .firestore()
+                .collection('issues')
+                .doc(`${number}`)
+                .set({ number, title, subject: body, labels: labelNames })
+        }
+    }
+    res.end()
+})
