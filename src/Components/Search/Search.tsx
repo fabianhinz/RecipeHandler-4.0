@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme =>
             left: 0,
             right: 0,
             zIndex: theme.zIndex.drawer + 1,
-            background: theme.palette.background.paper,
+            backgroundColor: theme.palette.background.paper,
         },
         searchContainer: {
             position: 'sticky',

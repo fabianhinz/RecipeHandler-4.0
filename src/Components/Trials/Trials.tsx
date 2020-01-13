@@ -7,7 +7,7 @@ import { useDropzone } from 'react-dropzone'
 
 import { getFileExtension } from '../../hooks/useAttachmentRef'
 import { ReactComponent as TrialIcon } from '../../icons/logo.svg'
-import { Trial, User } from '../../model/model'
+import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../Recipe/Create/Attachments/useAttachmentDropzone'
@@ -37,8 +37,7 @@ const Trials = () => {
     const [loading, setLoading] = useState(true)
     const classes = useStyles()
 
-    // ? private route, user is set
-    const { user } = useFirebaseAuthContext() as { user: User }
+    const { user } = useFirebaseAuthContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     useEffect(
@@ -55,6 +54,8 @@ const Trials = () => {
 
     const onDrop = useCallback(
         async (acceptedFiles: File[]) => {
+            if (!user) return
+
             const snackKey = enqueueSnackbar('Dateien werden verarbeitet und hochgeladen', {
                 variant: 'info',
             })

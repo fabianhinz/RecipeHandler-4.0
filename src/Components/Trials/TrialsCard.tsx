@@ -7,6 +7,7 @@ import {
     Grow,
     IconButton,
     makeStyles,
+    Slide,
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import { useSnackbar } from 'notistack'
@@ -16,6 +17,7 @@ import { DataUrls, getRefPaths, getResizedImages } from '../../hooks/useAttachme
 import { TRANSITION_DURATION } from '../../hooks/useTransition'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { BORDER_RADIUS } from '../../theme'
 import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -32,9 +34,16 @@ const useStyles = makeStyles(theme =>
             position: 'relative',
         },
         actions: {
-            padding: theme.spacing(1),
+            boxShadow: theme.shadows[8],
+            position: 'absolute',
             display: 'flex',
             justifyContent: 'space-evenly',
+            padding: theme.spacing(1),
+            bottom: 0,
+            left: 0,
+            right: 0,
+            borderRadius: `0px 0px ${BORDER_RADIUS}px  ${BORDER_RADIUS}px `,
+            backgroundColor: theme.palette.background.paper,
         },
     })
 )
@@ -46,7 +55,7 @@ interface Props {
 
 const TrialsCard = ({ trial, index }: Props) => {
     const [deleteAlert, setDeleteAlert] = useState(false)
-    const [dataUrls, setDataUrls] = useState<DataUrls | null>()
+    const [dataUrls, setDataUrls] = useState<DataUrls | undefined>()
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
@@ -84,33 +93,43 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     return (
         <>
-            <Grid item xs={12} md={6} lg={4} xl={3} key={trial.name}>
+            <Grid item xs={12} sm={6} lg={4} xl={3} key={trial.name}>
                 <Grow
-                    in={dataUrls ? true : false}
+                    in
                     timeout={{
                         enter: index === 0 ? TRANSITION_DURATION : TRANSITION_DURATION * index,
                         exit: TRANSITION_DURATION,
                     }}>
                     <Card className={classes.card}>
                         <AccountChip uid={trial.editorUid} variant="absolute" />
-                        {dataUrls && (
-                            <CardActionArea
-                                onClick={() => setSelectedAttachment(dataUrls.fullDataUrl)}>
-                                <CardMedia image={dataUrls.mediumDataUrl} className={classes.img} />
-                            </CardActionArea>
-                        )}
-                        {user && (
-                            <div className={classes.actions}>
-                                <Comments
-                                    collection="trials"
-                                    numberOfComments={trial.numberOfComments}
-                                    name={trial.name}
-                                />
 
-                                <IconButton onClick={() => setDeleteAlert(true)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </div>
+                        <CardActionArea
+                            disabled={!dataUrls}
+                            onClick={() => {
+                                if (dataUrls) setSelectedAttachment(dataUrls.fullDataUrl)
+                            }}>
+                            <CardMedia
+                                image={dataUrls && dataUrls.mediumDataUrl}
+                                className={classes.img}>
+                                {/* make mui happy */}
+                                <></>
+                            </CardMedia>
+                        </CardActionArea>
+
+                        {user && (
+                            <Slide direction="up" in>
+                                <div className={classes.actions}>
+                                    <Comments
+                                        collection="trials"
+                                        numberOfComments={trial.numberOfComments}
+                                        name={trial.name}
+                                    />
+
+                                    <IconButton onClick={() => setDeleteAlert(true)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </div>
+                            </Slide>
                         )}
                     </Card>
                 </Grow>
