@@ -21,6 +21,7 @@ const sharedTheme: Partial<ThemeOptions> = {
         MuiPaper: {
             rounded: {
                 borderRadius: BORDER_RADIUS,
+                // ! ToDo this is a hack :( what can we do instead?
                 margin:
                     /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
                         ? 1

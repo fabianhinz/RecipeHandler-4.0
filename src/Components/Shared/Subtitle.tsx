@@ -6,7 +6,7 @@ interface SubtitleProps {
     text: React.ReactNode
 }
 
-const useStyles = makeStyles(theme =>
+const useStyles = makeStyles(() =>
     createStyles({
         iconGridItem: {
             display: 'flex',

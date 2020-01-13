@@ -41,7 +41,7 @@ const RecipeCard = ({ variant, header, content }: Props) => {
 
     return (
         <Card className={classes.root} elevation={pinned ? 0 : 1}>
-            <Card className={clsx(classes.header, pinned && classes.pinnedHeader)}>{header}</Card>
+            <div className={clsx(classes.header, pinned && classes.pinnedHeader)}>{header}</div>
             <CardContent className={clsx(pinned && classes.pinnedContent)}>{content}</CardContent>
         </Card>
     )
