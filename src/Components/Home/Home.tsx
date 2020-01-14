@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import { AttachmentMetadata, DocumentId, Recipe, RecipeDocument } from '../../model/model'
+import ConfigService from '../../services/configService'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import RecentlyAdded from '../RecentlyAdded/RecentlyAdded'
@@ -18,7 +19,7 @@ const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
     const [lastRecipe, setLastRecipe] = useState<Recipe<AttachmentMetadata> | null>(null)
     const [loading, setLoading] = useState(true)
-    const [orderBy, setOrderBy] = useState<OrderByRecord>({ name: 'asc' })
+    const [orderBy, setOrderBy] = useState<OrderByRecord>(ConfigService.orderBy)
 
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
     const { user } = useFirebaseAuthContext()
@@ -34,10 +35,8 @@ const Home = () => {
 
         const observer = new IntersectionObserver(entries => {
             const [lastRecipeTrigger] = entries
-            if (lastRecipeTrigger.isIntersecting && pagedRecipes.size > 0) {
-                console.log('new stuff')
+            if (lastRecipeTrigger.isIntersecting && pagedRecipes.size > 0)
                 setLastRecipe([...pagedRecipes.values()].pop()!)
-            }
         })
         observer.observe(trigger)
 
