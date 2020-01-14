@@ -18,6 +18,7 @@ import React from 'react'
 
 import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { AttachmentMetadata, Recipe } from '../../model/model'
+import configService from '../../services/configService'
 import RecipeResult from '../Recipe/Result/RecipeResult'
 
 export type OrderByKey = keyof Pick<Recipe<AttachmentMetadata>, 'name' | 'createdDate'>
@@ -48,9 +49,14 @@ export const HomeRecipe = ({ recipes, skeletons, orderBy, onOrderByChange }: Hom
     const classes = useStyles()
 
     const handleOrderByChange = (key: keyof OrderByRecord) => () => {
-        if (orderBy[key] && orderBy[key] === 'asc') onOrderByChange({ [key]: 'desc' })
-        else if (orderBy[key] && orderBy[key] === 'desc') onOrderByChange({ [key]: 'asc' })
-        else onOrderByChange({ [key]: 'asc' })
+        let newOrderBy: OrderByRecord
+
+        if (orderBy[key] && orderBy[key] === 'asc') newOrderBy = { [key]: 'desc' }
+        else if (orderBy[key] && orderBy[key] === 'desc') newOrderBy = { [key]: 'asc' }
+        else newOrderBy = { [key]: 'asc' }
+
+        onOrderByChange(newOrderBy)
+        configService.orderBy = newOrderBy
     }
 
     const getStartIcon = (orderBy?: 'asc' | 'desc') => {
