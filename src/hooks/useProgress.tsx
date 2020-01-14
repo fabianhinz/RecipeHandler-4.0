@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 
-import Progress from '../Components/Shared/Progress'
+import Progress, { ProgressVariant } from '../Components/Shared/Progress'
 
-const useProgress = () => {
+const useProgress = (variant?: ProgressVariant) => {
     const [progress, setProgress] = useState(false)
 
     return {
         setProgress,
-        ProgressComponent: () => <>{progress && <Progress variant="fixed" />}</>,
+        ProgressComponent: () => <>{progress && <Progress variant={variant || 'fixed'} />}</>,
     }
 }
 

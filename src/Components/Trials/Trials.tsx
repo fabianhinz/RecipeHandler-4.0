@@ -1,4 +1,4 @@
-import { Box, createStyles, Fab, Grid, makeStyles, Typography, Zoom } from '@material-ui/core'
+import { Box, createStyles, Fab, Grid, makeStyles, Zoom } from '@material-ui/core'
 import CameraIcon from '@material-ui/icons/CameraTwoTone'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
@@ -119,10 +119,6 @@ const Trials = () => {
 
     return (
         <>
-            <Typography gutterBottom variant="h5" align="center">
-                Versuchskaninchen
-            </Typography>
-
             {loading ? (
                 <Progress variant="fixed" />
             ) : trials.size === 0 ? (
@@ -130,13 +126,11 @@ const Trials = () => {
                     <TrialIcon width={200} />
                 </Box>
             ) : (
-                <Box paddingTop={1} paddingBottom={1}>
-                    <Grid container spacing={4}>
-                        {[...trials.values()].map((trial, index) => (
-                            <TrialsCard index={index} trial={trial} key={trial.name} />
-                        ))}
-                    </Grid>
-                </Box>
+                <Grid container spacing={4}>
+                    {[...trials.values()].map((trial, index) => (
+                        <TrialsCard index={index} trial={trial} key={trial.name} />
+                    ))}
+                </Grid>
             )}
 
             {user && (

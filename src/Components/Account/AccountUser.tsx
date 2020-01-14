@@ -43,8 +43,7 @@ import AccountListItem from './AccountListItem'
 const useStyles = makeStyles(theme =>
     createStyles({
         gridContainerAccount: {
-            marginTop: theme.spacing(2),
-            marginBottom: theme.spacing(2),
+            marginBottom: theme.spacing(1),
         },
         avatar: {
             width: 220,
