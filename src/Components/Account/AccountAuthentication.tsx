@@ -47,7 +47,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
     const [username, setUsername] = useState('')
     const [newUser, setNewUser] = useState(false)
 
-    const { ProgressComponent, setProgress } = useProgress()
+    const { ProgressComponent, setProgress } = useProgress('cover')
     const { history } = useRouterContext()
     const { isDialogFullscreen } = useBreakpointsContext()
     const { user } = useFirebaseAuthContext()
@@ -148,78 +148,77 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
     }
 
     return (
-        <>
-            <Dialog
-                open={open}
-                onClose={onClose}
-                maxWidth="sm"
-                fullWidth
-                fullScreen={isDialogFullscreen}
-                TransitionComponent={SlideUp}>
-                <DialogTitle>Account</DialogTitle>
-                <form className={classes.form} onSubmit={handleSubmit}>
-                    <DialogContent>
-                        {newUser && (
-                            <Typography align="center" color="textSecondary">
-                                Daten vervollständigen um neuen Benutzer anzulegen
-                            </Typography>
-                        )}
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="sm"
+            fullWidth
+            fullScreen={isDialogFullscreen}
+            TransitionComponent={SlideUp}>
+            <DialogTitle>Account</DialogTitle>
+            <form className={classes.form} onSubmit={handleSubmit}>
+                <DialogContent>
+                    <ProgressComponent />
 
-                        <TextField
-                            autoFocus
-                            autoComplete="username"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            label="Email"
-                        />
-                        <TextField
-                            autoComplete="current-password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            type="password"
-                            label="Passwort"
-                        />
-                        {newUser && (
-                            <>
-                                <TextField
-                                    onChange={e => setPasswordRepeat(e.target.value)}
-                                    value={passwordRepeat}
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    type="password"
-                                    label="Passwort wiederholen"
-                                />
-                                <TextField
-                                    helperText="Rezepte weisen ihren Ersteller anhand des Benutzernamens aus"
-                                    onChange={e => setUsername(e.target.value)}
-                                    value={username}
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    label="Benutzername"
-                                />
-                            </>
-                        )}
-                    </DialogContent>
-                    <DialogActions>
-                        <Button startIcon={<CloseIcon />} onClick={onClose}>
-                            schließen
-                        </Button>
-                        <Button color="secondary" startIcon={<AccountIcon />} type="submit">
-                            {newUser ? 'registrieren' : 'einloggen'}
-                        </Button>
-                    </DialogActions>
-                </form>
-            </Dialog>
-            <ProgressComponent />
-        </>
+                    {newUser && (
+                        <Typography align="center" color="textSecondary">
+                            Daten vervollständigen um neuen Benutzer anzulegen
+                        </Typography>
+                    )}
+
+                    <TextField
+                        autoFocus
+                        autoComplete="username"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        label="Email"
+                    />
+                    <TextField
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        type="password"
+                        label="Passwort"
+                    />
+                    {newUser && (
+                        <>
+                            <TextField
+                                onChange={e => setPasswordRepeat(e.target.value)}
+                                value={passwordRepeat}
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                type="password"
+                                label="Passwort wiederholen"
+                            />
+                            <TextField
+                                helperText="Rezepte weisen ihren Ersteller anhand des Benutzernamens aus"
+                                onChange={e => setUsername(e.target.value)}
+                                value={username}
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                label="Benutzername"
+                            />
+                        </>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button startIcon={<CloseIcon />} onClick={onClose}>
+                        schließen
+                    </Button>
+                    <Button color="secondary" startIcon={<AccountIcon />} type="submit">
+                        {newUser ? 'registrieren' : 'einloggen'}
+                    </Button>
+                </DialogActions>
+            </form>
+        </Dialog>
     )
 }
 

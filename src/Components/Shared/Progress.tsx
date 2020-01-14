@@ -27,8 +27,10 @@ const useStyles = makeStyles(() =>
     })
 )
 
+export type ProgressVariant = 'fixed' | 'cover'
+
 interface Props {
-    variant: 'fixed' | 'cover'
+    variant: ProgressVariant
 }
 
 const Progress = ({ variant }: Props) => {
