@@ -1,3 +1,4 @@
+import { PaletteType } from '@material-ui/core'
 import { RouteComponentProps } from 'react-router'
 
 export interface Attachment {
@@ -25,7 +26,7 @@ export interface Recipe<T extends Attachment> extends CommentsDocument {
     ingredients: string
     amount: number
     description: string
-
+    editorUid: string
     relatedRecipes: Array<string>
 }
 
@@ -51,6 +52,7 @@ export interface Comment {
 }
 
 export interface Trial extends CommentsDocument {
+    editorUid: string
     fullPath: string
     createdDate: firebase.firestore.Timestamp
 }
@@ -70,3 +72,19 @@ export type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> &
 export type Hits = Array<Hit>
 
 export type DataUrl = string
+
+export type DocumentId = string
+
+export type User = {
+    uid: string
+    username: string
+    muiTheme: PaletteType
+    selectedUsers: string[]
+    showRecentlyAdded: boolean
+    notifications: boolean
+    admin?: boolean
+    profilePicture?: string
+    emailVerified?: boolean
+    createdDate: firebase.firestore.Timestamp
+    algoliaAdvancedSyntax: boolean
+}

@@ -6,8 +6,6 @@ import {
     DialogTitle,
     Grid,
     IconButton,
-    List,
-    ListItem,
     makeStyles,
     TextField,
 } from '@material-ui/core'
@@ -33,31 +31,32 @@ interface RecipeCreateRelatedDialogProps {
     onSave: (relatedRecipes: Array<string>) => void
     onClose: () => void
 }
-
+// ToDo change color scheme
 const useStyles = makeStyles(theme =>
     createStyles({
-        list: {
-            transform: 'translateZ(0)',
-        },
-        listItem: {
+        recipeHeader: {
+            cursor: 'pointer',
+            padding: theme.spacing(2),
             borderRadius: 0,
+            transition: theme.transitions.create('background-color', {
+                duration: theme.transitions.duration.short,
+            }),
             '&:first-child': {
                 borderRadius: `${BORDER_RADIUS}px ${BORDER_RADIUS}px 0 0`,
             },
             '&:last-child': {
                 borderRadius: `0 0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px `,
             },
+            '@media (pointer: fine)': {
+                '&:hover': {
+                    backgroundColor: 'rgb(90, 139, 92, 0.15)',
+                },
+            },
         },
-        selectedListItem: {
-            backgroundColor:
-                theme.palette.type === 'dark'
-                    ? 'rgb(183, 222, 184, 0.25)'
-                    : 'rgb(115, 149, 116, 0.25)',
+        selectedRecipeHeader: {
+            backgroundColor: 'rgb(90, 139, 92, 0.3)',
             '&:hover': {
-                backgroundColor:
-                    theme.palette.type === 'dark'
-                        ? 'rgb(183, 222, 184, 0.35)'
-                        : 'rgb(115, 149, 116, 0.35)',
+                backgroundColor: 'rgb(90, 139, 92, 0.45)',
             },
         },
     })
@@ -131,7 +130,6 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
 
     return (
         <Dialog
-            keepMounted
             fullScreen={isDialogFullscreen}
             TransitionComponent={SlideUp}
             open={open}
@@ -141,20 +139,17 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             <DialogTitle>Passende Rezepte auswählen</DialogTitle>
             <DialogContent>
                 {loading && <Progress variant="cover" />}
-                <List>
-                    {recipes.map(recipe => (
-                        <ListItem
-                            key={recipe.name}
-                            onClick={() => handleSelectedChange(recipe.name)}
-                            className={clsx(
-                                classes.listItem,
-                                selected.has(recipe.name) && classes.selectedListItem
-                            )}
-                            button>
-                            <RecipeResultHeader variant="related" recipe={recipe} />
-                        </ListItem>
-                    ))}
-                </List>
+                {recipes.map(recipe => (
+                    <div
+                        key={recipe.name}
+                        onClick={() => handleSelectedChange(recipe.name)}
+                        className={clsx(
+                            classes.recipeHeader,
+                            selected.has(recipe.name) && classes.selectedRecipeHeader
+                        )}>
+                        <RecipeResultHeader variant="related" recipe={recipe} />
+                    </div>
+                ))}
             </DialogContent>
             <DialogActions>
                 <Grid container>

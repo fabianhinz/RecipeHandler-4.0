@@ -1,4 +1,4 @@
-import { Box, createStyles, IconButton, makeStyles, Paper, Slide } from '@material-ui/core'
+import { Box, createStyles, Fab, makeStyles, Paper, Slide } from '@material-ui/core'
 import ChevronLeft from '@material-ui/icons/ChevronLeft'
 import ChevronRight from '@material-ui/icons/ChevronRight'
 import clsx from 'clsx'
@@ -9,6 +9,7 @@ import { useRecipeDoc } from '../../hooks/useRecipeDoc'
 import { BORDER_RADIUS } from '../../theme'
 import { RecipeResultPin } from '../Recipe/Result/Action/RecipeResultPin'
 import RecipeResult from '../Recipe/Result/RecipeResult'
+import { BadgeWrapper } from '../Shared/BadgeWrapper'
 import Progress from '../Shared/Progress'
 import { useBreakpointsContext } from './BreakpointsProvider'
 
@@ -26,7 +27,7 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ recipeName })
 
     return (
-        <Box padding={2}>
+        <Box padding={2} paddingTop={3}>
             <Box display="flex" justifyContent="center">
                 <RecipeResultPin name={recipeName} />
             </Box>
@@ -41,35 +42,40 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
 
 export const PINNED_WIDTH = 425
 
+interface StyleProps {
+    pinnedOnMobile: boolean
+}
+
 const useStyles = makeStyles(theme =>
     createStyles({
         pinnedContainer: {
-            width: (props: any) => (props.pinnedOnMobile ? '100vw' : PINNED_WIDTH),
+            width: (props: StyleProps) => (props.pinnedOnMobile ? '100vw' : PINNED_WIDTH),
             position: 'fixed',
             height: '100vh',
             overflowY: 'auto',
             top: 0,
             left: 0,
-            zIndex: theme.zIndex.drawer + 1,
+            zIndex: theme.zIndex.modal - 1,
             boxShadow: theme.shadows[8],
+            paddingTop: 'env(safe-area-inset-top)',
             borderRadius: `0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px 0`,
-        },
-        recipePadding: {
-            padding: theme.spacing(2),
+            '@media screen and (orientation: landscape)': {
+                paddingLeft: 'env(safe-area-inset-bottom)',
+            },
         },
         pinnedWidth: {
             marginLeft: PINNED_WIDTH,
         },
         drawerLike: {
-            zIndex: theme.zIndex.drawer + 2,
+            zIndex: theme.zIndex.modal,
             position: 'fixed',
-            top: '50%',
-            transform: 'translateY(-50%)',
+            top: `calc(env(safe-area-inset-top) + ${theme.spacing(3)})`,
+            left: theme.spacing(2),
         },
     })
 )
 
-export const PinnedRecipesProvider: FC = ({ children }) => {
+const PinnedRecipesProvider: FC = ({ children }) => {
     const [pinnedRecipes, setPinnedRecipes] = useState<Set<string>>(new Set())
     const [activeIndex, setActiveIndex] = useState(0)
     const [drawerLike, setDrawerLike] = useState(false)
@@ -78,7 +84,7 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
 
     const pinnedOnDesktop = pinnedRecipes.size > 0 && isDesktopPinnable
     const pinnedOnMobile = pinnedRecipes.size > 0 && isMobilePinnable
-    const classes = useStyles({ pinnedOnMobile })
+    const classes = useStyles({ pinnedOnMobile } as StyleProps)
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
@@ -139,15 +145,13 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
                 pinnedOnDesktop,
             }}>
             <Slide in={pinnedOnMobile} direction="right">
-                <IconButton
-                    onClick={() => setDrawerLike(prev => !prev)}
-                    className={classes.drawerLike}>
-                    {drawerLike ? (
-                        <ChevronLeft fontSize="large" />
-                    ) : (
-                        <ChevronRight fontSize="large" />
-                    )}
-                </IconButton>
+                <div className={classes.drawerLike}>
+                    <BadgeWrapper badgeContent={pinnedRecipes.size}>
+                        <Fab size="small" onClick={() => setDrawerLike(prev => !prev)}>
+                            {drawerLike ? <ChevronLeft /> : <ChevronRight />}
+                        </Fab>
+                    </BadgeWrapper>
+                </div>
             </Slide>
             <Slide in={pinnedOnDesktop || drawerLike} direction="right">
                 <Paper className={classes.pinnedContainer}>
@@ -164,3 +168,5 @@ export const PinnedRecipesProvider: FC = ({ children }) => {
         </Context.Provider>
     )
 }
+
+export default PinnedRecipesProvider

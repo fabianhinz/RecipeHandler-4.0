@@ -1,4 +1,4 @@
-import { Box, Card, Grid } from '@material-ui/core'
+import { Card, Grid } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
 
@@ -32,28 +32,23 @@ const RecentlyAdded = () => {
     }, [limit])
 
     return (
-        <Box marginBottom={2}>
-            <Grid container spacing={2}>
-                {recipes.map(recipe => (
-                    <RecentlyAddedCard skeleton={false} key={recipe.name} recipe={recipe} />
-                ))}
-                {recipes.length === 0 &&
-                    new Array(limit).fill(1).map((_skeleton, index) => (
-                        <Grid
-                            {...recentlyAddedGridProps(isHighRes, pinnedOnDesktop)}
-                            item
-                            key={index}>
-                            <Grid container spacing={2} justify="space-between" alignItems="center">
-                                <Grid xs={12} item>
-                                    <Card>
-                                        <Skeleton width="100%" height={110} variant="rect" />
-                                    </Card>
-                                </Grid>
+        <Grid container spacing={2}>
+            {recipes.map(recipe => (
+                <RecentlyAddedCard skeleton={false} key={recipe.name} recipe={recipe} />
+            ))}
+            {recipes.length === 0 &&
+                new Array(limit).fill(1).map((_skeleton, index) => (
+                    <Grid {...recentlyAddedGridProps(isHighRes, pinnedOnDesktop)} item key={index}>
+                        <Grid container spacing={2} justify="space-between" alignItems="center">
+                            <Grid xs={12} item>
+                                <Card>
+                                    <Skeleton width="100%" height={112} variant="rect" />
+                                </Card>
                             </Grid>
                         </Grid>
-                    ))}
-            </Grid>
-        </Box>
+                    </Grid>
+                ))}
+        </Grid>
     )
 }
 

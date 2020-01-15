@@ -5,7 +5,7 @@ import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 
 type Props = { children: React.ReactNode; className?: string }
 
-export const Container = ({ children, className }: Props) => {
+const Container = ({ children, className }: Props) => {
     const { isHighRes } = useBreakpointsContext()
 
     return (
@@ -14,3 +14,5 @@ export const Container = ({ children, className }: Props) => {
         </MuiContainer>
     )
 }
+
+export default Container

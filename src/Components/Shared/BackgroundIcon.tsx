@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core'
 import React, { FC } from 'react'
 
-import { Container } from './Container'
+import Container from './Container'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -18,6 +18,9 @@ const useStyles = makeStyles(theme =>
         },
         iconBackground: {
             opacity: 0.3,
+            [theme.breakpoints.down('xs')]: {
+                width: '80%',
+            },
             width: '50%',
         },
     })

@@ -6,8 +6,9 @@ import { BORDER_RADIUS } from '../../theme'
 const useStyles = makeStyles(() =>
     createStyles({
         linearProgress: {
+            height: 6,
             position: 'fixed',
-            bottom: 0,
+            top: 0,
             left: 0,
             width: '100vw',
         },
@@ -26,8 +27,10 @@ const useStyles = makeStyles(() =>
     })
 )
 
+export type ProgressVariant = 'fixed' | 'cover'
+
 interface Props {
-    variant: 'fixed' | 'cover'
+    variant: ProgressVariant
 }
 
 const Progress = ({ variant }: Props) => {

@@ -24,6 +24,8 @@ const useStyles = makeStyles(theme =>
             cursor: 'pointer',
         },
         attachment: {
+            maxHeight: '100%',
+            overflow: 'auto',
             [theme.breakpoints.only('xs')]: {
                 maxWidth: '90%',
             },

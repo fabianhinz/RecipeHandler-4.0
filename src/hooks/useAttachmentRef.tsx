@@ -39,7 +39,9 @@ export const getResizedImages = async (fullPath: string) => {
         urls.mediumDataUrl = await FirebaseService.storage.ref(mediumPath).getDownloadURL()
         urls.smallDataUrl = await FirebaseService.storage.ref(smallPath).getDownloadURL()
     } catch (e) {
-        // ? happens after creating an attachment. catch it and move on....
+        // ? happens after creating an attachment. just load the full version
+        urls.mediumDataUrl = urls.fullDataUrl
+        urls.smallDataUrl = urls.fullDataUrl
     }
 
     return urls

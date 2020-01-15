@@ -18,7 +18,7 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, memo, useState } from 'react'
 
 import { getFileExtension, useAttachmentRef } from '../../../../hooks/useAttachmentRef'
-import { TRANSITION_DURATION, useTransition } from '../../../../hooks/useTransition'
+import { getTransitionTimeoutProps, useTransition } from '../../../../hooks/useTransition'
 import { AttachmentData, AttachmentMetadata } from '../../../../model/model'
 import { isData, isMetadata } from '../../../../model/modelUtil'
 
@@ -47,10 +47,12 @@ export interface AttachmentsCardChangeHandler {
 }
 
 interface RecipeCreateAttachmentsCardProps extends AttachmentsCardChangeHandler {
+    index: number
     attachment: AttachmentData | AttachmentMetadata
 }
 
 const RecipeCreateAttachmentsCard: FC<RecipeCreateAttachmentsCardProps> = ({
+    index,
     attachment,
     onRemoveAttachment,
     onDeleteAttachment,
@@ -75,7 +77,7 @@ const RecipeCreateAttachmentsCard: FC<RecipeCreateAttachmentsCardProps> = ({
 
     return (
         <Grid item>
-            <Grow in={transition} mountOnEnter timeout={TRANSITION_DURATION}>
+            <Grow in={transition} timeout={getTransitionTimeoutProps(++index)}>
                 <Card onClick={e => e.stopPropagation()}>
                     <CardContent>
                         <Chip label={`${(attachment.size / 1000000).toFixed(1)} MB`} />
@@ -129,6 +131,7 @@ export default memo(RecipeCreateAttachmentsCard, (prev, next) => {
     return (
         sameAttachment &&
         prev.attachment.name === next.attachment.name &&
-        prev.onSaveAttachment === next.onSaveAttachment
+        prev.onSaveAttachment === next.onSaveAttachment &&
+        prev.index === next.index
     )
 })

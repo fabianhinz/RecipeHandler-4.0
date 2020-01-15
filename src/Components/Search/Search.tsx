@@ -15,14 +15,32 @@ import useDebounce from '../../hooks/useDebounce'
 import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { Hits } from '../../model/model'
 import { index } from '../../services/algolia'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import SearchHit from './SearchHit'
 import SearchInput from './SearchInput'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
-        list: {
+        paper: {
+            paddingTop: 'env(safe-area-inset-top)',
             maxHeight: '100%',
             overflowY: 'auto',
+            overflowX: 'hidden',
+        },
+        safeAreaIos: {
+            height: 'env(safe-area-inset-top)',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: theme.zIndex.drawer + 1,
+            backgroundColor: theme.palette.background.paper,
+        },
+        searchContainer: {
+            position: 'sticky',
+            top: 0,
+            zIndex: 1,
+            backgroundColor: theme.palette.background.paper,
         },
     })
 )
@@ -36,13 +54,17 @@ const Search = () => {
 
     const classes = useStyles()
     const debouncedSearchValue = useDebounce(searchValue, 500)
+    const { user } = useFirebaseAuthContext()
 
     const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous)
 
     useEffect(() => {
         if (debouncedSearchValue.length > 0) {
             index
-                .search(debouncedSearchValue)
+                .search({
+                    query: debouncedSearchValue,
+                    advancedSyntax: user && user.algoliaAdvancedSyntax ? true : false,
+                })
                 .then(({ hits }) => {
                     setError(null)
                     setAlgoliaHits(hits)
@@ -56,19 +78,25 @@ const Search = () => {
             setAlgoliaHits([])
             setLoading(false)
         }
-    }, [debouncedSearchValue])
+    }, [debouncedSearchValue, user])
 
     return (
         <>
-            <Box marginBottom={2} display="flex" justifyContent="space-evenly">
+            <Box marginBottom={2} display="flex" justifyContent="center">
                 <Fab onClick={handleSearchDrawerChange} size="small" color="primary">
                     <SearchIcon />
                 </Fab>
             </Box>
 
-            <Drawer open={searchDrawer} onClose={handleSearchDrawerChange} anchor="top">
-                <Box padding={2}>
+            <Drawer
+                open={searchDrawer}
+                PaperProps={{ className: classes.paper }}
+                onClose={handleSearchDrawerChange}
+                anchor="top">
+                <div className={classes.safeAreaIos} />
+                <div className={classes.searchContainer}>
                     <SearchInput
+                        onSearchBtnClick={() => setSearchDrawer(false)}
                         searchValue={searchValue}
                         loading={loading}
                         onChange={e => {
@@ -76,12 +104,12 @@ const Search = () => {
                             setSearchValue(e.target.value)
                         }}
                     />
-                </Box>
 
-                <Divider />
+                    <Divider />
+                </div>
 
                 {algoliaHits.length > 0 && (
-                    <List className={classes.list}>
+                    <List>
                         {algoliaHits.map(recipeHit => (
                             <SearchHit
                                 key={recipeHit.name}

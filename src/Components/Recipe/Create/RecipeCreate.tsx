@@ -1,30 +1,12 @@
-import {
-    Box,
-    createStyles,
-    Grid,
-    IconButton,
-    InputBase,
-    makeStyles,
-    TextField,
-    Typography,
-} from '@material-ui/core'
-import AddIcon from '@material-ui/icons/AddCircle'
-import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
-import BookIcon from '@material-ui/icons/BookTwoTone'
-import CameraIcon from '@material-ui/icons/CameraTwoTone'
-import SpeedDialIcon from '@material-ui/icons/ClassRounded'
+import { Grid } from '@material-ui/core'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
-import RemoveIcon from '@material-ui/icons/RemoveCircle'
-import EyeIcon from '@material-ui/icons/RemoveRedEyeTwoTone'
-import SaveIcon from '@material-ui/icons/SaveTwoTone'
-import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
-import { SpeedDial, SpeedDialAction } from '@material-ui/lab'
 import { useSnackbar } from 'notistack'
-import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
 import { createWorker } from 'tesseract.js'
 
 import { getRefPaths } from '../../../hooks/useAttachmentRef'
+import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
 import { AttachmentMetadata, Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
@@ -38,49 +20,33 @@ import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
 import { RecipeCreateAttachments } from './Attachments/RecipeCreateAttachments'
 import { useAttachmentDropzone } from './Attachments/useAttachmentDropzone'
+import RecipeCreateDescription from './RecipeCreateDescription'
+import RecipeCreateHeader from './RecipeCreateHeader'
+import RecipeCreateIngredients from './RecipeCreateIngredients'
 import { AttachmentName, CreateChangeKey, useRecipeCreateReducer } from './RecipeCreateReducer'
 import { RecipeCreateRelatedDialog } from './RecipeCreateRelatedDialog'
+import RecipeCreateSpeedDial from './RecipeCreateSpeedDial'
 import { useRecipeCreate } from './useRecipeCreate'
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        textFieldName: {
-            marginBottom: theme.spacing(1),
-            width: '100%',
-            ...theme.typography.h5,
-        },
-        cardHeader: {
-            paddingBottom: 0,
-        },
-        speedDial: {
-            zIndex: theme.zIndex.drawer + 1,
-            position: 'fixed',
-            right: theme.spacing(2),
-            bottom: theme.spacing(4.5),
-        },
-        iconButtonSubtitle: {
-            color: 'rgba(0, 0, 0, 0.54)',
-        },
-    })
-)
 
 interface RecipeCreateProps extends Pick<RouteComponentProps, 'history' | 'location'> {
     recipe?: Recipe<AttachmentMetadata> | null
     edit?: boolean
 }
-// ! this is a mess, split into multiple components
+
 const RecipeCreate: FC<RecipeCreateProps> = props => {
     const { state, dispatch } = useRecipeCreateReducer(props.recipe)
-    const { attachments, dropzoneProps } = useAttachmentDropzone(state.attachments)
-    const [speedDialOpen, setSpeedDialOpen] = useState(false)
 
     const recipeCreateService = useRecipeCreate(state, props.edit)
     const { selectedCategories, setSelectedCategories } = useCategorySelect(props.recipe)
     const { user } = useFirebaseAuthContext()
     const { history } = useRouterContext()
-
+    const { attachments, dropzoneProps } = useAttachmentDropzone({
+        currentAttachments: state.attachments,
+        attachmentMaxWidth: 3840,
+        attachmentLimit: 5,
+    })
+    const { breakpoints } = useCardBreakpoints({ xlEnabled: state.relatedRecipes.length !== 0 })
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-    const classes = useStyles()
 
     const ocr = useCallback(async () => {
         if (attachments.length === 0) return
@@ -113,25 +79,17 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
     useEffect(() => {
         dispatch({ type: 'attachmentsDrop', newAttachments: attachments })
-    }, [attachments, dispatch])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [attachments])
+
+    useEffect(() => {
+        dispatch({ type: 'categoriesChange', selectedCategories })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedCategories])
 
     useEffect(() => {
         if (!user) history.push(PATHS.home)
     }, [history, user])
-
-    useEffect(() => {
-        dispatch({ type: 'categoriesChange', selectedCategories })
-    }, [dispatch, selectedCategories])
-
-    const handleSaveClick = useCallback(async () => {
-        const valid = await recipeCreateService.validate(selectedCategories)
-        if (!valid) return
-
-        const attachmentMetadata = await recipeCreateService.uploadAttachments()
-        await recipeCreateService.saveRecipeDocument(attachmentMetadata)
-
-        // eslint-disable-next-line prettier/prettier
-    },[recipeCreateService, selectedCategories] )
 
     const handleRemoveAttachment = (name: string) => {
         dispatch({ type: 'removeAttachment', name })
@@ -162,10 +120,16 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         }
     }
 
-    const handleTextFieldChange = (key: CreateChangeKey) => (
-        event: ChangeEvent<HTMLInputElement>
-    ) => {
-        dispatch({ type: 'textFieldChange', key, value: event.target.value })
+    const handleSaveRecipe = useCallback(async () => {
+        const valid = await recipeCreateService.validate(selectedCategories)
+        if (!valid) return
+
+        const attachmentMetadata = await recipeCreateService.uploadAttachments()
+        await recipeCreateService.saveRecipeDocument(attachmentMetadata)
+    }, [recipeCreateService, selectedCategories])
+
+    const handleTextFieldChange = (key: CreateChangeKey) => (value: string) => {
+        dispatch({ type: 'textFieldChange', key, value })
     }
 
     const warnOnLocationChange = () => {
@@ -189,7 +153,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
     return (
         <>
-            {state.preview ? (
+            {state.preview && user ? (
                 <RecipeResult
                     variant="preview"
                     recipe={{
@@ -202,30 +166,17 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         amount: state.amount,
                         description: state.description,
                         relatedRecipes: state.relatedRecipes,
+                        editorUid: user.uid,
                     }}
                 />
             ) : (
                 <Grid container spacing={4} alignContent="stretch">
                     <Grid item xs={12}>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <InputBase
-                                    autoFocus
-                                    disabled={props.edit}
-                                    className={classes.textFieldName}
-                                    value={state.name}
-                                    placeholder="Name"
-                                    onChange={handleTextFieldChange('name')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Typography component="span" color="textSecondary">
-                                    Ein Rezept sollte mindestens einen Namen und Kategorie
-                                    aufweißen. Nach erfolgter Speicherung ist die Änderung des
-                                    Rezeptnamens nicht mehr möglich
-                                </Typography>
-                            </Grid>
-                        </Grid>
+                        <RecipeCreateHeader
+                            inputDisabled={props.edit}
+                            name={state.name}
+                            onNameChange={handleTextFieldChange('name')}
+                        />
                     </Grid>
 
                     <Grid item xs={12}>
@@ -246,81 +197,27 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         </Grid>
                     )}
 
-                    <Grid item xs={12} lg={6} xl={4}>
-                        <RecipeCard
-                            variant="preview"
-                            header={
-                                <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
-                                    {/* ToDo extract */}
-                                    <Box display="flex" alignItems="center">
-                                        <IconButton
-                                            className={classes.iconButtonSubtitle}
-                                            onClick={() => dispatch({ type: 'decreaseAmount' })}
-                                            size="small">
-                                            <RemoveIcon />
-                                        </IconButton>
-                                        <Box
-                                            marginLeft={0.5}
-                                            marginRight={0.5}
-                                            width={25}
-                                            textAlign="center">
-                                            <Typography variant="h6">{state.amount}</Typography>
-                                        </Box>
-                                        <IconButton
-                                            className={classes.iconButtonSubtitle}
-                                            onClick={() => dispatch({ type: 'increaseAmount' })}
-                                            size="small">
-                                            <AddIcon />
-                                        </IconButton>
-                                        <Box
-                                            marginLeft={0.5}
-                                            marginRight={0.5}
-                                            width={25}
-                                            textAlign="center">
-                                            <Typography variant="h5">
-                                                {state.amount < 2 ? 'Person' : 'Personen'}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                </Subtitle>
-                            }
-                            content={
-                                <TextField
-                                    label="optional"
-                                    value={state.ingredients}
-                                    onChange={handleTextFieldChange('ingredients')}
-                                    fullWidth
-                                    rows={15}
-                                    multiline
-                                    variant="outlined"
-                                    margin="dense"
-                                />
-                            }
+                    <Grid item {...breakpoints}>
+                        <RecipeCreateIngredients
+                            amount={state.amount}
+                            onDecreaseAmount={() => dispatch({ type: 'decreaseAmount' })}
+                            onIncreaseAmount={() => dispatch({ type: 'increaseAmount' })}
+                            ingredients={state.ingredients}
+                            onIngredientsChange={handleTextFieldChange('ingredients')}
                         />
                     </Grid>
 
-                    <Grid item xs={12} lg={6} xl={4}>
-                        <RecipeCard
-                            variant="preview"
-                            header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
-                            content={
-                                <TextField
-                                    label="optional"
-                                    value={state.description}
-                                    rows={15}
-                                    onChange={handleTextFieldChange('description')}
-                                    fullWidth
-                                    multiline
-                                    variant="outlined"
-                                    margin="dense"
-                                />
-                            }
+                    <Grid item {...breakpoints}>
+                        <RecipeCreateDescription
+                            description={state.description}
+                            onDescriptionChange={handleTextFieldChange('description')}
                         />
                     </Grid>
 
                     {state.relatedRecipes.length > 0 && (
-                        <Grid item xs={12} lg={6} xl={4}>
+                        <Grid item {...breakpoints}>
                             <RecipeCard
+                                transitionOrder={3}
                                 variant="preview"
                                 header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
                                 content={
@@ -347,46 +244,12 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                 message="Nicht gespeicherte Änderungen gehen verloren. Trotzdem die Seite verlassen?"
             />
 
-            {/* ToDo extract */}
-            <SpeedDial
-                className={classes.speedDial}
-                FabProps={{ color: 'secondary' }}
-                ariaLabel="recipe create speed dial"
-                open={speedDialOpen}
-                onOpen={() => setSpeedDialOpen(true)}
-                onClose={() => setSpeedDialOpen(false)}
-                icon={<SpeedDialIcon />}
-                openIcon={<SpeedDialIcon />}>
-                <SpeedDialAction
-                    {...dropzoneProps.getRootProps()}
-                    icon={
-                        <>
-                            <input {...dropzoneProps.getInputProps()} />
-                            <CameraIcon />
-                        </>
-                    }
-                    FabProps={{ size: 'medium' }}
-                    tooltipTitle="Bilder hinzufügen"
-                />
-                <SpeedDialAction
-                    onClick={() => dispatch({ type: 'openRelatedRecipesDialog' })}
-                    tooltipTitle="Passt gut zu bearbeiten"
-                    FabProps={{ size: 'medium' }}
-                    icon={<SwapIcon />}
-                />
-                <SpeedDialAction
-                    icon={<EyeIcon />}
-                    onClick={() => dispatch({ type: 'previewChange' })}
-                    tooltipTitle="Rezeptvorschau"
-                    FabProps={{ size: 'medium' }}
-                />
-                <SpeedDialAction
-                    icon={<SaveIcon />}
-                    onClick={handleSaveClick}
-                    tooltipTitle="Rezept speichern"
-                    FabProps={{ size: 'medium' }}
-                />
-            </SpeedDial>
+            <RecipeCreateSpeedDial
+                dropzoneProps={dropzoneProps}
+                onRelated={() => dispatch({ type: 'openRelatedRecipesDialog' })}
+                onPreview={() => dispatch({ type: 'previewChange' })}
+                onSave={handleSaveRecipe}
+            />
         </>
     )
 }

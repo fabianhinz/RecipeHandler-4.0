@@ -7,18 +7,21 @@ type Breakpoints = {
     isDialogFullscreen: boolean
     isLowRes: boolean
     isHighRes: boolean
+    isMobile: boolean
 }
 
 const Context = React.createContext<Breakpoints | null>(null)
 
 export const useBreakpointsContext = () => useContext(Context) as Breakpoints
 
-export const BreakpointsProvider: FC = ({ children }) => {
+const BreakpointsProvider: FC = ({ children }) => {
+    // ToDo streamline those...
     const isDesktopPinnable = useMediaQuery('(min-width: 1024px)')
     const isMobilePinnable = useMediaQuery('(max-width: 1023px)')
-    const isDialogFullscreen = useMediaQuery('(max-width: 768px)')
+    const isDialogFullscreen = useMediaQuery('(max-width: 1023px)')
     const isLowRes = useMediaQuery('(max-width: 599px)')
     const isHighRes = useMediaQuery('(min-width: 2560px)')
+    const isMobile = useMediaQuery(`(max-width: 425px)`)
 
     return (
         <Context.Provider
@@ -28,8 +31,11 @@ export const BreakpointsProvider: FC = ({ children }) => {
                 isDialogFullscreen,
                 isLowRes,
                 isHighRes,
+                isMobile,
             }}>
             {children}
         </Context.Provider>
     )
 }
+
+export default BreakpointsProvider

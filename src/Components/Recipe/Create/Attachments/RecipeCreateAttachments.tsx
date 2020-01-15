@@ -23,8 +23,9 @@ export const RecipeCreateAttachments: FC<RecipeCreateAttachmentsProps> = props =
 
     return (
         <Grid className={classes.gridContainer} wrap="nowrap" container spacing={2}>
-            {props.attachments.map(attachment => (
+            {props.attachments.map((attachment, index) => (
                 <RecipeCreateAttachmentsCard
+                    index={index}
                     key={attachment.name}
                     attachment={attachment}
                     onDeleteAttachment={props.onDeleteAttachment}

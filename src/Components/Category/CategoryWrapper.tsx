@@ -1,6 +1,5 @@
 import {
     Avatar,
-    Box,
     createStyles,
     Dialog,
     DialogActions,
@@ -18,6 +17,7 @@ import {
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import Skeleton from '@material-ui/lab/Skeleton'
+import clsx from 'clsx'
 import {
     AvTimer,
     Barley,
@@ -41,6 +41,7 @@ import React, { FC, memo, useState } from 'react'
 
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useCategoriesCollectionContext } from '../Provider/CategoriesCollectionProvider'
+import { useDeviceOrientationContext } from '../Provider/DeviceOrientationProvider'
 import { SlideUp } from '../Shared/Transitions'
 
 export const iconFromCategory = (category: string) => {
@@ -88,8 +89,7 @@ interface CategoryDialogProps extends CategoryWrapperProps {
 const useStyles = makeStyles(theme =>
     createStyles({
         skeletonContainer: {
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2),
+            padding: theme.spacing(2),
         },
         avatarSelected: {
             backgroundColor: theme.palette.secondary.main,
@@ -155,7 +155,13 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
                                 button
                                 key={category}>
                                 <ListItemAvatar>
-                                    <Avatar>{iconFromCategory(category)}</Avatar>
+                                    <Avatar
+                                        className={clsx(
+                                            category === selectedCategories.get(type) &&
+                                                classes.avatarSelected
+                                        )}>
+                                        {iconFromCategory(category)}
+                                    </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText primary={category} />
                             </ListItem>
@@ -163,20 +169,14 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
                     </List>
                 </DialogContent>
                 <DialogActions>
-                    <Box
-                        flexGrow={1}
-                        display="flex"
-                        justifyContent="space-evenly"
-                        alignItems="center">
-                        <IconButton onClick={handleDialogChange}>
-                            <CloseIcon />
-                        </IconButton>
-                        <IconButton
-                            onClick={handleCategoryChange(selectedCategory)}
-                            disabled={!selectedHasType}>
-                            <DeleteIcon />
-                        </IconButton>
-                    </Box>
+                    <IconButton onClick={handleDialogChange}>
+                        <CloseIcon />
+                    </IconButton>
+                    <IconButton
+                        onClick={handleCategoryChange(selectedCategory)}
+                        disabled={!selectedHasType}>
+                        <DeleteIcon />
+                    </IconButton>
                 </DialogActions>
             </Dialog>
         </>
@@ -192,12 +192,12 @@ const SKELETON_CATEGORIES = ['art', 'ernährung', 'zeit']
 
 const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedCategories }) => {
     const { categoriesCollection, categoriesLoading } = useCategoriesCollectionContext()
-    const classes = useStyles()
+    const { landscape } = useDeviceOrientationContext()
 
     return (
         <Grid container spacing={2}>
             {Object.keys(categoriesCollection).map(type => (
-                <Grid key={type} item xs={12} md={4}>
+                <Grid key={type} item xs={landscape ? 4 : 12} sm={4}>
                     <CategoryDialog
                         categories={categoriesCollection[type]}
                         onCategoryChange={onCategoryChange}
@@ -208,20 +208,17 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
             ))}
             {categoriesLoading &&
                 SKELETON_CATEGORIES.map(dummy => (
-                    <Grid key={dummy} item xs={12} md={4}>
-                        <Grid
-                            className={classes.skeletonContainer}
-                            container
-                            spacing={1}
-                            alignItems="center">
-                            <Grid item xs={2}>
+                    <Grid key={dummy} item xs={landscape ? 4 : 12} sm={4}>
+                        <ListItem>
+                            <ListItemIcon>
                                 <Skeleton variant="circle" width={40} height={40} />
-                            </Grid>
-                            <Grid item xs={10}>
-                                <Skeleton variant="text" width="30%" />
-                                <Skeleton variant="text" width="60%" />
-                            </Grid>
-                        </Grid>
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={<Skeleton variant="text" width="30%" />}
+                                primaryTypographyProps={{ component: 'div' }}
+                                secondary="Auswählen (optional)"
+                            />
+                        </ListItem>
                     </Grid>
                 ))}
         </Grid>

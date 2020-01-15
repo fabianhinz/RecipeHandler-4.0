@@ -4,6 +4,8 @@ import { ThemeOptions } from '@material-ui/core/styles/createMuiTheme'
 export const BORDER_RADIUS = 10
 export const BORDER_RADIUS_HUGE = 16
 
+const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
+
 const sharedTheme: Partial<ThemeOptions> = {
     overrides: {
         MuiExpansionPanel: {
@@ -18,9 +20,16 @@ const sharedTheme: Partial<ThemeOptions> = {
                 },
             },
         },
+        MuiCardActionArea: {
+            root: {
+                margin: isSafari ? 1 : undefined,
+            },
+        },
         MuiPaper: {
             rounded: {
                 borderRadius: BORDER_RADIUS,
+                // ! ToDo this is a hack :( what can we do instead?
+                margin: isSafari ? 1 : undefined,
             },
         },
         MuiCard: {
@@ -33,14 +42,6 @@ const sharedTheme: Partial<ThemeOptions> = {
                 '&:last-child': {
                     paddingBottom: 'inherhit',
                 },
-            },
-        },
-        MuiChip: {
-            root: {
-                cursor: 'pointer',
-            },
-            sizeSmall: {
-                cursor: 'auto',
             },
         },
         MuiOutlinedInput: {
@@ -63,11 +64,22 @@ const sharedTheme: Partial<ThemeOptions> = {
                 alignSelf: 'center',
             },
         },
+        MuiDialogTitle: {
+            root: {
+                paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
+            },
+        },
+        MuiDialogActions: {
+            root: {
+                paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
+                justifyContent: 'space-evenly',
+            },
+        },
     },
 }
 
-const PRIMARY_COLOR = '#A5D6A7'
-const SECONDARY_COLOR = '#FFCC80'
+export const PRIMARY_COLOR = '#81c784'
+export const SECONDARY_COLOR = '#ffb74d'
 
 const darkTheme = createMuiTheme({
     palette: {
