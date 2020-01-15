@@ -30,6 +30,7 @@ const Home = () => {
     }
 
     useEffect(() => {
+        // ToDo extract observer as a custom hook
         const trigger = document.getElementById('intersection-observer-trigger')
         if (!trigger) return
 
