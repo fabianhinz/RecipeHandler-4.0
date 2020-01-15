@@ -15,6 +15,7 @@ const RecipeCreateDescription = ({ description, onDescriptionChange }: Props) =>
 
     return (
         <RecipeCard
+            transitionOrder={2}
             variant="preview"
             header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
             content={

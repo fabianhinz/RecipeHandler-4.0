@@ -80,6 +80,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
             {recipe.ingredients.length > 0 && (
                 <Grid {...breakpoints} item>
                     <RecipeCard
+                        transitionOrder={1}
                         variant={variant}
                         header={
                             <Subtitle
@@ -100,6 +101,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
             {recipe.description.length > 0 && (
                 <Grid {...breakpoints} item>
                     <RecipeCard
+                        transitionOrder={2}
                         variant={variant}
                         header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
                         content={<Markdown source={recipe.description} />}
@@ -110,6 +112,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
             {recipe.relatedRecipes.length > 0 && variant !== 'pinned' && (
                 <Grid {...breakpoints} item>
                     <RecipeCard
+                        transitionOrder={3}
                         variant={variant}
                         header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
                         content={<RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />}

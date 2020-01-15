@@ -189,6 +189,7 @@ const AccountUser = () => {
 
             <Grid item {...breakpoints}>
                 <RecipeCard
+                    transitionOrder={1}
                     header={<Subtitle icon={<SettingsIcon />} text="Einstellungen" />}
                     content={
                         <List>
@@ -338,6 +339,7 @@ const AccountUser = () => {
 
             <Grid item {...breakpoints}>
                 <RecipeCard
+                    transitionOrder={2}
                     header={<Subtitle icon={<BookIcon />} text="Rezeptanzeige" />}
                     content={
                         <List>
@@ -360,6 +362,7 @@ const AccountUser = () => {
             {user.admin && (
                 <Grid item {...breakpoints}>
                     <RecipeCard
+                        transitionOrder={3}
                         header={<Subtitle text="Editoren" icon={<SecurityIcon />} />}
                         content={<AccountAdmin />}
                     />

@@ -35,6 +35,7 @@ const RecipeCreateIngredients = ({
 
     return (
         <RecipeCard
+            transitionOrder={1}
             variant="preview"
             header={
                 <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
