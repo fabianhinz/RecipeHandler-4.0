@@ -89,10 +89,7 @@ interface CategoryDialogProps extends CategoryWrapperProps {
 const useStyles = makeStyles(theme =>
     createStyles({
         skeletonContainer: {
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2),
-            paddingTop: theme.spacing(1),
-            paddingBottom: theme.spacing(1),
+            padding: theme.spacing(2),
         },
         avatarSelected: {
             backgroundColor: theme.palette.secondary.main,
@@ -195,7 +192,6 @@ const SKELETON_CATEGORIES = ['art', 'ernährung', 'zeit']
 
 const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedCategories }) => {
     const { categoriesCollection, categoriesLoading } = useCategoriesCollectionContext()
-    const classes = useStyles()
     const { landscape } = useDeviceOrientationContext()
 
     return (
@@ -213,19 +209,16 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
             {categoriesLoading &&
                 SKELETON_CATEGORIES.map(dummy => (
                     <Grid key={dummy} item xs={landscape ? 4 : 12} sm={4}>
-                        <Grid
-                            className={classes.skeletonContainer}
-                            container
-                            spacing={1}
-                            alignItems="center">
-                            <Grid item xs="auto">
+                        <ListItem>
+                            <ListItemIcon>
                                 <Skeleton variant="circle" width={40} height={40} />
-                            </Grid>
-                            <Grid item xs={9}>
-                                <Skeleton variant="text" width="30%" />
-                                <Skeleton variant="text" width="60%" />
-                            </Grid>
-                        </Grid>
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={<Skeleton variant="text" width="30%" />}
+                                primaryTypographyProps={{ component: 'div' }}
+                                secondary="Auswählen (optional)"
+                            />
+                        </ListItem>
                     </Grid>
                 ))}
         </Grid>

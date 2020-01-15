@@ -20,7 +20,7 @@ export const useCategorySelect = (recipe?: Recipe<AttachmentMetadata> | null) =>
                 newState = new Map(previous.set(type, value))
             }
 
-            ConfigService.selectedCategories = newState
+            if (!recipe) ConfigService.selectedCategories = newState
             return newState
         })
     }

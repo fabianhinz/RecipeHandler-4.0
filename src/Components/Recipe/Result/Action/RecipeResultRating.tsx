@@ -8,6 +8,7 @@ import { BadgeWrapper } from '../../../Shared/BadgeWrapper'
 
 export const RecipeResultRating: FC<Pick<Recipe<AttachmentMetadata>, 'name'>> = ({ name }) => {
     const [rating, setRating] = useState(0)
+    const [disabled, setDisabled] = useState(false)
 
     useEffect(() => {
         return FirebaseService.firestore
@@ -19,6 +20,7 @@ export const RecipeResultRating: FC<Pick<Recipe<AttachmentMetadata>, 'name'>> = 
     }, [name])
 
     const handleClick = () => {
+        setDisabled(true)
         FirebaseService.firestore
             .collection('rating')
             .doc(name)
@@ -27,9 +29,9 @@ export const RecipeResultRating: FC<Pick<Recipe<AttachmentMetadata>, 'name'>> = 
     }
 
     return (
-        <IconButton disableRipple onClick={handleClick}>
+        <IconButton disabled={disabled} onClick={handleClick}>
             <BadgeWrapper badgeContent={rating}>
-                <FavoriteIcon color="error" />
+                <FavoriteIcon color={disabled ? 'primary' : 'error'} />
             </BadgeWrapper>
         </IconButton>
     )

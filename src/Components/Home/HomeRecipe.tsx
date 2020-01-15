@@ -115,7 +115,7 @@ export const HomeRecipe = ({ recipes, skeletons, orderBy, onOrderByChange }: Hom
                                     justify="space-between"
                                     alignItems="center">
                                     <Grid xs={12} item>
-                                        <Skeleton width="100%" height={125} variant="rect" />
+                                        <Skeleton width="100%" height={111} variant="rect" />
                                     </Grid>
                                 </Grid>
                             </Grid>

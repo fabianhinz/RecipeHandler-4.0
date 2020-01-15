@@ -42,7 +42,7 @@ const RecentlyAdded = () => {
                         <Grid container spacing={2} justify="space-between" alignItems="center">
                             <Grid xs={12} item>
                                 <Card>
-                                    <Skeleton width="100%" height={110} variant="rect" />
+                                    <Skeleton width="100%" height={112} variant="rect" />
                                 </Card>
                             </Grid>
                         </Grid>

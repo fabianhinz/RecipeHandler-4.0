@@ -1,7 +1,8 @@
-import { Card, CardContent, createStyles, makeStyles } from '@material-ui/core'
+import { Card, CardContent, createStyles, Grow, makeStyles } from '@material-ui/core'
 import clsx from 'clsx'
 import React from 'react'
 
+import { getTransitionTimeoutProps } from '../../hooks/useTransition'
 import { BORDER_RADIUS_HUGE } from '../../theme'
 import { RecipeVariants } from './Result/Action/RecipeResultAction'
 
@@ -33,17 +34,22 @@ const useStyles = makeStyles(theme =>
 interface Props extends Partial<RecipeVariants> {
     header: React.ReactNode
     content: React.ReactNode
+    transitionOrder: number
 }
 
-const RecipeCard = ({ variant, header, content }: Props) => {
+const RecipeCard = ({ variant, header, content, transitionOrder }: Props) => {
     const classes = useStyles()
     const pinned = variant === 'pinned'
 
     return (
-        <Card className={classes.root} elevation={pinned ? 0 : 1}>
-            <div className={clsx(classes.header, pinned && classes.pinnedHeader)}>{header}</div>
-            <CardContent className={clsx(pinned && classes.pinnedContent)}>{content}</CardContent>
-        </Card>
+        <Grow in timeout={getTransitionTimeoutProps(transitionOrder)}>
+            <Card className={classes.root} elevation={pinned ? 0 : 1}>
+                <div className={clsx(classes.header, pinned && classes.pinnedHeader)}>{header}</div>
+                <CardContent className={clsx(pinned && classes.pinnedContent)}>
+                    {content}
+                </CardContent>
+            </Card>
+        </Grow>
     )
 }
 

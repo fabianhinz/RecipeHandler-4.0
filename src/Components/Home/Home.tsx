@@ -3,6 +3,7 @@ import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
+import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { AttachmentMetadata, DocumentId, Recipe, RecipeDocument } from '../../model/model'
 import ConfigService from '../../services/configService'
 import { FirebaseService } from '../../services/firebase'
@@ -17,31 +18,22 @@ type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentI
 
 const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
-    const [lastRecipe, setLastRecipe] = useState<Recipe<AttachmentMetadata> | null>(null)
+    const [lastRecipe, setLastRecipe] = useState<Recipe<AttachmentMetadata> | undefined | null>(
+        null
+    )
     const [loading, setLoading] = useState(true)
     const [orderBy, setOrderBy] = useState<OrderByRecord>(ConfigService.orderBy)
 
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
     const { user } = useFirebaseAuthContext()
+    const { IntersectionObserverTrigger } = useIntersectionObserver({
+        onIsIntersecting: () => setLastRecipe([...pagedRecipes.values()].pop()),
+    })
 
     const handleCategoryChange = (type: string, value: string) => {
         setLastRecipe(null)
         setSelectedCategories(type, value)
     }
-
-    useEffect(() => {
-        const trigger = document.getElementById('intersection-observer-trigger')
-        if (!trigger) return
-
-        const observer = new IntersectionObserver(entries => {
-            const [lastRecipeTrigger] = entries
-            if (lastRecipeTrigger.isIntersecting && pagedRecipes.size > 0)
-                setLastRecipe([...pagedRecipes.values()].pop()!)
-        })
-        observer.observe(trigger)
-
-        return () => observer.unobserve(trigger)
-    }, [pagedRecipes])
 
     useEffect(() => {
         setPagedRecipes(new Map())
@@ -133,8 +125,8 @@ const Home = () => {
                     skeletons={loading}
                     recipes={[...pagedRecipes.values()]}
                 />
-                {/* IMPORTANT: the intersection observer trigger must not be moved away from HomeRecipe */}
-                <div id="intersection-observer-trigger" />
+                {/* IMPORTANT: the intersection observer trigger must not be moved */}
+                <IntersectionObserverTrigger />
             </Grid>
 
             <NavigateFab to={PATHS.recipeCreate} icon={<AddIcon />} />
