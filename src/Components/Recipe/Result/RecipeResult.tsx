@@ -1,11 +1,10 @@
 import { Box, createStyles, Divider, Grid, Grow, makeStyles } from '@material-ui/core'
-import { GridSize } from '@material-ui/core/Grid'
-import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { memo } from 'react'
 
+import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import AccountChip from '../../Account/AccountChip'
@@ -30,13 +29,13 @@ const useStyles = makeStyles(() =>
     })
 )
 
-const recipeResultBreakpoints = (
-    fullWidth?: boolean
-): Partial<Record<Breakpoint, boolean | GridSize>> =>
-    fullWidth ? { xs: 12 } : { xs: 12, lg: 6, xl: 4 }
-
 const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
     const classes = useStyles()
+
+    const { breakpoints } = useCardBreakpoints({
+        xsOnly: variant === 'pinned',
+        xlEnabled: recipe !== null && recipe.relatedRecipes.length !== 0,
+    })
 
     if (!recipe)
         return (
@@ -62,8 +61,6 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
             </Grid>
         )
 
-    const breakpoints = recipeResultBreakpoints(variant === 'pinned')
-
     return (
         <Grid container spacing={variant === 'pinned' ? 2 : 4} className={classes.recipeContainer}>
             <Grid item xs={12}>
@@ -74,7 +71,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                 <Divider />
             </Grid>
 
-            {variant !== 'pinned' && (
+            {variant !== 'pinned' && recipe.attachments.length !== 0 && (
                 <Grid item xs={12}>
                     <RecipeResultAttachments attachments={recipe.attachments} />
                 </Grid>

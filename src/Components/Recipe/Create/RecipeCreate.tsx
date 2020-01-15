@@ -5,6 +5,7 @@ import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
 
 import { getRefPaths } from '../../../hooks/useAttachmentRef'
+import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
 import { AttachmentMetadata, Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
@@ -43,7 +44,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         attachmentMaxWidth: 3840,
         attachmentLimit: 5,
     })
-
+    const { breakpoints } = useCardBreakpoints({ xlEnabled: state.relatedRecipes.length !== 0 })
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     useEffect(() => {
@@ -166,7 +167,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         </Grid>
                     )}
 
-                    <Grid item xs={12} lg={6} xl={4}>
+                    <Grid item {...breakpoints}>
                         <RecipeCreateIngredients
                             amount={state.amount}
                             onDecreaseAmount={() => dispatch({ type: 'decreaseAmount' })}
@@ -176,7 +177,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         />
                     </Grid>
 
-                    <Grid item xs={12} lg={6} xl={4}>
+                    <Grid item {...breakpoints}>
                         <RecipeCreateDescription
                             description={state.description}
                             onDescriptionChange={handleTextFieldChange('description')}
@@ -184,7 +185,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     </Grid>
 
                     {state.relatedRecipes.length > 0 && (
-                        <Grid item xs={12} lg={6} xl={4}>
+                        <Grid item {...breakpoints}>
                             <RecipeCard
                                 variant="preview"
                                 header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}

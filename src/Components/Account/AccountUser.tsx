@@ -29,6 +29,7 @@ import { CameraImage, DatabaseSearch } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useMemo, useState } from 'react'
 
+import useCardBreakpoints from '../../hooks/useCardBreakpoints'
 import useProgress from '../../hooks/useProgress'
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -77,18 +78,13 @@ const AccountUser = () => {
         attachmentLimit: 1,
     })
     const { ProgressComponent, setProgress } = useProgress()
-
     // ? we won't load this component without an existing user - pinky promise -_-
     const { user } = useFirebaseAuthContext() as { user: User }
+    const { breakpoints } = useCardBreakpoints({ xlEnabled: user.admin })
 
     const userDoc = useMemo(() => FirebaseService.firestore.collection('users').doc(user.uid), [
         user.uid,
     ])
-
-    const breakpoints: Pick<GridProps, 'xs' | 'lg' | 'xl'> = useMemo(
-        () => ({ xs: 12, lg: 6, xl: user.admin ? 4 : 6 }),
-        [user]
-    )
 
     useEffect(() => {
         if (attachments.length > 0) {
