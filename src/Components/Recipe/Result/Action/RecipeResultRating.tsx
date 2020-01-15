@@ -25,14 +25,13 @@ export const RecipeResultRating: FC<Pick<Recipe<AttachmentMetadata>, 'name'>> = 
             .collection('rating')
             .doc(name)
             .update({ value: FirebaseService.incrementBy(1) })
-            .then(() => setTimeout(() => setDisabled(false), 5000))
             .catch(console.error)
     }
 
     return (
         <IconButton disabled={disabled} onClick={handleClick}>
             <BadgeWrapper badgeContent={rating}>
-                <FavoriteIcon color={disabled ? 'disabled' : 'error'} />
+                <FavoriteIcon color={disabled ? 'primary' : 'error'} />
             </BadgeWrapper>
         </IconButton>
     )
