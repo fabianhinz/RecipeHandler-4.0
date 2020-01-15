@@ -6,7 +6,6 @@ import {
     createStyles,
     Divider,
     Grid,
-    GridProps,
     List,
     ListItem,
     ListItemIcon,

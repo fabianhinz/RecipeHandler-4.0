@@ -1,27 +1,39 @@
-import { IconButton } from '@material-ui/core'
+import { Fab, IconButton } from '@material-ui/core'
 import CommentIcon from '@material-ui/icons/CommentTwoTone'
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { CommentsCollections, CommentsDocument } from '../../model/model'
 import { BadgeWrapper } from '../Shared/BadgeWrapper'
 import { CommentsDialog } from './CommentsDialog'
 
-export const Comments: FC<CommentsDocument & CommentsCollections> = ({
+export const Comments: FC<CommentsDocument & CommentsCollections & { highContrast?: boolean }> = ({
     name,
     numberOfComments,
     collection,
+    highContrast,
 }) => {
     const [drawer, setDrawer] = useState(false)
 
-    const handleDrawerChange = () => setDrawer(previous => !previous)
+    const handleDrawerChange = useCallback(() => setDrawer(previous => !previous), [])
+
+    const badgeComment = useMemo(
+        () => (
+            <BadgeWrapper badgeContent={numberOfComments}>
+                <CommentIcon />
+            </BadgeWrapper>
+        ),
+        [numberOfComments]
+    )
 
     return (
         <>
-            <IconButton onClick={handleDrawerChange}>
-                <BadgeWrapper badgeContent={numberOfComments}>
-                    <CommentIcon />
-                </BadgeWrapper>
-            </IconButton>
+            {highContrast ? (
+                <Fab size="small" onClick={handleDrawerChange}>
+                    {badgeComment}
+                </Fab>
+            ) : (
+                <IconButton onClick={handleDrawerChange}>{badgeComment}</IconButton>
+            )}
 
             <CommentsDialog
                 collection={collection}

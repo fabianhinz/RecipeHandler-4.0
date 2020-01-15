@@ -3,9 +3,9 @@ import {
     CardActionArea,
     CardMedia,
     createStyles,
+    Fab,
     Grid,
     Grow,
-    IconButton,
     makeStyles,
     Slide,
 } from '@material-ui/core'
@@ -14,10 +14,9 @@ import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
 import { DataUrls, getRefPaths, getResizedImages } from '../../hooks/useAttachmentRef'
-import { TRANSITION_DURATION } from '../../hooks/useTransition'
+import { getTransitionTimeoutProps } from '../../hooks/useTransition'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS } from '../../theme'
 import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -34,16 +33,9 @@ const useStyles = makeStyles(theme =>
             position: 'relative',
         },
         actions: {
-            boxShadow: theme.shadows[8],
             position: 'absolute',
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            padding: theme.spacing(1),
-            bottom: 0,
-            left: 0,
-            right: 0,
-            borderRadius: `0px 0px ${BORDER_RADIUS}px  ${BORDER_RADIUS}px `,
-            backgroundColor: theme.palette.background.paper,
+            bottom: theme.spacing(1),
+            right: theme.spacing(1),
         },
     })
 )
@@ -93,13 +85,8 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     return (
         <>
-            <Grid item xs={12} sm={6} lg={4} xl={3} key={trial.name}>
-                <Grow
-                    in
-                    timeout={{
-                        enter: index === 0 ? TRANSITION_DURATION : TRANSITION_DURATION * index,
-                        exit: TRANSITION_DURATION,
-                    }}>
+            <Grid item xs={12} md={6} lg={4} key={trial.name}>
+                <Grow in timeout={getTransitionTimeoutProps(++index)}>
                     <Card className={classes.card}>
                         <AccountChip uid={trial.editorUid} variant="absolute" />
 
@@ -117,18 +104,27 @@ const TrialsCard = ({ trial, index }: Props) => {
                         </CardActionArea>
 
                         {user && (
-                            <Slide direction="up" in>
-                                <div className={classes.actions}>
-                                    <Comments
-                                        collection="trials"
-                                        numberOfComments={trial.numberOfComments}
-                                        name={trial.name}
-                                    />
+                            <Slide direction="up" in timeout={getTransitionTimeoutProps(++index)}>
+                                <Grid
+                                    container
+                                    justify="flex-end"
+                                    spacing={1}
+                                    className={classes.actions}>
+                                    <Grid item xs="auto">
+                                        <Comments
+                                            highContrast
+                                            collection="trials"
+                                            numberOfComments={trial.numberOfComments}
+                                            name={trial.name}
+                                        />
+                                    </Grid>
 
-                                    <IconButton onClick={() => setDeleteAlert(true)}>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </div>
+                                    <Grid item xs="auto">
+                                        <Fab size="small" onClick={() => setDeleteAlert(true)}>
+                                            <DeleteIcon />
+                                        </Fab>
+                                    </Grid>
+                                </Grid>
                             </Slide>
                         )}
                     </Card>
