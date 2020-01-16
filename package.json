@@ -43,13 +43,13 @@
 	},
 	"scripts": {
 		"dev:install": "npm install",
-		"dev:cra": "react-scripts start",
+		"dev:cra": "react-app-rewired start",
 		"serveHosting": "firebase serve --only hosting",
 		"exploreChunks": "npx source-map-explorer build/static/js/*.js",
 		"start": "run-s dev:*",
-		"build:cra": "react-scripts build",
+        "build:cra": "react-app-rewired build",
 		"build": "run-s dev:install build:cra",
-		"test": "react-scripts test",
+		"test": "react-app-rewired test",
 		"eject": "react-scripts eject"
 	},
 	"browserslist": {
@@ -63,5 +63,9 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
+	},
+	"devDependencies": {
+		"@bundle-analyzer/webpack-plugin": "^0.5.1",
+		"react-app-rewired": "^2.1.5"
 	}
 }
