@@ -2,6 +2,7 @@ import {
     Avatar,
     Button,
     CardActionArea,
+    Chip,
     Collapse,
     createStyles,
     Divider,
@@ -25,6 +26,7 @@ import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
 import SearchIcon from '@material-ui/icons/SearchRounded'
 import SecurityIcon from '@material-ui/icons/SecurityTwoTone'
 import TimelapseIcon from '@material-ui/icons/TimelapseRounded'
+import TimelineIcon from '@material-ui/icons/TimelineRounded'
 import { CameraImage, DatabaseSearch } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -160,9 +162,20 @@ const AccountUser = () => {
                     <Grid item xs="auto">
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
-                                <Typography variant="h5" display="inline">
-                                    Willkommen zurück {user.username}
-                                </Typography>
+                                <Grid container justify="space-between">
+                                    <Grid item xs="auto">
+                                        <Typography variant="h5" display="inline">
+                                            Willkommen zurück {user.username}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs="auto">
+                                        <Chip
+                                            onClick={() => alert('ToDo Miwri ;)')}
+                                            icon={<TimelineIcon />}
+                                            label={__VERSION__}
+                                        />
+                                    </Grid>
+                                </Grid>
                             </Grid>
                             <Grid item xs={12}>
                                 <Divider />
