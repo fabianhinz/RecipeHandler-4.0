@@ -12,6 +12,7 @@ import {
     ListItemText,
     makeStyles,
     Typography,
+    TypographyProps,
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import SettingsIcon from '@material-ui/icons/AccountCircleTwoTone'
@@ -202,7 +203,9 @@ const AccountUser = () => {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary="Design"
-                                    secondaryTypographyProps={{ component: 'div' }}
+                                    secondaryTypographyProps={
+                                        { component: 'div' } as TypographyProps
+                                    }
                                     secondary={
                                         <>
                                             <Typography
@@ -232,7 +235,9 @@ const AccountUser = () => {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary="Kürzlich hinzugefügte Rezepte"
-                                    secondaryTypographyProps={{ component: 'div' }}
+                                    secondaryTypographyProps={
+                                        { component: 'div' } as TypographyProps
+                                    }
                                     secondary={
                                         <>
                                             <Typography
@@ -268,7 +273,9 @@ const AccountUser = () => {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary="Benachrichtigungen"
-                                    secondaryTypographyProps={{ component: 'div' }}
+                                    secondaryTypographyProps={
+                                        { component: 'div' } as TypographyProps
+                                    }
                                     secondary={
                                         <>
                                             <Typography
@@ -304,7 +311,9 @@ const AccountUser = () => {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary="erweiterte Abfragesyntax"
-                                    secondaryTypographyProps={{ component: 'div' }}
+                                    secondaryTypographyProps={
+                                        { component: 'div' } as TypographyProps
+                                    }
                                     secondary={
                                         <>
                                             <Typography

@@ -16,7 +16,8 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: 'https://recipehandler.firebaseio.com',
 })
-
+// ! ToDo each function must return a promise
+// ! ToDo eval: everything above is initialized for each function container
 const editorsCollection = admin.firestore().collection('editors')
 const auth = admin.auth()
 

@@ -40,13 +40,10 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => {
     const { categoriesCollection } = useCategoriesCollectionContext()
     const initialChipFocus = useMemo(
         () =>
-            Object.keys(categoriesCollection).reduce(
-                (accumulator, currentKey) => {
-                    accumulator[currentKey] = false
-                    return accumulator
-                },
-                {} as Categories<boolean>
-            ),
+            Object.keys(categoriesCollection).reduce((accumulator, currentKey) => {
+                accumulator[currentKey] = false
+                return accumulator
+            }, {} as Categories<boolean>),
         [categoriesCollection]
     )
     const [chipFocus, setChipFocus] = useState<Categories<boolean>>(initialChipFocus)
