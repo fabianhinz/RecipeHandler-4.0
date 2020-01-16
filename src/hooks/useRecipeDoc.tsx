@@ -4,6 +4,7 @@ import { AttachmentMetadata, Recipe, RouteWithRecipeName } from '../model/model'
 import { FirebaseService } from '../services/firebase'
 
 type RecipesCollectionState = { loading: boolean; recipe: Recipe<AttachmentMetadata> | null }
+type RecipeLocation = Pick<RecipesCollectionState, 'recipe'>
 
 export const useRecipeDoc = (options: {
     routeProps?: RouteWithRecipeName
@@ -19,8 +20,10 @@ export const useRecipeDoc = (options: {
 
         if (options.routeProps) {
             const { location, match } = options.routeProps
-            if (location.state && location.state.recipe) {
-                setState({ loading: false, recipe: location.state.recipe })
+            const recipe = location.state && (location.state as RecipeLocation).recipe
+
+            if (recipe) {
+                setState({ loading: false, recipe })
             } else {
                 FirebaseService.firestore
                     .collection('recipes')
