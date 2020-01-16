@@ -215,7 +215,6 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
                             </ListItemIcon>
                             <ListItemText
                                 primary={<Skeleton variant="text" width="30%" />}
-                                primaryTypographyProps={{ component: 'div' }}
                                 secondary="Auswählen (optional)"
                             />
                         </ListItem>
