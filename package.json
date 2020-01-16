@@ -38,7 +38,7 @@
 		"react-swipeable-views": "^0.13.3",
 		"stacktrace-js": "^2.0.2",
 		"typeface-roboto": "0.0.75",
-		"typescript": "3.6.2"
+		"typescript": "3.7.4"
 	},
 	"scripts": {
 		"dev:install": "npm install",
