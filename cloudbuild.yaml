@@ -6,7 +6,7 @@ steps:
 #   args: [ 'install' ]
 - name: 'gcr.io/cloud-builders/npm'
   args: [ 'run', 'build' ]
-- name: 'gcr.io/recipehandler/firebase'
-  args: [ 'deploy', '-m', '$SHORT_SHA', '--only', 'firestore,hosting,storage']
   env:
     - 'VERSION=$SHORT_SHA'
+- name: 'gcr.io/recipehandler/firebase'
+  args: [ 'deploy', '-m', '$SHORT_SHA', '--only', 'firestore,hosting,storage']
