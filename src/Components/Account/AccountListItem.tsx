@@ -8,6 +8,7 @@ import {
     ListItemTextProps,
     makeStyles,
     Switch,
+    TypographyProps,
 } from '@material-ui/core'
 import EmailIcon from '@material-ui/icons/EmailRounded'
 import React from 'react'
@@ -73,7 +74,7 @@ const AccountListItem = ({ uid, onChange, checked, variant }: Props) => {
                         )}
                     </div>
                 }
-                primaryTypographyProps={{ component: 'div' }}
+                primaryTypographyProps={{ component: 'div' } as TypographyProps}
                 {...textProps}
             />
             <ListItemSecondaryAction>
