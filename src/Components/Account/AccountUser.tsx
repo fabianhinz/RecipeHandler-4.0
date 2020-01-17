@@ -18,8 +18,9 @@ import {
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import SettingsIcon from '@material-ui/icons/AccountCircleTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
-import DarkThemeIcon from '@material-ui/icons/BrightnessHighRounded'
-import LightThemeIcon from '@material-ui/icons/BrightnessLowRounded'
+import DynamicThemeIcon from '@material-ui/icons/BrightnessAutoRounded'
+import LightThemeIcon from '@material-ui/icons/BrightnessHighRounded'
+import DarkThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 import InfoIcon from '@material-ui/icons/InfoRounded'
 import NotificationsOffIcon from '@material-ui/icons/NotificationsOffRounded'
 import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
@@ -109,7 +110,14 @@ const AccountUser = () => {
     const handleUserSettingChange = (key: SettingKeys) => (uid?: any) => {
         switch (key) {
             case 'muiTheme': {
-                userDoc.update({ [key]: user.muiTheme === 'dark' ? 'light' : 'dark' })
+                userDoc.update({
+                    [key]:
+                        user.muiTheme === 'dynamic'
+                            ? 'dark'
+                            : user.muiTheme === 'dark'
+                            ? 'light'
+                            : 'dynamic',
+                })
                 break
             }
             case 'selectedUsers': {
@@ -162,7 +170,7 @@ const AccountUser = () => {
                     <Grid item xs="auto">
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
-                                <Grid container justify="space-between">
+                                <Grid container spacing={1} justify="space-between">
                                     <Grid item xs="auto">
                                         <Typography variant="h5" display="inline">
                                             Willkommen zurück {user.username}
@@ -208,7 +216,9 @@ const AccountUser = () => {
                         <List>
                             <ListItem button onClick={handleUserSettingChange('muiTheme')}>
                                 <ListItemIcon>
-                                    {user.muiTheme === 'dark' ? (
+                                    {user.muiTheme === 'dynamic' ? (
+                                        <DynamicThemeIcon />
+                                    ) : user.muiTheme === 'dark' ? (
                                         <DarkThemeIcon />
                                     ) : (
                                         <LightThemeIcon />
@@ -225,7 +235,11 @@ const AccountUser = () => {
                                                 gutterBottom
                                                 variant="body2"
                                                 color="textSecondary">
-                                                {user.muiTheme === 'dark' ? 'Dunkel' : 'Hell'}
+                                                {user.muiTheme === 'dynamic'
+                                                    ? 'Dynamisch'
+                                                    : user.muiTheme === 'dark'
+                                                    ? 'Dunkel'
+                                                    : 'Hell'}
                                             </Typography>
                                             <Collapse in={showInfo}>
                                                 <Typography
@@ -234,7 +248,8 @@ const AccountUser = () => {
                                                     color="textSecondary">
                                                     Den Augen zu liebe gibt es ein sogenanntes{' '}
                                                     <i>Darktheme</i>. Dem Nutzer zuliebe auch ein{' '}
-                                                    <i>Lighttheme</i>.
+                                                    <i>Lighttheme</i>. Bei <i>Dynamisch</i>{' '}
+                                                    entscheidet das Betriebssystem über das Design.
                                                 </Typography>
                                             </Collapse>
                                         </>

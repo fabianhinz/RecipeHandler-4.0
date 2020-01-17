@@ -78,7 +78,7 @@ export type DocumentId = string
 export type User = {
     uid: string
     username: string
-    muiTheme: PaletteType
+    muiTheme: PaletteType | 'dynamic'
     selectedUsers: string[]
     showRecentlyAdded: boolean
     notifications: boolean
