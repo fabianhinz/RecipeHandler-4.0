@@ -31,7 +31,7 @@ interface RecipeCreateRelatedDialogProps {
     onSave: (relatedRecipes: Array<string>) => void
     onClose: () => void
 }
-// ToDo change color scheme
+
 const useStyles = makeStyles(theme =>
     createStyles({
         recipeHeader: {

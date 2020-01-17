@@ -16,7 +16,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: 'https://recipehandler.firebaseio.com',
 })
-// ! ToDo each function must return a promise
+
 // ! ToDo eval: everything above is initialized for each function container
 const editorsCollection = admin.firestore().collection('editors')
 const auth = admin.auth()
@@ -76,24 +76,24 @@ export const getCustomToken = functions
 export const handleNumberOfCommentsRecipes = functions
     .region('europe-west1')
     .firestore.document('recipes/{recipeName}/comments/{commentId}')
-    .onCreate((_change, context) => {
+    .onCreate((_change, context) =>
         admin
             .firestore()
             .collection('recipes')
             .doc(context.params.recipeName)
             .update({ numberOfComments: admin.firestore.FieldValue.increment(1) })
-    })
+    )
 
 export const handleNumberOfCommentsTrials = functions
     .region('europe-west1')
     .firestore.document('trials/{trialId}/comments/{commentId}')
-    .onCreate((_change, context) => {
+    .onCreate((_change, context) =>
         admin
             .firestore()
             .collection('trials')
             .doc(context.params.trialId)
             .update({ numberOfComments: admin.firestore.FieldValue.increment(1) })
-    })
+    )
 
 interface Label {
     name: string
