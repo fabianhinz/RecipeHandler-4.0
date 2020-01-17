@@ -57,7 +57,7 @@ const securedRoutes: AppRoute[] = [
     },
     {
         path: PATHS.account,
-        Component: lazy(() => import('../Account/AccountUser')),
+        Component: lazy(() => import('../Account/AccountUser/AccountUser')),
         Background: () => <BackgroundIcon Icon={AccountIcon} />,
     },
 ]
