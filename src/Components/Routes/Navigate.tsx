@@ -1,6 +1,6 @@
 import { createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
 import clsx from 'clsx'
-import React, { CSSProperties, FC } from 'react'
+import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 
 import { BORDER_RADIUS } from '../../theme'
