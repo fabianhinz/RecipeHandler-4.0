@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme =>
 )
 
 interface Props extends Partial<RecipeVariants> {
-    header: React.ReactNode
+    header?: React.ReactNode
     content: React.ReactNode
     transitionOrder: number
 }
@@ -44,7 +44,11 @@ const RecipeCard = ({ variant, header, content, transitionOrder }: Props) => {
     return (
         <Grow in timeout={getTransitionTimeoutProps(transitionOrder)}>
             <Card className={classes.root} elevation={pinned ? 0 : 1}>
-                <div className={clsx(classes.header, pinned && classes.pinnedHeader)}>{header}</div>
+                {header && (
+                    <div className={clsx(classes.header, pinned && classes.pinnedHeader)}>
+                        {header}
+                    </div>
+                )}
                 <CardContent className={clsx(pinned && classes.pinnedContent)}>
                     {content}
                 </CardContent>

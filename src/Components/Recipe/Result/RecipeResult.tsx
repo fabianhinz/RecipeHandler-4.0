@@ -121,9 +121,11 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                 </Grid>
             )}
 
-            <Grid item xs={12} container>
-                <Satisfaction />
-            </Grid>
+            {variant !== 'preview' && variant !== 'pinned' && (
+                <Grid xs={12} item>
+                    <Satisfaction recipeName={recipe.name} transitionOrder={4} />
+                </Grid>
+            )}
 
             <Grid item xs={12} container justify="center">
                 <AccountChip variant="readonly" uid={recipe.editorUid} />

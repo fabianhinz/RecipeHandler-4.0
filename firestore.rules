@@ -32,6 +32,10 @@ service cloud.firestore {
     match /recipes/{recipeName}/comments/{commentId} {
         allow write: if isAdmin() || isEditor();
     }
+
+    match /recipes/{recipeName}/satisfaction/{satisfactionId} {
+        allow write: if isAdmin() || isEditor();
+    }
     
     match /rating/{recipe} {
         allow write: if isAdmin() || isEditor();
