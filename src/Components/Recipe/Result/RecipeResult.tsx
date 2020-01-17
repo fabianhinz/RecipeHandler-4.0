@@ -8,6 +8,7 @@ import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import AccountChip from '../../Account/AccountChip'
+import Satisfaction from '../../Satisfaction/Satisfaction'
 import Markdown from '../../Shared/Markdown'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
@@ -117,6 +118,12 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                         header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
                         content={<RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />}
                     />
+                </Grid>
+            )}
+
+            {variant !== 'preview' && variant !== 'pinned' && (
+                <Grid xs={12} item>
+                    <Satisfaction recipeName={recipe.name} transitionOrder={4} />
                 </Grid>
             )}
 
