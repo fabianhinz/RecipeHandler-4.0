@@ -17,6 +17,8 @@ import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
 import Container from './Shared/Container'
 
+const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
+
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
     const { user } = useFirebaseAuthContext()
@@ -36,7 +38,7 @@ const App: FC = () => {
     }, [])
 
     useEffect(() => {
-        if (!user && colorSchemeDark) {
+        if ((!user && colorSchemeDark) || isSafari) {
             setDarkTheme()
         } else if (user && user.muiTheme === 'dynamic') {
             if (colorSchemeDark) setDarkTheme()
