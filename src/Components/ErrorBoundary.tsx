@@ -33,10 +33,11 @@ class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
         })
 
         if (process.env.NODE_ENV !== 'production') return this.setState({ errorLogged: true })
-        // Todo include app version in error doc
+
         FirebaseService.firestore
             .collection('errors')
             .add({
+                version: __VERSION__,
                 minError: minError.toString(),
                 trace: trace.toString(),
                 agent: window.navigator.userAgent,

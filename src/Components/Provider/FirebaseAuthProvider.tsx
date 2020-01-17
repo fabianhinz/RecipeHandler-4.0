@@ -14,7 +14,7 @@ export const useFirebaseAuthContext = () => useContext(Context)
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        root: {
+        auth: {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -31,6 +31,12 @@ const useStyles = makeStyles(theme =>
         progress: {
             position: 'absolute',
             color: '#ffcd34',
+        },
+        main: {
+            paddingTop: 'env(safe-area-inset-top)',
+            paddingLeft: 'env(safe-area-inset-left)',
+            paddingRight: 'env(safe-area-inset-right)',
+            paddingBottom: 'env(safe-area-inset-bottom)',
         },
     })
 )
@@ -91,9 +97,9 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     return (
         <Context.Provider value={{ user, loginEnabled }}>
             {authReady ? (
-                children
+                <div className={classes.main}>{children}</div>
             ) : (
-                <div className={classes.root}>
+                <div className={classes.auth}>
                     <Avatar className={classes.avatar}>
                         <FirebaseIcon height="100%" />
                         <CircularProgress size={130} className={classes.progress} />

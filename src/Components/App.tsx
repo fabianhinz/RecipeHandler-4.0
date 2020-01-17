@@ -1,7 +1,8 @@
+import { useMediaQuery } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 
 import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import Footer from './Footer'
@@ -16,24 +17,40 @@ import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
 import Container from './Shared/Container'
 
-const preferedColorSchemeDark =
-    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
     const { user } = useFirebaseAuthContext()
     const { isMobile } = useBreakpointsContext()
+    const colorSchemeDark = useMediaQuery('(prefers-color-scheme: dark)')
+
+    const setDarkTheme = useCallback(() => {
+        const metaThemeColor = document.getElementsByName('theme-color')[0]
+        setTheme(responsiveDarkTheme)
+        metaThemeColor.setAttribute('content', '#424242')
+    }, [])
+
+    const setLigthTheme = useCallback(() => {
+        const metaThemeColor = document.getElementsByName('theme-color')[0]
+        setTheme(responsiveLightTheme)
+        metaThemeColor.setAttribute('content', '#FFFFFF')
+    }, [])
 
     useEffect(() => {
-        const metaThemeColor = document.getElementsByName('theme-color')[0]
-        if ((user && user.muiTheme === 'dark') || (!user && preferedColorSchemeDark)) {
-            setTheme(responsiveDarkTheme)
-            metaThemeColor.setAttribute('content', '#424242')
+        if ((!user && colorSchemeDark) || isSafari) {
+            setDarkTheme()
+        } else if (user && user.muiTheme === 'dynamic') {
+            if (colorSchemeDark) setDarkTheme()
+            else setLigthTheme()
+        } else if (user && user.muiTheme === 'dark') {
+            setDarkTheme()
+        } else if (user && user.muiTheme === 'light') {
+            setLigthTheme()
         } else {
-            setTheme(responsiveLightTheme)
-            metaThemeColor.setAttribute('content', '#FFFFFF')
+            setLigthTheme()
         }
-    }, [user])
+    }, [colorSchemeDark, setDarkTheme, setLigthTheme, user])
 
     return (
         <ThemeProvider theme={theme}>
