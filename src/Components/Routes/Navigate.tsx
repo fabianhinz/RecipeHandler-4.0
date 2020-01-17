@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { BORDER_RADIUS } from '../../theme'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../Provider/RouterProvider'
+import { PATHS } from './Routes'
 
 interface NavigateProps {
     to?: string
@@ -41,7 +42,12 @@ export const Navigate: FC<NavigateProps> = ({ to, children, disabled }) => {
         return (
             <Link
                 to={to}
-                className={clsx(classes.link, location.pathname === to && classes.linkActive)}>
+                className={clsx(
+                    classes.link,
+                    location.pathname === to &&
+                        Object.entries(PATHS).some(([_key, path]) => path === location.pathname) &&
+                        classes.linkActive
+                )}>
                 {children}
             </Link>
         )
