@@ -68,19 +68,19 @@ const Navigation = () => {
                 </Hidden>
 
                 <Hidden smUp>
-                    <Navigate to={PATHS.home}>
+                    <Navigate to={PATHS.home} activeStyle="rounded">
                         <IconButton>
                             <HomeIcon />
                         </IconButton>
                     </Navigate>
 
-                    <Navigate to={PATHS.trials}>
+                    <Navigate to={PATHS.trials} activeStyle="rounded">
                         <IconButton>
                             <Lightbulb />
                         </IconButton>
                     </Navigate>
 
-                    <Navigate disabled={!user} to={PATHS.account}>
+                    <Navigate disabled={!user} to={PATHS.account} activeStyle="rounded">
                         <IconButton
                             disabled={!loginEnabled}
                             onClick={() => {

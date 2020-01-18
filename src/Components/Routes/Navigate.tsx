@@ -8,7 +8,10 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../Provider/RouterProvider'
 import { PATHS } from './Routes'
 
-interface NavigateProps {
+interface ActiveStyle {
+    activeStyle?: 'square' | 'rounded'
+}
+interface NavigateProps extends ActiveStyle {
     to?: string
     disabled?: boolean
 }
@@ -22,7 +25,8 @@ const useStyles = makeStyles(theme =>
         linkActive: {
             backgroundColor:
                 theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
-            borderRadius: BORDER_RADIUS,
+            borderRadius: ({ activeStyle }: ActiveStyle) =>
+                activeStyle === 'rounded' ? '50%' : BORDER_RADIUS,
         },
         fab: {
             zIndex: theme.zIndex.drawer + 1,
@@ -33,9 +37,9 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-export const Navigate: FC<NavigateProps> = ({ to, children, disabled }) => {
+export const Navigate: FC<NavigateProps> = ({ to, children, disabled, activeStyle }) => {
     const { location } = useRouterContext()
-    const classes = useStyles()
+    const classes = useStyles({ activeStyle })
 
     if (disabled || !to) return <>{children}</>
     else
@@ -58,7 +62,7 @@ interface NavigateFabProps extends NavigateProps {
 }
 
 export const NavigateFab = ({ to, icon }: NavigateFabProps) => {
-    const classes = useStyles()
+    const classes = useStyles({})
     const { user } = useFirebaseAuthContext()
 
     return (

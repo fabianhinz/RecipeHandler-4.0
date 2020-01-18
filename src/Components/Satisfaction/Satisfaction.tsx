@@ -1,7 +1,7 @@
-import { Box, createStyles, Divider, Fade, Grid, IconButton, makeStyles } from '@material-ui/core'
+import { Box, createStyles, Fade, Grid, IconButton, makeStyles } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ChevronLeftRounded'
 import clsx from 'clsx'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { getTransitionTimeoutProps } from '../../hooks/useTransition'
 import { FirebaseService } from '../../services/firebase'
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme =>
         expand: {
             transform: 'rotate(0deg)',
             transition: theme.transitions.create('transform', {
-                duration: theme.transitions.duration.shortest,
+                duration: theme.transitions.duration.standard,
             }),
         },
         expanded: {
@@ -22,6 +22,14 @@ const useStyles = makeStyles(theme =>
         },
         divider: {
             height: theme.spacing(8),
+        },
+        userSatisfaction: {
+            transition: theme.transitions.create('transform', {
+                duration: theme.transitions.duration.standard,
+            }),
+        },
+        userSatisfactionExpanded: {
+            transform: 'translate(-202px)',
         },
         satisfaction: {
             transform: 'translate(3000px)',
@@ -31,6 +39,9 @@ const useStyles = makeStyles(theme =>
         },
         satisfactionExpanded: {
             transform: 'translate(0px)',
+        },
+        satisfactionsGridContainer: {
+            overflowX: 'auto',
         },
     })
 )
@@ -42,34 +53,33 @@ interface Props {
 
 const Satisfaction = ({ transitionOrder, recipeName }: Props) => {
     const { user, loginEnabled } = useFirebaseAuthContext()
-    const [expanded, setExpanded] = useState(loginEnabled && !user)
+    const [expanded, setExpanded] = useState(!user)
     const [satisfaction, setSatisfaction] = useState<Map<string, number>>(new Map())
 
     const { userIds } = useUsersContext()
     const classes = useStyles()
 
-    useEffect(
+    const memoSatisfactionCollection = useMemo(
         () =>
             FirebaseService.firestore
                 .collection('recipes')
                 .doc(recipeName)
-                .collection('satisfaction')
-                .onSnapshot(querySnapshot =>
-                    setSatisfaction(
-                        new Map(querySnapshot.docs.map(doc => [doc.id, doc.data().value]))
-                    )
-                ),
+                .collection('satisfaction'),
         [recipeName]
+    )
+
+    useEffect(
+        () =>
+            memoSatisfactionCollection.onSnapshot(querySnapshot =>
+                setSatisfaction(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data().value])))
+            ),
+        [memoSatisfactionCollection]
     )
 
     const handleSatisfactionChange = (_event: React.ChangeEvent<{}>, value: number | null) => {
         if (!user) return
-        FirebaseService.firestore
-            .collection('recipes')
-            .doc(recipeName)
-            .collection('satisfaction')
-            .doc(user.uid)
-            .set({ value })
+
+        memoSatisfactionCollection.doc(user.uid).set({ value })
     }
 
     const satisfactionValueOrNull = useCallback((uid: string) => satisfaction.get(uid) || null, [
@@ -78,58 +88,71 @@ const Satisfaction = ({ transitionOrder, recipeName }: Props) => {
 
     return (
         <Fade in={loginEnabled} timeout={getTransitionTimeoutProps(transitionOrder)}>
-            <Grid container spacing={2} wrap="nowrap" alignItems="center">
-                {user && (
-                    <>
-                        <Grid item>
-                            <SatisfactionUser
-                                value={satisfactionValueOrNull(user.uid)}
-                                onChange={handleSatisfactionChange}
-                                uid={user.uid}
-                            />
-                        </Grid>
-                        <Grid item>
-                            <Box display="flex" justifyContent="center">
-                                <IconButton onClick={() => setExpanded(prev => !prev)}>
-                                    <ExpandMoreIcon
-                                        className={clsx(
-                                            classes.expand,
-                                            expanded && classes.expanded
-                                        )}
-                                    />
-                                </IconButton>
-                            </Box>
-                        </Grid>
-                        <Grid item>
-                            <Divider className={classes.divider} orientation="vertical" />
-                        </Grid>
-                    </>
-                )}
-
+            <div>
                 <Grid
-                    item
                     className={clsx(
-                        classes.satisfaction,
-                        expanded && classes.satisfactionExpanded
-                    )}>
-                    <Grid container spacing={2} wrap="nowrap" alignItems="center">
-                        {userIds
-                            .filter(uid => {
-                                if (user) return uid !== user.uid
-                                else return uid
-                            })
-                            .map(uid => (
-                                <Grid item key={uid}>
-                                    <SatisfactionUser
-                                        disabled
-                                        value={satisfactionValueOrNull(uid)}
-                                        uid={uid}
-                                    />
-                                </Grid>
-                            ))}
+                        classes.userSatisfaction,
+                        user && expanded && classes.userSatisfactionExpanded
+                    )}
+                    container
+                    wrap="nowrap"
+                    spacing={2}
+                    alignItems="center">
+                    {user && (
+                        <>
+                            <Grid item>
+                                <SatisfactionUser
+                                    value={satisfactionValueOrNull(user.uid)}
+                                    onChange={handleSatisfactionChange}
+                                    uid={user.uid}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <Box display="flex" justifyContent="center">
+                                    <IconButton onClick={() => setExpanded(prev => !prev)}>
+                                        <ExpandMoreIcon
+                                            className={clsx(
+                                                classes.expand,
+                                                expanded && classes.expanded
+                                            )}
+                                        />
+                                    </IconButton>
+                                </Box>
+                            </Grid>
+                        </>
+                    )}
+
+                    <Grid
+                        item
+                        xs={!user ? 12 : 10}
+                        className={clsx(
+                            classes.satisfaction,
+                            expanded && classes.satisfactionExpanded
+                        )}>
+                        <Grid
+                            className={classes.satisfactionsGridContainer}
+                            container
+                            spacing={2}
+                            wrap="nowrap"
+                            alignItems="center">
+                            {userIds
+                                .filter(uid => {
+                                    if (user) return uid !== user.uid
+                                    else return uid
+                                })
+                                .map(uid => (
+                                    <Grid item key={uid}>
+                                        <SatisfactionUser
+                                            disabled
+                                            value={satisfactionValueOrNull(uid)}
+                                            uid={uid}
+                                        />
+                                    </Grid>
+                                ))}
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
+            </div>
         </Fade>
     )
 }
