@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
 
-import { getRefPaths } from '../../../hooks/useAttachmentRef'
 import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
 import { AttachmentMetadata, Recipe } from '../../../model/model'
@@ -66,14 +65,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     }
 
     const handleDeleteAttachment = (name: string, fullPath: string) => {
-        const { smallPath, mediumPath } = getRefPaths(fullPath)
-
-        const full = FirebaseService.storageRef.child(fullPath)
-        const medium = FirebaseService.storageRef.child(smallPath)
-        const small = FirebaseService.storageRef.child(mediumPath)
-
         handleRemoveAttachment(name)
-        dispatch({ type: 'storageDeleteRefsChange', refs: [full, medium, small] })
+        dispatch({
+            type: 'storageDeleteRefsChange',
+            ref: FirebaseService.storageRef.child(fullPath),
+        })
     }
 
     const handleSaveAttachment = (name: AttachmentName) => {

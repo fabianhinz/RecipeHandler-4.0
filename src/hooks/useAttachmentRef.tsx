@@ -19,7 +19,7 @@ const initialDataUrls = { fullDataUrl: '', mediumDataUrl: '', smallDataUrl: '' }
 
 export const getFileExtension = (fullpath: string) => fullpath.split('.').slice(-1)[0]
 
-export const getRefPaths = (fullPath: string) => {
+const getRefPaths = (fullPath: string) => {
     // ? the fullPath Field in firestore always looks something like [whatever].jpg|png
     const extension = getFileExtension(fullPath)
     const basePath = fullPath.replace(`.${extension}`, '')

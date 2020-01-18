@@ -16,7 +16,8 @@
     "@types/algoliasearch": "^3.34.8",
     "algoliasearch": "^3.35.1",
     "firebase-admin": "^8.9.1",
-    "firebase-functions": "^3.3.0"
+    "firebase-functions": "^3.3.0",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "typescript": "^3.7.5",
