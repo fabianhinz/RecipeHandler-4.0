@@ -14,12 +14,13 @@ import InfoIcon from '@material-ui/icons/InfoRounded'
 import TimelineIcon from '@material-ui/icons/TimelineRounded'
 import { CameraImage } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import useProgress from '../../../hooks/useProgress'
 import { User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { useAttachmentDropzone } from '../../Recipe/Create/Attachments/useAttachmentDropzone'
+import AccountUserChangelog from './AccountUserChangelog'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -55,6 +56,7 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
     })
     const { enqueueSnackbar } = useSnackbar()
     const { ProgressComponent, setProgress } = useProgress()
+    const [openChangelog, setOpenChangelog] = useState(false)
 
     const classes = useStyles()
 
@@ -100,10 +102,11 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
                                 </Grid>
                                 <Grid item xs="auto">
                                     <Chip
-                                        onClick={() => alert('ToDo Miwri ;)')}
+                                        onClick={() => setOpenChangelog(!openChangelog)}
                                         icon={<TimelineIcon />}
                                         label={__VERSION__}
                                     />
+                                    <AccountUserChangelog open={openChangelog} />
                                 </Grid>
                             </Grid>
                         </Grid>

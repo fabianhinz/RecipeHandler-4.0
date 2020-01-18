@@ -96,6 +96,7 @@ export const handleNumberOfCommentsTrials = functions
 
 interface Label {
     name: string
+    color: string
 }
 
 export const handleChangelog = functions.region('europe-west1').https.onRequest((req, res) => {
@@ -122,7 +123,9 @@ export const handleChangelog = functions.region('europe-west1').https.onRequest(
         const { action, issue } = req.body
         if (action === 'closed') {
             const { number, title, body, labels } = issue
-            const labelNames: Array<string> = labels.map((label: Label) => label.name)
+            const labelNames: Array<string> = labels.map((label: Label) => {
+                return { name: label.name, color: label.color }
+            })
             admin
                 .firestore()
                 .collection('issues')
