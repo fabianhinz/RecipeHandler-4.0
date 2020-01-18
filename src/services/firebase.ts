@@ -3,6 +3,7 @@ import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/performance'
 import 'firebase/functions'
+import 'firebase/analytics'
 
 import firebase from 'firebase/app'
 
@@ -14,6 +15,7 @@ const firebaseConfig = {
     storageBucket: 'recipehandler.appspot.com',
     messagingSenderId: '363099897269',
     appId: '1:363099897269:web:7086b238a86f56c9546dfc',
+    measurementId: 'G-XR1E22ZPY4',
 }
 
 firebase.initializeApp(firebaseConfig)
@@ -27,6 +29,7 @@ const storage = firebase.storage()
 const storageRef = storage.ref()
 const auth = firebase.auth()
 const performance = firebase.performance()
+const analytics = firebase.analytics()
 
 const createTimestampFromDate = (date: Date) => firebase.firestore.Timestamp.fromDate(date)
 const createDateFromTimestamp = (timestamp: firebase.firestore.Timestamp) =>
@@ -43,4 +46,5 @@ export const FirebaseService = {
     incrementBy,
     performance,
     functions,
+    analytics,
 }
