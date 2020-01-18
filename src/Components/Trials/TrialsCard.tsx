@@ -13,7 +13,7 @@ import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
-import { DataUrls, getRefPaths, getResizedImages } from '../../hooks/useAttachmentRef'
+import { DataUrls, getResizedImages } from '../../hooks/useAttachmentRef'
 import { getTransitionTimeoutProps } from '../../hooks/useTransition'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -67,17 +67,13 @@ const TrialsCard = ({ trial, index }: Props) => {
     const handleDeleteBtnClick = async () => {
         // ! this does not delete the comments collection --> should use https://firebase.google.com/docs/firestore/solutions/delete-collections
         // ! --> which is fine, we can recover comments even if the trial is lost
-        const { smallPath, mediumPath } = getRefPaths(trial.fullPath)
         try {
             await FirebaseService.firestore
                 .collection('trials')
                 .doc(trial.name)
                 .delete()
 
-            // ! This logic should be in a cloud function
             await FirebaseService.storageRef.child(trial.fullPath).delete()
-            await FirebaseService.storageRef.child(smallPath).delete()
-            await FirebaseService.storageRef.child(mediumPath).delete()
         } catch (e) {
             enqueueSnackbar(e.message, { variant: 'error' })
         }
