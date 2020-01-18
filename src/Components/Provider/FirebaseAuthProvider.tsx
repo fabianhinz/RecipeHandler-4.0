@@ -56,9 +56,12 @@ const FirebaseAuthProvider: FC = ({ children }) => {
             if (user.isAnonymous) {
                 setUser(null)
                 setLoginEnabled(true)
+                FirebaseService.analytics.setUserId(`Anonymous - ${user.uid}`)
             } else {
                 const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
                 await userDocRef.update({ emailVerified: user.emailVerified })
+
+                FirebaseService.analytics.setUserId(user.uid)
 
                 userDocUnsubscribe = userDocRef.onSnapshot(doc => {
                     setUser({
