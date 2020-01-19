@@ -55,9 +55,9 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => {
     }
 
     return (
-        <Grid container spacing={1} wrap="nowrap" {...stopPropagationProps}>
+        <Grid container spacing={1} wrap="nowrap">
             {Object.keys(categories).map(type => (
-                <Grid item key={type}>
+                <Grid item key={type} {...stopPropagationProps}>
                     {categories[type].length > 0 && (
                         <Chip
                             {...(isMobile ? { onClick: handleChipClick(type) } : {})}

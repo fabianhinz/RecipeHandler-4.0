@@ -9,16 +9,13 @@ import {
     makeStyles,
     Typography,
 } from '@material-ui/core'
-import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import InfoIcon from '@material-ui/icons/InfoRounded'
 import TimelineIcon from '@material-ui/icons/TimelineRounded'
 import { CameraImage } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useEffect } from 'react'
 
-import useProgress from '../../../hooks/useProgress'
 import { User } from '../../../model/model'
-import { FirebaseService } from '../../../services/firebase'
 import { useAttachmentDropzone } from '../../Recipe/Create/Attachments/useAttachmentDropzone'
 
 const useStyles = makeStyles(theme =>
@@ -54,7 +51,6 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
         attachmentLimit: 1,
     })
     const { enqueueSnackbar } = useSnackbar()
-    const { ProgressComponent, setProgress } = useProgress()
 
     const classes = useStyles()
 
@@ -69,65 +65,45 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
         }
     }, [attachments, enqueueSnackbar, userDoc])
 
-    const handleLogout = () => {
-        setProgress(true)
-        FirebaseService.auth
-            .signOut()
-            .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
-    }
-
     return (
-        <>
-            <Grid className={classes.gridContainerAccount} container spacing={4} justify="center">
-                <Grid item xs="auto">
-                    <CardActionArea
-                        className={classes.actionArea}
-                        {...dropzoneProps.getRootProps()}>
-                        <Avatar className={classes.avatar} src={user.profilePicture}>
-                            <CameraImage fontSize="large" />
-                        </Avatar>
-                        <input {...dropzoneProps.getInputProps()} />
-                    </CardActionArea>
-                </Grid>
-                <Grid item xs="auto">
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Grid container spacing={1} justify="space-between">
-                                <Grid item xs="auto">
-                                    <Typography variant="h5" display="inline">
-                                        Willkommen zurück {user.username}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs="auto">
-                                    <Chip
-                                        onClick={() => alert('ToDo Miwri ;)')}
-                                        icon={<TimelineIcon />}
-                                        label={__VERSION__}
-                                    />
-                                </Grid>
+        <Grid className={classes.gridContainerAccount} container spacing={4} justify="center">
+            <Grid item xs="auto">
+                <CardActionArea className={classes.actionArea} {...dropzoneProps.getRootProps()}>
+                    <Avatar className={classes.avatar} src={user.profilePicture}>
+                        <CameraImage fontSize="large" />
+                    </Avatar>
+                    <input {...dropzoneProps.getInputProps()} />
+                </CardActionArea>
+            </Grid>
+            <Grid item xs="auto">
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <Grid container spacing={1} justify="space-between">
+                            <Grid item xs="auto">
+                                <Typography variant="h5" display="inline">
+                                    Willkommen zurück {user.username}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs="auto">
+                                <Chip
+                                    onClick={() => alert('ToDo Miwri ;)')}
+                                    icon={<TimelineIcon />}
+                                    label={__VERSION__}
+                                />
                             </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Divider />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button startIcon={<InfoIcon />} onClick={onShowInfoChange}>
-                                Informationen {showInfo ? 'ausblenden' : 'einblenden'}
-                            </Button>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                color="secondary"
-                                startIcon={<AccountIcon />}
-                                onClick={handleLogout}>
-                                ausloggen
-                            </Button>
-                        </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Divider />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button startIcon={<InfoIcon />} onClick={onShowInfoChange}>
+                            Informationen {showInfo ? 'ausblenden' : 'einblenden'}
+                        </Button>
                     </Grid>
                 </Grid>
             </Grid>
-            <ProgressComponent />
-        </>
+        </Grid>
     )
 }
 
