@@ -102,11 +102,14 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
                                 </Grid>
                                 <Grid item xs="auto">
                                     <Chip
-                                        onClick={() => setOpenChangelog(!openChangelog)}
+                                        onClick={() => setOpenChangelog(true)}
                                         icon={<TimelineIcon />}
                                         label={__VERSION__}
                                     />
-                                    <AccountUserChangelog open={openChangelog} />
+                                    <AccountUserChangelog
+                                        isOpen={openChangelog}
+                                        onClose={() => setOpenChangelog(false)}
+                                    />
                                 </Grid>
                             </Grid>
                         </Grid>
