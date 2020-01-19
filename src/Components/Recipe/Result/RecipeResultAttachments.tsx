@@ -1,11 +1,4 @@
-import {
-    Avatar,
-    CardActionArea,
-    createStyles,
-    Grid,
-    makeStyles,
-    useMediaQuery,
-} from '@material-ui/core'
+import { Avatar, CardActionArea, createStyles, Grid, makeStyles } from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
 import { Skeleton } from '@material-ui/lab'
 import React, { useRef } from 'react'
@@ -14,7 +7,7 @@ import { useAttachmentRef } from '../../../hooks/useAttachmentRef'
 import { AttachmentData, AttachmentMetadata } from '../../../model/model'
 import { isMetadata } from '../../../model/modelUtil'
 import elementIdService from '../../../services/elementIdService'
-import { useSelectedAttachement } from '../../Provider/SelectedAttachementProvider'
+import { useAnimationContext } from '../../Provider/AnimationProvider'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -40,15 +33,6 @@ const useStyles = makeStyles(theme =>
                     ? 'rgba(117, 117, 117, 0.75)'
                     : 'rgb(189, 189, 189, 0.75)',
         },
-        destinationContainer: {
-            zIndex: -1,
-            height: 800,
-            width: 800,
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%,-50%)',
-        },
     })
 )
 
@@ -57,91 +41,34 @@ interface AttachmentPreviewProps {
 }
 
 const AttachmentPreview = ({ attachment }: AttachmentPreviewProps) => {
-    const animationRef = useRef<Animation | null>(null)
     const originIdRef = useRef(elementIdService.getId('attachment-origin'))
 
+    const { handleAnimation } = useAnimationContext()
     const { attachmentRef, attachmentRefLoading } = useAttachmentRef(attachment)
     const classes = useStyles()
 
-    const handleAnimation = () => {
-        if (animationRef.current) {
-            animationRef.current.reverse()
-            animationRef.current = null
-        } else initAnimation()
-    }
-
-    const initAnimation = () => {
-        const origin = document.getElementById(originIdRef.current)
-        const destination = document.getElementById('destination')
-
-        if (!origin || !destination) return
-
-        const originRect = origin.getBoundingClientRect()
-        const destinationRect = destination.getBoundingClientRect()
-
-        const keyframes: Keyframe[] = [
-            {
-                top: `${originRect.top}px`,
-                left: `${originRect.left}px`,
-                position: 'fixed',
-                transform: `
-                    translate(0px,0px)
-                    scale(1,1)
-                `,
-                borderRadius: '50%',
-                zIndex: 1,
-            },
-            {
-                transform: `
-                    translate(-50%,-50%)
-                    scale(${destinationRect.width / originRect.width},${destinationRect.height /
-                    originRect.height})
-                `,
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                borderRadius: '10%',
-                zIndex: 1,
-            },
-        ]
-
-        const options: KeyframeAnimationOptions = {
-            duration: 500,
-            easing: 'ease-in-out',
-            fill: 'forwards',
-        }
-
-        animationRef.current = origin.animate(keyframes, options)
-    }
-
     return (
-        <>
-            <Grid item>
-                {attachmentRefLoading ? (
-                    <Skeleton variant="circle" className={classes.attachmentPreview} />
-                ) : (
-                    <CardActionArea
-                        onClick={() => {
-                            handleAnimation()
-                        }}
-                        className={classes.actionArea}>
-                        <Avatar
-                            id={originIdRef.current}
-                            variant="circle"
-                            className={classes.attachmentPreview}
-                            src={
-                                isMetadata(attachment)
-                                    ? attachmentRef.mediumDataUrl
-                                    : attachment.dataUrl
-                            }>
-                            <BugIcon fontSize="large" />
-                        </Avatar>
-                    </CardActionArea>
-                )}
-            </Grid>
-
-            <div id="destination" className={classes.destinationContainer} />
-        </>
+        <Grid item>
+            {attachmentRefLoading ? (
+                <Skeleton variant="circle" className={classes.attachmentPreview} />
+            ) : (
+                <CardActionArea
+                    onClick={() => handleAnimation(originIdRef.current)}
+                    className={classes.actionArea}>
+                    <Avatar
+                        id={originIdRef.current}
+                        variant="circle"
+                        className={classes.attachmentPreview}
+                        src={
+                            isMetadata(attachment)
+                                ? attachmentRef.mediumDataUrl
+                                : attachment.dataUrl
+                        }>
+                        <BugIcon fontSize="large" />
+                    </Avatar>
+                </CardActionArea>
+            )}
+        </Grid>
     )
 }
 
