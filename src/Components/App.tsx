@@ -5,8 +5,10 @@ import { SnackbarProvider } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
 import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
+import { isSafari } from '../util/constants'
 import Footer from './Footer'
 import Main from './Main'
+import AnimationProvider from './Provider/AnimationProvider'
 import { useBreakpointsContext } from './Provider/BreakpointsProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
 import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
@@ -16,8 +18,6 @@ import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
 import Container from './Shared/Container'
-
-const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
@@ -67,12 +67,14 @@ const App: FC = () => {
                         <UsersProvider>
                             <CategoriesCollectionProvider>
                                 <SelectedAttachementProvider>
-                                    <PinnedRecipesProvider>
-                                        <Container>
-                                            <Main />
-                                            <Footer />
-                                        </Container>
-                                    </PinnedRecipesProvider>
+                                    <AnimationProvider>
+                                        <PinnedRecipesProvider>
+                                            <Container>
+                                                <Main />
+                                                <Footer />
+                                            </Container>
+                                        </PinnedRecipesProvider>
+                                    </AnimationProvider>
                                 </SelectedAttachementProvider>
                             </CategoriesCollectionProvider>
                         </UsersProvider>

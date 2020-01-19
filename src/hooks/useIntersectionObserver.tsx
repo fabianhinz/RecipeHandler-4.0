@@ -13,13 +13,10 @@ const useIntersectionObserver = ({ onIsIntersecting }: useIntersectionObserverOp
         const trigger = document.getElementById(intersectionObserverId)
         if (!trigger) return
 
-        const observer = new IntersectionObserver(
-            entries => {
-                const [lastRecipeTrigger] = entries
-                if (lastRecipeTrigger.isIntersecting) onIsIntersecting()
-            },
-            { threshold: 1, rootMargin: '50px' }
-        )
+        const observer = new IntersectionObserver(entries => {
+            const [lastRecipeTrigger] = entries
+            if (lastRecipeTrigger.isIntersecting) onIsIntersecting()
+        })
         observer.observe(trigger)
 
         return () => observer.unobserve(trigger)
