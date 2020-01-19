@@ -1,4 +1,5 @@
 import {
+    CardActionArea,
     createStyles,
     Dialog,
     DialogActions,
@@ -37,19 +38,14 @@ const useStyles = makeStyles(theme =>
         recipeHeader: {
             cursor: 'pointer',
             padding: theme.spacing(2),
-            borderRadius: 0,
-            transition: theme.transitions.create('background-color', {
-                duration: theme.transitions.duration.short,
+            borderRadius: BORDER_RADIUS,
+            transition: theme.transitions.create('background-color,transform', {
+                duration: theme.transitions.duration.enteringScreen,
+                easing: theme.transitions.easing.easeIn,
             }),
-            '&:first-child': {
-                borderRadius: `${BORDER_RADIUS}px ${BORDER_RADIUS}px 0 0`,
-            },
-            '&:last-child': {
-                borderRadius: `0 0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px `,
-            },
             '@media (pointer: fine)': {
                 '&:hover': {
-                    backgroundColor: 'rgb(90, 139, 92, 0.15)',
+                    transform: 'scale(1.03,1.03)',
                 },
             },
         },
@@ -139,17 +135,22 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
             <DialogTitle>Passende Rezepte auswählen</DialogTitle>
             <DialogContent>
                 {loading && <Progress variant="cover" />}
-                {recipes.map(recipe => (
-                    <div
-                        key={recipe.name}
-                        onClick={() => handleSelectedChange(recipe.name)}
-                        className={clsx(
-                            classes.recipeHeader,
-                            selected.has(recipe.name) && classes.selectedRecipeHeader
-                        )}>
-                        <RecipeResultHeader variant="related" recipe={recipe} />
-                    </div>
-                ))}
+                <Grid container spacing={1} direction="column">
+                    {recipes.map(recipe => (
+                        <Grid
+                            item
+                            key={recipe.name}
+                            onClick={() => handleSelectedChange(recipe.name)}>
+                            <CardActionArea
+                                className={clsx(
+                                    classes.recipeHeader,
+                                    selected.has(recipe.name) && classes.selectedRecipeHeader
+                                )}>
+                                <RecipeResultHeader variant="related" recipe={recipe} />
+                            </CardActionArea>
+                        </Grid>
+                    ))}
+                </Grid>
             </DialogContent>
             <DialogActions>
                 <Grid container>

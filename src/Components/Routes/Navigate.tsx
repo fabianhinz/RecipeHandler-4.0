@@ -1,4 +1,4 @@
-import { createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
+import { ButtonProps, createStyles, Fab, makeStyles, Zoom } from '@material-ui/core'
 import clsx from 'clsx'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
@@ -57,11 +57,11 @@ export const Navigate: FC<NavigateProps> = ({ to, children, disabled, activeStyl
         )
 }
 
-interface NavigateFabProps extends NavigateProps {
+interface NavigateFabProps extends NavigateProps, Pick<ButtonProps, 'onClick'> {
     icon: JSX.Element
 }
 
-export const NavigateFab = ({ to, icon }: NavigateFabProps) => {
+export const NavigateFab = ({ to, icon, onClick }: NavigateFabProps) => {
     const classes = useStyles({})
     const { user } = useFirebaseAuthContext()
 
@@ -70,7 +70,7 @@ export const NavigateFab = ({ to, icon }: NavigateFabProps) => {
             {user && (
                 <Navigate to={to}>
                     <Zoom in>
-                        <Fab className={classes.fab} color="secondary">
+                        <Fab onClick={onClick} className={classes.fab} color="secondary">
                             {icon}
                         </Fab>
                     </Zoom>
