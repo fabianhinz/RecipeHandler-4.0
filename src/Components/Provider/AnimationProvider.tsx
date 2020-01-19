@@ -1,6 +1,7 @@
 import { createStyles, makeStyles, useTheme } from '@material-ui/core'
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 
+import { BORDER_RADIUS } from '../../theme'
 import { useRouterContext } from './RouterProvider'
 
 interface AnimationHandler {
@@ -79,7 +80,6 @@ const AnimationProvider: FC = ({ children }) => {
                 `,
                 borderRadius: '50%',
                 zIndex: 1,
-                boxShadow: theme.shadows[1],
             },
             {
                 transform: `
@@ -90,9 +90,8 @@ const AnimationProvider: FC = ({ children }) => {
                 position: 'fixed',
                 top: '50%',
                 left: '50%',
-                borderRadius: '10%',
+                borderRadius: `${BORDER_RADIUS}px`,
                 zIndex: 1,
-                boxShadow: theme.shadows[8],
             },
         ]
 
