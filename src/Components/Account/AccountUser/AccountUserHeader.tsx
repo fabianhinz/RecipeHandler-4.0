@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import InfoIcon from '@material-ui/icons/InfoRounded'
-import TimelineIcon from '@material-ui/icons/TimelineRounded'
 import { CameraImage } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
@@ -101,14 +100,10 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
                                     </Typography>
                                 </Grid>
                                 <Grid item xs="auto">
-                                    <Chip
-                                        onClick={() => setOpenChangelog(true)}
-                                        icon={<TimelineIcon />}
-                                        label={__VERSION__}
-                                    />
                                     <AccountUserChangelog
                                         isOpen={openChangelog}
                                         onClose={() => setOpenChangelog(false)}
+                                        onClick={() => setOpenChangelog(true)}
                                     />
                                 </Grid>
                             </Grid>

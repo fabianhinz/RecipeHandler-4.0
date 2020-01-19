@@ -13,6 +13,7 @@ import {
     makeStyles,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import TimelineIcon from '@material-ui/icons/TimelineRounded'
 import React, { useEffect, useState } from 'react'
 
 import { FirebaseService } from '../../../services/firebase'
@@ -43,6 +44,7 @@ interface Issue {
 interface Props {
     isOpen: boolean
     onClose: () => void
+    onClick: () => void
 }
 
 const useStyles = makeStyles(theme =>
@@ -53,7 +55,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const AccountUserChangelog = ({ isOpen, onClose }: Props) => {
+const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
     // const classes = useStyles()
     const { isDialogFullscreen } = useBreakpointsContext()
     const [pullrequests, setPullrequests] = useState<Array<Pullrequest>>()
@@ -97,6 +99,16 @@ const AccountUserChangelog = ({ isOpen, onClose }: Props) => {
 
     return (
         <>
+            <Chip
+                onClick={onClick}
+                icon={<TimelineIcon />}
+                label={__VERSION__}
+                color={
+                    pullrequests && pullrequests[0]?.shortSha === __VERSION__
+                        ? 'default'
+                        : 'secondary'
+                }
+            />
             <Dialog
                 fullScreen={isDialogFullscreen}
                 open={isOpen}
@@ -108,7 +120,10 @@ const AccountUserChangelog = ({ isOpen, onClose }: Props) => {
                         {pullrequests?.map(pr => (
                             <ListItem key={pr.shortSha} alignItems="flex-start">
                                 <ListItemIcon className={classes.itemChip}>
-                                    <Chip label={pr.shortSha} />
+                                    <Chip
+                                        label={pr.shortSha}
+                                        color={pr.shortSha === __VERSION__ ? 'primary' : 'default'}
+                                    />
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={
@@ -120,9 +135,8 @@ const AccountUserChangelog = ({ isOpen, onClose }: Props) => {
                                         <div>
                                             created by <b>{pr.creator}</b>
                                             <br />
-                                            merged: {new Date(
-                                                pr.closedAt
-                                            ).toLocaleDateString()},{' '}
+                                            merged: {new Date(pr.closedAt).toLocaleDateString()}
+                                            {', '}
                                             {new Date(pr.closedAt).toLocaleTimeString()} Uhr
                                             <br /> <br />
                                             {relatingIssues(pr).map(issue => (
