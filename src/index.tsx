@@ -1,4 +1,5 @@
 import 'typeface-roboto'
+import 'web-animations-js'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
