@@ -1,5 +1,6 @@
 import {
     Chip,
+    createStyles,
     Dialog,
     DialogActions,
     DialogContent,
@@ -7,7 +8,9 @@ import {
     IconButton,
     List,
     ListItem,
+    ListItemIcon,
     ListItemText,
+    makeStyles,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import React, { useEffect, useState } from 'react'
@@ -18,6 +21,7 @@ import { SlideUp } from '../../Shared/Transitions'
 
 interface Pullrequest {
     closedAt: string
+    closedAtFormated: Date | undefined
     creator: string
     issueNumbers: Array<string> | undefined
     shortSha: string
@@ -41,11 +45,20 @@ interface Props {
     onClose: () => void
 }
 
+const useStyles = makeStyles(theme =>
+    createStyles({
+        itemChip: {
+            marginRight: theme.spacing(1),
+        },
+    })
+)
+
 const AccountUserChangelog = ({ isOpen, onClose }: Props) => {
     // const classes = useStyles()
     const { isDialogFullscreen } = useBreakpointsContext()
     const [pullrequests, setPullrequests] = useState<Array<Pullrequest>>()
     const [issues, setIssues] = useState<Array<Issue>>()
+    const classes = useStyles()
 
     useEffect(() => {
         FirebaseService.firestore
@@ -56,6 +69,9 @@ const AccountUserChangelog = ({ isOpen, onClose }: Props) => {
                     querySnapshot.docs
                         .map(doc => doc.data() as Pullrequest)
                         .filter(pr => pr.creator !== 'dependabot-preview[bot]')
+                        .sort((a, b) => {
+                            return new Date(b.closedAt).getTime() - new Date(a.closedAt).getTime()
+                        })
                 )
             })
 
@@ -90,15 +106,29 @@ const AccountUserChangelog = ({ isOpen, onClose }: Props) => {
                 <DialogContent>
                     <List>
                         {pullrequests?.map(pr => (
-                            <ListItem key={pr.shortSha}>
+                            <ListItem key={pr.shortSha} alignItems="flex-start">
+                                <ListItemIcon className={classes.itemChip}>
+                                    <Chip label={pr.shortSha} />
+                                </ListItemIcon>
                                 <ListItemText
                                     primary={
                                         <div>
-                                            <Chip label={pr.shortSha} />
                                             {pr.title} <br />
-                                            {pr.creator} {pr.closedAt}
+                                        </div>
+                                    }
+                                    secondary={
+                                        <div>
+                                            created by <b>{pr.creator}</b>
+                                            <br />
+                                            merged: {new Date(
+                                                pr.closedAt
+                                            ).toLocaleDateString()},{' '}
+                                            {new Date(pr.closedAt).toLocaleTimeString()} Uhr
+                                            <br /> <br />
                                             {relatingIssues(pr).map(issue => (
-                                                <div>{issue.title}</div>
+                                                <div>
+                                                    <i>- {issue.title}</i>
+                                                </div>
                                             ))}
                                         </div>
                                     }
