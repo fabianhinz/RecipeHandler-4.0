@@ -19,7 +19,7 @@ import React, { useEffect, useState } from 'react'
 import { FirebaseService } from '../../../services/firebase'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { SlideUp } from '../../Shared/Transitions'
-
+// ? PullRequest, Label und Issue types bitte hier hin >> model.ts
 interface Pullrequest {
     closedAt: string
     closedAtFormated: Date | undefined
@@ -40,7 +40,7 @@ interface Issue {
     subject: string
     title: string
 }
-
+// ? Die Props brauchen wir nicht, sofern der state nach innen wandert
 interface Props {
     isOpen: boolean
     onClose: () => void
@@ -56,8 +56,10 @@ const useStyles = makeStyles(theme =>
 )
 
 const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
+    // ? das darf raus :D ?!
     // const classes = useStyles()
     const { isDialogFullscreen } = useBreakpointsContext()
+    // ? array bitte so instanziieren useState<T[]>([])
     const [pullrequests, setPullrequests] = useState<Array<Pullrequest>>()
     const [issues, setIssues] = useState<Array<Issue>>()
     const classes = useStyles()
@@ -65,6 +67,7 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
     useEffect(() => {
         FirebaseService.firestore
             .collection('pullrequests')
+            // ? warum kein onShnapshot ?
             .get()
             .then(querySnapshot => {
                 setPullrequests(
@@ -79,6 +82,7 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
 
         FirebaseService.firestore
             .collection('issues')
+            // ? warum kein onShnapshot ?
             .get()
             .then(querySnapshot => {
                 setIssues(querySnapshot.docs.map(doc => doc.data() as Issue))
@@ -86,6 +90,9 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
     }, [])
 
     const relatingIssues = (pullrequest: Pullrequest) => {
+        // ? bitte sei so gut und initialisier Arrays nur via array literale --> []
+        // ? warum --> naja: const test = [10] ist ein array mit einem element
+        // ? --> const test = new Array(10) ist ein array mit 10 elementen...
         const relatedIssues = Array<Issue>()
         pullrequest.issueNumbers?.forEach(number => {
             issues?.forEach(issue => {
@@ -104,6 +111,7 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
                 icon={<TimelineIcon />}
                 label={__VERSION__}
                 color={
+                    // ? shau dir mal Array.prototype.some an ;)
                     pullrequests && pullrequests[0]?.shortSha === __VERSION__
                         ? 'default'
                         : 'secondary'
@@ -113,12 +121,14 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
                 fullScreen={isDialogFullscreen}
                 open={isOpen}
                 onClose={onClose}
+                // ? keepMounted prop bitte setzen
                 TransitionComponent={SlideUp}>
                 <DialogTitle>Changelog</DialogTitle>
                 <DialogContent>
                     <List>
                         {pullrequests?.map(pr => (
                             <ListItem key={pr.shortSha} alignItems="flex-start">
+                                {/* ? nimm statt <ListItemIcon /> bitte <ListItemSecondaryAction /> */}
                                 <ListItemIcon className={classes.itemChip}>
                                     <Chip
                                         label={pr.shortSha}
@@ -128,10 +138,13 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
                                 <ListItemText
                                     primary={
                                         <div>
+                                            {/* was spricht gegen primary={pr.title} */}
                                             {pr.title} <br />
                                         </div>
                                     }
                                     secondary={
+                                        // dachte das ist ne Anwendung für deutschsprachige menschen :D
+                                        // nimm hier einfach die Typography komponente
                                         <div>
                                             created by <b>{pr.creator}</b>
                                             <br />
@@ -139,6 +152,8 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
                                             {', '}
                                             {new Date(pr.closedAt).toLocaleTimeString()} Uhr
                                             <br /> <br />
+                                            {/* fänds super wenn wir sowas toggle ähnliches machen
+                                            schau dir mal den showInfo state an --> AccountUser */}
                                             {relatingIssues(pr).map(issue => (
                                                 <div>
                                                     <i>- {issue.title}</i>

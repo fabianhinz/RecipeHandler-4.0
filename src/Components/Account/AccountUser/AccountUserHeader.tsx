@@ -55,6 +55,7 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
     })
     const { enqueueSnackbar } = useSnackbar()
     const { ProgressComponent, setProgress } = useProgress()
+    // ? den State brauchst du hier nicht >> zieh ihn in die AccountUserChangelog Komponente
     const [openChangelog, setOpenChangelog] = useState(false)
 
     const classes = useStyles()
