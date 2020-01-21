@@ -1,4 +1,5 @@
 import { createStyles, makeStyles, useTheme } from '@material-ui/core'
+import clsx from 'clsx'
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 
 import { BORDER_RADIUS } from '../../theme'
@@ -14,15 +15,31 @@ export const useAnimationContext = () => useContext(Context) as AnimationHandler
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        destination: {
-            zIndex: -1,
+        background: {
             position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%,-50%)',
+            top: 0,
+            left: 0,
+            zIndex: -1,
+            opacity: 0,
+            height: '100vh',
+            width: '100vw',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            transition: theme.transitions.create('opacity', {
+                duration: theme.transitions.duration.enteringScreen,
+            }),
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        backgroundVisible: {
+            zIndex: theme.zIndex.appBar,
+            opacity: 1,
+        },
+        destination: {
             [theme.breakpoints.only('xs')]: {
-                height: 300,
-                width: 300,
+                width: 320,
+                height: 320,
             },
             [theme.breakpoints.only('sm')]: {
                 height: 500,
@@ -40,13 +57,14 @@ const useStyles = makeStyles(theme =>
                 height: 900,
                 width: 900,
             },
+            borderRadius: BORDER_RADIUS,
         },
     })
 )
 // ! ToDo: handle img ratio
 const AnimationProvider: FC = ({ children }) => {
     const [originId, setOriginId] = useState<string | undefined>()
-    const animationRef = useRef<Animation | null>(null)
+    const animationRef = useRef<Animation | undefined>()
 
     const { location } = useRouterContext()
     const classes = useStyles()
@@ -54,7 +72,14 @@ const AnimationProvider: FC = ({ children }) => {
 
     useEffect(() => {
         setOriginId(undefined)
+        animationRef.current = undefined
     }, [location.pathname])
+
+    useEffect(() => {
+        const root = document.getElementsByTagName('html')[0]
+        if (originId) root.setAttribute('style', 'overflow: hidden;')
+        if (!originId) root.removeAttribute('style')
+    }, [originId])
 
     const initAnimation = (newOriginId?: string) => {
         if (!newOriginId) return
@@ -79,7 +104,7 @@ const AnimationProvider: FC = ({ children }) => {
                     scale(1,1)
                 `,
                 borderRadius: '50%',
-                zIndex: 1,
+                zIndex: theme.zIndex.appBar + 1,
             },
             {
                 transform: `
@@ -91,13 +116,12 @@ const AnimationProvider: FC = ({ children }) => {
                 top: '50%',
                 left: '50%',
                 borderRadius: `${BORDER_RADIUS}px`,
-                zIndex: 1,
+                zIndex: theme.zIndex.appBar + 1,
             },
         ]
 
         const options: KeyframeAnimationOptions = {
-            duration: theme.transitions.duration.complex,
-            easing: theme.transitions.easing.easeInOut,
+            duration: theme.transitions.duration.enteringScreen,
             fill: 'forwards',
         }
 
@@ -107,13 +131,8 @@ const AnimationProvider: FC = ({ children }) => {
     const handleAnimation = (newOriginId?: string) => {
         if (animationRef.current) {
             animationRef.current.reverse()
-            animationRef.current = null
-
-            // ? if a new originId comes around we wait till the old origin is reversed
-            if (originId !== newOriginId)
-                setTimeout(() => {
-                    initAnimation(newOriginId)
-                }, theme.transitions.duration.complex)
+            animationRef.current = undefined
+            setOriginId(undefined)
         } else {
             initAnimation(newOriginId)
         }
@@ -124,9 +143,9 @@ const AnimationProvider: FC = ({ children }) => {
             <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
             <div
                 onClick={() => handleAnimation()}
-                id="destination"
-                className={classes.destination}
-            />
+                className={clsx(classes.background, originId && classes.backgroundVisible)}>
+                <div id="destination" className={classes.destination} />
+            </div>
         </>
     )
 }
