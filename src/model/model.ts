@@ -88,3 +88,24 @@ export type User = {
     createdDate: firebase.firestore.Timestamp
     algoliaAdvancedSyntax: boolean
 }
+
+export interface Pullrequest {
+    closedAt: string
+    closedAtFormated: Date | undefined
+    creator: string
+    issueNumbers: Array<string> | undefined
+    shortSha: string
+    title: string
+}
+
+export interface Label {
+    name: string
+    color: string
+}
+
+export interface Issue {
+    labels: Array<string> | Array<Label>
+    number: number
+    subject: string
+    title: string
+}

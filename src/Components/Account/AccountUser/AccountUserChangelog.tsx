@@ -5,95 +5,79 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    ExpansionPanel,
+    ExpansionPanelDetails,
+    ExpansionPanelSummary,
     IconButton,
     List,
     ListItem,
-    ListItemIcon,
+    ListItemSecondaryAction,
     ListItemText,
     makeStyles,
+    Typography,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import TimelineIcon from '@material-ui/icons/TimelineRounded'
 import React, { useEffect, useState } from 'react'
 
+import { Issue, Pullrequest } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { SlideUp } from '../../Shared/Transitions'
-// ? PullRequest, Label und Issue types bitte hier hin >> model.ts
-interface Pullrequest {
-    closedAt: string
-    closedAtFormated: Date | undefined
-    creator: string
-    issueNumbers: Array<string> | undefined
-    shortSha: string
-    title: string
-}
-
-interface Label {
-    name: string
-    color: string
-}
-
-interface Issue {
-    labels: Array<string> | Array<Label>
-    number: number
-    subject: string
-    title: string
-}
-// ? Die Props brauchen wir nicht, sofern der state nach innen wandert
-interface Props {
-    isOpen: boolean
-    onClose: () => void
-    onClick: () => void
-}
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        itemChip: {
-            marginRight: theme.spacing(1),
+        expansionPanelHeaderVersion: {
+            flexBasis: '20%',
+            flexShrink: 0,
+        },
+        expansionPanelHeaderTitle: {
+            flexBasis: '60%',
+            flexShrink: 0,
+        },
+        expansionPanelContentIssues: {
+            flexBasis: '80%',
+            flexShrink: 0,
         },
     })
 )
 
-const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
-    // ? das darf raus :D ?!
-    // const classes = useStyles()
+const AccountUserChangelog = () => {
     const { isDialogFullscreen } = useBreakpointsContext()
-    // ? array bitte so instanziieren useState<T[]>([])
-    const [pullrequests, setPullrequests] = useState<Array<Pullrequest>>()
-    const [issues, setIssues] = useState<Array<Issue>>()
+    const [pullrequests, setPullrequests] = useState<Pullrequest[]>([])
+    const [issues, setIssues] = useState<Issue[]>([])
+    const [openChangelog, setOpenChangelog] = useState(false)
     const classes = useStyles()
 
-    useEffect(() => {
-        FirebaseService.firestore
-            .collection('pullrequests')
-            // ? warum kein onShnapshot ?
-            .get()
-            .then(querySnapshot => {
+    useEffect(
+        () =>
+            FirebaseService.firestore.collection('pullrequests').onSnapshot(querySnapshot =>
                 setPullrequests(
                     querySnapshot.docs
+                        // TODO timestamp speichern und mit querysyntax filtern
                         .map(doc => doc.data() as Pullrequest)
                         .filter(pr => pr.creator !== 'dependabot-preview[bot]')
                         .sort((a, b) => {
                             return new Date(b.closedAt).getTime() - new Date(a.closedAt).getTime()
                         })
                 )
-            })
+            ),
+        []
+    )
 
-        FirebaseService.firestore
-            .collection('issues')
-            // ? warum kein onShnapshot ?
-            .get()
-            .then(querySnapshot => {
-                setIssues(querySnapshot.docs.map(doc => doc.data() as Issue))
-            })
-    }, [])
+    useEffect(
+        () =>
+            FirebaseService.firestore
+                .collection('issues')
+                .onSnapshot(querySnapshot =>
+                    setIssues(querySnapshot.docs.map(doc => doc.data() as Issue))
+                ),
+        []
+    )
 
     const relatingIssues = (pullrequest: Pullrequest) => {
-        // ? bitte sei so gut und initialisier Arrays nur via array literale --> []
-        // ? warum --> naja: const test = [10] ist ein array mit einem element
-        // ? --> const test = new Array(10) ist ein array mit 10 elementen...
-        const relatedIssues = Array<Issue>()
+        const relatedIssues: Issue[] = []
         pullrequest.issueNumbers?.forEach(number => {
             issues?.forEach(issue => {
                 if (issue.number.toString() === number) {
@@ -104,44 +88,76 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
         return relatedIssues
     }
 
+    // expansionpanel statt list
     return (
         <>
             <Chip
-                onClick={onClick}
+                onClick={() => setOpenChangelog(true)}
                 icon={<TimelineIcon />}
                 label={__VERSION__}
-                color={
-                    // ? shau dir mal Array.prototype.some an ;)
-                    pullrequests && pullrequests[0]?.shortSha === __VERSION__
-                        ? 'default'
-                        : 'secondary'
-                }
+                color={pullrequests[0]?.shortSha === __VERSION__ ? 'default' : 'secondary'}
             />
             <Dialog
                 fullScreen={isDialogFullscreen}
-                open={isOpen}
-                onClose={onClose}
-                // ? keepMounted prop bitte setzen
+                open={openChangelog}
+                onClose={() => setOpenChangelog(false)}
+                keepMounted
                 TransitionComponent={SlideUp}>
                 <DialogTitle>Changelog</DialogTitle>
                 <DialogContent>
-                    <List>
-                        {pullrequests?.map(pr => (
-                            <ListItem key={pr.shortSha} alignItems="flex-start">
-                                {/* ? nimm statt <ListItemIcon /> bitte <ListItemSecondaryAction /> */}
-                                <ListItemIcon className={classes.itemChip}>
+                    {pullrequests.map(pr => (
+                        <ExpansionPanel key={pr.shortSha}>
+                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography className={classes.expansionPanelHeaderVersion}>
                                     <Chip
                                         label={pr.shortSha}
                                         color={pr.shortSha === __VERSION__ ? 'primary' : 'default'}
                                     />
-                                </ListItemIcon>
+                                </Typography>
+                                <Typography className={classes.expansionPanelHeaderTitle}>
+                                    {pr.title}
+                                </Typography>
+                                <Typography>
+                                    {new Date(pr.closedAt).toLocaleDateString()}
+                                </Typography>
+                            </ExpansionPanelSummary>
+                            <ExpansionPanelDetails>
+                                <div>
+                                    <Typography gutterBottom>{pr.creator}</Typography>
+                                    <Typography gutterBottom>
+                                        {new Date(pr.closedAt).toLocaleDateString()}
+                                        {', '}
+                                        {new Date(pr.closedAt).toLocaleTimeString()} Uhr
+                                    </Typography>
+                                    <List>
+                                        {relatingIssues(pr).map(issue => (
+                                            <ListItem key={issue.number}>
+                                                <Typography
+                                                    className={classes.expansionPanelContentIssues}>
+                                                    {issue.title}
+                                                </Typography>
+                                                <Chip label={issue.labels.join(', ')} />
+                                                {/* {issue.labels.map(label => (
+                                                    <Chip label={label.name ? label.name : label} />
+                                                ))} */}
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </div>
+                            </ExpansionPanelDetails>
+                        </ExpansionPanel>
+                    ))}
+                    {/* <List>
+                        {pullrequests?.map(pr => (
+                            <ListItem key={pr.shortSha}>
+                                <ListItemSecondaryAction>
+                                    <Chip
+                                        label={pr.shortSha}
+                                        color={pr.shortSha === __VERSION__ ? 'primary' : 'default'}
+                                    />
+                                </ListItemSecondaryAction>
                                 <ListItemText
-                                    primary={
-                                        <div>
-                                            {/* was spricht gegen primary={pr.title} */}
-                                            {pr.title} <br />
-                                        </div>
-                                    }
+                                    primary={pr.title}
                                     secondary={
                                         // dachte das ist ne Anwendung für deutschsprachige menschen :D
                                         // nimm hier einfach die Typography komponente
@@ -152,10 +168,8 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
                                             {', '}
                                             {new Date(pr.closedAt).toLocaleTimeString()} Uhr
                                             <br /> <br />
-                                            {/* fänds super wenn wir sowas toggle ähnliches machen
-                                            schau dir mal den showInfo state an --> AccountUser */}
                                             {relatingIssues(pr).map(issue => (
-                                                <div>
+                                                <div key={issue.number}>
                                                     <i>- {issue.title}</i>
                                                 </div>
                                             ))}
@@ -164,10 +178,10 @@ const AccountUserChangelog = ({ isOpen, onClose, onClick }: Props) => {
                                 />
                             </ListItem>
                         ))}
-                    </List>
+                    </List> */}
                 </DialogContent>
                 <DialogActions>
-                    <IconButton onClick={onClose}>
+                    <IconButton onClick={() => setOpenChangelog(false)}>
                         <CloseIcon />
                     </IconButton>
                 </DialogActions>
