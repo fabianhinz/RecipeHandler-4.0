@@ -1,10 +1,14 @@
 import { Grid } from '@material-ui/core'
+import { LogoutVariant } from 'mdi-material-ui'
+import { useSnackbar } from 'notistack'
 import React, { useMemo, useState } from 'react'
 
 import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
+import useProgress from '../../../hooks/useProgress'
 import { User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { NavigateFab } from '../../Routes/Navigate'
 import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
 import AccountUserRecipes from './AccountUserRecipes'
@@ -23,10 +27,19 @@ const AccountUser = () => {
     // ? we won't load this component without an existing user - pinky promise -_-
     const { user } = useFirebaseAuthContext() as { user: User }
     const { breakpoints } = useCardBreakpoints({ xlEnabled: user.admin })
+    const { ProgressComponent, setProgress } = useProgress()
+    const { enqueueSnackbar } = useSnackbar()
 
     const userDoc = useMemo(() => FirebaseService.firestore.collection('users').doc(user.uid), [
         user.uid,
     ])
+
+    const handleLogout = () => {
+        setProgress(true)
+        FirebaseService.auth
+            .signOut()
+            .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
+    }
 
     const handleUserSettingChange: UserSettingChangeHandler = (key: SettingKeys) => (uid?: any) => {
         switch (key) {
@@ -98,6 +111,9 @@ const AccountUser = () => {
                     <AccountUserAdmin />
                 </Grid>
             )}
+
+            <NavigateFab onClick={handleLogout} icon={<LogoutVariant />} />
+            <ProgressComponent />
         </Grid>
     )
 }

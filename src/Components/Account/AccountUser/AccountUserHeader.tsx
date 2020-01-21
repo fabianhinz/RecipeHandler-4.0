@@ -2,22 +2,18 @@ import {
     Avatar,
     Button,
     CardActionArea,
-    Chip,
     createStyles,
     Divider,
     Grid,
     makeStyles,
     Typography,
 } from '@material-ui/core'
-import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import InfoIcon from '@material-ui/icons/InfoRounded'
 import { CameraImage } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
-import useProgress from '../../../hooks/useProgress'
 import { User } from '../../../model/model'
-import { FirebaseService } from '../../../services/firebase'
 import { useAttachmentDropzone } from '../../Recipe/Create/Attachments/useAttachmentDropzone'
 import AccountUserChangelog from './AccountUserChangelog'
 
@@ -54,7 +50,6 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
         attachmentLimit: 1,
     })
     const { enqueueSnackbar } = useSnackbar()
-    const { ProgressComponent, setProgress } = useProgress()
 
     const classes = useStyles()
 
@@ -68,13 +63,6 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
             }
         }
     }, [attachments, enqueueSnackbar, userDoc])
-
-    const handleLogout = () => {
-        setProgress(true)
-        FirebaseService.auth
-            .signOut()
-            .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
-    }
 
     return (
         <>
@@ -103,26 +91,17 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Divider />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button startIcon={<InfoIcon />} onClick={onShowInfoChange}>
-                                Informationen {showInfo ? 'ausblenden' : 'einblenden'}
-                            </Button>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                color="secondary"
-                                startIcon={<AccountIcon />}
-                                onClick={handleLogout}>
-                                ausloggen
-                            </Button>
-                        </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Divider />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button startIcon={<InfoIcon />} onClick={onShowInfoChange}>
+                            Informationen {showInfo ? 'ausblenden' : 'einblenden'}
+                        </Button>
                     </Grid>
                 </Grid>
             </Grid>
-            <ProgressComponent />
         </>
     )
 }
