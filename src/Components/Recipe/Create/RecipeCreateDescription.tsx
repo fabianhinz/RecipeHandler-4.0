@@ -1,7 +1,7 @@
-import { TextField } from '@material-ui/core'
 import BookIcon from '@material-ui/icons/BookTwoTone'
-import React, { useState } from 'react'
+import React from 'react'
 
+import MarkdownInput from '../../Shared/MarkdownInput'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
 
@@ -11,26 +11,12 @@ interface Props {
 }
 
 const RecipeCreateDescription = ({ description, onDescriptionChange }: Props) => {
-    const [value, setValue] = useState(description)
-
     return (
         <RecipeCard
             transitionOrder={2}
             variant="preview"
             header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
-            content={
-                <TextField
-                    label="optional"
-                    value={value}
-                    rows={15}
-                    onChange={e => setValue(e.target.value)}
-                    onBlur={() => onDescriptionChange(value)}
-                    fullWidth
-                    multiline
-                    variant="outlined"
-                    margin="dense"
-                />
-            }
+            content={<MarkdownInput defaultValue={description} onChange={onDescriptionChange} />}
         />
     )
 }
