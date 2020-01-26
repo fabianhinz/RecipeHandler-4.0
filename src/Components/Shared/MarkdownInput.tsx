@@ -22,7 +22,7 @@ import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough'
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
 import TextFormatIcon from '@material-ui/icons/TextFormat'
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 const StyledToggleButtonGroup = withStyles(theme => ({
     grouped: {
@@ -99,15 +99,20 @@ type Text = 'bold' | 'italic' | 'strikethrough'
 type Format = Text | List | Heading
 
 interface HeadingToggle {
-    format: Heading
-    text: string
+    heading: Heading
+    label: string
+}
+
+interface MarkdownSelection {
+    value: string | undefined
+    isFocused: boolean
 }
 
 const HEADINGS: HeadingToggle[] = [
-    { format: 'h1', text: 'Überschrift 1' },
-    { format: 'h2', text: 'Überschrift 2' },
-    { format: 'h3', text: 'Überschrift 3' },
-    { format: 'h4', text: 'Überschrift 4' },
+    { heading: 'h1', label: 'Überschrift 1' },
+    { heading: 'h2', label: 'Überschrift 2' },
+    { heading: 'h3', label: 'Überschrift 3' },
+    { heading: 'h4', label: 'Überschrift 4' },
 ]
 
 const MARKDOWN: Record<Format, string> = {
@@ -156,9 +161,18 @@ const popoverOriginProps: Pick<PopoverProps, 'anchorOrigin' | 'transformOrigin'>
     },
 }
 
+const FORMAT_REGEXP = /(?<bold>^\*{2}.*\*{2}$)|(?<italic>^_{1}.*_{1}$)|(?<strikethrough>^~{2}.*~{2}$)|(?<bulletedList>^-\s.*)|(?<numberedList>^\d{1,}.\s.*)|(?<h1>^#\s.*)|(?<h2>^#{2}\s.*)|(?<h3>^#{3}\s.*)|(?<h4>^#{4}\s.*)/
+
 const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const [value, setValue] = useState(defaultValue)
     const [formattingDisabled, setFormattingDisabled] = useState(false)
+
+    const [currentFormat, setCurrentFormat] = useState<Format[]>([])
+    const [currentSelection, setCurrentSelection] = useState<MarkdownSelection>({
+        value: '',
+        isFocused: false,
+    })
+
     const inputRef = useRef<any>(null)
 
     const [headingAnchorEl, setHeadingAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -166,6 +180,30 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
 
     const classes = useStyles()
     const theme = useTheme()
+
+    useEffect(() => {
+        const handleSelectionChange = () => {
+            if (!currentSelection.isFocused) return
+            setCurrentSelection(prev => ({ ...prev, value: document.getSelection()?.toString() }))
+        }
+        document.addEventListener('selectionchange', handleSelectionChange)
+        return () => document.removeEventListener('selectionchange', handleSelectionChange)
+    }, [currentSelection.isFocused])
+
+    useEffect(() => {
+        if (!currentSelection.value || !currentSelection.isFocused) return setCurrentFormat([])
+
+        const newFormat: Format[] = []
+        for (const { groups } of currentSelection.value.matchAll(FORMAT_REGEXP)) {
+            if (groups)
+                newFormat.push(
+                    ...(Object.keys(groups)
+                        .map(group => (groups[group] !== undefined ? group : null))
+                        .filter(Boolean) as Format[])
+                )
+        }
+        setCurrentFormat(newFormat)
+    }, [currentSelection.isFocused, currentSelection.value])
 
     // ! ToDo handle links
     const handleTogglesChange = (type: 'text' | 'list' | 'heading' | 'emoji') => (
@@ -251,12 +289,17 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     }
 
     return (
-        <div onBlur={() => onChange(value)}>
+        <div
+            onBlur={() => {
+                onChange(value)
+                setCurrentSelection({ value: '', isFocused: false })
+            }}
+            onFocus={() => setCurrentSelection({ value: '', isFocused: true })}>
             <div className={classes.paper}>
                 <StyledToggleButtonGroup
-                    exclusive
                     size="small"
-                    value=""
+                    value={currentFormat}
+                    exclusive
                     onChange={handleTogglesChange('text')}>
                     <ToggleButton value="bold">
                         <FormatBoldIcon />
@@ -272,8 +315,8 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 <Divider className={classes.divider} orientation="vertical" />
 
                 <StyledToggleButtonGroup
+                    value={currentFormat}
                     exclusive
-                    value=""
                     size="small"
                     onChange={handleTogglesChange('list')}>
                     <ToggleButton value="bulletedList">
@@ -286,7 +329,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
 
                 <Divider className={classes.divider} orientation="vertical" />
 
-                <StyledToggleButtonGroup size="small" value="">
+                <StyledToggleButtonGroup size="small">
                     <ToggleButton
                         onClick={e => setHeadingAnchorEl(e.currentTarget)}
                         value="textFormat">
@@ -325,12 +368,15 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 onClose={() => setHeadingAnchorEl(null)}
                 {...popoverOriginProps}>
                 <List>
-                    {HEADINGS.map(({ format, text }) => (
+                    {HEADINGS.map(({ heading, label }) => (
                         <ListItem
-                            key={format}
+                            key={heading}
                             button
-                            onClick={() => handleTogglesChange('heading')({} as any, format)}>
-                            <ListItemText primary={<div className={classes[format]}>{text}</div>} />
+                            selected={currentFormat.some(format => format === heading)}
+                            onClick={() => handleTogglesChange('heading')({} as any, heading)}>
+                            <ListItemText
+                                primary={<div className={classes[heading]}>{label}</div>}
+                            />
                         </ListItem>
                     ))}
                 </List>
