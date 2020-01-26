@@ -1,13 +1,15 @@
 import {
     createStyles,
     Divider,
+    Grid,
+    IconButton,
     List,
     ListItem,
     ListItemText,
     makeStyles,
-    Paper,
     Popover,
     TextField,
+    useTheme,
     withStyles,
 } from '@material-ui/core'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
@@ -16,9 +18,10 @@ import FormatItalicIcon from '@material-ui/icons/FormatItalic'
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted'
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
 import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough'
+import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
 import TextFormatIcon from '@material-ui/icons/TextFormat'
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 const StyledToggleButtonGroup = withStyles(theme => ({
     grouped: {
@@ -41,7 +44,7 @@ const useStyles = makeStyles(theme =>
     createStyles({
         paper: {
             display: 'flex',
-            flexWrap: 'wrap',
+            overflowX: 'auto',
         },
         divider: {
             alignSelf: 'stretch',
@@ -50,6 +53,36 @@ const useStyles = makeStyles(theme =>
         },
         popoverPaper: {
             padding: theme.spacing(1),
+            [theme.breakpoints.only('xs')]: {
+                maxWidth: 150,
+            },
+            [theme.breakpoints.up('sm')]: {
+                maxWidth: 300,
+            },
+            maxHeight: 300,
+            overflowY: 'auto',
+        },
+        textField: {
+            marginTop: theme.spacing(2),
+        },
+        emojiLabel: {
+            width: theme.spacing(4),
+            heigth: theme.spacing(4),
+        },
+        iconButtonRoot: {
+            padding: theme.spacing(1),
+        },
+        h1: {
+            fontSize: 32,
+        },
+        h2: {
+            fontSize: 24,
+        },
+        h3: {
+            fontSize: 18.72,
+        },
+        h4: {
+            fontSize: 16,
         },
     })
 )
@@ -65,36 +98,94 @@ type Text = 'bold' | 'italic' | 'strikethrough'
 type Format = Text | List | Heading
 
 const HEADINGS: Heading[] = ['h1', 'h2', 'h3', 'h4']
+const EMOJIS = [
+    '😀',
+    '😂',
+    '😅',
+    '😛',
+    '🤑',
+    '🤓',
+    '🤖',
+    '🦁',
+    '🦄',
+    '🐭',
+    '✌',
+    '👌',
+    '👏',
+    '✍',
+    '🖖',
+    '🍽',
+    '🍻',
+    '🍸',
+    '🍪',
+    '🎂',
+]
+
+const newFormatOrEmpty = (newFormat: any) => (previousFormat: any) =>
+    newFormat !== previousFormat ? newFormat : ''
 
 const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const [value, setValue] = useState(defaultValue)
+    const inputRef = useRef<any>(null)
+
+    const [textFormat, setTextFormat] = useState<Text | null>(null)
     const [listFormat, setListFormat] = useState<List | null>(null)
-    const [selection, setSelection] = useState(0)
+    const [headingFormat, setHeadingFormat] = useState<Heading | null>(null)
+
     const [headingAnchorEl, setHeadingAnchorEl] = useState<HTMLButtonElement | null>(null)
+    const [emoticonAnchorEl, setEmoticonAnchorEl] = useState<HTMLButtonElement | null>(null)
 
     const classes = useStyles()
+    const theme = useTheme()
 
-    const handleFormat = (_event: React.MouseEvent<HTMLElement>, newFormat: Format) => {
-        console.log(newFormat)
-        const selectedText = window.getSelection()?.toString()
-        if (selectedText) console.log(selectedText)
-
-        if (newFormat === 'bulletedList' || newFormat === 'numberedList')
-            setListFormat(prev => (prev === newFormat ? null : newFormat))
+    const handleTextFieldChange = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        setValue(event.target.value)
     }
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setHeadingAnchorEl(event.currentTarget)
-    }
-
-    const handleClose = () => {
-        setHeadingAnchorEl(null)
+    const handleTogglesChange = (type: 'text' | 'list' | 'heading' | 'emoji') => (
+        _event: React.MouseEvent<HTMLElement, MouseEvent>,
+        format: any
+    ) => {
+        switch (type) {
+            case 'text': {
+                setTextFormat(newFormatOrEmpty(format))
+                break
+            }
+            case 'list': {
+                setListFormat(newFormatOrEmpty(format))
+                break
+            }
+            case 'heading': {
+                setHeadingAnchorEl(null)
+                setHeadingFormat(newFormatOrEmpty(format))
+                break
+            }
+            case 'emoji': {
+                setEmoticonAnchorEl(null)
+                setValue(prev => `${prev}${format}`)
+                break
+            }
+        }
+        // ? give the ui some time to breath -_-
+        setTimeout(() => {
+            inputRef.current?.focus()
+            inputRef.current?.setSelectionRange(
+                inputRef.current?.value.length,
+                inputRef.current?.value.length
+            )
+        }, theme.transitions.duration.enteringScreen)
     }
 
     return (
         <div onBlur={() => onChange(value)}>
-            <Paper elevation={0} className={classes.paper}>
-                <StyledToggleButtonGroup exclusive size="small" value="" onChange={handleFormat}>
+            <div className={classes.paper}>
+                <StyledToggleButtonGroup
+                    exclusive
+                    size="small"
+                    value={textFormat}
+                    onChange={handleTogglesChange('text')}>
                     <ToggleButton value="bold">
                         <FormatBoldIcon />
                     </ToggleButton>
@@ -112,7 +203,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                     exclusive
                     value={listFormat}
                     size="small"
-                    onChange={handleFormat}>
+                    onChange={handleTogglesChange('list')}>
                     <ToggleButton value="bulletedList">
                         <FormatListBulletedIcon />
                     </ToggleButton>
@@ -122,47 +213,44 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 </StyledToggleButtonGroup>
 
                 <Divider className={classes.divider} orientation="vertical" />
+
                 <StyledToggleButtonGroup size="small" value="">
                     <ToggleButton
-                        aria-describedby="simple-popover"
-                        onClick={handleClick}
-                        value="color">
+                        onClick={e => setHeadingAnchorEl(e.currentTarget)}
+                        value="textFormat">
                         <TextFormatIcon />
                         <ArrowDropDownIcon />
                     </ToggleButton>
                 </StyledToggleButtonGroup>
-            </Paper>
+
+                <Divider className={classes.divider} orientation="vertical" />
+
+                <StyledToggleButtonGroup size="small" value="">
+                    <ToggleButton
+                        onClick={e => setEmoticonAnchorEl(e.currentTarget)}
+                        value="emoticonFormat">
+                        <InsertEmoticonIcon />
+                        <ArrowDropDownIcon />
+                    </ToggleButton>
+                </StyledToggleButtonGroup>
+            </div>
 
             <TextField
-                label="optional"
+                inputRef={inputRef}
                 value={value}
                 rows={15}
-                onChange={e => setValue(e.target.value)}
-                onKeyUp={e => {
-                    if (e.key === 'Enter' && listFormat === 'bulletedList') {
-                        const splittedInput = value.split('\n')
-                        const lastInput = splittedInput[splittedInput.length - 2]
-
-                        if (lastInput === '- ') {
-                            splittedInput.splice(-2, 2)
-                            splittedInput.push('')
-                            setValue(splittedInput.join('\n'))
-                        } else if (lastInput !== '') setValue(prev => `${prev}- `)
-                    }
-                }}
-                onBlur={e => setSelection(e.target.selectionStart as number)}
+                className={classes.textField}
+                onChange={handleTextFieldChange}
                 fullWidth
                 multiline
                 variant="outlined"
-                margin="dense"
             />
 
             <Popover
                 classes={{ paper: classes.popoverPaper }}
-                id={headingAnchorEl ? 'simple-popover' : undefined}
                 open={Boolean(headingAnchorEl)}
                 anchorEl={headingAnchorEl}
-                onClose={handleClose}
+                onClose={() => setHeadingAnchorEl(null)}
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'left',
@@ -176,14 +264,43 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                         <ListItem
                             key={heading}
                             button
-                            onClick={() => {
-                                setHeadingAnchorEl(null)
-                                handleFormat({} as any, heading)
-                            }}>
-                            <ListItemText primary={heading} />
+                            selected={headingFormat === heading}
+                            onClick={() => handleTogglesChange('heading')({} as any, heading)}>
+                            <ListItemText
+                                primary={<div className={classes[heading]}>{heading}</div>}
+                            />
                         </ListItem>
                     ))}
                 </List>
+            </Popover>
+
+            <Popover
+                classes={{ paper: classes.popoverPaper }}
+                open={Boolean(emoticonAnchorEl)}
+                anchorEl={emoticonAnchorEl}
+                onClose={() => setEmoticonAnchorEl(null)}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}>
+                <Grid justify="space-evenly" container spacing={1}>
+                    {EMOJIS.map(emoji => (
+                        <Grid item key={emoji}>
+                            <IconButton
+                                onClick={() => handleTogglesChange('emoji')({} as any, emoji)}
+                                classes={{
+                                    label: classes.emojiLabel,
+                                    root: classes.iconButtonRoot,
+                                }}>
+                                {emoji}
+                            </IconButton>
+                        </Grid>
+                    ))}
+                </Grid>
             </Popover>
         </div>
     )
