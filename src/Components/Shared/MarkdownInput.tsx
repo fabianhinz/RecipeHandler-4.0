@@ -97,7 +97,17 @@ type List = 'bulletedList' | 'numberedList'
 type Text = 'bold' | 'italic' | 'strikethrough'
 type Format = Text | List | Heading
 
-const HEADINGS: Heading[] = ['h1', 'h2', 'h3', 'h4']
+interface HeadingToggle {
+    format: Heading
+    text: string
+}
+
+const HEADINGS: HeadingToggle[] = [
+    { format: 'h1', text: 'Überschrift 1' },
+    { format: 'h2', text: 'Überschrift 2' },
+    { format: 'h3', text: 'Überschrift 3' },
+    { format: 'h4', text: 'Überschrift 4' },
+]
 const EMOJIS = [
     '😀',
     '😂',
@@ -105,10 +115,10 @@ const EMOJIS = [
     '😛',
     '🤑',
     '🤓',
-    '🤖',
-    '🦁',
-    '🦄',
-    '🐭',
+    '⏲',
+    '🚫',
+    '❌',
+    '✅',
     '✌',
     '👌',
     '👏',
@@ -121,16 +131,21 @@ const EMOJIS = [
     '🎂',
 ]
 
-const newFormatOrEmpty = (newFormat: any) => (previousFormat: any) =>
-    newFormat !== previousFormat ? newFormat : ''
+const MARKDOWN: Record<Format, string> = {
+    bold: '**',
+    italic: '*',
+    strikethrough: '~~',
+    bulletedList: '- ',
+    numberedList: '1. ',
+    h1: '#',
+    h2: '##',
+    h3: '###',
+    h4: '####',
+}
 
 const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const [value, setValue] = useState(defaultValue)
     const inputRef = useRef<any>(null)
-
-    const [textFormat, setTextFormat] = useState<Text | null>(null)
-    const [listFormat, setListFormat] = useState<List | null>(null)
-    const [headingFormat, setHeadingFormat] = useState<Heading | null>(null)
 
     const [headingAnchorEl, setHeadingAnchorEl] = useState<HTMLButtonElement | null>(null)
     const [emoticonAnchorEl, setEmoticonAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -143,28 +158,40 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     ) => {
         setValue(event.target.value)
     }
-
+    // ! ToDo handle links
     const handleTogglesChange = (type: 'text' | 'list' | 'heading' | 'emoji') => (
         _event: React.MouseEvent<HTMLElement, MouseEvent>,
-        format: any
+        formatOrEmoji: Format
     ) => {
+        const selectionStart = inputRef.current?.selectionStart
+        const selectionEnd = inputRef.current?.selectionEnd
+
+        const selection = value.substring(selectionStart, selectionEnd)
+        const beforeSelection = value.substring(0, selectionStart)
+        const afterSelection = value.substring(selectionEnd, value.length)
+
+        const markdownStyle = MARKDOWN[formatOrEmoji]
+        const numberOfModifications = markdownStyle.length
+
         switch (type) {
             case 'text': {
-                setTextFormat(newFormatOrEmpty(format))
+                setValue(
+                    beforeSelection + markdownStyle + selection + markdownStyle + afterSelection
+                )
                 break
             }
             case 'list': {
-                setListFormat(newFormatOrEmpty(format))
+                setValue(value.replace(selection, MARKDOWN[formatOrEmoji] + selection))
                 break
             }
             case 'heading': {
+                setValue(value.replace(selection, MARKDOWN[formatOrEmoji] + selection))
                 setHeadingAnchorEl(null)
-                setHeadingFormat(newFormatOrEmpty(format))
                 break
             }
             case 'emoji': {
                 setEmoticonAnchorEl(null)
-                setValue(prev => `${prev}${format}`)
+                setValue(prev => `${prev}${formatOrEmoji}`)
                 break
             }
         }
@@ -172,8 +199,8 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
         setTimeout(() => {
             inputRef.current?.focus()
             inputRef.current?.setSelectionRange(
-                inputRef.current?.value.length,
-                inputRef.current?.value.length
+                selectionStart + numberOfModifications,
+                selectionEnd + numberOfModifications
             )
         }, theme.transitions.duration.enteringScreen)
     }
@@ -184,7 +211,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 <StyledToggleButtonGroup
                     exclusive
                     size="small"
-                    value={textFormat}
+                    value=""
                     onChange={handleTogglesChange('text')}>
                     <ToggleButton value="bold">
                         <FormatBoldIcon />
@@ -192,7 +219,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                     <ToggleButton value="italic">
                         <FormatItalicIcon />
                     </ToggleButton>
-                    <ToggleButton value="underlined">
+                    <ToggleButton value="strikethrough">
                         <FormatStrikethroughIcon />
                     </ToggleButton>
                 </StyledToggleButtonGroup>
@@ -201,7 +228,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
 
                 <StyledToggleButtonGroup
                     exclusive
-                    value={listFormat}
+                    value=""
                     size="small"
                     onChange={handleTogglesChange('list')}>
                     <ToggleButton value="bulletedList">
@@ -260,15 +287,12 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                     horizontal: 'left',
                 }}>
                 <List>
-                    {HEADINGS.map(heading => (
+                    {HEADINGS.map(({ format, text }) => (
                         <ListItem
-                            key={heading}
+                            key={format}
                             button
-                            selected={headingFormat === heading}
-                            onClick={() => handleTogglesChange('heading')({} as any, heading)}>
-                            <ListItemText
-                                primary={<div className={classes[heading]}>{heading}</div>}
-                            />
+                            onClick={() => handleTogglesChange('heading')({} as any, format)}>
+                            <ListItemText primary={<div className={classes[format]}>{text}</div>} />
                         </ListItem>
                     ))}
                 </List>
@@ -291,7 +315,9 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                     {EMOJIS.map(emoji => (
                         <Grid item key={emoji}>
                             <IconButton
-                                onClick={() => handleTogglesChange('emoji')({} as any, emoji)}
+                                onClick={() =>
+                                    handleTogglesChange('emoji')({} as any, emoji as any)
+                                }
                                 classes={{
                                     label: classes.emojiLabel,
                                     root: classes.iconButtonRoot,
