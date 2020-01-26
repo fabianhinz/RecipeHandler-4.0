@@ -22,6 +22,7 @@ import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough'
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
 import TextFormatIcon from '@material-ui/icons/TextFormat'
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
+import clsx from 'clsx'
 import React, { useEffect, useRef, useState } from 'react'
 
 const StyledToggleButtonGroup = withStyles(theme => ({
@@ -73,6 +74,11 @@ const useStyles = makeStyles(theme =>
         iconButtonRoot: {
             padding: theme.spacing(1),
         },
+        hRoot: {
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+        },
         h1: {
             fontSize: 32,
         },
@@ -101,11 +107,6 @@ type Format = Text | List | Heading
 interface HeadingToggle {
     heading: Heading
     label: string
-}
-
-interface MarkdownSelection {
-    value: string | undefined
-    isFocused: boolean
 }
 
 const HEADINGS: HeadingToggle[] = [
@@ -167,11 +168,8 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const [value, setValue] = useState(defaultValue)
     const [formattingDisabled, setFormattingDisabled] = useState(false)
 
-    const [currentFormat, setCurrentFormat] = useState<Format[]>([])
-    const [currentSelection, setCurrentSelection] = useState<MarkdownSelection>({
-        value: '',
-        isFocused: false,
-    })
+    const [formats, setFormats] = useState<Format[]>([])
+    const [markdownSelection, setMarkdownSelection] = useState<string | undefined>(undefined)
 
     const inputRef = useRef<any>(null)
 
@@ -182,19 +180,18 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const theme = useTheme()
 
     useEffect(() => {
-        const handleSelectionChange = () => {
-            if (!currentSelection.isFocused) return
-            setCurrentSelection(prev => ({ ...prev, value: document.getSelection()?.toString() }))
-        }
+        const handleSelectionChange = () =>
+            setMarkdownSelection(document.getSelection()?.toString())
+
         document.addEventListener('selectionchange', handleSelectionChange)
         return () => document.removeEventListener('selectionchange', handleSelectionChange)
-    }, [currentSelection.isFocused])
+    }, [markdownSelection])
 
     useEffect(() => {
-        if (!currentSelection.value || !currentSelection.isFocused) return setCurrentFormat([])
+        if (!markdownSelection || markdownSelection.length === 0) return setFormats([])
 
         const newFormat: Format[] = []
-        for (const { groups } of currentSelection.value.matchAll(FORMAT_REGEXP)) {
+        for (const { groups } of markdownSelection.matchAll(FORMAT_REGEXP)) {
             if (groups)
                 newFormat.push(
                     ...(Object.keys(groups)
@@ -202,8 +199,8 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                         .filter(Boolean) as Format[])
                 )
         }
-        setCurrentFormat(newFormat)
-    }, [currentSelection.isFocused, currentSelection.value])
+        setFormats(newFormat)
+    }, [markdownSelection])
 
     // ! ToDo handle links
     const handleTogglesChange = (type: 'text' | 'list' | 'heading' | 'emoji') => (
@@ -216,7 +213,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
         let selectionStart = inputRef.current?.selectionStart
         let selectionEnd = inputRef.current?.selectionEnd
 
-        const selection = value.substring(selectionStart, selectionEnd)
+        let selection = value.substring(selectionStart, selectionEnd)
         const beforeSelection = value.substring(0, selectionStart)
         const afterSelection = value.substring(selectionEnd, value.length)
 
@@ -224,19 +221,20 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
 
         switch (type) {
             case 'text': {
-                const alreadyStyled = beforeSelection.slice(-markdownStyle.length) === markdownStyle
+                const alreadyStyled = selection.slice(0, markdownStyle.length) === markdownStyle
 
                 if (alreadyStyled) {
-                    selectionStart -= markdownStyle.length
-                    selectionEnd -= markdownStyle.length
+                    selectionEnd -= markdownStyle.length * 2
                     setValue(
-                        beforeSelection.slice(0, beforeSelection.length - markdownStyle.length) +
-                            selection +
-                            afterSelection.slice(markdownStyle.length)
+                        beforeSelection +
+                            selection.slice(
+                                markdownStyle.length,
+                                selection.length - markdownStyle.length
+                            ) +
+                            afterSelection
                     )
                 } else {
-                    selectionStart += markdownStyle.length
-                    selectionEnd += markdownStyle.length
+                    selectionEnd += markdownStyle.length * 2
                     setValue(
                         beforeSelection + markdownStyle + selection + markdownStyle + afterSelection
                     )
@@ -273,8 +271,10 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 break
             }
             case 'emoji': {
-                ++selectionStart
-                ++selectionEnd
+                if (selectionStart === selectionEnd) {
+                    ++selectionStart
+                    ++selectionEnd
+                }
                 setEmoticonAnchorEl(null)
                 setValue(prev => `${prev}${formatOrEmoji}`)
                 break
@@ -289,16 +289,11 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     }
 
     return (
-        <div
-            onBlur={() => {
-                onChange(value)
-                setCurrentSelection({ value: '', isFocused: false })
-            }}
-            onFocus={() => setCurrentSelection({ value: '', isFocused: true })}>
+        <div onBlur={() => onChange(value)}>
             <div className={classes.paper}>
                 <StyledToggleButtonGroup
                     size="small"
-                    value={currentFormat}
+                    value={formats}
                     exclusive
                     onChange={handleTogglesChange('text')}>
                     <ToggleButton value="bold">
@@ -315,7 +310,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 <Divider className={classes.divider} orientation="vertical" />
 
                 <StyledToggleButtonGroup
-                    value={currentFormat}
+                    value={formats}
                     exclusive
                     size="small"
                     onChange={handleTogglesChange('list')}>
@@ -329,7 +324,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
 
                 <Divider className={classes.divider} orientation="vertical" />
 
-                <StyledToggleButtonGroup size="small">
+                <StyledToggleButtonGroup size="small" value={formats}>
                     <ToggleButton
                         onClick={e => setHeadingAnchorEl(e.currentTarget)}
                         value="textFormat">
@@ -340,7 +335,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
 
                 <Divider className={classes.divider} orientation="vertical" />
 
-                <StyledToggleButtonGroup size="small" value="">
+                <StyledToggleButtonGroup size="small">
                     <ToggleButton
                         onClick={e => setEmoticonAnchorEl(e.currentTarget)}
                         value="emoticonFormat">
@@ -355,7 +350,21 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 value={value}
                 rows={15}
                 className={classes.textField}
-                onChange={e => setValue(e.target.value)}
+                onChange={e => {
+                    let { value: changeValue } = e.target
+                    const lines = changeValue.split('\n')
+                    const currentLine = lines[lines.length - 1]
+                    const previousLine = lines[lines.length - 2]
+
+                    if (currentLine.length === 0) {
+                        if (/^-\s\w{1,}/.test(previousLine)) {
+                            changeValue += MARKDOWN.bulletedList
+                        } else if (/^\d{1,}.\s\w{1,}/.test(previousLine)) {
+                            changeValue += MARKDOWN.numberedList
+                        }
+                    }
+                    setValue(changeValue)
+                }}
                 fullWidth
                 multiline
                 variant="outlined"
@@ -372,10 +381,14 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                         <ListItem
                             key={heading}
                             button
-                            selected={currentFormat.some(format => format === heading)}
+                            selected={formats.some(format => format === heading)}
                             onClick={() => handleTogglesChange('heading')({} as any, heading)}>
                             <ListItemText
-                                primary={<div className={classes[heading]}>{label}</div>}
+                                primary={
+                                    <div className={clsx(classes.hRoot, classes[heading])}>
+                                        {label}
+                                    </div>
+                                }
                             />
                         </ListItem>
                     ))}
