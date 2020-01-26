@@ -1,4 +1,5 @@
 import { PaletteType } from '@material-ui/core'
+import { firestore } from 'firebase'
 import { RouteComponentProps } from 'react-router'
 
 export interface Attachment {
@@ -90,10 +91,9 @@ export type User = {
 }
 
 export interface Pullrequest {
-    closedAt: string
-    closedAtFormated: Date | undefined
+    closedAt: firestore.Timestamp
     creator: string
-    issueNumbers: Array<string> | undefined
+    issueNumbers: string[] | undefined
     shortSha: string
     title: string
 }
@@ -104,7 +104,7 @@ export interface Label {
 }
 
 export interface Issue {
-    labels: Array<string> | Array<Label>
+    labels: Label[]
     number: number
     subject: string
     title: string

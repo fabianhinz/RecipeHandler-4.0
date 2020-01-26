@@ -11,8 +11,6 @@ import {
     IconButton,
     List,
     ListItem,
-    ListItemSecondaryAction,
-    ListItemText,
     makeStyles,
     Typography,
 } from '@material-ui/core'
@@ -26,7 +24,7 @@ import { FirebaseService } from '../../../services/firebase'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { SlideUp } from '../../Shared/Transitions'
 
-const useStyles = makeStyles(theme =>
+const useStyles = makeStyles(() =>
     createStyles({
         expansionPanelHeaderVersion: {
             flexBasis: '20%',
@@ -37,7 +35,11 @@ const useStyles = makeStyles(theme =>
             flexShrink: 0,
         },
         expansionPanelContentIssues: {
-            flexBasis: '80%',
+            flexBasis: '70%',
+            flexShrink: 0,
+        },
+        expansionPanelContentIssueNumber: {
+            flexBasis: '10%',
             flexShrink: 0,
         },
     })
@@ -49,20 +51,16 @@ const AccountUserChangelog = () => {
     const [issues, setIssues] = useState<Issue[]>([])
     const [openChangelog, setOpenChangelog] = useState(false)
     const classes = useStyles()
+    const [expanded, setExpanded] = useState<string | false>(false)
 
     useEffect(
         () =>
-            FirebaseService.firestore.collection('pullrequests').onSnapshot(querySnapshot =>
-                setPullrequests(
-                    querySnapshot.docs
-                        // TODO timestamp speichern und mit querysyntax filtern
-                        .map(doc => doc.data() as Pullrequest)
-                        .filter(pr => pr.creator !== 'dependabot-preview[bot]')
-                        .sort((a, b) => {
-                            return new Date(b.closedAt).getTime() - new Date(a.closedAt).getTime()
-                        })
-                )
-            ),
+            FirebaseService.firestore
+                .collection('pullrequests')
+                .orderBy('closedAt', 'desc')
+                .onSnapshot(querySnapshot =>
+                    setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
+                ),
         []
     )
 
@@ -88,7 +86,10 @@ const AccountUserChangelog = () => {
         return relatedIssues
     }
 
-    // expansionpanel statt list
+    const handleChange = (pr: string) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+        setExpanded(isExpanded ? pr : false)
+    }
+
     return (
         <>
             <Chip
@@ -106,7 +107,10 @@ const AccountUserChangelog = () => {
                 <DialogTitle>Changelog</DialogTitle>
                 <DialogContent>
                     {pullrequests.map(pr => (
-                        <ExpansionPanel key={pr.shortSha}>
+                        <ExpansionPanel
+                            key={pr.shortSha}
+                            expanded={expanded === pr.shortSha}
+                            onChange={handleChange(pr.shortSha)}>
                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography className={classes.expansionPanelHeaderVersion}>
                                     <Chip
@@ -117,29 +121,36 @@ const AccountUserChangelog = () => {
                                 <Typography className={classes.expansionPanelHeaderTitle}>
                                     {pr.title}
                                 </Typography>
-                                <Typography>
-                                    {new Date(pr.closedAt).toLocaleDateString()}
-                                </Typography>
+                                <Typography>{pr.closedAt.toDate().toLocaleDateString()}</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
                                 <div>
                                     <Typography gutterBottom>{pr.creator}</Typography>
                                     <Typography gutterBottom>
-                                        {new Date(pr.closedAt).toLocaleDateString()}
+                                        {pr.closedAt.toDate().toLocaleDateString()}
                                         {', '}
-                                        {new Date(pr.closedAt).toLocaleTimeString()} Uhr
+                                        {pr.closedAt.toDate().toLocaleTimeString()} Uhr
                                     </Typography>
                                     <List>
                                         {relatingIssues(pr).map(issue => (
                                             <ListItem key={issue.number}>
                                                 <Typography
+                                                    className={
+                                                        classes.expansionPanelContentIssueNumber
+                                                    }>
+                                                    {issue.number}
+                                                </Typography>
+                                                <Typography
                                                     className={classes.expansionPanelContentIssues}>
                                                     {issue.title}
                                                 </Typography>
-                                                <Chip label={issue.labels.join(', ')} />
-                                                {/* {issue.labels.map(label => (
-                                                    <Chip label={label.name ? label.name : label} />
-                                                ))} */}
+                                                {issue.labels.map(label => (
+                                                    <Chip
+                                                        key={issue.number + label.name}
+                                                        label={label.name}
+                                                        color="default"
+                                                    />
+                                                ))}
                                             </ListItem>
                                         ))}
                                     </List>
@@ -147,38 +158,6 @@ const AccountUserChangelog = () => {
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                     ))}
-                    {/* <List>
-                        {pullrequests?.map(pr => (
-                            <ListItem key={pr.shortSha}>
-                                <ListItemSecondaryAction>
-                                    <Chip
-                                        label={pr.shortSha}
-                                        color={pr.shortSha === __VERSION__ ? 'primary' : 'default'}
-                                    />
-                                </ListItemSecondaryAction>
-                                <ListItemText
-                                    primary={pr.title}
-                                    secondary={
-                                        // dachte das ist ne Anwendung für deutschsprachige menschen :D
-                                        // nimm hier einfach die Typography komponente
-                                        <div>
-                                            created by <b>{pr.creator}</b>
-                                            <br />
-                                            merged: {new Date(pr.closedAt).toLocaleDateString()}
-                                            {', '}
-                                            {new Date(pr.closedAt).toLocaleTimeString()} Uhr
-                                            <br /> <br />
-                                            {relatingIssues(pr).map(issue => (
-                                                <div key={issue.number}>
-                                                    <i>- {issue.title}</i>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    }
-                                />
-                            </ListItem>
-                        ))}
-                    </List> */}
                 </DialogContent>
                 <DialogActions>
                     <IconButton onClick={() => setOpenChangelog(false)}>

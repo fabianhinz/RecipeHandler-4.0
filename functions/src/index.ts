@@ -115,7 +115,7 @@ export const handleChangelog = functions.region('europe-west1').https.onRequest(
                     shortSha,
                     title,
                     issueNumbers,
-                    closedAt: closed_at,
+                    closedAt: admin.firestore.Timestamp.fromDate(new Date(closed_at)),
                     creator: user.login,
                 })
         }
