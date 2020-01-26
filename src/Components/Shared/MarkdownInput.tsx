@@ -108,6 +108,19 @@ const HEADINGS: HeadingToggle[] = [
     { format: 'h3', text: 'Überschrift 3' },
     { format: 'h4', text: 'Überschrift 4' },
 ]
+
+const MARKDOWN: Record<Format, string> = {
+    bold: '**',
+    italic: '*',
+    strikethrough: '~~',
+    bulletedList: '- ',
+    numberedList: '1. ',
+    h1: '# ',
+    h2: '## ',
+    h3: '### ',
+    h4: '#### ',
+}
+
 const EMOJIS = [
     '😀',
     '😂',
@@ -131,18 +144,6 @@ const EMOJIS = [
     '🎂',
 ]
 
-const MARKDOWN: Record<Format, string> = {
-    bold: '**',
-    italic: '*',
-    strikethrough: '~~',
-    bulletedList: '- ',
-    numberedList: '1. ',
-    h1: '#',
-    h2: '##',
-    h3: '###',
-    h4: '####',
-}
-
 const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const [value, setValue] = useState(defaultValue)
     const inputRef = useRef<any>(null)
@@ -153,43 +154,47 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const classes = useStyles()
     const theme = useTheme()
 
-    const handleTextFieldChange = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        setValue(event.target.value)
-    }
     // ! ToDo handle links
     const handleTogglesChange = (type: 'text' | 'list' | 'heading' | 'emoji') => (
         _event: React.MouseEvent<HTMLElement, MouseEvent>,
         formatOrEmoji: Format
     ) => {
-        const selectionStart = inputRef.current?.selectionStart
-        const selectionEnd = inputRef.current?.selectionEnd
+        let selectionStart = inputRef.current?.selectionStart
+        let selectionEnd = inputRef.current?.selectionEnd
 
         const selection = value.substring(selectionStart, selectionEnd)
         const beforeSelection = value.substring(0, selectionStart)
         const afterSelection = value.substring(selectionEnd, value.length)
 
         const markdownStyle = MARKDOWN[formatOrEmoji]
-        const numberOfModifications = markdownStyle.length
 
         switch (type) {
             case 'text': {
+                selectionStart += markdownStyle.length
+                selectionEnd += markdownStyle.length
                 setValue(
                     beforeSelection + markdownStyle + selection + markdownStyle + afterSelection
                 )
                 break
             }
-            case 'list': {
-                setValue(value.replace(selection, MARKDOWN[formatOrEmoji] + selection))
-                break
-            }
+            case 'list':
             case 'heading': {
-                setValue(value.replace(selection, MARKDOWN[formatOrEmoji] + selection))
+                const selectionParts = selection.split('\n')
+                selectionEnd += selectionParts.length * markdownStyle.length
+                setValue(
+                    beforeSelection +
+                        selectionParts
+                            .map(selection => (selection = markdownStyle + selection))
+                            .join('\n') +
+                        afterSelection
+                )
                 setHeadingAnchorEl(null)
+
                 break
             }
             case 'emoji': {
+                ++selectionStart
+                ++selectionEnd
                 setEmoticonAnchorEl(null)
                 setValue(prev => `${prev}${formatOrEmoji}`)
                 break
@@ -198,10 +203,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
         // ? give the ui some time to breath -_-
         setTimeout(() => {
             inputRef.current?.focus()
-            inputRef.current?.setSelectionRange(
-                selectionStart + numberOfModifications,
-                selectionEnd + numberOfModifications
-            )
+            inputRef.current?.setSelectionRange(selectionStart, selectionEnd)
         }, theme.transitions.duration.enteringScreen)
     }
 
@@ -267,7 +269,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 value={value}
                 rows={15}
                 className={classes.textField}
-                onChange={handleTextFieldChange}
+                onChange={e => setValue(e.target.value)}
                 fullWidth
                 multiline
                 variant="outlined"
