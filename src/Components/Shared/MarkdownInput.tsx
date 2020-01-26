@@ -8,6 +8,7 @@ import {
     ListItemText,
     makeStyles,
     Popover,
+    PopoverProps,
     TextField,
     useTheme,
     withStyles,
@@ -111,7 +112,7 @@ const HEADINGS: HeadingToggle[] = [
 
 const MARKDOWN: Record<Format, string> = {
     bold: '**',
-    italic: '*',
+    italic: '_',
     strikethrough: '~~',
     bulletedList: '- ',
     numberedList: '1. ',
@@ -144,8 +145,20 @@ const EMOJIS = [
     '🎂',
 ]
 
+const popoverOriginProps: Pick<PopoverProps, 'anchorOrigin' | 'transformOrigin'> = {
+    anchorOrigin: {
+        vertical: 'bottom',
+        horizontal: 'left',
+    },
+    transformOrigin: {
+        vertical: 'top',
+        horizontal: 'left',
+    },
+}
+
 const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const [value, setValue] = useState(defaultValue)
+    const [formattingDisabled, setFormattingDisabled] = useState(false)
     const inputRef = useRef<any>(null)
 
     const [headingAnchorEl, setHeadingAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -159,6 +172,9 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
         _event: React.MouseEvent<HTMLElement, MouseEvent>,
         formatOrEmoji: Format
     ) => {
+        if (formattingDisabled) return
+        setFormattingDisabled(true)
+
         let selectionStart = inputRef.current?.selectionStart
         let selectionEnd = inputRef.current?.selectionEnd
 
@@ -170,26 +186,52 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
 
         switch (type) {
             case 'text': {
-                selectionStart += markdownStyle.length
-                selectionEnd += markdownStyle.length
-                setValue(
-                    beforeSelection + markdownStyle + selection + markdownStyle + afterSelection
-                )
+                const alreadyStyled = beforeSelection.slice(-markdownStyle.length) === markdownStyle
+
+                if (alreadyStyled) {
+                    selectionStart -= markdownStyle.length
+                    selectionEnd -= markdownStyle.length
+                    setValue(
+                        beforeSelection.slice(0, beforeSelection.length - markdownStyle.length) +
+                            selection +
+                            afterSelection.slice(markdownStyle.length)
+                    )
+                } else {
+                    selectionStart += markdownStyle.length
+                    selectionEnd += markdownStyle.length
+                    setValue(
+                        beforeSelection + markdownStyle + selection + markdownStyle + afterSelection
+                    )
+                }
                 break
             }
             case 'list':
             case 'heading': {
+                const alreadyStyled = selection.slice(0, markdownStyle.length) === markdownStyle
                 const selectionParts = selection.split('\n')
-                selectionEnd += selectionParts.length * markdownStyle.length
-                setValue(
-                    beforeSelection +
-                        selectionParts
-                            .map(selection => (selection = markdownStyle + selection))
-                            .join('\n') +
-                        afterSelection
-                )
-                setHeadingAnchorEl(null)
 
+                if (alreadyStyled) {
+                    selectionEnd -= selectionParts.length * markdownStyle.length
+                    setValue(
+                        beforeSelection +
+                            selectionParts
+                                .map(
+                                    selection => (selection = selection.replace(markdownStyle, ''))
+                                )
+                                .join('\n') +
+                            afterSelection
+                    )
+                } else {
+                    selectionEnd += selectionParts.length * markdownStyle.length
+                    setValue(
+                        beforeSelection +
+                            selectionParts
+                                .map(selection => (selection = markdownStyle + selection))
+                                .join('\n') +
+                            afterSelection
+                    )
+                }
+                setHeadingAnchorEl(null)
                 break
             }
             case 'emoji': {
@@ -204,6 +246,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
         setTimeout(() => {
             inputRef.current?.focus()
             inputRef.current?.setSelectionRange(selectionStart, selectionEnd)
+            setFormattingDisabled(false)
         }, theme.transitions.duration.enteringScreen)
     }
 
@@ -280,14 +323,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 open={Boolean(headingAnchorEl)}
                 anchorEl={headingAnchorEl}
                 onClose={() => setHeadingAnchorEl(null)}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}>
+                {...popoverOriginProps}>
                 <List>
                     {HEADINGS.map(({ format, text }) => (
                         <ListItem
@@ -305,14 +341,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 open={Boolean(emoticonAnchorEl)}
                 anchorEl={emoticonAnchorEl}
                 onClose={() => setEmoticonAnchorEl(null)}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}>
+                {...popoverOriginProps}>
                 <Grid justify="space-evenly" container spacing={1}>
                     {EMOJIS.map(emoji => (
                         <Grid item key={emoji}>
