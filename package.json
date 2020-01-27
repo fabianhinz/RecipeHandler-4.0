@@ -21,7 +21,7 @@
 		"clsx": "^1.0.4",
 		"eslint-config-prettier": "^6.9.0",
 		"eslint-plugin-prettier": "^3.1.2",
-		"eslint-plugin-simple-import-sort": "^5.0.0",
+		"eslint-plugin-simple-import-sort": "^5.0.1",
 		"firebase": "^7.7.0",
 		"mdi-material-ui": "^6.11.0",
 		"notistack": "^0.9.7",
