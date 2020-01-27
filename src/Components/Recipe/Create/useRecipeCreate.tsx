@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import { AttachmentMetadata, Recipe } from '../../../model/model'
 import { isData } from '../../../model/modelUtil'
+import configService from '../../../services/configService'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
@@ -140,6 +141,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                 variant: 'success',
             })
             setChangesSaved(true)
+            configService.selectedCategories = new Map()
             history.push(PATHS.home)
         } catch (e) {
             enqueueSnackbar('fehlende Berechtigungen', { variant: 'error' })

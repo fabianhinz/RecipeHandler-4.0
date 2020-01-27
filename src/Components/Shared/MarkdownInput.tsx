@@ -166,6 +166,7 @@ const FORMAT_REGEXP = /(?<bold>^\*{2}.*\*{2}$)|(?<italic>^_{1}.*_{1}$)|(?<strike
 
 const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const [value, setValue] = useState(defaultValue)
+    const [inFocus, setInFocus] = useState(false)
     const [formattingDisabled, setFormattingDisabled] = useState(false)
 
     const [formats, setFormats] = useState<Format[]>([])
@@ -180,12 +181,13 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     const theme = useTheme()
 
     useEffect(() => {
-        const handleSelectionChange = () =>
-            setMarkdownSelection(document.getSelection()?.toString())
+        const handleSelectionChange = () => {
+            if (inFocus) setMarkdownSelection(document.getSelection()?.toString())
+        }
 
         document.addEventListener('selectionchange', handleSelectionChange)
         return () => document.removeEventListener('selectionchange', handleSelectionChange)
-    }, [markdownSelection])
+    }, [inFocus, markdownSelection])
 
     useEffect(() => {
         if (!markdownSelection || markdownSelection.length === 0) return setFormats([])
@@ -289,7 +291,12 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
     }
 
     return (
-        <div onBlur={() => onChange(value)}>
+        <div
+            onBlur={() => {
+                setInFocus(false)
+                onChange(value)
+            }}
+            onFocus={() => setInFocus(true)}>
             <div className={classes.paper}>
                 <StyledToggleButtonGroup
                     size="small"
@@ -350,21 +357,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 value={value}
                 rows={15}
                 className={classes.textField}
-                onChange={e => {
-                    let { value: changeValue } = e.target
-                    const lines = changeValue.split('\n')
-                    const currentLine = lines[lines.length - 1]
-                    const previousLine = lines[lines.length - 2]
-
-                    if (currentLine.length === 0) {
-                        if (/^-\s\w{1,}/.test(previousLine)) {
-                            changeValue += MARKDOWN.bulletedList
-                        } else if (/^\d{1,}.\s\w{1,}/.test(previousLine)) {
-                            changeValue += MARKDOWN.numberedList
-                        }
-                    }
-                    setValue(changeValue)
-                }}
+                onChange={e => setValue(e.target.value)}
                 fullWidth
                 multiline
                 variant="outlined"
