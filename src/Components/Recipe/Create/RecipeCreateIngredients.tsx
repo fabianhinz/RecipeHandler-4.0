@@ -1,9 +1,10 @@
-import { Box, createStyles, IconButton, makeStyles, TextField, Typography } from '@material-ui/core'
+import { Box, createStyles, IconButton, makeStyles, Typography } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/AddCircle'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
-import React, { useState } from 'react'
+import React from 'react'
 
+import MarkdownInput from '../../Shared/MarkdownInput'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
 
@@ -30,7 +31,6 @@ const RecipeCreateIngredients = ({
     ingredients,
     onIngredientsChange,
 }: Props) => {
-    const [value, setValue] = useState(ingredients)
     const classes = useStyles()
 
     return (
@@ -63,19 +63,7 @@ const RecipeCreateIngredients = ({
                     </Box>
                 </Subtitle>
             }
-            content={
-                <TextField
-                    label="optional"
-                    value={value}
-                    onChange={e => setValue(e.target.value)}
-                    onBlur={() => onIngredientsChange(value)}
-                    fullWidth
-                    rows={15}
-                    multiline
-                    variant="outlined"
-                    margin="dense"
-                />
-            }
+            content={<MarkdownInput defaultValue={ingredients} onChange={onIngredientsChange} />}
         />
     )
 }

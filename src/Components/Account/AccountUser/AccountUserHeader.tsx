@@ -21,7 +21,9 @@ import { useAttachmentDropzone } from '../../Recipe/Create/Attachments/useAttach
 const useStyles = makeStyles(theme =>
     createStyles({
         gridContainerAccount: {
-            marginBottom: theme.spacing(1),
+            [theme.breakpoints.up('lg')]: {
+                marginBottom: theme.spacing(1),
+            },
         },
         avatar: {
             width: 220,
