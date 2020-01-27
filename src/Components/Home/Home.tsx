@@ -41,8 +41,6 @@ const Home = () => {
     }, [user, orderBy])
 
     useEffect(() => {
-        if (selectedCategories.size > 0) return
-        // ! do not merge those to effect hooks
         setLoading(true)
         const orderByKey = Object.keys(orderBy)[0] as OrderByKey
         let query:
@@ -55,6 +53,10 @@ const Home = () => {
             query = query.where('editorUid', 'in', user.selectedUsers)
 
         if (lastRecipe) query = query.startAfter(lastRecipe[orderByKey])
+
+        selectedCategories.forEach(
+            (value, type) => (query = query.where(`categories.${type}`, '==', value))
+        )
 
         return query.limit(8).onSnapshot(querySnapshot => {
             const changes: ChangesRecord = {
@@ -72,34 +74,6 @@ const Home = () => {
             setLoading(false)
         })
     }, [lastRecipe, orderBy, selectedCategories, user])
-
-    useEffect(() => {
-        if (selectedCategories.size === 0) return
-        // ! do not merge those to effect hooks
-        setLoading(true)
-        const orderByKey = Object.keys(orderBy)[0] as OrderByKey
-        let query:
-            | firebase.firestore.CollectionReference
-            | firebase.firestore.Query = FirebaseService.firestore
-            .collection('recipes')
-            .orderBy(orderByKey, orderBy[orderByKey])
-
-        if (user && user.selectedUsers.length > 0)
-            query = query.where('editorUid', 'in', user.selectedUsers)
-
-        selectedCategories.forEach(
-            (value, type) => (query = query.where(`categories.${type}`, '==', value))
-        )
-        return query.onSnapshot(
-            querySnapshot => {
-                const added: Map<DocumentId, RecipeDocument> = new Map()
-                querySnapshot.docs.map(doc => added.set(doc.id, doc.data() as RecipeDocument))
-                setPagedRecipes(added)
-                setLoading(false)
-            },
-            error => console.error(error)
-        )
-    }, [orderBy, selectedCategories, user])
 
     return (
         <Grid container spacing={4}>
