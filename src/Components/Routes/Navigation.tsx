@@ -8,6 +8,7 @@ import React, { memo, useState } from 'react'
 import AccountAuthentication from '../Account/AccountAuthentication'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PINNED_WIDTH, usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
+import { BadgeWrapper } from '../Shared/BadgeWrapper'
 import { Navigate } from './Navigate'
 import { PATHS } from './Routes'
 
@@ -33,7 +34,7 @@ const useStyles = makeStyles(theme =>
 const Navigation = () => {
     const [authenticationOpen, setAuthenticationOpen] = useState(false)
 
-    const { user, loginEnabled } = useFirebaseAuthContext()
+    const { user, loginEnabled, shoppingList } = useFirebaseAuthContext()
     const { pinnedOnDesktop } = usePinnedRecipesContext()
 
     const classes = useStyles()
@@ -61,7 +62,11 @@ const Navigation = () => {
                                 if (!user) setAuthenticationOpen(true)
                             }}
                             size="large"
-                            startIcon={<AccountIcon />}>
+                            startIcon={
+                                <BadgeWrapper badgeContent={shoppingList.size}>
+                                    <AccountIcon />
+                                </BadgeWrapper>
+                            }>
                             {!user ? 'Einloggen' : 'Account'}
                         </Button>
                     </Navigate>
@@ -86,7 +91,9 @@ const Navigation = () => {
                             onClick={() => {
                                 if (!user) setAuthenticationOpen(true)
                             }}>
-                            <AccountIcon />
+                            <BadgeWrapper badgeContent={shoppingList.size}>
+                                <AccountIcon />
+                            </BadgeWrapper>
                         </IconButton>
                     </Navigate>
                 </Hidden>

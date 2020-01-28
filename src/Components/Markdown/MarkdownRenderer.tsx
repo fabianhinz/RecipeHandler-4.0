@@ -15,10 +15,13 @@ import {
     TableHead,
     TableRow,
 } from '@material-ui/core'
-import React, { useState } from 'react'
+import AddCircleIcon from '@material-ui/icons/AddCircleTwoTone'
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircleTwoTone'
+import React, { useMemo, useState } from 'react'
 import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown'
 import { useRouteMatch } from 'react-router-dom'
 
+import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PATHS } from '../Routes/Routes'
 
@@ -43,61 +46,110 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const MarkdownRenderer = (props: Omit<ReactMarkdownProps, 'renderers' | 'className'>) => {
+interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
+    recipeName: string
+}
+
+const MarkdownRenderer = (props: Props) => {
     const [orderedList, setOrderedList] = useState(false)
     const [lastListIndex, setLastListIndex] = useState(0)
+    const [updatingList, setUpdatingList] = useState(false)
 
-    const { user } = useFirebaseAuthContext()
+    const { user, shoppingList } = useFirebaseAuthContext()
     const match = useRouteMatch()
     const classes = useStyles()
+
+    const shoppingListDocRef = useMemo(() => {
+        if (!user || !props.recipeName) return
+        return FirebaseService.firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('shoppingList')
+            .doc(props.recipeName)
+    }, [props.recipeName, user])
+
+    const renderPropsToGrocery = (children: any) => children[0]?.props?.value as string | undefined
+
+    const checkboxChecked = (children: any) => {
+        const groceries = shoppingList.get(props.recipeName)
+        if (!groceries) return false
+
+        const grocery = renderPropsToGrocery(children)
+        if (!grocery) return false
+
+        return Object.keys(groceries).some(
+            definedGrocery => definedGrocery === grocery.replace('.', '')
+        )
+    }
+
+    const handleCheckboxChange = (children: any) => async (
+        _event: React.ChangeEvent<HTMLInputElement>,
+        checked: boolean
+    ) => {
+        setUpdatingList(true)
+
+        let grocery = renderPropsToGrocery(children)
+        if (!grocery || !props.recipeName || !shoppingListDocRef) return
+
+        if (!checked) await shoppingListDocRef.update({ [grocery]: FirebaseService.deleteField() })
+        else await shoppingListDocRef.set({ [grocery]: false }, { merge: true })
+
+        setUpdatingList(false)
+    }
 
     return (
         <ReactMarkdown
             renderers={{
-                link: props => (
+                link: renderProps => (
                     <a
                         className={classes.markdownLink}
-                        href={props.href}
+                        href={renderProps.href}
                         target="_blank"
                         rel="noopener noreferrer">
-                        {props.children}
+                        {renderProps.children}
                     </a>
                 ),
-                list: props => {
-                    setOrderedList(props.ordered)
-                    setLastListIndex(props.children.length - 1)
-                    return <List>{props.children}</List>
+                list: renderProps => {
+                    setOrderedList(renderProps.ordered)
+                    setLastListIndex(renderProps.children.length - 1)
+                    return <List>{renderProps.children}</List>
                 },
-                listItem: props => (
+                listItem: renderProps => (
                     <>
                         <ListItem>
                             {orderedList ? (
                                 <ListItemAvatar>
-                                    <Avatar>{props.index + 1}</Avatar>
+                                    <Avatar>{renderProps.index + 1}</Avatar>
                                 </ListItemAvatar>
                             ) : (
                                 user && (
                                     <ListItemIcon>
                                         <Checkbox
+                                            icon={<AddCircleIcon />}
+                                            checkedIcon={<RemoveCircleIcon />}
+                                            checked={checkboxChecked(renderProps.children)}
+                                            onChange={handleCheckboxChange(renderProps.children)}
                                             classes={{ root: classes.checkboxRoot }}
-                                            disabled={match.path !== PATHS.details()}
+                                            disabled={
+                                                match.path !== PATHS.details() || updatingList
+                                            }
                                         />
                                     </ListItemIcon>
                                 )
                             )}
-                            <ListItemText primary={props.children} />
+                            <ListItemText primary={renderProps.children} />
                         </ListItem>
-                        {orderedList && lastListIndex !== props.index && (
+                        {orderedList && lastListIndex !== renderProps.index && (
                             <Divider variant="inset" />
                         )}
                     </>
                 ),
                 thematicBreak: () => <Divider />,
-                table: props => <Table>{props.children}</Table>,
-                tableHead: props => <TableHead>{props.children}</TableHead>,
-                tableBody: props => <TableBody>{props.children}</TableBody>,
-                tableRow: props => <TableRow>{props.children}</TableRow>,
-                tableCell: props => <TableCell>{props.children}</TableCell>,
+                table: renderProps => <Table>{renderProps.children}</Table>,
+                tableHead: renderProps => <TableHead>{renderProps.children}</TableHead>,
+                tableBody: renderProps => <TableBody>{renderProps.children}</TableBody>,
+                tableRow: renderProps => <TableRow>{renderProps.children}</TableRow>,
+                tableCell: renderProps => <TableCell>{renderProps.children}</TableCell>,
             }}
             className={classes.markdown}
             {...props}

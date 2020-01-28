@@ -35,6 +35,7 @@ const createTimestampFromDate = (date: Date) => firebase.firestore.Timestamp.fro
 const createDateFromTimestamp = (timestamp: firebase.firestore.Timestamp) =>
     new firebase.firestore.Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate()
 const incrementBy = (value: number) => firebase.firestore.FieldValue.increment(value)
+const deleteField = firebase.firestore.FieldValue.delete
 
 export const FirebaseService = {
     firestore,
@@ -47,4 +48,5 @@ export const FirebaseService = {
     performance,
     functions,
     analytics,
+    deleteField,
 }

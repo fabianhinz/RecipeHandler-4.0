@@ -88,3 +88,11 @@ export type User = {
     createdDate: firebase.firestore.Timestamp
     algoliaAdvancedSyntax: boolean
 }
+
+export type RecipeName = string
+
+export type GroceriesTracker = {
+    [grocery: string]: boolean
+}
+
+export type ShoppingList = Map<RecipeName, GroceriesTracker>

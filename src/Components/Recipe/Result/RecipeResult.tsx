@@ -94,7 +94,12 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                                 }
                             />
                         }
-                        content={<MarkdownRenderer source={recipe.ingredients} />}
+                        content={
+                            <MarkdownRenderer
+                                recipeName={recipe.name}
+                                source={recipe.ingredients}
+                            />
+                        }
                     />
                 </Grid>
             )}
@@ -105,7 +110,12 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                         transitionOrder={2}
                         variant={variant}
                         header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
-                        content={<MarkdownRenderer source={recipe.description} />}
+                        content={
+                            <MarkdownRenderer
+                                recipeName={recipe.name}
+                                source={recipe.description}
+                            />
+                        }
                     />
                 </Grid>
             )}

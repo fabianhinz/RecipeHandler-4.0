@@ -2,11 +2,18 @@ import { Avatar, CircularProgress, createStyles, makeStyles } from '@material-ui
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
 import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
-import { User } from '../../model/model'
+import { GroceriesTracker, RecipeName, ShoppingList, User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 
-const Context = React.createContext<{ user: User | null; loginEnabled: boolean }>({
+interface AuthContext {
+    user: User | null
+    shoppingList: ShoppingList
+    loginEnabled: boolean
+}
+
+const Context = React.createContext<AuthContext>({
     user: null,
+    shoppingList: new Map(),
     loginEnabled: false,
 })
 
@@ -42,11 +49,13 @@ const useStyles = makeStyles(theme =>
 )
 
 let userDocUnsubscribe: any = undefined
+let shoppingListUnsubscribe: any = undefined
 
 const FirebaseAuthProvider: FC = ({ children }) => {
     const [authReady, setAuthReady] = useState(false)
     const [loginEnabled, setLoginEnabled] = useState(false)
     const [user, setUser] = useState<User | null>(null)
+    const [shoppingList, setShoppingList] = useState<ShoppingList>(new Map())
 
     const classes = useStyles()
 
@@ -70,6 +79,16 @@ const FirebaseAuthProvider: FC = ({ children }) => {
                     })
                     setLoginEnabled(true)
                 })
+
+                shoppingListUnsubscribe = userDocRef
+                    .collection('shoppingList')
+                    .onSnapshot(querySnapshot => {
+                        const newShoppingList: Map<RecipeName, GroceriesTracker> = new Map()
+                        querySnapshot.docs.forEach(doc =>
+                            newShoppingList.set(doc.id, doc.data() as GroceriesTracker)
+                        )
+                        setShoppingList(newShoppingList)
+                    })
             }
         } else FirebaseService.auth.signInAnonymously()
     }, [])
@@ -90,7 +109,10 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     }, [signInWithCustomToken])
 
     useEffect(() => {
-        return userDocUnsubscribe
+        return () => {
+            userDocUnsubscribe()
+            shoppingListUnsubscribe()
+        }
     }, [])
 
     useEffect(() => {
@@ -98,7 +120,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     }, [handleAuthStateChange])
 
     return (
-        <Context.Provider value={{ user, loginEnabled }}>
+        <Context.Provider value={{ user, shoppingList, loginEnabled }}>
             {authReady ? (
                 <div className={classes.main}>{children}</div>
             ) : (

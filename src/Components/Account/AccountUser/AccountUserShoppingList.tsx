@@ -1,6 +1,7 @@
 import {
     Checkbox,
     createStyles,
+    IconButton,
     List,
     ListItem,
     ListItemIcon,
@@ -8,11 +9,11 @@ import {
     ListSubheader,
     makeStyles,
 } from '@material-ui/core'
+import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCartTwoTone'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCartTwoTone'
 import clsx from 'clsx'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 
-import { User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import RecipeCard from '../../Recipe/RecipeCard'
@@ -23,44 +24,37 @@ const useStyles = makeStyles(() =>
         checked: {
             textDecoration: 'line-through',
         },
+        listSubHeader: {
+            fontSize: '1rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+        },
     })
 )
 
-type RecipeName = string
-type GroceriesTracker = {
-    [grocery: string]: boolean
-}
-
 const AccountUserShoppingList = () => {
-    const [shoppingList, setShoppingList] = useState<Map<RecipeName, GroceriesTracker>>(new Map())
     const classes = useStyles()
 
-    const { user } = useFirebaseAuthContext() as { user: User }
+    const { user, shoppingList } = useFirebaseAuthContext()
 
-    const shoppingListRef = useMemo(
+    const shoppingListDocRef = useMemo(
         () =>
             FirebaseService.firestore
                 .collection('users')
-                .doc(user.uid)
+                .doc(user?.uid)
                 .collection('shoppingList'),
-        [user.uid]
+        [user]
     )
-
-    useEffect(() => {
-        shoppingListRef.onSnapshot(querySnapshot => {
-            const newShoppingList: Map<RecipeName, GroceriesTracker> = new Map()
-            querySnapshot.docs.forEach(doc =>
-                newShoppingList.set(doc.id, doc.data() as GroceriesTracker)
-            )
-            setShoppingList(newShoppingList)
-        })
-    }, [shoppingListRef])
 
     const handleGroceryClick = (recipe: string, grocery: string) => (
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
-        shoppingListRef.doc(recipe).update({ [grocery]: checked })
+        shoppingListDocRef.doc(recipe).update({ [grocery]: checked })
+    }
+
+    const handleRemove = (recipe: string) => () => {
+        shoppingListDocRef.doc(recipe).delete()
     }
 
     return (
@@ -71,7 +65,12 @@ const AccountUserShoppingList = () => {
                 <List>
                     {[...shoppingList.entries()].map(([recipe, groceries]) => (
                         <div key={recipe}>
-                            <ListSubheader>{recipe}</ListSubheader>
+                            <ListSubheader className={classes.listSubHeader}>
+                                {recipe}
+                                <IconButton onClick={handleRemove(recipe)}>
+                                    <RemoveFromShoppingCartIcon color="secondary" />
+                                </IconButton>
+                            </ListSubheader>
                             {Object.keys(groceries).map(grocery => (
                                 <ListItem key={grocery}>
                                     <ListItemIcon>

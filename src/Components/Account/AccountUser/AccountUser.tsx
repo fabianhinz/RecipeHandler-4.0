@@ -5,7 +5,7 @@ import React, { useMemo, useState } from 'react'
 
 import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import useProgress from '../../../hooks/useProgress'
-import { User } from '../../../model/model'
+import { ShoppingList, User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { NavigateFab } from '../../Routes/Navigate'
@@ -26,7 +26,10 @@ const AccountUser = () => {
     const [showInfo, setShowInfo] = useState(false)
 
     // ? we won't load this component without an existing user - pinky promise -_-
-    const { user } = useFirebaseAuthContext() as { user: User }
+    const { user, shoppingList } = useFirebaseAuthContext() as {
+        user: User
+        shoppingList: ShoppingList
+    }
     const { breakpoints } = useCardBreakpoints({ xlEnabled: user.admin })
     const { ProgressComponent, setProgress } = useProgress()
     const { enqueueSnackbar } = useSnackbar()
@@ -95,9 +98,11 @@ const AccountUser = () => {
                 />
             </Grid>
 
-            <Grid item {...breakpoints}>
-                <AccountUserShoppingList />
-            </Grid>
+            {shoppingList.size > 0 && (
+                <Grid item {...breakpoints}>
+                    <AccountUserShoppingList />
+                </Grid>
+            )}
 
             <Grid item {...breakpoints}>
                 <AccountUserSettings
