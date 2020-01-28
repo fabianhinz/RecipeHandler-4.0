@@ -150,6 +150,8 @@ const AccountUserChangelog = () => {
                                                         label={label.name}
                                                         style={{
                                                             backgroundColor: '#' + label.color,
+                                                            margin: '2px',
+                                                            height: '20px',
                                                         }}
                                                     />
                                                 ))}
