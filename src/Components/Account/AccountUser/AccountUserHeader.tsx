@@ -67,30 +67,26 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
     }, [attachments, enqueueSnackbar, userDoc])
 
     return (
-        <>
-            <Grid className={classes.gridContainerAccount} container spacing={4} justify="center">
-                <Grid item xs="auto">
-                    <CardActionArea
-                        className={classes.actionArea}
-                        {...dropzoneProps.getRootProps()}>
-                        <Avatar className={classes.avatar} src={user.profilePicture}>
-                            <CameraImage fontSize="large" />
-                        </Avatar>
-                        <input {...dropzoneProps.getInputProps()} />
-                    </CardActionArea>
-                </Grid>
-                <Grid item xs="auto">
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Grid container spacing={1} justify="space-between">
-                                <Grid item xs="auto">
-                                    <Typography variant="h5" display="inline">
-                                        Willkommen zurück {user.username}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs="auto">
-                                    <AccountUserChangelog />
-                                </Grid>
+        <Grid className={classes.gridContainerAccount} container spacing={4} justify="center">
+            <Grid item xs="auto">
+                <CardActionArea className={classes.actionArea} {...dropzoneProps.getRootProps()}>
+                    <Avatar className={classes.avatar} src={user.profilePicture}>
+                        <CameraImage fontSize="large" />
+                    </Avatar>
+                    <input {...dropzoneProps.getInputProps()} />
+                </CardActionArea>
+            </Grid>
+            <Grid item xs="auto">
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <Grid container spacing={1} justify="space-between">
+                            <Grid item xs="auto">
+                                <Typography variant="h5" display="inline">
+                                    Willkommen zurück {user.username}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs="auto">
+                                <AccountUserChangelog />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -104,7 +100,7 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
                     </Grid>
                 </Grid>
             </Grid>
-        </>
+        </Grid>
     )
 }
 
