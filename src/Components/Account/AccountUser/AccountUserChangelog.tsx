@@ -148,7 +148,9 @@ const AccountUserChangelog = () => {
                                                     <Chip
                                                         key={issue.number + label.name}
                                                         label={label.name}
-                                                        color="default"
+                                                        style={{
+                                                            backgroundColor: '#' + label.color,
+                                                        }}
                                                     />
                                                 ))}
                                             </ListItem>
