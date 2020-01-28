@@ -20,7 +20,9 @@ import AccountUserChangelog from './AccountUserChangelog'
 const useStyles = makeStyles(theme =>
     createStyles({
         gridContainerAccount: {
-            marginBottom: theme.spacing(1),
+            [theme.breakpoints.up('lg')]: {
+                marginBottom: theme.spacing(1),
+            },
         },
         avatar: {
             width: 220,
