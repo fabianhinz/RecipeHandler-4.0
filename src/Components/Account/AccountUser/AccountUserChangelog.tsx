@@ -74,17 +74,8 @@ const AccountUserChangelog = () => {
         []
     )
 
-    const relatingIssues = (pullrequest: Pullrequest) => {
-        const relatedIssues: Issue[] = []
-        pullrequest.issueNumbers?.forEach(number => {
-            issues?.forEach(issue => {
-                if (issue.number.toString() === number) {
-                    relatedIssues.push(issue)
-                }
-            })
-        })
-        return relatedIssues
-    }
+    const relatingIssues = (pullrequest: Pullrequest) =>
+        issues.filter(issue => pullrequest.issueNumbers?.includes(issue.number.toString()))
 
     const handleChange = (pr: string) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
         setExpanded(isExpanded ? pr : false)
