@@ -33,7 +33,7 @@ interface Props {
 const AccountUserSettings = ({ onUserSettingChange, showInfo, user }: Props) => {
     return (
         <RecipeCard
-            transitionOrder={1}
+            transitionOrder={2}
             header={<Subtitle icon={<SettingsIcon />} text="Einstellungen" />}
             content={
                 <List>

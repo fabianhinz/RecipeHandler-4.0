@@ -13,6 +13,7 @@ import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
 import AccountUserRecipes from './AccountUserRecipes'
 import AccountUserSettings from './AccountUserSettings'
+import AccountUserShoppingList from './AccountUserShoppingList'
 
 type SettingKeys = keyof Pick<
     User,
@@ -92,6 +93,10 @@ const AccountUser = () => {
                     showInfo={showInfo}
                     onShowInfoChange={() => setShowInfo(prev => !prev)}
                 />
+            </Grid>
+
+            <Grid item {...breakpoints}>
+                <AccountUserShoppingList />
             </Grid>
 
             <Grid item {...breakpoints}>

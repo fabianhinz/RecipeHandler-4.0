@@ -33,7 +33,7 @@ const AccountUserAdmin = () => {
     return (
         <>
             <RecipeCard
-                transitionOrder={3}
+                transitionOrder={4}
                 header={<Subtitle text="Editoren" icon={<SecurityIcon />} />}
                 content={
                     <List>

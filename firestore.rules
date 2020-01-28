@@ -22,6 +22,10 @@ service cloud.firestore {
         allow update: if request.auth.uid == userId;
         allow delete: if isAdmin();
     }
+
+    match /users/{userId}/shoppingList/{recipeName} {
+        allow write: if request.auth.uid == userId
+    }
     
     match /recipes/{recipeName} {
         allow create: if isAdmin() || isEditor();
