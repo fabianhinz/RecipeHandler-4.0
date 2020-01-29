@@ -38,7 +38,8 @@ const Home = () => {
     useEffect(() => {
         setPagedRecipes(new Map())
         setLastRecipe(null)
-    }, [user, orderBy])
+        // ? clear intersection observer trigger and recipes when any of following change
+    }, [user, orderBy, selectedCategories])
 
     useEffect(() => {
         setLoading(true)

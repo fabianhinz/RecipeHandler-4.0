@@ -1,11 +1,17 @@
 import { useState } from 'react'
+import { useRouteMatch } from 'react-router-dom'
 
+import { PATHS } from '../Components/Routes/Routes'
 import { AttachmentMetadata, Recipe } from '../model/model'
 import ConfigService from '../services/configService'
 
 export const useCategorySelect = (recipe?: Recipe<AttachmentMetadata> | null) => {
+    const match = useRouteMatch()
+
     const [state, setState] = useState<Map<string, string>>(() => {
-        if (!recipe || !recipe.categories) return ConfigService.selectedCategories
+        if (match.path === PATHS.home) return ConfigService.selectedCategories
+        else if (!recipe) return new Map()
+
         return new Map(Object.keys(recipe.categories).map(type => [type, recipe.categories[type]]))
     })
 
@@ -20,7 +26,7 @@ export const useCategorySelect = (recipe?: Recipe<AttachmentMetadata> | null) =>
                 newState = new Map(previous.set(type, value))
             }
 
-            if (!recipe) ConfigService.selectedCategories = newState
+            if (match.path === PATHS.home) ConfigService.selectedCategories = newState
             return newState
         })
     }
