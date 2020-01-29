@@ -90,9 +90,7 @@ export type User = {
 }
 
 export type RecipeName = string
+export type Grocery = string
 
-export type GroceriesTracker = {
-    [grocery: string]: boolean
-}
-
-export type ShoppingList = Map<RecipeName, GroceriesTracker>
+export type ShoppingList = Map<RecipeName, { list: Grocery[] } | undefined>
+export type ShoppingTracker = Map<RecipeName, { tracker: Grocery[] } | undefined>

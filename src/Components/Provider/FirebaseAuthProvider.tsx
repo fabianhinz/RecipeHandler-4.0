@@ -2,18 +2,20 @@ import { Avatar, CircularProgress, createStyles, makeStyles } from '@material-ui
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
 import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
-import { GroceriesTracker, RecipeName, ShoppingList, User } from '../../model/model'
+import { ShoppingList, ShoppingTracker, User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 
 interface AuthContext {
     user: User | null
     shoppingList: ShoppingList
+    shoppingTracker: ShoppingTracker
     loginEnabled: boolean
 }
 
 const Context = React.createContext<AuthContext>({
     user: null,
     shoppingList: new Map(),
+    shoppingTracker: new Map(),
     loginEnabled: false,
 })
 
@@ -56,6 +58,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     const [loginEnabled, setLoginEnabled] = useState(false)
     const [user, setUser] = useState<User | null>(null)
     const [shoppingList, setShoppingList] = useState<ShoppingList>(new Map())
+    const [shoppingTracker, setShoppingTracker] = useState<ShoppingTracker>(new Map())
 
     const classes = useStyles()
 
@@ -83,11 +86,17 @@ const FirebaseAuthProvider: FC = ({ children }) => {
                 shoppingListUnsubscribe = userDocRef
                     .collection('shoppingList')
                     .onSnapshot(querySnapshot => {
-                        const newShoppingList: Map<RecipeName, GroceriesTracker> = new Map()
-                        querySnapshot.docs.forEach(doc =>
-                            newShoppingList.set(doc.id, doc.data() as GroceriesTracker)
-                        )
+                        const newShoppingList: ShoppingList = new Map()
+                        const newShoppingTracker: ShoppingTracker = new Map()
+
+                        querySnapshot.docs.forEach(doc => {
+                            const { list, tracker } = doc.data()
+                            newShoppingList.set(doc.id, { list })
+                            newShoppingTracker.set(doc.id, { tracker })
+                        })
+
                         setShoppingList(newShoppingList)
+                        setShoppingTracker(newShoppingTracker)
                     })
             }
         } else FirebaseService.auth.signInAnonymously()
@@ -120,7 +129,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     }, [handleAuthStateChange])
 
     return (
-        <Context.Provider value={{ user, shoppingList, loginEnabled }}>
+        <Context.Provider value={{ user, shoppingList, shoppingTracker, loginEnabled }}>
             {authReady ? (
                 <div className={classes.main}>{children}</div>
             ) : (

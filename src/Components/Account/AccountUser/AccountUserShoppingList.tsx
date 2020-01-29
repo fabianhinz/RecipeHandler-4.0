@@ -12,7 +12,7 @@ import {
 import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCartTwoTone'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCartTwoTone'
 import clsx from 'clsx'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -34,8 +34,9 @@ const useStyles = makeStyles(() =>
 
 const AccountUserShoppingList = () => {
     const classes = useStyles()
+    const [updatingTracker, setUpdatingTracker] = useState(false)
 
-    const { user, shoppingList } = useFirebaseAuthContext()
+    const { user, shoppingList, shoppingTracker } = useFirebaseAuthContext()
 
     const shoppingListDocRef = useMemo(
         () =>
@@ -46,16 +47,27 @@ const AccountUserShoppingList = () => {
         [user]
     )
 
-    const handleGroceryClick = (recipe: string, grocery: string) => (
+    const handleGroceryClick = (recipe: string, grocery: string) => async (
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
-        shoppingListDocRef.doc(recipe).update({ [grocery]: checked })
+        setUpdatingTracker(true)
+        let tracker = shoppingTracker.get(recipe)?.tracker
+
+        if (!tracker) tracker = [grocery]
+        else if (checked) tracker.push(grocery)
+        else tracker = tracker.filter(trackerEl => trackerEl !== grocery)
+
+        await shoppingListDocRef.doc(recipe).set({ tracker }, { merge: true })
+        setUpdatingTracker(false)
     }
 
     const handleRemove = (recipe: string) => () => {
         shoppingListDocRef.doc(recipe).delete()
     }
+
+    const listItemChecked = (recipe: string, grocery: string) =>
+        Boolean(shoppingTracker.get(recipe)?.tracker?.some(trackerEl => trackerEl === grocery))
 
     return (
         <RecipeCard
@@ -71,18 +83,21 @@ const AccountUserShoppingList = () => {
                                     <RemoveFromShoppingCartIcon color="secondary" />
                                 </IconButton>
                             </ListSubheader>
-                            {Object.keys(groceries).map(grocery => (
+                            {groceries?.list.map(grocery => (
                                 <ListItem key={grocery}>
                                     <ListItemIcon>
                                         <Checkbox
-                                            checked={groceries[grocery]}
+                                            checked={listItemChecked(recipe, grocery)}
+                                            disabled={updatingTracker}
                                             onChange={handleGroceryClick(recipe, grocery)}
                                             edge="start"
                                         />
                                     </ListItemIcon>
                                     <ListItemText
                                         classes={{
-                                            primary: clsx(groceries[grocery] && classes.checked),
+                                            primary: clsx(
+                                                listItemChecked(recipe, grocery) && classes.checked
+                                            ),
                                         }}
                                         primary={grocery}
                                     />

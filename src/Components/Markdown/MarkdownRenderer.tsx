@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme =>
 interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
     recipeName: string
 }
-
+// ToDo handle ordered and unordered List in same Renderer
 const MarkdownRenderer = (props: Props) => {
     const [orderedList, setOrderedList] = useState(false)
     const [lastListIndex, setLastListIndex] = useState(0)
@@ -71,15 +71,14 @@ const MarkdownRenderer = (props: Props) => {
     const renderPropsToGrocery = (children: any) => children[0]?.props?.value as string | undefined
 
     const checkboxChecked = (children: any) => {
-        const groceries = shoppingList.get(props.recipeName)
-        if (!groceries) return false
+        const groceries = shoppingList.get(props.recipeName)?.list
+
+        if (!groceries || groceries.length === 0) return false
 
         const grocery = renderPropsToGrocery(children)
         if (!grocery) return false
 
-        return Object.keys(groceries).some(
-            definedGrocery => definedGrocery === grocery.replace('.', '')
-        )
+        return groceries.some(groceryEl => groceryEl === grocery)
     }
 
     const handleCheckboxChange = (children: any) => async (
@@ -91,8 +90,14 @@ const MarkdownRenderer = (props: Props) => {
         let grocery = renderPropsToGrocery(children)
         if (!grocery || !props.recipeName || !shoppingListDocRef) return
 
-        if (!checked) await shoppingListDocRef.update({ [grocery]: FirebaseService.deleteField() })
-        else await shoppingListDocRef.set({ [grocery]: false }, { merge: true })
+        let list = shoppingList.get(props.recipeName)?.list
+
+        if (!list) list = [grocery]
+        else if (checked) list.push(grocery)
+        else list = list.filter(listEl => listEl !== grocery)
+
+        if (list.length === 0) await shoppingListDocRef.delete()
+        else await shoppingListDocRef.set({ list }, { merge: true })
 
         setUpdatingList(false)
     }
