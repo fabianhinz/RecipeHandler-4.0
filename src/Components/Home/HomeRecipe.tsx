@@ -51,8 +51,8 @@ export const HomeRecipe = ({ recipes, skeletons, orderBy, onOrderByChange }: Hom
     const handleOrderByChange = (key: keyof OrderByRecord) => () => {
         let newOrderBy: OrderByRecord
 
-        if (orderBy[key] && orderBy[key] === 'asc') newOrderBy = { [key]: 'desc' }
-        else if (orderBy[key] && orderBy[key] === 'desc') newOrderBy = { [key]: 'asc' }
+        if (orderBy[key] === 'asc') newOrderBy = { [key]: 'desc' }
+        else if (orderBy[key] === 'desc') newOrderBy = { [key]: 'asc' }
         else newOrderBy = { [key]: 'asc' }
 
         onOrderByChange(newOrderBy)

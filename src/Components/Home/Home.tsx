@@ -27,7 +27,9 @@ const Home = () => {
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
     const { user } = useFirebaseAuthContext()
     const { IntersectionObserverTrigger } = useIntersectionObserver({
-        onIsIntersecting: () => setLastRecipe([...pagedRecipes.values()].pop()),
+        onIsIntersecting: () => {
+            if (pagedRecipes.size > 0) setLastRecipe([...pagedRecipes.values()].pop())
+        },
     })
 
     const handleCategoryChange = (type: string, value: string) => {
