@@ -53,7 +53,7 @@ interface Props {
 
 const Satisfaction = ({ transitionOrder, recipeName }: Props) => {
     const { user, loginEnabled } = useFirebaseAuthContext()
-    const [expanded, setExpanded] = useState(!user)
+    const [expanded, setExpanded] = useState(false)
     const [satisfaction, setSatisfaction] = useState<Map<string, number>>(new Map())
 
     const { userIds } = useUsersContext()
@@ -67,6 +67,10 @@ const Satisfaction = ({ transitionOrder, recipeName }: Props) => {
                 .collection('satisfaction'),
         [recipeName]
     )
+
+    useEffect(() => {
+        setExpanded(!user)
+    }, [user])
 
     useEffect(
         () =>

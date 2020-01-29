@@ -45,17 +45,13 @@ const useStyles = makeStyles(theme =>
                 height: 500,
                 width: 500,
             },
-            [theme.breakpoints.only('md')]: {
+            [theme.breakpoints.between('md', 'lg')]: {
                 height: 600,
                 width: 600,
             },
-            [theme.breakpoints.only('lg')]: {
-                height: 700,
-                width: 700,
-            },
             [theme.breakpoints.up('xl')]: {
-                height: 900,
-                width: 900,
+                height: 800,
+                width: 800,
             },
             borderRadius: BORDER_RADIUS,
         },

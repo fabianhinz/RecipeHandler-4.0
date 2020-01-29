@@ -4,7 +4,7 @@ import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
 import React from 'react'
 
-import MarkdownInput from '../../Shared/MarkdownInput'
+import MarkdownInput from '../../Markdown/MarkdownInput'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
 

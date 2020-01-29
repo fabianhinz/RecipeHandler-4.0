@@ -1,7 +1,7 @@
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import React from 'react'
 
-import MarkdownInput from '../../Shared/MarkdownInput'
+import MarkdownInput from '../../Markdown/MarkdownInput'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
 

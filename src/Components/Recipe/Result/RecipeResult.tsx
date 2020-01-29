@@ -8,8 +8,8 @@ import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import AccountChip from '../../Account/AccountChip'
+import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
 import Satisfaction from '../../Satisfaction/Satisfaction'
-import Markdown from '../../Shared/Markdown'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
 import { RecipeVariants } from './Action/RecipeResultAction'
@@ -94,7 +94,12 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                                 }
                             />
                         }
-                        content={<Markdown source={recipe.ingredients} />}
+                        content={
+                            <MarkdownRenderer
+                                recipeName={recipe.name}
+                                source={recipe.ingredients}
+                            />
+                        }
                     />
                 </Grid>
             )}
@@ -105,7 +110,12 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                         transitionOrder={2}
                         variant={variant}
                         header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
-                        content={<Markdown source={recipe.description} />}
+                        content={
+                            <MarkdownRenderer
+                                recipeName={recipe.name}
+                                source={recipe.description}
+                            />
+                        }
                     />
                 </Grid>
             )}

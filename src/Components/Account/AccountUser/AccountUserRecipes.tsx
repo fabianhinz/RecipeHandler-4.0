@@ -20,7 +20,7 @@ const AccountUserRecipes = ({ onUserSettingChange }: Props) => {
 
     return (
         <RecipeCard
-            transitionOrder={2}
+            transitionOrder={3}
             header={<Subtitle icon={<BookIcon />} text="Rezeptanzeige" />}
             content={
                 <List>
