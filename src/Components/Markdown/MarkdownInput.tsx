@@ -278,7 +278,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                     ++selectionEnd
                 }
                 setEmoticonAnchorEl(null)
-                setValue(prev => `${prev}${formatOrEmoji}`)
+                setValue(beforeSelection + selection + formatOrEmoji + afterSelection)
                 break
             }
         }

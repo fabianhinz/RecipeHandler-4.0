@@ -50,8 +50,8 @@ const useStyles = makeStyles(theme =>
                 width: 600,
             },
             [theme.breakpoints.up('xl')]: {
-                height: 900,
-                width: 900,
+                height: 800,
+                width: 800,
             },
             borderRadius: BORDER_RADIUS,
         },

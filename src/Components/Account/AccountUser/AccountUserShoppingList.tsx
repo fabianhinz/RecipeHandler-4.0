@@ -47,7 +47,7 @@ const AccountUserShoppingList = () => {
         [user]
     )
 
-    const handleGroceryClick = (recipe: string, grocery: string) => async (
+    const handleCheckboxChange = (recipe: string, grocery: string) => async (
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
@@ -62,9 +62,7 @@ const AccountUserShoppingList = () => {
         setUpdatingTracker(false)
     }
 
-    const handleRemove = (recipe: string) => () => {
-        shoppingListDocRef.doc(recipe).delete()
-    }
+    const handleRemove = (recipe: string) => () => shoppingListDocRef.doc(recipe).delete()
 
     const listItemChecked = (recipe: string, grocery: string) =>
         Boolean(shoppingTracker.get(recipe)?.tracker?.some(trackerEl => trackerEl === grocery))
@@ -89,7 +87,7 @@ const AccountUserShoppingList = () => {
                                         <Checkbox
                                             checked={listItemChecked(recipe, grocery)}
                                             disabled={updatingTracker}
-                                            onChange={handleGroceryClick(recipe, grocery)}
+                                            onChange={handleCheckboxChange(recipe, grocery)}
                                             edge="start"
                                         />
                                     </ListItemIcon>

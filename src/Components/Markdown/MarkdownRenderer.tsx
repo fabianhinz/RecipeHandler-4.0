@@ -51,8 +51,6 @@ interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
 }
 // ToDo handle ordered and unordered List in same Renderer
 const MarkdownRenderer = (props: Props) => {
-    const [orderedList, setOrderedList] = useState(false)
-    const [lastListIndex, setLastListIndex] = useState(0)
     const [updatingList, setUpdatingList] = useState(false)
 
     const { user, shoppingList } = useFirebaseAuthContext()
@@ -114,39 +112,31 @@ const MarkdownRenderer = (props: Props) => {
                         {renderProps.children}
                     </a>
                 ),
-                list: renderProps => {
-                    setOrderedList(renderProps.ordered)
-                    setLastListIndex(renderProps.children.length - 1)
-                    return <List>{renderProps.children}</List>
-                },
+                list: renderProps => <List>{renderProps.children}</List>,
                 listItem: renderProps => (
                     <>
                         <ListItem>
-                            {orderedList ? (
+                            {renderProps.ordered ? (
                                 <ListItemAvatar>
                                     <Avatar>{renderProps.index + 1}</Avatar>
                                 </ListItemAvatar>
                             ) : (
-                                user && (
-                                    <ListItemIcon>
-                                        <Checkbox
-                                            icon={<AddCircleIcon />}
-                                            checkedIcon={<RemoveCircleIcon />}
-                                            checked={checkboxChecked(renderProps.children)}
-                                            onChange={handleCheckboxChange(renderProps.children)}
-                                            classes={{ root: classes.checkboxRoot }}
-                                            disabled={
-                                                match.path !== PATHS.details() || updatingList
-                                            }
-                                        />
-                                    </ListItemIcon>
-                                )
+                                <ListItemIcon>
+                                    <Checkbox
+                                        icon={<AddCircleIcon />}
+                                        checkedIcon={<RemoveCircleIcon />}
+                                        checked={checkboxChecked(renderProps.children)}
+                                        onChange={handleCheckboxChange(renderProps.children)}
+                                        classes={{ root: classes.checkboxRoot }}
+                                        disabled={
+                                            match.path !== PATHS.details() || updatingList || !user
+                                        }
+                                    />
+                                </ListItemIcon>
                             )}
                             <ListItemText primary={renderProps.children} />
                         </ListItem>
-                        {orderedList && lastListIndex !== renderProps.index && (
-                            <Divider variant="inset" />
-                        )}
+                        {renderProps.ordered && renderProps.tight && <Divider variant="inset" />}
                     </>
                 ),
                 thematicBreak: () => <Divider />,
