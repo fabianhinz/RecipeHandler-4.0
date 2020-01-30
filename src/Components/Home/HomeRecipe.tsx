@@ -27,72 +27,13 @@ export type OrderByRecord = Partial<Record<OrderByKey, 'asc' | 'desc'>>
 interface HomeRecipeProps {
     recipes: Array<Recipe<AttachmentMetadata>>
     skeletons: boolean
-    orderBy: OrderByRecord
-    onOrderByChange: (orderBy: OrderByRecord) => void
+    // orderBy: OrderByRecord
+    // onOrderByChange: (orderBy: OrderByRecord) => void
 }
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        buttonGroupText: {
-            '&:not(:first-child), &:not(:last-child)': {
-                borderRight: 'none',
-                borderBottom: 'none',
-            },
-        },
-        buttonGroupRoot: {
-            boxShadow: 'none',
-        },
-    })
-)
-
-export const HomeRecipe = ({ recipes, skeletons, orderBy, onOrderByChange }: HomeRecipeProps) => {
-    const classes = useStyles()
-
-    const handleOrderByChange = (key: keyof OrderByRecord) => () => {
-        let newOrderBy: OrderByRecord
-
-        if (orderBy[key] === 'asc') newOrderBy = { [key]: 'desc' }
-        else if (orderBy[key] === 'desc') newOrderBy = { [key]: 'asc' }
-        else newOrderBy = { [key]: 'asc' }
-
-        onOrderByChange(newOrderBy)
-        configService.orderBy = newOrderBy
-    }
-
-    const getStartIcon = (orderBy?: 'asc' | 'desc') => {
-        if (!orderBy) return {}
-
-        return {
-            startIcon: <Zoom in>{orderBy === 'asc' ? <AscIcon /> : <DescIcon />}</Zoom>,
-        }
-    }
-
+export const HomeRecipe = ({ recipes, skeletons }: HomeRecipeProps) => {
     return (
         <Card>
-            <CardActions>
-                <Box display="flex" justifyContent="center" flexGrow={1}>
-                    <ButtonGroup
-                        classes={{
-                            groupedTextHorizontal: classes.buttonGroupText,
-                            groupedTextVertical: classes.buttonGroupText,
-                            root: classes.buttonGroupRoot,
-                        }}
-                        variant="contained">
-                        <Button
-                            onClick={handleOrderByChange('name')}
-                            color={orderBy.name ? 'primary' : 'default'}
-                            {...getStartIcon(orderBy.name)}>
-                            Name
-                        </Button>
-                        <Button
-                            onClick={handleOrderByChange('createdDate')}
-                            color={orderBy.createdDate ? 'primary' : 'default'}
-                            {...getStartIcon(orderBy.createdDate)}>
-                            Datum
-                        </Button>
-                    </ButtonGroup>
-                </Box>
-            </CardActions>
             <CardContent>
                 <Grid container spacing={2}>
                     {recipes.map(recipe => (

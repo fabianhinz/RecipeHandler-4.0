@@ -8,13 +8,14 @@ import {
     makeStyles,
     Typography,
 } from '@material-ui/core'
-import SearchIcon from '@material-ui/icons/SearchTwoTone'
+import SearchIcon from '@material-ui/icons/Search'
 import React, { useEffect, useState } from 'react'
 
 import useDebounce from '../../hooks/useDebounce'
 import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { Hits } from '../../model/model'
 import { index } from '../../services/algolia'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import SearchHit from './SearchHit'
 import SearchInput from './SearchInput'
@@ -40,7 +41,9 @@ const useStyles = makeStyles(theme =>
             position: 'sticky',
             top: 0,
             zIndex: 1,
-            backgroundColor: theme.palette.background.paper,
+        },
+        searchIcon: {
+            marginRight: theme.spacing(1),
         },
     })
 )
@@ -55,6 +58,7 @@ const Search = () => {
     const classes = useStyles()
     const debouncedSearchValue = useDebounce(searchValue, 500)
     const { user } = useFirebaseAuthContext()
+    const { isLowRes } = useBreakpointsContext()
 
     const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous)
 
@@ -82,11 +86,15 @@ const Search = () => {
 
     return (
         <>
-            <Box marginBottom={2} display="flex" justifyContent="center">
-                <Fab onClick={handleSearchDrawerChange} size="small" color="primary">
+            {isLowRes ? (
+                <Fab onClick={handleSearchDrawerChange} size="medium">
                     <SearchIcon />
                 </Fab>
-            </Box>
+            ) : (
+                <Fab onClick={handleSearchDrawerChange} size="medium" variant="extended">
+                    <SearchIcon className={classes.searchIcon} /> Rezeptsuche
+                </Fab>
+            )}
 
             <Drawer
                 open={searchDrawer}

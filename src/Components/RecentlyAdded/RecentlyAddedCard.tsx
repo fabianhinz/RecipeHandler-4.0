@@ -9,11 +9,14 @@ import {
 } from '@material-ui/core'
 import { GridSize } from '@material-ui/core/Grid'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
+import PeopleIcon from '@material-ui/icons/People'
 import Skeleton from '@material-ui/lab/Skeleton'
+import { CalendarMonth } from 'mdi-material-ui'
 import React from 'react'
 
 import { useAttachmentRef } from '../../hooks/useAttachmentRef'
 import { AttachmentMetadata, Recipe } from '../../model/model'
+import { BORDER_RADIUS } from '../../theme'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
 import { useRouterContext } from '../Provider/RouterProvider'
@@ -22,12 +25,27 @@ import { PATHS } from '../Routes/Routes'
 const useStyles = makeStyles(theme =>
     createStyles({
         avatar: {
-            width: 80,
-            height: 80,
-            fontSize: theme.typography.pxToRem(40),
+            width: 140,
+            height: 140,
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
+            fontSize: theme.typography.pxToRem(60),
         },
-        paper: {
-            padding: theme.spacing(2),
+        skeleton: {
+            width: 140,
+            height: 140,
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
+            borderRadius: BORDER_RADIUS,
+        },
+        recipeName: {
+            fontFamily: "'Lato', sans-serif",
+        },
+        recipeDate: {
+            fontFamily: "'Raleway', sans-serif",
+        },
+        recipeItem: {
+            marginLeft: theme.spacing(2),
         },
     })
 )
@@ -56,33 +74,68 @@ const RecentlyAddedCard = ({ recipe, skeleton }: Props) => {
     return (
         <Grid {...recentlyAddedGridProps(isHighRes, pinnedOnDesktop)} item>
             <CardActionArea onClick={() => history.push(PATHS.details(recipe.name), { recipe })}>
-                <Paper className={classes.paper}>
-                    <Grid container wrap="nowrap" spacing={2} alignItems="center">
+                <Paper>
+                    <Grid container wrap="nowrap" alignItems="center">
                         <Grid item>
                             {attachmentRefLoading || skeleton ? (
-                                <Skeleton variant="circle" width={80} height={80} />
+                                <Skeleton className={classes.skeleton} variant="rect" />
                             ) : (
-                                <Avatar className={classes.avatar} src={attachmentRef.smallDataUrl}>
+                                <Avatar
+                                    variant="rounded"
+                                    className={classes.avatar}
+                                    src={attachmentRef.smallDataUrl}>
                                     {recipe.name.slice(0, 1).toUpperCase()}
                                 </Avatar>
                             )}
                         </Grid>
-                        <Grid item zeroMinWidth>
+                        <Grid className={classes.recipeItem} item zeroMinWidth>
                             {skeleton ? (
                                 <>
                                     <Skeleton width="4rem" height="1rem" />
                                     <Skeleton width="8rem" height="1rem" />
                                 </>
                             ) : (
-                                <>
-                                    <Typography noWrap variant="subtitle1">
-                                        {recipe.name}
-                                    </Typography>
-                                    <Typography color="textSecondary">
-                                        Zuletzt geändert am{' '}
-                                        {recipe.createdDate.toDate().toLocaleDateString()}
-                                    </Typography>
-                                </>
+                                <Grid container spacing={1}>
+                                    <Grid item xs={12}>
+                                        <Typography
+                                            gutterBottom
+                                            className={classes.recipeName}
+                                            variant="h5"
+                                            noWrap>
+                                            {recipe.name}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Grid container spacing={1} alignItems="center">
+                                            <Grid item>
+                                                <CalendarMonth />
+                                            </Grid>
+                                            <Grid item>
+                                                <Typography
+                                                    className={classes.recipeDate}
+                                                    color="textSecondary">
+                                                    {recipe.createdDate
+                                                        .toDate()
+                                                        .toLocaleDateString()}
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Grid container spacing={1} alignItems="center">
+                                            <Grid item>
+                                                <PeopleIcon />
+                                            </Grid>
+                                            <Grid item>
+                                                <Typography
+                                                    className={classes.recipeDate}
+                                                    color="textSecondary">
+                                                    {recipe.amount}
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
                             )}
                         </Grid>
                     </Grid>

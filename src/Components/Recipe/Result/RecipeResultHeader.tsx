@@ -1,4 +1,5 @@
-import { Grid, Typography } from '@material-ui/core'
+import { createStyles, Grid, makeStyles, Typography } from '@material-ui/core'
+import { CalendarMonth } from 'mdi-material-ui'
 import React from 'react'
 
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
@@ -13,8 +14,21 @@ interface Props extends RecipeVariants {
     recipe: Recipe<AttachmentMetadata | AttachmentData>
 }
 
+const useStyles = makeStyles(() =>
+    createStyles({
+        recipeName: {
+            fontFamily: "'Lato', sans-serif",
+        },
+        recipeDate: {
+            fontFamily: "'Raleway', sans-serif",
+        },
+    })
+)
+
 const RecipeResultHeader = ({ recipe, variant }: Props) => {
     const { isMobile } = useBreakpointsContext()
+
+    const classes = useStyles()
 
     const minifiedLayout = isMobile && variant === 'summary'
     const nameLayout = variant === 'pinned' || variant === 'related'
@@ -23,17 +37,30 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">
             <Grid item xs={nameLayout ? 12 : minifiedLayout ? 11 : 7}>
-                <Navigate disabled={nameLayout} to={PATHS.details(recipe.name)}>
-                    <Typography display="inline" variant="h5">
-                        {recipe.name}
-                    </Typography>
-                </Navigate>
-                <Typography color="textSecondary">
-                    Zuletzt geändert am{' '}
-                    {FirebaseService.createDateFromTimestamp(
-                        recipe.createdDate
-                    ).toLocaleDateString()}
-                </Typography>
+                <Grid container spacing={1} direction="column" justify="center">
+                    <Grid item>
+                        <Navigate disabled={nameLayout} to={PATHS.details(recipe.name)}>
+                            <Typography
+                                className={classes.recipeName}
+                                display="inline"
+                                variant="h5">
+                                {recipe.name}
+                            </Typography>
+                        </Navigate>
+                    </Grid>
+                    <Grid item>
+                        <Grid container spacing={1} alignItems="center">
+                            <Grid item>
+                                <CalendarMonth />
+                            </Grid>
+                            <Grid item>
+                                <Typography className={classes.recipeDate} color="textSecondary">
+                                    {recipe.createdDate.toDate().toLocaleDateString()}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
             {actionsLayout && (
                 <Grid item xs={minifiedLayout ? 1 : 5}>

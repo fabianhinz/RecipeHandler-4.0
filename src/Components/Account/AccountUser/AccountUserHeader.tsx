@@ -82,7 +82,7 @@ const AccountUserHeader = ({ user, userDoc, showInfo, onShowInfoChange }: Props)
                     <Grid item xs={12}>
                         <Grid container spacing={1} justify="space-between">
                             <Grid item xs="auto">
-                                <Typography variant="h5" display="inline">
+                                <Typography variant="h4" display="inline">
                                     Willkommen zurück {user.username}
                                 </Typography>
                             </Grid>
