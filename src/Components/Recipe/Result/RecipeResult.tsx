@@ -1,15 +1,15 @@
-import { Box, createStyles, Divider, Grid, Grow, makeStyles } from '@material-ui/core'
+import { createStyles, Divider, Grid, makeStyles } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { memo } from 'react'
 
 import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
-import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import AccountChip from '../../Account/AccountChip'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
 import Satisfaction from '../../Satisfaction/Satisfaction'
+import NotFound from '../../Shared/NotFound'
 import { Subtitle } from '../../Shared/Subtitle'
 import RecipeCard from '../RecipeCard'
 import { RecipeVariants } from './Action/RecipeResultAction'
@@ -38,29 +38,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
         xlEnabled: recipe !== null && recipe.relatedRecipes.length !== 0,
     })
 
-    if (!recipe)
-        return (
-            <Box display="flex" justifyContent="center" marginTop={4}>
-                <Grow in timeout={500}>
-                    <NotFoundIcon width={200} />
-                </Grow>
-            </Box>
-        )
-
-    if (variant === 'summary')
-        return (
-            <Grid container spacing={2} className={classes.recipeContainer} alignContent="stretch">
-                <Grid item xs={12}>
-                    <RecipeResultHeader recipe={recipe} variant={variant} />
-                </Grid>
-
-                {divider && (
-                    <Grid item xs={12}>
-                        <Divider />
-                    </Grid>
-                )}
-            </Grid>
-        )
+    if (!recipe) return <NotFound visible />
 
     return (
         <Grid container spacing={variant === 'pinned' ? 2 : 4} className={classes.recipeContainer}>

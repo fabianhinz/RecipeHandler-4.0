@@ -1,22 +1,13 @@
-import {
-    Box,
-    createStyles,
-    Divider,
-    Drawer,
-    Fab,
-    List,
-    makeStyles,
-    Typography,
-} from '@material-ui/core'
+import { createStyles, Divider, Drawer, Fab, List, makeStyles, Typography } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search'
 import React, { useEffect, useState } from 'react'
 
 import useDebounce from '../../hooks/useDebounce'
-import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { Hits } from '../../model/model'
 import { index } from '../../services/algolia'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import NotFound from '../Shared/NotFound'
 import SearchHit from './SearchHit'
 import SearchInput from './SearchInput'
 
@@ -129,11 +120,9 @@ const Search = () => {
                     </List>
                 )}
 
-                {!loading && algoliaHits.length === 0 && searchValue.length > 0 && (
-                    <Box padding={2} display="flex" justifyContent="center">
-                        <NotFoundIcon width={150} />
-                    </Box>
-                )}
+                <NotFound
+                    visible={!loading && algoliaHits.length === 0 && searchValue.length > 0}
+                />
 
                 {!loading && error && (
                     <Typography gutterBottom align="center" variant="h6">

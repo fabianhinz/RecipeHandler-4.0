@@ -22,11 +22,6 @@ const useStyles = makeStyles(theme => {
             background,
             color: theme.palette.getContrastText(background),
         },
-        notFound: {
-            flexGrow: 1,
-            display: 'flex',
-            justifyContent: 'center',
-        },
     })
 })
 

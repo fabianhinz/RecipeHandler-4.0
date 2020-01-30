@@ -3,7 +3,6 @@ import { CalendarMonth } from 'mdi-material-ui'
 import React from 'react'
 
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
-import { FirebaseService } from '../../../services/firebase'
 import { CategoryResult } from '../../Category/CategoryResult'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { Navigate } from '../../Routes/Navigate'
@@ -30,9 +29,9 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
 
     const classes = useStyles()
 
-    const minifiedLayout = isMobile && variant === 'summary'
+    const minifiedLayout = isMobile
     const nameLayout = variant === 'pinned' || variant === 'related'
-    const actionsLayout = variant === 'details' || variant === 'summary'
+    const actionsLayout = variant === 'details'
 
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">

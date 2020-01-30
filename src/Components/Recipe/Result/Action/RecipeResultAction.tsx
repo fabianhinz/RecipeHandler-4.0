@@ -7,7 +7,7 @@ import { RecipeResultPin } from './RecipeResultPin'
 import { RecipeResultRating } from './RecipeResultRating'
 import { RecipeResultShare } from './RecipeResultShare'
 
-export type RecipeVariants = { variant: 'summary' | 'details' | 'pinned' | 'preview' | 'related' }
+export type RecipeVariants = { variant: 'details' | 'pinned' | 'preview' | 'related' }
 
 interface RecipeResultActionProps {
     name: string

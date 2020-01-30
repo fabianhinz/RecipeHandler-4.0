@@ -94,3 +94,6 @@ export type Grocery = string
 
 export type ShoppingList = Map<RecipeName, { list: Grocery[] } | undefined>
 export type ShoppingTracker = Map<RecipeName, { tracker: Grocery[] } | undefined>
+
+export type OrderByKey = keyof Pick<Recipe<AttachmentMetadata>, 'name' | 'createdDate'>
+export type OrderByRecord = Partial<Record<OrderByKey, 'asc' | 'desc'>>

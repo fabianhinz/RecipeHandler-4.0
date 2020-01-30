@@ -1,51 +1,29 @@
-import {
-    Button,
-    ButtonGroup,
-    createStyles,
-    Grid,
-    makeStyles,
-    Typography,
-    Zoom,
-} from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import DescIcon from '@material-ui/icons/ArrowDownwardRounded'
-import AscIcon from '@material-ui/icons/ArrowUpwardRounded'
+import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import useIntersectionObserver from '../../hooks/useIntersectionObserver'
-import { AttachmentMetadata, DocumentId, Recipe, RecipeDocument } from '../../model/model'
+import {
+    AttachmentMetadata,
+    DocumentId,
+    OrderByKey,
+    OrderByRecord,
+    Recipe,
+    RecipeDocument,
+} from '../../model/model'
 import ConfigService from '../../services/configService'
-import configService from '../../services/configService'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import RecentlyAdded from '../RecentlyAdded/RecentlyAdded'
 import { NavigateFab } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
-import Search from '../Search/Search'
-import { HomeCategory } from './HomeCategory'
-import { HomeRecipe, OrderByKey, OrderByRecord } from './HomeRecipe'
+import HomeRecentlyAdded from './HomeRecentlyAdded'
+import HomeRecipeCard from './HomeRecipeCard'
+import HomeRecipeSelection from './HomeRecipeSelection'
+import HomeSkeletons from './HomeSkeletons'
 
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        buttonGroupText: {
-            '&:not(:first-child), &:not(:last-child)': {
-                borderRight: 'none',
-                borderBottom: 'none',
-            },
-        },
-        buttonGroupRoot: {
-            borderRadius: 20,
-            height: 40,
-            boxShadow: theme.shadows[6],
-        },
-        button: {
-            borderRadius: 20,
-        },
-    })
-)
 
 const Home = () => {
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
@@ -62,11 +40,6 @@ const Home = () => {
             if (pagedRecipes.size > 0) setLastRecipe([...pagedRecipes.values()].pop())
         },
     })
-
-    const handleCategoryChange = (type: string, value: string) => {
-        setLastRecipe(null)
-        setSelectedCategories(type, value)
-    }
 
     useEffect(() => {
         setPagedRecipes(new Map())
@@ -92,7 +65,7 @@ const Home = () => {
             (value, type) => (query = query.where(`categories.${type}`, '==', value))
         )
 
-        return query.limit(8).onSnapshot(querySnapshot => {
+        return query.limit(6).onSnapshot(querySnapshot => {
             const changes: ChangesRecord = {
                 added: new Map(),
                 modified: new Map(),
@@ -109,88 +82,22 @@ const Home = () => {
         })
     }, [lastRecipe, orderBy, selectedCategories, user])
 
-    const getStartIcon = (orderBy?: 'asc' | 'desc') => {
-        if (!orderBy) return {}
-
-        return {
-            startIcon: <Zoom in>{orderBy === 'asc' ? <AscIcon /> : <DescIcon />}</Zoom>,
-        }
-    }
-
-    const classes = useStyles()
-
-    const handleOrderByChange = (key: keyof OrderByRecord) => () => {
-        let newOrderBy: OrderByRecord
-
-        if (orderBy[key] === 'asc') newOrderBy = { [key]: 'desc' }
-        else if (orderBy[key] === 'desc') newOrderBy = { [key]: 'asc' }
-        else newOrderBy = { [key]: 'asc' }
-
-        setOrderBy(newOrderBy)
-        configService.orderBy = newOrderBy
-    }
-
     return (
         <Grid container spacing={4} justify="space-between" alignItems="center">
-            {user && !user.showRecentlyAdded ? (
-                <></>
-            ) : (
-                <>
-                    <Grid item xs={6}>
-                        <Typography variant="h4">Zuletzt hinzugefügt</Typography>
-                    </Grid>
-                    <Grid item>
-                        <Search />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <RecentlyAdded />
-                    </Grid>
-                </>
-            )}
-
-            <Grid item xs={6}>
-                <Typography variant="h4">Auswahl</Typography>
-            </Grid>
-            <Grid item>
-                <ButtonGroup
-                    size="medium"
-                    classes={{
-                        groupedTextHorizontal: classes.buttonGroupText,
-                        groupedTextVertical: classes.buttonGroupText,
-                        root: classes.buttonGroupRoot,
-                    }}
-                    variant="contained">
-                    <Button
-                        className={classes.button}
-                        onClick={handleOrderByChange('name')}
-                        color={orderBy.name ? 'primary' : 'default'}
-                        {...getStartIcon(orderBy.name)}>
-                        Name
-                    </Button>
-                    <Button
-                        className={classes.button}
-                        onClick={handleOrderByChange('createdDate')}
-                        color={orderBy.createdDate ? 'primary' : 'default'}
-                        {...getStartIcon(orderBy.createdDate)}>
-                        Datum
-                    </Button>
-                </ButtonGroup>
-            </Grid>
+            <HomeRecentlyAdded />
+            <HomeRecipeSelection
+                selectedCategories={selectedCategories}
+                onSelectedCategoriesChange={setSelectedCategories}
+                orderBy={orderBy}
+                onOrderByChange={setOrderBy}
+            />
             <Grid item xs={12}>
-                <HomeCategory
-                    selectedCategories={selectedCategories}
-                    onCategoryChange={handleCategoryChange}
-                />
-            </Grid>
-
-            <Grid item xs={12}>
-                <HomeRecipe
-                    // orderBy={orderBy}
-                    // onOrderByChange={setOrderBy}
-                    skeletons={loading}
-                    recipes={[...pagedRecipes.values()]}
-                />
-                {/* IMPORTANT: the intersection observer trigger must not be moved */}
+                <Grid container spacing={3}>
+                    {[...pagedRecipes.values()].map(recipe => (
+                        <HomeRecipeCard key={recipe.name} skeleton={false} recipe={recipe} />
+                    ))}
+                    <HomeSkeletons visible={pagedRecipes.size === 0} numberOfSkeletons={6} />
+                </Grid>
                 <IntersectionObserverTrigger />
             </Grid>
 

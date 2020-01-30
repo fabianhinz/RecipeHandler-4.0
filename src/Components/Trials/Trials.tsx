@@ -1,4 +1,4 @@
-import { Box, createStyles, Fab, Grid, makeStyles, Zoom } from '@material-ui/core'
+import { Box, createStyles, Fab, Grid, makeStyles, Typography, Zoom } from '@material-ui/core'
 import CameraIcon from '@material-ui/icons/CameraTwoTone'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
@@ -127,6 +127,9 @@ const Trials = () => {
                 </Box>
             ) : (
                 <Grid container spacing={4}>
+                    <Grid item xs={12}>
+                        <Typography variant="h4">Versuchskaninchen</Typography>
+                    </Grid>
                     {[...trials.values()].map((trial, index) => (
                         <TrialsCard index={index} trial={trial} key={trial.name} />
                     ))}
