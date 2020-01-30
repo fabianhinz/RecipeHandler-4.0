@@ -119,8 +119,8 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
     useEffect(() => {
         return () => {
-            userDocUnsubscribe()
-            shoppingListUnsubscribe()
+            if (userDocUnsubscribe) userDocUnsubscribe()
+            if (shoppingListUnsubscribe) shoppingListUnsubscribe()
         }
     }, [])
 

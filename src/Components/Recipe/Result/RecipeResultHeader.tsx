@@ -3,6 +3,7 @@ import { CalendarMonth } from 'mdi-material-ui'
 import React from 'react'
 
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
+import { FirebaseService } from '../../../services/firebase'
 import { CategoryResult } from '../../Category/CategoryResult'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { Navigate } from '../../Routes/Navigate'
@@ -54,7 +55,9 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
                             </Grid>
                             <Grid item>
                                 <Typography className={classes.recipeDate} color="textSecondary">
-                                    {recipe.createdDate.toDate().toLocaleDateString()}
+                                    {FirebaseService.createDateFromTimestamp(
+                                        recipe.createdDate
+                                    ).toLocaleDateString()}
                                 </Typography>
                             </Grid>
                         </Grid>
