@@ -43,7 +43,7 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
                             <Typography
                                 className={classes.recipeName}
                                 display="inline"
-                                variant="h5">
+                                variant="h4">
                                 {recipe.name}
                             </Typography>
                         </Navigate>
