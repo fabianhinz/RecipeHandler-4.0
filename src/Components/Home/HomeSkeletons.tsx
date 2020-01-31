@@ -14,16 +14,16 @@ const useStyles = makeStyles(theme =>
     createStyles({
         skeleton: {
             [theme.breakpoints.down('sm')]: {
-                width: 120 + 56,
-                height: 120 + 56,
+                width: 120 + 57,
+                height: 120 + 57,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 150 + 56,
-                height: 150 + 56,
+                width: 150 + 57,
+                height: 150 + 57,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 200 + 56,
-                height: 200 + 56,
+                width: 200 + 57,
+                height: 200 + 57,
             },
         },
     })

@@ -82,49 +82,47 @@ const TrialsCard = ({ trial, index }: Props) => {
     return (
         <>
             <Grid item xs={12} md={6} lg={4} key={trial.name}>
-                <Grow in timeout={getTransitionTimeoutProps(++index)}>
-                    <Card className={classes.card}>
-                        <AccountChip uid={trial.editorUid} variant="absolute" />
+                <Card className={classes.card}>
+                    <AccountChip uid={trial.editorUid} variant="absolute" />
 
-                        <CardActionArea
-                            disabled={!dataUrls}
-                            onClick={() => {
-                                if (dataUrls) setSelectedAttachment(dataUrls.fullDataUrl)
-                            }}>
-                            <CardMedia
-                                image={dataUrls && dataUrls.mediumDataUrl}
-                                className={classes.img}>
-                                {/* make mui happy */}
-                                <></>
-                            </CardMedia>
-                        </CardActionArea>
+                    <CardActionArea
+                        disabled={!dataUrls}
+                        onClick={() => {
+                            if (dataUrls) setSelectedAttachment(dataUrls.fullDataUrl)
+                        }}>
+                        <CardMedia
+                            image={dataUrls && dataUrls.mediumDataUrl}
+                            className={classes.img}>
+                            {/* make mui happy */}
+                            <></>
+                        </CardMedia>
+                    </CardActionArea>
 
-                        {user && (
-                            <Slide direction="up" in timeout={getTransitionTimeoutProps(++index)}>
-                                <Grid
-                                    container
-                                    justify="flex-end"
-                                    spacing={1}
-                                    className={classes.actions}>
-                                    <Grid item xs="auto">
-                                        <Comments
-                                            highContrast
-                                            collection="trials"
-                                            numberOfComments={trial.numberOfComments}
-                                            name={trial.name}
-                                        />
-                                    </Grid>
-
-                                    <Grid item xs="auto">
-                                        <Fab size="small" onClick={() => setDeleteAlert(true)}>
-                                            <DeleteIcon />
-                                        </Fab>
-                                    </Grid>
+                    {user && (
+                        <Slide direction="up" in timeout={getTransitionTimeoutProps(++index)}>
+                            <Grid
+                                container
+                                justify="flex-end"
+                                spacing={1}
+                                className={classes.actions}>
+                                <Grid item xs="auto">
+                                    <Comments
+                                        highContrast
+                                        collection="trials"
+                                        numberOfComments={trial.numberOfComments}
+                                        name={trial.name}
+                                    />
                                 </Grid>
-                            </Slide>
-                        )}
-                    </Card>
-                </Grow>
+
+                                <Grid item xs="auto">
+                                    <Fab size="small" onClick={() => setDeleteAlert(true)}>
+                                        <DeleteIcon />
+                                    </Fab>
+                                </Grid>
+                            </Grid>
+                        </Slide>
+                    )}
+                </Card>
             </Grid>
             <TrialsDeleteAlert
                 open={deleteAlert}

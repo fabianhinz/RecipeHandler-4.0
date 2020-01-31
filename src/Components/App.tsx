@@ -7,6 +7,7 @@ import React, { FC, useCallback, useEffect, useState } from 'react'
 import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import { isSafari } from '../util/constants'
 import Footer from './Footer'
+import Header from './Header'
 import Main from './Main'
 import AnimationProvider from './Provider/AnimationProvider'
 import { useBreakpointsContext } from './Provider/BreakpointsProvider'
@@ -17,7 +18,22 @@ import PinnedRecipesProvider from './Provider/PinnedRecipesProvider'
 import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
-import Container from './Shared/Container'
+
+const AppProvider: FC = ({ children }) => (
+    <RouterProvider>
+        <DeviceOrientationProvider>
+            <UsersProvider>
+                <CategoriesCollectionProvider>
+                    <SelectedAttachementProvider>
+                        <AnimationProvider>
+                            <PinnedRecipesProvider>{children}</PinnedRecipesProvider>
+                        </AnimationProvider>
+                    </SelectedAttachementProvider>
+                </CategoriesCollectionProvider>
+            </UsersProvider>
+        </DeviceOrientationProvider>
+    </RouterProvider>
+)
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
@@ -62,24 +78,11 @@ const App: FC = () => {
                     vertical: isMobile ? 'bottom' : 'top',
                     horizontal: 'right',
                 }}>
-                <RouterProvider>
-                    <DeviceOrientationProvider>
-                        <UsersProvider>
-                            <CategoriesCollectionProvider>
-                                <SelectedAttachementProvider>
-                                    <AnimationProvider>
-                                        <PinnedRecipesProvider>
-                                            <Container>
-                                                <Main />
-                                                <Footer />
-                                            </Container>
-                                        </PinnedRecipesProvider>
-                                    </AnimationProvider>
-                                </SelectedAttachementProvider>
-                            </CategoriesCollectionProvider>
-                        </UsersProvider>
-                    </DeviceOrientationProvider>
-                </RouterProvider>
+                <AppProvider>
+                    <Header />
+                    <Main />
+                    <Footer />
+                </AppProvider>
             </SnackbarProvider>
         </ThemeProvider>
     )

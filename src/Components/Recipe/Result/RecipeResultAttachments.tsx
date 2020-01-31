@@ -7,6 +7,7 @@ import { useAttachmentRef } from '../../../hooks/useAttachmentRef'
 import { AttachmentData, AttachmentMetadata } from '../../../model/model'
 import { isMetadata } from '../../../model/modelUtil'
 import elementIdService from '../../../services/elementIdService'
+import { BORDER_RADIUS } from '../../../theme'
 import { useAnimationContext } from '../../Provider/AnimationProvider'
 
 const useStyles = makeStyles(theme =>
@@ -15,14 +16,35 @@ const useStyles = makeStyles(theme =>
             overflowX: 'auto',
         },
         attachmentPreview: {
-            width: 200,
-            height: 200,
+            [theme.breakpoints.down('sm')]: {
+                width: 180,
+                height: 180,
+            },
+            [theme.breakpoints.between('sm', 'lg')]: {
+                width: 225,
+                height: 225,
+            },
+            [theme.breakpoints.up('xl')]: {
+                width: 300,
+                height: 300,
+            },
+            borderRadius: BORDER_RADIUS,
             boxShadow: theme.shadows[1],
         },
         actionArea: {
-            width: 200,
-            height: 200,
-            borderRadius: '50%',
+            [theme.breakpoints.down('sm')]: {
+                width: 180,
+                height: 180,
+            },
+            [theme.breakpoints.between('sm', 'lg')]: {
+                width: 225,
+                height: 225,
+            },
+            [theme.breakpoints.up('xl')]: {
+                width: 300,
+                height: 300,
+            },
+            borderRadius: BORDER_RADIUS,
         },
         addAvatar: {
             width: 200,

@@ -10,11 +10,11 @@ interface Props {
 const NotFound = ({ visible }: Props) => (
     <>
         {visible && (
-            <Box padding={2} display="flex" justifyContent="center">
-                <Grow in timeout={250}>
+            <Grow in timeout={250}>
+                <Box flexGrow={1} padding={2} display="flex" justifyContent="center">
                     <NotFoundIcon width={200} />
-                </Grow>
-            </Box>
+                </Box>
+            </Grow>
         )}
     </>
 )

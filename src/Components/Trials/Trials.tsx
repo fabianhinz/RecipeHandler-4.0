@@ -128,7 +128,7 @@ const Trials = () => {
             ) : (
                 <Grid container spacing={4}>
                     <Grid item xs={12}>
-                        <Typography variant="h4">Versuchskaninchen</Typography>
+                        <Typography variant="h4">Rezeptideen</Typography>
                     </Grid>
                     {[...trials.values()].map((trial, index) => (
                         <TrialsCard index={index} trial={trial} key={trial.name} />

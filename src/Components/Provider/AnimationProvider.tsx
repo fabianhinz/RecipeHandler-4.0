@@ -99,7 +99,7 @@ const AnimationProvider: FC = ({ children }) => {
                     translate(0px,0px)
                     scale(1,1)
                 `,
-                borderRadius: '50%',
+                boxShadow: 'unset',
                 zIndex: theme.zIndex.appBar + 1,
             },
             {
@@ -111,7 +111,7 @@ const AnimationProvider: FC = ({ children }) => {
                 position: 'fixed',
                 top: '50%',
                 left: '50%',
-                borderRadius: `${BORDER_RADIUS}px`,
+                boxShadow: 'unset',
                 zIndex: theme.zIndex.appBar + 1,
             },
         ]

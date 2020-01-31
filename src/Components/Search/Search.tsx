@@ -1,11 +1,18 @@
-import { createStyles, Divider, Drawer, Fab, List, makeStyles, Typography } from '@material-ui/core'
-import SearchIcon from '@material-ui/icons/Search'
+import {
+    createStyles,
+    Divider,
+    Drawer,
+    IconButton,
+    List,
+    makeStyles,
+    Typography,
+} from '@material-ui/core'
+import { CloudSearch } from 'mdi-material-ui'
 import React, { useEffect, useState } from 'react'
 
 import useDebounce from '../../hooks/useDebounce'
 import { Hits } from '../../model/model'
 import { index } from '../../services/algolia'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import NotFound from '../Shared/NotFound'
 import SearchHit from './SearchHit'
@@ -49,7 +56,6 @@ const Search = () => {
     const classes = useStyles()
     const debouncedSearchValue = useDebounce(searchValue, 500)
     const { user } = useFirebaseAuthContext()
-    const { isLowRes } = useBreakpointsContext()
 
     const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous)
 
@@ -77,15 +83,9 @@ const Search = () => {
 
     return (
         <>
-            {isLowRes ? (
-                <Fab onClick={handleSearchDrawerChange} size="medium">
-                    <SearchIcon />
-                </Fab>
-            ) : (
-                <Fab onClick={handleSearchDrawerChange} size="medium" variant="extended">
-                    <SearchIcon className={classes.searchIcon} /> Rezeptsuche
-                </Fab>
-            )}
+            <IconButton onClick={handleSearchDrawerChange}>
+                <CloudSearch />
+            </IconButton>
 
             <Drawer
                 open={searchDrawer}

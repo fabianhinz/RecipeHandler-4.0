@@ -2,13 +2,14 @@ import { Box } from '@material-ui/core'
 import React from 'react'
 
 import { Routes } from './Routes/Routes'
+import Container from './Shared/Container'
 
 const Main = () => (
-    <Box marginTop={3} marginBottom={11}>
-        <Box paddingTop={1}>
+    <Container>
+        <Box marginTop={4} marginBottom={11}>
             <Routes />
         </Box>
-    </Box>
+    </Container>
 )
 
 export default Main

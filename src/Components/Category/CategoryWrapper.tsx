@@ -135,7 +135,7 @@ const CategoryDialog: FC<CategoryDialogProps> = ({
                 </ListItemIcon>
                 <ListItemText
                     primary={type}
-                    secondary={selectedHasType ? selectedCategory : 'Auswählen (optional)'}
+                    secondary={selectedHasType ? selectedCategory : '(optional)'}
                 />
             </ListItem>
 
