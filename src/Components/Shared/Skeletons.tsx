@@ -5,30 +5,39 @@ import React from 'react'
 import { useGridContext } from '../Provider/GridProvider'
 
 interface Props {
+    variant: 'home' | 'trial'
     visible: boolean
     numberOfSkeletons?: number
 }
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        skeleton: {
+        home: {
             [theme.breakpoints.down('sm')]: {
-                width: 120 + 57,
                 height: 120 + 57,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 150 + 57,
                 height: 150 + 57,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 200 + 57,
                 height: 200 + 57,
+            },
+        },
+        trial: {
+            [theme.breakpoints.down('sm')]: {
+                height: 283,
+            },
+            [theme.breakpoints.between('sm', 'lg')]: {
+                height: 333,
+            },
+            [theme.breakpoints.up('xl')]: {
+                height: 383,
             },
         },
     })
 )
 
-const HomeSkeletons = ({ visible, numberOfSkeletons }: Props) => {
+const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
     const classes = useStyles()
     const { gridBreakpointProps } = useGridContext()
 
@@ -41,7 +50,7 @@ const HomeSkeletons = ({ visible, numberOfSkeletons }: Props) => {
                             <Grid xs={12} item>
                                 <Card>
                                     <Skeleton
-                                        className={classes.skeleton}
+                                        className={classes[variant]}
                                         width="100%"
                                         variant="rect"
                                     />
@@ -54,4 +63,4 @@ const HomeSkeletons = ({ visible, numberOfSkeletons }: Props) => {
     )
 }
 
-export default HomeSkeletons
+export default Skeletons

@@ -20,6 +20,7 @@ import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../Recipe/Create/Attachments/useAttachmentDropzone'
 import NotFound from '../Shared/NotFound'
+import Skeletons from '../Shared/Skeletons'
 import TrialsCard from './TrialsCard'
 
 const useStyles = makeStyles(theme =>
@@ -160,6 +161,8 @@ const Trials = () => {
                 {[...pagedTrials.values()].map((trial, index) => (
                     <TrialsCard index={index} trial={trial} key={trial.name} />
                 ))}
+
+                <Skeletons variant="trial" visible={querying && pagedTrials.size === 0} />
 
                 <NotFound visible={!querying && pagedTrials.size === 0} />
 

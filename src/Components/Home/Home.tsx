@@ -18,10 +18,10 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { NavigateFab } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
 import NotFound from '../Shared/NotFound'
+import Skeletons from '../Shared/Skeletons'
 import HomeRecentlyAdded from './HomeRecentlyAdded'
 import HomeRecipeCard from './HomeRecipeCard'
 import HomeRecipeSelection from './HomeRecipeSelection'
-import HomeSkeletons from './HomeSkeletons'
 
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>
 
@@ -103,12 +103,14 @@ const Home = () => {
                             <HomeRecipeCard key={recipe.name} recipe={recipe} />
                         ))}
 
-                        <HomeSkeletons
+                        <Skeletons
+                            variant="home"
                             visible={querying && pagedRecipes.size === 0}
                             numberOfSkeletons={
                                 pagedRecipesSize.current > 0 ? pagedRecipesSize.current : 6
                             }
                         />
+
                         <NotFound visible={!querying && pagedRecipes.size === 0} />
 
                         <Grid item xs={12}>

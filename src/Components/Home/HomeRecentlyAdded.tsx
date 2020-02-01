@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { RecipeDocument } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import Skeletons from '../Shared/Skeletons'
 import HomeRecipeCard from './HomeRecipeCard'
-import HomeSkeletons from './HomeSkeletons'
 
 const HomeRecentlyAdded = () => {
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
@@ -35,11 +35,15 @@ const HomeRecentlyAdded = () => {
                 <Typography variant="h4">Kürzlich hinzugefügt</Typography>
             </Grid>
             <Grid item xs={12}>
-                <Grid container justify="space-evenly" spacing={3}>
+                <Grid container spacing={3}>
                     {recipes.map(recipe => (
                         <HomeRecipeCard key={recipe.name} recipe={recipe} />
                     ))}
-                    <HomeSkeletons visible={recipes.length === 0} numberOfSkeletons={6} />
+                    <Skeletons
+                        variant="home"
+                        visible={recipes.length === 0}
+                        numberOfSkeletons={6}
+                    />
                 </Grid>
             </Grid>
         </>
