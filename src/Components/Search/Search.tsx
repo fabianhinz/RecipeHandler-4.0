@@ -1,74 +1,72 @@
 import {
     createStyles,
-    Divider,
-    Drawer,
-    IconButton,
+    Grow,
+    InputAdornment,
+    InputBase,
     List,
     makeStyles,
+    Paper,
     Typography,
 } from '@material-ui/core'
-import { CloudSearch } from 'mdi-material-ui'
 import React, { useEffect, useState } from 'react'
 
 import useDebounce from '../../hooks/useDebounce'
+import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
+import { ReactComponent as Logo } from '../../icons/logo.svg'
 import { Hits } from '../../model/model'
 import { index } from '../../services/algolia'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import NotFound from '../Shared/NotFound'
-import SearchHit from './SearchHit'
-import SearchInput from './SearchInput'
+import Progress from '../Shared/Progress'
+import SearchResult from './SearchResult'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        paper: {
-            paddingTop: 'env(safe-area-inset-top)',
-            maxHeight: '100%',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-        },
-        safeAreaIos: {
-            height: 'env(safe-area-inset-top)',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: theme.zIndex.drawer + 1,
-            backgroundColor: theme.palette.background.paper,
+        logo: {
+            marginRight: theme.spacing(0.5),
+            height: 40,
         },
         searchContainer: {
-            position: 'sticky',
-            top: 0,
-            zIndex: 1,
+            flexGrow: 1,
+            display: 'flex',
         },
-        searchIcon: {
-            marginRight: theme.spacing(1),
+        searchResultsPaper: {
+            position: 'absolute',
+            left: 0,
+            top: theme.spacing(9),
+            width: '100%',
+            padding: theme.spacing(2),
+            minHeight: 280,
+            maxHeight: '50vh',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            zIndex: theme.zIndex.appBar + 1,
         },
     })
 )
 
 const Search = () => {
-    const [searchDrawer, setSearchDrawer] = useState(false)
-    const [searchValue, setSearchValue] = useState('')
-    const [algoliaHits, setAlgoliaHits] = useState<Hits>([])
+    const [value, setValue] = useState('')
+    const [results, setResults] = useState<Hits>([])
+    const [resultsOpen, setResultsOpen] = useState(false)
     const [error, setError] = useState<any>(null)
     const [loading, setLoading] = useState(false)
 
     const classes = useStyles()
-    const debouncedSearchValue = useDebounce(searchValue, 500)
+
+    const debouncedValue = useDebounce(value, 500)
     const { user } = useFirebaseAuthContext()
 
-    const handleSearchDrawerChange = () => setSearchDrawer(previous => !previous)
-
     useEffect(() => {
-        if (debouncedSearchValue.length > 0) {
+        if (debouncedValue.length > 0) {
             index
                 .search({
-                    query: debouncedSearchValue,
+                    query: debouncedValue,
                     advancedSyntax: user && user.algoliaAdvancedSyntax ? true : false,
                 })
                 .then(({ hits }) => {
                     setError(null)
-                    setAlgoliaHits(hits)
+                    setResults(hits)
                     setLoading(false)
                 })
                 .catch(error => {
@@ -76,61 +74,72 @@ const Search = () => {
                     setLoading(false)
                 })
         } else {
-            setAlgoliaHits([])
+            setResults([])
             setLoading(false)
         }
-    }, [debouncedSearchValue, user])
+    }, [debouncedValue, user])
+
+    const handleInputChange = (
+        event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+    ) => {
+        setLoading(true)
+        setValue(event.target.value)
+    }
+
+    const closeResults = () => setResultsOpen(false)
+
+    const openResults = () => setResultsOpen(true)
 
     return (
-        <>
-            <IconButton onClick={handleSearchDrawerChange}>
-                <CloudSearch />
-            </IconButton>
+        <div className={classes.searchContainer} onFocus={openResults} onBlur={closeResults}>
+            <InputBase
+                autoFocus={value.length === 0}
+                fullWidth
+                placeholder="Rezepte durchsuchen"
+                value={value}
+                onChange={handleInputChange}
+                startAdornment={
+                    <InputAdornment position="start">
+                        <Logo className={classes.logo} />
+                    </InputAdornment>
+                }
+                endAdornment={
+                    <InputAdornment position="end">
+                        <a
+                            style={{ lineHeight: 0, width: '100%' }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://www.algolia.com/docsearch">
+                            <AlgoliaIcon />
+                        </a>
+                    </InputAdornment>
+                }
+            />
 
-            <Drawer
-                open={searchDrawer}
-                PaperProps={{ className: classes.paper }}
-                onClose={handleSearchDrawerChange}
-                anchor="top">
-                <div className={classes.safeAreaIos} />
-                <div className={classes.searchContainer}>
-                    <SearchInput
-                        onSearchBtnClick={() => setSearchDrawer(false)}
-                        searchValue={searchValue}
-                        loading={loading}
-                        onChange={e => {
-                            setLoading(true)
-                            setSearchValue(e.target.value)
-                        }}
-                    />
-
-                    <Divider />
-                </div>
-
-                {algoliaHits.length > 0 && (
-                    <List>
-                        {algoliaHits.map(recipeHit => (
-                            <SearchHit
-                                key={recipeHit.name}
-                                recipeHit={recipeHit}
-                                onHitSelect={handleSearchDrawerChange}
-                                debouncedSearchValue={debouncedSearchValue}
+            <Grow in={value.length > 0 && resultsOpen}>
+                <Paper className={classes.searchResultsPaper}>
+                    <List disablePadding>
+                        {results.map(result => (
+                            <SearchResult
+                                key={result.name}
+                                result={result}
+                                onResultClick={closeResults}
+                                searchValue={value}
                             />
                         ))}
                     </List>
-                )}
 
-                <NotFound
-                    visible={!loading && algoliaHits.length === 0 && searchValue.length > 0}
-                />
+                    {loading && <Progress variant="cover" />}
+                    <NotFound visible={!loading && results.length === 0 && value.length > 0} />
 
-                {!loading && error && (
-                    <Typography gutterBottom align="center" variant="h6">
-                        Fehler beim Abruf der Daten
-                    </Typography>
-                )}
-            </Drawer>
-        </>
+                    {!loading && error && (
+                        <Typography gutterBottom align="center" variant="h6">
+                            Fehler beim Abruf der Daten
+                        </Typography>
+                    )}
+                </Paper>
+            </Grow>
+        </div>
     )
 }
 

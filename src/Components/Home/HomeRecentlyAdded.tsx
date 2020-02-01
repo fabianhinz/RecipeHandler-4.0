@@ -31,7 +31,7 @@ const HomeRecentlyAdded = () => {
 
     return (
         <>
-            <Grid item xs={8}>
+            <Grid item>
                 <Typography variant="h4">Kürzlich hinzugefügt</Typography>
             </Grid>
             <Grid item xs={12}>

@@ -9,7 +9,6 @@ import {
     makeStyles,
     Paper,
     Popover,
-    Tooltip,
     Typography,
 } from '@material-ui/core'
 import { GridSize } from '@material-ui/core/Grid'

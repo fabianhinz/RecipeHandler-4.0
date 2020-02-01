@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme =>
         },
     })
 )
-// ! ToDo: handle img ratio
+// ! ToDo: this has to go
 const AnimationProvider: FC = ({ children }) => {
     const [originId, setOriginId] = useState<string | undefined>()
     const animationRef = useRef<Animation | undefined>()

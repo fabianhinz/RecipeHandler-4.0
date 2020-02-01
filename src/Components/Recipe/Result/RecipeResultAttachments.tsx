@@ -108,7 +108,7 @@ const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) 
                     wrap="nowrap"
                     className={classes.attachmentPreviewGrid}
                     container
-                    spacing={2}
+                    spacing={3}
                     justify="flex-start">
                     {attachments.map(attachment => (
                         <AttachmentPreview attachment={attachment} key={attachment.name} />

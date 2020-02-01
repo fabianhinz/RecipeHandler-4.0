@@ -18,6 +18,7 @@ import PinnedRecipesProvider from './Provider/PinnedRecipesProvider'
 import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
+import Container from './Shared/Container'
 
 const AppProvider: FC = ({ children }) => (
     <RouterProvider>
@@ -79,9 +80,11 @@ const App: FC = () => {
                     horizontal: 'right',
                 }}>
                 <AppProvider>
-                    <Header />
-                    <Main />
-                    <Footer />
+                    <Container>
+                        <Header />
+                        <Main />
+                        <Footer />
+                    </Container>
                 </AppProvider>
             </SnackbarProvider>
         </ThemeProvider>
