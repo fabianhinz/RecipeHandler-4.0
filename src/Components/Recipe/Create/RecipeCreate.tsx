@@ -12,8 +12,8 @@ import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
+import StyledCard from '../../Shared/RecipeCard'
 import { Subtitle } from '../../Shared/Subtitle'
-import RecipeCard from '../RecipeCard'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
 import { RecipeCreateAttachments } from './Attachments/RecipeCreateAttachments'
@@ -182,7 +182,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
                     {state.relatedRecipes.length > 0 && (
                         <Grid item {...gridBreakpointProps}>
-                            <RecipeCard
+                            <StyledCard
                                 transitionOrder={3}
                                 variant="preview"
                                 header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}

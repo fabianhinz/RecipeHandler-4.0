@@ -20,7 +20,7 @@ import { DatabaseSearch } from 'mdi-material-ui'
 import React from 'react'
 
 import { User } from '../../../model/model'
-import RecipeCard from '../../Recipe/RecipeCard'
+import StyledCard from '../../Shared/RecipeCard'
 import { Subtitle } from '../../Shared/Subtitle'
 import { UserSettingChangeHandler } from './AccountUser'
 
@@ -32,7 +32,7 @@ interface Props {
 
 const AccountUserSettings = ({ onUserSettingChange, showInfo, user }: Props) => {
     return (
-        <RecipeCard
+        <StyledCard
             transitionOrder={2}
             header={<Subtitle icon={<SettingsIcon />} text="Einstellungen" />}
             content={

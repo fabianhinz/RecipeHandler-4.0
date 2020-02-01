@@ -94,7 +94,7 @@ interface Props {
 }
 
 const HomeRecipeCard = ({ recipe }: Props) => {
-    const [settingsAnchorEl, setSettingsAnchorEl] = useState<HTMLButtonElement | null>(null)
+    const [actionsAnchorEl, setActionsAnchorEl] = useState<HTMLButtonElement | null>(null)
 
     const classes = useStyles()
 
@@ -108,7 +108,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                 <Paper className={classes.paper}>
                     <IconButton
                         className={classes.iconButton}
-                        onClick={e => setSettingsAnchorEl(e.currentTarget)}>
+                        onClick={e => setActionsAnchorEl(e.currentTarget)}>
                         <MoreVertIcon />
                     </IconButton>
                     <CardActionArea
@@ -181,10 +181,10 @@ const HomeRecipeCard = ({ recipe }: Props) => {
             </Grid>
 
             <Popover
-                open={Boolean(settingsAnchorEl)}
-                anchorEl={settingsAnchorEl}
+                open={Boolean(actionsAnchorEl)}
+                anchorEl={actionsAnchorEl}
                 classes={{ paper: classes.popoverPaper }}
-                onClose={() => setSettingsAnchorEl(null)}
+                onClose={() => setActionsAnchorEl(null)}
                 anchorOrigin={{
                     vertical: 'center',
                     horizontal: 'left',

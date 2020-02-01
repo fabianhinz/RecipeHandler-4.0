@@ -5,7 +5,7 @@ import React, { memo, useEffect, useState } from 'react'
 import useProgress from '../../../hooks/useProgress'
 import { FirebaseService } from '../../../services/firebase'
 import { useUsersContext } from '../../Provider/UsersProvider'
-import RecipeCard from '../../Recipe/RecipeCard'
+import StyledCard from '../../Shared/RecipeCard'
 import { Subtitle } from '../../Shared/Subtitle'
 import AccountListItem from '../AccountListItem'
 
@@ -32,7 +32,7 @@ const AccountUserAdmin = () => {
 
     return (
         <>
-            <RecipeCard
+            <StyledCard
                 transitionOrder={4}
                 header={<Subtitle text="Editoren" icon={<SecurityIcon />} />}
                 content={

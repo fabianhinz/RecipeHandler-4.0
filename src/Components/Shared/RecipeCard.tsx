@@ -4,7 +4,7 @@ import React from 'react'
 
 import { getTransitionTimeoutProps } from '../../hooks/useTransition'
 import { BORDER_RADIUS_HUGE } from '../../theme'
-import { RecipeVariants } from './Result/Action/RecipeResultAction'
+import { RecipeVariants } from '../Recipe/Result/Action/RecipeResultAction'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -37,7 +37,7 @@ interface Props extends Partial<RecipeVariants> {
     transitionOrder: number
 }
 
-const RecipeCard = ({ variant, header, content, transitionOrder }: Props) => {
+const StyledCard = ({ variant, header, content, transitionOrder }: Props) => {
     const classes = useStyles()
     const pinned = variant === 'pinned'
 
@@ -57,4 +57,4 @@ const RecipeCard = ({ variant, header, content, transitionOrder }: Props) => {
     )
 }
 
-export default RecipeCard
+export default StyledCard
