@@ -41,6 +41,7 @@ const useStyles = makeStyles(theme =>
             overflowY: 'auto',
             overflowX: 'hidden',
             zIndex: theme.zIndex.appBar + 1,
+            boxShadow: theme.shadows[2],
         },
     })
 )
