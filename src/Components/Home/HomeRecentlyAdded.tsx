@@ -1,15 +1,20 @@
 import { Grid, Typography } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { RecipeDocument } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import Skeletons from '../Shared/Skeletons'
 import HomeRecipeCard from './HomeRecipeCard'
 
 const HomeRecentlyAdded = () => {
     const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
+
     const { user } = useFirebaseAuthContext()
+    const { isLowRes } = useBreakpointsContext()
+
+    const limit = useMemo(() => (isLowRes ? 3 : 6), [isLowRes])
 
     useEffect(() => {
         let query:
@@ -18,14 +23,14 @@ const HomeRecentlyAdded = () => {
 
         return query
             .orderBy('createdDate', 'desc')
-            .limit(6)
+            .limit(limit)
             .onSnapshot(
                 querySnapshot => {
                     setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
                 },
                 error => console.error(error)
             )
-    }, [])
+    }, [limit])
 
     if (user && !user.showRecentlyAdded) return <></>
 
@@ -42,7 +47,7 @@ const HomeRecentlyAdded = () => {
                     <Skeletons
                         variant="home"
                         visible={recipes.length === 0}
-                        numberOfSkeletons={6}
+                        numberOfSkeletons={limit}
                     />
                 </Grid>
             </Grid>

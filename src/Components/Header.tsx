@@ -1,4 +1,4 @@
-import { createStyles, Grid, IconButton, makeStyles, Paper } from '@material-ui/core'
+import { createStyles, Grid, Hidden, IconButton, makeStyles, Paper } from '@material-ui/core'
 import InfoIcon from '@material-ui/icons/Info'
 import GridIcon from '@material-ui/icons/ViewModule'
 import ListIcon from '@material-ui/icons/ViewStream'
@@ -42,19 +42,21 @@ const Header = () => {
                         <Search />
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={4} md={2}>
-                    <Paper className={classes.buttonPaper}>
-                        <IconButton
-                            onClick={() =>
-                                setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
-                            }>
-                            {gridLayout === 'grid' ? <GridIcon /> : <ListIcon />}
-                        </IconButton>
-                        <IconButton onClick={() => alert('todo')}>
-                            <InfoIcon />
-                        </IconButton>
-                    </Paper>
-                </Grid>
+                <Hidden xsDown>
+                    <Grid item xs={12} sm={4} md={2}>
+                        <Paper className={classes.buttonPaper}>
+                            <IconButton
+                                onClick={() =>
+                                    setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
+                                }>
+                                {gridLayout === 'grid' ? <GridIcon /> : <ListIcon />}
+                            </IconButton>
+                            <IconButton onClick={() => alert('todo')}>
+                                <InfoIcon />
+                            </IconButton>
+                        </Paper>
+                    </Grid>
+                </Hidden>
             </Grid>
         </div>
     )
