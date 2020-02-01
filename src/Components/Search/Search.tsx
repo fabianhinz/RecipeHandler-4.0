@@ -16,6 +16,7 @@ import { ReactComponent as Logo } from '../../icons/logo.svg'
 import { Hits } from '../../model/model'
 import { index } from '../../services/algolia'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
 import NotFound from '../Shared/NotFound'
 import Progress from '../Shared/Progress'
 import SearchResult from './SearchResult'
@@ -28,6 +29,7 @@ const useStyles = makeStyles(theme =>
         },
         searchContainer: {
             flexGrow: 1,
+
             display: 'flex',
         },
         searchResultsPaper: {
@@ -40,7 +42,7 @@ const useStyles = makeStyles(theme =>
             maxHeight: '50vh',
             overflowY: 'auto',
             overflowX: 'hidden',
-            zIndex: theme.zIndex.appBar + 1,
+
             boxShadow: theme.shadows[2],
         },
     })
@@ -56,6 +58,8 @@ const Search = () => {
     const classes = useStyles()
 
     const debouncedValue = useDebounce(value, 500)
+
+    const { pinnedRecipesTrigger } = usePinnedRecipesContext()
     const { user } = useFirebaseAuthContext()
 
     useEffect(() => {
@@ -94,14 +98,13 @@ const Search = () => {
     return (
         <div className={classes.searchContainer} onFocus={openResults} onBlur={closeResults}>
             <InputBase
-                autoFocus={value.length === 0}
                 fullWidth
-                placeholder="Rezepte durchsuchen"
+                placeholder="Suchen"
                 value={value}
                 onChange={handleInputChange}
                 startAdornment={
                     <InputAdornment position="start">
-                        <Logo className={classes.logo} />
+                        {pinnedRecipesTrigger || <Logo className={classes.logo} />}
                     </InputAdornment>
                 }
                 endAdornment={

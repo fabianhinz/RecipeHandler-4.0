@@ -5,7 +5,7 @@ import RemoveIcon from '@material-ui/icons/RemoveCircle'
 import React from 'react'
 
 import MarkdownInput from '../../Markdown/MarkdownInput'
-import StyledCard from '../../Shared/RecipeCard'
+import StyledCard from '../../Shared/StyledCard'
 import { Subtitle } from '../../Shared/Subtitle'
 
 const useStyles = makeStyles(() =>
@@ -35,7 +35,6 @@ const RecipeCreateIngredients = ({
 
     return (
         <StyledCard
-            transitionOrder={1}
             variant="preview"
             header={
                 <Subtitle icon={<AssignmentIcon />} text="Zutaten für">

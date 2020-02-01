@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme =>
             paddingTop: theme.spacing(4),
             position: 'sticky',
             top: 'env(safe-area-inset-bottom)',
-            zIndex: theme.zIndex.appBar,
+            zIndex: theme.zIndex.modal + 1,
         },
         searchPaper: {
             padding: 16,
@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme =>
 
 const Header = () => {
     const classes = useStyles()
+
     const { setGridLayout, gridLayout } = useGridContext()
 
     return (
@@ -51,7 +52,7 @@ const Header = () => {
                                 }>
                                 {gridLayout === 'grid' ? <GridIcon /> : <ListIcon />}
                             </IconButton>
-                            <IconButton onClick={() => alert('todo')}>
+                            <IconButton size="small" onClick={() => alert('todo')}>
                                 <InfoIcon />
                             </IconButton>
                         </Paper>

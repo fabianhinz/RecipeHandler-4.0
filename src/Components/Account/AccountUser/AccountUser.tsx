@@ -1,7 +1,7 @@
 import { Grid } from '@material-ui/core'
 import { LogoutVariant } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 
 import useProgress from '../../../hooks/useProgress'
 import { ShoppingList, User } from '../../../model/model'
@@ -12,7 +12,6 @@ import { NavigateFab } from '../../Routes/Navigate'
 import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
 import AccountUserRecipes from './AccountUserRecipes'
-import AccountUserSettings from './AccountUserSettings'
 import AccountUserShoppingList from './AccountUserShoppingList'
 
 type SettingKeys = keyof Pick<
@@ -23,8 +22,6 @@ type SettingKeys = keyof Pick<
 export type UserSettingChangeHandler = (key: SettingKeys) => (uid?: any) => void
 
 const AccountUser = () => {
-    const [showInfo, setShowInfo] = useState(false)
-
     // ? we won't load this component without an existing user - pinky promise -_-
     const { user, shoppingList } = useFirebaseAuthContext() as {
         user: User
@@ -88,43 +85,36 @@ const AccountUser = () => {
     }
 
     return (
-        <Grid container spacing={4}>
-            <Grid item xs={12}>
-                <AccountUserHeader
-                    user={user}
-                    userDoc={userDoc}
-                    showInfo={showInfo}
-                    onShowInfoChange={() => setShowInfo(prev => !prev)}
-                />
-            </Grid>
-
-            {shoppingList.size > 0 && (
-                <Grid item {...gridBreakpointProps}>
-                    <AccountUserShoppingList />
+        <>
+            <Grid container spacing={4}>
+                <Grid item xs={12}>
+                    <AccountUserHeader
+                        user={user}
+                        userDoc={userDoc}
+                        onUserSettingChange={handleUserSettingChange}
+                    />
                 </Grid>
-            )}
 
-            <Grid item {...gridBreakpointProps}>
-                <AccountUserSettings
-                    user={user}
-                    showInfo={showInfo}
-                    onUserSettingChange={handleUserSettingChange}
-                />
-            </Grid>
+                {shoppingList.size > 0 && (
+                    <Grid item {...gridBreakpointProps}>
+                        <AccountUserShoppingList />
+                    </Grid>
+                )}
 
-            <Grid item {...gridBreakpointProps}>
-                <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
-            </Grid>
-
-            {user.admin && (
                 <Grid item {...gridBreakpointProps}>
-                    <AccountUserAdmin />
+                    <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
                 </Grid>
-            )}
+
+                {user.admin && (
+                    <Grid item {...gridBreakpointProps}>
+                        <AccountUserAdmin />
+                    </Grid>
+                )}
+            </Grid>
 
             <NavigateFab onClick={handleLogout} icon={<LogoutVariant />} />
             <ProgressComponent />
-        </Grid>
+        </>
     )
 }
 

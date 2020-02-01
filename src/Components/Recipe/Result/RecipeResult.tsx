@@ -11,7 +11,7 @@ import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
 import { useGridContext } from '../../Provider/GridProvider'
 import Satisfaction from '../../Satisfaction/Satisfaction'
 import NotFound from '../../Shared/NotFound'
-import StyledCard from '../../Shared/RecipeCard'
+import StyledCard from '../../Shared/StyledCard'
 import { Subtitle } from '../../Shared/Subtitle'
 import { RecipeVariants } from './Action/RecipeResultAction'
 import RecipeResultAttachments from './RecipeResultAttachments'
@@ -59,7 +59,6 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
             {recipe.ingredients.length > 0 && (
                 <Grid {...variantAwareBreakpoints} item>
                     <StyledCard
-                        transitionOrder={1}
                         variant={variant}
                         header={
                             <Subtitle
@@ -85,7 +84,6 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
             {recipe.description.length > 0 && (
                 <Grid {...variantAwareBreakpoints} item>
                     <StyledCard
-                        transitionOrder={2}
                         variant={variant}
                         header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
                         content={
@@ -101,7 +99,6 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
             {recipe.relatedRecipes.length > 0 && variant !== 'pinned' && (
                 <Grid {...variantAwareBreakpoints} item>
                     <StyledCard
-                        transitionOrder={3}
                         variant={variant}
                         header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
                         content={<RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />}

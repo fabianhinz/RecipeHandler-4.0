@@ -1,8 +1,7 @@
-import { Card, CardContent, createStyles, Grow, makeStyles } from '@material-ui/core'
+import { Card, CardContent, createStyles, Fade, makeStyles } from '@material-ui/core'
 import clsx from 'clsx'
 import React from 'react'
 
-import { getTransitionTimeoutProps } from '../../hooks/useTransition'
 import { BORDER_RADIUS_HUGE } from '../../theme'
 import { RecipeVariants } from '../Recipe/Result/Action/RecipeResultAction'
 
@@ -34,15 +33,14 @@ const useStyles = makeStyles(theme =>
 interface Props extends Partial<RecipeVariants> {
     header?: React.ReactNode
     content: React.ReactNode
-    transitionOrder: number
 }
 
-const StyledCard = ({ variant, header, content, transitionOrder }: Props) => {
+const StyledCard = ({ variant, header, content }: Props) => {
     const classes = useStyles()
     const pinned = variant === 'pinned'
 
     return (
-        <Grow in timeout={getTransitionTimeoutProps(transitionOrder)}>
+        <Fade in>
             <Card className={classes.root} elevation={pinned ? 0 : 1}>
                 {header && (
                     <div className={clsx(classes.header, pinned && classes.pinnedHeader)}>
@@ -53,7 +51,7 @@ const StyledCard = ({ variant, header, content, transitionOrder }: Props) => {
                     {content}
                 </CardContent>
             </Card>
-        </Grow>
+        </Fade>
     )
 }
 

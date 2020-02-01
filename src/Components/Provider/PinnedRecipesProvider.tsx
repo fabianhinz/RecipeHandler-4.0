@@ -1,6 +1,5 @@
-import { Box, createStyles, Fab, makeStyles, Paper, Slide } from '@material-ui/core'
-import ChevronLeft from '@material-ui/icons/ChevronLeft'
-import ChevronRight from '@material-ui/icons/ChevronRight'
+import { Box, createStyles, IconButton, makeStyles, Paper, Slide } from '@material-ui/core'
+import MenuIcon from '@material-ui/icons/Menu'
 import clsx from 'clsx'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
@@ -10,6 +9,7 @@ import { BORDER_RADIUS } from '../../theme'
 import { RecipeResultPin } from '../Recipe/Result/Action/RecipeResultPin'
 import RecipeResult from '../Recipe/Result/RecipeResult'
 import { BadgeWrapper } from '../Shared/BadgeWrapper'
+import NotFound from '../Shared/NotFound'
 import Progress from '../Shared/Progress'
 import { useBreakpointsContext } from './BreakpointsProvider'
 
@@ -17,6 +17,7 @@ type PinnedRecipesState = {
     pinnedContains: (recipeName: string) => boolean
     handlePinnedChange: (recipeName: string) => void
     pinnedOnDesktop: boolean
+    pinnedRecipesTrigger: JSX.Element | undefined
 }
 
 const Context = React.createContext<PinnedRecipesState | null>(null)
@@ -55,9 +56,12 @@ const useStyles = makeStyles(theme =>
             overflowY: 'auto',
             top: 0,
             left: 0,
-            zIndex: theme.zIndex.modal - 1,
+            zIndex: theme.zIndex.modal,
             boxShadow: theme.shadows[8],
-            paddingTop: 'env(safe-area-inset-top)',
+            paddingTop: (props: StyleProps) =>
+                props.pinnedOnMobile
+                    ? `calc(env(safe-area-inset-top) + ${theme.spacing(11)}px)`
+                    : 'inherhit',
             borderRadius: `0 ${BORDER_RADIUS}px ${BORDER_RADIUS}px 0`,
             '@media screen and (orientation: landscape)': {
                 paddingLeft: 'env(safe-area-inset-bottom)',
@@ -65,12 +69,6 @@ const useStyles = makeStyles(theme =>
         },
         pinnedWidth: {
             marginLeft: PINNED_WIDTH,
-        },
-        drawerLike: {
-            zIndex: theme.zIndex.modal,
-            position: 'fixed',
-            top: `calc(env(safe-area-inset-top) + ${theme.spacing(3)})`,
-            left: theme.spacing(2),
         },
     })
 )
@@ -109,10 +107,6 @@ const PinnedRecipesProvider: FC = ({ children }) => {
     )
 
     useEffect(() => {
-        if (drawerLike && pinnedRecipes.size === 0) setDrawerLike(false)
-    }, [drawerLike, pinnedRecipes])
-
-    useEffect(() => {
         document.addEventListener('keydown', handleKeyDown)
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [handleKeyDown])
@@ -137,22 +131,24 @@ const PinnedRecipesProvider: FC = ({ children }) => {
         })
     }
 
+    const pinnedRecipesTrigger = isMobilePinnable ? (
+        <IconButton onClick={() => setDrawerLike(prev => !prev)}>
+            <BadgeWrapper badgeContent={pinnedRecipes.size}>
+                <MenuIcon />
+            </BadgeWrapper>
+        </IconButton>
+    ) : (
+        undefined
+    )
+
     return (
         <Context.Provider
             value={{
                 handlePinnedChange,
                 pinnedContains: (recipeName: string) => pinnedRecipes.has(recipeName),
                 pinnedOnDesktop,
+                pinnedRecipesTrigger,
             }}>
-            <Slide in={pinnedOnMobile} direction="right">
-                <div className={classes.drawerLike}>
-                    <BadgeWrapper badgeContent={pinnedRecipes.size}>
-                        <Fab size="small" onClick={() => setDrawerLike(prev => !prev)}>
-                            {drawerLike ? <ChevronLeft /> : <ChevronRight />}
-                        </Fab>
-                    </BadgeWrapper>
-                </div>
-            </Slide>
             <Slide in={pinnedOnDesktop || drawerLike} direction="right">
                 <Paper className={classes.pinnedContainer}>
                     <SwipeableViews
@@ -162,6 +158,7 @@ const PinnedRecipesProvider: FC = ({ children }) => {
                             <SelectedRecipe key={recipeName} recipeName={recipeName} />
                         ))}
                     </SwipeableViews>
+                    <NotFound visible={pinnedRecipes.size === 0} />
                 </Paper>
             </Slide>
             <div className={clsx(pinnedOnDesktop && classes.pinnedWidth)}>{children}</div>

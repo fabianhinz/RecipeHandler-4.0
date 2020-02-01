@@ -16,7 +16,7 @@ import React, { useMemo, useState } from 'react'
 
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import StyledCard from '../../Shared/RecipeCard'
+import StyledCard from '../../Shared/StyledCard'
 import { Subtitle } from '../../Shared/Subtitle'
 
 const useStyles = makeStyles(() =>
@@ -69,7 +69,6 @@ const AccountUserShoppingList = () => {
 
     return (
         <StyledCard
-            transitionOrder={1}
             header={<Subtitle icon={<ShoppingCartIcon />} text="Einkaufsliste" />}
             content={
                 <List>

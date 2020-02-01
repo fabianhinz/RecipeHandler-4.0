@@ -5,7 +5,7 @@ import React from 'react'
 import { User } from '../../../model/model'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useUsersContext } from '../../Provider/UsersProvider'
-import StyledCard from '../../Shared/RecipeCard'
+import StyledCard from '../../Shared/StyledCard'
 import { Subtitle } from '../../Shared/Subtitle'
 import AccountListItem from '../AccountListItem'
 import { UserSettingChangeHandler } from './AccountUser'
@@ -20,7 +20,6 @@ const AccountUserRecipes = ({ onUserSettingChange }: Props) => {
 
     return (
         <StyledCard
-            transitionOrder={3}
             header={<Subtitle icon={<BookIcon />} text="Rezeptanzeige" />}
             content={
                 <List>
