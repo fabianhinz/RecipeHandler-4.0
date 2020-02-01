@@ -41,8 +41,6 @@ const SelectedRecipe: FC<{ recipeName: string }> = ({ recipeName }) => {
     )
 }
 
-export const PINNED_WIDTH = 425
-
 interface StyleProps {
     pinnedOnMobile: boolean
 }
@@ -50,7 +48,12 @@ interface StyleProps {
 const useStyles = makeStyles(theme =>
     createStyles({
         pinnedContainer: {
-            width: (props: StyleProps) => (props.pinnedOnMobile ? '100vw' : PINNED_WIDTH),
+            [theme.breakpoints.between('md', 'lg')]: {
+                width: (props: StyleProps) => (props.pinnedOnMobile ? '100vw' : 350),
+            },
+            [theme.breakpoints.up('xl')]: {
+                width: (props: StyleProps) => (props.pinnedOnMobile ? '100vw' : 450),
+            },
             position: 'fixed',
             height: '100vh',
             overflowY: 'auto',
@@ -68,7 +71,12 @@ const useStyles = makeStyles(theme =>
             },
         },
         pinnedWidth: {
-            marginLeft: PINNED_WIDTH,
+            [theme.breakpoints.between('md', 'lg')]: {
+                marginLeft: 350,
+            },
+            [theme.breakpoints.up('xl')]: {
+                marginLeft: 450,
+            },
         },
     })
 )

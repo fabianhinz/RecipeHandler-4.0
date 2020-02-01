@@ -7,7 +7,7 @@ import React, { memo, useState } from 'react'
 
 import AccountAuthentication from '../Account/AccountAuthentication'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { PINNED_WIDTH, usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
+import { usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
 import { BadgeWrapper } from '../Shared/BadgeWrapper'
 import { Navigate } from './Navigate'
 import { PATHS } from './Routes'
@@ -26,7 +26,12 @@ const useStyles = makeStyles(theme =>
             },
         },
         pinnedRecipes: {
-            marginLeft: PINNED_WIDTH,
+            [theme.breakpoints.between('md', 'lg')]: {
+                marginLeft: 350,
+            },
+            [theme.breakpoints.up('xl')]: {
+                marginLeft: 450,
+            },
         },
     })
 )

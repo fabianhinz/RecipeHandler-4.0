@@ -36,11 +36,12 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
 
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">
-            <Grid item xs={nameLayout ? 12 : minifiedLayout ? 11 : 7}>
+            <Grid item xs={nameLayout ? 12 : minifiedLayout ? 11 : 8}>
                 <Grid container spacing={1} direction="column" justify="center">
                     <Grid item>
                         <Navigate disabled={nameLayout} to={PATHS.details(recipe.name)}>
                             <Typography
+                                gutterBottom
                                 className={classes.recipeName}
                                 display="inline"
                                 variant="h4">
@@ -65,7 +66,7 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
                 </Grid>
             </Grid>
             {actionsLayout && (
-                <Grid item xs={minifiedLayout ? 1 : 5}>
+                <Grid item xs={minifiedLayout ? 1 : 4}>
                     <RecipeResultAction
                         pinOnly={minifiedLayout}
                         name={recipe.name}
