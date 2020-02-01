@@ -14,6 +14,7 @@ import { useBreakpointsContext } from './Provider/BreakpointsProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
 import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
+import GridProvider from './Provider/GridProvider'
 import PinnedRecipesProvider from './Provider/PinnedRecipesProvider'
 import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
@@ -25,11 +26,13 @@ const AppProvider: FC = ({ children }) => (
         <DeviceOrientationProvider>
             <UsersProvider>
                 <CategoriesCollectionProvider>
-                    <SelectedAttachementProvider>
-                        <AnimationProvider>
-                            <PinnedRecipesProvider>{children}</PinnedRecipesProvider>
-                        </AnimationProvider>
-                    </SelectedAttachementProvider>
+                    <GridProvider>
+                        <SelectedAttachementProvider>
+                            <AnimationProvider>
+                                <PinnedRecipesProvider>{children}</PinnedRecipesProvider>
+                            </AnimationProvider>
+                        </SelectedAttachementProvider>
+                    </GridProvider>
                 </CategoriesCollectionProvider>
             </UsersProvider>
         </DeviceOrientationProvider>

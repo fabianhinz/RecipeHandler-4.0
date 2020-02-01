@@ -11,8 +11,6 @@ import {
     Popover,
     Typography,
 } from '@material-ui/core'
-import { GridSize } from '@material-ui/core/Grid'
-import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import PeopleIcon from '@material-ui/icons/People'
 import Skeleton from '@material-ui/lab/Skeleton'
@@ -23,7 +21,7 @@ import { useAttachmentRef } from '../../hooks/useAttachmentRef'
 import { AttachmentMetadata, Recipe } from '../../model/model'
 import { BORDER_RADIUS } from '../../theme'
 import { CategoryResult } from '../Category/CategoryResult'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import { useGridContext } from '../Provider/GridProvider'
 import { useRouterContext } from '../Provider/RouterProvider'
 import { RecipeResultAction } from '../Recipe/Result/Action/RecipeResultAction'
 import { PATHS } from '../Routes/Routes'
@@ -95,22 +93,18 @@ interface Props {
     recipe: Recipe<AttachmentMetadata>
 }
 
-export const recentlyAddedGridProps = (
-    isHighRes?: boolean
-): Partial<Record<Breakpoint, boolean | GridSize>> => ({ xs: 12, md: 6, xl: isHighRes ? 4 : 6 })
-
 const HomeRecipeCard = ({ recipe }: Props) => {
     const [settingsAnchorEl, setSettingsAnchorEl] = useState<HTMLButtonElement | null>(null)
 
     const classes = useStyles()
 
     const { attachmentRef, attachmentRefLoading } = useAttachmentRef(recipe.attachments[0])
-    const { isHighRes } = useBreakpointsContext()
     const { history } = useRouterContext()
+    const { gridBreakpointProps } = useGridContext()
 
     return (
         <>
-            <Grid {...recentlyAddedGridProps(isHighRes)} item>
+            <Grid {...gridBreakpointProps} item>
                 <Paper className={classes.paper}>
                     <IconButton
                         className={classes.iconButton}

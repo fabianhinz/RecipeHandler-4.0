@@ -2,8 +2,7 @@ import { Card, createStyles, Grid, makeStyles } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { recentlyAddedGridProps } from './HomeRecipeCard'
+import { useGridContext } from '../Provider/GridProvider'
 
 interface Props {
     visible: boolean
@@ -31,13 +30,13 @@ const useStyles = makeStyles(theme =>
 
 const HomeSkeletons = ({ visible, numberOfSkeletons }: Props) => {
     const classes = useStyles()
-    const { isHighRes } = useBreakpointsContext()
+    const { gridBreakpointProps } = useGridContext()
 
     return (
         <>
             {visible &&
                 new Array(numberOfSkeletons || 6).fill(1).map((_skeleton, index) => (
-                    <Grid {...recentlyAddedGridProps(isHighRes)} item key={index}>
+                    <Grid {...gridBreakpointProps} item key={index}>
                         <Grid container spacing={2} justify="space-between" alignItems="center">
                             <Grid xs={12} item>
                                 <Card>

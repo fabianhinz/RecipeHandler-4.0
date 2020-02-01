@@ -19,6 +19,7 @@ import { FirebaseService } from '../../services/firebase'
 import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useGridContext } from '../Provider/GridProvider'
 import { useSelectedAttachement } from '../Provider/SelectedAttachementProvider'
 import TrialsDeleteAlert from './TrialsDeleteAlert'
 
@@ -50,6 +51,7 @@ const TrialsCard = ({ trial, index }: Props) => {
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
+    const { gridBreakpointProps } = useGridContext()
     const { enqueueSnackbar } = useSnackbar()
     const { setSelectedAttachment } = useSelectedAttachement()
 
@@ -80,7 +82,7 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     return (
         <>
-            <Grid item xs={12} md={6} lg={4} key={trial.name}>
+            <Grid item {...gridBreakpointProps} key={trial.name}>
                 <Card className={classes.card}>
                     <AccountChip uid={trial.editorUid} variant="absolute" />
 

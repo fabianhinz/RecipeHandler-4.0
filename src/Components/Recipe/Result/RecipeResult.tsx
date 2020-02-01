@@ -4,10 +4,10 @@ import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { memo } from 'react'
 
-import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import AccountChip from '../../Account/AccountChip'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
+import { useGridContext } from '../../Provider/GridProvider'
 import Satisfaction from '../../Satisfaction/Satisfaction'
 import NotFound from '../../Shared/NotFound'
 import { Subtitle } from '../../Shared/Subtitle'
@@ -32,11 +32,7 @@ const useStyles = makeStyles(() =>
 
 const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
     const classes = useStyles()
-
-    const { breakpoints } = useCardBreakpoints({
-        xsOnly: variant === 'pinned',
-        xlEnabled: recipe !== null && recipe.relatedRecipes.length !== 0,
-    })
+    const { gridBreakpointProps } = useGridContext()
 
     if (!recipe) return <NotFound visible />
 
@@ -57,7 +53,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
             )}
 
             {recipe.ingredients.length > 0 && (
-                <Grid {...breakpoints} item>
+                <Grid {...gridBreakpointProps} item>
                     <RecipeCard
                         transitionOrder={1}
                         variant={variant}
@@ -83,7 +79,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
             )}
 
             {recipe.description.length > 0 && (
-                <Grid {...breakpoints} item>
+                <Grid {...gridBreakpointProps} item>
                     <RecipeCard
                         transitionOrder={2}
                         variant={variant}
@@ -99,7 +95,7 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
             )}
 
             {recipe.relatedRecipes.length > 0 && variant !== 'pinned' && (
-                <Grid {...breakpoints} item>
+                <Grid {...gridBreakpointProps} item>
                     <RecipeCard
                         transitionOrder={3}
                         variant={variant}

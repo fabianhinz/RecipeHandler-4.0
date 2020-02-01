@@ -3,11 +3,11 @@ import { LogoutVariant } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useMemo, useState } from 'react'
 
-import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import useProgress from '../../../hooks/useProgress'
 import { ShoppingList, User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { useGridContext } from '../../Provider/GridProvider'
 import { NavigateFab } from '../../Routes/Navigate'
 import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
@@ -30,7 +30,7 @@ const AccountUser = () => {
         user: User
         shoppingList: ShoppingList
     }
-    const { breakpoints } = useCardBreakpoints({ xlEnabled: user.admin })
+    const { gridBreakpointProps } = useGridContext()
     const { ProgressComponent, setProgress } = useProgress()
     const { enqueueSnackbar } = useSnackbar()
 
@@ -99,12 +99,12 @@ const AccountUser = () => {
             </Grid>
 
             {shoppingList.size > 0 && (
-                <Grid item {...breakpoints}>
+                <Grid item {...gridBreakpointProps}>
                     <AccountUserShoppingList />
                 </Grid>
             )}
 
-            <Grid item {...breakpoints}>
+            <Grid item {...gridBreakpointProps}>
                 <AccountUserSettings
                     user={user}
                     showInfo={showInfo}
@@ -112,12 +112,12 @@ const AccountUser = () => {
                 />
             </Grid>
 
-            <Grid item {...breakpoints}>
+            <Grid item {...gridBreakpointProps}>
                 <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
             </Grid>
 
             {user.admin && (
-                <Grid item {...breakpoints}>
+                <Grid item {...gridBreakpointProps}>
                     <AccountUserAdmin />
                 </Grid>
             )}

@@ -1,8 +1,10 @@
 import { createStyles, Grid, IconButton, makeStyles, Paper } from '@material-ui/core'
 import InfoIcon from '@material-ui/icons/Info'
 import GridIcon from '@material-ui/icons/ViewModule'
+import ListIcon from '@material-ui/icons/ViewStream'
 import React from 'react'
 
+import { useGridContext } from './Provider/GridProvider'
 import Search from './Search/Search'
 
 const useStyles = makeStyles(theme =>
@@ -30,6 +32,7 @@ const useStyles = makeStyles(theme =>
 
 const Header = () => {
     const classes = useStyles()
+    const { setGridLayout, gridLayout } = useGridContext()
 
     return (
         <div className={classes.header}>
@@ -41,8 +44,11 @@ const Header = () => {
                 </Grid>
                 <Grid item xs={12} sm={4} md={2}>
                     <Paper className={classes.buttonPaper}>
-                        <IconButton onClick={() => alert('todo')}>
-                            <GridIcon />
+                        <IconButton
+                            onClick={() =>
+                                setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
+                            }>
+                            {gridLayout === 'grid' ? <GridIcon /> : <ListIcon />}
                         </IconButton>
                         <IconButton onClick={() => alert('todo')}>
                             <InfoIcon />
