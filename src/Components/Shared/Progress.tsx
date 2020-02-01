@@ -3,14 +3,14 @@ import React from 'react'
 
 import { BORDER_RADIUS } from '../../theme'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         linearProgress: {
-            height: 6,
             position: 'fixed',
             top: 0,
             left: 0,
             width: '100vw',
+            zIndex: theme.zIndex.appBar + 1,
         },
         circularProgress: {
             display: 'flex',
