@@ -115,6 +115,10 @@ const PinnedRecipesProvider: FC = ({ children }) => {
     )
 
     useEffect(() => {
+        if (drawerLike && pinnedRecipes.size === 0) setDrawerLike(false)
+    }, [drawerLike, pinnedRecipes])
+
+    useEffect(() => {
         document.addEventListener('keydown', handleKeyDown)
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [handleKeyDown])
@@ -139,7 +143,7 @@ const PinnedRecipesProvider: FC = ({ children }) => {
         })
     }
 
-    const pinnedRecipesTrigger = isMobilePinnable ? (
+    const pinnedRecipesTrigger = pinnedOnMobile ? (
         <IconButton onClick={() => setDrawerLike(prev => !prev)}>
             <BadgeWrapper badgeContent={pinnedRecipes.size}>
                 <MenuIcon />
@@ -166,7 +170,6 @@ const PinnedRecipesProvider: FC = ({ children }) => {
                             <SelectedRecipe key={recipeName} recipeName={recipeName} />
                         ))}
                     </SwipeableViews>
-                    <NotFound visible={pinnedRecipes.size === 0} />
                 </Paper>
             </Slide>
             <div className={clsx(pinnedOnDesktop && classes.pinnedWidth)}>{children}</div>
