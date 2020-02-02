@@ -19,22 +19,19 @@ const AccountUserRecipes = ({ onUserSettingChange }: Props) => {
     const { user } = useFirebaseAuthContext() as { user: User }
 
     return (
-        <StyledCard
-            header={<Subtitle icon={<BookIcon />} text="Rezeptanzeige" />}
-            content={
-                <List>
-                    {userIds.map(id => (
-                        <AccountListItem
-                            key={id}
-                            uid={id}
-                            variant="user"
-                            checked={user.selectedUsers.some(selectedId => selectedId === id)}
-                            onChange={onUserSettingChange('selectedUsers')}
-                        />
-                    ))}
-                </List>
-            }
-        />
+        <StyledCard header={<Subtitle icon={<BookIcon />} text="Rezeptanzeige" />}>
+            <List>
+                {userIds.map(id => (
+                    <AccountListItem
+                        key={id}
+                        uid={id}
+                        variant="user"
+                        checked={user.selectedUsers.some(selectedId => selectedId === id)}
+                        onChange={onUserSettingChange('selectedUsers')}
+                    />
+                ))}
+            </List>
+        </StyledCard>
     )
 }
 

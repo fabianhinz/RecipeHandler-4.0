@@ -213,28 +213,23 @@ const AccountUserHeader = ({ user, userDoc, onUserSettingChange }: AccountUserHe
                 </Grid>
             </Grid>
             <Grid item xs={12}>
-                <StyledCard
-                    content={
-                        <Grid container spacing={3}>
-                            <Grid className={classes.profilePictureItem} item xs={12} md={4}>
-                                <CardActionArea
-                                    className={classes.actionArea}
-                                    {...dropzoneProps.getRootProps()}>
-                                    <Avatar className={classes.avatar} src={user.profilePicture}>
-                                        <CameraImage fontSize="large" />
-                                    </Avatar>
-                                    <input {...dropzoneProps.getInputProps()} />
-                                </CardActionArea>
-                            </Grid>
-                            <Grid item xs={12} md={8}>
-                                <UserStettings
-                                    user={user}
-                                    onUserSettingChange={onUserSettingChange}
-                                />
-                            </Grid>
+                <StyledCard>
+                    <Grid container spacing={3}>
+                        <Grid className={classes.profilePictureItem} item xs={12} md={4}>
+                            <CardActionArea
+                                className={classes.actionArea}
+                                {...dropzoneProps.getRootProps()}>
+                                <Avatar className={classes.avatar} src={user.profilePicture}>
+                                    <CameraImage fontSize="large" />
+                                </Avatar>
+                                <input {...dropzoneProps.getInputProps()} />
+                            </CardActionArea>
                         </Grid>
-                    }
-                />
+                        <Grid item xs={12} md={8}>
+                            <UserStettings user={user} onUserSettingChange={onUserSettingChange} />
+                        </Grid>
+                    </Grid>
+                </StyledCard>
             </Grid>
         </Grid>
     )

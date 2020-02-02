@@ -51,40 +51,37 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
 
     return (
         <div className={classes.recipeItem}>
-            <StyledCard
-                header={<Subtitle text={recipeName} />}
-                content={
-                    <>
-                        <Tabs
-                            style={{ flexGrow: 1 }}
-                            variant="fullWidth"
-                            value={value}
-                            onChange={(_e, newValue) => setValue(newValue)}>
-                            <Tab icon={<AssignmentIcon />} label="Zutaten" />
-                            <Tab icon={<BookIcon />} label="Beschreibung" />
-                        </Tabs>
-                        {recipe ? (
-                            <>
-                                <SwipeableViews index={value}>
-                                    <MarkdownRenderer
-                                        recipeName={recipeName}
-                                        source={recipe.ingredients}
-                                    />
-                                    <MarkdownRenderer
-                                        recipeName={recipeName}
-                                        source={recipe.description}
-                                    />
-                                </SwipeableViews>
-                                <Box display="flex" justifyContent="center">
-                                    <RecipeResultBookmark name={recipeName} />
-                                </Box>
-                            </>
-                        ) : (
-                            <Skeleton variant="rect" width="100%" height={400} />
-                        )}
-                    </>
-                }
-            />
+            <StyledCard header={<Subtitle text={recipeName} />}>
+                <>
+                    <Tabs
+                        style={{ flexGrow: 1 }}
+                        variant="fullWidth"
+                        value={value}
+                        onChange={(_e, newValue) => setValue(newValue)}>
+                        <Tab icon={<AssignmentIcon />} label="Zutaten" />
+                        <Tab icon={<BookIcon />} label="Beschreibung" />
+                    </Tabs>
+                    {recipe ? (
+                        <>
+                            <SwipeableViews index={value}>
+                                <MarkdownRenderer
+                                    recipeName={recipeName}
+                                    source={recipe.ingredients}
+                                />
+                                <MarkdownRenderer
+                                    recipeName={recipeName}
+                                    source={recipe.description}
+                                />
+                            </SwipeableViews>
+                            <Box display="flex" justifyContent="center">
+                                <RecipeResultBookmark name={recipeName} />
+                            </Box>
+                        </>
+                    ) : (
+                        <Skeleton variant="rect" width="100%" height={400} />
+                    )}
+                </>
+            </StyledCard>
         </div>
     )
 }

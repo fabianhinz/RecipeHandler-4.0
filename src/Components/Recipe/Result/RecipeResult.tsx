@@ -65,37 +65,25 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                                     </>
                                 }
                             />
-                        }
-                        content={
-                            <MarkdownRenderer
-                                recipeName={recipe.name}
-                                source={recipe.ingredients}
-                            />
-                        }
-                    />
+                        }>
+                        <MarkdownRenderer recipeName={recipe.name} source={recipe.ingredients} />
+                    </StyledCard>
                 </Grid>
             )}
 
             {recipe.description.length > 0 && (
                 <Grid {...gridBreakpointProps} item>
-                    <StyledCard
-                        header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
-                        content={
-                            <MarkdownRenderer
-                                recipeName={recipe.name}
-                                source={recipe.description}
-                            />
-                        }
-                    />
+                    <StyledCard header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}>
+                        <MarkdownRenderer recipeName={recipe.name} source={recipe.description} />
+                    </StyledCard>
                 </Grid>
             )}
 
             {recipe.relatedRecipes.length > 0 && (
                 <Grid {...gridBreakpointProps} item>
-                    <StyledCard
-                        header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
-                        content={<RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />}
-                    />
+                    <StyledCard header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}>
+                        <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+                    </StyledCard>
                 </Grid>
             )}
 

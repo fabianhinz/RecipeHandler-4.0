@@ -32,22 +32,19 @@ const AccountUserAdmin = () => {
 
     return (
         <>
-            <StyledCard
-                header={<Subtitle text="Editoren" icon={<SecurityIcon />} />}
-                content={
-                    <List>
-                        {userIds.map(uid => (
-                            <AccountListItem
-                                key={uid}
-                                uid={uid}
-                                variant="admin"
-                                checked={editors.has(uid)}
-                                onChange={handleEditorChange}
-                            />
-                        ))}
-                    </List>
-                }
-            />
+            <StyledCard header={<Subtitle text="Editoren" icon={<SecurityIcon />} />}>
+                <List>
+                    {userIds.map(uid => (
+                        <AccountListItem
+                            key={uid}
+                            uid={uid}
+                            variant="admin"
+                            checked={editors.has(uid)}
+                            onChange={handleEditorChange}
+                        />
+                    ))}
+                </List>
+            </StyledCard>
 
             <ProgressComponent />
         </>

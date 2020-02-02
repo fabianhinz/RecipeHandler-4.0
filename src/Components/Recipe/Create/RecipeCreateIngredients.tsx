@@ -60,9 +60,9 @@ const RecipeCreateIngredients = ({
                         </Box>
                     </Box>
                 </Subtitle>
-            }
-            content={<MarkdownInput defaultValue={ingredients} onChange={onIngredientsChange} />}
-        />
+            }>
+            <MarkdownInput defaultValue={ingredients} onChange={onIngredientsChange} />
+        </StyledCard>
     )
 }
 

@@ -20,17 +20,17 @@ const useStyles = makeStyles(theme =>
 
 interface Props {
     header?: React.ReactNode
-    content: React.ReactNode
+    children: React.ReactNode
 }
 
-const StyledCard = ({ header, content }: Props) => {
+const StyledCard = ({ header, children }: Props) => {
     const classes = useStyles()
 
     return (
         <Fade in>
             <Card className={classes.root}>
                 {header && <div className={classes.header}>{header}</div>}
-                <CardContent>{content}</CardContent>
+                <CardContent>{children}</CardContent>
             </Card>
         </Fade>
     )

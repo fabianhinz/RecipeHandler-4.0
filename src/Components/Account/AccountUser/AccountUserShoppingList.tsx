@@ -68,43 +68,40 @@ const AccountUserShoppingList = () => {
         Boolean(shoppingTracker.get(recipe)?.tracker?.some(trackerEl => trackerEl === grocery))
 
     return (
-        <StyledCard
-            header={<Subtitle icon={<ShoppingCartIcon />} text="Einkaufsliste" />}
-            content={
-                <List>
-                    {[...shoppingList.entries()].map(([recipe, groceries]) => (
-                        <div key={recipe}>
-                            <ListSubheader className={classes.listSubHeader}>
-                                {recipe}
-                                <IconButton onClick={handleRemove(recipe)}>
-                                    <RemoveFromShoppingCartIcon color="secondary" />
-                                </IconButton>
-                            </ListSubheader>
-                            {groceries?.list.map(grocery => (
-                                <ListItem key={grocery}>
-                                    <ListItemIcon>
-                                        <Checkbox
-                                            checked={listItemChecked(recipe, grocery)}
-                                            disabled={updatingTracker}
-                                            onChange={handleCheckboxChange(recipe, grocery)}
-                                            edge="start"
-                                        />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        classes={{
-                                            primary: clsx(
-                                                listItemChecked(recipe, grocery) && classes.checked
-                                            ),
-                                        }}
-                                        primary={grocery}
+        <StyledCard header={<Subtitle icon={<ShoppingCartIcon />} text="Einkaufsliste" />}>
+            <List>
+                {[...shoppingList.entries()].map(([recipe, groceries]) => (
+                    <div key={recipe}>
+                        <ListSubheader className={classes.listSubHeader}>
+                            {recipe}
+                            <IconButton onClick={handleRemove(recipe)}>
+                                <RemoveFromShoppingCartIcon color="secondary" />
+                            </IconButton>
+                        </ListSubheader>
+                        {groceries?.list.map(grocery => (
+                            <ListItem key={grocery}>
+                                <ListItemIcon>
+                                    <Checkbox
+                                        checked={listItemChecked(recipe, grocery)}
+                                        disabled={updatingTracker}
+                                        onChange={handleCheckboxChange(recipe, grocery)}
+                                        edge="start"
                                     />
-                                </ListItem>
-                            ))}
-                        </div>
-                    ))}
-                </List>
-            }
-        />
+                                </ListItemIcon>
+                                <ListItemText
+                                    classes={{
+                                        primary: clsx(
+                                            listItemChecked(recipe, grocery) && classes.checked
+                                        ),
+                                    }}
+                                    primary={grocery}
+                                />
+                            </ListItem>
+                        ))}
+                    </div>
+                ))}
+            </List>
+        </StyledCard>
     )
 }
 
