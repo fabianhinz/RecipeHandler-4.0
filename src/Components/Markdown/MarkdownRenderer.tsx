@@ -53,8 +53,6 @@ interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
 }
 // ToDo handle ordered and unordered List in same Renderer
 const MarkdownRenderer = (props: Props) => {
-    const [updatingList, setUpdatingList] = useState(false)
-
     const { user, shoppingList } = useFirebaseAuthContext()
     const match = useRouteMatch()
     const classes = useStyles()
@@ -85,8 +83,6 @@ const MarkdownRenderer = (props: Props) => {
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
-        setUpdatingList(true)
-
         let grocery = renderPropsToGrocery(children)
         if (!grocery || !props.recipeName || !shoppingListDocRef) return
 
@@ -98,8 +94,6 @@ const MarkdownRenderer = (props: Props) => {
 
         if (list.length === 0) await shoppingListDocRef.delete()
         else await shoppingListDocRef.set({ list }, { merge: true })
-
-        setUpdatingList(false)
     }
 
     return (
@@ -135,7 +129,6 @@ const MarkdownRenderer = (props: Props) => {
                                         disabled={
                                             (match.path !== PATHS.details() &&
                                                 match.path !== PATHS.bookmarks) ||
-                                            updatingList ||
                                             !user
                                         }
                                     />
