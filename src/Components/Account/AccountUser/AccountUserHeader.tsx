@@ -24,7 +24,14 @@ import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
 import SearchIcon from '@material-ui/icons/SearchRounded'
 import TimelapseIcon from '@material-ui/icons/TimelapseRounded'
 import TimelineIcon from '@material-ui/icons/TimelineRounded'
-import { CameraImage, DatabaseSearch, Information, SettingsOutline } from 'mdi-material-ui'
+import {
+    CameraImage,
+    CloudOffOutline,
+    CloudSync,
+    DatabaseSearch,
+    Information,
+    SettingsOutline,
+} from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
@@ -169,7 +176,7 @@ const UserStettings = ({ user, onUserSettingChange }: UserSettingsProps) => {
                     {user.algoliaAdvancedSyntax ? <DatabaseSearch /> : <SearchIcon />}
                 </ListItemIcon>
                 <ListItemText
-                    primary="erweiterte Abfragesyntax"
+                    primary="Erweiterte Abfragesyntax"
                     secondaryTypographyProps={{ component: 'div' } as TypographyProps}
                     secondary={
                         <>
@@ -182,6 +189,29 @@ const UserStettings = ({ user, onUserSettingChange }: UserSettingsProps) => {
                                     und enden werden als ganze Sätze interpretiert. Über den{' '}
                                     <b>Bindestrich</b> können Wörter explizit aus der Suche
                                     ausgeschlossen werden.
+                                </Typography>
+                            </Collapse>
+                        </>
+                    }
+                />
+            </ListItem>
+            <ListItem button onClick={onUserSettingChange('bookmarkSync')}>
+                <ListItemIcon>
+                    {user.bookmarkSync ? <CloudSync /> : <CloudOffOutline />}
+                </ListItemIcon>
+                <ListItemText
+                    primary="Geräteübergreifende Lesezeichen"
+                    secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                    secondary={
+                        <>
+                            <Typography gutterBottom variant="body2" color="textSecondary">
+                                {user.bookmarkSync ? 'aktiviert' : 'deaktiviert'}
+                            </Typography>
+                            <Collapse in={info}>
+                                <Typography variant="body2" gutterBottom color="textSecondary">
+                                    ist die Synchronisation aktiviert, so werden gesetzte
+                                    Lesezeichen automatisch auf Geräte, auf denen derselbe Nutzer
+                                    eingeloggt ist, übertragen.
                                 </Typography>
                             </Collapse>
                         </>

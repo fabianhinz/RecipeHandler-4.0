@@ -6,6 +6,7 @@ import React, { useMemo } from 'react'
 import useProgress from '../../../hooks/useProgress'
 import { ShoppingList, User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
+import { useBookmarkContext } from '../../Provider/BookmarkProvider'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
 import { NavigateFab } from '../../Routes/Navigate'
@@ -16,7 +17,12 @@ import AccountUserShoppingList from './AccountUserShoppingList'
 
 type SettingKeys = keyof Pick<
     User,
-    'muiTheme' | 'selectedUsers' | 'showRecentlyAdded' | 'notifications' | 'algoliaAdvancedSyntax'
+    | 'muiTheme'
+    | 'selectedUsers'
+    | 'showRecentlyAdded'
+    | 'notifications'
+    | 'algoliaAdvancedSyntax'
+    | 'bookmarkSync'
 >
 
 export type UserSettingChangeHandler = (key: SettingKeys) => (uid?: any) => void
@@ -28,6 +34,7 @@ const AccountUser = () => {
         shoppingList: ShoppingList
     }
     const { gridBreakpointProps } = useGridContext()
+    const { bookmarks } = useBookmarkContext()
     const { ProgressComponent, setProgress } = useProgress()
     const { enqueueSnackbar } = useSnackbar()
 
@@ -80,6 +87,19 @@ const AccountUser = () => {
             }
             case 'algoliaAdvancedSyntax': {
                 userDoc.update({ [key]: !user.algoliaAdvancedSyntax })
+                break
+            }
+            case 'bookmarkSync': {
+                const newSyncSetting = !user.bookmarkSync
+                const updates: Partial<Pick<User, 'bookmarks' | 'bookmarkSync'>> = {
+                    bookmarkSync: newSyncSetting,
+                }
+                // ? user has already selected bookmarks and decides to sync them
+                if (newSyncSetting && bookmarks.size > 0) {
+                    updates.bookmarks = [...bookmarks.values()]
+                }
+                userDoc.update(updates)
+                break
             }
         }
     }

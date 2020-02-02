@@ -87,6 +87,8 @@ export type User = {
     emailVerified?: boolean
     createdDate: firebase.firestore.Timestamp
     algoliaAdvancedSyntax: boolean
+    bookmarkSync: boolean
+    bookmarks: string[]
 }
 
 export type RecipeName = string

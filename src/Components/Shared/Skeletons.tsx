@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme =>
                 height: 150 + 57,
             },
             [theme.breakpoints.up('xl')]: {
-                height: 200 + 57,
+                height: 180 + 57,
             },
         },
         trial: {

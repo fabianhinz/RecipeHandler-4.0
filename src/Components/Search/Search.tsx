@@ -38,8 +38,11 @@ const useStyles = makeStyles(theme =>
             top: theme.spacing(9),
             width: '100%',
             padding: theme.spacing(2),
-            minHeight: 280,
-            maxHeight: '50vh',
+            minHeight: '20vh',
+            maxHeight: '40vh',
+            [theme.breakpoints.down('xs')]: {
+                maxHeight: '30vh',
+            },
             overflowY: 'auto',
             overflowX: 'hidden',
 

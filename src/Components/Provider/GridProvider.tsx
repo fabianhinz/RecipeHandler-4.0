@@ -2,7 +2,7 @@ import { GridSize } from '@material-ui/core'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import React, { FC, useContext, useState } from 'react'
 
-type GridLayout = 'list' | 'grid'
+export type GridLayout = 'list' | 'grid'
 
 type GridContext = {
     setGridLayout: React.Dispatch<React.SetStateAction<GridLayout>>

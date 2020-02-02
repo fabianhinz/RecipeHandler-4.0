@@ -1,17 +1,8 @@
-import {
-    Box,
-    Card,
-    CardContent,
-    createStyles,
-    Grid,
-    makeStyles,
-    Tab,
-    Tabs,
-    Typography,
-} from '@material-ui/core'
+import { Box, createStyles, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import { Skeleton } from '@material-ui/lab'
+import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
@@ -19,6 +10,7 @@ import { AttachmentMetadata, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import MarkdownRenderer from '../Markdown/MarkdownRenderer'
 import { useBookmarkContext } from '../Provider/BookmarkProvider'
+import { GridLayout, useGridContext } from '../Provider/GridProvider'
 import { RecipeResultBookmark } from '../Recipe/Result/Action/RecipeResultBookmark'
 import NotFound from '../Shared/NotFound'
 import StyledCard from '../Shared/StyledCard'
@@ -41,9 +33,10 @@ const useStyles = makeStyles(theme =>
 
 interface BookmarkProps {
     recipeName: string
+    gridLayout: GridLayout
 }
 
-const Bookmark = ({ recipeName }: BookmarkProps) => {
+const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
     const [recipe, setRecipe] = useState<Recipe<AttachmentMetadata> | null>(null)
     const [value, setValue] = useState(0)
 
@@ -59,7 +52,7 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
     }, [recipeName])
 
     return (
-        <div className={classes.recipeItem}>
+        <div className={clsx(gridLayout === 'grid' && classes.recipeItem)}>
             <StyledCard header={recipeName}>
                 <>
                     <Tabs
@@ -97,6 +90,7 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
 
 const Bookmarks = () => {
     const { bookmarks } = useBookmarkContext()
+    const { gridLayout } = useGridContext()
     const classes = useStyles()
 
     return (
@@ -104,31 +98,20 @@ const Bookmarks = () => {
             <Grid item xs={12}>
                 <Typography variant="h4">Lesezeichen</Typography>
             </Grid>
-
-            {bookmarks.size === 0 ? (
-                <Grid item xs={12}>
-                    <Card>
-                        <CardContent>
-                            <Typography color="textSecondary">
-                                <NotFound visible />
-                                Rezepte können über die Lesezeichen zur Seite gelegt werden und
-                                erscheinen anschließen hier. Aktuell werden diese Rezepte nicht
-                                geräteübergreifend gespeichert.
-                            </Typography>
-                        </CardContent>
-                    </Card>
+            <Grid item xs={12}>
+                <Grid
+                    container
+                    spacing={3}
+                    wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}
+                    className={classes.recipeContainer}>
+                    {[...bookmarks.values()].map(recipeName => (
+                        <Grid item xs={gridLayout === 'list' ? 12 : 'auto'} key={recipeName}>
+                            <Bookmark gridLayout={gridLayout} recipeName={recipeName} />
+                        </Grid>
+                    ))}
                 </Grid>
-            ) : (
-                <Grid item xs={12}>
-                    <Grid container spacing={3} wrap="nowrap" className={classes.recipeContainer}>
-                        {[...bookmarks.values()].map(recipeName => (
-                            <Grid item key={recipeName}>
-                                <Bookmark recipeName={recipeName} />
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Grid>
-            )}
+                <NotFound visible={bookmarks.size === 0} />
+            </Grid>
         </Grid>
     )
 }
