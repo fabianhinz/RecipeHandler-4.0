@@ -129,7 +129,10 @@ const MarkdownRenderer = (props: Props) => {
                                         onChange={handleCheckboxChange(renderProps.children)}
                                         classes={{ root: classes.checkboxRoot }}
                                         disabled={
-                                            match.path !== PATHS.details() || updatingList || !user
+                                            (match.path !== PATHS.details() &&
+                                                match.path !== PATHS.bookmarks) ||
+                                            updatingList ||
+                                            !user
                                         }
                                     />
                                 </ListItemIcon>
