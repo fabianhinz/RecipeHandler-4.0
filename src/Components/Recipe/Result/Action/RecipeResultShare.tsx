@@ -1,5 +1,5 @@
 import { IconButton, Tooltip } from '@material-ui/core'
-import ShareIcon from '@material-ui/icons/ShareTwoTone'
+import ShareIcon from '@material-ui/icons/Share'
 import copy from 'clipboard-copy'
 import React, { FC, useState } from 'react'
 

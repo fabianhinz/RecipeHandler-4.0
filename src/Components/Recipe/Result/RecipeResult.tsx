@@ -1,5 +1,4 @@
-import { createStyles, Divider, Grid, GridSize, makeStyles } from '@material-ui/core'
-import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
+import { createStyles, Divider, Grid, makeStyles } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
@@ -37,11 +36,8 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
     if (!recipe) return <NotFound visible />
 
-    const variantAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
-        variant === 'pinned' ? { xs: 12 } : gridBreakpointProps
-
     return (
-        <Grid container spacing={variant === 'pinned' ? 2 : 4} className={classes.recipeContainer}>
+        <Grid container spacing={4} className={classes.recipeContainer}>
             <Grid item xs={12}>
                 <RecipeResultHeader recipe={recipe} variant={variant} />
             </Grid>
@@ -50,16 +46,15 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 <Divider />
             </Grid>
 
-            {variant !== 'pinned' && recipe.attachments.length !== 0 && (
+            {recipe.attachments.length !== 0 && (
                 <Grid item xs={12}>
                     <RecipeResultAttachments attachments={recipe.attachments} />
                 </Grid>
             )}
 
             {recipe.ingredients.length > 0 && (
-                <Grid {...variantAwareBreakpoints} item>
+                <Grid {...gridBreakpointProps} item>
                     <StyledCard
-                        variant={variant}
                         header={
                             <Subtitle
                                 icon={<AssignmentIcon />}
@@ -82,9 +77,8 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
             )}
 
             {recipe.description.length > 0 && (
-                <Grid {...variantAwareBreakpoints} item>
+                <Grid {...gridBreakpointProps} item>
                     <StyledCard
-                        variant={variant}
                         header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
                         content={
                             <MarkdownRenderer
@@ -96,17 +90,16 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 </Grid>
             )}
 
-            {recipe.relatedRecipes.length > 0 && variant !== 'pinned' && (
-                <Grid {...variantAwareBreakpoints} item>
+            {recipe.relatedRecipes.length > 0 && (
+                <Grid {...gridBreakpointProps} item>
                     <StyledCard
-                        variant={variant}
                         header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
                         content={<RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />}
                     />
                 </Grid>
             )}
 
-            {variant !== 'preview' && variant !== 'pinned' && (
+            {variant !== 'preview' && (
                 <Grid xs={12} item>
                     <Satisfaction recipeName={recipe.name} transitionOrder={4} />
                 </Grid>

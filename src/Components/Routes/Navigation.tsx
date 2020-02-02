@@ -1,13 +1,11 @@
 import { Button, createStyles, Hidden, IconButton, makeStyles } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import HomeIcon from '@material-ui/icons/HomeRounded'
-import clsx from 'clsx'
 import { Lightbulb } from 'mdi-material-ui'
 import React, { memo, useState } from 'react'
 
 import AccountAuthentication from '../Account/AccountAuthentication'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
 import { BadgeWrapper } from '../Shared/BadgeWrapper'
 import { Navigate } from './Navigate'
 import { PATHS } from './Routes'
@@ -25,14 +23,6 @@ const useStyles = makeStyles(theme =>
                 paddingRight: theme.spacing(4),
             },
         },
-        pinnedRecipes: {
-            [theme.breakpoints.between('md', 'lg')]: {
-                marginLeft: 350,
-            },
-            [theme.breakpoints.up('xl')]: {
-                marginLeft: 450,
-            },
-        },
     })
 )
 
@@ -40,13 +30,12 @@ const Navigation = () => {
     const [authenticationOpen, setAuthenticationOpen] = useState(false)
 
     const { user, loginEnabled, shoppingList } = useFirebaseAuthContext()
-    const { pinnedOnDesktop } = usePinnedRecipesContext()
 
     const classes = useStyles()
 
     return (
         <>
-            <div className={clsx(classes.container, pinnedOnDesktop && classes.pinnedRecipes)}>
+            <div className={classes.container}>
                 <Hidden xsDown>
                     <Navigate to={PATHS.home}>
                         <Button size="large" startIcon={<HomeIcon />}>

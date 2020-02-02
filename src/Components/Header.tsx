@@ -1,11 +1,18 @@
 import { createStyles, Grid, Hidden, IconButton, makeStyles, Paper } from '@material-ui/core'
-import InfoIcon from '@material-ui/icons/Info'
-import GridIcon from '@material-ui/icons/ViewModule'
-import ListIcon from '@material-ui/icons/ViewStream'
+import {
+    BookmarkMultipleOutline,
+    InformationOutline,
+    ViewAgendaOutline,
+    ViewGridOutline,
+} from 'mdi-material-ui'
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 
+import { useBookmarkContext } from './Provider/BookmarkProvider'
 import { useGridContext } from './Provider/GridProvider'
+import { PATHS } from './Routes/Routes'
 import Search from './Search/Search'
+import { BadgeWrapper } from './Shared/BadgeWrapper'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -13,7 +20,7 @@ const useStyles = makeStyles(theme =>
             paddingTop: theme.spacing(4),
             position: 'sticky',
             top: 'env(safe-area-inset-bottom)',
-            zIndex: theme.zIndex.modal + 1,
+            zIndex: theme.zIndex.appBar + 1,
         },
         searchPaper: {
             padding: 16,
@@ -34,6 +41,8 @@ const Header = () => {
     const classes = useStyles()
 
     const { setGridLayout, gridLayout } = useGridContext()
+    const { bookmarks } = useBookmarkContext()
+    const history = useHistory()
 
     return (
         <div className={classes.header}>
@@ -44,16 +53,25 @@ const Header = () => {
                     </Paper>
                 </Grid>
                 <Hidden xsDown>
-                    <Grid item xs={12} sm={4} md={2}>
+                    <Grid item>
                         <Paper className={classes.buttonPaper}>
                             <IconButton
                                 onClick={() =>
                                     setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
                                 }>
-                                {gridLayout === 'grid' ? <GridIcon /> : <ListIcon />}
+                                {gridLayout === 'grid' ? (
+                                    <ViewAgendaOutline />
+                                ) : (
+                                    <ViewGridOutline />
+                                )}
                             </IconButton>
-                            <IconButton size="small" onClick={() => alert('todo')}>
-                                <InfoIcon />
+                            <IconButton onClick={() => history.push(PATHS.bookmarks)}>
+                                <BadgeWrapper badgeContent={bookmarks.size}>
+                                    <BookmarkMultipleOutline />
+                                </BadgeWrapper>
+                            </IconButton>
+                            <IconButton onClick={() => alert('todo')}>
+                                <InformationOutline />
                             </IconButton>
                         </Paper>
                     </Grid>

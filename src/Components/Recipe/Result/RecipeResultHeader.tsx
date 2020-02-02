@@ -5,7 +5,6 @@ import React from 'react'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { CategoryResult } from '../../Category/CategoryResult'
-import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { Navigate } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
 import { RecipeResultAction, RecipeVariants } from './Action/RecipeResultAction'
@@ -26,20 +25,16 @@ const useStyles = makeStyles(() =>
 )
 
 const RecipeResultHeader = ({ recipe, variant }: Props) => {
-    const { isMobile } = useBreakpointsContext()
-
     const classes = useStyles()
-
-    const minifiedLayout = isMobile
-    const nameLayout = variant === 'pinned' || variant === 'related'
-    const actionsLayout = variant === 'details'
 
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">
-            <Grid item xs={nameLayout ? 12 : minifiedLayout ? 11 : 8}>
+            <Grid item xs={variant === 'related' ? 12 : 8}>
                 <Grid container spacing={1} direction="column" justify="center">
                     <Grid item>
-                        <Navigate disabled={nameLayout} to={PATHS.details(recipe.name)}>
+                        <Navigate
+                            disabled={variant === 'related' || variant === 'preview'}
+                            to={PATHS.details(recipe.name)}>
                             <Typography
                                 gutterBottom
                                 className={classes.recipeName}
@@ -65,10 +60,9 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
                     </Grid>
                 </Grid>
             </Grid>
-            {actionsLayout && (
-                <Grid item xs={minifiedLayout ? 1 : 4}>
+            {variant === 'details' && (
+                <Grid item xs={4}>
                     <RecipeResultAction
-                        pinOnly={minifiedLayout}
                         name={recipe.name}
                         numberOfComments={recipe.numberOfComments}
                     />

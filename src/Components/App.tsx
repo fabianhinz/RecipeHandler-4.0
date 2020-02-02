@@ -10,12 +10,12 @@ import Footer from './Footer'
 import Header from './Header'
 import Main from './Main'
 import AnimationProvider from './Provider/AnimationProvider'
+import BookmarkProvider from './Provider/BookmarkProvider'
 import { useBreakpointsContext } from './Provider/BreakpointsProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
 import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import GridProvider from './Provider/GridProvider'
-import PinnedRecipesProvider from './Provider/PinnedRecipesProvider'
 import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
@@ -29,7 +29,7 @@ const AppProvider: FC = ({ children }) => (
                     <GridProvider>
                         <SelectedAttachementProvider>
                             <AnimationProvider>
-                                <PinnedRecipesProvider>{children}</PinnedRecipesProvider>
+                                <BookmarkProvider>{children}</BookmarkProvider>
                             </AnimationProvider>
                         </SelectedAttachementProvider>
                     </GridProvider>

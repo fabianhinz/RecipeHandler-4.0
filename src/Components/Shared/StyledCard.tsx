@@ -1,9 +1,5 @@
 import { Card, CardContent, createStyles, Fade, makeStyles } from '@material-ui/core'
-import clsx from 'clsx'
 import React from 'react'
-
-import { BORDER_RADIUS_HUGE } from '../../theme'
-import { RecipeVariants } from '../Recipe/Result/Action/RecipeResultAction'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -19,37 +15,22 @@ const useStyles = makeStyles(theme =>
             minHeight: theme.typography.pxToRem(48),
             display: 'flex',
         },
-        pinnedHeader: {
-            boxShadow: theme.shadows[1],
-            borderRadius: BORDER_RADIUS_HUGE,
-        },
-        pinnedContent: {
-            padding: 0,
-            paddingTop: 16,
-        },
     })
 )
 
-interface Props extends Partial<RecipeVariants> {
+interface Props {
     header?: React.ReactNode
     content: React.ReactNode
 }
 
-const StyledCard = ({ variant, header, content }: Props) => {
+const StyledCard = ({ header, content }: Props) => {
     const classes = useStyles()
-    const pinned = variant === 'pinned'
 
     return (
         <Fade in>
-            <Card className={classes.root} elevation={pinned ? 0 : 1}>
-                {header && (
-                    <div className={clsx(classes.header, pinned && classes.pinnedHeader)}>
-                        {header}
-                    </div>
-                )}
-                <CardContent className={clsx(pinned && classes.pinnedContent)}>
-                    {content}
-                </CardContent>
+            <Card className={classes.root}>
+                {header && <div className={classes.header}>{header}</div>}
+                <CardContent>{content}</CardContent>
             </Card>
         </Fade>
     )

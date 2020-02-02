@@ -183,7 +183,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     {state.relatedRecipes.length > 0 && (
                         <Grid item {...gridBreakpointProps}>
                             <StyledCard
-                                variant="preview"
                                 header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
                                 content={
                                     <RecipeResultRelated relatedRecipes={state.relatedRecipes} />

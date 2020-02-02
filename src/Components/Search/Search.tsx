@@ -16,7 +16,6 @@ import { ReactComponent as Logo } from '../../icons/logo.svg'
 import { Hits } from '../../model/model'
 import { index } from '../../services/algolia'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { usePinnedRecipesContext } from '../Provider/PinnedRecipesProvider'
 import NotFound from '../Shared/NotFound'
 import Progress from '../Shared/Progress'
 import SearchResult from './SearchResult'
@@ -59,7 +58,6 @@ const Search = () => {
 
     const debouncedValue = useDebounce(value, 500)
 
-    const { pinnedRecipesTrigger } = usePinnedRecipesContext()
     const { user } = useFirebaseAuthContext()
 
     useEffect(() => {
@@ -104,7 +102,7 @@ const Search = () => {
                 onChange={handleInputChange}
                 startAdornment={
                     <InputAdornment position="start">
-                        {pinnedRecipesTrigger || <Logo className={classes.logo} />}
+                        <Logo className={classes.logo} />
                     </InputAdornment>
                 }
                 endAdornment={

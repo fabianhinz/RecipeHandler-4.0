@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme =>
             alignItems: 'center',
         },
         backgroundVisible: {
-            zIndex: theme.zIndex.appBar,
+            zIndex: theme.zIndex.modal + 2,
             opacity: 1,
         },
         destination: {
@@ -100,7 +100,7 @@ const AnimationProvider: FC = ({ children }) => {
                     scale(1,1)
                 `,
                 boxShadow: 'unset',
-                zIndex: theme.zIndex.appBar + 1,
+                zIndex: theme.zIndex.modal + 3,
             },
             {
                 transform: `
@@ -112,7 +112,7 @@ const AnimationProvider: FC = ({ children }) => {
                 top: '50%',
                 left: '50%',
                 boxShadow: 'unset',
-                zIndex: theme.zIndex.appBar + 1,
+                zIndex: theme.zIndex.modal + 3,
             },
         ]
 

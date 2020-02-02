@@ -12,7 +12,7 @@ import {
 import brown from '@material-ui/core/colors/brown'
 import React, { FC } from 'react'
 
-import { RecipeResultPin } from './Action/RecipeResultPin'
+import { RecipeResultBookmark } from './Action/RecipeResultBookmark'
 
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === 'light' ? brown[200] : brown[400]
@@ -40,7 +40,7 @@ export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ rel
                         </ListItemAvatar>
                         <ListItemText primary={recipeName} />
                         <ListItemSecondaryAction>
-                            <RecipeResultPin name={recipeName} />
+                            <RecipeResultBookmark name={recipeName} />
                         </ListItemSecondaryAction>
                     </ListItem>
                     {index !== relatedRecipes.length - 1 && <Divider />}

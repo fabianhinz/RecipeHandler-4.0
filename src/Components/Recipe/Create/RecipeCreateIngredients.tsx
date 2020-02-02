@@ -35,7 +35,6 @@ const RecipeCreateIngredients = ({
 
     return (
         <StyledCard
-            variant="preview"
             header={
                 <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
                     <Box display="flex" alignItems="center">

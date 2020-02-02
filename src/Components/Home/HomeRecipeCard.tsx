@@ -193,11 +193,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                     vertical: 'center',
                     horizontal: 'right',
                 }}>
-                <RecipeResultAction
-                    name={recipe.name}
-                    pinOnly={false}
-                    numberOfComments={recipe.numberOfComments}
-                />
+                <RecipeResultAction name={recipe.name} numberOfComments={recipe.numberOfComments} />
             </Popover>
         </>
     )
