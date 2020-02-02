@@ -12,7 +12,6 @@ import { useBookmarkContext } from '../Provider/BookmarkProvider'
 import { RecipeResultBookmark } from '../Recipe/Result/Action/RecipeResultBookmark'
 import NotFound from '../Shared/NotFound'
 import StyledCard from '../Shared/StyledCard'
-import { Subtitle } from '../Shared/Subtitle'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -51,7 +50,7 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
 
     return (
         <div className={classes.recipeItem}>
-            <StyledCard header={<Subtitle text={recipeName} />}>
+            <StyledCard header={recipeName}>
                 <>
                     <Tabs
                         style={{ flexGrow: 1 }}

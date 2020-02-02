@@ -13,7 +13,6 @@ import { useGridContext } from '../../Provider/GridProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import StyledCard from '../../Shared/StyledCard'
-import { Subtitle } from '../../Shared/Subtitle'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
 import { RecipeCreateAttachments } from './Attachments/RecipeCreateAttachments'
@@ -166,9 +165,8 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     <Grid item {...gridBreakpointProps}>
                         <RecipeCreateIngredients
                             amount={state.amount}
-                            onDecreaseAmount={() => dispatch({ type: 'decreaseAmount' })}
-                            onIncreaseAmount={() => dispatch({ type: 'increaseAmount' })}
                             ingredients={state.ingredients}
+                            dispatch={dispatch}
                             onIngredientsChange={handleTextFieldChange('ingredients')}
                         />
                     </Grid>
@@ -182,8 +180,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
                     {state.relatedRecipes.length > 0 && (
                         <Grid item {...gridBreakpointProps}>
-                            <StyledCard
-                                header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}>
+                            <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
                                 <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
                             </StyledCard>
                         </Grid>

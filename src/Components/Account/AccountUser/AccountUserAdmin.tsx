@@ -6,7 +6,6 @@ import useProgress from '../../../hooks/useProgress'
 import { FirebaseService } from '../../../services/firebase'
 import { useUsersContext } from '../../Provider/UsersProvider'
 import StyledCard from '../../Shared/StyledCard'
-import { Subtitle } from '../../Shared/Subtitle'
 import AccountListItem from '../AccountListItem'
 
 const editorsCollection = FirebaseService.firestore.collection('editors')
@@ -32,7 +31,7 @@ const AccountUserAdmin = () => {
 
     return (
         <>
-            <StyledCard header={<Subtitle text="Editoren" icon={<SecurityIcon />} />}>
+            <StyledCard header="Editoren" BackgroundIcon={SecurityIcon}>
                 <List>
                     {userIds.map(uid => (
                         <AccountListItem

@@ -11,7 +11,6 @@ import { useGridContext } from '../../Provider/GridProvider'
 import Satisfaction from '../../Satisfaction/Satisfaction'
 import NotFound from '../../Shared/NotFound'
 import StyledCard from '../../Shared/StyledCard'
-import { Subtitle } from '../../Shared/Subtitle'
 import { RecipeVariants } from './Action/RecipeResultAction'
 import RecipeResultAttachments from './RecipeResultAttachments'
 import RecipeResultHeader from './RecipeResultHeader'
@@ -56,16 +55,12 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 <Grid {...gridBreakpointProps} item>
                     <StyledCard
                         header={
-                            <Subtitle
-                                icon={<AssignmentIcon />}
-                                text={
-                                    <>
-                                        Zutaten für {recipe.amount}{' '}
-                                        {recipe.amount < 2 ? 'Person' : 'Personen'}
-                                    </>
-                                }
-                            />
-                        }>
+                            <>
+                                Zutaten für {recipe.amount}{' '}
+                                {recipe.amount < 2 ? 'Person' : 'Personen'}
+                            </>
+                        }
+                        BackgroundIcon={AssignmentIcon}>
                         <MarkdownRenderer recipeName={recipe.name} source={recipe.ingredients} />
                     </StyledCard>
                 </Grid>
@@ -73,7 +68,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
             {recipe.description.length > 0 && (
                 <Grid {...gridBreakpointProps} item>
-                    <StyledCard header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}>
+                    <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
                         <MarkdownRenderer recipeName={recipe.name} source={recipe.description} />
                     </StyledCard>
                 </Grid>
@@ -81,7 +76,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
             {recipe.relatedRecipes.length > 0 && (
                 <Grid {...gridBreakpointProps} item>
-                    <StyledCard header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}>
+                    <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
                         <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
                     </StyledCard>
                 </Grid>

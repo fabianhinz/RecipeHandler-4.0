@@ -114,33 +114,30 @@ const MarkdownRenderer = (props: Props) => {
                 ),
                 list: renderProps => <List>{renderProps.children}</List>,
                 listItem: renderProps => (
-                    <>
-                        <ListItem>
-                            {renderProps.ordered ? (
-                                <ListItemAvatar>
-                                    <Avatar>{renderProps.index + 1}</Avatar>
-                                </ListItemAvatar>
-                            ) : (
-                                <ListItemIcon>
-                                    <Checkbox
-                                        icon={<AddCircleIcon />}
-                                        checkedIcon={<RemoveCircleIcon />}
-                                        checked={checkboxChecked(renderProps.children)}
-                                        onChange={handleCheckboxChange(renderProps.children)}
-                                        classes={{ root: classes.checkboxRoot }}
-                                        disabled={
-                                            (match.path !== PATHS.details() &&
-                                                match.path !== PATHS.bookmarks) ||
-                                            updatingList ||
-                                            !user
-                                        }
-                                    />
-                                </ListItemIcon>
-                            )}
-                            <ListItemText primary={renderProps.children} />
-                        </ListItem>
-                        {renderProps.ordered && renderProps.tight && <Divider variant="inset" />}
-                    </>
+                    <ListItem>
+                        {renderProps.ordered ? (
+                            <ListItemAvatar>
+                                <Avatar>{renderProps.index + 1}</Avatar>
+                            </ListItemAvatar>
+                        ) : (
+                            <ListItemIcon>
+                                <Checkbox
+                                    icon={<AddCircleIcon />}
+                                    checkedIcon={<RemoveCircleIcon />}
+                                    checked={checkboxChecked(renderProps.children)}
+                                    onChange={handleCheckboxChange(renderProps.children)}
+                                    classes={{ root: classes.checkboxRoot }}
+                                    disabled={
+                                        (match.path !== PATHS.details() &&
+                                            match.path !== PATHS.bookmarks) ||
+                                        updatingList ||
+                                        !user
+                                    }
+                                />
+                            </ListItemIcon>
+                        )}
+                        <ListItemText primary={renderProps.children} />
+                    </ListItem>
                 ),
                 thematicBreak: () => <Divider />,
                 table: renderProps => <Table>{renderProps.children}</Table>,

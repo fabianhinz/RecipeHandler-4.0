@@ -1,68 +1,99 @@
-import { Box, createStyles, IconButton, makeStyles, Typography } from '@material-ui/core'
+import {
+    Button,
+    createStyles,
+    Grid,
+    IconButton,
+    makeStyles,
+    Popover,
+    Typography,
+} from '@material-ui/core'
 import AddIcon from '@material-ui/icons/AddCircle'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
-import React from 'react'
+import React, { useState } from 'react'
 
 import MarkdownInput from '../../Markdown/MarkdownInput'
 import StyledCard from '../../Shared/StyledCard'
-import { Subtitle } from '../../Shared/Subtitle'
+import { RecipeCreateDispatch } from './RecipeCreateReducer'
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        iconButtonSubtitle: {
-            color: 'rgba(0, 0, 0, 0.54)',
-        },
-    })
-)
-
-interface Props {
+interface Props extends RecipeCreateDispatch {
     amount: number
-    onDecreaseAmount: () => void
-    onIncreaseAmount: () => void
     ingredients: string
     onIngredientsChange: (value: string) => void
 }
 
-const RecipeCreateIngredients = ({
-    amount,
-    onDecreaseAmount,
-    onIncreaseAmount,
-    ingredients,
-    onIngredientsChange,
-}: Props) => {
+const useStyles = makeStyles(theme =>
+    createStyles({
+        headerButton: {
+            color: theme.palette.common.black,
+            textTransform: 'none',
+        },
+        popoverPaper: {
+            padding: theme.spacing(1),
+            display: 'flex',
+            alignItems: 'center',
+            maxWidth: 'fit-content',
+        },
+    })
+)
+
+const RecipeCreateIngredients = ({ amount, ingredients, onIngredientsChange, dispatch }: Props) => {
+    const [amountAnchorEl, setAmountAnchorEl] = useState<HTMLButtonElement | null>(null)
+
     const classes = useStyles()
 
     return (
-        <StyledCard
-            header={
-                <Subtitle icon={<AssignmentIcon />} text="Zutaten für">
-                    <Box display="flex" alignItems="center">
+        <>
+            <StyledCard
+                header={
+                    <Button
+                        className={classes.headerButton}
+                        variant="text"
+                        onClick={e => setAmountAnchorEl(e.currentTarget)}>
+                        <Typography variant="h5">Zutaten für {amount}</Typography>
+                    </Button>
+                }
+                BackgroundIcon={AssignmentIcon}>
+                <MarkdownInput defaultValue={ingredients} onChange={onIngredientsChange} />
+            </StyledCard>
+
+            <Popover
+                classes={{ paper: classes.popoverPaper }}
+                open={Boolean(amountAnchorEl)}
+                anchorEl={amountAnchorEl}
+                onClose={() => setAmountAnchorEl(null)}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}>
+                <Grid container spacing={1} alignItems="center">
+                    <Grid item>
+                        <Typography variant="h5">Personen</Typography>
+                    </Grid>
+                    <Grid item>
                         <IconButton
-                            className={classes.iconButtonSubtitle}
-                            onClick={onDecreaseAmount}
+                            onClick={() => dispatch({ type: 'decreaseAmount' })}
                             size="small">
                             <RemoveIcon />
                         </IconButton>
-                        <Box marginLeft={0.5} marginRight={0.5} width={25} textAlign="center">
-                            <Typography variant="h6">{amount}</Typography>
-                        </Box>
+                    </Grid>
+                    <Grid item>
+                        <Typography variant="h5">{amount}</Typography>
+                    </Grid>
+                    <Grid item>
                         <IconButton
-                            className={classes.iconButtonSubtitle}
-                            onClick={onIncreaseAmount}
+                            onClick={() => dispatch({ type: 'increaseAmount' })}
                             size="small">
                             <AddIcon />
                         </IconButton>
-                        <Box marginLeft={0.5} marginRight={0.5} width={25} textAlign="center">
-                            <Typography variant="h5">
-                                {amount < 2 ? 'Person' : 'Personen'}
-                            </Typography>
-                        </Box>
-                    </Box>
-                </Subtitle>
-            }>
-            <MarkdownInput defaultValue={ingredients} onChange={onIngredientsChange} />
-        </StyledCard>
+                    </Grid>
+                </Grid>
+            </Popover>
+        </>
     )
 }
 

@@ -17,7 +17,6 @@ import React, { useMemo, useState } from 'react'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import StyledCard from '../../Shared/StyledCard'
-import { Subtitle } from '../../Shared/Subtitle'
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -68,7 +67,7 @@ const AccountUserShoppingList = () => {
         Boolean(shoppingTracker.get(recipe)?.tracker?.some(trackerEl => trackerEl === grocery))
 
     return (
-        <StyledCard header={<Subtitle icon={<ShoppingCartIcon />} text="Einkaufsliste" />}>
+        <StyledCard header="Einkaufsliste" BackgroundIcon={ShoppingCartIcon}>
             <List>
                 {[...shoppingList.entries()].map(([recipe, groceries]) => (
                     <div key={recipe}>

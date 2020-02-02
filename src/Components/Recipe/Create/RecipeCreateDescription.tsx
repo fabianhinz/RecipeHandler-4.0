@@ -3,7 +3,6 @@ import React from 'react'
 
 import MarkdownInput from '../../Markdown/MarkdownInput'
 import StyledCard from '../../Shared/StyledCard'
-import { Subtitle } from '../../Shared/Subtitle'
 
 interface Props {
     description: string
@@ -12,7 +11,7 @@ interface Props {
 
 const RecipeCreateDescription = ({ description, onDescriptionChange }: Props) => {
     return (
-        <StyledCard header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}>
+        <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
             <MarkdownInput defaultValue={description} onChange={onDescriptionChange} />
         </StyledCard>
     )

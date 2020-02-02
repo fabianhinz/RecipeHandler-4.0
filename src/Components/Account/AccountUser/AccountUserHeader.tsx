@@ -21,7 +21,7 @@ import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
 import SearchIcon from '@material-ui/icons/SearchRounded'
 import TimelapseIcon from '@material-ui/icons/TimelapseRounded'
 import TimelineIcon from '@material-ui/icons/TimelineRounded'
-import { CameraImage, DatabaseSearch } from 'mdi-material-ui'
+import { CameraImage, DatabaseSearch, SettingsOutline } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useEffect } from 'react'
 
@@ -98,7 +98,7 @@ const UserStettings = ({ user, onUserSettingChange }: UserSettingsProps) => (
                 }
             />
         </ListItem>
-        <Divider />
+        <Divider variant="inset" />
         <ListItem button onClick={onUserSettingChange('showRecentlyAdded')}>
             <ListItemIcon>
                 <TimelapseIcon />
@@ -120,7 +120,7 @@ const UserStettings = ({ user, onUserSettingChange }: UserSettingsProps) => (
                 }
             />
         </ListItem>
-        <Divider />
+        <Divider variant="inset" />
         <ListItem button onClick={onUserSettingChange('notifications')}>
             <ListItemIcon>
                 {user.notifications ? <NotificationsIcon /> : <NotificationsOffIcon />}
@@ -142,7 +142,7 @@ const UserStettings = ({ user, onUserSettingChange }: UserSettingsProps) => (
                 }
             />
         </ListItem>
-        <Divider />
+        <Divider variant="inset" />
         <ListItem button onClick={onUserSettingChange('algoliaAdvancedSyntax')}>
             <ListItemIcon>
                 {user.algoliaAdvancedSyntax ? <DatabaseSearch /> : <SearchIcon />}
@@ -213,7 +213,7 @@ const AccountUserHeader = ({ user, userDoc, onUserSettingChange }: AccountUserHe
                 </Grid>
             </Grid>
             <Grid item xs={12}>
-                <StyledCard>
+                <StyledCard BackgroundIcon={SettingsOutline}>
                     <Grid container spacing={3}>
                         <Grid className={classes.profilePictureItem} item xs={12} md={4}>
                             <CardActionArea

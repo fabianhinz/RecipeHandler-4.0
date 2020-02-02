@@ -39,7 +39,7 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
                                 gutterBottom
                                 className={classes.recipeName}
                                 display="inline"
-                                variant="h4">
+                                variant={variant === 'related' ? 'h6' : 'h4'}>
                                 {recipe.name}
                             </Typography>
                         </Navigate>
