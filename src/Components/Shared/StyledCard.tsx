@@ -1,5 +1,6 @@
 import {
     Card,
+    CardActions,
     CardContent,
     createStyles,
     Fade,
@@ -14,6 +15,8 @@ const useStyles = makeStyles(theme =>
         root: {
             height: '100%',
             position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
         },
         header: {
             backgroundColor: theme.palette.primary.main,
@@ -28,6 +31,10 @@ const useStyles = makeStyles(theme =>
         cardContent: {
             zIndex: 1,
             position: 'relative',
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
         },
         backgroundIcon: {
             color:

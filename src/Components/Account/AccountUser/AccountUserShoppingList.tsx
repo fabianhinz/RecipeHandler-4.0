@@ -8,6 +8,7 @@ import {
     ListItemText,
     ListSubheader,
     makeStyles,
+    TextField,
 } from '@material-ui/core'
 import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCartTwoTone'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCartTwoTone'
@@ -34,6 +35,7 @@ const useStyles = makeStyles(() =>
 const AccountUserShoppingList = () => {
     const classes = useStyles()
     const [updatingTracker, setUpdatingTracker] = useState(false)
+    const [textFieldValue, setTextFieldValue] = useState('')
 
     const { user, shoppingList, shoppingTracker } = useFirebaseAuthContext()
 
@@ -62,6 +64,22 @@ const AccountUserShoppingList = () => {
     }
 
     const handleRemove = (recipe: string) => () => shoppingListDocRef.doc(recipe).delete()
+
+    const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+
+        // ToDo try to stay dry :(
+        let list = shoppingList.get('Sonstiges')?.list
+
+        if (!list) list = [textFieldValue]
+        else if (!list.some(el => el === textFieldValue)) list.push(textFieldValue)
+        else list = list.filter(listEl => listEl !== textFieldValue)
+
+        if (list.length === 0) await shoppingListDocRef.doc('Sonstiges').delete()
+        else await shoppingListDocRef.doc('Sonstiges').set({ list }, { merge: true })
+
+        setTextFieldValue('')
+    }
 
     const listItemChecked = (recipe: string, grocery: string) =>
         Boolean(shoppingTracker.get(recipe)?.tracker?.some(trackerEl => trackerEl === grocery))
@@ -100,6 +118,16 @@ const AccountUserShoppingList = () => {
                     </div>
                 ))}
             </List>
+            <form onSubmit={handleFormSubmit}>
+                <TextField
+                    value={textFieldValue}
+                    onChange={e => setTextFieldValue(e.target.value)}
+                    variant="outlined"
+                    helperText="Die Liste kann beliebig erweitert werden"
+                    fullWidth
+                    label="Sonstiges"
+                />
+            </form>
         </StyledCard>
     )
 }

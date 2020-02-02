@@ -14,6 +14,7 @@ import {
     TableCell,
     TableHead,
     TableRow,
+    Tooltip,
 } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircleTwoTone'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircleTwoTone'
@@ -24,6 +25,7 @@ import { useRouteMatch } from 'react-router-dom'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PATHS } from '../Routes/Routes'
+import { GrowIn } from '../Shared/Transitions'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -121,19 +123,23 @@ const MarkdownRenderer = (props: Props) => {
                             </ListItemAvatar>
                         ) : (
                             <ListItemIcon>
-                                <Checkbox
-                                    icon={<AddCircleIcon />}
-                                    checkedIcon={<RemoveCircleIcon />}
-                                    checked={checkboxChecked(renderProps.children)}
-                                    onChange={handleCheckboxChange(renderProps.children)}
-                                    classes={{ root: classes.checkboxRoot }}
-                                    disabled={
-                                        (match.path !== PATHS.details() &&
-                                            match.path !== PATHS.bookmarks) ||
-                                        updatingList ||
-                                        !user
-                                    }
-                                />
+                                <Tooltip
+                                    TransitionComponent={GrowIn}
+                                    title="Zur Einkaufsliste hinzufügen">
+                                    <Checkbox
+                                        icon={<AddCircleIcon />}
+                                        checkedIcon={<RemoveCircleIcon />}
+                                        checked={checkboxChecked(renderProps.children)}
+                                        onChange={handleCheckboxChange(renderProps.children)}
+                                        classes={{ root: classes.checkboxRoot }}
+                                        disabled={
+                                            (match.path !== PATHS.details() &&
+                                                match.path !== PATHS.bookmarks) ||
+                                            updatingList ||
+                                            !user
+                                        }
+                                    />
+                                </Tooltip>
                             </ListItemIcon>
                         )}
                         <ListItemText primary={renderProps.children} />
