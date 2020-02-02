@@ -116,3 +116,5 @@ export const useRecipeCreateReducer = (recipe?: Recipe<AttachmentMetadata> | nul
     const [state, dispatch] = useReducer(reducer, { ...initialState, ...recipe })
     return { state, dispatch }
 }
+
+export type RecipeCreateDispatch = { dispatch: React.Dispatch<Action> }

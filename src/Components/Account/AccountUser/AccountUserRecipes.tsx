@@ -5,8 +5,7 @@ import React from 'react'
 import { User } from '../../../model/model'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useUsersContext } from '../../Provider/UsersProvider'
-import RecipeCard from '../../Recipe/RecipeCard'
-import { Subtitle } from '../../Shared/Subtitle'
+import StyledCard from '../../Shared/StyledCard'
 import AccountListItem from '../AccountListItem'
 import { UserSettingChangeHandler } from './AccountUser'
 
@@ -19,23 +18,19 @@ const AccountUserRecipes = ({ onUserSettingChange }: Props) => {
     const { user } = useFirebaseAuthContext() as { user: User }
 
     return (
-        <RecipeCard
-            transitionOrder={3}
-            header={<Subtitle icon={<BookIcon />} text="Rezeptanzeige" />}
-            content={
-                <List>
-                    {userIds.map(id => (
-                        <AccountListItem
-                            key={id}
-                            uid={id}
-                            variant="user"
-                            checked={user.selectedUsers.some(selectedId => selectedId === id)}
-                            onChange={onUserSettingChange('selectedUsers')}
-                        />
-                    ))}
-                </List>
-            }
-        />
+        <StyledCard header="Rezeptanzeige" BackgroundIcon={BookIcon}>
+            <List>
+                {userIds.map(id => (
+                    <AccountListItem
+                        key={id}
+                        uid={id}
+                        variant="user"
+                        checked={user.selectedUsers.some(selectedId => selectedId === id)}
+                        onChange={onUserSettingChange('selectedUsers')}
+                    />
+                ))}
+            </List>
+        </StyledCard>
     )
 }
 

@@ -46,46 +46,46 @@ const getHighlightedIngredients = (ingredients: string) => {
 }
 
 interface Props {
-    recipeHit: Hit
-    onHitSelect: () => void
-    debouncedSearchValue: string
+    result: Hit
+    onResultClick: () => void
+    searchValue: string
 }
 
-const SearchHit = ({ recipeHit, debouncedSearchValue, onHitSelect }: Props) => {
+const SearchResult = ({ result, onResultClick, searchValue }: Props) => {
     const { history } = useRouterContext()
 
     const handleListItemClick = () => {
-        onHitSelect()
-        history.push(PATHS.details(recipeHit.name))
+        onResultClick()
+        history.push(PATHS.details(result.name))
     }
 
     return (
-        <ListItem button onClick={handleListItemClick} key={recipeHit.name}>
+        <ListItem button onClick={handleListItemClick} key={result.name}>
             <ListItemText
-                primary={recipeHit.name}
+                primary={result.name}
                 secondary={
                     <>
                         <b>Zutaten:</b>{' '}
-                        {getHighlightedIngredients(
-                            recipeHit._highlightResult.ingredients.value
-                        ).map((recipeFragment, index) => (
-                            <Highlighter
-                                searchWords={[debouncedSearchValue]}
-                                textToHighlight={recipeFragment}
-                                key={index}
-                            />
-                        ))}
+                        {getHighlightedIngredients(result._highlightResult.ingredients.value).map(
+                            (recipeFragment, index) => (
+                                <Highlighter
+                                    searchWords={[searchValue]}
+                                    textToHighlight={recipeFragment}
+                                    key={index}
+                                />
+                            )
+                        )}
                         <br />
                         <b>Beschreibung:</b>{' '}
-                        {getHighlightedDescription(
-                            recipeHit._highlightResult.description.value
-                        ).map((recipeFragment, index) => (
-                            <Highlighter
-                                searchWords={[debouncedSearchValue]}
-                                textToHighlight={recipeFragment}
-                                key={index}
-                            />
-                        ))}
+                        {getHighlightedDescription(result._highlightResult.description.value).map(
+                            (recipeFragment, index) => (
+                                <Highlighter
+                                    searchWords={[searchValue]}
+                                    textToHighlight={recipeFragment}
+                                    key={index}
+                                />
+                            )
+                        )}
                     </>
                 }
             />
@@ -93,4 +93,4 @@ const SearchHit = ({ recipeHit, debouncedSearchValue, onHitSelect }: Props) => {
     )
 }
 
-export default SearchHit
+export default SearchResult

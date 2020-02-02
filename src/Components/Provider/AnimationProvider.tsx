@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme =>
             alignItems: 'center',
         },
         backgroundVisible: {
-            zIndex: theme.zIndex.appBar,
+            zIndex: theme.zIndex.modal + 2,
             opacity: 1,
         },
         destination: {
@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme =>
         },
     })
 )
-// ! ToDo: handle img ratio
+// ! ToDo: this has to go
 const AnimationProvider: FC = ({ children }) => {
     const [originId, setOriginId] = useState<string | undefined>()
     const animationRef = useRef<Animation | undefined>()
@@ -99,8 +99,8 @@ const AnimationProvider: FC = ({ children }) => {
                     translate(0px,0px)
                     scale(1,1)
                 `,
-                borderRadius: '50%',
-                zIndex: theme.zIndex.appBar + 1,
+                boxShadow: 'unset',
+                zIndex: theme.zIndex.modal + 3,
             },
             {
                 transform: `
@@ -111,8 +111,8 @@ const AnimationProvider: FC = ({ children }) => {
                 position: 'fixed',
                 top: '50%',
                 left: '50%',
-                borderRadius: `${BORDER_RADIUS}px`,
-                zIndex: theme.zIndex.appBar + 1,
+                boxShadow: 'unset',
+                zIndex: theme.zIndex.modal + 3,
             },
         ]
 

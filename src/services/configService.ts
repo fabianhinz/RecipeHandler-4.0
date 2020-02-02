@@ -1,4 +1,4 @@
-import { OrderByRecord } from '../Components/Home/HomeRecipe'
+import { OrderByRecord } from '../model/model'
 
 class ConfigService {
     private _selectedCategories: Map<string, string>

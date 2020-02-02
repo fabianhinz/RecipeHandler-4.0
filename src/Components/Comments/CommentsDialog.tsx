@@ -1,12 +1,10 @@
 import {
-    Box,
     createStyles,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     Grid,
-    Grow,
     IconButton,
     makeStyles,
     TextField,
@@ -20,12 +18,12 @@ import clsx from 'clsx'
 import React, { FC, useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 
-import { ReactComponent as NotFoundIcon } from '../../icons/notFound.svg'
 import { Comment as CommentModel, CommentsCollections, CommentsDocument } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS_HUGE } from '../../theme'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import NotFound from '../Shared/NotFound'
 import { SlideUp } from '../Shared/Transitions'
 import Comment from './Comment'
 
@@ -168,13 +166,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 </Grid>
                 <div id={SCROLL_TO_ID} />
 
-                {comments.length === 0 && !loading && (
-                    <Box display="flex" justifyContent="center">
-                        <Grow in timeout={500}>
-                            <NotFoundIcon width={200} />
-                        </Grow>
-                    </Box>
-                )}
+                <NotFound visible={comments.length === 0 && !loading} />
             </DialogContent>
             <DialogActions>
                 <form className={classes.form} onSubmit={handleFormSubmit}>

@@ -1,10 +1,10 @@
-import { Grid, Typography } from '@material-ui/core'
+import { createStyles, Grid, makeStyles, Typography } from '@material-ui/core'
+import { CalendarMonth } from 'mdi-material-ui'
 import React from 'react'
 
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { CategoryResult } from '../../Category/CategoryResult'
-import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import { Navigate } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
 import { RecipeResultAction, RecipeVariants } from './Action/RecipeResultAction'
@@ -13,32 +13,56 @@ interface Props extends RecipeVariants {
     recipe: Recipe<AttachmentMetadata | AttachmentData>
 }
 
-const RecipeResultHeader = ({ recipe, variant }: Props) => {
-    const { isMobile } = useBreakpointsContext()
+const useStyles = makeStyles(() =>
+    createStyles({
+        recipeName: {
+            fontFamily: "'Lato', sans-serif",
+        },
+        recipeDate: {
+            fontFamily: "'Raleway', sans-serif",
+        },
+    })
+)
 
-    const minifiedLayout = isMobile && variant === 'summary'
-    const nameLayout = variant === 'pinned' || variant === 'related'
-    const actionsLayout = variant === 'details' || variant === 'summary'
+const RecipeResultHeader = ({ recipe, variant }: Props) => {
+    const classes = useStyles()
 
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">
-            <Grid item xs={nameLayout ? 12 : minifiedLayout ? 11 : 7}>
-                <Navigate disabled={nameLayout} to={PATHS.details(recipe.name)}>
-                    <Typography display="inline" variant="h5">
-                        {recipe.name}
-                    </Typography>
-                </Navigate>
-                <Typography color="textSecondary">
-                    Zuletzt geändert am{' '}
-                    {FirebaseService.createDateFromTimestamp(
-                        recipe.createdDate
-                    ).toLocaleDateString()}
-                </Typography>
+            <Grid item xs={variant === 'related' ? 12 : 8}>
+                <Grid container spacing={1} direction="column" justify="center">
+                    <Grid item>
+                        <Navigate
+                            disabled={variant === 'related' || variant === 'preview'}
+                            to={PATHS.details(recipe.name)}>
+                            <Typography
+                                gutterBottom
+                                className={classes.recipeName}
+                                display="inline"
+                                variant={variant === 'related' ? 'h6' : 'h5'}>
+                                {recipe.name}
+                            </Typography>
+                        </Navigate>
+                    </Grid>
+                    <Grid item>
+                        <Grid container spacing={1} alignItems="center">
+                            <Grid item>
+                                <CalendarMonth />
+                            </Grid>
+                            <Grid item>
+                                <Typography className={classes.recipeDate} color="textSecondary">
+                                    {FirebaseService.createDateFromTimestamp(
+                                        recipe.createdDate
+                                    ).toLocaleDateString()}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
-            {actionsLayout && (
-                <Grid item xs={minifiedLayout ? 1 : 5}>
+            {variant === 'details' && (
+                <Grid item xs={4}>
                     <RecipeResultAction
-                        pinOnly={minifiedLayout}
                         name={recipe.name}
                         numberOfComments={recipe.numberOfComments}
                     />

@@ -87,6 +87,8 @@ export type User = {
     emailVerified?: boolean
     createdDate: firebase.firestore.Timestamp
     algoliaAdvancedSyntax: boolean
+    bookmarkSync: boolean
+    bookmarks: string[]
 }
 
 export type RecipeName = string
@@ -94,3 +96,6 @@ export type Grocery = string
 
 export type ShoppingList = Map<RecipeName, { list: Grocery[] } | undefined>
 export type ShoppingTracker = Map<RecipeName, { tracker: Grocery[] } | undefined>
+
+export type OrderByKey = keyof Pick<Recipe<AttachmentMetadata>, 'name' | 'createdDate'>
+export type OrderByRecord = Partial<Record<OrderByKey, 'asc' | 'desc'>>

@@ -1,5 +1,5 @@
 import { IconButton } from '@material-ui/core/'
-import FavoriteIcon from '@material-ui/icons/FavoriteTwoTone'
+import FavoriteIcon from '@material-ui/icons/Favorite'
 import React, { FC, useEffect, useState } from 'react'
 
 import { AttachmentMetadata, Recipe } from '../../../../model/model'

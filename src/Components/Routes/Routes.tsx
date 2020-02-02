@@ -2,11 +2,12 @@ import React, { FC, lazy, LazyExoticComponent, Suspense } from 'react'
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import { ReactComponent as AccountIcon } from '../../icons/account.svg'
+import { ReactComponent as BookmarksIcon } from '../../icons/bookmarks.svg'
 import { ReactComponent as CreateIcon } from '../../icons/create.svg'
 import { ReactComponent as DetailsIcon } from '../../icons/details.svg'
 import { ReactComponent as EditIcon } from '../../icons/edit.svg'
 import { ReactComponent as HomeIcon } from '../../icons/home.svg'
-import { ReactComponent as TrialIcon } from '../../icons/logo.svg'
+import { ReactComponent as TrialIcon } from '../../icons/trial.svg'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { BackgroundIcon } from '../Shared/BackgroundIcon'
 import Progress from '../Shared/Progress'
@@ -18,6 +19,7 @@ export const PATHS = {
     recipeEdit: (name = ':name') => `/recipe/edit/${name}`,
     trials: '/trials',
     account: '/account',
+    bookmarks: '/bookmarks',
 }
 
 interface AppRoute {
@@ -41,6 +43,11 @@ const anonymousRoutes: AppRoute[] = [
         path: PATHS.trials,
         Component: lazy(() => import('../Trials/Trials')),
         Background: () => <BackgroundIcon Icon={TrialIcon} />,
+    },
+    {
+        path: PATHS.bookmarks,
+        Component: lazy(() => import('../Bookmarks/Bookmarks')),
+        Background: () => <BackgroundIcon Icon={BookmarksIcon} />,
     },
 ]
 

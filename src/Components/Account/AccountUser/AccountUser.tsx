@@ -1,36 +1,40 @@
 import { Grid } from '@material-ui/core'
 import { LogoutVariant } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 
-import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import useProgress from '../../../hooks/useProgress'
 import { ShoppingList, User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
+import { useBookmarkContext } from '../../Provider/BookmarkProvider'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { useGridContext } from '../../Provider/GridProvider'
 import { NavigateFab } from '../../Routes/Navigate'
 import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
 import AccountUserRecipes from './AccountUserRecipes'
-import AccountUserSettings from './AccountUserSettings'
 import AccountUserShoppingList from './AccountUserShoppingList'
 
 type SettingKeys = keyof Pick<
     User,
-    'muiTheme' | 'selectedUsers' | 'showRecentlyAdded' | 'notifications' | 'algoliaAdvancedSyntax'
+    | 'muiTheme'
+    | 'selectedUsers'
+    | 'showRecentlyAdded'
+    | 'notifications'
+    | 'algoliaAdvancedSyntax'
+    | 'bookmarkSync'
 >
 
 export type UserSettingChangeHandler = (key: SettingKeys) => (uid?: any) => void
 
 const AccountUser = () => {
-    const [showInfo, setShowInfo] = useState(false)
-
     // ? we won't load this component without an existing user - pinky promise -_-
     const { user, shoppingList } = useFirebaseAuthContext() as {
         user: User
         shoppingList: ShoppingList
     }
-    const { breakpoints } = useCardBreakpoints({ xlEnabled: user.admin })
+    const { gridBreakpointProps } = useGridContext()
+    const { bookmarks } = useBookmarkContext()
     const { ProgressComponent, setProgress } = useProgress()
     const { enqueueSnackbar } = useSnackbar()
 
@@ -83,48 +87,54 @@ const AccountUser = () => {
             }
             case 'algoliaAdvancedSyntax': {
                 userDoc.update({ [key]: !user.algoliaAdvancedSyntax })
+                break
+            }
+            case 'bookmarkSync': {
+                const newSyncSetting = !user.bookmarkSync
+                const updates: Partial<Pick<User, 'bookmarks' | 'bookmarkSync'>> = {
+                    bookmarkSync: newSyncSetting,
+                }
+                // ? user has already selected bookmarks and decides to sync them
+                if (newSyncSetting && bookmarks.size > 0) {
+                    updates.bookmarks = [...bookmarks.values()]
+                }
+                userDoc.update(updates)
+                break
             }
         }
     }
 
     return (
-        <Grid container spacing={4}>
-            <Grid item xs={12}>
-                <AccountUserHeader
-                    user={user}
-                    userDoc={userDoc}
-                    showInfo={showInfo}
-                    onShowInfoChange={() => setShowInfo(prev => !prev)}
-                />
-            </Grid>
-
-            {shoppingList.size > 0 && (
-                <Grid item {...breakpoints}>
-                    <AccountUserShoppingList />
+        <>
+            <Grid container spacing={4}>
+                <Grid item xs={12}>
+                    <AccountUserHeader
+                        user={user}
+                        userDoc={userDoc}
+                        onUserSettingChange={handleUserSettingChange}
+                    />
                 </Grid>
-            )}
 
-            <Grid item {...breakpoints}>
-                <AccountUserSettings
-                    user={user}
-                    showInfo={showInfo}
-                    onUserSettingChange={handleUserSettingChange}
-                />
-            </Grid>
+                {shoppingList.size > 0 && (
+                    <Grid item {...gridBreakpointProps}>
+                        <AccountUserShoppingList />
+                    </Grid>
+                )}
 
-            <Grid item {...breakpoints}>
-                <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
-            </Grid>
-
-            {user.admin && (
-                <Grid item {...breakpoints}>
-                    <AccountUserAdmin />
+                <Grid item {...gridBreakpointProps}>
+                    <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
                 </Grid>
-            )}
+
+                {user.admin && (
+                    <Grid item {...gridBreakpointProps}>
+                        <AccountUserAdmin />
+                    </Grid>
+                )}
+            </Grid>
 
             <NavigateFab onClick={handleLogout} icon={<LogoutVariant />} />
             <ProgressComponent />
-        </Grid>
+        </>
     )
 }
 
