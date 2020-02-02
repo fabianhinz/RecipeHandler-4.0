@@ -8,7 +8,7 @@ import {
     makeStyles,
     Slide,
 } from '@material-ui/core'
-import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
+import DeleteIcon from '@material-ui/icons/Delete'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
