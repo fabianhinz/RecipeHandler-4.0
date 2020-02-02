@@ -34,7 +34,6 @@ const useStyles = makeStyles(() =>
 
 const AccountUserShoppingList = () => {
     const classes = useStyles()
-    const [updatingTracker, setUpdatingTracker] = useState(false)
     const [textFieldValue, setTextFieldValue] = useState('')
 
     const { user, shoppingList, shoppingTracker } = useFirebaseAuthContext()
@@ -52,7 +51,6 @@ const AccountUserShoppingList = () => {
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
-        setUpdatingTracker(true)
         let tracker = shoppingTracker.get(recipe)?.tracker
 
         if (!tracker) tracker = [grocery]
@@ -60,7 +58,6 @@ const AccountUserShoppingList = () => {
         else tracker = tracker.filter(trackerEl => trackerEl !== grocery)
 
         await shoppingListDocRef.doc(recipe).set({ tracker }, { merge: true })
-        setUpdatingTracker(false)
     }
 
     const handleRemove = (recipe: string) => () => shoppingListDocRef.doc(recipe).delete()
@@ -100,7 +97,6 @@ const AccountUserShoppingList = () => {
                                 <ListItemIcon>
                                     <Checkbox
                                         checked={listItemChecked(recipe, grocery)}
-                                        disabled={updatingTracker}
                                         onChange={handleCheckboxChange(recipe, grocery)}
                                         edge="start"
                                     />
