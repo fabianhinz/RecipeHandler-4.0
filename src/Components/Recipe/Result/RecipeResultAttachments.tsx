@@ -25,8 +25,8 @@ const useStyles = makeStyles(theme =>
                 height: 225,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 300,
-                height: 300,
+                width: 280,
+                height: 280,
             },
             borderRadius: BORDER_RADIUS,
             boxShadow: theme.shadows[1],
@@ -41,8 +41,8 @@ const useStyles = makeStyles(theme =>
                 height: 225,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 300,
-                height: 300,
+                width: 280,
+                height: 280,
             },
             borderRadius: BORDER_RADIUS,
         },

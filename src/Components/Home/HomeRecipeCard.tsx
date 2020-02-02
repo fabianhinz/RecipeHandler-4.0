@@ -38,8 +38,8 @@ const useStyles = makeStyles(theme =>
                 height: 150,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 200,
-                height: 200,
+                width: 180,
+                height: 180,
             },
             borderTopRightRadius: 0,
             borderBottomRightRadius: 0,
@@ -57,8 +57,8 @@ const useStyles = makeStyles(theme =>
                 height: 150,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 200,
-                height: 200,
+                width: 180,
+                height: 180,
             },
             borderTopRightRadius: 0,
             borderBottomRightRadius: 0,
@@ -132,7 +132,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                                         <Typography
                                             gutterBottom
                                             className={classes.recipeName}
-                                            variant="h5"
+                                            variant="h6"
                                             noWrap>
                                             {recipe.name}
                                         </Typography>
