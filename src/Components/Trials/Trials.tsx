@@ -1,4 +1,12 @@
-import { Box, createStyles, Fab, Grid, makeStyles, Zoom } from '@material-ui/core'
+import {
+    createStyles,
+    Fab,
+    Grid,
+    LinearProgress,
+    makeStyles,
+    Typography,
+    Zoom,
+} from '@material-ui/core'
 import CameraIcon from '@material-ui/icons/CameraTwoTone'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
@@ -6,12 +14,13 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 import { getFileExtension } from '../../hooks/useAttachmentRef'
-import { ReactComponent as TrialIcon } from '../../icons/logo.svg'
+import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { readDocumentAsync } from '../Recipe/Create/Attachments/useAttachmentDropzone'
-import Progress from '../Shared/Progress'
+import NotFound from '../Shared/NotFound'
+import Skeletons from '../Shared/Skeletons'
 import TrialsCard from './TrialsCard'
 
 const useStyles = makeStyles(theme =>
@@ -33,24 +42,49 @@ const useStyles = makeStyles(theme =>
 )
 
 const Trials = () => {
-    const [trials, setTrials] = useState<Map<string, Trial>>(new Map())
-    const [loading, setLoading] = useState(true)
+    const [pagedTrials, setPagedTrials] = useState<Map<string, Trial>>(new Map())
+    const [lastTrial, setLastTrial] = useState<Trial | undefined | null>(null)
+    const [querying, setQuerying] = useState(false)
+
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const { IntersectionObserverTrigger } = useIntersectionObserver({
+        onIsIntersecting: () => {
+            if (pagedTrials.size > 0) setLastTrial([...pagedTrials.values()].pop())
+        },
+    })
 
-    useEffect(
-        () =>
-            FirebaseService.firestore
-                .collection('trials')
-                .orderBy('createdDate', 'desc')
-                .onSnapshot(querySnapshot => {
-                    setTrials(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as Trial])))
-                    setLoading(false)
-                }),
-        []
-    )
+    useEffect(() => {
+        setQuerying(true)
+        let query:
+            | firebase.firestore.CollectionReference
+            | firebase.firestore.Query = FirebaseService.firestore
+            .collection('trials')
+            .orderBy('createdDate', 'desc')
+
+        if (lastTrial) query = query.startAfter(lastTrial.createdDate)
+        // ToDo refactor below --> merge with Home.tsx 69 ff.
+        return query.limit(6).onSnapshot(querySnapshot => {
+            const changes = {
+                added: new Map(),
+                modified: new Map(),
+                removed: new Map(),
+            }
+            querySnapshot
+                .docChanges()
+                .forEach(({ type, doc }) => changes[type].set(doc.id, doc.data() as Trial))
+
+            setPagedTrials(trials => {
+                changes.removed.forEach((_v, key) => trials.delete(key))
+                const newRecipes = new Map([...trials, ...changes.added, ...changes.modified])
+
+                return newRecipes
+            })
+            setQuerying(false)
+        })
+    }, [lastTrial])
 
     const onDrop = useCallback(
         async (acceptedFiles: File[]) => {
@@ -119,19 +153,24 @@ const Trials = () => {
 
     return (
         <>
-            {loading ? (
-                <Progress variant="fixed" />
-            ) : trials.size === 0 ? (
-                <Box display="flex" justifyContent="center" padding={4}>
-                    <TrialIcon width={200} />
-                </Box>
-            ) : (
-                <Grid container spacing={4}>
-                    {[...trials.values()].map((trial, index) => (
-                        <TrialsCard index={index} trial={trial} key={trial.name} />
-                    ))}
+            <Grid container spacing={4}>
+                <Grid item xs={12}>
+                    <Typography variant="h4">Rezeptideen</Typography>
                 </Grid>
-            )}
+
+                {[...pagedTrials.values()].map((trial, index) => (
+                    <TrialsCard index={index} trial={trial} key={trial.name} />
+                ))}
+
+                <Skeletons variant="trial" visible={querying && pagedTrials.size === 0} />
+
+                <NotFound visible={!querying && pagedTrials.size === 0} />
+
+                <Grid item xs={12}>
+                    {querying && <LinearProgress variant="query" color="secondary" />}
+                    <IntersectionObserverTrigger />
+                </Grid>
+            </Grid>
 
             {user && (
                 <Zoom in>

@@ -55,7 +55,7 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories }) => {
     }
 
     return (
-        <Grid container spacing={1} wrap="nowrap">
+        <Grid container spacing={1}>
             {Object.keys(categories).map(type => (
                 <Grid item key={type} {...stopPropagationProps}>
                     {categories[type].length > 0 && (

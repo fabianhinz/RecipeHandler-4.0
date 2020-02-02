@@ -1,9 +1,8 @@
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import React from 'react'
 
-import MarkdownInput from '../../Shared/MarkdownInput'
-import { Subtitle } from '../../Shared/Subtitle'
-import RecipeCard from '../RecipeCard'
+import MarkdownInput from '../../Markdown/MarkdownInput'
+import StyledCard from '../../Shared/StyledCard'
 
 interface Props {
     description: string
@@ -12,12 +11,9 @@ interface Props {
 
 const RecipeCreateDescription = ({ description, onDescriptionChange }: Props) => {
     return (
-        <RecipeCard
-            transitionOrder={2}
-            variant="preview"
-            header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
-            content={<MarkdownInput defaultValue={description} onChange={onDescriptionChange} />}
-        />
+        <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
+            <MarkdownInput defaultValue={description} onChange={onDescriptionChange} />
+        </StyledCard>
     )
 }
 

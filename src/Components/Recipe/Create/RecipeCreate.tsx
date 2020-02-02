@@ -4,16 +4,15 @@ import { useSnackbar } from 'notistack'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
 
-import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
 import { AttachmentMetadata, Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import CategoryWrapper from '../../Category/CategoryWrapper'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { useGridContext } from '../../Provider/GridProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
-import { Subtitle } from '../../Shared/Subtitle'
-import RecipeCard from '../RecipeCard'
+import StyledCard from '../../Shared/StyledCard'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
 import { RecipeCreateAttachments } from './Attachments/RecipeCreateAttachments'
@@ -43,7 +42,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         attachmentMaxWidth: 3840,
         attachmentLimit: 5,
     })
-    const { breakpoints } = useCardBreakpoints({ xlEnabled: state.relatedRecipes.length !== 0 })
+    const { gridBreakpointProps } = useGridContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     useEffect(() => {
@@ -163,17 +162,16 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         </Grid>
                     )}
 
-                    <Grid item {...breakpoints}>
+                    <Grid item {...gridBreakpointProps}>
                         <RecipeCreateIngredients
                             amount={state.amount}
-                            onDecreaseAmount={() => dispatch({ type: 'decreaseAmount' })}
-                            onIncreaseAmount={() => dispatch({ type: 'increaseAmount' })}
                             ingredients={state.ingredients}
+                            dispatch={dispatch}
                             onIngredientsChange={handleTextFieldChange('ingredients')}
                         />
                     </Grid>
 
-                    <Grid item {...breakpoints}>
+                    <Grid item {...gridBreakpointProps}>
                         <RecipeCreateDescription
                             description={state.description}
                             onDescriptionChange={handleTextFieldChange('description')}
@@ -181,15 +179,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     </Grid>
 
                     {state.relatedRecipes.length > 0 && (
-                        <Grid item {...breakpoints}>
-                            <RecipeCard
-                                transitionOrder={3}
-                                variant="preview"
-                                header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
-                                content={
-                                    <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
-                                }
-                            />
+                        <Grid item {...gridBreakpointProps}>
+                            <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
+                                <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                            </StyledCard>
                         </Grid>
                     )}
                 </Grid>

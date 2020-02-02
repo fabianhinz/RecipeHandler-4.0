@@ -1,5 +1,5 @@
 import { Fab, IconButton } from '@material-ui/core'
-import CommentIcon from '@material-ui/icons/CommentTwoTone'
+import CommentIcon from '@material-ui/icons/Comment'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { CommentsCollections, CommentsDocument } from '../../model/model'

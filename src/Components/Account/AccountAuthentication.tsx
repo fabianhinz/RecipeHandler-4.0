@@ -127,6 +127,8 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
                                 notifications: false,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
                                 algoliaAdvancedSyntax: false,
+                                bookmarkSync: false,
+                                bookmarks: [],
                             } as Omit<User, 'uid'>)
                         // send a verification email to the newly created user
                         user.sendEmailVerification({ url: 'https://recipehandler.web.app/' })

@@ -18,7 +18,17 @@ const sharedTheme: Partial<ThemeOptions> = {
                 },
             },
         },
+        MuiGrid: {
+            item: {
+                lineHeight: 1,
+            },
+        },
         MuiPaper: {
+            rounded: {
+                borderRadius: BORDER_RADIUS,
+            },
+        },
+        MuiAvatar: {
             rounded: {
                 borderRadius: BORDER_RADIUS,
             },

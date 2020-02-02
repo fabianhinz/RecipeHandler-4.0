@@ -5,8 +5,7 @@ import React, { memo, useEffect, useState } from 'react'
 import useProgress from '../../../hooks/useProgress'
 import { FirebaseService } from '../../../services/firebase'
 import { useUsersContext } from '../../Provider/UsersProvider'
-import RecipeCard from '../../Recipe/RecipeCard'
-import { Subtitle } from '../../Shared/Subtitle'
+import StyledCard from '../../Shared/StyledCard'
 import AccountListItem from '../AccountListItem'
 
 const editorsCollection = FirebaseService.firestore.collection('editors')
@@ -32,23 +31,19 @@ const AccountUserAdmin = () => {
 
     return (
         <>
-            <RecipeCard
-                transitionOrder={3}
-                header={<Subtitle text="Editoren" icon={<SecurityIcon />} />}
-                content={
-                    <List>
-                        {userIds.map(uid => (
-                            <AccountListItem
-                                key={uid}
-                                uid={uid}
-                                variant="admin"
-                                checked={editors.has(uid)}
-                                onChange={handleEditorChange}
-                            />
-                        ))}
-                    </List>
-                }
-            />
+            <StyledCard header="Editoren" BackgroundIcon={SecurityIcon}>
+                <List>
+                    {userIds.map(uid => (
+                        <AccountListItem
+                            key={uid}
+                            uid={uid}
+                            variant="admin"
+                            checked={editors.has(uid)}
+                            onChange={handleEditorChange}
+                        />
+                    ))}
+                </List>
+            </StyledCard>
 
             <ProgressComponent />
         </>

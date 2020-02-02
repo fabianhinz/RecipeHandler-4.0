@@ -5,11 +5,10 @@ import {
     createStyles,
     Fab,
     Grid,
-    Grow,
     makeStyles,
     Slide,
 } from '@material-ui/core'
-import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
+import DeleteIcon from '@material-ui/icons/Delete'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
@@ -20,6 +19,7 @@ import { FirebaseService } from '../../services/firebase'
 import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useGridContext } from '../Provider/GridProvider'
 import { useSelectedAttachement } from '../Provider/SelectedAttachementProvider'
 import TrialsDeleteAlert from './TrialsDeleteAlert'
 
@@ -51,6 +51,7 @@ const TrialsCard = ({ trial, index }: Props) => {
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
+    const { gridBreakpointProps } = useGridContext()
     const { enqueueSnackbar } = useSnackbar()
     const { setSelectedAttachment } = useSelectedAttachement()
 
@@ -81,50 +82,48 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     return (
         <>
-            <Grid item xs={12} md={6} lg={4} key={trial.name}>
-                <Grow in timeout={getTransitionTimeoutProps(++index)}>
-                    <Card className={classes.card}>
-                        <AccountChip uid={trial.editorUid} variant="absolute" />
+            <Grid item {...gridBreakpointProps} key={trial.name}>
+                <Card className={classes.card}>
+                    <AccountChip uid={trial.editorUid} variant="absolute" />
 
-                        <CardActionArea
-                            disabled={!dataUrls}
-                            onClick={() => {
-                                if (dataUrls) setSelectedAttachment(dataUrls.fullDataUrl)
-                            }}>
-                            <CardMedia
-                                image={dataUrls && dataUrls.mediumDataUrl}
-                                className={classes.img}>
-                                {/* make mui happy */}
-                                <></>
-                            </CardMedia>
-                        </CardActionArea>
+                    <CardActionArea
+                        disabled={!dataUrls}
+                        onClick={() => {
+                            if (dataUrls) setSelectedAttachment(dataUrls.fullDataUrl)
+                        }}>
+                        <CardMedia
+                            image={dataUrls && dataUrls.mediumDataUrl}
+                            className={classes.img}>
+                            {/* make mui happy */}
+                            <></>
+                        </CardMedia>
+                    </CardActionArea>
 
-                        {user && (
-                            <Slide direction="up" in timeout={getTransitionTimeoutProps(++index)}>
-                                <Grid
-                                    container
-                                    justify="flex-end"
-                                    spacing={1}
-                                    className={classes.actions}>
-                                    <Grid item xs="auto">
-                                        <Comments
-                                            highContrast
-                                            collection="trials"
-                                            numberOfComments={trial.numberOfComments}
-                                            name={trial.name}
-                                        />
-                                    </Grid>
-
-                                    <Grid item xs="auto">
-                                        <Fab size="small" onClick={() => setDeleteAlert(true)}>
-                                            <DeleteIcon />
-                                        </Fab>
-                                    </Grid>
+                    {user && (
+                        <Slide direction="up" in timeout={getTransitionTimeoutProps(++index)}>
+                            <Grid
+                                container
+                                justify="flex-end"
+                                spacing={1}
+                                className={classes.actions}>
+                                <Grid item xs="auto">
+                                    <Comments
+                                        highContrast
+                                        collection="trials"
+                                        numberOfComments={trial.numberOfComments}
+                                        name={trial.name}
+                                    />
                                 </Grid>
-                            </Slide>
-                        )}
-                    </Card>
-                </Grow>
+
+                                <Grid item xs="auto">
+                                    <Fab size="small" onClick={() => setDeleteAlert(true)}>
+                                        <DeleteIcon />
+                                    </Fab>
+                                </Grid>
+                            </Grid>
+                        </Slide>
+                    )}
+                </Card>
             </Grid>
             <TrialsDeleteAlert
                 open={deleteAlert}

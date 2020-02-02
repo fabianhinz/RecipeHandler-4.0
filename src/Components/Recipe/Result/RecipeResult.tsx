@@ -1,17 +1,16 @@
-import { Box, createStyles, Divider, Grid, Grow, makeStyles } from '@material-ui/core'
+import { createStyles, Divider, Grid, makeStyles } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { memo } from 'react'
 
-import useCardBreakpoints from '../../../hooks/useCardBreakpoints'
-import { ReactComponent as NotFoundIcon } from '../../../icons/notFound.svg'
 import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
 import AccountChip from '../../Account/AccountChip'
+import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
+import { useGridContext } from '../../Provider/GridProvider'
 import Satisfaction from '../../Satisfaction/Satisfaction'
-import Markdown from '../../Shared/Markdown'
-import { Subtitle } from '../../Shared/Subtitle'
-import RecipeCard from '../RecipeCard'
+import NotFound from '../../Shared/NotFound'
+import StyledCard from '../../Shared/StyledCard'
 import { RecipeVariants } from './Action/RecipeResultAction'
 import RecipeResultAttachments from './RecipeResultAttachments'
 import RecipeResultHeader from './RecipeResultHeader'
@@ -30,40 +29,14 @@ const useStyles = makeStyles(() =>
     })
 )
 
-const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
+const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
     const classes = useStyles()
+    const { gridBreakpointProps } = useGridContext()
 
-    const { breakpoints } = useCardBreakpoints({
-        xsOnly: variant === 'pinned',
-        xlEnabled: recipe !== null && recipe.relatedRecipes.length !== 0,
-    })
-
-    if (!recipe)
-        return (
-            <Box display="flex" justifyContent="center" marginTop={4}>
-                <Grow in timeout={500}>
-                    <NotFoundIcon width={200} />
-                </Grow>
-            </Box>
-        )
-
-    if (variant === 'summary')
-        return (
-            <Grid container spacing={2} className={classes.recipeContainer} alignContent="stretch">
-                <Grid item xs={12}>
-                    <RecipeResultHeader recipe={recipe} variant={variant} />
-                </Grid>
-
-                {divider && (
-                    <Grid item xs={12}>
-                        <Divider />
-                    </Grid>
-                )}
-            </Grid>
-        )
+    if (!recipe) return <NotFound visible />
 
     return (
-        <Grid container spacing={variant === 'pinned' ? 2 : 4} className={classes.recipeContainer}>
+        <Grid container spacing={4} className={classes.recipeContainer}>
             <Grid item xs={12}>
                 <RecipeResultHeader recipe={recipe} variant={variant} />
             </Grid>
@@ -72,56 +45,44 @@ const RecipeResult = ({ recipe, variant, divider }: RecipeResultProps) => {
                 <Divider />
             </Grid>
 
-            {variant !== 'pinned' && recipe.attachments.length !== 0 && (
+            {recipe.attachments.length !== 0 && (
                 <Grid item xs={12}>
                     <RecipeResultAttachments attachments={recipe.attachments} />
                 </Grid>
             )}
 
             {recipe.ingredients.length > 0 && (
-                <Grid {...breakpoints} item>
-                    <RecipeCard
-                        transitionOrder={1}
-                        variant={variant}
+                <Grid {...gridBreakpointProps} item>
+                    <StyledCard
                         header={
-                            <Subtitle
-                                icon={<AssignmentIcon />}
-                                text={
-                                    <>
-                                        Zutaten für {recipe.amount}{' '}
-                                        {recipe.amount < 2 ? 'Person' : 'Personen'}
-                                    </>
-                                }
-                            />
+                            <>
+                                Zutaten für {recipe.amount}{' '}
+                                {recipe.amount < 2 ? 'Person' : 'Personen'}
+                            </>
                         }
-                        content={<Markdown source={recipe.ingredients} />}
-                    />
+                        BackgroundIcon={AssignmentIcon}>
+                        <MarkdownRenderer recipeName={recipe.name} source={recipe.ingredients} />
+                    </StyledCard>
                 </Grid>
             )}
 
             {recipe.description.length > 0 && (
-                <Grid {...breakpoints} item>
-                    <RecipeCard
-                        transitionOrder={2}
-                        variant={variant}
-                        header={<Subtitle icon={<BookIcon />} text="Beschreibung" />}
-                        content={<Markdown source={recipe.description} />}
-                    />
+                <Grid {...gridBreakpointProps} item>
+                    <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
+                        <MarkdownRenderer recipeName={recipe.name} source={recipe.description} />
+                    </StyledCard>
                 </Grid>
             )}
 
-            {recipe.relatedRecipes.length > 0 && variant !== 'pinned' && (
-                <Grid {...breakpoints} item>
-                    <RecipeCard
-                        transitionOrder={3}
-                        variant={variant}
-                        header={<Subtitle icon={<LabelIcon />} text="Passt gut zu" />}
-                        content={<RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />}
-                    />
+            {recipe.relatedRecipes.length > 0 && (
+                <Grid {...gridBreakpointProps} item>
+                    <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
+                        <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+                    </StyledCard>
                 </Grid>
             )}
 
-            {variant !== 'preview' && variant !== 'pinned' && (
+            {variant !== 'preview' && (
                 <Grid xs={12} item>
                     <Satisfaction recipeName={recipe.name} transitionOrder={4} />
                 </Grid>
