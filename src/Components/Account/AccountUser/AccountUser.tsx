@@ -115,11 +115,9 @@ const AccountUser = () => {
                     />
                 </Grid>
 
-                {shoppingList.size > 0 && (
-                    <Grid item {...gridBreakpointProps}>
-                        <AccountUserShoppingList />
-                    </Grid>
-                )}
+                <Grid item {...gridBreakpointProps}>
+                    <AccountUserShoppingList />
+                </Grid>
 
                 <Grid item {...gridBreakpointProps}>
                     <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
