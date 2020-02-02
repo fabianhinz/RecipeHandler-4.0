@@ -26,12 +26,12 @@ import { BadgeWrapper } from './Shared/BadgeWrapper'
 const useStyles = makeStyles(theme =>
     createStyles({
         header: {
-            paddingTop: theme.spacing(4),
             position: 'sticky',
+            paddingTop: theme.spacing(3),
             '@media (max-width: 1023px) and (orientation: landscape)': {
                 position: 'static',
             },
-            top: 'env(safe-area-inset-bottom)',
+            top: 'env(safe-area-inset-top)',
             zIndex: theme.zIndex.appBar + 1,
         },
         searchPaper: {
@@ -48,6 +48,8 @@ const useStyles = makeStyles(theme =>
         },
         drawerPaper: {
             padding: theme.spacing(3),
+            paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
+            paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
             display: 'flex',
             justifyContent: 'space-between',
             flexDirection: 'column',

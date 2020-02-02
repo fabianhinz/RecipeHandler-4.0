@@ -4,7 +4,7 @@ import React from 'react'
 import { Routes } from './Routes/Routes'
 
 const Main = () => (
-    <Box marginTop={2} marginBottom={11}>
+    <Box marginTop={2} marginBottom={10}>
         <Routes />
     </Box>
 )

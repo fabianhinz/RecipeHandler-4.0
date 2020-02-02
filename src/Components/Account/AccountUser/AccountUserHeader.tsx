@@ -195,6 +195,7 @@ const UserStettings = ({ user, onUserSettingChange }: UserSettingsProps) => {
                     }
                 />
             </ListItem>
+            <Divider variant="inset" />
             <ListItem button onClick={onUserSettingChange('bookmarkSync')}>
                 <ListItemIcon>
                     {user.bookmarkSync ? <CloudSync /> : <CloudOffOutline />}
