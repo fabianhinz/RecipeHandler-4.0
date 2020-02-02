@@ -119,7 +119,11 @@ const MarkdownRenderer = (props: Props) => {
                             <ListItemIcon>
                                 <Tooltip
                                     TransitionComponent={GrowIn}
-                                    title="Zur Einkaufsliste hinzufügen">
+                                    title={
+                                        checkboxChecked(renderProps.children)
+                                            ? 'Von der Einkaufsliste entfernen'
+                                            : 'Zur Einkaufsliste hinzufügen'
+                                    }>
                                     <Checkbox
                                         icon={<AddCircleIcon />}
                                         checkedIcon={<RemoveCircleIcon />}
