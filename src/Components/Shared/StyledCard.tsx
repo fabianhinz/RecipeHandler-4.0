@@ -25,6 +25,10 @@ const useStyles = makeStyles(theme =>
             alignItems: 'center',
             justifyContent: 'center',
         },
+        cardContent: {
+            zIndex: 1,
+            position: 'relative',
+        },
         backgroundIcon: {
             color:
                 theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
@@ -35,7 +39,6 @@ const useStyles = makeStyles(theme =>
         },
     })
 )
-
 interface Props {
     header?: React.ReactNode
     children: React.ReactNode
@@ -50,10 +53,12 @@ const StyledCard = ({ header, children, BackgroundIcon }: Props) => {
             <Card className={classes.root}>
                 {header && (
                     <div className={classes.header}>
-                        <Typography variant="h5">{header}</Typography>
+                        <Typography noWrap variant="h5">
+                            {header}
+                        </Typography>
                     </div>
                 )}
-                <CardContent>{children}</CardContent>
+                <CardContent className={classes.cardContent}>{children}</CardContent>
                 {BackgroundIcon && <BackgroundIcon className={classes.backgroundIcon} />}
             </Card>
         </Fade>

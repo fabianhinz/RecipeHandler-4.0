@@ -1,6 +1,7 @@
 import {
     createStyles,
     Grow,
+    Hidden,
     InputAdornment,
     InputBase,
     List,
@@ -45,6 +46,16 @@ const useStyles = makeStyles(theme =>
             boxShadow: theme.shadows[2],
         },
     })
+)
+
+export const AlgoliaDocSearchRef = (
+    <a
+        style={{ lineHeight: 0, width: '100%' }}
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.algolia.com/docsearch">
+        <AlgoliaIcon />
+    </a>
 )
 
 const Search = () => {
@@ -106,15 +117,9 @@ const Search = () => {
                     </InputAdornment>
                 }
                 endAdornment={
-                    <InputAdornment position="end">
-                        <a
-                            style={{ lineHeight: 0, width: '100%' }}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href="https://www.algolia.com/docsearch">
-                            <AlgoliaIcon />
-                        </a>
-                    </InputAdornment>
+                    <Hidden xsDown>
+                        <InputAdornment position="end">{AlgoliaDocSearchRef}</InputAdornment>
+                    </Hidden>
                 }
             />
 

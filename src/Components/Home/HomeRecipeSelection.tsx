@@ -14,6 +14,7 @@ import React from 'react'
 import { OrderByRecord } from '../../model/model'
 import configService from '../../services/configService'
 import CategoryWrapper from '../Category/CategoryWrapper'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -48,6 +49,7 @@ const HomeRecipeSelection = ({
     onOrderByChange,
 }: Props) => {
     const classes = useStyles()
+    const { isMobile } = useBreakpointsContext()
 
     const getStartIcon = (orderBy?: 'asc' | 'desc') => {
         if (!orderBy) return {}
@@ -75,7 +77,7 @@ const HomeRecipeSelection = ({
             </Grid>
             <Grid item>
                 <ButtonGroup
-                    size="medium"
+                    size={isMobile ? 'small' : 'medium'}
                     classes={{
                         groupedTextHorizontal: classes.buttonGroupText,
                         groupedTextVertical: classes.buttonGroupText,

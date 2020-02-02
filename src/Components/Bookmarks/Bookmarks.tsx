@@ -1,4 +1,14 @@
-import { Box, createStyles, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
+import {
+    Box,
+    Card,
+    CardContent,
+    createStyles,
+    Grid,
+    makeStyles,
+    Tab,
+    Tabs,
+    Typography,
+} from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import { Skeleton } from '@material-ui/lab'
@@ -17,7 +27,7 @@ const useStyles = makeStyles(theme =>
     createStyles({
         recipeItem: {
             [theme.breakpoints.down('xs')]: {
-                width: 320,
+                width: 340,
             },
             [theme.breakpoints.up('sm')]: {
                 width: 600,
@@ -94,16 +104,31 @@ const Bookmarks = () => {
             <Grid item xs={12}>
                 <Typography variant="h4">Lesezeichen</Typography>
             </Grid>
-            <Grid item xs={12}>
-                <Grid container spacing={3} wrap="nowrap" className={classes.recipeContainer}>
-                    {[...bookmarks.values()].map(recipeName => (
-                        <Grid item key={recipeName}>
-                            <Bookmark recipeName={recipeName} />
-                        </Grid>
-                    ))}
+
+            {bookmarks.size === 0 ? (
+                <Grid item xs={12}>
+                    <Card>
+                        <CardContent>
+                            <Typography color="textSecondary">
+                                <NotFound visible />
+                                Rezepte können über die Lesezeichen zur Seite gelegt werden und
+                                erscheinen anschließen hier. Aktuell werden diese Rezepte nicht
+                                geräteübergreifend gespeichert.
+                            </Typography>
+                        </CardContent>
+                    </Card>
                 </Grid>
-                <NotFound visible={bookmarks.size === 0} />
-            </Grid>
+            ) : (
+                <Grid item xs={12}>
+                    <Grid container spacing={3} wrap="nowrap" className={classes.recipeContainer}>
+                        {[...bookmarks.values()].map(recipeName => (
+                            <Grid item key={recipeName}>
+                                <Bookmark recipeName={recipeName} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Grid>
+            )}
         </Grid>
     )
 }
