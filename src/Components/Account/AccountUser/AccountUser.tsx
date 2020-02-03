@@ -29,7 +29,7 @@ export type UserSettingChangeHandler = (key: SettingKeys) => (uid?: any) => void
 
 const AccountUser = () => {
     // ? we won't load this component without an existing user - pinky promise -_-
-    const { user, shoppingList } = useFirebaseAuthContext() as {
+    const { user } = useFirebaseAuthContext() as {
         user: User
         shoppingList: ShoppingList
     }
