@@ -35,7 +35,7 @@
 		"react-markdown": "^4.3.1",
 		"react-router-dom": "^5.1.2",
 		"react-scripts": "^3.3.1",
-		"react-swipeable-views": "^0.13.3",
+		"react-swipeable-views": "^0.13.7",
 		"stacktrace-js": "^2.0.2",
 		"typeface-roboto": "0.0.75",
 		"typescript": "3.7.5",
