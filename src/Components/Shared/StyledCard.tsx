@@ -1,6 +1,5 @@
 import {
     Card,
-    CardActions,
     CardContent,
     createStyles,
     Fade,
