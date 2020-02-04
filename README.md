@@ -1,3 +1,5 @@
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=fabianhinz/RecipeHandler-4.0&identifier=207148306)](https://dependabot.com)
+
 # ReadMe
 
 ## this project depends on the following plugins
