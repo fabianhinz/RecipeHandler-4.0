@@ -99,3 +99,13 @@ export type ShoppingTracker = Map<RecipeName, { tracker: Grocery[] } | undefined
 
 export type OrderByKey = keyof Pick<Recipe<AttachmentMetadata>, 'name' | 'createdDate'>
 export type OrderByRecord = Partial<Record<OrderByKey, 'asc' | 'desc'>>
+
+export interface DataUrls {
+    fullDataUrl: string
+    mediumDataUrl: string
+    smallDataUrl: string
+}
+
+export interface Metadata {
+    timeCreated: string
+}

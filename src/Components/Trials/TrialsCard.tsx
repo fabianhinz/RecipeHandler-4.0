@@ -12,9 +12,9 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
-import { DataUrls, getResizedImages } from '../../hooks/useAttachmentRef'
+import { getResizedImagesWithMetadata } from '../../hooks/useAttachmentRef'
 import { getTransitionTimeoutProps } from '../../hooks/useTransition'
-import { Trial } from '../../model/model'
+import { DataUrls, Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
@@ -48,6 +48,7 @@ interface Props {
 const TrialsCard = ({ trial, index }: Props) => {
     const [deleteAlert, setDeleteAlert] = useState(false)
     const [dataUrls, setDataUrls] = useState<DataUrls | undefined>()
+
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
@@ -57,8 +58,9 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     useEffect(() => {
         let mounted = true
-        getResizedImages(trial.fullPath).then(urls => {
-            if (mounted) setDataUrls(urls)
+        getResizedImagesWithMetadata(trial.fullPath).then(({ timeCreated, ...urls }) => {
+            if (!mounted) return
+            setDataUrls(urls)
         })
         return () => {
             mounted = false

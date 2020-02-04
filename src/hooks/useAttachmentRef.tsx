@@ -1,21 +1,20 @@
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 
-import { AttachmentData, AttachmentMetadata } from '../model/model'
+import { AttachmentData, AttachmentMetadata, DataUrls, Metadata } from '../model/model'
 import { isMetadata } from '../model/modelUtil'
 import { FirebaseService } from '../services/firebase'
 
-export interface DataUrls {
-    fullDataUrl: string
-    mediumDataUrl: string
-    smallDataUrl: string
-}
-
-interface State extends DataUrls {
+interface AttachmentRef extends DataUrls, Metadata {
     base: Omit<AttachmentData, 'dataUrl'>
 }
 
-const initialDataUrls = { fullDataUrl: '', mediumDataUrl: '', smallDataUrl: '' }
+const initialDataUrlsAndMetadata = {
+    fullDataUrl: '',
+    mediumDataUrl: '',
+    smallDataUrl: '',
+    timeCreated: '',
+}
 
 export const getFileExtension = (fullpath: string) => fullpath.split('.').slice(-1)[0]
 
@@ -30,11 +29,14 @@ const getRefPaths = (fullPath: string) => {
     }
 }
 
-export const getResizedImages = async (fullPath: string) => {
+export const getResizedImagesWithMetadata = async (fullPath: string) => {
     const { smallPath, mediumPath } = getRefPaths(fullPath)
-    const urls: Omit<State, 'base'> = { ...initialDataUrls }
+    const urls: Omit<AttachmentRef, 'base'> = { ...initialDataUrlsAndMetadata }
 
     try {
+        const metadata = await FirebaseService.storage.ref(fullPath).getMetadata()
+        urls.timeCreated = new Date(metadata.timeCreated).toLocaleDateString()
+
         urls.fullDataUrl = await FirebaseService.storage.ref(fullPath).getDownloadURL()
         urls.mediumDataUrl = await FirebaseService.storage.ref(mediumPath).getDownloadURL()
         urls.smallDataUrl = await FirebaseService.storage.ref(smallPath).getDownloadURL()
@@ -48,12 +50,12 @@ export const getResizedImages = async (fullPath: string) => {
 }
 
 export const useAttachmentRef = (attachment: AttachmentMetadata | AttachmentData) => {
-    const [attachmentRef, setAttachmentRef] = useState<State>({
+    const [attachmentRef, setAttachmentRef] = useState<AttachmentRef>({
         base: {
             name: attachment && attachment.name,
             size: attachment && attachment.size,
         },
-        ...initialDataUrls,
+        ...initialDataUrlsAndMetadata,
     })
     const [attachmentRefLoading, setAttachmentRefLoading] = useState(true)
 
@@ -63,9 +65,9 @@ export const useAttachmentRef = (attachment: AttachmentMetadata | AttachmentData
         let mounted = true
         if (!isMetadata(attachment)) return setAttachmentRefLoading(false)
 
-        getResizedImages(attachment.fullPath).then(urls => {
+        getResizedImagesWithMetadata(attachment.fullPath).then(urlsAndMetadata => {
             if (!mounted) return
-            setAttachmentRef(previous => ({ ...previous, ...urls }))
+            setAttachmentRef(previous => ({ ...previous, ...urlsAndMetadata }))
             setAttachmentRefLoading(false)
         })
 

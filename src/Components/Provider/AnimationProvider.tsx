@@ -1,12 +1,21 @@
-import { createStyles, makeStyles, useTheme } from '@material-ui/core'
+import { createStyles, makeStyles, Tab, Tabs, useTheme } from '@material-ui/core'
 import clsx from 'clsx'
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
+import SwipeableViews from 'react-swipeable-views'
 
+import { useAttachmentRef } from '../../hooks/useAttachmentRef'
+import { AttachmentData, AttachmentMetadata } from '../../model/model'
+import { isMetadata } from '../../model/modelUtil'
 import { BORDER_RADIUS } from '../../theme'
+import { stopPropagationProps } from '../../util/constants'
 import { useRouterContext } from './RouterProvider'
 
 interface AnimationHandler {
-    handleAnimation: (originId: string) => void
+    handleAnimation: (
+        originId: string,
+        attachments: (AttachmentMetadata | AttachmentData)[],
+        activeAttachment: number
+    ) => void
 }
 
 const Context = React.createContext<AnimationHandler | null>(null)
@@ -54,12 +63,41 @@ const useStyles = makeStyles(theme =>
                 width: 800,
             },
             borderRadius: BORDER_RADIUS,
+            position: 'relative',
         },
     })
 )
-// ! ToDo: this has to go
+
+interface AttachmentProps {
+    attachment: AttachmentMetadata | AttachmentData
+}
+
+const Attachment = ({ attachment }: AttachmentProps) => {
+    const { attachmentRef, attachmentRefLoading } = useAttachmentRef(attachment)
+
+    return (
+        <img
+            alt=""
+            width="100%"
+            style={{ borderRadius: BORDER_RADIUS }}
+            src={
+                attachmentRefLoading
+                    ? ''
+                    : isMetadata(attachment)
+                    ? attachmentRef.fullDataUrl
+                    : attachment.dataUrl
+            }
+        />
+    )
+}
+// ToDo Rename to SwipeableAttachmentProvider
 const AnimationProvider: FC = ({ children }) => {
     const [originId, setOriginId] = useState<string | undefined>()
+    const [attachments, setAttachments] = useState<
+        (AttachmentMetadata | AttachmentData)[] | undefined
+    >()
+    const [tab, setTab] = useState(0)
+
     const animationRef = useRef<Animation | undefined>()
 
     const { location } = useRouterContext()
@@ -77,10 +115,16 @@ const AnimationProvider: FC = ({ children }) => {
         if (!originId) root.removeAttribute('style')
     }, [originId])
 
-    const initAnimation = (newOriginId?: string) => {
+    const initAnimation = (
+        newOriginId?: string,
+        attachments?: (AttachmentMetadata | AttachmentData)[],
+        activeAttachment?: number
+    ) => {
         if (!newOriginId) return
 
         setOriginId(newOriginId)
+        setAttachments(attachments)
+        setTab(activeAttachment || 0)
 
         const origin = document.getElementById(newOriginId)
         const destination = document.getElementById('destination')
@@ -100,7 +144,7 @@ const AnimationProvider: FC = ({ children }) => {
                     scale(1,1)
                 `,
                 boxShadow: 'unset',
-                zIndex: theme.zIndex.modal + 3,
+                // zIndex: theme.zIndex.modal + 3,
             },
             {
                 transform: `
@@ -112,7 +156,7 @@ const AnimationProvider: FC = ({ children }) => {
                 top: '50%',
                 left: '50%',
                 boxShadow: 'unset',
-                zIndex: theme.zIndex.modal + 3,
+                // zIndex: theme.zIndex.modal + 3,
             },
         ]
 
@@ -124,13 +168,19 @@ const AnimationProvider: FC = ({ children }) => {
         animationRef.current = origin.animate(keyframes, options)
     }
 
-    const handleAnimation = (newOriginId?: string) => {
+    const handleAnimation = (
+        newOriginId?: string,
+        attachments?: (AttachmentMetadata | AttachmentData)[],
+        activeAttachment?: number
+    ) => {
         if (animationRef.current) {
             animationRef.current.reverse()
             animationRef.current = undefined
             setOriginId(undefined)
+            setAttachments([])
+            setTab(0)
         } else {
-            initAnimation(newOriginId)
+            initAnimation(newOriginId, attachments, activeAttachment)
         }
     }
 
@@ -140,7 +190,26 @@ const AnimationProvider: FC = ({ children }) => {
             <div
                 onClick={() => handleAnimation()}
                 className={clsx(classes.background, originId && classes.backgroundVisible)}>
-                <div id="destination" className={classes.destination} />
+                <div id="destination" className={classes.destination}>
+                    <Tabs
+                        {...stopPropagationProps}
+                        variant="scrollable"
+                        scrollButtons="on"
+                        style={{ position: 'absolute', top: -56, width: '100%' }}
+                        value={tab}
+                        onChange={(_e, newValue) => setTab(newValue)}>
+                        {attachments?.map((attachment, index) => (
+                            <Tab key={index} label={attachment.name} />
+                        ))}
+                    </Tabs>
+                    {attachments && (
+                        <SwipeableViews index={tab}>
+                            {attachments.map((attachment, index) => (
+                                <Attachment key={index} attachment={attachment} />
+                            ))}
+                        </SwipeableViews>
+                    )}
+                </div>
             </div>
         </>
     )
