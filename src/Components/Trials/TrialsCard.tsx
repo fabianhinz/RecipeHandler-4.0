@@ -13,7 +13,6 @@ import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
 import { getResizedImagesWithMetadata } from '../../hooks/useAttachmentRef'
-import { getTransitionTimeoutProps } from '../../hooks/useTransition'
 import { DataUrls, Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import AccountChip from '../Account/AccountChip'
@@ -104,7 +103,7 @@ const TrialsCard = ({ trial, index }: Props) => {
                     </CardActionArea>
 
                     {user && (
-                        <Slide direction="up" in timeout={getTransitionTimeoutProps(++index)}>
+                        <Slide direction="up" in>
                             <Grid
                                 container
                                 justify="flex-end"

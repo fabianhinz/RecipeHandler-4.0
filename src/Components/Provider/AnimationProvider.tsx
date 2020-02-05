@@ -1,4 +1,4 @@
-import { Chip, createStyles, Fab, Grid, makeStyles, useTheme } from '@material-ui/core'
+import { Chip, createStyles, Fab, Grid, makeStyles, Slide, useTheme } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
 import { CalendarMonth, ChevronLeft, ChevronRight, Sd } from 'mdi-material-ui'
@@ -76,7 +76,7 @@ const useStyles = makeStyles(theme =>
             right: theme.spacing(1),
         },
         attachmentChipMetadata: {
-            boxShadow: theme.shadows[8],
+            boxShadow: theme.shadows[4],
         },
     })
 )
@@ -108,28 +108,27 @@ const Attachment = ({ attachment }: AttachmentProps) => {
                     src={isMetadata(attachment) ? attachmentRef.fullDataUrl : attachment.dataUrl}
                 />
             )}
-            <div className={classes.attachmentMetadata}>
-                <Grid container justify="flex-end" spacing={1}>
-                    <Grid item>
-                        <Chip
-                            className={classes.attachmentChipMetadata}
-                            icon={<CalendarMonth />}
-                            label={attachmentRef.timeCreated}
-                        />
+            <Slide direction="up" in={attachmentRef.timeCreated.length > 0}>
+                <div className={classes.attachmentMetadata}>
+                    <Grid container justify="flex-end" spacing={1}>
+                        <Grid item>
+                            <Chip
+                                className={classes.attachmentChipMetadata}
+                                icon={<CalendarMonth />}
+                                label={attachmentRef.timeCreated}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <Chip
+                                className={classes.attachmentChipMetadata}
+                                icon={<Sd />}
+                                label={attachmentRef.size}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <Chip
-                            className={classes.attachmentChipMetadata}
-                            icon={<Sd />}
-                            label={attachmentRef.size}
-                        />
-                    </Grid>
-                </Grid>
-            </div>
-            <AccountChip
-                variant="absolute"
-                uid={attachment.editorUid || 'fY6g8kg5RmYuhvoTC6rlkzES89h1'}
-            />
+                </div>
+            </Slide>
+            <AccountChip variant="absolute" uid={attachment.editorUid} />
         </div>
     )
 }

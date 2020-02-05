@@ -84,7 +84,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
             {variant !== 'preview' && (
                 <Grid xs={12} item>
-                    <Satisfaction recipeName={recipe.name} transitionOrder={4} />
+                    <Satisfaction recipeName={recipe.name} />
                 </Grid>
             )}
 

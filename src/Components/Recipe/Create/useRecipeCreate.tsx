@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 
-import { AttachmentMetadata, Recipe } from '../../../model/model'
+import { AttachmentMetadata, Recipe, User } from '../../../model/model'
 import { isData } from '../../../model/modelUtil'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -14,7 +14,9 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
     const { history } = useRouterContext()
-    const { user } = useFirebaseAuthContext()
+
+    // ? create is a securedRoute (Routes.tsx) >> user should not be null
+    const { user } = useFirebaseAuthContext() as { user: User }
 
     const validate = async (selectedCategories: Map<string, string>) => {
         let valid = true
@@ -74,7 +76,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                 continue
             }
             const uploadTask = FirebaseService.storageRef
-                .child(`recipes/${state.name}/${attachment.name}`)
+                .child(`recipes/${state.name}/${user.uid}/${attachment.name}`)
                 .putString(attachment.dataUrl, 'data_url')
                 .catch(error =>
                     enqueueSnackbar(error.message, {
@@ -122,13 +124,19 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                     ingredients: state.ingredients,
                     amount: state.amount,
                     description: state.description,
-                    attachments: [...oldMetadata, ...newMetadata],
                     numberOfComments: state.numberOfComments,
                     categories: state.categories,
                     relatedRecipes: state.relatedRecipes,
                     createdDate: FirebaseService.createTimestampFromDate(new Date()),
                     editorUid: state.editorUid || user!.uid,
                 } as Recipe<AttachmentMetadata>)
+
+            await FirebaseService.firestore
+                .collection('recipes')
+                .doc(state.name)
+                .collection('attachments')
+                .doc(user.uid)
+                .set({ attachments: [...oldMetadata, ...newMetadata] })
 
             if (!editedRecipe) {
                 await FirebaseService.firestore

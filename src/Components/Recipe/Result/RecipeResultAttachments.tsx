@@ -1,7 +1,6 @@
-import { Avatar, CardActionArea, Chip, createStyles, Grid, makeStyles } from '@material-ui/core'
+import { Avatar, CardActionArea, createStyles, Grid, makeStyles } from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
 import { Skeleton } from '@material-ui/lab'
-import { Clock } from 'mdi-material-ui'
 import React, { useRef } from 'react'
 
 import { useAttachmentRef } from '../../../hooks/useAttachmentRef'
@@ -49,7 +48,6 @@ const useStyles = makeStyles(theme =>
                 height: 280,
             },
             borderRadius: BORDER_RADIUS,
-            position: 'relative',
         },
         addAvatar: {
             [theme.breakpoints.down('sm')]: {
@@ -70,14 +68,6 @@ const useStyles = makeStyles(theme =>
                 theme.palette.type === 'dark'
                     ? 'rgba(117, 117, 117, 0.75)'
                     : 'rgb(189, 189, 189, 0.75)',
-        },
-        timeCreatedChip: {
-            boxShadow: theme.shadows[8],
-            position: 'absolute',
-            left: '50%',
-            transform: 'translate(-50%, 0)',
-            zIndex: 1,
-            top: theme.spacing(0.5),
         },
     })
 )
@@ -111,13 +101,6 @@ const AttachmentPreview = ({ attachment, onClick }: AttachmentPreviewProps) => {
                         }>
                         <BugIcon fontSize="large" />
                     </Avatar>
-
-                    <Chip
-                        size="small"
-                        icon={<Clock />}
-                        label={attachmentRef.timeCreated}
-                        className={classes.timeCreatedChip}
-                    />
                 </CardActionArea>
             )}
         </Grid>

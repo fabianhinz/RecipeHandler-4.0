@@ -18,7 +18,7 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import React, { FC, memo, useState } from 'react'
 
 import { getFileExtension, useAttachmentRef } from '../../../../hooks/useAttachmentRef'
-import { getTransitionTimeoutProps, useTransition } from '../../../../hooks/useTransition'
+import { useTransition } from '../../../../hooks/useTransition'
 import { AttachmentData, AttachmentMetadata } from '../../../../model/model'
 import { isData, isMetadata } from '../../../../model/modelUtil'
 
@@ -77,7 +77,7 @@ const RecipeCreateAttachmentsCard: FC<RecipeCreateAttachmentsCardProps> = ({
 
     return (
         <Grid item>
-            <Grow in={transition} timeout={getTransitionTimeoutProps(++index)}>
+            <Grow in={transition}>
                 <Card onClick={e => e.stopPropagation()}>
                     <CardContent>
                         <Chip label={`${(attachment.size / 1000000).toFixed(1)} MB`} />
