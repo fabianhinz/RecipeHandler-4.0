@@ -4,6 +4,8 @@ import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
+import { Recipe, RecipeDocument } from '../model/model'
+import { FirebaseService } from '../services/firebase'
 import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import { isSafari } from '../util/constants'
 import Footer from './Footer'
@@ -56,6 +58,26 @@ const App: FC = () => {
         setTheme(responsiveLightTheme)
         metaThemeColor.setAttribute('content', '#FFFFFF')
     }, [])
+
+    // useEffect(() => {
+    //     FirebaseService.firestore
+    //         .collection('recipes')
+    //         .get()
+    //         .then(recipes => {
+    //             recipes.forEach(recipeDoc => {
+    //                 const recipe = recipeDoc.data() as RecipeDocument
+    //                 if (recipe.attachments.length > 0) {
+    //                     recipe.attachments.forEach(
+    //                         attachment => (attachment.editorUid = 'fY6g8kg5RmYuhvoTC6rlkzES89h1')
+    //                     )
+    //                     FirebaseService.firestore
+    //                         .collection('recipes')
+    //                         .doc(recipeDoc.id)
+    //                         .update({ attachments: recipe.attachments })
+    //                 }
+    //             })
+    //         })
+    // }, [])
 
     useEffect(() => {
         if ((!user && colorSchemeDark) || isSafari) {

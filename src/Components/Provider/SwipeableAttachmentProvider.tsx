@@ -1,17 +1,18 @@
 import {
-    Button,
     Chip,
     createStyles,
     Fab,
     Grid,
+    IconButton,
     makeStyles,
     Slide,
     useTheme,
 } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
-import { CalendarMonth, ChevronLeft, ChevronRight, Sd } from 'mdi-material-ui'
+import { CalendarMonth, ChevronLeft, ChevronRight, Download, Sd } from 'mdi-material-ui'
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
@@ -68,8 +69,8 @@ const useStyles = makeStyles(theme =>
                 height: 337.5,
             },
             [theme.breakpoints.between('md', 'lg')]: {
-                width: 800,
-                height: 450,
+                width: 900,
+                height: 506.25,
             },
             [theme.breakpoints.up('xl')]: {
                 width: 1280,
@@ -90,9 +91,11 @@ const useStyles = makeStyles(theme =>
         attachmentChipMetadata: {
             boxShadow: theme.shadows[4],
         },
-        deleteBtn: {
+        btnContainer: {
             position: 'absolute',
-            bottom: '10%',
+            top: 0,
+            right: 0,
+            padding: theme.spacing(2),
         },
     })
 )
@@ -129,6 +132,7 @@ const Attachment = ({ attachment }: AttachmentProps) => {
                     <Grid container justify="flex-end" spacing={1}>
                         <Grid item>
                             <Chip
+                                size="small"
                                 className={classes.attachmentChipMetadata}
                                 icon={<CalendarMonth />}
                                 label={attachmentRef.timeCreated}
@@ -136,6 +140,7 @@ const Attachment = ({ attachment }: AttachmentProps) => {
                         </Grid>
                         <Grid item>
                             <Chip
+                                size="small"
                                 className={classes.attachmentChipMetadata}
                                 icon={<Sd />}
                                 label={attachmentRef.size}
@@ -163,6 +168,28 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
 
     const { location } = useRouterContext()
     const { isMobile } = useBreakpointsContext()
+
+    useEffect(() => {
+        if (!attachments) return
+        const handleKeydown = (event: KeyboardEvent) => {
+            console.log('oh hey there')
+            if (!event.repeat) {
+                if (event.key === 'ArrowLeft' && activeAttachment !== 0) {
+                    setActiveAttachment(prev => --prev)
+                } else if (
+                    event.key === 'ArrowRight' &&
+                    activeAttachment !== attachments.length - 1
+                ) {
+                    setActiveAttachment(prev => ++prev)
+                } else if (event.key === 'Escape') {
+                    handleAnimation()
+                }
+            }
+        }
+        document.addEventListener('keydown', handleKeydown)
+        return () => document.removeEventListener('keydown', handleKeydown)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeAttachment, attachments])
 
     useEffect(() => {
         setOriginId(undefined)
@@ -246,7 +273,7 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
         }
     }
 
-    const handleDeleteBtnClick = () => {
+    const handleDelete = () => {
         if (!attachments) return
 
         const attachment = attachments[activeAttachment]
@@ -259,6 +286,19 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
         }
     }
 
+    const handleDownload = async () => {
+        if (!attachments) return
+        const attachment = attachments[activeAttachment]
+        if (!isMetadata(attachment)) return
+
+        const link = document.createElement('a')
+        link.href = await FirebaseService.storageRef.child(attachment.fullPath).getDownloadURL()
+        link.target = '_blank'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
     return (
         <>
             <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
@@ -269,10 +309,7 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
                     disabled={activeAttachment === 0}>
                     <ChevronLeft />
                 </Fab>
-                <div
-                    onClick={() => handleAnimation()}
-                    id="destination"
-                    className={classes.destination}>
+                <div id="destination" className={classes.destination}>
                     {attachments && (
                         <SwipeableViews index={activeAttachment}>
                             {attachments.map((attachment, index) => (
@@ -287,15 +324,23 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
                     disabled={attachments && activeAttachment === attachments.length - 1}>
                     <ChevronRight />
                 </Fab>
-                <Button
-                    variant="outlined"
-                    startIcon={<DeleteIcon />}
-                    size={isMobile ? 'medium' : 'large'}
-                    color="primary"
-                    onClick={handleDeleteBtnClick}
-                    className={classes.deleteBtn}>
-                    löschen
-                </Button>
+                <Grid container justify="flex-end" spacing={1} className={classes.btnContainer}>
+                    <Grid item>
+                        <IconButton onClick={() => handleAnimation()}>
+                            <CloseIcon />
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        <IconButton onClick={handleDownload}>
+                            <Download />
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        <IconButton onClick={handleDelete}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Grid>
+                </Grid>
             </div>
         </>
     )

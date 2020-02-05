@@ -1,7 +1,7 @@
-import { Avatar, CardActionArea, createStyles, Grid, makeStyles } from '@material-ui/core'
+import { Avatar, CardActionArea, createStyles, Grid, makeStyles, Zoom } from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
 import { Skeleton } from '@material-ui/lab'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { useAttachmentRef } from '../../../hooks/useAttachmentRef'
 import { AttachmentData, AttachmentMetadata } from '../../../model/model'
@@ -10,6 +10,7 @@ import elementIdService from '../../../services/elementIdService'
 import { BORDER_RADIUS } from '../../../theme'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useSwipeableAttachmentContext } from '../../Provider/SwipeableAttachmentProvider'
+import { useAttachmentDropzone } from '../Create/Attachments/useAttachmentDropzone'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -116,6 +117,17 @@ const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) 
     const classes = useStyles()
     const { handleAnimation } = useSwipeableAttachmentContext()
     const { user } = useFirebaseAuthContext()
+    const { attachments: dropzoneAttachments, dropzoneProps } = useAttachmentDropzone({
+        currentAttachments: attachments,
+        attachmentMaxWidth: 3840,
+        attachmentLimit: 5,
+    })
+
+    useEffect(() => {
+        if (dropzoneAttachments.length > 0 && user) {
+            console.log(dropzoneAttachments)
+        }
+    }, [dropzoneAttachments, user])
 
     const handlePreviewClick = (originId: string, activeAttachment: number) =>
         handleAnimation(originId, attachments, activeAttachment)
@@ -123,11 +135,16 @@ const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) 
     return (
         <Grid wrap="nowrap" className={classes.attachmentPreviewGrid} container spacing={3}>
             {user && (
-                <Grid item>
-                    <CardActionArea className={classes.actionArea}>
-                        <Avatar className={classes.addAvatar}>+</Avatar>
-                    </CardActionArea>
-                </Grid>
+                <Zoom in>
+                    <Grid item>
+                        <CardActionArea
+                            className={classes.actionArea}
+                            {...dropzoneProps.getRootProps()}>
+                            <Avatar className={classes.addAvatar}>+</Avatar>
+                            <input {...dropzoneProps.getInputProps()} />
+                        </CardActionArea>
+                    </Grid>
+                </Zoom>
             )}
             {attachments.map((attachment, index) => (
                 <AttachmentPreview
