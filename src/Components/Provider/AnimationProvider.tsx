@@ -1,5 +1,17 @@
-import { createStyles, makeStyles, Tab, Tabs, useTheme } from '@material-ui/core'
+import {
+    Avatar,
+    Card,
+    CardMedia,
+    Chip,
+    createStyles,
+    Grid,
+    makeStyles,
+    Tab,
+    Tabs,
+    useTheme,
+} from '@material-ui/core'
 import clsx from 'clsx'
+import { Clock } from 'mdi-material-ui'
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
@@ -65,6 +77,17 @@ const useStyles = makeStyles(theme =>
             borderRadius: BORDER_RADIUS,
             position: 'relative',
         },
+        card: {
+            display: 'flex',
+            flexDirection: 'column',
+            justify: 'space-between',
+            paddingBottom: theme.spacing(2),
+        },
+        cardMedia: {
+            height: '100%',
+            width: '100%',
+            backgroundSize: 'contain',
+        },
     })
 )
 
@@ -74,20 +97,33 @@ interface AttachmentProps {
 
 const Attachment = ({ attachment }: AttachmentProps) => {
     const { attachmentRef, attachmentRefLoading } = useAttachmentRef(attachment)
+    const classes = useStyles()
 
     return (
-        <img
-            alt=""
-            width="100%"
-            style={{ borderRadius: BORDER_RADIUS }}
-            src={
-                attachmentRefLoading
-                    ? ''
-                    : isMetadata(attachment)
-                    ? attachmentRef.fullDataUrl
-                    : attachment.dataUrl
-            }
-        />
+        <Card className={clsx(classes.destination, classes.card)}>
+            <CardMedia
+                image={
+                    attachmentRefLoading
+                        ? undefined
+                        : isMetadata(attachment)
+                        ? attachmentRef.fullDataUrl
+                        : attachment.dataUrl
+                }
+                className={classes.cardMedia}>
+                <></>
+            </CardMedia>
+            <Grid container justify="space-evenly" spacing={2}>
+                <Grid item>
+                    <Chip icon={<Clock />} label="Tbd" />
+                </Grid>
+                <Grid item>
+                    <Chip icon={<Clock />} label="Tbd" />
+                </Grid>
+                <Grid item>
+                    <Chip icon={<Clock />} label="Tbd" />
+                </Grid>
+            </Grid>
+        </Card>
     )
 }
 // ToDo Rename to SwipeableAttachmentProvider
@@ -144,7 +180,8 @@ const AnimationProvider: FC = ({ children }) => {
                     scale(1,1)
                 `,
                 boxShadow: 'unset',
-                // zIndex: theme.zIndex.modal + 3,
+                zIndex: theme.zIndex.modal + 3,
+                opacity: 1,
             },
             {
                 transform: `
@@ -156,7 +193,8 @@ const AnimationProvider: FC = ({ children }) => {
                 top: '50%',
                 left: '50%',
                 boxShadow: 'unset',
-                // zIndex: theme.zIndex.modal + 3,
+                zIndex: theme.zIndex.modal + 3,
+                opacity: 0,
             },
         ]
 
