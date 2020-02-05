@@ -1,12 +1,4 @@
-import {
-    Avatar,
-    CardActionArea,
-    Chip,
-    createStyles,
-    Grid,
-    makeStyles,
-    Slide,
-} from '@material-ui/core'
+import { Avatar, CardActionArea, Chip, createStyles, Grid, makeStyles } from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
 import { Skeleton } from '@material-ui/lab'
 import { Clock } from 'mdi-material-ui'

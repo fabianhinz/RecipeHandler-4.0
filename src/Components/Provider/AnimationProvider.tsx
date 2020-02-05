@@ -1,7 +1,7 @@
 import { Chip, createStyles, Fab, Grid, makeStyles, useTheme } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
-import { CalendarMonth, ChevronLeft, ChevronRight, Clock, Sd } from 'mdi-material-ui'
+import { CalendarMonth, ChevronLeft, ChevronRight, Sd } from 'mdi-material-ui'
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
