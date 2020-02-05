@@ -1,7 +1,11 @@
 import { PaletteType } from '@material-ui/core'
 import { RouteComponentProps } from 'react-router'
 
-export interface Attachment {
+export interface Editor {
+    editorUid: string
+}
+
+export interface Attachment extends Editor {
     name: string
     size: number
 }
@@ -19,14 +23,13 @@ export interface CommentsDocument {
     numberOfComments: number
 }
 
-export interface Recipe<T extends Attachment> extends CommentsDocument {
+export interface Recipe<T extends Attachment> extends CommentsDocument, Editor {
     createdDate: firebase.firestore.Timestamp
     categories: Categories<string>
     attachments: Array<T>
     ingredients: string
     amount: number
     description: string
-    editorUid: string
     relatedRecipes: Array<string>
 }
 
@@ -108,4 +111,5 @@ export interface DataUrls {
 
 export interface Metadata {
     timeCreated: string
+    size: string
 }

@@ -14,6 +14,7 @@ const initialDataUrlsAndMetadata = {
     mediumDataUrl: '',
     smallDataUrl: '',
     timeCreated: '',
+    size: '',
 }
 
 export const getFileExtension = (fullpath: string) => fullpath.split('.').slice(-1)[0]
@@ -36,6 +37,7 @@ export const getResizedImagesWithMetadata = async (fullPath: string) => {
     try {
         const metadata = await FirebaseService.storage.ref(fullPath).getMetadata()
         urls.timeCreated = new Date(metadata.timeCreated).toLocaleDateString()
+        urls.size = `${(metadata.size / 1000).toFixed(0)} KB`
 
         urls.fullDataUrl = await FirebaseService.storage.ref(fullPath).getDownloadURL()
         urls.mediumDataUrl = await FirebaseService.storage.ref(mediumPath).getDownloadURL()
@@ -54,6 +56,7 @@ export const useAttachmentRef = (attachment: AttachmentMetadata | AttachmentData
         base: {
             name: attachment && attachment.name,
             size: attachment && attachment.size,
+            editorUid: attachment && attachment.editorUid,
         },
         ...initialDataUrlsAndMetadata,
     })

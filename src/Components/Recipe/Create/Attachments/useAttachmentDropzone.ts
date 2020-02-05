@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react'
 import { DropzoneState, useDropzone } from 'react-dropzone'
 
 import { AttachmentData, AttachmentMetadata } from '../../../../model/model'
+import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
 
 export const readDocumentAsync = (document: Blob) =>
     new Promise<string>((resolve, reject) => {
@@ -31,6 +32,8 @@ export const useAttachmentDropzone = ({
 }: Options) => {
     const [attachments, setAttachments] = useState<Array<AttachmentData>>([])
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+
+    const { user } = useFirebaseAuthContext()
 
     const onDrop = useCallback(
         async (acceptedFiles: File[], rejectedFiles: File[]) => {
@@ -68,12 +71,20 @@ export const useAttachmentDropzone = ({
                     name: file.name,
                     dataUrl,
                     size: compressedFile.size,
+                    editorUid: user ? user.uid : 'unkown',
                 })
             }
             setAttachments(newAttachments)
             closeSnackbar(loadingKey as string)
         },
-        [attachmentLimit, attachmentMaxWidth, closeSnackbar, currentAttachments, enqueueSnackbar]
+        [
+            attachmentLimit,
+            attachmentMaxWidth,
+            closeSnackbar,
+            currentAttachments,
+            enqueueSnackbar,
+            user,
+        ]
     )
 
     const { getRootProps, getInputProps } = useDropzone({

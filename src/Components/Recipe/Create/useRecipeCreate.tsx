@@ -94,6 +94,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                 fullPath,
                 name,
                 size,
+                editorUid: user ? user.uid : 'unkown',
             })
         })
 

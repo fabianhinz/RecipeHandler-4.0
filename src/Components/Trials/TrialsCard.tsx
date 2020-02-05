@@ -58,10 +58,12 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     useEffect(() => {
         let mounted = true
-        getResizedImagesWithMetadata(trial.fullPath).then(({ timeCreated, ...urls }) => {
-            if (!mounted) return
-            setDataUrls(urls)
-        })
+        getResizedImagesWithMetadata(trial.fullPath).then(
+            ({ fullDataUrl, mediumDataUrl, smallDataUrl }) => {
+                if (!mounted) return
+                setDataUrls({ fullDataUrl, mediumDataUrl, smallDataUrl })
+            }
+        )
         return () => {
             mounted = false
         }

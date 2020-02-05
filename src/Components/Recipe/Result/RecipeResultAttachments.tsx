@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme =>
     createStyles({
         attachmentPreviewGrid: {
             overflowX: 'auto',
+            // '&::-webkit-scrollbar': {
+            //     display: 'none',
+            // },
         },
         attachmentPreview: {
             [theme.breakpoints.down('sm')]: {
@@ -79,7 +82,7 @@ const useStyles = makeStyles(theme =>
         timeCreatedChip: {
             boxShadow: theme.shadows[8],
             position: 'absolute',
-            left: ' 50%',
+            left: '50%',
             transform: 'translate(-50%, 0)',
             zIndex: 1,
             top: theme.spacing(0.5),

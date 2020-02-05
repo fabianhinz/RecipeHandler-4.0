@@ -1,17 +1,7 @@
-import {
-    Avatar,
-    Card,
-    CardMedia,
-    Chip,
-    createStyles,
-    Grid,
-    makeStyles,
-    Tab,
-    Tabs,
-    useTheme,
-} from '@material-ui/core'
+import { Chip, createStyles, Fab, Grid, makeStyles, useTheme } from '@material-ui/core'
+import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
-import { Clock } from 'mdi-material-ui'
+import { CalendarMonth, ChevronLeft, ChevronRight, Clock, Sd } from 'mdi-material-ui'
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
@@ -19,7 +9,8 @@ import { useAttachmentRef } from '../../hooks/useAttachmentRef'
 import { AttachmentData, AttachmentMetadata } from '../../model/model'
 import { isMetadata } from '../../model/modelUtil'
 import { BORDER_RADIUS } from '../../theme'
-import { stopPropagationProps } from '../../util/constants'
+import AccountChip from '../Account/AccountChip'
+import { useBreakpointsContext } from './BreakpointsProvider'
 import { useRouterContext } from './RouterProvider'
 
 interface AnimationHandler {
@@ -44,13 +35,12 @@ const useStyles = makeStyles(theme =>
             opacity: 0,
             height: '100vh',
             width: '100vw',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backgroundColor: theme.palette.background.paper,
             transition: theme.transitions.create('opacity', {
                 duration: theme.transitions.duration.enteringScreen,
             }),
-            cursor: 'pointer',
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'space-evenly',
             alignItems: 'center',
         },
         backgroundVisible: {
@@ -59,34 +49,34 @@ const useStyles = makeStyles(theme =>
         },
         destination: {
             [theme.breakpoints.only('xs')]: {
-                width: 320,
-                height: 320,
+                width: 300,
+                height: 168.75,
             },
             [theme.breakpoints.only('sm')]: {
-                height: 500,
                 width: 500,
+                height: 337.5,
             },
             [theme.breakpoints.between('md', 'lg')]: {
-                height: 600,
-                width: 600,
+                width: 800,
+                height: 450,
             },
             [theme.breakpoints.up('xl')]: {
-                height: 800,
-                width: 800,
+                width: 1280,
+                height: 720,
             },
             borderRadius: BORDER_RADIUS,
             position: 'relative',
         },
-        card: {
-            display: 'flex',
-            flexDirection: 'column',
-            justify: 'space-between',
-            paddingBottom: theme.spacing(2),
+        attachment: {
+            overflow: 'hidden',
         },
-        cardMedia: {
-            height: '100%',
-            width: '100%',
-            backgroundSize: 'contain',
+        attachmentMetadata: {
+            position: 'absolute',
+            bottom: theme.spacing(1),
+            right: theme.spacing(1),
+        },
+        attachmentChipMetadata: {
+            boxShadow: theme.shadows[8],
         },
     })
 )
@@ -96,34 +86,51 @@ interface AttachmentProps {
 }
 
 const Attachment = ({ attachment }: AttachmentProps) => {
+    const [imgLoaded, setImgLoaded] = useState(false)
     const { attachmentRef, attachmentRefLoading } = useAttachmentRef(attachment)
     const classes = useStyles()
 
     return (
-        <Card className={clsx(classes.destination, classes.card)}>
-            <CardMedia
-                image={
-                    attachmentRefLoading
-                        ? undefined
-                        : isMetadata(attachment)
-                        ? attachmentRef.fullDataUrl
-                        : attachment.dataUrl
-                }
-                className={classes.cardMedia}>
-                <></>
-            </CardMedia>
-            <Grid container justify="space-evenly" spacing={2}>
-                <Grid item>
-                    <Chip icon={<Clock />} label="Tbd" />
+        <div className={clsx(classes.destination, classes.attachment)}>
+            {!imgLoaded && (
+                <Skeleton
+                    style={{ borderRadius: BORDER_RADIUS }}
+                    variant="rect"
+                    width="100%"
+                    height="100%"
+                />
+            )}
+            {!attachmentRefLoading && (
+                <img
+                    alt=""
+                    width="100%"
+                    onLoad={() => setImgLoaded(true)}
+                    src={isMetadata(attachment) ? attachmentRef.fullDataUrl : attachment.dataUrl}
+                />
+            )}
+            <div className={classes.attachmentMetadata}>
+                <Grid container justify="flex-end" spacing={1}>
+                    <Grid item>
+                        <Chip
+                            className={classes.attachmentChipMetadata}
+                            icon={<CalendarMonth />}
+                            label={attachmentRef.timeCreated}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <Chip
+                            className={classes.attachmentChipMetadata}
+                            icon={<Sd />}
+                            label={attachmentRef.size}
+                        />
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <Chip icon={<Clock />} label="Tbd" />
-                </Grid>
-                <Grid item>
-                    <Chip icon={<Clock />} label="Tbd" />
-                </Grid>
-            </Grid>
-        </Card>
+            </div>
+            <AccountChip
+                variant="absolute"
+                uid={attachment.editorUid || 'fY6g8kg5RmYuhvoTC6rlkzES89h1'}
+            />
+        </div>
     )
 }
 // ToDo Rename to SwipeableAttachmentProvider
@@ -132,13 +139,15 @@ const AnimationProvider: FC = ({ children }) => {
     const [attachments, setAttachments] = useState<
         (AttachmentMetadata | AttachmentData)[] | undefined
     >()
-    const [tab, setTab] = useState(0)
+    const [activeAttachment, setActiveAttachment] = useState(0)
 
     const animationRef = useRef<Animation | undefined>()
 
-    const { location } = useRouterContext()
     const classes = useStyles()
     const theme = useTheme()
+
+    const { location } = useRouterContext()
+    const { isMobile } = useBreakpointsContext()
 
     useEffect(() => {
         setOriginId(undefined)
@@ -160,7 +169,7 @@ const AnimationProvider: FC = ({ children }) => {
 
         setOriginId(newOriginId)
         setAttachments(attachments)
-        setTab(activeAttachment || 0)
+        setActiveAttachment(activeAttachment || 0)
 
         const origin = document.getElementById(newOriginId)
         const destination = document.getElementById('destination')
@@ -216,7 +225,7 @@ const AnimationProvider: FC = ({ children }) => {
             animationRef.current = undefined
             setOriginId(undefined)
             setAttachments([])
-            setTab(0)
+            setActiveAttachment(0)
         } else {
             initAnimation(newOriginId, attachments, activeAttachment)
         }
@@ -225,29 +234,31 @@ const AnimationProvider: FC = ({ children }) => {
     return (
         <>
             <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
-            <div
-                onClick={() => handleAnimation()}
-                className={clsx(classes.background, originId && classes.backgroundVisible)}>
-                <div id="destination" className={classes.destination}>
-                    <Tabs
-                        {...stopPropagationProps}
-                        variant="scrollable"
-                        scrollButtons="on"
-                        style={{ position: 'absolute', top: -56, width: '100%' }}
-                        value={tab}
-                        onChange={(_e, newValue) => setTab(newValue)}>
-                        {attachments?.map((attachment, index) => (
-                            <Tab key={index} label={attachment.name} />
-                        ))}
-                    </Tabs>
+            <div className={clsx(classes.background, originId && classes.backgroundVisible)}>
+                <Fab
+                    size={isMobile ? 'medium' : 'large'}
+                    onClick={() => setActiveAttachment(prev => --prev)}
+                    disabled={activeAttachment === 0}>
+                    <ChevronLeft />
+                </Fab>
+                <div
+                    onClick={() => handleAnimation()}
+                    id="destination"
+                    className={classes.destination}>
                     {attachments && (
-                        <SwipeableViews index={tab}>
+                        <SwipeableViews index={activeAttachment}>
                             {attachments.map((attachment, index) => (
                                 <Attachment key={index} attachment={attachment} />
                             ))}
                         </SwipeableViews>
                     )}
                 </div>
+                <Fab
+                    size={isMobile ? 'medium' : 'large'}
+                    onClick={() => setActiveAttachment(prev => ++prev)}
+                    disabled={attachments && activeAttachment === attachments.length - 1}>
+                    <ChevronRight />
+                </Fab>
             </div>
         </>
     )
