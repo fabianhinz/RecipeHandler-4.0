@@ -1,4 +1,13 @@
-import { Chip, createStyles, Fab, Grid, makeStyles, Slide, useTheme } from '@material-ui/core'
+import {
+    Button,
+    Chip,
+    createStyles,
+    Fab,
+    Grid,
+    makeStyles,
+    Slide,
+    useTheme,
+} from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
@@ -9,6 +18,7 @@ import SwipeableViews from 'react-swipeable-views'
 import { useAttachmentRef } from '../../hooks/useAttachmentRef'
 import { AttachmentData, AttachmentMetadata } from '../../model/model'
 import { isMetadata } from '../../model/modelUtil'
+import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
 import AccountChip from '../Account/AccountChip'
 import { useBreakpointsContext } from './BreakpointsProvider'
@@ -79,6 +89,10 @@ const useStyles = makeStyles(theme =>
         },
         attachmentChipMetadata: {
             boxShadow: theme.shadows[4],
+        },
+        deleteBtn: {
+            position: 'absolute',
+            bottom: '10%',
         },
     })
 )
@@ -232,6 +246,19 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
         }
     }
 
+    const handleDeleteBtnClick = () => {
+        if (!attachments) return
+
+        const attachment = attachments[activeAttachment]
+        if (isMetadata(attachment)) {
+            console.log(FirebaseService.storageRef.child(attachment.fullPath))
+        } else {
+            setAttachments(prev =>
+                prev?.filter(prevAttachment => prevAttachment.name !== attachment.name)
+            )
+        }
+    }
+
     return (
         <>
             <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
@@ -260,10 +287,16 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
                     disabled={attachments && activeAttachment === attachments.length - 1}>
                     <ChevronRight />
                 </Fab>
+                <Button
+                    variant="outlined"
+                    startIcon={<DeleteIcon />}
+                    size={isMobile ? 'medium' : 'large'}
+                    color="primary"
+                    onClick={handleDeleteBtnClick}
+                    className={classes.deleteBtn}>
+                    löschen
+                </Button>
             </div>
-            <Fab style={{ position: 'fixed' }} color="secondary">
-                <DeleteIcon />
-            </Fab>
         </>
     )
 }

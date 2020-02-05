@@ -15,12 +15,13 @@ export const useUsersContext = () => useContext(Context)
 
 const UsersProvider: FC = ({ children }) => {
     const [users, setUsers] = useState<Map<DocumentId, User>>(new Map())
-
+    // ! onShapshot would not scale ...
     useEffect(() => {
-        return FirebaseService.firestore
+        FirebaseService.firestore
             .collection('users')
             .orderBy('username', 'asc')
-            .onSnapshot(querySnapshot =>
+            .get()
+            .then(querySnapshot =>
                 setUsers(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as User])))
             )
     }, [])

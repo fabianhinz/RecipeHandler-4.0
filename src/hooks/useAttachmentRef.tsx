@@ -5,7 +5,7 @@ import { AttachmentData, AttachmentMetadata, DataUrls, Metadata } from '../model
 import { isMetadata } from '../model/modelUtil'
 import { FirebaseService } from '../services/firebase'
 
-interface AttachmentRef extends DataUrls, Metadata {
+export interface AttachmentRef extends DataUrls, Metadata {
     base: Omit<AttachmentData, 'dataUrl'>
 }
 
