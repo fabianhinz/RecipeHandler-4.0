@@ -8,7 +8,8 @@ import { AttachmentData, AttachmentMetadata } from '../../../model/model'
 import { isMetadata } from '../../../model/modelUtil'
 import elementIdService from '../../../services/elementIdService'
 import { BORDER_RADIUS } from '../../../theme'
-import { useAnimationContext } from '../../Provider/AnimationProvider'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { useSwipeableAttachmentContext } from '../../Provider/SwipeableAttachmentProvider'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -113,18 +114,21 @@ interface RecipeResultAttachmentsProps {
 
 const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) => {
     const classes = useStyles()
-    const { handleAnimation } = useAnimationContext()
+    const { handleAnimation } = useSwipeableAttachmentContext()
+    const { user } = useFirebaseAuthContext()
 
     const handlePreviewClick = (originId: string, activeAttachment: number) =>
         handleAnimation(originId, attachments, activeAttachment)
 
     return (
         <Grid wrap="nowrap" className={classes.attachmentPreviewGrid} container spacing={3}>
-            <Grid item>
-                <CardActionArea className={classes.actionArea}>
-                    <Avatar className={classes.addAvatar}>+</Avatar>
-                </CardActionArea>
-            </Grid>
+            {user && (
+                <Grid item>
+                    <CardActionArea className={classes.actionArea}>
+                        <Avatar className={classes.addAvatar}>+</Avatar>
+                    </CardActionArea>
+                </Grid>
+            )}
             {attachments.map((attachment, index) => (
                 <AttachmentPreview
                     onClick={originId => handlePreviewClick(originId, index)}

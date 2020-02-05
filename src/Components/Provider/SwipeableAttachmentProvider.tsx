@@ -1,4 +1,5 @@
 import { Chip, createStyles, Fab, Grid, makeStyles, Slide, useTheme } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
 import { CalendarMonth, ChevronLeft, ChevronRight, Sd } from 'mdi-material-ui'
@@ -23,7 +24,7 @@ interface AnimationHandler {
 
 const Context = React.createContext<AnimationHandler | null>(null)
 
-export const useAnimationContext = () => useContext(Context) as AnimationHandler
+export const useSwipeableAttachmentContext = () => useContext(Context) as AnimationHandler
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -74,6 +75,7 @@ const useStyles = makeStyles(theme =>
             position: 'absolute',
             bottom: theme.spacing(1),
             right: theme.spacing(1),
+            width: '100%',
         },
         attachmentChipMetadata: {
             boxShadow: theme.shadows[4],
@@ -132,8 +134,8 @@ const Attachment = ({ attachment }: AttachmentProps) => {
         </div>
     )
 }
-// ToDo Rename to SwipeableAttachmentProvider
-const AnimationProvider: FC = ({ children }) => {
+
+const SwipeableAttachmentProvider: FC = ({ children }) => {
     const [originId, setOriginId] = useState<string | undefined>()
     const [attachments, setAttachments] = useState<
         (AttachmentMetadata | AttachmentData)[] | undefined
@@ -259,8 +261,11 @@ const AnimationProvider: FC = ({ children }) => {
                     <ChevronRight />
                 </Fab>
             </div>
+            <Fab style={{ position: 'fixed' }} color="secondary">
+                <DeleteIcon />
+            </Fab>
         </>
     )
 }
 
-export default AnimationProvider
+export default SwipeableAttachmentProvider
