@@ -2,16 +2,12 @@ import {
     Avatar,
     Card,
     CardActionArea,
-    CardContent,
-    Checkbox,
     CircularProgress,
     createStyles,
-    Fab,
     Grid,
     List,
     ListItem,
-    ListItemIcon,
-    ListItemSecondaryAction,
+    ListItemAvatar,
     ListItemText,
     makeStyles,
     Slide,
@@ -138,23 +134,29 @@ const UploadContainer = ({ attachments }: UploadContainerProps) => {
     return (
         <Slide in={attachments.length > 0} direction="left">
             <Card
-                style={{ position: 'fixed', bottom: 24, right: 24, zIndex: theme.zIndex.modal }}
+                style={{ position: 'fixed', top: 24, right: 24, zIndex: theme.zIndex.modal }}
                 elevation={8}>
-                <CardContent>
-                    <List>
-                        {attachments.map((attachment, index) => (
-                            <ListItem key={index}>
-                                <ListItemIcon>
-                                    <CircularProgress />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary={attachment.name}
-                                    secondary={`${(attachment.size / 1000).toFixed(0)} KB`}
-                                />
-                            </ListItem>
-                        ))}
-                    </List>
-                </CardContent>
+                <List>
+                    {attachments.map((attachment, index) => (
+                        <ListItem key={index}>
+                            <ListItemAvatar>
+                                <Avatar style={{ position: 'relative' }}>
+                                    <CloudUpload />
+                                    <CircularProgress
+                                        disableShrink
+                                        style={{ position: 'absolute' }}
+                                        size={40}
+                                        thickness={5}
+                                    />
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={attachment.name}
+                                secondary={`${(attachment.size / 1000).toFixed(0)} KB`}
+                            />
+                        </ListItem>
+                    ))}
+                </List>
             </Card>
         </Slide>
     )

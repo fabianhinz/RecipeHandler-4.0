@@ -136,7 +136,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
                 <div className={classes.auth}>
                     <Avatar className={classes.avatar}>
                         <FirebaseIcon height="100%" />
-                        <CircularProgress size={130} className={classes.progress} />
+                        <CircularProgress disableShrink size={130} className={classes.progress} />
                     </Avatar>
                 </div>
             )}
