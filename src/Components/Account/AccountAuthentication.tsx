@@ -20,8 +20,6 @@ import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useRouterContext } from '../Provider/RouterProvider'
-import { PATHS } from '../Routes/Routes'
 import { SlideUp } from '../Shared/Transitions'
 
 const useStyles = makeStyles(() =>
@@ -48,7 +46,6 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
     const [newUser, setNewUser] = useState(false)
 
     const { ProgressComponent, setProgress } = useProgress('cover')
-    const { history } = useRouterContext()
     const { isDialogFullscreen } = useBreakpointsContext()
     const { user } = useFirebaseAuthContext()
 
@@ -58,12 +55,8 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
     const classes = useStyles()
 
     useEffect(() => {
-        // ? user is logged in and the dialog is open --> redirect
-        if (user && open) {
-            history.push(PATHS.account)
-            onClose()
-        }
-    }, [history, onClose, open, user])
+        if (user && open) onClose()
+    }, [onClose, open, user])
 
     const handleAuthError = (error: { code: string }) => {
         let snackbarMessage: string | null = null

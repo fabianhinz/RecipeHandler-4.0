@@ -1,6 +1,26 @@
-import { Avatar, CardActionArea, createStyles, Grid, makeStyles, Zoom } from '@material-ui/core'
+import {
+    Avatar,
+    Card,
+    CardActionArea,
+    CardContent,
+    Checkbox,
+    CircularProgress,
+    createStyles,
+    Fab,
+    Grid,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemSecondaryAction,
+    ListItemText,
+    makeStyles,
+    Slide,
+    useTheme,
+    Zoom,
+} from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
 import { Skeleton } from '@material-ui/lab'
+import { CloudUpload } from 'mdi-material-ui'
 import React, { useEffect, useRef } from 'react'
 
 import { useAttachmentRef } from '../../../hooks/useAttachmentRef'
@@ -109,6 +129,37 @@ const AttachmentPreview = ({ attachment, onClick }: AttachmentPreviewProps) => {
     )
 }
 
+interface UploadContainerProps {
+    attachments: AttachmentData[]
+}
+
+const UploadContainer = ({ attachments }: UploadContainerProps) => {
+    const theme = useTheme()
+    return (
+        <Slide in={attachments.length > 0} direction="left">
+            <Card
+                style={{ position: 'fixed', bottom: 24, right: 24, zIndex: theme.zIndex.modal }}
+                elevation={8}>
+                <CardContent>
+                    <List>
+                        {attachments.map((attachment, index) => (
+                            <ListItem key={index}>
+                                <ListItemIcon>
+                                    <CircularProgress />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={attachment.name}
+                                    secondary={`${(attachment.size / 1000).toFixed(0)} KB`}
+                                />
+                            </ListItem>
+                        ))}
+                    </List>
+                </CardContent>
+            </Card>
+        </Slide>
+    )
+}
+
 interface RecipeResultAttachmentsProps {
     attachments: (AttachmentMetadata | AttachmentData)[]
 }
@@ -133,27 +184,30 @@ const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) 
         handleAnimation(originId, attachments, activeAttachment)
 
     return (
-        <Grid wrap="nowrap" className={classes.attachmentPreviewGrid} container spacing={3}>
-            {user && (
-                <Zoom in>
-                    <Grid item>
-                        <CardActionArea
-                            className={classes.actionArea}
-                            {...dropzoneProps.getRootProps()}>
-                            <Avatar className={classes.addAvatar}>+</Avatar>
-                            <input {...dropzoneProps.getInputProps()} />
-                        </CardActionArea>
-                    </Grid>
-                </Zoom>
-            )}
-            {attachments.map((attachment, index) => (
-                <AttachmentPreview
-                    onClick={originId => handlePreviewClick(originId, index)}
-                    attachment={attachment}
-                    key={attachment.name}
-                />
-            ))}
-        </Grid>
+        <>
+            <Grid wrap="nowrap" className={classes.attachmentPreviewGrid} container spacing={3}>
+                {user && (
+                    <Zoom in>
+                        <Grid item>
+                            <CardActionArea
+                                className={classes.actionArea}
+                                {...dropzoneProps.getRootProps()}>
+                                <Avatar className={classes.addAvatar}>+</Avatar>
+                                <input {...dropzoneProps.getInputProps()} />
+                            </CardActionArea>
+                        </Grid>
+                    </Zoom>
+                )}
+                {attachments.map((attachment, index) => (
+                    <AttachmentPreview
+                        onClick={originId => handlePreviewClick(originId, index)}
+                        attachment={attachment}
+                        key={attachment.name}
+                    />
+                ))}
+            </Grid>
+            <UploadContainer attachments={dropzoneAttachments} />
+        </>
     )
 }
 

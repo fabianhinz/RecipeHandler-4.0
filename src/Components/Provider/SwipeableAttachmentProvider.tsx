@@ -68,7 +68,11 @@ const useStyles = makeStyles(theme =>
                 width: 500,
                 height: 337.5,
             },
-            [theme.breakpoints.between('md', 'lg')]: {
+            [theme.breakpoints.only('md')]: {
+                width: 700,
+                height: 393.75,
+            },
+            [theme.breakpoints.only('lg')]: {
                 width: 900,
                 height: 506.25,
             },

@@ -2,7 +2,6 @@ import { Avatar, createStyles, Grid, makeStyles, Typography } from '@material-ui
 import { Rating, RatingProps } from '@material-ui/lab'
 import React from 'react'
 
-import { User } from '../../model/model'
 import { useUsersContext } from '../Provider/UsersProvider'
 import SatisfactionIconContainer from './SatisfactionIconContainer'
 
@@ -22,20 +21,23 @@ interface Props extends Pick<RatingProps, 'value' | 'onChange' | 'disabled'> {
 
 const SatisfactionUser = ({ uid, ...ratingProps }: Props) => {
     const { getByUid } = useUsersContext()
-    const { username, profilePicture } = getByUid(uid) as User
+
+    const user = getByUid(uid)
 
     const classes = useStyles()
+
+    if (!user) return <></>
 
     return (
         <Grid container wrap="nowrap" spacing={2} alignItems="center">
             <Grid item>
-                <Avatar className={classes.avatar} src={profilePicture}>
-                    {username.slice(0, 1)}
+                <Avatar className={classes.avatar} src={user.profilePicture}>
+                    {user.username.slice(0, 1)}
                 </Avatar>
             </Grid>
             <Grid item zeroMinWidth>
                 <Typography gutterBottom noWrap variant="subtitle1">
-                    {username}{' '}
+                    {user.username}{' '}
                 </Typography>
                 <Rating
                     {...ratingProps}

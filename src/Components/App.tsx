@@ -4,8 +4,6 @@ import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
-import { Recipe, RecipeDocument } from '../model/model'
-import { FirebaseService } from '../services/firebase'
 import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import { isSafari } from '../util/constants'
 import Footer from './Footer'
