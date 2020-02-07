@@ -6,13 +6,13 @@ import React, { memo } from 'react'
 
 import { Recipe } from '../../../model/model'
 import AccountChip from '../../Account/AccountChip'
+import Attachments from '../../Attachments/Attachments'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
 import { useGridContext } from '../../Provider/GridProvider'
 import Satisfaction from '../../Satisfaction/Satisfaction'
 import NotFound from '../../Shared/NotFound'
 import StyledCard from '../../Shared/StyledCard'
 import { RecipeVariants } from './Action/RecipeResultAction'
-import RecipeResultAttachments from './RecipeResultAttachments'
 import RecipeResultHeader from './RecipeResultHeader'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
@@ -47,7 +47,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
             {variant !== 'preview' && (
                 <Grid item xs={12}>
-                    <RecipeResultAttachments recipeName={recipe.name} />
+                    <Attachments recipeName={recipe.name} />
                 </Grid>
             )}
 

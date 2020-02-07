@@ -35,8 +35,8 @@ import {
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
+import { useAttachmentDropzone } from '../../../hooks/useAttachmentDropzone'
 import { User } from '../../../model/model'
-import { useAttachmentDropzone } from '../../Recipe/Create/Attachments/useAttachmentDropzone'
 import StyledCard from '../../Shared/StyledCard'
 import { UserSettingChangeHandler } from './AccountUser'
 
