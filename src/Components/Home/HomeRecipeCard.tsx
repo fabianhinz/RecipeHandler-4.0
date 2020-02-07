@@ -110,6 +110,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
             .collection('recipes')
             .doc(recipe.name)
             .collection('attachments')
+            .orderBy('createdDate', 'desc')
             .limit(1)
             .get()
             .then(querySnapshot => {

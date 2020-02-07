@@ -17,7 +17,8 @@ import {
 import BugIcon from '@material-ui/icons/BugReport'
 import CheckIcon from '@material-ui/icons/Check'
 import { Skeleton } from '@material-ui/lab'
-import { CloudUpload } from 'mdi-material-ui'
+import clsx from 'clsx'
+import { CloudUpload, HeartBroken } from 'mdi-material-ui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Prompt } from 'react-router-dom'
 
@@ -91,9 +92,20 @@ const useStyles = makeStyles(theme =>
         },
         attachmentUploadAvatar: {
             position: 'relative',
+            transition: theme.transitions.create('all', {
+                duration: theme.transitions.duration.standard,
+            }),
         },
         attachmentUploadProgress: {
             position: 'absolute',
+        },
+        attachmentUploadDone: {
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.getContrastText(theme.palette.primary.main),
+        },
+        attachmentUploadError: {
+            backgroundColor: theme.palette.error.main,
+            color: theme.palette.getContrastText(theme.palette.primary.main),
         },
     })
 )
@@ -137,6 +149,8 @@ interface AttachmentUploadProps {
 
 const AttachmentUpload = ({ attachment, onUploadComplete, recipeName }: AttachmentUploadProps) => {
     const [uploading, setUploading] = useState(true)
+    const [error, setError] = useState(false)
+
     const { user } = useFirebaseAuthContext()
 
     const classes = useStyles()
@@ -155,12 +169,23 @@ const AttachmentUpload = ({ attachment, onUploadComplete, recipeName }: Attachme
             .putString(attachment.dataUrl, 'data_url', { cacheControl: 'public, max-age=31536000' })
             .then(snapshot => {
                 const { fullPath, size, name } = snapshot.metadata
-                docRef.set({ fullPath, size, name, editorUid: user?.uid }).then(() => {
-                    setUploading(false)
-                    setTimeout(() => {
-                        if (mounted) onUploadComplete(attachment.name)
-                    }, 2000)
-                })
+                docRef
+                    .set({
+                        fullPath,
+                        size,
+                        name,
+                        editorUid: user?.uid,
+                        createdDate: attachment.createdDate,
+                    } as AttachmentDoc)
+                    .then(() => {
+                        setUploading(false)
+                        setTimeout(() => {
+                            if (mounted) onUploadComplete(attachment.name)
+                        }, 4000)
+                    })
+                    .catch(() => {
+                        setError(true)
+                    })
             })
 
         return () => {
@@ -174,9 +199,14 @@ const AttachmentUpload = ({ attachment, onUploadComplete, recipeName }: Attachme
         <>
             <ListItem>
                 <ListItemAvatar>
-                    <Avatar className={classes.attachmentUploadAvatar}>
-                        {uploading ? <CloudUpload /> : <CheckIcon />}
-                        {uploading && (
+                    <Avatar
+                        className={clsx(
+                            classes.attachmentUploadAvatar,
+                            !uploading && classes.attachmentUploadDone,
+                            error && classes.attachmentUploadError
+                        )}>
+                        {uploading ? error ? <HeartBroken /> : <CloudUpload /> : <CheckIcon />}
+                        {uploading && !error && (
                             <CircularProgress
                                 disableShrink
                                 className={classes.attachmentUploadProgress}
@@ -277,8 +307,13 @@ const RecipeResultAttachments = ({ recipeName }: RecipeResultAttachmentsProps) =
                 .collection('recipes')
                 .doc(recipeName)
                 .collection('attachments')
+                .orderBy('createdDate', 'desc')
                 .onSnapshot(querySnapshot =>
-                    setSavedAttachments(querySnapshot.docs.map(doc => doc.data() as AttachmentDoc))
+                    setSavedAttachments(
+                        querySnapshot.docs.map(
+                            doc => ({ ...doc.data(), docPath: doc.ref.path } as AttachmentDoc)
+                        )
+                    )
                 ),
         [recipeName]
     )
@@ -305,7 +340,7 @@ const RecipeResultAttachments = ({ recipeName }: RecipeResultAttachmentsProps) =
                     <AttachmentPreview
                         onClick={originId => handlePreviewClick(originId, index)}
                         attachment={attachment}
-                        key={attachment.name}
+                        key={attachment.docPath}
                     />
                 ))}
             </Grid>

@@ -8,12 +8,14 @@ import {
     Slide,
     useTheme,
 } from '@material-ui/core'
+import CheckIcon from '@material-ui/icons/Check'
+import ClearIcon from '@material-ui/icons/Clear'
 import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'
-import { Skeleton } from '@material-ui/lab'
+import { Alert, AlertProps, Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
 import { CalendarMonth, ChevronLeft, ChevronRight, Download, Sd } from 'mdi-material-ui'
-import React, { FC, useContext, useEffect, useRef, useState } from 'react'
+import React, { FC, ReactText, useContext, useEffect, useRef, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
 import { useAttachment } from '../../hooks/useAttachment'
@@ -100,6 +102,15 @@ const useStyles = makeStyles(theme =>
             right: 0,
             padding: theme.spacing(2),
         },
+        alertContainer: {
+            position: 'absolute',
+            padding: theme.spacing(3),
+            top: 0,
+            right: 0,
+            left: 0,
+            display: 'flex',
+            justifyContent: 'center',
+        },
     })
 )
 
@@ -157,10 +168,16 @@ const SwipeableAttachment = ({ attachment }: SwipeableAttachmentProps) => {
     )
 }
 
+interface AttachmentAlert extends Partial<Pick<AlertProps, 'severity' | 'action'>> {
+    text?: ReactText
+    open: boolean
+}
+
 const SwipeableAttachmentProvider: FC = ({ children }) => {
     const [originId, setOriginId] = useState<string | undefined>()
     const [attachments, setAttachments] = useState<AttachmentDoc[] | undefined>()
     const [activeAttachment, setActiveAttachment] = useState(0)
+    const [alert, setAlert] = useState<AttachmentAlert>({ open: false })
 
     const animationRef = useRef<Animation | undefined>()
 
@@ -171,7 +188,7 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
     const { isMobile } = useBreakpointsContext()
 
     useEffect(() => {
-        if (!attachments) return
+        if (!attachments || attachments.length === 0) return
         const handleKeydown = (event: KeyboardEvent) => {
             if (event.key === 'ArrowLeft' && activeAttachment !== 0) {
                 setActiveAttachment(prev => --prev)
@@ -263,17 +280,68 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
             setOriginId(undefined)
             setAttachments([])
             setActiveAttachment(0)
+            setAlert({ open: false })
         } else {
             initAnimation(newOriginId, attachments, activeAttachment)
         }
     }
 
-    const handleDelete = () => {
+    const requestDeleteConfirmation = () => {
         if (!attachments) return
-
         const attachment = attachments[activeAttachment]
 
-        if (attachment.fullPath) console.log(FirebaseService.storageRef.child(attachment.fullPath))
+        setAlert({
+            open: true,
+            text: `${attachment.name} wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.`,
+            severity: 'warning',
+            action: (
+                <Grid container spacing={1}>
+                    <Grid item>
+                        <IconButton
+                            color="inherit"
+                            size="small"
+                            onClick={() => setAlert(prev => ({ ...prev, open: false }))}>
+                            <ClearIcon />
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        <IconButton
+                            color="inherit"
+                            size="small"
+                            onClick={() => handleDelete(attachment)}>
+                            <CheckIcon />
+                        </IconButton>
+                    </Grid>
+                </Grid>
+            ),
+        })
+    }
+
+    const handleDelete = async (attachment: AttachmentDoc) => {
+        setAlert({ open: true, text: `löschen wird vorbereitet`, severity: 'info' })
+        try {
+            await FirebaseService.firestore.doc(attachment.docPath as string).delete()
+            await FirebaseService.storageRef.child(attachment.fullPath).delete()
+
+            setAttachments(prev => {
+                // ? we are deleting the last image >> reverse the animation
+                if (prev?.length === 1) handleAnimation()
+                return prev?.filter(
+                    prevAttachment => prevAttachment.fullPath !== attachment.fullPath
+                )
+            })
+            setActiveAttachment(prev => (prev !== 0 ? --prev : prev))
+            setAlert({ open: true, text: `${attachment.name} wurde gelöscht`, severity: 'success' })
+        } catch (e) {
+            console.error(e)
+            setAlert({
+                open: true,
+                text: 'Nur eigene Bilder können gelöscht werden',
+                severity: 'info',
+            })
+        } finally {
+            setTimeout(() => setAlert(prev => ({ ...prev, open: false })), 4000)
+        }
     }
 
     const handleDownload = async () => {
@@ -315,7 +383,8 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
                     disabled={attachments && activeAttachment === attachments.length - 1}>
                     <ChevronRight />
                 </Fab>
-                <Grid container justify="flex-end" spacing={1} className={classes.btnContainer}>
+
+                <Grid className={classes.btnContainer} container justify="flex-end" spacing={1}>
                     <Grid item>
                         <IconButton onClick={() => handleAnimation()}>
                             <CloseIcon />
@@ -327,11 +396,22 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
                         </IconButton>
                     </Grid>
                     <Grid item>
-                        <IconButton onClick={handleDelete}>
+                        <IconButton onClick={requestDeleteConfirmation}>
                             <DeleteIcon />
                         </IconButton>
                     </Grid>
                 </Grid>
+
+                <Slide direction="down" in={alert.open}>
+                    <div className={classes.alertContainer}>
+                        <Alert
+                            severity={alert?.severity}
+                            action={alert.action}
+                            onClose={() => setAlert(prev => ({ ...prev, open: false }))}>
+                            {alert?.text}
+                        </Alert>
+                    </div>
+                </Slide>
             </div>
         </>
     )

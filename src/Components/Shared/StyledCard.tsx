@@ -21,9 +21,12 @@ const useStyles = makeStyles(theme =>
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.getContrastText(theme.palette.primary.main),
             padding: theme.spacing(1.5),
+            paddingLeft: theme.spacing(3),
+            paddingRight: theme.spacing(3),
             boxShadow: theme.shadows[4],
             maxHeight: 55,
             display: 'flex',
+            position: 'relative',
             alignItems: 'center',
             justifyContent: 'center',
         },
@@ -43,15 +46,26 @@ const useStyles = makeStyles(theme =>
             right: theme.spacing(1),
             fontSize: '10rem',
         },
+        action: {
+            position: 'absolute',
+            display: 'flex',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            '& > *': {
+                color: theme.palette.getContrastText(theme.palette.primary.main),
+            },
+        },
     })
 )
 interface Props {
     header?: React.ReactNode
+    action?: React.ReactNode
     children: React.ReactNode
     BackgroundIcon?: (props: SvgIconProps) => JSX.Element
 }
 
-const StyledCard = ({ header, children, BackgroundIcon }: Props) => {
+const StyledCard = ({ header, children, BackgroundIcon, action }: Props) => {
     const classes = useStyles()
 
     return (
@@ -59,6 +73,7 @@ const StyledCard = ({ header, children, BackgroundIcon }: Props) => {
             <Card className={classes.root}>
                 {header && (
                     <div className={classes.header}>
+                        <div className={classes.action}>{action}</div>
                         <Typography noWrap variant="h5">
                             {header}
                         </Typography>

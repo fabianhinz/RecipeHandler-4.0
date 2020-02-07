@@ -1,4 +1,4 @@
-import { Box, createStyles, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
+import { createStyles, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import { Skeleton } from '@material-ui/lab'
@@ -51,7 +51,7 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
 
     return (
         <div className={clsx(gridLayout === 'grid' && classes.recipeItem)}>
-            <StyledCard header={recipeName}>
+            <StyledCard header={recipeName} action={<RecipeResultBookmark name={recipeName} />}>
                 <>
                     <Tabs
                         style={{ flexGrow: 1 }}
@@ -62,21 +62,10 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
                         <Tab icon={<BookIcon />} label="Beschreibung" />
                     </Tabs>
                     {recipe ? (
-                        <>
-                            <SwipeableViews index={value}>
-                                <MarkdownRenderer
-                                    recipeName={recipeName}
-                                    source={recipe.ingredients}
-                                />
-                                <MarkdownRenderer
-                                    recipeName={recipeName}
-                                    source={recipe.description}
-                                />
-                            </SwipeableViews>
-                            <Box display="flex" justifyContent="center">
-                                <RecipeResultBookmark name={recipeName} />
-                            </Box>
-                        </>
+                        <SwipeableViews index={value}>
+                            <MarkdownRenderer recipeName={recipeName} source={recipe.ingredients} />
+                            <MarkdownRenderer recipeName={recipeName} source={recipe.description} />
+                        </SwipeableViews>
                     ) : (
                         <Skeleton variant="rect" width="100%" height={400} />
                     )}

@@ -9,7 +9,11 @@ export interface DataUrl {
     dataUrl: string
 }
 
-export interface AttachmentDoc extends Editor {
+export interface CreatedDate {
+    createdDate: firebase.firestore.Timestamp
+}
+
+export interface AttachmentDoc extends Editor, CreatedDate, Partial<FirestoreDocPath> {
     name: string
     size: number
     fullPath: string
@@ -20,8 +24,7 @@ export interface CommentsDocument {
     numberOfComments: number
 }
 
-export interface Recipe extends CommentsDocument, Editor {
-    createdDate: firebase.firestore.Timestamp
+export interface Recipe extends CommentsDocument, Editor, CreatedDate {
     categories: Categories<string>
     ingredients: string
     amount: number
@@ -104,4 +107,8 @@ export interface AllDataUrls {
 export interface Metadata {
     timeCreated: string
     size: string
+}
+
+export interface FirestoreDocPath {
+    docPath: string
 }

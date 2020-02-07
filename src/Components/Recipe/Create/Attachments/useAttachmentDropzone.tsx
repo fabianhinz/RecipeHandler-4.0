@@ -4,6 +4,7 @@ import React, { useCallback, useState } from 'react'
 import { DropzoneState, useDropzone } from 'react-dropzone'
 
 import { AttachmentDoc, DataUrl } from '../../../../model/model'
+import { FirebaseService } from '../../../../services/firebase'
 import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
 
 export const readDocumentAsync = (document: Blob) =>
@@ -65,6 +66,7 @@ export const useAttachmentDropzone = ({ attachmentLimit, attachmentMaxWidth }: O
                     fullPath: '',
                     size: file.size,
                     editorUid: user ? user.uid : 'unkown',
+                    createdDate: FirebaseService.createTimestampFromDate(new Date()),
                 })
             }
             setAttachments(newAttachments)

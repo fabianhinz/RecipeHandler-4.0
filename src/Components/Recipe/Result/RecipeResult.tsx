@@ -45,9 +45,11 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 <Divider />
             </Grid>
 
-            <Grid item xs={12}>
-                <RecipeResultAttachments recipeName={recipe.name} />
-            </Grid>
+            {variant !== 'preview' && (
+                <Grid item xs={12}>
+                    <RecipeResultAttachments recipeName={recipe.name} />
+                </Grid>
+            )}
 
             {recipe.ingredients.length > 0 && (
                 <Grid {...gridBreakpointProps} item>
