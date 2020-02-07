@@ -1,12 +1,24 @@
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
         function isAdmin() {
       	    return request.auth.uid == "fY6g8kg5RmYuhvoTC6rlkzES89h1";
         }
 
-        allow read: if request.auth.uid != null;
-        allow write: if isAdmin() || request.auth.token.isEditor;
-    }
+        function isEditor() {
+            return request.auth.token.isEditor
+        }
+
+        match /recipes/{recipeName}/{userId}/{docId}/{attachmentName} {
+            allow create: if isAdmin() || isEditor()
+            allow update, delete: if isAdmin() || (isEditor() && request.auth.uid == userId)
+        }
+
+        match /trials/{trialName} {
+            allow write: if isAdmin() || isEditor() ;
+        }
+
+        match /{allPaths=**} {
+            allow read: if request.auth.uid != null;
+        }
   }
 }

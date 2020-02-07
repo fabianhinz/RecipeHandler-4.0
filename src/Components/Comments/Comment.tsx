@@ -3,8 +3,8 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
 import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
 import React, { memo } from 'react'
 
-import { Comment as CommentModel } from '../../model/model'
-import { CommentsCollections, RecipeDocument } from '../../model/model'
+import { Comment as CommentModel, Recipe } from '../../model/model'
+import { CommentsCollections } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS_HUGE } from '../../theme'
 import { BadgeWrapper } from '../Shared/BadgeWrapper'
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface CommentProps extends Pick<RecipeDocument, 'name'>, CommentsCollections {
+interface CommentProps extends Pick<Recipe, 'name'>, CommentsCollections {
     comment: CommentModel
 }
 

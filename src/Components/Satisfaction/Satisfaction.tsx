@@ -3,7 +3,6 @@ import ExpandMoreIcon from '@material-ui/icons/ChevronLeftRounded'
 import clsx from 'clsx'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { getTransitionTimeoutProps } from '../../hooks/useTransition'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
@@ -47,11 +46,10 @@ const useStyles = makeStyles(theme =>
 )
 
 interface Props {
-    transitionOrder: number
     recipeName: string
 }
 
-const Satisfaction = ({ transitionOrder, recipeName }: Props) => {
+const Satisfaction = ({ recipeName }: Props) => {
     const { user, loginEnabled } = useFirebaseAuthContext()
     const [expanded, setExpanded] = useState(false)
     const [satisfaction, setSatisfaction] = useState<Map<string, number>>(new Map())
@@ -91,7 +89,7 @@ const Satisfaction = ({ transitionOrder, recipeName }: Props) => {
     ])
 
     return (
-        <Fade in={loginEnabled} timeout={getTransitionTimeoutProps(transitionOrder)}>
+        <Fade in={loginEnabled}>
             <div>
                 <Grid
                     className={clsx(

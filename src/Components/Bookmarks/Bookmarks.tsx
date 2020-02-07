@@ -1,4 +1,4 @@
-import { Box, createStyles, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
+import { createStyles, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import { Skeleton } from '@material-ui/lab'
@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
-import { AttachmentMetadata, Recipe } from '../../model/model'
+import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import MarkdownRenderer from '../Markdown/MarkdownRenderer'
 import { useBookmarkContext } from '../Provider/BookmarkProvider'
@@ -37,7 +37,7 @@ interface BookmarkProps {
 }
 
 const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
-    const [recipe, setRecipe] = useState<Recipe<AttachmentMetadata> | null>(null)
+    const [recipe, setRecipe] = useState<Recipe | null>(null)
     const [value, setValue] = useState(0)
 
     const classes = useStyles()
@@ -46,14 +46,12 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
         FirebaseService.firestore
             .collection('recipes')
             .doc(recipeName)
-            .onSnapshot(doc =>
-                setRecipe({ name: doc.id, ...doc.data() } as Recipe<AttachmentMetadata>)
-            )
+            .onSnapshot(doc => setRecipe({ name: doc.id, ...doc.data() } as Recipe))
     }, [recipeName])
 
     return (
         <div className={clsx(gridLayout === 'grid' && classes.recipeItem)}>
-            <StyledCard header={recipeName}>
+            <StyledCard header={recipeName} action={<RecipeResultBookmark name={recipeName} />}>
                 <>
                     <Tabs
                         style={{ flexGrow: 1 }}
@@ -64,21 +62,10 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
                         <Tab icon={<BookIcon />} label="Beschreibung" />
                     </Tabs>
                     {recipe ? (
-                        <>
-                            <SwipeableViews index={value}>
-                                <MarkdownRenderer
-                                    recipeName={recipeName}
-                                    source={recipe.ingredients}
-                                />
-                                <MarkdownRenderer
-                                    recipeName={recipeName}
-                                    source={recipe.description}
-                                />
-                            </SwipeableViews>
-                            <Box display="flex" justifyContent="center">
-                                <RecipeResultBookmark name={recipeName} />
-                            </Box>
-                        </>
+                        <SwipeableViews index={value}>
+                            <MarkdownRenderer recipeName={recipeName} source={recipe.ingredients} />
+                            <MarkdownRenderer recipeName={recipeName} source={recipe.description} />
+                        </SwipeableViews>
                     ) : (
                         <Skeleton variant="rect" width="100%" height={400} />
                     )}

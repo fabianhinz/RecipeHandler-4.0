@@ -1,16 +1,21 @@
 import { PaletteType } from '@material-ui/core'
 import { RouteComponentProps } from 'react-router'
 
-export interface Attachment {
-    name: string
-    size: number
+export interface Editor {
+    editorUid: string
 }
 
-export interface AttachmentData extends Attachment {
+export interface DataUrl {
     dataUrl: string
 }
 
-export interface AttachmentMetadata extends Attachment {
+export interface CreatedDate {
+    createdDate: firebase.firestore.Timestamp
+}
+
+export interface AttachmentDoc extends Editor, CreatedDate, Partial<FirestoreDocPath> {
+    name: string
+    size: number
     fullPath: string
 }
 
@@ -19,14 +24,11 @@ export interface CommentsDocument {
     numberOfComments: number
 }
 
-export interface Recipe<T extends Attachment> extends CommentsDocument {
-    createdDate: firebase.firestore.Timestamp
+export interface Recipe extends CommentsDocument, Editor, CreatedDate {
     categories: Categories<string>
-    attachments: Array<T>
     ingredients: string
     amount: number
     description: string
-    editorUid: string
     relatedRecipes: Array<string>
 }
 
@@ -40,8 +42,6 @@ export interface Category {
 }
 
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>
-
-export type RecipeDocument = Recipe<AttachmentMetadata>
 
 export interface Comment {
     createdDate: firebase.firestore.Timestamp
@@ -61,7 +61,7 @@ export interface CommentsCollections {
     collection: 'recipes' | 'trials'
 }
 
-export type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> & {
+export type Hit = Pick<Recipe, 'name' | 'description' | 'ingredients'> & {
     _highlightResult: {
         name: { value: string }
         description: { value: string }
@@ -70,8 +70,6 @@ export type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> &
 }
 
 export type Hits = Array<Hit>
-
-export type DataUrl = string
 
 export type DocumentId = string
 
@@ -97,5 +95,20 @@ export type Grocery = string
 export type ShoppingList = Map<RecipeName, { list: Grocery[] } | undefined>
 export type ShoppingTracker = Map<RecipeName, { tracker: Grocery[] } | undefined>
 
-export type OrderByKey = keyof Pick<Recipe<AttachmentMetadata>, 'name' | 'createdDate'>
+export type OrderByKey = keyof Pick<Recipe, 'name' | 'createdDate'>
 export type OrderByRecord = Partial<Record<OrderByKey, 'asc' | 'desc'>>
+
+export interface AllDataUrls {
+    fullDataUrl: string
+    mediumDataUrl: string
+    smallDataUrl: string
+}
+
+export interface Metadata {
+    timeCreated: string
+    size: string
+}
+
+export interface FirestoreDocPath {
+    docPath: string
+}

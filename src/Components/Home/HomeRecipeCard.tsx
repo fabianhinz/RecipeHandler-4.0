@@ -15,10 +15,11 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import PeopleIcon from '@material-ui/icons/People'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { CalendarMonth } from 'mdi-material-ui'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { useAttachmentRef } from '../../hooks/useAttachmentRef'
-import { AttachmentMetadata, Recipe } from '../../model/model'
+import { useAttachment } from '../../hooks/useAttachment'
+import { AttachmentDoc, Recipe } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
 import { CategoryResult } from '../Category/CategoryResult'
 import { useGridContext } from '../Provider/GridProvider'
@@ -90,17 +91,37 @@ const useStyles = makeStyles(theme =>
 )
 
 interface Props {
-    recipe: Recipe<AttachmentMetadata>
+    recipe: Recipe
 }
 
 const HomeRecipeCard = ({ recipe }: Props) => {
+    const [attachmentDoc, setAttachmentDoc] = useState<AttachmentDoc | undefined>()
     const [actionsAnchorEl, setActionsAnchorEl] = useState<HTMLButtonElement | null>(null)
 
     const classes = useStyles()
 
-    const { attachmentRef, attachmentRefLoading } = useAttachmentRef(recipe.attachments[0])
+    const { attachmentRef, attachmentRefLoading } = useAttachment(attachmentDoc)
     const { history } = useRouterContext()
     const { gridBreakpointProps } = useGridContext()
+
+    useEffect(() => {
+        let mounted = true
+        FirebaseService.firestore
+            .collection('recipes')
+            .doc(recipe.name)
+            .collection('attachments')
+            .orderBy('createdDate', 'desc')
+            .limit(1)
+            .get()
+            .then(querySnapshot => {
+                if (!mounted || querySnapshot.docs.length === 0) return
+                setAttachmentDoc(querySnapshot.docs[0].data() as AttachmentDoc)
+            })
+
+        return () => {
+            mounted = false
+        }
+    }, [recipe.name])
 
     return (
         <>

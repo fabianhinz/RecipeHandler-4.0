@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 
 import { PATHS } from '../Components/Routes/Routes'
-import { AttachmentMetadata, Recipe } from '../model/model'
+import { Recipe } from '../model/model'
 import ConfigService from '../services/configService'
 
-export const useCategorySelect = (recipe?: Recipe<AttachmentMetadata> | null) => {
+export const useCategorySelect = (recipe?: Recipe | null) => {
     const match = useRouteMatch()
 
     const [state, setState] = useState<Map<string, string>>(() => {

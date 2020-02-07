@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => {
             },
         },
         absolute: {
-            boxShadow: theme.shadows[8],
+            boxShadow: theme.shadows[4],
             position: 'absolute',
             left: ' 50%',
             transform: 'translate(-50%, 0)',

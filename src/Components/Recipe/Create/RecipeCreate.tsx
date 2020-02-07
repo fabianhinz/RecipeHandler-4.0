@@ -1,11 +1,10 @@
 import { Grid } from '@material-ui/core'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
-import { useSnackbar } from 'notistack'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
 
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
-import { AttachmentMetadata, Recipe } from '../../../model/model'
+import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import CategoryWrapper from '../../Category/CategoryWrapper'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -15,18 +14,16 @@ import { PATHS } from '../../Routes/Routes'
 import StyledCard from '../../Shared/StyledCard'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
-import { RecipeCreateAttachments } from './Attachments/RecipeCreateAttachments'
-import { useAttachmentDropzone } from './Attachments/useAttachmentDropzone'
 import RecipeCreateDescription from './RecipeCreateDescription'
 import RecipeCreateHeader from './RecipeCreateHeader'
 import RecipeCreateIngredients from './RecipeCreateIngredients'
-import { AttachmentName, CreateChangeKey, useRecipeCreateReducer } from './RecipeCreateReducer'
+import { CreateChangeKey, useRecipeCreateReducer } from './RecipeCreateReducer'
 import { RecipeCreateRelatedDialog } from './RecipeCreateRelatedDialog'
 import RecipeCreateSpeedDial from './RecipeCreateSpeedDial'
 import { useRecipeCreate } from './useRecipeCreate'
 
 interface RecipeCreateProps extends Pick<RouteComponentProps, 'history' | 'location'> {
-    recipe?: Recipe<AttachmentMetadata> | null
+    recipe?: Recipe | null
     edit?: boolean
 }
 
@@ -37,18 +34,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     const { selectedCategories, setSelectedCategories } = useCategorySelect(props.recipe)
     const { user } = useFirebaseAuthContext()
     const { history } = useRouterContext()
-    const { attachments, dropzoneProps } = useAttachmentDropzone({
-        currentAttachments: state.attachments,
-        attachmentMaxWidth: 3840,
-        attachmentLimit: 5,
-    })
     const { gridBreakpointProps } = useGridContext()
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-
-    useEffect(() => {
-        dispatch({ type: 'attachmentsDrop', newAttachments: attachments })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [attachments])
 
     useEffect(() => {
         dispatch({ type: 'categoriesChange', selectedCategories })
@@ -59,38 +45,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         if (!user) history.push(PATHS.home)
     }, [history, user])
 
-    const handleRemoveAttachment = (name: string) => {
-        dispatch({ type: 'removeAttachment', name })
-    }
-
-    const handleDeleteAttachment = (name: string, fullPath: string) => {
-        handleRemoveAttachment(name)
-        dispatch({
-            type: 'storageDeleteRefsChange',
-            ref: FirebaseService.storageRef.child(fullPath),
-        })
-    }
-
-    const handleSaveAttachment = (name: AttachmentName) => {
-        closeSnackbar()
-        if (state.attachments.filter(a => a.name === name.new).length > 0) {
-            enqueueSnackbar('Änderung wird nicht gespeichert. Name bereits vorhanden', {
-                variant: 'warning',
-            })
-        } else {
-            dispatch({ type: 'attachmentNameChange', name })
-            enqueueSnackbar(`Name von '${name.old}' auf '${name.new}' geändert`, {
-                variant: 'success',
-            })
-        }
-    }
-
     const handleSaveRecipe = useCallback(async () => {
         const valid = await recipeCreateService.validate(selectedCategories)
         if (!valid) return
 
-        const attachmentMetadata = await recipeCreateService.uploadAttachments()
-        await recipeCreateService.saveRecipeDocument(attachmentMetadata)
+        await recipeCreateService.saveRecipeDocument()
     }, [recipeCreateService, selectedCategories])
 
     const handleTextFieldChange = (key: CreateChangeKey) => (value: string) => {
@@ -103,7 +62,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         } else if (
             (state.name.length > 0 ||
                 Object.keys(state.categories).length > 0 ||
-                state.attachments.length > 0 ||
                 state.amount > 1 ||
                 state.ingredients.length > 0 ||
                 state.description.length > 0 ||
@@ -126,7 +84,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         createdDate: FirebaseService.createTimestampFromDate(new Date()),
                         numberOfComments: 0,
                         categories: state.categories,
-                        attachments: state.attachments,
                         ingredients: state.ingredients,
                         amount: state.amount,
                         description: state.description,
@@ -150,17 +107,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             onCategoryChange={setSelectedCategories}
                         />
                     </Grid>
-
-                    {state.attachments.length > 0 && (
-                        <Grid item xs={12}>
-                            <RecipeCreateAttachments
-                                onDeleteAttachment={handleDeleteAttachment}
-                                onRemoveAttachment={handleRemoveAttachment}
-                                onSaveAttachment={handleSaveAttachment}
-                                attachments={state.attachments}
-                            />
-                        </Grid>
-                    )}
 
                     <Grid item {...gridBreakpointProps}>
                         <RecipeCreateIngredients
@@ -204,7 +150,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
             />
 
             <RecipeCreateSpeedDial
-                dropzoneProps={dropzoneProps}
                 onRelated={() => dispatch({ type: 'openRelatedRecipesDialog' })}
                 onPreview={() => dispatch({ type: 'previewChange' })}
                 onSave={handleSaveRecipe}

@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@material-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { RecipeDocument } from '../../model/model'
+import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -9,7 +9,7 @@ import Skeletons from '../Shared/Skeletons'
 import HomeRecipeCard from './HomeRecipeCard'
 
 const HomeRecentlyAdded = () => {
-    const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
+    const [recipes, setRecipes] = useState<Array<Recipe>>([])
 
     const { user } = useFirebaseAuthContext()
     const { isLowRes } = useBreakpointsContext()
@@ -26,7 +26,7 @@ const HomeRecentlyAdded = () => {
             .limit(limit)
             .onSnapshot(
                 querySnapshot => {
-                    setRecipes(querySnapshot.docs.map(doc => doc.data() as RecipeDocument))
+                    setRecipes(querySnapshot.docs.map(doc => doc.data() as Recipe))
                 },
                 error => console.error(error)
             )
