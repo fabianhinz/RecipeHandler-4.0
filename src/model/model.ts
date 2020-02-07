@@ -5,16 +5,13 @@ export interface Editor {
     editorUid: string
 }
 
-export interface Attachment extends Editor {
-    name: string
-    size: number
-}
-
-export interface AttachmentData extends Attachment {
+export interface DataUrl {
     dataUrl: string
 }
 
-export interface AttachmentMetadata extends Attachment {
+export interface AttachmentDoc extends Editor {
+    name: string
+    size: number
     fullPath: string
 }
 
@@ -23,10 +20,9 @@ export interface CommentsDocument {
     numberOfComments: number
 }
 
-export interface Recipe<T extends Attachment> extends CommentsDocument, Editor {
+export interface Recipe extends CommentsDocument, Editor {
     createdDate: firebase.firestore.Timestamp
     categories: Categories<string>
-    attachments: Array<T>
     ingredients: string
     amount: number
     description: string
@@ -43,8 +39,6 @@ export interface Category {
 }
 
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>
-
-export type RecipeDocument = Recipe<AttachmentMetadata>
 
 export interface Comment {
     createdDate: firebase.firestore.Timestamp
@@ -64,7 +58,7 @@ export interface CommentsCollections {
     collection: 'recipes' | 'trials'
 }
 
-export type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> & {
+export type Hit = Pick<Recipe, 'name' | 'description' | 'ingredients'> & {
     _highlightResult: {
         name: { value: string }
         description: { value: string }
@@ -73,8 +67,6 @@ export type Hit = Pick<RecipeDocument, 'name' | 'description' | 'ingredients'> &
 }
 
 export type Hits = Array<Hit>
-
-export type DataUrl = string
 
 export type DocumentId = string
 
@@ -100,10 +92,10 @@ export type Grocery = string
 export type ShoppingList = Map<RecipeName, { list: Grocery[] } | undefined>
 export type ShoppingTracker = Map<RecipeName, { tracker: Grocery[] } | undefined>
 
-export type OrderByKey = keyof Pick<Recipe<AttachmentMetadata>, 'name' | 'createdDate'>
+export type OrderByKey = keyof Pick<Recipe, 'name' | 'createdDate'>
 export type OrderByRecord = Partial<Record<OrderByKey, 'asc' | 'desc'>>
 
-export interface DataUrls {
+export interface AllDataUrls {
     fullDataUrl: string
     mediumDataUrl: string
     smallDataUrl: string

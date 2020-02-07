@@ -1,8 +1,7 @@
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 
-import { AttachmentMetadata, Recipe, User } from '../../../model/model'
-import { isData } from '../../../model/modelUtil'
+import { Recipe, User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
@@ -49,67 +48,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
         return valid
     }
 
-    const uploadAttachments = async () => {
-        const attachmentSnackbar = enqueueSnackbar('Bilder werden verarbeitet', {
-            persist: true,
-            variant: 'info',
-        })
-
-        if (state.storageDeleteRefs) {
-            try {
-                for (const ref of state.storageDeleteRefs) {
-                    await ref.delete()
-                }
-            } catch (e) {
-                // ? possible exeption is 'storage/object-not-found'
-                // we don't care, move on
-                console.log(e)
-            }
-        }
-
-        const uploadTasks: Array<PromiseLike<any>> = []
-        const oldMetadata: Array<AttachmentMetadata> = []
-        for (const attachment of state.attachments) {
-            if (!isData(attachment)) {
-                // ? old Metadata indicates that those attachments are already uploaded
-                oldMetadata.push(attachment)
-                continue
-            }
-            const uploadTask = FirebaseService.storageRef
-                .child(`recipes/${state.name}/${user.uid}/${attachment.name}`)
-                .putString(attachment.dataUrl, 'data_url')
-                .catch(error =>
-                    enqueueSnackbar(error.message, {
-                        variant: 'error',
-                    })
-                )
-            uploadTasks.push(uploadTask)
-        }
-
-        const finishedTasks = await Promise.all(uploadTasks)
-        const newMetadata: Array<AttachmentMetadata> = []
-        finishedTasks.forEach((snapshot: firebase.storage.UploadTaskSnapshot) => {
-            // ? on "storage/unauthorized" snapshot is not of type "object"
-            if (typeof snapshot !== 'object') return
-            const { fullPath, size, name } = snapshot.metadata
-            newMetadata.push({
-                fullPath,
-                name,
-                size,
-                editorUid: user ? user.uid : 'unkown',
-            })
-        })
-
-        closeSnackbar(attachmentSnackbar as string)
-        return { newMetadata, oldMetadata }
-    }
-
-    const saveRecipeDocument = async (args: {
-        newMetadata: Array<AttachmentMetadata>
-        oldMetadata: Array<AttachmentMetadata>
-    }) => {
-        const { oldMetadata, newMetadata } = args
-
+    const saveRecipeDocument = async () => {
         const saveSnackbar = enqueueSnackbar('Rezept wird gespeichert', {
             persist: true,
             variant: 'info',
@@ -129,7 +68,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                     relatedRecipes: state.relatedRecipes,
                     createdDate: FirebaseService.createTimestampFromDate(new Date()),
                     editorUid: state.editorUid || user!.uid,
-                } as Recipe<AttachmentMetadata>)
+                } as Recipe)
 
             if (!editedRecipe) {
                 await FirebaseService.firestore
@@ -150,5 +89,5 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
         }
     }
 
-    return { validate, uploadAttachments, saveRecipeDocument, changesSaved }
+    return { validate, saveRecipeDocument, changesSaved }
 }

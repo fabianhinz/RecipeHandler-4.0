@@ -6,7 +6,7 @@ import { BORDER_RADIUS } from '../../theme'
 import { useRouterContext } from './RouterProvider'
 
 interface AttachmentSelect {
-    setSelectedAttachment: React.Dispatch<React.SetStateAction<string | null>>
+    setSelectedAttachment: React.Dispatch<React.SetStateAction<DataUrl | null>>
 }
 
 const Context = React.createContext<AttachmentSelect | null>(null)
@@ -64,14 +64,14 @@ const SelectedAttachementProvider: FC = ({ children }) => {
     return (
         <>
             <Context.Provider value={{ setSelectedAttachment }}>{children}</Context.Provider>
-            <Slide direction="up" in={selectedAttachment !== null && selectedAttachment.length > 0}>
+            <Slide direction="up" in={Boolean(selectedAttachment)}>
                 <Backdrop
                     open
                     onClick={() => setSelectedAttachment(null)}
                     className={classes.backdrop}>
                     {selectedAttachment && (
                         <img
-                            src={selectedAttachment}
+                            src={selectedAttachment.dataUrl}
                             className={classes.attachment}
                             alt="selected"
                         />

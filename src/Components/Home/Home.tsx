@@ -4,14 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import useIntersectionObserver from '../../hooks/useIntersectionObserver'
-import {
-    AttachmentMetadata,
-    DocumentId,
-    OrderByKey,
-    OrderByRecord,
-    Recipe,
-    RecipeDocument,
-} from '../../model/model'
+import { DocumentId, OrderByKey, OrderByRecord, Recipe } from '../../model/model'
 import ConfigService from '../../services/configService'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -23,13 +16,11 @@ import HomeRecentlyAdded from './HomeRecentlyAdded'
 import HomeRecipeCard from './HomeRecipeCard'
 import HomeRecipeSelection from './HomeRecipeSelection'
 
-type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, RecipeDocument>>
+type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, Recipe>>
 
 const Home = () => {
-    const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, RecipeDocument>>(new Map())
-    const [lastRecipe, setLastRecipe] = useState<Recipe<AttachmentMetadata> | undefined | null>(
-        null
-    )
+    const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, Recipe>>(new Map())
+    const [lastRecipe, setLastRecipe] = useState<Recipe | undefined | null>(null)
     const pagedRecipesSize = useRef(0)
     const [orderBy, setOrderBy] = useState<OrderByRecord>(ConfigService.orderBy)
     const [querying, setQuerying] = useState(false)
@@ -74,7 +65,7 @@ const Home = () => {
             }
             querySnapshot
                 .docChanges()
-                .forEach(({ type, doc }) => changes[type].set(doc.id, doc.data() as RecipeDocument))
+                .forEach(({ type, doc }) => changes[type].set(doc.id, doc.data() as Recipe))
 
             setPagedRecipes(recipes => {
                 changes.removed.forEach((_v, key) => recipes.delete(key))

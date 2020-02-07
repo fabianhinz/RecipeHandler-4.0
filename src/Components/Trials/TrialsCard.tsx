@@ -12,8 +12,8 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
-import { getResizedImagesWithMetadata } from '../../hooks/useAttachmentRef'
-import { DataUrls, Trial } from '../../model/model'
+import { getResizedImagesWithMetadata } from '../../hooks/useAttachment'
+import { AllDataUrls, Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
@@ -46,7 +46,7 @@ interface Props {
 
 const TrialsCard = ({ trial, index }: Props) => {
     const [deleteAlert, setDeleteAlert] = useState(false)
-    const [dataUrls, setDataUrls] = useState<DataUrls | undefined>()
+    const [dataUrls, setDataUrls] = useState<AllDataUrls | undefined>()
 
     const classes = useStyles()
 

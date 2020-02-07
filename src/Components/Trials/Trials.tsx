@@ -13,7 +13,7 @@ import { useSnackbar } from 'notistack'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
-import { getFileExtension } from '../../hooks/useAttachmentRef'
+import { getFileExtension } from '../../hooks/useAttachment'
 import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'

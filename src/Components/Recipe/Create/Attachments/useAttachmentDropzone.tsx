@@ -3,7 +3,7 @@ import compressImage from 'browser-image-compression'
 import React, { useCallback, useState } from 'react'
 import { DropzoneState, useDropzone } from 'react-dropzone'
 
-import { AttachmentData, AttachmentMetadata } from '../../../../model/model'
+import { AttachmentDoc, DataUrl } from '../../../../model/model'
 import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
 
 export const readDocumentAsync = (document: Blob) =>
@@ -20,17 +20,12 @@ export type DropzoneProps = Record<
 >
 
 interface Options {
-    currentAttachments?: Array<AttachmentData | AttachmentMetadata>
     attachmentLimit: number
     attachmentMaxWidth: number
 }
 
-export const useAttachmentDropzone = ({
-    currentAttachments,
-    attachmentLimit,
-    attachmentMaxWidth,
-}: Options) => {
-    const [attachments, setAttachments] = useState<Array<AttachmentData>>([])
+export const useAttachmentDropzone = ({ attachmentLimit, attachmentMaxWidth }: Options) => {
+    const [attachments, setAttachments] = useState<Array<AttachmentDoc & DataUrl>>([])
     const [attachmentAlert, setAttachmentAlert] = useState<JSX.Element | undefined>()
 
     const { user } = useFirebaseAuthContext()
@@ -55,15 +50,8 @@ export const useAttachmentDropzone = ({
 
             setAttachmentAlert(<Alert severity="info">Dateien werden komprimiert</Alert>)
 
-            const newAttachments: Array<AttachmentData> = []
-            const uniqueNames = new Set(
-                currentAttachments ? currentAttachments.map(({ name }) => name) : []
-            )
+            const newAttachments: Array<AttachmentDoc & DataUrl> = []
             for (const file of acceptedFiles) {
-                // filenames are our keys, react will warn about duplicate keys
-                if (uniqueNames.has(file.name)) continue
-                uniqueNames.add(file.name)
-
                 const compressedFile: Blob = await compressImage(file, {
                     maxSizeMB: 0.5,
                     useWebWorker: false,
@@ -74,14 +62,15 @@ export const useAttachmentDropzone = ({
                 newAttachments.push({
                     name: file.name,
                     dataUrl,
-                    size: compressedFile.size,
+                    fullPath: '',
+                    size: file.size,
                     editorUid: user ? user.uid : 'unkown',
                 })
             }
             setAttachments(newAttachments)
             closeAlert()
         },
-        [attachmentLimit, attachmentMaxWidth, currentAttachments, user]
+        [attachmentLimit, attachmentMaxWidth, user]
     )
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -92,7 +81,7 @@ export const useAttachmentDropzone = ({
 
     return {
         dropzoneProps: { getRootProps, getInputProps },
-        attachments,
-        attachmentAlert,
+        dropzoneAttachments: attachments,
+        dropzoneAlert: attachmentAlert,
     }
 }

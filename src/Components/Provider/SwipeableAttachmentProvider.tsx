@@ -16,9 +16,8 @@ import { CalendarMonth, ChevronLeft, ChevronRight, Download, Sd } from 'mdi-mate
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
-import { useAttachmentRef } from '../../hooks/useAttachmentRef'
-import { AttachmentData, AttachmentMetadata } from '../../model/model'
-import { isMetadata } from '../../model/modelUtil'
+import { useAttachment } from '../../hooks/useAttachment'
+import { AttachmentDoc } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
 import AccountChip from '../Account/AccountChip'
@@ -28,7 +27,7 @@ import { useRouterContext } from './RouterProvider'
 interface AnimationHandler {
     handleAnimation: (
         originId: string,
-        attachments: (AttachmentMetadata | AttachmentData)[],
+        attachments: AttachmentDoc[],
         activeAttachment: number
     ) => void
 }
@@ -104,13 +103,13 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface AttachmentProps {
-    attachment: AttachmentMetadata | AttachmentData
+interface SwipeableAttachmentProps {
+    attachment: AttachmentDoc
 }
 
-const Attachment = ({ attachment }: AttachmentProps) => {
+const SwipeableAttachment = ({ attachment }: SwipeableAttachmentProps) => {
     const [imgLoaded, setImgLoaded] = useState(false)
-    const { attachmentRef, attachmentRefLoading } = useAttachmentRef(attachment)
+    const { attachmentRef, attachmentRefLoading } = useAttachment(attachment)
     const classes = useStyles()
 
     return (
@@ -128,7 +127,7 @@ const Attachment = ({ attachment }: AttachmentProps) => {
                     alt=""
                     width="100%"
                     onLoad={() => setImgLoaded(true)}
-                    src={isMetadata(attachment) ? attachmentRef.fullDataUrl : attachment.dataUrl}
+                    src={attachmentRef.fullDataUrl}
                 />
             )}
             <Slide direction="up" in={attachmentRef.timeCreated.length > 0}>
@@ -160,9 +159,7 @@ const Attachment = ({ attachment }: AttachmentProps) => {
 
 const SwipeableAttachmentProvider: FC = ({ children }) => {
     const [originId, setOriginId] = useState<string | undefined>()
-    const [attachments, setAttachments] = useState<
-        (AttachmentMetadata | AttachmentData)[] | undefined
-    >()
+    const [attachments, setAttachments] = useState<AttachmentDoc[] | undefined>()
     const [activeAttachment, setActiveAttachment] = useState(0)
 
     const animationRef = useRef<Animation | undefined>()
@@ -208,7 +205,7 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
 
     const initAnimation = (
         newOriginId?: string,
-        attachments?: (AttachmentMetadata | AttachmentData)[],
+        attachments?: AttachmentDoc[],
         activeAttachment?: number
     ) => {
         if (!newOriginId) return
@@ -263,7 +260,7 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
 
     const handleAnimation = (
         newOriginId?: string,
-        attachments?: (AttachmentMetadata | AttachmentData)[],
+        attachments?: AttachmentDoc[],
         activeAttachment?: number
     ) => {
         if (animationRef.current) {
@@ -281,22 +278,18 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
         if (!attachments) return
 
         const attachment = attachments[activeAttachment]
-        if (isMetadata(attachment)) {
-            console.log(FirebaseService.storageRef.child(attachment.fullPath))
-        } else {
-            setAttachments(prev =>
-                prev?.filter(prevAttachment => prevAttachment.name !== attachment.name)
-            )
-        }
+
+        if (attachment.fullPath) console.log(FirebaseService.storageRef.child(attachment.fullPath))
     }
 
     const handleDownload = async () => {
         if (!attachments) return
-        const attachment = attachments[activeAttachment]
-        if (!isMetadata(attachment)) return
 
         const link = document.createElement('a')
-        link.href = await FirebaseService.storageRef.child(attachment.fullPath).getDownloadURL()
+        link.href = await FirebaseService.storageRef
+            .child(attachments[activeAttachment].fullPath)
+            .getDownloadURL()
+
         link.target = '_blank'
         document.body.appendChild(link)
         link.click()
@@ -317,7 +310,7 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
                     {attachments && (
                         <SwipeableViews index={activeAttachment}>
                             {attachments.map((attachment, index) => (
-                                <Attachment key={index} attachment={attachment} />
+                                <SwipeableAttachment key={index} attachment={attachment} />
                             ))}
                         </SwipeableViews>
                     )}

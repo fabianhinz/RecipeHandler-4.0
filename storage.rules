@@ -8,7 +8,7 @@ service firebase.storage {
             return request.auth.token.isEditor
         }
 
-        match /recipes/{recipeName}/{userId}/{docId} {
+        match /recipes/{recipeName}/{userId}/{docId}/{attachmentName} {
             allow create: if isAdmin() || isEditor()
             allow update, delete: if isAdmin() || (isEditor() && request.auth.uid == userId)
         }

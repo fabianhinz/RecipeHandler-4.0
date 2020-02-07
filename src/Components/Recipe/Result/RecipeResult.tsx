@@ -4,7 +4,7 @@ import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { memo } from 'react'
 
-import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
+import { Recipe } from '../../../model/model'
 import AccountChip from '../../Account/AccountChip'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
 import { useGridContext } from '../../Provider/GridProvider'
@@ -17,7 +17,7 @@ import RecipeResultHeader from './RecipeResultHeader'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
 interface RecipeResultProps extends RecipeVariants {
-    recipe: Recipe<AttachmentMetadata | AttachmentData> | null
+    recipe: Recipe | null
     divider?: boolean
 }
 
@@ -46,10 +46,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
             </Grid>
 
             <Grid item xs={12}>
-                <RecipeResultAttachments
-                    recipeName={recipe.name}
-                    attachments={recipe.attachments}
-                />
+                <RecipeResultAttachments recipeName={recipe.name} />
             </Grid>
 
             {recipe.ingredients.length > 0 && (

@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
-import { AttachmentMetadata, Recipe } from '../../model/model'
+import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import MarkdownRenderer from '../Markdown/MarkdownRenderer'
 import { useBookmarkContext } from '../Provider/BookmarkProvider'
@@ -37,7 +37,7 @@ interface BookmarkProps {
 }
 
 const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
-    const [recipe, setRecipe] = useState<Recipe<AttachmentMetadata> | null>(null)
+    const [recipe, setRecipe] = useState<Recipe | null>(null)
     const [value, setValue] = useState(0)
 
     const classes = useStyles()
@@ -46,9 +46,7 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
         FirebaseService.firestore
             .collection('recipes')
             .doc(recipeName)
-            .onSnapshot(doc =>
-                setRecipe({ name: doc.id, ...doc.data() } as Recipe<AttachmentMetadata>)
-            )
+            .onSnapshot(doc => setRecipe({ name: doc.id, ...doc.data() } as Recipe))
     }, [recipeName])
 
     return (

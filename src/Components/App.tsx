@@ -57,26 +57,6 @@ const App: FC = () => {
         metaThemeColor.setAttribute('content', '#FFFFFF')
     }, [])
 
-    // useEffect(() => {
-    //     FirebaseService.firestore
-    //         .collection('recipes')
-    //         .get()
-    //         .then(recipes => {
-    //             recipes.forEach(recipeDoc => {
-    //                 const recipe = recipeDoc.data() as RecipeDocument
-    //                 if (recipe.attachments.length > 0) {
-    //                     recipe.attachments.forEach(
-    //                         attachment => (attachment.editorUid = 'fY6g8kg5RmYuhvoTC6rlkzES89h1')
-    //                     )
-    //                     FirebaseService.firestore
-    //                         .collection('recipes')
-    //                         .doc(recipeDoc.id)
-    //                         .update({ attachments: recipe.attachments })
-    //                 }
-    //             })
-    //         })
-    // }, [])
-
     useEffect(() => {
         if ((!user && colorSchemeDark) || isSafari) {
             setDarkTheme()
