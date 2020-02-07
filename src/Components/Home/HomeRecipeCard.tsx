@@ -113,7 +113,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
             .limit(1)
             .get()
             .then(querySnapshot => {
-                if (!mounted) return
+                if (!mounted || querySnapshot.docs.length === 0) return
                 setAttachmentDoc(querySnapshot.docs[0].data() as AttachmentDoc)
             })
 

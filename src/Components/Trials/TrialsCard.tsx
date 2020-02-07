@@ -92,7 +92,7 @@ const TrialsCard = ({ trial, index }: Props) => {
                     <CardActionArea
                         disabled={!dataUrls}
                         onClick={() => {
-                            if (dataUrls) setSelectedAttachment(dataUrls.fullDataUrl)
+                            if (dataUrls) setSelectedAttachment({ dataUrl: dataUrls.fullDataUrl })
                         }}>
                         <CardMedia
                             image={dataUrls && dataUrls.mediumDataUrl}

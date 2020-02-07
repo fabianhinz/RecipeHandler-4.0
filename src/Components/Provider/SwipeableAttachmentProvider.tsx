@@ -173,18 +173,12 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
     useEffect(() => {
         if (!attachments) return
         const handleKeydown = (event: KeyboardEvent) => {
-            console.log('oh hey there')
-            if (!event.repeat) {
-                if (event.key === 'ArrowLeft' && activeAttachment !== 0) {
-                    setActiveAttachment(prev => --prev)
-                } else if (
-                    event.key === 'ArrowRight' &&
-                    activeAttachment !== attachments.length - 1
-                ) {
-                    setActiveAttachment(prev => ++prev)
-                } else if (event.key === 'Escape') {
-                    handleAnimation()
-                }
+            if (event.key === 'ArrowLeft' && activeAttachment !== 0) {
+                setActiveAttachment(prev => --prev)
+            } else if (event.key === 'ArrowRight' && activeAttachment !== attachments.length - 1) {
+                setActiveAttachment(prev => ++prev)
+            } else if (event.key === 'Escape') {
+                handleAnimation()
             }
         }
         document.addEventListener('keydown', handleKeydown)

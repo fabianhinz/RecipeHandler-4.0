@@ -58,7 +58,8 @@ export const useAttachment = (doc?: AttachmentDoc) => {
     const { enqueueSnackbar } = useSnackbar()
 
     useEffect(() => {
-        if (!doc) return
+        if (!doc) return setAttachmentRefLoading(false)
+        else setAttachmentRefLoading(true)
         let mounted = true
 
         getResizedImagesWithMetadata(doc.fullPath).then(urlsAndMetadata => {
