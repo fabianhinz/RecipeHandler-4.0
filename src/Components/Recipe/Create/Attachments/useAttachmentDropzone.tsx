@@ -1,6 +1,6 @@
+import { Alert } from '@material-ui/lab'
 import compressImage from 'browser-image-compression'
-import { useSnackbar } from 'notistack'
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { DropzoneState, useDropzone } from 'react-dropzone'
 
 import { AttachmentData, AttachmentMetadata } from '../../../../model/model'
@@ -31,25 +31,29 @@ export const useAttachmentDropzone = ({
     attachmentMaxWidth,
 }: Options) => {
     const [attachments, setAttachments] = useState<Array<AttachmentData>>([])
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const [attachmentAlert, setAttachmentAlert] = useState<JSX.Element | undefined>()
 
     const { user } = useFirebaseAuthContext()
 
     const onDrop = useCallback(
         async (acceptedFiles: File[], rejectedFiles: File[]) => {
+            const closeAlert = () => setAttachmentAlert(undefined)
+
             if (rejectedFiles.length > 0)
-                enqueueSnackbar('Lediglich JPG, PNG sind möglich', {
-                    variant: 'error',
-                })
+                return setAttachmentAlert(
+                    <Alert severity="error" onClose={closeAlert}>
+                        Lediglich JPG, PNG sind möglich
+                    </Alert>
+                )
 
             if (acceptedFiles.length > attachmentLimit)
-                return enqueueSnackbar(`Maximal zulässige Anzahl an Bildern überschritten`, {
-                    variant: 'warning',
-                })
+                return setAttachmentAlert(
+                    <Alert severity="warning" onClose={closeAlert}>
+                        Maximal zulässige Anzahl an Bildern überschritten
+                    </Alert>
+                )
 
-            const loadingKey = enqueueSnackbar('Dateien werden komprimiert', {
-                variant: 'info',
-            })
+            setAttachmentAlert(<Alert severity="info">Dateien werden komprimiert</Alert>)
 
             const newAttachments: Array<AttachmentData> = []
             const uniqueNames = new Set(
@@ -75,16 +79,9 @@ export const useAttachmentDropzone = ({
                 })
             }
             setAttachments(newAttachments)
-            closeSnackbar(loadingKey as string)
+            closeAlert()
         },
-        [
-            attachmentLimit,
-            attachmentMaxWidth,
-            closeSnackbar,
-            currentAttachments,
-            enqueueSnackbar,
-            user,
-        ]
+        [attachmentLimit, attachmentMaxWidth, currentAttachments, user]
     )
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -96,5 +93,6 @@ export const useAttachmentDropzone = ({
     return {
         dropzoneProps: { getRootProps, getInputProps },
         attachments,
+        attachmentAlert,
     }
 }

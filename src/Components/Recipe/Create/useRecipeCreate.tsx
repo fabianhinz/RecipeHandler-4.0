@@ -131,13 +131,6 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                     editorUid: state.editorUid || user!.uid,
                 } as Recipe<AttachmentMetadata>)
 
-            await FirebaseService.firestore
-                .collection('recipes')
-                .doc(state.name)
-                .collection('attachments')
-                .doc(user.uid)
-                .set({ attachments: [...oldMetadata, ...newMetadata] })
-
             if (!editedRecipe) {
                 await FirebaseService.firestore
                     .collection('rating')

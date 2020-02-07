@@ -46,7 +46,10 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
             </Grid>
 
             <Grid item xs={12}>
-                <RecipeResultAttachments attachments={recipe.attachments} />
+                <RecipeResultAttachments
+                    recipeName={recipe.name}
+                    attachments={recipe.attachments}
+                />
             </Grid>
 
             {recipe.ingredients.length > 0 && (

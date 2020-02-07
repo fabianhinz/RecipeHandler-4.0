@@ -98,7 +98,9 @@ const HomeRecipeCard = ({ recipe }: Props) => {
 
     const classes = useStyles()
 
-    const { attachmentRef, attachmentRefLoading } = useAttachmentRef(recipe.attachments[0])
+    const { attachmentRef, attachmentRefLoading } = useAttachmentRef(
+        recipe.attachments && recipe.attachments[0]
+    )
     const { history } = useRouterContext()
     const { gridBreakpointProps } = useGridContext()
 

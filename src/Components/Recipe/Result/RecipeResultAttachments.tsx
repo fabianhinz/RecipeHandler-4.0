@@ -3,6 +3,7 @@ import {
     Card,
     CardActionArea,
     CircularProgress,
+    Collapse,
     createStyles,
     Grid,
     List,
@@ -15,14 +16,16 @@ import {
     Zoom,
 } from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
+import CheckIcon from '@material-ui/icons/Check'
 import { Skeleton } from '@material-ui/lab'
 import { CloudUpload } from 'mdi-material-ui'
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useAttachmentRef } from '../../../hooks/useAttachmentRef'
 import { AttachmentData, AttachmentMetadata } from '../../../model/model'
 import { isMetadata } from '../../../model/modelUtil'
 import elementIdService from '../../../services/elementIdService'
+import { FirebaseService } from '../../../services/firebase'
 import { BORDER_RADIUS } from '../../../theme'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useSwipeableAttachmentContext } from '../../Provider/SwipeableAttachmentProvider'
@@ -87,6 +90,12 @@ const useStyles = makeStyles(theme =>
                     ? 'rgba(117, 117, 117, 0.75)'
                     : 'rgb(189, 189, 189, 0.75)',
         },
+        attachmentUploadAvatar: {
+            position: 'relative',
+        },
+        attachmentUploadProgress: {
+            position: 'absolute',
+        },
     })
 )
 
@@ -125,62 +134,135 @@ const AttachmentPreview = ({ attachment, onClick }: AttachmentPreviewProps) => {
     )
 }
 
-interface UploadContainerProps {
-    attachments: AttachmentData[]
+interface AttachmentUploadProps {
+    recipeName: string
+    attachment: AttachmentData
+    onUploadComplete: (recipeName: string) => void
 }
 
-const UploadContainer = ({ attachments }: UploadContainerProps) => {
-    const theme = useTheme()
+const AttachmentUpload = ({ attachment, onUploadComplete, recipeName }: AttachmentUploadProps) => {
+    const [uploading, setUploading] = useState(true)
+    const { user } = useFirebaseAuthContext()
+
+    const classes = useStyles()
+
+    useEffect(() => {
+        const docRef = FirebaseService.firestore
+            .collection('recipes')
+            .doc(recipeName)
+            .collection('attachments')
+            .doc()
+
+        FirebaseService.storageRef
+            .child(`recipes/${recipeName}/${user?.uid}/${docRef.id}/${attachment.name}`)
+            .putString(attachment.dataUrl, 'data_url', { cacheControl: 'public, max-age=31536000' })
+            .then(snapshot => {
+                const { fullPath, size, name } = snapshot.metadata
+                docRef.set({ fullPath, size, name, editorUid: user?.uid }).then(() => {
+                    setUploading(false)
+                    setTimeout(() => onUploadComplete(attachment.name), 2000)
+                })
+            })
+    }, [attachment, onUploadComplete, recipeName, user])
+
+    if (!user) return <></>
+
     return (
-        <Slide in={attachments.length > 0} direction="left">
+        <ListItem>
+            <ListItemAvatar>
+                <Avatar className={classes.attachmentUploadAvatar}>
+                    {uploading ? <CloudUpload /> : <CheckIcon />}
+                    {uploading && (
+                        <CircularProgress
+                            disableShrink
+                            className={classes.attachmentUploadProgress}
+                            size={40}
+                            thickness={5}
+                        />
+                    )}
+                </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+                primary={attachment.name}
+                secondary={`${(attachment.size / 1000).toFixed(0)} KB`}
+            />
+        </ListItem>
+    )
+}
+
+interface UploadContainerProps {
+    recipeName: string
+    dropzoneAttachments: AttachmentData[]
+    dropzoneAlert: JSX.Element | undefined
+}
+
+const UploadContainer = ({
+    dropzoneAttachments,
+    dropzoneAlert,
+    recipeName,
+}: UploadContainerProps) => {
+    const [uploads, setUploads] = useState<Map<string, AttachmentData>>(new Map())
+    const theme = useTheme()
+
+    useEffect(() => {
+        if (dropzoneAttachments.length === 0) return
+
+        setUploads(previous => {
+            for (const attachment of dropzoneAttachments) {
+                if (!previous.get(attachment.name)) previous.set(attachment.name, attachment)
+            }
+            return new Map(previous)
+        })
+    }, [dropzoneAttachments, setUploads])
+
+    const handleUploadComplete = useCallback((recipeName: string) => {
+        setUploads(previous => {
+            if (previous.has(recipeName)) previous.delete(recipeName)
+            return new Map(previous)
+        })
+    }, [])
+
+    return (
+        <Slide in={Boolean(dropzoneAlert || dropzoneAttachments.length > 0)} direction="left">
             <Card
                 style={{ position: 'fixed', top: 24, right: 24, zIndex: theme.zIndex.modal }}
                 elevation={8}>
-                <List>
-                    {attachments.map((attachment, index) => (
-                        <ListItem key={index}>
-                            <ListItemAvatar>
-                                <Avatar style={{ position: 'relative' }}>
-                                    <CloudUpload />
-                                    <CircularProgress
-                                        disableShrink
-                                        style={{ position: 'absolute' }}
-                                        size={40}
-                                        thickness={5}
-                                    />
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={attachment.name}
-                                secondary={`${(attachment.size / 1000).toFixed(0)} KB`}
+                {uploads.size > 0 && (
+                    <List>
+                        {[...uploads.values()].map(attachment => (
+                            <AttachmentUpload
+                                recipeName={recipeName}
+                                attachment={attachment}
+                                onUploadComplete={handleUploadComplete}
+                                key={attachment.name}
                             />
-                        </ListItem>
-                    ))}
-                </List>
+                        ))}
+                    </List>
+                )}
+                <Collapse in={Boolean(dropzoneAlert)}>{dropzoneAlert}</Collapse>
             </Card>
         </Slide>
     )
 }
 
 interface RecipeResultAttachmentsProps {
+    recipeName: string
     attachments: (AttachmentMetadata | AttachmentData)[]
 }
 
-const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) => {
+const RecipeResultAttachments = ({ attachments, recipeName }: RecipeResultAttachmentsProps) => {
     const classes = useStyles()
     const { handleAnimation } = useSwipeableAttachmentContext()
     const { user } = useFirebaseAuthContext()
-    const { attachments: dropzoneAttachments, dropzoneProps } = useAttachmentDropzone({
+    const {
+        attachments: dropzoneAttachments,
+        dropzoneProps,
+        attachmentAlert,
+    } = useAttachmentDropzone({
         currentAttachments: attachments,
         attachmentMaxWidth: 3840,
         attachmentLimit: 5,
     })
-
-    useEffect(() => {
-        if (dropzoneAttachments.length > 0 && user) {
-            console.log(dropzoneAttachments)
-        }
-    }, [dropzoneAttachments, user])
 
     const handlePreviewClick = (originId: string, activeAttachment: number) =>
         handleAnimation(originId, attachments, activeAttachment)
@@ -200,7 +282,7 @@ const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) 
                         </Grid>
                     </Zoom>
                 )}
-                {attachments.map((attachment, index) => (
+                {attachments?.map((attachment, index) => (
                     <AttachmentPreview
                         onClick={originId => handlePreviewClick(originId, index)}
                         attachment={attachment}
@@ -208,7 +290,11 @@ const RecipeResultAttachments = ({ attachments }: RecipeResultAttachmentsProps) 
                     />
                 ))}
             </Grid>
-            <UploadContainer attachments={dropzoneAttachments} />
+            <UploadContainer
+                recipeName={recipeName}
+                dropzoneAttachments={dropzoneAttachments}
+                dropzoneAlert={attachmentAlert}
+            />
         </>
     )
 }

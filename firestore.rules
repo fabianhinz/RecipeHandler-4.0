@@ -41,8 +41,9 @@ service cloud.firestore {
         allow write: if userId == request.auth.uid && isEditor()
     }
 
-    match /recipes/{recipeName}/attachments/{userId} {
-        allow write: if userId == request.auth.uid && isEditor()
+    match /recipes/{recipeName}/attachments/{userId}/userAttachments/{docId} {
+        allow create: if isAdmin() || isEditor()
+        allow update, delete: if isAdmin() || (isEditor() && request.auth.uid == userId)
     }
     
     match /rating/{recipe} {
