@@ -43,12 +43,10 @@ export interface Category {
 
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>
 
-export interface Comment {
+export interface Comment extends Editor {
     createdDate: firebase.firestore.Timestamp
     documentId: string
     comment: string
-    dislikes: number
-    likes: number
 }
 
 export interface Trial extends CommentsDocument {

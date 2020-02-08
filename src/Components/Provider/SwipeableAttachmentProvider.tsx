@@ -163,7 +163,7 @@ const SwipeableAttachment = ({ attachment }: SwipeableAttachmentProps) => {
                     </Grid>
                 </div>
             </Slide>
-            <AccountChip variant="absolute" uid={attachment.editorUid} />
+            <AccountChip position="absolute" uid={attachment.editorUid} />
         </div>
     )
 }
@@ -386,17 +386,17 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
 
                 <Grid className={classes.btnContainer} container justify="flex-end" spacing={1}>
                     <Grid item>
-                        <IconButton onClick={() => handleAnimation()}>
+                        <IconButton disabled={alert.open} onClick={() => handleAnimation()}>
                             <CloseIcon />
                         </IconButton>
                     </Grid>
                     <Grid item>
-                        <IconButton onClick={handleDownload}>
+                        <IconButton disabled={alert.open} onClick={handleDownload}>
                             <Download />
                         </IconButton>
                     </Grid>
                     <Grid item>
-                        <IconButton onClick={requestDeleteConfirmation}>
+                        <IconButton disabled={alert.open} onClick={requestDeleteConfirmation}>
                             <DeleteIcon />
                         </IconButton>
                     </Grid>

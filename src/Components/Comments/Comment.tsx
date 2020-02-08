@@ -1,12 +1,24 @@
-import { Box, createStyles, Grid, IconButton, makeStyles, Typography } from '@material-ui/core'
+import {
+    Avatar,
+    Box,
+    createStyles,
+    Divider,
+    Grid,
+    IconButton,
+    makeStyles,
+    Tooltip,
+    Typography,
+} from '@material-ui/core'
 import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
 import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
+import { AvatarGroup } from '@material-ui/lab'
 import React, { memo } from 'react'
 
 import { Comment as CommentModel, Recipe } from '../../model/model'
 import { CommentsCollections } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS_HUGE } from '../../theme'
+import AccountChip from '../Account/AccountChip'
 import { BadgeWrapper } from '../Shared/BadgeWrapper'
 
 const useStyles = makeStyles(theme =>
@@ -17,7 +29,6 @@ const useStyles = makeStyles(theme =>
             color: theme.palette.primary.contrastText,
             padding: theme.spacing(1),
             borderRadius: BORDER_RADIUS_HUGE,
-            marginBottom: theme.spacing(0.5),
         },
     })
 )
@@ -54,49 +65,55 @@ const getCommentTypography = (comment: string): React.ReactNode => {
 const Comment = ({ comment, name, collection }: CommentProps) => {
     const classes = useStyles()
 
-    const handleThumbClick = (
-        documentId: string,
-        type: keyof Pick<CommentModel, 'dislikes' | 'likes'>
-    ) => () => {
-        FirebaseService.firestore
-            .collection(collection)
-            .doc(name)
-            .collection('comments')
-            .doc(documentId)
-            .update({ [type]: FirebaseService.incrementBy(1) })
-    }
-
     return (
-        <Grid item>
-            <div className={classes.comment}>
-                <Typography variant="caption">
-                    {FirebaseService.createDateFromTimestamp(comment.createdDate).toLocaleString()}
-                </Typography>
-                <Typography>{getCommentTypography(comment.comment)}</Typography>
-            </div>
+        <Grid container direction="column" spacing={2} alignItems="flex-end">
+            <Grid item>
+                <div className={classes.comment}>
+                    <Grid container direction="column" spacing={1}>
+                        <Grid item>
+                            <Typography variant="caption">
+                                {FirebaseService.createDateFromTimestamp(
+                                    comment.createdDate
+                                ).toLocaleString()}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography>{getCommentTypography(comment.comment)}</Typography>
+                        </Grid>
+                        <Grid item>
+                            <AccountChip uid="fY6g8kg5RmYuhvoTC6rlkzES89h1" />
+                        </Grid>
+                    </Grid>
+                </div>
+            </Grid>
 
-            <Box marginBottom={1} display="flex" justifyContent="flex-end">
-                <IconButton onClick={handleThumbClick(comment.documentId, 'likes')}>
-                    <BadgeWrapper
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                        }}
-                        badgeContent={comment.likes}>
-                        <ThumbUpIcon />
-                    </BadgeWrapper>
-                </IconButton>
-                <IconButton onClick={handleThumbClick(comment.documentId, 'dislikes')}>
-                    <BadgeWrapper
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                        }}
-                        badgeContent={comment.dislikes}>
-                        <ThumbDownIcon />
-                    </BadgeWrapper>
-                </IconButton>
-            </Box>
+            <Grid item>
+                <AvatarGroup>
+                    <Avatar>
+                        <span aria-Label="" role="img">
+                            👍
+                        </span>
+                    </Avatar>
+                    <Avatar>
+                        <span aria-Label="" role="img">
+                            👎
+                        </span>
+                    </Avatar>
+                    {/* <Avatar>
+                        <span aria-Label="" role="img">
+                            👏
+                        </span>
+                    </Avatar>
+                    <Avatar>
+                        <span aria-Label="" role="img">
+                            😛
+                        </span>
+                    </Avatar> */}
+                    <Tooltip title="Foo • Bar • Baz">
+                        <Avatar>+3</Avatar>
+                    </Tooltip>
+                </AvatarGroup>
+            </Grid>
         </Grid>
     )
 }

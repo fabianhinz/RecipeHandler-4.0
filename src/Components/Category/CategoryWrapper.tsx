@@ -195,7 +195,7 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
     const { landscape } = useDeviceOrientationContext()
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={3}>
             {Object.keys(categoriesCollection).map(type => (
                 <Grid key={type} item xs={landscape ? 4 : 12} sm={4}>
                     <CategoryDialog

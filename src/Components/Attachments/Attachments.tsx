@@ -78,7 +78,7 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                 .collection('recipes')
                 .doc(recipeName)
                 .collection('attachments')
-                .orderBy('createdDate', 'desc')
+                .orderBy('createdDate', 'asc')
                 .onSnapshot(querySnapshot =>
                     setSavedAttachments(
                         querySnapshot.docs.map(
@@ -95,6 +95,13 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
     return (
         <>
             <Grid wrap="nowrap" className={classes.attachmentsGridContainer} container spacing={3}>
+                {savedAttachments.map((attachment, index) => (
+                    <AttachmentPreview
+                        onClick={originId => handlePreviewClick(originId, index)}
+                        attachment={attachment}
+                        key={attachment.docPath}
+                    />
+                ))}
                 {user && (
                     <Zoom in>
                         <Grid item>
@@ -107,13 +114,6 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                         </Grid>
                     </Zoom>
                 )}
-                {savedAttachments.map((attachment, index) => (
-                    <AttachmentPreview
-                        onClick={originId => handlePreviewClick(originId, index)}
-                        attachment={attachment}
-                        key={attachment.docPath}
-                    />
-                ))}
             </Grid>
             <AttachmentUpload
                 recipeName={recipeName}

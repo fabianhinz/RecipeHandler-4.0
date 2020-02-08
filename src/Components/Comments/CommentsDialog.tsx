@@ -27,7 +27,7 @@ import NotFound from '../Shared/NotFound'
 import { SlideUp } from '../Shared/Transitions'
 import Comment from './Comment'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         skeleton: {
             borderRadius: BORDER_RADIUS_HUGE,
@@ -37,6 +37,9 @@ const useStyles = makeStyles(() =>
         },
         form: {
             flexGrow: 1,
+        },
+        dialogContent: {
+            padding: theme.spacing(3),
         },
     })
 )
@@ -114,11 +117,12 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 .doc(name)
                 .collection('comments')
                 .add({
-                    comment: `${user!.username}: ${input}`,
+                    editorUid: user?.uid,
+                    comment: input,
                     likes: 0,
                     dislikes: 0,
                     createdDate: FirebaseService.createTimestampFromDate(new Date()),
-                })
+                } as Omit<CommentModel, 'documentId'>)
 
             setInput('')
             setInputDisabled(false)
@@ -142,8 +146,8 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 className={clsx(classes.dialogTitle, !isDialogFullscreen && 'dragghandler')}>
                 {name}
             </DialogTitle>
-            <DialogContent>
-                <Grid alignItems="flex-end" direction="column" wrap="nowrap" container spacing={1}>
+            <DialogContent className={classes.dialogContent}>
+                <Grid alignItems="flex-end" direction="column" wrap="nowrap" container spacing={3}>
                     {loading
                         ? new Array(numberOfComments).fill(1).map((_skeleton, index) => (
                               <Grid item key={index}>
@@ -156,12 +160,9 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                               </Grid>
                           ))
                         : comments.map(comment => (
-                              <Comment
-                                  collection={collection}
-                                  key={comment.documentId}
-                                  name={name}
-                                  comment={comment}
-                              />
+                              <Grid item key={comment.documentId}>
+                                  <Comment collection={collection} name={name} comment={comment} />
+                              </Grid>
                           ))}
                 </Grid>
                 <div id={SCROLL_TO_ID} />
