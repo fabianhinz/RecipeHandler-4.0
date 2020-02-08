@@ -1,8 +1,8 @@
 import { Avatar, CardActionArea, createStyles, Grid, makeStyles, Zoom } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
-import { AttachmentDoc } from '../../model/model'
+import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -62,6 +62,7 @@ interface RecipeResultAttachmentsProps {
 
 const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
     const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[]>([])
+    const [previewAttachment, setPreviewAttachment] = useState<string | undefined>('')
 
     const classes = useStyles()
 
@@ -72,11 +73,14 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
         attachmentLimit: 5,
     })
 
+    const recipeDocRef = useMemo(
+        () => FirebaseService.firestore.collection('recipes').doc(recipeName),
+        [recipeName]
+    )
+
     useEffect(
         () =>
-            FirebaseService.firestore
-                .collection('recipes')
-                .doc(recipeName)
+            recipeDocRef
                 .collection('attachments')
                 .orderBy('createdDate', 'asc')
                 .onSnapshot(querySnapshot =>
@@ -86,11 +90,23 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                         )
                     )
                 ),
-        [recipeName]
+        [recipeDocRef, recipeName]
+    )
+
+    useEffect(
+        () =>
+            recipeDocRef.onSnapshot(querySnapshot =>
+                setPreviewAttachment((querySnapshot.data() as Recipe).previewAttachment)
+            ),
+        [recipeDocRef, recipeName]
     )
 
     const handlePreviewClick = (originId: string, activeAttachment: number) =>
         handleAnimation(originId, savedAttachments, activeAttachment)
+
+    const handlePreviewAttachmentChange = (smallDataUrl: string) => {
+        recipeDocRef.update({ previewAttachment: smallDataUrl } as Recipe)
+    }
 
     return (
         <>
@@ -99,6 +115,8 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                     <AttachmentPreview
                         onClick={originId => handlePreviewClick(originId, index)}
                         attachment={attachment}
+                        previewAttachment={previewAttachment}
+                        onPreviewAttachmentChange={handlePreviewAttachmentChange}
                         key={attachment.docPath}
                     />
                 ))}
