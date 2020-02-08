@@ -48,8 +48,8 @@ const Home = () => {
             .collection('recipes')
             .orderBy(orderByKey, orderBy[orderByKey])
 
-        if (user && user.selectedUsers.length > 0)
-            query = query.where('editorUid', 'in', user.selectedUsers)
+        if (user?.selectedUsers && user?.selectedUsers.length > 0)
+            query = query.where('editorUid', 'in', user?.selectedUsers)
 
         if (lastRecipe) query = query.startAfter(lastRecipe[orderByKey])
 
