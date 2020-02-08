@@ -62,7 +62,9 @@ interface RecipeResultAttachmentsProps {
 
 const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
     const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[]>([])
-    const [previewAttachment, setPreviewAttachment] = useState<string | undefined>('')
+    const [recipePreview, setRecipePreview] = useState<
+        { smallDataUrl?: string; disabled: boolean } | undefined
+    >()
 
     const classes = useStyles()
 
@@ -95,10 +97,14 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
 
     useEffect(
         () =>
-            recipeDocRef.onSnapshot(querySnapshot =>
-                setPreviewAttachment((querySnapshot.data() as Recipe).previewAttachment)
-            ),
-        [recipeDocRef, recipeName]
+            recipeDocRef.onSnapshot(querySnapshot => {
+                const { editorUid, previewAttachment } = querySnapshot.data() as Recipe
+                setRecipePreview({
+                    smallDataUrl: previewAttachment,
+                    disabled: !user || (user.uid !== editorUid && !user.admin),
+                })
+            }),
+        [recipeDocRef, recipeName, user]
     )
 
     const handlePreviewClick = (originId: string, activeAttachment: number) =>
@@ -115,7 +121,8 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                     <AttachmentPreview
                         onClick={originId => handlePreviewClick(originId, index)}
                         attachment={attachment}
-                        previewAttachment={previewAttachment}
+                        previewAttachment={recipePreview?.smallDataUrl}
+                        previewChangeDisabled={recipePreview?.disabled}
                         onPreviewAttachmentChange={handlePreviewAttachmentChange}
                         key={attachment.docPath}
                     />

@@ -5,12 +5,12 @@ import {
     Grid,
     IconButton,
     makeStyles,
+    Tooltip,
     Zoom,
 } from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
 import CheckIcon from '@material-ui/icons/CheckCircle'
 import { Skeleton } from '@material-ui/lab'
-import clsx from 'clsx'
 import React, { useRef, useState } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
@@ -65,6 +65,7 @@ interface AttachmentPreviewProps {
     attachment: AttachmentDoc
     onClick: (originId: string) => void
     previewAttachment: string | undefined
+    previewChangeDisabled?: boolean
     onPreviewAttachmentChange: (smallDataUrl: string) => void
 }
 
@@ -73,6 +74,7 @@ const AttachmentPreview = ({
     onClick,
     previewAttachment,
     onPreviewAttachmentChange,
+    previewChangeDisabled,
 }: AttachmentPreviewProps) => {
     const [showSelection, setShowSelection] = useState(false)
 
@@ -101,7 +103,7 @@ const AttachmentPreview = ({
                             <BugIcon fontSize="large" />
                         </Avatar>
                     </CardActionArea>
-                    <Zoom in={showSelection}>
+                    <Zoom in={showSelection && !previewChangeDisabled}>
                         <IconButton
                             className={classes.selectionButton}
                             onClick={() => onPreviewAttachmentChange(attachmentRef.smallDataUrl)}
@@ -111,7 +113,9 @@ const AttachmentPreview = ({
                                     : 'default'
                             }
                             size="small">
-                            <CheckIcon />
+                            <Tooltip title="Als Vorschaubild setzen">
+                                <CheckIcon />
+                            </Tooltip>
                         </IconButton>
                     </Zoom>
                 </>
