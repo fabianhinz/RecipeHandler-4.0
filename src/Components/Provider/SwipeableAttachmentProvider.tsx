@@ -62,12 +62,12 @@ const useStyles = makeStyles(theme =>
         },
         destination: {
             [theme.breakpoints.only('xs')]: {
-                width: 300,
-                height: 168.75,
+                width: 280,
+                height: 157.5,
             },
             [theme.breakpoints.only('sm')]: {
-                width: 500,
-                height: 337.5,
+                width: 480,
+                height: 270,
             },
             [theme.breakpoints.only('md')]: {
                 width: 700,
@@ -98,14 +98,14 @@ const useStyles = makeStyles(theme =>
         },
         btnContainer: {
             position: 'absolute',
-            top: 0,
+            top: `calc(0px + env(safe-area-inset-top))`,
             right: 0,
             padding: theme.spacing(2),
         },
         alertContainer: {
             position: 'absolute',
             padding: theme.spacing(3),
-            top: 0,
+            top: `calc(0px + env(safe-area-inset-top))`,
             right: 0,
             left: 0,
             display: 'flex',
@@ -295,7 +295,7 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
             text: `${attachment.name} wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.`,
             severity: 'warning',
             action: (
-                <Grid container spacing={1}>
+                <Grid container wrap="nowrap" spacing={3}>
                     <Grid item>
                         <IconButton
                             color="inherit"
@@ -363,7 +363,7 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
             <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
             <div className={clsx(classes.background, originId && classes.backgroundVisible)}>
                 <Fab
-                    size={isMobile ? 'medium' : 'large'}
+                    size={isMobile ? 'small' : 'large'}
                     onClick={() => setActiveAttachment(prev => --prev)}
                     disabled={activeAttachment === 0}>
                     <ChevronLeft />
@@ -378,7 +378,7 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
                     )}
                 </div>
                 <Fab
-                    size={isMobile ? 'medium' : 'large'}
+                    size={isMobile ? 'small' : 'large'}
                     onClick={() => setActiveAttachment(prev => ++prev)}
                     disabled={attachments && activeAttachment === attachments.length - 1}>
                     <ChevronRight />

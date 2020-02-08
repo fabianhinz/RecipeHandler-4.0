@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme =>
     createStyles({
         linearProgress: {
             position: 'fixed',
-            top: 0,
+            top: `calc(0px + env(safe-area-inset-top))`,
             left: 0,
             width: '100vw',
             zIndex: theme.zIndex.appBar + 1,
