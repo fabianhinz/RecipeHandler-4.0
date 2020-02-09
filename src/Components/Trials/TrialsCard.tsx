@@ -7,6 +7,7 @@ import {
     Grid,
     makeStyles,
     Slide,
+    Tooltip,
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { useSnackbar } from 'notistack'
@@ -119,9 +120,11 @@ const TrialsCard = ({ trial, index }: Props) => {
                                 </Grid>
 
                                 <Grid item xs="auto">
-                                    <Fab size="small" onClick={() => setDeleteAlert(true)}>
-                                        <DeleteIcon />
-                                    </Fab>
+                                    <Tooltip title="Löschen">
+                                        <Fab size="small" onClick={() => setDeleteAlert(true)}>
+                                            <DeleteIcon />
+                                        </Fab>
+                                    </Tooltip>
                                 </Grid>
                             </Grid>
                         </Slide>

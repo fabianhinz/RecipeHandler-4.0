@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 import { stopPropagationProps } from '../../../../util/constants'
 import { Comments } from '../../../Comments/Comments'
 import { RecipeResultBookmark } from './RecipeResultBookmark'
-import { RecipeResultRating } from './RecipeResultRating'
+import { RecipeResultCookCounter } from './RecipeResultRating'
 import { RecipeResultShare } from './RecipeResultShare'
 
 export type RecipeVariants = { variant: 'details' | 'preview' | 'related' }
@@ -27,7 +27,7 @@ export const RecipeResultAction: FC<RecipeResultActionProps> = ({ name, numberOf
             <Comments collection="recipes" numberOfComments={numberOfComments} name={name} />
         </Grid>
         <Grid item>
-            <RecipeResultRating name={name} />
+            <RecipeResultCookCounter name={name} />
         </Grid>
     </Grid>
 )

@@ -6,6 +6,7 @@ import {
     makeStyles,
     Paper,
     SwipeableDrawer,
+    Tooltip,
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import {
@@ -75,18 +76,24 @@ const Header = () => {
     const actions = useMemo(
         () => (
             <>
-                <IconButton
-                    onClick={() => setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))}>
-                    {gridLayout === 'grid' ? <ViewAgendaOutline /> : <ViewGridOutline />}
-                </IconButton>
-                <IconButton onClick={() => history.push(PATHS.bookmarks)}>
-                    <BadgeWrapper badgeContent={bookmarks.size}>
-                        <BookmarkMultipleOutline />
-                    </BadgeWrapper>
-                </IconButton>
-                <IconButton onClick={() => alert('todo')}>
-                    <InformationOutline />
-                </IconButton>
+                <Tooltip title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
+                    <IconButton
+                        onClick={() => setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))}>
+                        {gridLayout === 'grid' ? <ViewAgendaOutline /> : <ViewGridOutline />}
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Lesezeichen">
+                    <IconButton onClick={() => history.push(PATHS.bookmarks)}>
+                        <BadgeWrapper badgeContent={bookmarks.size}>
+                            <BookmarkMultipleOutline />
+                        </BadgeWrapper>
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Impressum">
+                    <IconButton onClick={() => alert('todo')}>
+                        <InformationOutline />
+                    </IconButton>
+                </Tooltip>
             </>
         ),
         [bookmarks.size, gridLayout, history, setGridLayout]

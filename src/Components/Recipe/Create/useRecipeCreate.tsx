@@ -72,7 +72,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
 
             if (!editedRecipe) {
                 await FirebaseService.firestore
-                    .collection('rating')
+                    .collection('cookCounter')
                     .doc(state.name)
                     .set({ value: 0 })
             }

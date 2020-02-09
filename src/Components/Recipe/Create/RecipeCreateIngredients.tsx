@@ -64,11 +64,11 @@ const RecipeCreateIngredients = ({ amount, ingredients, onIngredientsChange, dis
                 onClose={() => setAmountAnchorEl(null)}
                 anchorOrigin={{
                     vertical: 'bottom',
-                    horizontal: 'left',
+                    horizontal: 'center',
                 }}
                 transformOrigin={{
                     vertical: 'top',
-                    horizontal: 'left',
+                    horizontal: 'center',
                 }}>
                 <Grid container spacing={1} alignItems="center">
                     <Grid item>

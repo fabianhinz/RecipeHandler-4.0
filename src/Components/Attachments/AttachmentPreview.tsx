@@ -104,19 +104,26 @@ const AttachmentPreview = ({
                         </Avatar>
                     </CardActionArea>
                     <Zoom in={showSelection && !previewChangeDisabled}>
-                        <IconButton
-                            className={classes.selectionButton}
-                            onClick={() => onPreviewAttachmentChange(attachmentRef.smallDataUrl)}
-                            color={
+                        <Tooltip
+                            title={
                                 previewAttachment === attachmentRef.smallDataUrl
-                                    ? 'primary'
-                                    : 'default'
-                            }
-                            size="small">
-                            <Tooltip title="Als Vorschaubild setzen">
+                                    ? ''
+                                    : 'Als Vorschaubild setzen'
+                            }>
+                            <IconButton
+                                className={classes.selectionButton}
+                                onClick={() =>
+                                    onPreviewAttachmentChange(attachmentRef.smallDataUrl)
+                                }
+                                color={
+                                    previewAttachment === attachmentRef.smallDataUrl
+                                        ? 'primary'
+                                        : 'default'
+                                }
+                                size="small">
                                 <CheckIcon />
-                            </Tooltip>
-                        </IconButton>
+                            </IconButton>
+                        </Tooltip>
                     </Zoom>
                 </>
             )}

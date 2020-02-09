@@ -4,6 +4,7 @@ import {
     Grid,
     LinearProgress,
     makeStyles,
+    Tooltip,
     Typography,
     Zoom,
 } from '@material-ui/core'
@@ -175,10 +176,12 @@ const Trials = () => {
             {user && (
                 <Zoom in>
                     <div className={classes.fabContainer} {...getRootProps()}>
-                        <Fab color="secondary">
-                            <input {...getInputProps()} />
-                            <CameraIcon />
-                        </Fab>
+                        <Tooltip title="Rezeptidee hinzufügen" placement="left">
+                            <Fab color="secondary">
+                                <input {...getInputProps()} />
+                                <CameraIcon />
+                            </Fab>
+                        </Tooltip>
                     </div>
                 </Zoom>
             )}

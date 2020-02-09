@@ -46,7 +46,7 @@ service cloud.firestore {
         allow update, delete: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
     }
     
-    match /rating/{recipe} {
+    match /cookCounter/{recipe} {
         allow write: if isAdmin() || isEditor();
     }
     

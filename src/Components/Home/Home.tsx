@@ -111,7 +111,12 @@ const Home = () => {
                     </Grid>
                 </Grid>
             </Grid>
-            <NavigateFab to={PATHS.recipeCreate} icon={<AddIcon />} />
+
+            <NavigateFab
+                to={PATHS.recipeCreate}
+                icon={<AddIcon />}
+                tooltipTitle="Rezept erstellen"
+            />
         </>
     )
 }

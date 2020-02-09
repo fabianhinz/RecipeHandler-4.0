@@ -130,7 +130,7 @@ const AccountUser = () => {
                 )}
             </Grid>
 
-            <NavigateFab onClick={handleLogout} icon={<LogoutVariant />} />
+            <NavigateFab onClick={handleLogout} icon={<LogoutVariant />} tooltipTitle="Ausloggen" />
             <ProgressComponent />
         </>
     )

@@ -5,8 +5,8 @@ import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
 import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
+import { useAttachmentGalleryContext } from '../Provider/AttachmentGalleryProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useSwipeableAttachmentContext } from '../Provider/SwipeableAttachmentProvider'
 import AttachmentPreview from './AttachmentPreview'
 import AttachmentUpload from './AttachmentUpload'
 
@@ -68,7 +68,7 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
 
     const classes = useStyles()
 
-    const { handleAnimation } = useSwipeableAttachmentContext()
+    const { handleAnimation } = useAttachmentGalleryContext()
     const { user } = useFirebaseAuthContext()
     const { dropzoneAttachments, dropzoneProps, dropzoneAlert } = useAttachmentDropzone({
         attachmentMaxWidth: 3840,

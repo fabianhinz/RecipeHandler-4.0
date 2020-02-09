@@ -36,7 +36,7 @@ interface AnimationHandler {
 
 const Context = React.createContext<AnimationHandler | null>(null)
 
-export const useSwipeableAttachmentContext = () => useContext(Context) as AnimationHandler
+export const useAttachmentGalleryContext = () => useContext(Context) as AnimationHandler
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -173,7 +173,7 @@ interface AttachmentAlert extends Partial<Pick<AlertProps, 'severity' | 'action'
     open: boolean
 }
 
-const SwipeableAttachmentProvider: FC = ({ children }) => {
+const AttachmentGalleryProvider: FC = ({ children }) => {
     const [originId, setOriginId] = useState<string | undefined>()
     const [attachments, setAttachments] = useState<AttachmentDoc[] | undefined>()
     const [activeAttachment, setActiveAttachment] = useState(0)
@@ -417,4 +417,4 @@ const SwipeableAttachmentProvider: FC = ({ children }) => {
     )
 }
 
-export default SwipeableAttachmentProvider
+export default AttachmentGalleryProvider

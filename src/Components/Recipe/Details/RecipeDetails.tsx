@@ -22,7 +22,11 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
             )}
 
             {recipeDoc && user && (user.uid === recipeDoc.editorUid || user.admin) && (
-                <NavigateFab to={PATHS.recipeEdit(recipeDoc.name)} icon={<EditIcon />} />
+                <NavigateFab
+                    to={PATHS.recipeEdit(recipeDoc.name)}
+                    icon={<EditIcon />}
+                    tooltipTitle="Rezept bearbeiten"
+                />
             )}
         </>
     )

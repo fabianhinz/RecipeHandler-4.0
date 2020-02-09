@@ -1,16 +1,4 @@
-import {
-    Avatar,
-    Box,
-    createStyles,
-    Divider,
-    Grid,
-    IconButton,
-    makeStyles,
-    Tooltip,
-    Typography,
-} from '@material-ui/core'
-import ThumbDownIcon from '@material-ui/icons/ThumbDownRounded'
-import ThumbUpIcon from '@material-ui/icons/ThumbUpRounded'
+import { Avatar, createStyles, Grid, makeStyles, Tooltip, Typography } from '@material-ui/core'
 import { AvatarGroup } from '@material-ui/lab'
 import React, { memo } from 'react'
 
@@ -19,7 +7,6 @@ import { CommentsCollections } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS_HUGE } from '../../theme'
 import AccountChip from '../Account/AccountChip'
-import { BadgeWrapper } from '../Shared/BadgeWrapper'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -62,7 +49,7 @@ const getCommentTypography = (comment: string): React.ReactNode => {
     )
 }
 
-const Comment = ({ comment, name, collection }: CommentProps) => {
+const Comment = ({ comment }: CommentProps) => {
     const classes = useStyles()
 
     return (
@@ -90,22 +77,22 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
             <Grid item>
                 <AvatarGroup>
                     <Avatar>
-                        <span aria-Label="" role="img">
+                        <span aria-label="" role="img">
                             👍
                         </span>
                     </Avatar>
                     <Avatar>
-                        <span aria-Label="" role="img">
+                        <span aria-label="" role="img">
                             👎
                         </span>
                     </Avatar>
                     {/* <Avatar>
-                        <span aria-Label="" role="img">
+                        <span aria-label="" role="img">
                             👏
                         </span>
                     </Avatar>
                     <Avatar>
-                        <span aria-Label="" role="img">
+                        <span aria-label="" role="img">
                             😛
                         </span>
                     </Avatar> */}
