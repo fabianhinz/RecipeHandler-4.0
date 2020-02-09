@@ -9,11 +9,12 @@ import {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     Grid,
+    Hidden,
     IconButton,
-    List,
-    ListItem,
+    ListSubheader,
     makeStyles,
     Typography,
+    useTheme,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
@@ -23,33 +24,46 @@ import React, { useEffect, useState } from 'react'
 import { Issue, Pullrequest } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
+import Progress from '../../Shared/Progress'
 import { SlideUp } from '../../Shared/Transitions'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         dialogContent: {
             paddingLeft: 0,
             paddingRight: 0,
         },
+        issueContainer: {
+            marginBottom: theme.spacing(2),
+        },
+        labelsContainer: {
+            display: 'flex',
+            flexDirection: 'column',
+        },
     })
 )
 
 const AccountUserChangelog = () => {
-    const { isDialogFullscreen } = useBreakpointsContext()
     const [pullrequests, setPullrequests] = useState<Pullrequest[]>([])
     const [issues, setIssues] = useState<Issue[]>([])
     const [changelogOpen, setChangelogOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
+
     const classes = useStyles()
+
+    const theme = useTheme()
+    const { isDialogFullscreen } = useBreakpointsContext()
 
     useEffect(() => {
         if (!changelogOpen) return
-
+        setLoading(true)
         return FirebaseService.firestore
             .collection('pullrequests')
             .orderBy('closedAt', 'desc')
-            .onSnapshot(querySnapshot =>
+            .onSnapshot(querySnapshot => {
                 setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
-            )
+                setLoading(false)
+            })
     }, [changelogOpen])
 
     useEffect(() => {
@@ -78,8 +92,11 @@ const AccountUserChangelog = () => {
                 open={changelogOpen}
                 onClose={() => setChangelogOpen(false)}
                 keepMounted
-                TransitionComponent={SlideUp}>
+                TransitionComponent={SlideUp}
+                maxWidth="sm"
+                fullWidth>
                 <DialogTitle>Changelog</DialogTitle>
+                {loading && <Progress variant="cover" />}
                 <DialogContent className={classes.dialogContent}>
                     {pullrequests.map(pr => (
                         <ExpansionPanel key={pr.shortSha}>
@@ -106,60 +123,77 @@ const AccountUserChangelog = () => {
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <Typography>
-                                            {pr.closedAt.toDate().toLocaleDateString()}
-                                        </Typography>
-                                    </Grid>
+                                    <Hidden xsDown>
+                                        <Grid item>
+                                            <Typography>
+                                                {pr.closedAt.toDate().toLocaleDateString()}
+                                            </Typography>
+                                        </Grid>
+                                    </Hidden>
                                 </Grid>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
-                                <Grid container alignItems="center" spacing={3}>
+                                <Grid
+                                    container
+                                    alignItems="center"
+                                    justify="space-between"
+                                    spacing={1}>
                                     <Grid item>
-                                        <Typography>{pr.creator}</Typography>
+                                        <ListSubheader disableGutters>{pr.creator}</ListSubheader>
                                     </Grid>
                                     <Grid item>
-                                        <Typography>
+                                        <ListSubheader disableGutters>
                                             {pr.closedAt.toDate().toLocaleString()} Uhr
-                                        </Typography>
+                                        </ListSubheader>
                                     </Grid>
-                                    {getRelatedIssues.length > 0 && (
+                                    {pr.issueNumbers && pr.issueNumbers.length > 0 ? (
                                         <Grid item xs={12}>
-                                            <List>
-                                                {getRelatedIssues(pr).map(issue => (
-                                                    <ListItem key={issue.number}>
+                                            {getRelatedIssues(pr).map(issue => (
+                                                <Grid
+                                                    key={issue.number}
+                                                    container
+                                                    wrap="nowrap"
+                                                    justify="space-between"
+                                                    className={classes.issueContainer}>
+                                                    <Grid item xs={9}>
                                                         <Grid container spacing={1}>
-                                                            <Grid item xs={2} sm={1}>
-                                                                <Typography>
+                                                            <Grid item xs={2}>
+                                                                <Typography noWrap>
                                                                     {issue.number}
                                                                 </Typography>
                                                             </Grid>
-                                                            <Grid item xs={10} sm={8}>
+                                                            <Grid item xs={10}>
                                                                 <Typography>
                                                                     {issue.title}
                                                                 </Typography>
                                                             </Grid>
-                                                            <Grid item xs={12} sm={3}>
-                                                                {issue.labels.map(label => (
-                                                                    <Chip
-                                                                        key={
-                                                                            issue.number +
-                                                                            label.name
-                                                                        }
-                                                                        label={label.name}
-                                                                        style={{
-                                                                            backgroundColor:
-                                                                                '#' + label.color,
-                                                                            margin: '2px',
-                                                                            height: '20px',
-                                                                        }}
-                                                                    />
-                                                                ))}
-                                                            </Grid>
                                                         </Grid>
-                                                    </ListItem>
-                                                ))}
-                                            </List>
+                                                    </Grid>
+                                                    <Grid item className={classes.labelsContainer}>
+                                                        {issue.labels.map(label => (
+                                                            <Chip
+                                                                key={issue.number + label.name}
+                                                                label={label.name}
+                                                                size="small"
+                                                                style={{
+                                                                    color: theme.palette.getContrastText(
+                                                                        '#' + label.color
+                                                                    ),
+                                                                    backgroundColor:
+                                                                        '#' + label.color,
+                                                                    margin: theme.spacing(0.5),
+                                                                }}
+                                                            />
+                                                        ))}
+                                                    </Grid>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+                                    ) : (
+                                        <Grid item xs={12}>
+                                            <Typography>
+                                                Keine zugehörigen Issues vorhanden
+                                            </Typography>
                                         </Grid>
                                     )}
                                 </Grid>
