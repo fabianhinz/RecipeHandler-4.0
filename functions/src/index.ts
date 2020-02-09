@@ -96,14 +96,16 @@ export const handleNumberOfCommentsTrials = functions
 
 interface Label {
     name: string
+    color: string
 }
 
 export const handleChangelog = functions.region('europe-west1').https.onRequest((req, res) => {
     if (req.body.pull_request) {
         const { action, pull_request } = req.body
         const { merge_commit_sha, merged, title, body, closed_at, user } = pull_request
-        if (action === 'closed' && merged) {
+        if (action === 'closed' && merged && user.login !== 'dependabot-preview[bot]') {
             const shortSha = merge_commit_sha ? merge_commit_sha.slice(0, 7) : ''
+            // TODO evtl nur Nummer mit Hash davor suchen und hash vor speichern wieder entfernen?
             const issueNumbers = body.match(/\d+/g)
             admin
                 .firestore()
@@ -113,7 +115,7 @@ export const handleChangelog = functions.region('europe-west1').https.onRequest(
                     shortSha,
                     title,
                     issueNumbers,
-                    closedAt: closed_at,
+                    closedAt: admin.firestore.Timestamp.fromDate(new Date(closed_at)),
                     creator: user.login,
                 })
         }
@@ -122,7 +124,9 @@ export const handleChangelog = functions.region('europe-west1').https.onRequest(
         const { action, issue } = req.body
         if (action === 'closed') {
             const { number, title, body, labels } = issue
-            const labelNames: Array<string> = labels.map((label: Label) => label.name)
+            const labelNames: Array<string> = labels.map((label: Label) => {
+                return { name: label.name, color: label.color }
+            })
             admin
                 .firestore()
                 .collection('issues')

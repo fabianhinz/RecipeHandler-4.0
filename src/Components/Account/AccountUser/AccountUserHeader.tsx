@@ -1,7 +1,6 @@
 import {
     Avatar,
     CardActionArea,
-    Chip,
     Collapse,
     createStyles,
     Divider,
@@ -24,7 +23,6 @@ import NotificationsOffIcon from '@material-ui/icons/NotificationsOffRounded'
 import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
 import SearchIcon from '@material-ui/icons/SearchRounded'
 import TimelapseIcon from '@material-ui/icons/TimelapseRounded'
-import TimelineIcon from '@material-ui/icons/TimelineRounded'
 import {
     CameraImage,
     CloudOffOutline,
@@ -40,6 +38,7 @@ import { useAttachmentDropzone } from '../../../hooks/useAttachmentDropzone'
 import { User } from '../../../model/model'
 import StyledCard from '../../Shared/StyledCard'
 import { UserSettingChangeHandler } from './AccountUser'
+import AccountUserChangelog from './AccountUserChangelog'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -271,11 +270,7 @@ const AccountUserHeader = ({ user, userDoc, onUserSettingChange }: AccountUserHe
                         </Typography>
                     </Grid>
                     <Grid item xs="auto">
-                        <Chip
-                            onClick={() => alert('ToDo Miwri ;)')}
-                            icon={<TimelineIcon />}
-                            label={__VERSION__}
-                        />
+                        <AccountUserChangelog />
                     </Grid>
                 </Grid>
             </Grid>

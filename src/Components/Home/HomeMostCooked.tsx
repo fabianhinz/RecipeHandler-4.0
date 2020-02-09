@@ -34,6 +34,7 @@ import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { DocumentId, MostCooked } from '../../model/model'
 import elementIdService from '../../services/elementIdService'
 import { FirebaseService } from '../../services/firebase'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
@@ -130,7 +131,7 @@ const MostCookedPaper = ({ recipeName, counter, index }: MostCookedPaperProps) =
 const useHomeMostCookedStyles = makeStyles(theme =>
     createStyles({
         mostCookedGridContainer: {
-            overflowX: 'hidden',
+            overflowX: 'auto',
             '&::-webkit-scrollbar': {
                 display: 'none',
             },
@@ -153,6 +154,7 @@ const HomeMostCooked = () => {
     const classes = useHomeMostCookedStyles()
 
     const { user } = useFirebaseAuthContext()
+    const { isMobile } = useBreakpointsContext()
     const { IntersectionObserverTrigger } = useIntersectionObserver({
         onIsIntersecting: () => setScrollRightDisabled(true),
         onLeave: () => setScrollRightDisabled(false),
@@ -192,18 +194,24 @@ const HomeMostCooked = () => {
 
     return (
         <>
-            <Grid item xs={9}>
+            <Grid item xs={10} md={9}>
                 <Typography variant="h4">Am häufigsten gekocht</Typography>
             </Grid>
-            <Grid item xs={3}>
-                <Grid container spacing={1} justify="flex-end" wrap="nowrap">
+            <Grid item xs={2} md={3}>
+                <Grid container justify="flex-end" wrap="nowrap">
                     <Grid item>
-                        <IconButton disabled={containerScrollLeft === 0} onClick={handleScrollLeft}>
+                        <IconButton
+                            size={isMobile ? 'small' : 'medium'}
+                            disabled={containerScrollLeft === 0}
+                            onClick={handleScrollLeft}>
                             <ChevronLeft />
                         </IconButton>
                     </Grid>
                     <Grid item>
-                        <IconButton disabled={scrollRightDisabled} onClick={handleScrollRight}>
+                        <IconButton
+                            size={isMobile ? 'small' : 'medium'}
+                            disabled={scrollRightDisabled}
+                            onClick={handleScrollRight}>
                             <ChevronRight />
                         </IconButton>
                     </Grid>

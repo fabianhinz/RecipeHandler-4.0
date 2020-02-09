@@ -47,6 +47,7 @@
 		"serveHosting": "firebase serve --only hosting",
 		"exploreChunks": "npx source-map-explorer build/static/js/*.js",
 		"start": "run-s dev:*",
+		"profile": "npx react-scripts build --profile",
 		"build:cra": "react-app-rewired build",
 		"build": "run-s dev:install build:cra",
 		"test": "react-app-rewired test",

@@ -1,4 +1,5 @@
 import { PaletteType } from '@material-ui/core'
+import { firestore } from 'firebase'
 import { RouteComponentProps } from 'react-router'
 
 export interface Editor {
@@ -93,6 +94,25 @@ export type User = {
     bookmarks: string[]
 }
 
+export interface Pullrequest {
+    closedAt: firestore.Timestamp
+    creator: string
+    issueNumbers: string[] | undefined
+    shortSha: string
+    title: string
+}
+
+export interface Label {
+    name: string
+    color: string
+}
+
+export interface Issue {
+    labels: Label[]
+    number: number
+    subject: string
+    title: string
+}
 export type RecipeName = string
 export type Grocery = string
 
