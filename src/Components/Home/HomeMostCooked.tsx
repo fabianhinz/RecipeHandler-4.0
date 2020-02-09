@@ -192,10 +192,10 @@ const HomeMostCooked = () => {
 
     return (
         <>
-            <Grid item xs={6}>
+            <Grid item xs={9}>
                 <Typography variant="h4">Am häufigsten gekocht</Typography>
             </Grid>
-            <Grid item>
+            <Grid item xs={3}>
                 <Grid container spacing={1} justify="flex-end" wrap="nowrap">
                     <Grid item>
                         <IconButton disabled={containerScrollLeft === 0} onClick={handleScrollLeft}>

@@ -1,5 +1,5 @@
 import { IconButton, Tooltip } from '@material-ui/core/'
-import { BookPlus } from 'mdi-material-ui'
+import FavoriteIcon from '@material-ui/icons/Favorite'
 import React, { FC, useEffect, useState } from 'react'
 
 import { MostCooked, Recipe } from '../../../../model/model'
@@ -35,12 +35,14 @@ export const RecipeResultCookCounter: FC<Pick<Recipe, 'name'>> = ({ name }) => {
             .catch(console.error)
     }
 
+    if (!user) return <></>
+
     return (
-        <Tooltip title="Gekocht Zähler erhöhen">
+        <Tooltip title={disabled ? 'Zähler erhöht' : 'Gekocht Zähler erhöhen'}>
             <div>
-                <IconButton disabled={disabled || !user} onClick={handleClick}>
+                <IconButton disabled={disabled} onClick={handleClick}>
                     <BadgeWrapper badgeContent={numberOfCooks}>
-                        <BookPlus color={disabled ? 'primary' : 'inherit'} />
+                        <FavoriteIcon color={disabled ? 'primary' : 'error'} />
                     </BadgeWrapper>
                 </IconButton>
             </div>

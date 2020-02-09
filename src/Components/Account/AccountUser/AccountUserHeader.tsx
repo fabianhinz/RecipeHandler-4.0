@@ -19,13 +19,13 @@ import {
 import DynamicThemeIcon from '@material-ui/icons/BrightnessAutoRounded'
 import LightThemeIcon from '@material-ui/icons/BrightnessHighRounded'
 import DarkThemeIcon from '@material-ui/icons/BrightnessLowRounded'
+import FavoriteIcon from '@material-ui/icons/Favorite'
 import NotificationsOffIcon from '@material-ui/icons/NotificationsOffRounded'
 import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
 import SearchIcon from '@material-ui/icons/SearchRounded'
 import TimelapseIcon from '@material-ui/icons/TimelapseRounded'
 import TimelineIcon from '@material-ui/icons/TimelineRounded'
 import {
-    BookPlus,
     CameraImage,
     CloudOffOutline,
     CloudSync,
@@ -49,12 +49,12 @@ const useStyles = makeStyles(theme =>
                 height: 180,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 225,
-                height: 225,
+                width: 250,
+                height: 250,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 300,
-                height: 300,
+                width: 325,
+                height: 325,
             },
         },
         actionArea: {
@@ -140,7 +140,7 @@ const UserStettings = ({ user, onUserSettingChange, showInfo }: UserSettingsProp
         <Divider variant="inset" />
         <ListItem button onClick={onUserSettingChange('showMostCooked')}>
             <ListItemIcon>
-                <BookPlus />
+                <FavoriteIcon />
             </ListItemIcon>
             <ListItemText
                 primary="Am häufigsten gekochte Rezepte"

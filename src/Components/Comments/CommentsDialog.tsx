@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme =>
         },
         dialogContent: {
             padding: theme.spacing(3),
+            paddingRight: theme.spacing(4),
         },
     })
 )
@@ -147,7 +148,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                 {name}
             </DialogTitle>
             <DialogContent className={classes.dialogContent}>
-                <Grid alignItems="flex-end" direction="column" wrap="nowrap" container spacing={3}>
+                <Grid alignItems="flex-end" direction="column" wrap="nowrap" container spacing={4}>
                     {loading
                         ? new Array(numberOfComments).fill(1).map((_skeleton, index) => (
                               <Grid item key={index}>

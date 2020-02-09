@@ -50,6 +50,10 @@ export interface Comment extends Editor {
     comment: string
 }
 
+export interface CommentReaction extends Editor, CreatedDate {
+    emoji: string
+}
+
 export interface Trial extends CommentsDocument {
     editorUid: string
     fullPath: string
