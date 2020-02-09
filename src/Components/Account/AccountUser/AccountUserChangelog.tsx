@@ -3,7 +3,6 @@ import {
     createStyles,
     Dialog,
     DialogActions,
-    DialogContent,
     DialogTitle,
     ExpansionPanel,
     ExpansionPanelDetails,
@@ -16,7 +15,7 @@ import {
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/CloseTwoTone'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import TimelineIcon from '@material-ui/icons/TimelineRounded'
+import UpdateIconRounded from '@material-ui/icons/UpdateRounded'
 import React, { useEffect, useState } from 'react'
 
 import { Issue, Pullrequest } from '../../../model/model'
@@ -51,7 +50,6 @@ const AccountUserChangelog = () => {
     const [issues, setIssues] = useState<Issue[]>([])
     const [openChangelog, setOpenChangelog] = useState(false)
     const classes = useStyles()
-    const [expanded, setExpanded] = useState<string | false>(false)
 
     useEffect(
         () =>
@@ -77,15 +75,11 @@ const AccountUserChangelog = () => {
     const relatingIssues = (pullrequest: Pullrequest) =>
         issues.filter(issue => pullrequest.issueNumbers?.includes(issue.number.toString()))
 
-    const handleChange = (pr: string) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
-        setExpanded(isExpanded ? pr : false)
-    }
-
     return (
         <>
             <Chip
                 onClick={() => setOpenChangelog(true)}
-                icon={<TimelineIcon />}
+                icon={<UpdateIconRounded />}
                 label={__VERSION__}
                 color={pullrequests[0]?.shortSha === __VERSION__ ? 'default' : 'secondary'}
             />
@@ -96,64 +90,57 @@ const AccountUserChangelog = () => {
                 keepMounted
                 TransitionComponent={SlideUp}>
                 <DialogTitle>Changelog</DialogTitle>
-                <DialogContent>
-                    {pullrequests.map(pr => (
-                        <ExpansionPanel
-                            key={pr.shortSha}
-                            expanded={expanded === pr.shortSha}
-                            onChange={handleChange(pr.shortSha)}>
-                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography className={classes.expansionPanelHeaderVersion}>
-                                    <Chip
-                                        label={pr.shortSha}
-                                        color={pr.shortSha === __VERSION__ ? 'primary' : 'default'}
-                                    />
+                {pullrequests.map(pr => (
+                    <ExpansionPanel key={pr.shortSha}>
+                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                            <Chip
+                                label={pr.shortSha}
+                                color={pr.shortSha === __VERSION__ ? 'primary' : 'default'}
+                            />
+                            <Typography className={classes.expansionPanelHeaderTitle}>
+                                {pr.title}
+                            </Typography>
+                            <Typography>{pr.closedAt.toDate().toLocaleDateString()}</Typography>
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails>
+                            <div>
+                                <Typography gutterBottom>{pr.creator}</Typography>
+                                <Typography gutterBottom>
+                                    {pr.closedAt.toDate().toLocaleDateString()}
+                                    {', '}
+                                    {pr.closedAt.toDate().toLocaleTimeString()} Uhr
                                 </Typography>
-                                <Typography className={classes.expansionPanelHeaderTitle}>
-                                    {pr.title}
-                                </Typography>
-                                <Typography>{pr.closedAt.toDate().toLocaleDateString()}</Typography>
-                            </ExpansionPanelSummary>
-                            <ExpansionPanelDetails>
-                                <div>
-                                    <Typography gutterBottom>{pr.creator}</Typography>
-                                    <Typography gutterBottom>
-                                        {pr.closedAt.toDate().toLocaleDateString()}
-                                        {', '}
-                                        {pr.closedAt.toDate().toLocaleTimeString()} Uhr
-                                    </Typography>
-                                    <List>
-                                        {relatingIssues(pr).map(issue => (
-                                            <ListItem key={issue.number}>
-                                                <Typography
-                                                    className={
-                                                        classes.expansionPanelContentIssueNumber
-                                                    }>
-                                                    {issue.number}
-                                                </Typography>
-                                                <Typography
-                                                    className={classes.expansionPanelContentIssues}>
-                                                    {issue.title}
-                                                </Typography>
-                                                {issue.labels.map(label => (
-                                                    <Chip
-                                                        key={issue.number + label.name}
-                                                        label={label.name}
-                                                        style={{
-                                                            backgroundColor: '#' + label.color,
-                                                            margin: '2px',
-                                                            height: '20px',
-                                                        }}
-                                                    />
-                                                ))}
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </div>
-                            </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                    ))}
-                </DialogContent>
+                                <List>
+                                    {relatingIssues(pr).map(issue => (
+                                        <ListItem key={issue.number}>
+                                            <Typography
+                                                className={
+                                                    classes.expansionPanelContentIssueNumber
+                                                }>
+                                                {issue.number}
+                                            </Typography>
+                                            <Typography
+                                                className={classes.expansionPanelContentIssues}>
+                                                {issue.title}
+                                            </Typography>
+                                            {issue.labels.map(label => (
+                                                <Chip
+                                                    key={issue.number + label.name}
+                                                    label={label.name}
+                                                    style={{
+                                                        backgroundColor: '#' + label.color,
+                                                        margin: '2px',
+                                                        height: '20px',
+                                                    }}
+                                                />
+                                            ))}
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </div>
+                        </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                ))}
                 <DialogActions>
                     <IconButton onClick={() => setOpenChangelog(false)}>
                         <CloseIcon />
