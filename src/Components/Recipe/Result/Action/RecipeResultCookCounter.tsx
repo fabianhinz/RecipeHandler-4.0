@@ -37,13 +37,13 @@ export const RecipeResultCookCounter: FC<Pick<Recipe, 'name'>> = ({ name }) => {
 
     return (
         <Tooltip title="Gekocht Zähler erhöhen">
-            <span>
+            <div>
                 <IconButton disabled={disabled || !user} onClick={handleClick}>
                     <BadgeWrapper badgeContent={numberOfCooks}>
                         <BookPlus color={disabled ? 'primary' : 'inherit'} />
                     </BadgeWrapper>
                 </IconButton>
-            </span>
+            </div>
         </Tooltip>
     )
 }

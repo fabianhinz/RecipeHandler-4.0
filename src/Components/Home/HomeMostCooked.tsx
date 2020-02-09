@@ -2,6 +2,7 @@ import {
     CardActionArea,
     createStyles,
     Grid,
+    IconButton,
     makeStyles,
     Paper,
     Typography,
@@ -25,10 +26,13 @@ import {
     teal,
     yellow,
 } from '@material-ui/core/colors'
+import { ChevronLeft, ChevronRight } from 'mdi-material-ui'
 import React, { memo, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { DocumentId, MostCooked } from '../../model/model'
+import elementIdService from '../../services/elementIdService'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
@@ -79,12 +83,6 @@ interface StyleProps {
 
 const useMostCookedPaperStyles = makeStyles(theme =>
     createStyles({
-        mostCookedGridContainer: {
-            overflowX: 'auto',
-            '&::-webkit-scrollbar': {
-                display: 'none',
-            },
-        },
         paper: {
             padding: theme.spacing(2),
             backgroundColor: (props: StyleProps) => props.backgroundColor,
@@ -132,7 +130,7 @@ const MostCookedPaper = ({ recipeName, counter, index }: MostCookedPaperProps) =
 const useHomeMostCookedStyles = makeStyles(theme =>
     createStyles({
         mostCookedGridContainer: {
-            overflowX: 'auto',
+            overflowX: 'hidden',
             '&::-webkit-scrollbar': {
                 display: 'none',
             },
@@ -143,13 +141,22 @@ const useHomeMostCookedStyles = makeStyles(theme =>
 type MostCookedMap = Map<DocumentId, MostCooked<number>>
 
 const MOST_COOKED_LIMIT = 10
+const MOST_COOKED_CONTAIER_ID = elementIdService.getId()
 
 const HomeMostCooked = () => {
     const [mostCooked, setMostCooked] = useState<MostCookedMap>(new Map())
+    const [containerScrollLeft, setContainerScrollLeft] = useState(0)
+    const [scrollRightDisabled, setScrollRightDisabled] = useState(false)
+
+    const containerRef = useRef<any | undefined>()
 
     const classes = useHomeMostCookedStyles()
 
     const { user } = useFirebaseAuthContext()
+    const { IntersectionObserverTrigger } = useIntersectionObserver({
+        onIsIntersecting: () => setScrollRightDisabled(true),
+        onLeave: () => setScrollRightDisabled(false),
+    })
 
     useEffect(() => {
         if (user && !user.showMostCooked) return
@@ -167,16 +174,48 @@ const HomeMostCooked = () => {
 
     if (user && !user.showMostCooked) return <></>
 
+    const handleScrollLeft = () => {
+        ;(containerRef.current as HTMLDivElement).scroll({
+            left: containerScrollLeft - 300,
+            behavior: 'smooth',
+        })
+        setContainerScrollLeft(prev => prev - 300)
+    }
+
+    const handleScrollRight = () => {
+        ;(containerRef.current as HTMLDivElement).scroll({
+            left: containerScrollLeft + 300,
+            behavior: 'smooth',
+        })
+        setContainerScrollLeft(prev => prev + 300)
+    }
+
     return (
         <>
-            <Grid item>
+            <Grid item xs={6}>
                 <Typography variant="h4">Am häufigsten gekocht</Typography>
+            </Grid>
+            <Grid item>
+                <Grid container spacing={1} justify="flex-end" wrap="nowrap">
+                    <Grid item>
+                        <IconButton disabled={containerScrollLeft === 0} onClick={handleScrollLeft}>
+                            <ChevronLeft />
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        <IconButton disabled={scrollRightDisabled} onClick={handleScrollRight}>
+                            <ChevronRight />
+                        </IconButton>
+                    </Grid>
+                </Grid>
             </Grid>
             <Grid item xs={12}>
                 <Grid
+                    ref={containerRef}
                     className={classes.mostCookedGridContainer}
                     container
                     spacing={3}
+                    id={MOST_COOKED_CONTAIER_ID}
                     wrap="nowrap">
                     {[...mostCooked.entries()].map(([recipeName, counter], index) => (
                         <MostCookedPaper
@@ -186,6 +225,7 @@ const HomeMostCooked = () => {
                             index={index}
                         />
                     ))}
+                    {mostCooked.size > 0 && <IntersectionObserverTrigger />}
                     <Skeletons
                         variant="cookCounter"
                         visible={mostCooked.size === 0}
