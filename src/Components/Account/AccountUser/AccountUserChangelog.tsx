@@ -55,7 +55,6 @@ const AccountUserChangelog = () => {
     const { isDialogFullscreen } = useBreakpointsContext()
 
     useEffect(() => {
-        if (!changelogOpen) return
         setLoading(true)
         return FirebaseService.firestore
             .collection('pullrequests')
@@ -64,7 +63,7 @@ const AccountUserChangelog = () => {
                 setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
                 setLoading(false)
             })
-    }, [changelogOpen])
+    }, [])
 
     useEffect(() => {
         if (!changelogOpen) return
@@ -85,7 +84,11 @@ const AccountUserChangelog = () => {
                 onClick={() => setChangelogOpen(true)}
                 icon={<UpdateIconRounded />}
                 label={__VERSION__}
-                color={pullrequests[0]?.shortSha === __VERSION__ ? 'default' : 'secondary'}
+                color={
+                    pullrequests.length > 0 && pullrequests[0]?.shortSha !== __VERSION__
+                        ? 'secondary'
+                        : 'default'
+                }
             />
             <Dialog
                 fullScreen={isDialogFullscreen}
