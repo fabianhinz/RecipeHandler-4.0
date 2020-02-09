@@ -20,6 +20,7 @@ type SettingKeys = keyof Pick<
     | 'muiTheme'
     | 'selectedUsers'
     | 'showRecentlyAdded'
+    | 'showMostCooked'
     | 'notifications'
     | 'algoliaAdvancedSyntax'
     | 'bookmarkSync'
@@ -79,6 +80,10 @@ const AccountUser = () => {
             }
             case 'showRecentlyAdded': {
                 userDoc.update({ [key]: !user.showRecentlyAdded })
+                break
+            }
+            case 'showMostCooked': {
+                userDoc.update({ [key]: !user.showMostCooked })
                 break
             }
             case 'notifications': {

@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 import { stopPropagationProps } from '../../../../util/constants'
 import { Comments } from '../../../Comments/Comments'
 import { RecipeResultBookmark } from './RecipeResultBookmark'
-import { RecipeResultCookCounter } from './RecipeResultRating'
+import { RecipeResultCookCounter } from './RecipeResultCookCounter'
 import { RecipeResultShare } from './RecipeResultShare'
 
 export type RecipeVariants = { variant: 'details' | 'preview' | 'related' }

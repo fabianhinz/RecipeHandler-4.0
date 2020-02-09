@@ -78,6 +78,7 @@ export type User = {
     muiTheme: PaletteType | 'dynamic'
     selectedUsers: string[]
     showRecentlyAdded: boolean
+    showMostCooked: boolean
     notifications: boolean
     admin?: boolean
     profilePicture?: string
@@ -110,4 +111,8 @@ export interface Metadata {
 
 export interface FirestoreDocPath {
     docPath: string
+}
+
+export interface MostCooked<T> {
+    value: T
 }

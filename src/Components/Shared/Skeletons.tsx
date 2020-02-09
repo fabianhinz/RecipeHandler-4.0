@@ -5,14 +5,14 @@ import React from 'react'
 import { useGridContext } from '../Provider/GridProvider'
 
 interface Props {
-    variant: 'home' | 'trial'
+    variant: 'recipe' | 'trial' | 'cookCounter'
     visible: boolean
     numberOfSkeletons?: number
 }
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        home: {
+        recipe: {
             [theme.breakpoints.down('sm')]: {
                 height: 120 + 57,
             },
@@ -33,6 +33,10 @@ const useStyles = makeStyles(theme =>
             [theme.breakpoints.up('xl')]: {
                 height: 383,
             },
+        },
+        cookCounter: {
+            height: 64,
+            minWidth: 150,
         },
     })
 )
