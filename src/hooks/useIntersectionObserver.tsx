@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import ElementIdService from '../services/elementIdService'
 
@@ -7,11 +7,11 @@ interface useIntersectionObserverOptions {
     onLeave?: () => void
 }
 
-const intersectionObserverId = ElementIdService.getId()
-
 const useIntersectionObserver = ({ onIsIntersecting, onLeave }: useIntersectionObserverOptions) => {
+    const idRef = useRef(ElementIdService.getId())
+
     useEffect(() => {
-        const trigger = document.getElementById(intersectionObserverId)
+        const trigger = document.getElementById(idRef.current)
         if (!trigger) return
 
         const observer = new IntersectionObserver(entries => {
@@ -25,7 +25,7 @@ const useIntersectionObserver = ({ onIsIntersecting, onLeave }: useIntersectionO
     }, [onIsIntersecting, onLeave])
 
     return {
-        IntersectionObserverTrigger: () => <div id={intersectionObserverId} />,
+        IntersectionObserverTrigger: () => <div id={idRef.current} />,
     }
 }
 
