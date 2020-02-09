@@ -3,10 +3,12 @@ import {
     createStyles,
     Dialog,
     DialogActions,
+    DialogContent,
     DialogTitle,
     ExpansionPanel,
     ExpansionPanelDetails,
     ExpansionPanelSummary,
+    Grid,
     IconButton,
     List,
     ListItem,
@@ -25,21 +27,9 @@ import { SlideUp } from '../../Shared/Transitions'
 
 const useStyles = makeStyles(() =>
     createStyles({
-        expansionPanelHeaderVersion: {
-            flexBasis: '20%',
-            flexShrink: 0,
-        },
-        expansionPanelHeaderTitle: {
-            flexBasis: '60%',
-            flexShrink: 0,
-        },
-        expansionPanelContentIssues: {
-            flexBasis: '70%',
-            flexShrink: 0,
-        },
-        expansionPanelContentIssueNumber: {
-            flexBasis: '10%',
-            flexShrink: 0,
+        dialogContent: {
+            paddingLeft: 0,
+            paddingRight: 0,
         },
     })
 )
@@ -48,101 +38,137 @@ const AccountUserChangelog = () => {
     const { isDialogFullscreen } = useBreakpointsContext()
     const [pullrequests, setPullrequests] = useState<Pullrequest[]>([])
     const [issues, setIssues] = useState<Issue[]>([])
-    const [openChangelog, setOpenChangelog] = useState(false)
+    const [changelogOpen, setChangelogOpen] = useState(false)
     const classes = useStyles()
 
-    useEffect(
-        () =>
-            FirebaseService.firestore
-                .collection('pullrequests')
-                .orderBy('closedAt', 'desc')
-                .onSnapshot(querySnapshot =>
-                    setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
-                ),
-        []
-    )
+    useEffect(() => {
+        if (!changelogOpen) return
 
-    useEffect(
-        () =>
-            FirebaseService.firestore
-                .collection('issues')
-                .onSnapshot(querySnapshot =>
-                    setIssues(querySnapshot.docs.map(doc => doc.data() as Issue))
-                ),
-        []
-    )
+        return FirebaseService.firestore
+            .collection('pullrequests')
+            .orderBy('closedAt', 'desc')
+            .onSnapshot(querySnapshot =>
+                setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
+            )
+    }, [changelogOpen])
 
-    const relatingIssues = (pullrequest: Pullrequest) =>
+    useEffect(() => {
+        if (!changelogOpen) return
+
+        return FirebaseService.firestore
+            .collection('issues')
+            .onSnapshot(querySnapshot =>
+                setIssues(querySnapshot.docs.map(doc => doc.data() as Issue))
+            )
+    }, [changelogOpen])
+
+    const getRelatedIssues = (pullrequest: Pullrequest) =>
         issues.filter(issue => pullrequest.issueNumbers?.includes(issue.number.toString()))
 
     return (
         <>
             <Chip
-                onClick={() => setOpenChangelog(true)}
+                onClick={() => setChangelogOpen(true)}
                 icon={<UpdateIconRounded />}
                 label={__VERSION__}
                 color={pullrequests[0]?.shortSha === __VERSION__ ? 'default' : 'secondary'}
             />
             <Dialog
                 fullScreen={isDialogFullscreen}
-                open={openChangelog}
-                onClose={() => setOpenChangelog(false)}
+                open={changelogOpen}
+                onClose={() => setChangelogOpen(false)}
                 keepMounted
                 TransitionComponent={SlideUp}>
                 <DialogTitle>Changelog</DialogTitle>
-                {pullrequests.map(pr => (
-                    <ExpansionPanel key={pr.shortSha}>
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                            <Chip
-                                label={pr.shortSha}
-                                color={pr.shortSha === __VERSION__ ? 'primary' : 'default'}
-                            />
-                            <Typography className={classes.expansionPanelHeaderTitle}>
-                                {pr.title}
-                            </Typography>
-                            <Typography>{pr.closedAt.toDate().toLocaleDateString()}</Typography>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            <div>
-                                <Typography gutterBottom>{pr.creator}</Typography>
-                                <Typography gutterBottom>
-                                    {pr.closedAt.toDate().toLocaleDateString()}
-                                    {', '}
-                                    {pr.closedAt.toDate().toLocaleTimeString()} Uhr
-                                </Typography>
-                                <List>
-                                    {relatingIssues(pr).map(issue => (
-                                        <ListItem key={issue.number}>
-                                            <Typography
-                                                className={
-                                                    classes.expansionPanelContentIssueNumber
-                                                }>
-                                                {issue.number}
-                                            </Typography>
-                                            <Typography
-                                                className={classes.expansionPanelContentIssues}>
-                                                {issue.title}
-                                            </Typography>
-                                            {issue.labels.map(label => (
+                <DialogContent className={classes.dialogContent}>
+                    {pullrequests.map(pr => (
+                        <ExpansionPanel key={pr.shortSha}>
+                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                <Grid
+                                    container
+                                    alignItems="center"
+                                    justify="space-between"
+                                    spacing={1}>
+                                    <Grid item xs={12} sm={9}>
+                                        <Grid container alignItems="center" spacing={3}>
+                                            <Grid item xs={4} sm={3}>
                                                 <Chip
-                                                    key={issue.number + label.name}
-                                                    label={label.name}
-                                                    style={{
-                                                        backgroundColor: '#' + label.color,
-                                                        margin: '2px',
-                                                        height: '20px',
-                                                    }}
+                                                    label={pr.shortSha}
+                                                    color={
+                                                        pr.shortSha === __VERSION__
+                                                            ? 'primary'
+                                                            : 'default'
+                                                    }
                                                 />
-                                            ))}
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </div>
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                ))}
+                                            </Grid>
+                                            <Grid item xs={8} sm={9}>
+                                                <Typography>{pr.title}</Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography>
+                                            {pr.closedAt.toDate().toLocaleDateString()}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </ExpansionPanelSummary>
+                            <ExpansionPanelDetails>
+                                <Grid container alignItems="center" spacing={3}>
+                                    <Grid item>
+                                        <Typography>{pr.creator}</Typography>
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography>
+                                            {pr.closedAt.toDate().toLocaleString()} Uhr
+                                        </Typography>
+                                    </Grid>
+                                    {getRelatedIssues.length > 0 && (
+                                        <Grid item xs={12}>
+                                            <List>
+                                                {getRelatedIssues(pr).map(issue => (
+                                                    <ListItem key={issue.number}>
+                                                        <Grid container spacing={1}>
+                                                            <Grid item xs={2} sm={1}>
+                                                                <Typography>
+                                                                    {issue.number}
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item xs={10} sm={8}>
+                                                                <Typography>
+                                                                    {issue.title}
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item xs={12} sm={3}>
+                                                                {issue.labels.map(label => (
+                                                                    <Chip
+                                                                        key={
+                                                                            issue.number +
+                                                                            label.name
+                                                                        }
+                                                                        label={label.name}
+                                                                        style={{
+                                                                            backgroundColor:
+                                                                                '#' + label.color,
+                                                                            margin: '2px',
+                                                                            height: '20px',
+                                                                        }}
+                                                                    />
+                                                                ))}
+                                                            </Grid>
+                                                        </Grid>
+                                                    </ListItem>
+                                                ))}
+                                            </List>
+                                        </Grid>
+                                    )}
+                                </Grid>
+                            </ExpansionPanelDetails>
+                        </ExpansionPanel>
+                    ))}
+                </DialogContent>
                 <DialogActions>
-                    <IconButton onClick={() => setOpenChangelog(false)}>
+                    <IconButton onClick={() => setChangelogOpen(false)}>
                         <CloseIcon />
                     </IconButton>
                 </DialogActions>
