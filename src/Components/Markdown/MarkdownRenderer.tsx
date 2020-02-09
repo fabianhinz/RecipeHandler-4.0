@@ -14,16 +14,18 @@ import {
     TableCell,
     TableHead,
     TableRow,
+    Tooltip,
 } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircleTwoTone'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircleTwoTone'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown'
 import { useRouteMatch } from 'react-router-dom'
 
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PATHS } from '../Routes/Routes'
+import { GrowIn } from '../Shared/Transitions'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -51,8 +53,6 @@ interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
 }
 // ToDo handle ordered and unordered List in same Renderer
 const MarkdownRenderer = (props: Props) => {
-    const [updatingList, setUpdatingList] = useState(false)
-
     const { user, shoppingList } = useFirebaseAuthContext()
     const match = useRouteMatch()
     const classes = useStyles()
@@ -83,8 +83,6 @@ const MarkdownRenderer = (props: Props) => {
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
-        setUpdatingList(true)
-
         let grocery = renderPropsToGrocery(children)
         if (!grocery || !props.recipeName || !shoppingListDocRef) return
 
@@ -96,8 +94,6 @@ const MarkdownRenderer = (props: Props) => {
 
         if (list.length === 0) await shoppingListDocRef.delete()
         else await shoppingListDocRef.set({ list }, { merge: true })
-
-        setUpdatingList(false)
     }
 
     return (
@@ -121,19 +117,26 @@ const MarkdownRenderer = (props: Props) => {
                             </ListItemAvatar>
                         ) : (
                             <ListItemIcon>
-                                <Checkbox
-                                    icon={<AddCircleIcon />}
-                                    checkedIcon={<RemoveCircleIcon />}
-                                    checked={checkboxChecked(renderProps.children)}
-                                    onChange={handleCheckboxChange(renderProps.children)}
-                                    classes={{ root: classes.checkboxRoot }}
-                                    disabled={
-                                        (match.path !== PATHS.details() &&
-                                            match.path !== PATHS.bookmarks) ||
-                                        updatingList ||
-                                        !user
-                                    }
-                                />
+                                <Tooltip
+                                    TransitionComponent={GrowIn}
+                                    title={
+                                        checkboxChecked(renderProps.children)
+                                            ? 'Von der Einkaufsliste entfernen'
+                                            : 'Zur Einkaufsliste hinzufügen'
+                                    }>
+                                    <Checkbox
+                                        icon={<AddCircleIcon />}
+                                        checkedIcon={<RemoveCircleIcon />}
+                                        checked={checkboxChecked(renderProps.children)}
+                                        onChange={handleCheckboxChange(renderProps.children)}
+                                        classes={{ root: classes.checkboxRoot }}
+                                        disabled={
+                                            (match.path !== PATHS.details() &&
+                                                match.path !== PATHS.bookmarks) ||
+                                            !user
+                                        }
+                                    />
+                                </Tooltip>
                             </ListItemIcon>
                         )}
                         <ListItemText primary={renderProps.children} />

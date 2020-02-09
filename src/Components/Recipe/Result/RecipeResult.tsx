@@ -4,20 +4,20 @@ import BookIcon from '@material-ui/icons/BookTwoTone'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { memo } from 'react'
 
-import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
+import { Recipe } from '../../../model/model'
 import AccountChip from '../../Account/AccountChip'
+import Attachments from '../../Attachments/Attachments'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
 import { useGridContext } from '../../Provider/GridProvider'
 import Satisfaction from '../../Satisfaction/Satisfaction'
 import NotFound from '../../Shared/NotFound'
 import StyledCard from '../../Shared/StyledCard'
 import { RecipeVariants } from './Action/RecipeResultAction'
-import RecipeResultAttachments from './RecipeResultAttachments'
 import RecipeResultHeader from './RecipeResultHeader'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
 interface RecipeResultProps extends RecipeVariants {
-    recipe: Recipe<AttachmentMetadata | AttachmentData> | null
+    recipe: Recipe | null
     divider?: boolean
 }
 
@@ -45,9 +45,9 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 <Divider />
             </Grid>
 
-            {recipe.attachments.length !== 0 && (
+            {variant !== 'preview' && (
                 <Grid item xs={12}>
-                    <RecipeResultAttachments attachments={recipe.attachments} />
+                    <Attachments recipeName={recipe.name} />
                 </Grid>
             )}
 
@@ -84,7 +84,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
             {variant !== 'preview' && (
                 <Grid xs={12} item>
-                    <Satisfaction recipeName={recipe.name} transitionOrder={4} />
+                    <Satisfaction recipeName={recipe.name} />
                 </Grid>
             )}
 

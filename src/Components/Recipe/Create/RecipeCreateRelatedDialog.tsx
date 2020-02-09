@@ -17,7 +17,7 @@ import clsx from 'clsx'
 import React, { FC, useEffect, useState } from 'react'
 
 import useDebounce from '../../../hooks/useDebounce'
-import { RecipeDocument } from '../../../model/model'
+import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { BORDER_RADIUS } from '../../../theme'
 import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
@@ -70,7 +70,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
     currentRecipeName,
     defaultValues,
 }) => {
-    const [recipes, setRecipes] = useState<Array<RecipeDocument>>([])
+    const [recipes, setRecipes] = useState<Array<Recipe>>([])
     const [selected, setSelected] = useState<Set<string>>(new Set(defaultValues))
     const [searchValue, setSearchValue] = useState('')
     const [loading, setLoading] = useState(false)
@@ -92,7 +92,7 @@ export const RecipeCreateRelatedDialog: FC<RecipeCreateRelatedDialogProps> = ({
         const handleSnapshot = (querySnapshot: firebase.firestore.QuerySnapshot) => {
             setRecipes(
                 querySnapshot.docs
-                    .map(doc => doc.data() as RecipeDocument)
+                    .map(doc => doc.data() as Recipe)
                     .filter(recipe => recipe.name !== currentRecipeName)
             )
             setLoading(false)

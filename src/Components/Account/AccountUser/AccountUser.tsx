@@ -29,7 +29,7 @@ export type UserSettingChangeHandler = (key: SettingKeys) => (uid?: any) => void
 
 const AccountUser = () => {
     // ? we won't load this component without an existing user - pinky promise -_-
-    const { user, shoppingList } = useFirebaseAuthContext() as {
+    const { user } = useFirebaseAuthContext() as {
         user: User
         shoppingList: ShoppingList
     }
@@ -115,11 +115,9 @@ const AccountUser = () => {
                     />
                 </Grid>
 
-                {shoppingList.size > 0 && (
-                    <Grid item {...gridBreakpointProps}>
-                        <AccountUserShoppingList />
-                    </Grid>
-                )}
+                <Grid item {...gridBreakpointProps}>
+                    <AccountUserShoppingList />
+                </Grid>
 
                 <Grid item {...gridBreakpointProps}>
                     <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />

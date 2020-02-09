@@ -12,9 +12,8 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
-import { DataUrls, getResizedImages } from '../../hooks/useAttachmentRef'
-import { getTransitionTimeoutProps } from '../../hooks/useTransition'
-import { Trial } from '../../model/model'
+import { getResizedImagesWithMetadata } from '../../hooks/useAttachment'
+import { AllDataUrls, Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
@@ -47,7 +46,8 @@ interface Props {
 
 const TrialsCard = ({ trial, index }: Props) => {
     const [deleteAlert, setDeleteAlert] = useState(false)
-    const [dataUrls, setDataUrls] = useState<DataUrls | undefined>()
+    const [dataUrls, setDataUrls] = useState<AllDataUrls | undefined>()
+
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
@@ -57,9 +57,12 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     useEffect(() => {
         let mounted = true
-        getResizedImages(trial.fullPath).then(urls => {
-            if (mounted) setDataUrls(urls)
-        })
+        getResizedImagesWithMetadata(trial.fullPath).then(
+            ({ fullDataUrl, mediumDataUrl, smallDataUrl }) => {
+                if (!mounted) return
+                setDataUrls({ fullDataUrl, mediumDataUrl, smallDataUrl })
+            }
+        )
         return () => {
             mounted = false
         }
@@ -89,7 +92,7 @@ const TrialsCard = ({ trial, index }: Props) => {
                     <CardActionArea
                         disabled={!dataUrls}
                         onClick={() => {
-                            if (dataUrls) setSelectedAttachment(dataUrls.fullDataUrl)
+                            if (dataUrls) setSelectedAttachment({ dataUrl: dataUrls.fullDataUrl })
                         }}>
                         <CardMedia
                             image={dataUrls && dataUrls.mediumDataUrl}
@@ -100,7 +103,7 @@ const TrialsCard = ({ trial, index }: Props) => {
                     </CardActionArea>
 
                     {user && (
-                        <Slide direction="up" in timeout={getTransitionTimeoutProps(++index)}>
+                        <Slide direction="up" in>
                             <Grid
                                 container
                                 justify="flex-end"

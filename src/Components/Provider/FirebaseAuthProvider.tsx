@@ -6,14 +6,14 @@ import { ShoppingList, ShoppingTracker, User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 
 interface AuthContext {
-    user: User | null
+    user: User | undefined
     shoppingList: ShoppingList
     shoppingTracker: ShoppingTracker
     loginEnabled: boolean
 }
 
 const Context = React.createContext<AuthContext>({
-    user: null,
+    user: undefined,
     shoppingList: new Map(),
     shoppingTracker: new Map(),
     loginEnabled: false,
@@ -56,7 +56,7 @@ let shoppingListUnsubscribe: any = undefined
 const FirebaseAuthProvider: FC = ({ children }) => {
     const [authReady, setAuthReady] = useState(false)
     const [loginEnabled, setLoginEnabled] = useState(false)
-    const [user, setUser] = useState<User | null>(null)
+    const [user, setUser] = useState<User | undefined>()
     const [shoppingList, setShoppingList] = useState<ShoppingList>(new Map())
     const [shoppingTracker, setShoppingTracker] = useState<ShoppingTracker>(new Map())
 
@@ -66,7 +66,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
         if (user) {
             setAuthReady(true)
             if (user.isAnonymous) {
-                setUser(null)
+                setUser(undefined)
                 setLoginEnabled(true)
                 FirebaseService.analytics.setUserId(`Anonymous - ${user.uid}`)
             } else {
@@ -136,7 +136,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
                 <div className={classes.auth}>
                     <Avatar className={classes.avatar}>
                         <FirebaseIcon height="100%" />
-                        <CircularProgress size={130} className={classes.progress} />
+                        <CircularProgress disableShrink size={130} className={classes.progress} />
                     </Avatar>
                 </div>
             )}

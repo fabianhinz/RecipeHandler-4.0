@@ -2,7 +2,7 @@ import { createStyles, Grid, makeStyles, Typography } from '@material-ui/core'
 import { CalendarMonth } from 'mdi-material-ui'
 import React from 'react'
 
-import { AttachmentData, AttachmentMetadata, Recipe } from '../../../model/model'
+import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { CategoryResult } from '../../Category/CategoryResult'
 import { Navigate } from '../../Routes/Navigate'
@@ -10,7 +10,7 @@ import { PATHS } from '../../Routes/Routes'
 import { RecipeResultAction, RecipeVariants } from './Action/RecipeResultAction'
 
 interface Props extends RecipeVariants {
-    recipe: Recipe<AttachmentMetadata | AttachmentData>
+    recipe: Recipe
 }
 
 const useStyles = makeStyles(() =>

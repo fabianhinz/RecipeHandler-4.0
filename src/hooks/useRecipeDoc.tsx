@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 
-import { AttachmentMetadata, Recipe, RouteWithRecipeName } from '../model/model'
+import { Recipe, RouteWithRecipeName } from '../model/model'
 import { FirebaseService } from '../services/firebase'
 
-type RecipesCollectionState = { loading: boolean; recipe: Recipe<AttachmentMetadata> | null }
+type RecipesCollectionState = { loading: boolean; recipe: Recipe | null }
 type RecipeLocation = Pick<RecipesCollectionState, 'recipe'>
 
 export const useRecipeDoc = (options: {
@@ -33,7 +33,7 @@ export const useRecipeDoc = (options: {
                         if (!mounted) return
                         setState({
                             loading: false,
-                            recipe: documentSnapshot.data() as Recipe<AttachmentMetadata>,
+                            recipe: documentSnapshot.data() as Recipe,
                         })
                     })
             }
@@ -46,7 +46,7 @@ export const useRecipeDoc = (options: {
                     if (!mounted) return
                     setState({
                         loading: false,
-                        recipe: documentSnapshot.data() as Recipe<AttachmentMetadata>,
+                        recipe: documentSnapshot.data() as Recipe,
                     })
                 })
         }

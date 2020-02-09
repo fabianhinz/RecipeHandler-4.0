@@ -1,13 +1,10 @@
 import { createStyles, makeStyles } from '@material-ui/core'
-import CameraIcon from '@material-ui/icons/CameraTwoTone'
 import SpeedDialIcon from '@material-ui/icons/ClassRounded'
 import EyeIcon from '@material-ui/icons/RemoveRedEyeTwoTone'
 import SaveIcon from '@material-ui/icons/SaveTwoTone'
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
 import { SpeedDial, SpeedDialAction } from '@material-ui/lab'
 import React, { useState } from 'react'
-
-import { DropzoneProps } from './Attachments/useAttachmentDropzone'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -20,13 +17,13 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface Props extends DropzoneProps {
+interface Props {
     onRelated: () => void
     onPreview: () => void
     onSave: () => void
 }
 
-const RecipeCreateSpeedDial = ({ onRelated, onPreview, onSave, dropzoneProps }: Props) => {
+const RecipeCreateSpeedDial = ({ onRelated, onPreview, onSave }: Props) => {
     const [speedDialOpen, setSpeedDialOpen] = useState(false)
     const classes = useStyles()
 
@@ -40,17 +37,6 @@ const RecipeCreateSpeedDial = ({ onRelated, onPreview, onSave, dropzoneProps }: 
             onClose={() => setSpeedDialOpen(false)}
             icon={<SpeedDialIcon />}
             openIcon={<SpeedDialIcon />}>
-            <SpeedDialAction
-                {...dropzoneProps.getRootProps()}
-                icon={
-                    <>
-                        <input {...dropzoneProps.getInputProps()} />
-                        <CameraIcon />
-                    </>
-                }
-                FabProps={{ size: 'medium' }}
-                tooltipTitle="Bilder hinzufügen"
-            />
             <SpeedDialAction
                 onClick={onRelated}
                 tooltipTitle="Passt gut zu bearbeiten"

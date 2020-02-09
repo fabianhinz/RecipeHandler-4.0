@@ -9,7 +9,6 @@ import { isSafari } from '../util/constants'
 import Footer from './Footer'
 import Header from './Header'
 import Main from './Main'
-import AnimationProvider from './Provider/AnimationProvider'
 import BookmarkProvider from './Provider/BookmarkProvider'
 import { useBreakpointsContext } from './Provider/BreakpointsProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
@@ -18,6 +17,7 @@ import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import GridProvider from './Provider/GridProvider'
 import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
+import SwipeableAttachmentProvider from './Provider/SwipeableAttachmentProvider'
 import UsersProvider from './Provider/UsersProvider'
 import Container from './Shared/Container'
 
@@ -28,9 +28,9 @@ const AppProvider: FC = ({ children }) => (
                 <CategoriesCollectionProvider>
                     <GridProvider>
                         <SelectedAttachementProvider>
-                            <AnimationProvider>
+                            <SwipeableAttachmentProvider>
                                 <BookmarkProvider>{children}</BookmarkProvider>
-                            </AnimationProvider>
+                            </SwipeableAttachmentProvider>
                         </SelectedAttachementProvider>
                     </GridProvider>
                 </CategoriesCollectionProvider>
