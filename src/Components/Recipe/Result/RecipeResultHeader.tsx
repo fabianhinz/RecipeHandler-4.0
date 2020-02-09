@@ -29,7 +29,7 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
 
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">
-            <Grid item xs={variant === 'related' ? 12 : 8}>
+            <Grid item xs={variant === 'related' ? 12 : 7} md={variant === 'related' ? 12 : 8}>
                 <Grid container spacing={1} direction="column" justify="center">
                     <Grid item>
                         <Navigate
@@ -61,7 +61,7 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
                 </Grid>
             </Grid>
             {variant === 'details' && (
-                <Grid item xs={4}>
+                <Grid item xs={5} md={4}>
                     <RecipeResultAction
                         name={recipe.name}
                         numberOfComments={recipe.numberOfComments}

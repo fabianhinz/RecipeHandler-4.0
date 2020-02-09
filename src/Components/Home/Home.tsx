@@ -12,6 +12,7 @@ import { NavigateFab } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
+import HomeMostCooked from './HomeMostCooked'
 import HomeRecentlyAdded from './HomeRecentlyAdded'
 import HomeRecipeCard from './HomeRecipeCard'
 import HomeRecipeSelection from './HomeRecipeSelection'
@@ -81,6 +82,7 @@ const Home = () => {
     return (
         <>
             <Grid container spacing={4} justify="space-between" alignItems="center">
+                <HomeMostCooked />
                 <HomeRecentlyAdded />
                 <HomeRecipeSelection
                     selectedCategories={selectedCategories}
@@ -95,7 +97,7 @@ const Home = () => {
                         ))}
 
                         <Skeletons
-                            variant="home"
+                            variant="recipe"
                             visible={querying && pagedRecipes.size === 0}
                             numberOfSkeletons={
                                 pagedRecipesSize.current > 0 ? pagedRecipesSize.current : 6
@@ -111,7 +113,12 @@ const Home = () => {
                     </Grid>
                 </Grid>
             </Grid>
-            <NavigateFab to={PATHS.recipeCreate} icon={<AddIcon />} />
+
+            <NavigateFab
+                to={PATHS.recipeCreate}
+                icon={<AddIcon />}
+                tooltipTitle="Rezept erstellen"
+            />
         </>
     )
 }

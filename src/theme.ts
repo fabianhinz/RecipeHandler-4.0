@@ -76,6 +76,11 @@ const sharedTheme: Partial<ThemeOptions> = {
                 justifyContent: 'space-evenly',
             },
         },
+        MuiTooltip: {
+            tooltip: {
+                fontSize: '0.725rem',
+            },
+        },
     },
 }
 

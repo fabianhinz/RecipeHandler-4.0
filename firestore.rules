@@ -37,6 +37,11 @@ service cloud.firestore {
         allow write: if isAdmin() || isEditor();
     }
 
+    match /recipes/{recipeName}/comments/{commentId}/reactions/{reactionId} {
+        allow create: if isAdmin() || isEditor();
+        allow update, delete: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
+    }
+
     match /recipes/{recipeName}/satisfaction/{userId} {
         allow write: if userId == request.auth.uid && isEditor()
     }
@@ -46,7 +51,7 @@ service cloud.firestore {
         allow update, delete: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
     }
     
-    match /rating/{recipe} {
+    match /cookCounter/{recipe} {
         allow write: if isAdmin() || isEditor();
     }
     

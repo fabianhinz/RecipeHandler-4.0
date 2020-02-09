@@ -13,13 +13,13 @@ import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
     <ErrorBoundary>
-        <BrowserRouter>
-            <BreakpointsProvider>
-                <FirebaseAuthProvider>
+        <FirebaseAuthProvider>
+            <BrowserRouter>
+                <BreakpointsProvider>
                     <App />
-                </FirebaseAuthProvider>
-            </BreakpointsProvider>
-        </BrowserRouter>
+                </BreakpointsProvider>
+            </BrowserRouter>
+        </FirebaseAuthProvider>
     </ErrorBoundary>,
     document.getElementById('root')
 )

@@ -1,12 +1,12 @@
 import { Avatar, CardActionArea, createStyles, Grid, makeStyles, Zoom } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
-import { AttachmentDoc } from '../../model/model'
+import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
+import { useAttachmentGalleryContext } from '../Provider/AttachmentGalleryProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useSwipeableAttachmentContext } from '../Provider/SwipeableAttachmentProvider'
 import AttachmentPreview from './AttachmentPreview'
 import AttachmentUpload from './AttachmentUpload'
 
@@ -62,23 +62,29 @@ interface RecipeResultAttachmentsProps {
 
 const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
     const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[]>([])
+    const [recipePreview, setRecipePreview] = useState<
+        { smallDataUrl?: string; disabled: boolean } | undefined
+    >()
 
     const classes = useStyles()
 
-    const { handleAnimation } = useSwipeableAttachmentContext()
+    const { handleAnimation } = useAttachmentGalleryContext()
     const { user } = useFirebaseAuthContext()
     const { dropzoneAttachments, dropzoneProps, dropzoneAlert } = useAttachmentDropzone({
         attachmentMaxWidth: 3840,
         attachmentLimit: 5,
     })
 
+    const recipeDocRef = useMemo(
+        () => FirebaseService.firestore.collection('recipes').doc(recipeName),
+        [recipeName]
+    )
+
     useEffect(
         () =>
-            FirebaseService.firestore
-                .collection('recipes')
-                .doc(recipeName)
+            recipeDocRef
                 .collection('attachments')
-                .orderBy('createdDate', 'desc')
+                .orderBy('createdDate', 'asc')
                 .onSnapshot(querySnapshot =>
                     setSavedAttachments(
                         querySnapshot.docs.map(
@@ -86,15 +92,41 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                         )
                     )
                 ),
-        [recipeName]
+        [recipeDocRef, recipeName]
+    )
+
+    useEffect(
+        () =>
+            recipeDocRef.onSnapshot(querySnapshot => {
+                const { editorUid, previewAttachment } = querySnapshot.data() as Recipe
+                setRecipePreview({
+                    smallDataUrl: previewAttachment,
+                    disabled: !user || (user.uid !== editorUid && !user.admin),
+                })
+            }),
+        [recipeDocRef, recipeName, user]
     )
 
     const handlePreviewClick = (originId: string, activeAttachment: number) =>
         handleAnimation(originId, savedAttachments, activeAttachment)
 
+    const handlePreviewAttachmentChange = (smallDataUrl: string) => {
+        recipeDocRef.update({ previewAttachment: smallDataUrl } as Recipe)
+    }
+
     return (
         <>
             <Grid wrap="nowrap" className={classes.attachmentsGridContainer} container spacing={3}>
+                {savedAttachments.map((attachment, index) => (
+                    <AttachmentPreview
+                        onClick={originId => handlePreviewClick(originId, index)}
+                        attachment={attachment}
+                        previewAttachment={recipePreview?.smallDataUrl}
+                        previewChangeDisabled={recipePreview?.disabled}
+                        onPreviewAttachmentChange={handlePreviewAttachmentChange}
+                        key={attachment.docPath}
+                    />
+                ))}
                 {user && (
                     <Zoom in>
                         <Grid item>
@@ -107,13 +139,6 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                         </Grid>
                     </Zoom>
                 )}
-                {savedAttachments.map((attachment, index) => (
-                    <AttachmentPreview
-                        onClick={originId => handlePreviewClick(originId, index)}
-                        attachment={attachment}
-                        key={attachment.docPath}
-                    />
-                ))}
             </Grid>
             <AttachmentUpload
                 recipeName={recipeName}

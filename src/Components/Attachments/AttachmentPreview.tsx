@@ -1,7 +1,17 @@
-import { Avatar, CardActionArea, createStyles, Grid, makeStyles } from '@material-ui/core'
+import {
+    Avatar,
+    CardActionArea,
+    createStyles,
+    Grid,
+    IconButton,
+    makeStyles,
+    Tooltip,
+    Zoom,
+} from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
+import CheckIcon from '@material-ui/icons/CheckCircle'
 import { Skeleton } from '@material-ui/lab'
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
 import { AttachmentDoc } from '../../model/model'
@@ -40,36 +50,82 @@ const useStyles = makeStyles(theme =>
                 height: 280,
             },
             borderRadius: BORDER_RADIUS,
+            transition: theme.transitions.create('border', {
+                duration: theme.transitions.duration.standard,
+            }),
         },
+        gridItem: {
+            position: 'relative',
+        },
+        selectionButton: { position: 'absolute', top: 0, left: 0 },
     })
 )
 
 interface AttachmentPreviewProps {
     attachment: AttachmentDoc
     onClick: (originId: string) => void
+    previewAttachment: string | undefined
+    previewChangeDisabled?: boolean
+    onPreviewAttachmentChange: (smallDataUrl: string) => void
 }
 
-const AttachmentPreview = ({ attachment, onClick }: AttachmentPreviewProps) => {
+const AttachmentPreview = ({
+    attachment,
+    onClick,
+    previewAttachment,
+    onPreviewAttachmentChange,
+    previewChangeDisabled,
+}: AttachmentPreviewProps) => {
+    const [showSelection, setShowSelection] = useState(false)
+
     const originIdRef = useRef(elementIdService.getId('attachment-origin'))
 
     const { attachmentRef, attachmentRefLoading } = useAttachment(attachment)
     const classes = useStyles()
 
     return (
-        <Grid item>
+        <Grid
+            item
+            className={classes.gridItem}
+            onMouseEnter={() => setShowSelection(true)}
+            onMouseLeave={() => setShowSelection(false)}>
             {attachmentRefLoading ? (
                 <Skeleton variant="circle" className={classes.attachmentPreview} />
             ) : (
-                <CardActionArea
-                    onClick={() => onClick(originIdRef.current)}
-                    className={classes.actionArea}>
-                    <Avatar
-                        id={originIdRef.current}
-                        className={classes.attachmentPreview}
-                        src={attachmentRef.mediumDataUrl}>
-                        <BugIcon fontSize="large" />
-                    </Avatar>
-                </CardActionArea>
+                <>
+                    <CardActionArea
+                        onClick={() => onClick(originIdRef.current)}
+                        className={classes.actionArea}>
+                        <Avatar
+                            id={originIdRef.current}
+                            className={classes.attachmentPreview}
+                            src={attachmentRef.mediumDataUrl}>
+                            <BugIcon fontSize="large" />
+                        </Avatar>
+                    </CardActionArea>
+                    <Zoom in={showSelection && !previewChangeDisabled}>
+                        <Tooltip
+                            title={
+                                previewAttachment === attachmentRef.smallDataUrl
+                                    ? ''
+                                    : 'Als Vorschaubild setzen'
+                            }>
+                            <IconButton
+                                className={classes.selectionButton}
+                                onClick={() =>
+                                    onPreviewAttachmentChange(attachmentRef.smallDataUrl)
+                                }
+                                color={
+                                    previewAttachment === attachmentRef.smallDataUrl
+                                        ? 'primary'
+                                        : 'default'
+                                }
+                                size="small">
+                                <CheckIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </Zoom>
+                </>
             )}
         </Grid>
     )

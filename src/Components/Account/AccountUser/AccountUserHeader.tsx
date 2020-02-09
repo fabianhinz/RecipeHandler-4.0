@@ -19,6 +19,7 @@ import {
 import DynamicThemeIcon from '@material-ui/icons/BrightnessAutoRounded'
 import LightThemeIcon from '@material-ui/icons/BrightnessHighRounded'
 import DarkThemeIcon from '@material-ui/icons/BrightnessLowRounded'
+import FavoriteIcon from '@material-ui/icons/Favorite'
 import NotificationsOffIcon from '@material-ui/icons/NotificationsOffRounded'
 import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
 import SearchIcon from '@material-ui/icons/SearchRounded'
@@ -48,12 +49,12 @@ const useStyles = makeStyles(theme =>
                 height: 180,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 225,
-                height: 225,
+                width: 250,
+                height: 250,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 300,
-                height: 300,
+                width: 325,
+                height: 325,
             },
         },
         actionArea: {
@@ -69,159 +70,168 @@ const useStyles = makeStyles(theme =>
             justifyContent: 'center',
             alignItems: 'center',
         },
+        showInfoBtn: { position: 'absolute', top: 12, left: 12 },
     })
 )
 
-type UserSettingsProps = Pick<AccountUserHeaderProps, 'user' | 'onUserSettingChange'>
-
-const UserStettings = ({ user, onUserSettingChange }: UserSettingsProps) => {
-    const [info, setInfo] = useState(false)
-
-    return (
-        <List>
-            <ListSubheader>
-                <Grid container alignItems="center" spacing={1}>
-                    <Grid item>Informationen</Grid>
-                    <Grid item>
-                        <IconButton onClick={() => setInfo(prev => !prev)}>
-                            <Information />
-                        </IconButton>
-                    </Grid>
-                </Grid>
-            </ListSubheader>
-            <ListItem button onClick={onUserSettingChange('muiTheme')}>
-                <ListItemIcon>
-                    {user.muiTheme === 'dynamic' ? (
-                        <DynamicThemeIcon />
-                    ) : user.muiTheme === 'dark' ? (
-                        <DarkThemeIcon />
-                    ) : (
-                        <LightThemeIcon />
-                    )}
-                </ListItemIcon>
-                <ListItemText
-                    primary="Design"
-                    secondaryTypographyProps={{ component: 'div' } as TypographyProps}
-                    secondary={
-                        <>
-                            <Typography gutterBottom variant="body2" color="textSecondary">
-                                {user.muiTheme === 'dynamic'
-                                    ? 'Dynamisch'
-                                    : user.muiTheme === 'dark'
-                                    ? 'Dunkel'
-                                    : 'Hell'}
-                            </Typography>
-                            <Collapse in={info}>
-                                <Typography gutterBottom variant="body2" color="textSecondary">
-                                    Den Augen zu liebe gibt es ein sogenanntes <i>Darktheme</i>. Dem
-                                    Nutzer zuliebe auch ein <i>Lighttheme</i>. Bei <i>Dynamisch</i>{' '}
-                                    entscheidet das Betriebssystem über das Design.
-                                </Typography>
-                            </Collapse>
-                        </>
-                    }
-                />
-            </ListItem>
-            <Divider variant="inset" />
-            <ListItem button onClick={onUserSettingChange('showRecentlyAdded')}>
-                <ListItemIcon>
-                    <TimelapseIcon />
-                </ListItemIcon>
-                <ListItemText
-                    primary="Kürzlich hinzugefügte Rezepte"
-                    secondaryTypographyProps={{ component: 'div' } as TypographyProps}
-                    secondary={
-                        <>
-                            <Typography gutterBottom variant="body2" color="textSecondary">
-                                {user.showRecentlyAdded
-                                    ? 'werden angezeigt'
-                                    : 'werden ausgeblendet'}
-                            </Typography>
-                            <Collapse in={info}>
-                                <Typography gutterBottom variant="body2" color="textSecondary">
-                                    Je nach Bildschirmgröße werden die neuesten Rezepte unabhängig
-                                    von Autor oder Filterung durch die Kategorien angezeigt.
-                                </Typography>
-                            </Collapse>
-                        </>
-                    }
-                />
-            </ListItem>
-            <Divider variant="inset" />
-            <ListItem button onClick={onUserSettingChange('notifications')}>
-                <ListItemIcon>
-                    {user.notifications ? <NotificationsIcon /> : <NotificationsOffIcon />}
-                </ListItemIcon>
-                <ListItemText
-                    primary="Benachrichtigungen"
-                    secondaryTypographyProps={{ component: 'div' } as TypographyProps}
-                    secondary={
-                        <>
-                            <Typography gutterBottom variant="body2" color="textSecondary">
-                                {user.notifications ? 'aktiviert' : 'deaktiviert'}
-                            </Typography>
-                            <Collapse in={info}>
-                                <Typography gutterBottom variant="body2" color="textSecondary">
-                                    Sofern <s>unterstützt</s> entwickelt 🤖erhälst du
-                                    Benachrichtigungen zu neuen Kommentaren und Rezepten.
-                                </Typography>
-                            </Collapse>
-                        </>
-                    }
-                />
-            </ListItem>
-            <Divider variant="inset" />
-            <ListItem button onClick={onUserSettingChange('algoliaAdvancedSyntax')}>
-                <ListItemIcon>
-                    {user.algoliaAdvancedSyntax ? <DatabaseSearch /> : <SearchIcon />}
-                </ListItemIcon>
-                <ListItemText
-                    primary="Erweiterte Abfragesyntax"
-                    secondaryTypographyProps={{ component: 'div' } as TypographyProps}
-                    secondary={
-                        <>
-                            <Typography gutterBottom variant="body2" color="textSecondary">
-                                {user.algoliaAdvancedSyntax ? 'aktiviert' : 'deaktiviert'}
-                            </Typography>
-                            <Collapse in={info}>
-                                <Typography variant="body2" gutterBottom color="textSecondary">
-                                    Suchanfragen die mit <b>doppelten Anführungszeichen</b> starten
-                                    und enden werden als ganze Sätze interpretiert. Über den{' '}
-                                    <b>Bindestrich</b> können Wörter explizit aus der Suche
-                                    ausgeschlossen werden.
-                                </Typography>
-                            </Collapse>
-                        </>
-                    }
-                />
-            </ListItem>
-            <Divider variant="inset" />
-            <ListItem button onClick={onUserSettingChange('bookmarkSync')}>
-                <ListItemIcon>
-                    {user.bookmarkSync ? <CloudSync /> : <CloudOffOutline />}
-                </ListItemIcon>
-                <ListItemText
-                    primary="Geräteübergreifende Lesezeichen"
-                    secondaryTypographyProps={{ component: 'div' } as TypographyProps}
-                    secondary={
-                        <>
-                            <Typography gutterBottom variant="body2" color="textSecondary">
-                                {user.bookmarkSync ? 'aktiviert' : 'deaktiviert'}
-                            </Typography>
-                            <Collapse in={info}>
-                                <Typography variant="body2" gutterBottom color="textSecondary">
-                                    ist die Synchronisation aktiviert, so werden gesetzte
-                                    Lesezeichen automatisch auf Geräte, auf denen derselbe Nutzer
-                                    eingeloggt ist, übertragen.
-                                </Typography>
-                            </Collapse>
-                        </>
-                    }
-                />
-            </ListItem>
-        </List>
-    )
+type UserSettingsProps = Pick<AccountUserHeaderProps, 'user' | 'onUserSettingChange'> & {
+    showInfo: boolean
 }
+
+const UserStettings = ({ user, onUserSettingChange, showInfo }: UserSettingsProps) => (
+    <List disablePadding>
+        <ListSubheader>Anzeige</ListSubheader>
+        <ListItem button onClick={onUserSettingChange('muiTheme')}>
+            <ListItemIcon>
+                {user.muiTheme === 'dynamic' ? (
+                    <DynamicThemeIcon />
+                ) : user.muiTheme === 'dark' ? (
+                    <DarkThemeIcon />
+                ) : (
+                    <LightThemeIcon />
+                )}
+            </ListItemIcon>
+            <ListItemText
+                primary="Design"
+                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                secondary={
+                    <>
+                        <Typography gutterBottom variant="body2" color="textSecondary">
+                            {user.muiTheme === 'dynamic'
+                                ? 'Dynamisch'
+                                : user.muiTheme === 'dark'
+                                ? 'Dunkel'
+                                : 'Hell'}
+                        </Typography>
+                        <Collapse in={showInfo}>
+                            <Typography gutterBottom variant="body2" color="textSecondary">
+                                Den Augen zu liebe gibt es ein sogenanntes <i>Darktheme</i>. Dem
+                                Nutzer zuliebe auch ein <i>Lighttheme</i>. Bei <i>Dynamisch</i>{' '}
+                                entscheidet das Betriebssystem über das Design.
+                            </Typography>
+                        </Collapse>
+                    </>
+                }
+            />
+        </ListItem>
+        <Divider variant="inset" />
+        <ListItem button onClick={onUserSettingChange('showRecentlyAdded')}>
+            <ListItemIcon>
+                <TimelapseIcon />
+            </ListItemIcon>
+            <ListItemText
+                primary="Kürzlich hinzugefügte Rezepte"
+                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                secondary={
+                    <>
+                        <Typography gutterBottom variant="body2" color="textSecondary">
+                            {user.showRecentlyAdded ? 'werden angezeigt' : 'werden ausgeblendet'}
+                        </Typography>
+                        <Collapse in={showInfo}>
+                            <Typography gutterBottom variant="body2" color="textSecondary">
+                                Je nach Bildschirmgröße werden die neuesten Rezepte unabhängig von
+                                Autor oder Filterung durch die Kategorien angezeigt.
+                            </Typography>
+                        </Collapse>
+                    </>
+                }
+            />
+        </ListItem>
+        <Divider variant="inset" />
+        <ListItem button onClick={onUserSettingChange('showMostCooked')}>
+            <ListItemIcon>
+                <FavoriteIcon />
+            </ListItemIcon>
+            <ListItemText
+                primary="Am häufigsten gekochte Rezepte"
+                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                secondary={
+                    <>
+                        <Typography gutterBottom variant="body2" color="textSecondary">
+                            {user.showMostCooked ? 'werden angezeigt' : 'werden ausgeblendet'}
+                        </Typography>
+                        <Collapse in={showInfo}>
+                            <Typography gutterBottom variant="body2" color="textSecondary">
+                                Je nach Bildschirmgröße werden die am häufigsten gekochte Rezepte
+                                unabhängig von Autor oder Filterung durch die Kategorien angezeigt.
+                            </Typography>
+                        </Collapse>
+                    </>
+                }
+            />
+        </ListItem>
+        <ListSubheader>Sonstiges</ListSubheader>
+        <ListItem button onClick={onUserSettingChange('notifications')}>
+            <ListItemIcon>
+                {user.notifications ? <NotificationsIcon /> : <NotificationsOffIcon />}
+            </ListItemIcon>
+            <ListItemText
+                primary="Benachrichtigungen"
+                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                secondary={
+                    <>
+                        <Typography gutterBottom variant="body2" color="textSecondary">
+                            {user.notifications ? 'aktiviert' : 'deaktiviert'}
+                        </Typography>
+                        <Collapse in={showInfo}>
+                            <Typography gutterBottom variant="body2" color="textSecondary">
+                                Sofern <s>unterstützt</s> entwickelt 🤖erhälst du Benachrichtigungen
+                                zu neuen Kommentaren und Rezepten.
+                            </Typography>
+                        </Collapse>
+                    </>
+                }
+            />
+        </ListItem>
+        <Divider variant="inset" />
+        <ListItem button onClick={onUserSettingChange('algoliaAdvancedSyntax')}>
+            <ListItemIcon>
+                {user.algoliaAdvancedSyntax ? <DatabaseSearch /> : <SearchIcon />}
+            </ListItemIcon>
+            <ListItemText
+                primary="Erweiterte Abfragesyntax"
+                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                secondary={
+                    <>
+                        <Typography gutterBottom variant="body2" color="textSecondary">
+                            {user.algoliaAdvancedSyntax ? 'aktiviert' : 'deaktiviert'}
+                        </Typography>
+                        <Collapse in={showInfo}>
+                            <Typography variant="body2" gutterBottom color="textSecondary">
+                                Suchanfragen die mit <b>doppelten Anführungszeichen</b> starten und
+                                enden werden als ganze Sätze interpretiert. Über den{' '}
+                                <b>Bindestrich</b> können Wörter explizit aus der Suche
+                                ausgeschlossen werden.
+                            </Typography>
+                        </Collapse>
+                    </>
+                }
+            />
+        </ListItem>
+        <Divider variant="inset" />
+        <ListItem button onClick={onUserSettingChange('bookmarkSync')}>
+            <ListItemIcon>{user.bookmarkSync ? <CloudSync /> : <CloudOffOutline />}</ListItemIcon>
+            <ListItemText
+                primary="Geräteübergreifende Lesezeichen"
+                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                secondary={
+                    <>
+                        <Typography gutterBottom variant="body2" color="textSecondary">
+                            {user.bookmarkSync ? 'aktiviert' : 'deaktiviert'}
+                        </Typography>
+                        <Collapse in={showInfo}>
+                            <Typography variant="body2" gutterBottom color="textSecondary">
+                                ist die Synchronisation aktiviert, so werden gesetzte Lesezeichen
+                                automatisch auf Geräte, auf denen derselbe Nutzer eingeloggt ist,
+                                übertragen.
+                            </Typography>
+                        </Collapse>
+                    </>
+                }
+            />
+        </ListItem>
+    </List>
+)
 
 interface AccountUserHeaderProps {
     user: User
@@ -230,6 +240,8 @@ interface AccountUserHeaderProps {
 }
 
 const AccountUserHeader = ({ user, userDoc, onUserSettingChange }: AccountUserHeaderProps) => {
+    const [showInfo, setShowInfo] = useState(false)
+
     const { dropzoneAttachments, dropzoneProps } = useAttachmentDropzone({
         attachmentMaxWidth: 1920,
         attachmentLimit: 1,
@@ -269,6 +281,11 @@ const AccountUserHeader = ({ user, userDoc, onUserSettingChange }: AccountUserHe
             </Grid>
             <Grid item xs={12}>
                 <StyledCard BackgroundIcon={SettingsOutline}>
+                    <IconButton
+                        className={classes.showInfoBtn}
+                        onClick={() => setShowInfo(prev => !prev)}>
+                        <Information />
+                    </IconButton>
                     <Grid container spacing={3}>
                         <Grid className={classes.profilePictureItem} item xs={12} md={4}>
                             <CardActionArea
@@ -281,7 +298,11 @@ const AccountUserHeader = ({ user, userDoc, onUserSettingChange }: AccountUserHe
                             </CardActionArea>
                         </Grid>
                         <Grid item xs={12} md={8}>
-                            <UserStettings user={user} onUserSettingChange={onUserSettingChange} />
+                            <UserStettings
+                                showInfo={showInfo}
+                                user={user}
+                                onUserSettingChange={onUserSettingChange}
+                            />
                         </Grid>
                     </Grid>
                 </StyledCard>

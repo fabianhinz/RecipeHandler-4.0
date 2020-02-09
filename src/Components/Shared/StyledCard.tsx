@@ -9,6 +9,10 @@ import {
 } from '@material-ui/core'
 import React from 'react'
 
+interface StyleProps {
+    action?: boolean
+}
+
 const useStyles = makeStyles(theme =>
     createStyles({
         root: {
@@ -21,8 +25,10 @@ const useStyles = makeStyles(theme =>
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.getContrastText(theme.palette.primary.main),
             padding: theme.spacing(1.5),
-            paddingLeft: theme.spacing(3),
-            paddingRight: theme.spacing(3),
+            paddingLeft: (props: StyleProps) =>
+                props.action ? theme.spacing(6) : theme.spacing(3),
+            paddingRight: (props: StyleProps) =>
+                props.action ? theme.spacing(6) : theme.spacing(3),
             boxShadow: theme.shadows[4],
             maxHeight: 55,
             display: 'flex',
@@ -50,7 +56,7 @@ const useStyles = makeStyles(theme =>
             position: 'absolute',
             display: 'flex',
             top: 0,
-            left: 0,
+            right: 0,
             bottom: 0,
             '& > *': {
                 color: theme.palette.getContrastText(theme.palette.primary.main),
@@ -66,7 +72,7 @@ interface Props {
 }
 
 const StyledCard = ({ header, children, BackgroundIcon, action }: Props) => {
-    const classes = useStyles()
+    const classes = useStyles({ action: Boolean(action) })
 
     return (
         <Fade in>
