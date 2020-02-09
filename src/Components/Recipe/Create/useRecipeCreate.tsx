@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 
-import { Recipe, User } from '../../../model/model'
+import { MostCooked, Recipe, User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
@@ -72,9 +72,9 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
 
             if (!editedRecipe) {
                 await FirebaseService.firestore
-                    .collection('rating')
+                    .collection('cookCounter')
                     .doc(state.name)
-                    .set({ value: 0 })
+                    .set({ value: 0 } as MostCooked<number>)
             }
 
             enqueueSnackbar(`${state.name} gespeichert`, {

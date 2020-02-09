@@ -20,6 +20,7 @@ type SettingKeys = keyof Pick<
     | 'muiTheme'
     | 'selectedUsers'
     | 'showRecentlyAdded'
+    | 'showMostCooked'
     | 'notifications'
     | 'algoliaAdvancedSyntax'
     | 'bookmarkSync'
@@ -81,6 +82,10 @@ const AccountUser = () => {
                 userDoc.update({ [key]: !user.showRecentlyAdded })
                 break
             }
+            case 'showMostCooked': {
+                userDoc.update({ [key]: !user.showMostCooked })
+                break
+            }
             case 'notifications': {
                 userDoc.update({ [key]: !user.notifications })
                 break
@@ -130,7 +135,7 @@ const AccountUser = () => {
                 )}
             </Grid>
 
-            <NavigateFab onClick={handleLogout} icon={<LogoutVariant />} />
+            <NavigateFab onClick={handleLogout} icon={<LogoutVariant />} tooltipTitle="Ausloggen" />
             <ProgressComponent />
         </>
     )

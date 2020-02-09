@@ -29,7 +29,7 @@ const TrialsDeleteAlert = ({ open, onConfirm, onAbort, title }: Props) => {
             open={open}
             onClose={onAbort}
             TransitionComponent={SlideUp}>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle>Rezeptidee löschen?</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     Möglicherweise werden Ideen anderer Benutzer gelöscht. Gelöschte Dateien können

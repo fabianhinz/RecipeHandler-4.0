@@ -105,6 +105,9 @@ const HomeRecipeCard = ({ recipe }: Props) => {
     const { gridBreakpointProps } = useGridContext()
 
     useEffect(() => {
+        // ? default preview is overwritten, don't query for attachments
+        if (recipe.previewAttachment) return
+
         let mounted = true
         FirebaseService.firestore
             .collection('recipes')
@@ -121,7 +124,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
         return () => {
             mounted = false
         }
-    }, [recipe.name])
+    }, [recipe.name, recipe.previewAttachment])
 
     return (
         <>
@@ -142,7 +145,9 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                                     <Avatar
                                         variant="rounded"
                                         className={classes.avatar}
-                                        src={attachmentRef.smallDataUrl}>
+                                        src={
+                                            recipe.previewAttachment || attachmentRef.smallDataUrl
+                                        }>
                                         {recipe.name.slice(0, 1).toUpperCase()}
                                     </Avatar>
                                 )}

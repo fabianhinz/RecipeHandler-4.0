@@ -1,29 +1,20 @@
 import { Avatar, Chip, createStyles, makeStyles } from '@material-ui/core'
 import { ChipProps } from '@material-ui/core/Chip'
+import clsx from 'clsx'
 import React from 'react'
 
 import { User } from '../../model/model'
 import { useUsersContext } from '../Provider/UsersProvider'
 
-interface Props {
+interface Props extends Pick<ChipProps, 'variant'> {
     uid: string
-    variant: 'readonly' | 'filter' | 'absolute'
+    position?: 'default' | 'absolute'
     onFilterChange?: (uid: string) => void
     selected?: boolean
 }
 
-const useStyles = makeStyles(theme => {
-    const dark = theme.palette.type === 'dark'
-    return createStyles({
-        selectedChip: {
-            color: theme.palette.getContrastText(theme.palette.secondary.main),
-            backgroundColor: theme.palette.secondary.main,
-            '&:hover, &:focus': {
-                backgroundColor: dark
-                    ? theme.palette.secondary.light
-                    : theme.palette.secondary.dark,
-            },
-        },
+const useStyles = makeStyles(theme =>
+    createStyles({
         absolute: {
             boxShadow: theme.shadows[4],
             position: 'absolute',
@@ -33,30 +24,20 @@ const useStyles = makeStyles(theme => {
             top: theme.spacing(1),
         },
     })
-})
+)
 
-const AccountChip = ({ uid, variant, onFilterChange, selected }: Props) => {
+const AccountChip = ({ uid, variant, position }: Props) => {
     const { getByUid } = useUsersContext()
     const user: User | undefined = getByUid(uid)
 
     const classes = useStyles()
 
-    const variantProps: ChipProps =
-        variant === 'filter'
-            ? {
-                  onClick: () => onFilterChange && onFilterChange(uid),
-                  variant: 'default',
-                  className: selected ? classes.selectedChip : undefined,
-              }
-            : variant === 'absolute'
-            ? { variant: 'default', className: classes.absolute }
-            : { variant: 'outlined' }
-
     return (
         <>
             {user && (
                 <Chip
-                    {...variantProps}
+                    variant={variant}
+                    className={clsx(position === 'absolute' && classes.absolute)}
                     avatar={<Avatar src={user.profilePicture}>{user.username.slice(0, 1)}</Avatar>}
                     label={user.username}
                 />

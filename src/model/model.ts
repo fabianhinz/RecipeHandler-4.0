@@ -31,6 +31,7 @@ export interface Recipe extends CommentsDocument, Editor, CreatedDate {
     amount: number
     description: string
     relatedRecipes: Array<string>
+    previewAttachment?: string
 }
 
 export type CategoryType = string
@@ -44,12 +45,14 @@ export interface Category {
 
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>
 
-export interface Comment {
+export interface Comment extends Editor {
     createdDate: firebase.firestore.Timestamp
     documentId: string
     comment: string
-    dislikes: number
-    likes: number
+}
+
+export interface CommentReaction extends Editor, CreatedDate {
+    emoji: string
 }
 
 export interface Trial extends CommentsDocument {
@@ -80,6 +83,7 @@ export type User = {
     muiTheme: PaletteType | 'dynamic'
     selectedUsers: string[]
     showRecentlyAdded: boolean
+    showMostCooked: boolean
     notifications: boolean
     admin?: boolean
     profilePicture?: string
@@ -131,4 +135,8 @@ export interface Metadata {
 
 export interface FirestoreDocPath {
     docPath: string
+}
+
+export interface MostCooked<T> {
+    value: T
 }

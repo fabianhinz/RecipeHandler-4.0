@@ -18,8 +18,7 @@ export const RecipeResultShare: FC<Pick<Recipe, 'name'>> = ({ name }) => {
     return (
         <Tooltip
             onMouseOut={() => setCopied(false)}
-            open={copied}
-            title="In der Zwischenablage gespeichert">
+            title={copied ? 'In der Zwischenablage gespeichert' : 'Rezept teilen'}>
             <IconButton onClick={handleShareBtnClick}>
                 <ShareIcon />
             </IconButton>

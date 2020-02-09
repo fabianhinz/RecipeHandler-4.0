@@ -1,5 +1,5 @@
 import { Grid, Typography } from '@material-ui/core'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
 
 import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -17,6 +17,8 @@ const HomeRecentlyAdded = () => {
     const limit = useMemo(() => (isLowRes ? 3 : 6), [isLowRes])
 
     useEffect(() => {
+        if (user && !user.showRecentlyAdded) return
+
         let query:
             | firebase.firestore.CollectionReference
             | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
@@ -30,7 +32,7 @@ const HomeRecentlyAdded = () => {
                 },
                 error => console.error(error)
             )
-    }, [limit])
+    }, [limit, user])
 
     if (user && !user.showRecentlyAdded) return <></>
 
@@ -45,7 +47,7 @@ const HomeRecentlyAdded = () => {
                         <HomeRecipeCard key={recipe.name} recipe={recipe} />
                     ))}
                     <Skeletons
-                        variant="home"
+                        variant="recipe"
                         visible={recipes.length === 0}
                         numberOfSkeletons={limit}
                     />
@@ -55,4 +57,4 @@ const HomeRecentlyAdded = () => {
     )
 }
 
-export default HomeRecentlyAdded
+export default memo(HomeRecentlyAdded)

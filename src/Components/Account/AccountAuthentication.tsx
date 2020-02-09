@@ -117,6 +117,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
                                 muiTheme: theme.palette.type,
                                 selectedUsers: [],
                                 showRecentlyAdded: true,
+                                showMostCooked: true,
                                 notifications: false,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
                                 algoliaAdvancedSyntax: false,

@@ -1,4 +1,4 @@
-import { Fab, IconButton } from '@material-ui/core'
+import { Fab, IconButton, Tooltip } from '@material-ui/core'
 import CommentIcon from '@material-ui/icons/Comment'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
@@ -27,13 +27,15 @@ export const Comments: FC<CommentsDocument & CommentsCollections & { highContras
 
     return (
         <>
-            {highContrast ? (
-                <Fab size="small" onClick={handleDrawerChange}>
-                    {badgeComment}
-                </Fab>
-            ) : (
-                <IconButton onClick={handleDrawerChange}>{badgeComment}</IconButton>
-            )}
+            <Tooltip title="Kommentare">
+                {highContrast ? (
+                    <Fab size="small" onClick={handleDrawerChange}>
+                        {badgeComment}
+                    </Fab>
+                ) : (
+                    <IconButton onClick={handleDrawerChange}>{badgeComment}</IconButton>
+                )}
+            </Tooltip>
 
             <CommentsDialog
                 collection={collection}
