@@ -90,7 +90,7 @@ const Header = () => {
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Impressum">
-                    <IconButton onClick={() => alert('todo')}>
+                    <IconButton onClick={() => history.push(PATHS.impressum)}>
                         <InformationOutline />
                     </IconButton>
                 </Tooltip>

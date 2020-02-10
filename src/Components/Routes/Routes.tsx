@@ -7,6 +7,7 @@ import { ReactComponent as CreateIcon } from '../../icons/create.svg'
 import { ReactComponent as DetailsIcon } from '../../icons/details.svg'
 import { ReactComponent as EditIcon } from '../../icons/edit.svg'
 import { ReactComponent as HomeIcon } from '../../icons/home.svg'
+import { ReactComponent as ImpressumIcon } from '../../icons/impressum.svg'
 import { ReactComponent as TrialIcon } from '../../icons/trial.svg'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { BackgroundIcon } from '../Shared/BackgroundIcon'
@@ -20,6 +21,7 @@ export const PATHS = {
     trials: '/trials',
     account: '/account',
     bookmarks: '/bookmarks',
+    impressum: '/impressum',
 }
 
 interface AppRoute {
@@ -48,6 +50,11 @@ const anonymousRoutes: AppRoute[] = [
         path: PATHS.bookmarks,
         Component: lazy(() => import('../Bookmarks/Bookmarks')),
         Background: () => <BackgroundIcon Icon={BookmarksIcon} />,
+    },
+    {
+        path: PATHS.impressum,
+        Component: lazy(() => import('../Impressum/Impressum')),
+        Background: () => <BackgroundIcon Icon={ImpressumIcon} />,
     },
 ]
 

@@ -17,11 +17,14 @@ import {
     deepOrange,
     deepPurple,
     green,
+    grey,
     indigo,
     lightBlue,
     lightGreen,
     lime,
     orange,
+    pink,
+    purple,
     red,
     teal,
     yellow,
@@ -49,11 +52,14 @@ const COLOR_PALETTE_DARK = [
     deepOrange[300],
     deepPurple[300],
     green[300],
+    grey[300],
     indigo[300],
     lightBlue[300],
     lightGreen[300],
     lime[300],
     orange[300],
+    pink[300],
+    purple[300],
     red[300],
     teal[300],
     yellow[300],
@@ -68,11 +74,14 @@ const COLOR_PALETTE_LIGHT = [
     deepOrange[100],
     deepPurple[100],
     green[100],
+    grey[100],
     indigo[100],
     lightBlue[100],
     lightGreen[100],
     lime[100],
     orange[100],
+    pink[100],
+    purple[100],
     red[100],
     teal[100],
     yellow[100],
@@ -85,12 +94,12 @@ interface StyleProps {
 const useMostCookedPaperStyles = makeStyles(theme =>
     createStyles({
         paper: {
-            padding: theme.spacing(2),
+            padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
             backgroundColor: (props: StyleProps) => props.backgroundColor,
         },
         typography: {
             fontFamily: "'Lato', sans-serif",
-            color: '#000',
+            color: (props: StyleProps) => theme.palette.getContrastText(props.backgroundColor),
         },
     })
 )
@@ -98,12 +107,11 @@ const useMostCookedPaperStyles = makeStyles(theme =>
 interface MostCookedPaperProps {
     recipeName: string
     counter: MostCooked<number>
-    index: number
 }
 
-const MostCookedPaper = ({ recipeName, counter, index }: MostCookedPaperProps) => {
+const MostCookedPaper = ({ recipeName, counter }: MostCookedPaperProps) => {
     const theme = useTheme()
-    const paletteIndexRef = useRef(Math.ceil(Math.random() * index))
+    const paletteIndexRef = useRef(Math.floor(Math.random() * COLOR_PALETTE_LIGHT.length))
 
     const classes = useMostCookedPaperStyles({
         backgroundColor:
@@ -148,6 +156,7 @@ const HomeMostCooked = () => {
     const [mostCooked, setMostCooked] = useState<MostCookedMap>(new Map())
     const [containerScrollLeft, setContainerScrollLeft] = useState(0)
     const [scrollRightDisabled, setScrollRightDisabled] = useState(false)
+    const [scrollLeftDisabled, setScrollLeftDisabled] = useState(false)
 
     const containerRef = useRef<any | undefined>()
 
@@ -155,9 +164,13 @@ const HomeMostCooked = () => {
 
     const { user } = useFirebaseAuthContext()
     const { isMobile } = useBreakpointsContext()
-    const { IntersectionObserverTrigger } = useIntersectionObserver({
+    const { IntersectionObserverTrigger: RightTrigger } = useIntersectionObserver({
         onIsIntersecting: () => setScrollRightDisabled(true),
         onLeave: () => setScrollRightDisabled(false),
+    })
+    const { IntersectionObserverTrigger: LeftTrigger } = useIntersectionObserver({
+        onIsIntersecting: () => setScrollLeftDisabled(true),
+        onLeave: () => setScrollLeftDisabled(false),
     })
 
     useEffect(() => {
@@ -202,7 +215,7 @@ const HomeMostCooked = () => {
                     <Grid item>
                         <IconButton
                             size={isMobile ? 'small' : 'medium'}
-                            disabled={containerScrollLeft === 0}
+                            disabled={scrollLeftDisabled}
                             onClick={handleScrollLeft}>
                             <ChevronLeft />
                         </IconButton>
@@ -225,15 +238,15 @@ const HomeMostCooked = () => {
                     spacing={3}
                     id={MOST_COOKED_CONTAIER_ID}
                     wrap="nowrap">
-                    {[...mostCooked.entries()].map(([recipeName, counter], index) => (
+                    <LeftTrigger />
+                    {[...mostCooked.entries()].map(([recipeName, counter]) => (
                         <MostCookedPaper
                             key={recipeName}
                             recipeName={recipeName}
                             counter={counter}
-                            index={index}
                         />
                     ))}
-                    {mostCooked.size > 0 && <IntersectionObserverTrigger />}
+                    <RightTrigger />
                     <Skeletons
                         variant="cookCounter"
                         visible={mostCooked.size === 0}

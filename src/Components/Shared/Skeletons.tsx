@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme =>
             },
         },
         cookCounter: {
-            height: 64,
+            height: 48,
             minWidth: 150,
         },
     })
