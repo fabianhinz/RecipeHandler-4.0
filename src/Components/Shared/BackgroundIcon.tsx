@@ -21,7 +21,12 @@ const useStyles = makeStyles(theme =>
             [theme.breakpoints.down('xs')]: {
                 width: '80%',
             },
-            width: '50%',
+            [theme.breakpoints.between('sm', 'lg')]: {
+                width: '50%',
+            },
+            [theme.breakpoints.up('xl')]: {
+                width: '40%',
+            },
         },
     })
 )

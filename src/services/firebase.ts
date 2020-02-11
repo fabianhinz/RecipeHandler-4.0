@@ -29,7 +29,6 @@ const storage = firebase.storage()
 const storageRef = storage.ref()
 const auth = firebase.auth()
 const performance = firebase.performance()
-const analytics = firebase.analytics()
 
 const createTimestampFromDate = (date: Date) => firebase.firestore.Timestamp.fromDate(date)
 const createDateFromTimestamp = (timestamp: firebase.firestore.Timestamp) =>
@@ -47,6 +46,5 @@ export const FirebaseService = {
     incrementBy,
     performance,
     functions,
-    analytics,
     deleteField,
 }
