@@ -24,6 +24,12 @@ const useStyles = makeStyles(() =>
         checked: {
             textDecoration: 'line-through',
         },
+        root: {
+            display: 'flex',
+            flexGrow: 1,
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+        },
         listSubHeader: {
             fontSize: '1rem',
             display: 'flex',
@@ -83,47 +89,49 @@ const AccountUserShoppingList = () => {
 
     return (
         <StyledCard header="Einkaufsliste" BackgroundIcon={ShoppingCartIcon}>
-            <List>
-                {[...shoppingList.entries()].map(([recipe, groceries]) => (
-                    <div key={recipe}>
-                        <ListSubheader className={classes.listSubHeader}>
-                            {recipe}
-                            <IconButton onClick={handleRemove(recipe)}>
-                                <RemoveFromShoppingCartIcon color="secondary" />
-                            </IconButton>
-                        </ListSubheader>
-                        {groceries?.list.map(grocery => (
-                            <ListItem key={grocery}>
-                                <ListItemIcon>
-                                    <Checkbox
-                                        checked={listItemChecked(recipe, grocery)}
-                                        onChange={handleCheckboxChange(recipe, grocery)}
-                                        edge="start"
+            <div className={classes.root}>
+                <List>
+                    {[...shoppingList.entries()].map(([recipe, groceries]) => (
+                        <div key={recipe}>
+                            <ListSubheader className={classes.listSubHeader}>
+                                {recipe}
+                                <IconButton onClick={handleRemove(recipe)}>
+                                    <RemoveFromShoppingCartIcon color="secondary" />
+                                </IconButton>
+                            </ListSubheader>
+                            {groceries?.list.map(grocery => (
+                                <ListItem key={grocery}>
+                                    <ListItemIcon>
+                                        <Checkbox
+                                            checked={listItemChecked(recipe, grocery)}
+                                            onChange={handleCheckboxChange(recipe, grocery)}
+                                            edge="start"
+                                        />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        classes={{
+                                            primary: clsx(
+                                                listItemChecked(recipe, grocery) && classes.checked
+                                            ),
+                                        }}
+                                        primary={grocery}
                                     />
-                                </ListItemIcon>
-                                <ListItemText
-                                    classes={{
-                                        primary: clsx(
-                                            listItemChecked(recipe, grocery) && classes.checked
-                                        ),
-                                    }}
-                                    primary={grocery}
-                                />
-                            </ListItem>
-                        ))}
-                    </div>
-                ))}
-            </List>
-            <form onSubmit={handleFormSubmit}>
-                <TextField
-                    value={textFieldValue}
-                    onChange={e => setTextFieldValue(e.target.value)}
-                    variant="outlined"
-                    helperText="Die Liste kann beliebig erweitert werden"
-                    fullWidth
-                    label="Sonstiges"
-                />
-            </form>
+                                </ListItem>
+                            ))}
+                        </div>
+                    ))}
+                </List>
+                <form onSubmit={handleFormSubmit}>
+                    <TextField
+                        value={textFieldValue}
+                        onChange={e => setTextFieldValue(e.target.value)}
+                        variant="outlined"
+                        helperText="Die Liste kann beliebig erweitert werden"
+                        fullWidth
+                        label="Sonstiges"
+                    />
+                </form>
+            </div>
         </StyledCard>
     )
 }

@@ -36,14 +36,6 @@ const useStyles = makeStyles(theme =>
             alignItems: 'center',
             justifyContent: 'center',
         },
-        cardContent: {
-            zIndex: 1,
-            position: 'relative',
-            flexGrow: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-        },
         backgroundIcon: {
             color:
                 theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
@@ -62,8 +54,14 @@ const useStyles = makeStyles(theme =>
                 color: theme.palette.getContrastText(theme.palette.primary.main),
             },
         },
+        cardContent: {
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
+        },
     })
 )
+
 interface Props {
     header?: React.ReactNode
     action?: React.ReactNode

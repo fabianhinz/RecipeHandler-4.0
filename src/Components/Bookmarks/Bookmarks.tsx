@@ -62,7 +62,7 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
                         <Tab icon={<BookIcon />} label="Beschreibung" />
                     </Tabs>
                     {recipe ? (
-                        <SwipeableViews index={value}>
+                        <SwipeableViews disabled index={value}>
                             <MarkdownRenderer recipeName={recipeName} source={recipe.ingredients} />
                             <MarkdownRenderer recipeName={recipeName} source={recipe.description} />
                         </SwipeableViews>

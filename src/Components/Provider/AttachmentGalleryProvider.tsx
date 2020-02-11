@@ -6,6 +6,7 @@ import {
     IconButton,
     makeStyles,
     Slide,
+    Tooltip,
     useTheme,
 } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
@@ -370,7 +371,7 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
                 </Fab>
                 <div id="destination" className={classes.destination}>
                     {attachments && (
-                        <SwipeableViews index={activeAttachment}>
+                        <SwipeableViews disabled index={activeAttachment}>
                             {attachments.map((attachment, index) => (
                                 <SwipeableAttachment key={index} attachment={attachment} />
                             ))}
@@ -386,19 +387,33 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
 
                 <Grid className={classes.btnContainer} container justify="flex-end" spacing={1}>
                     <Grid item>
-                        <IconButton disabled={alert.open} onClick={() => handleAnimation()}>
-                            <CloseIcon />
-                        </IconButton>
+                        <Tooltip placement="bottom" title="Schließen">
+                            <div>
+                                <IconButton disabled={alert.open} onClick={() => handleAnimation()}>
+                                    <CloseIcon />
+                                </IconButton>
+                            </div>
+                        </Tooltip>
                     </Grid>
                     <Grid item>
-                        <IconButton disabled={alert.open} onClick={handleDownload}>
-                            <Download />
-                        </IconButton>
+                        <Tooltip placement="bottom" title="Herunterladen">
+                            <div>
+                                <IconButton disabled={alert.open} onClick={handleDownload}>
+                                    <Download />
+                                </IconButton>
+                            </div>
+                        </Tooltip>
                     </Grid>
                     <Grid item>
-                        <IconButton disabled={alert.open} onClick={requestDeleteConfirmation}>
-                            <DeleteIcon />
-                        </IconButton>
+                        <Tooltip placement="bottom" title="Löschen">
+                            <div>
+                                <IconButton
+                                    disabled={alert.open}
+                                    onClick={requestDeleteConfirmation}>
+                                    <DeleteIcon />
+                                </IconButton>
+                            </div>
+                        </Tooltip>
                     </Grid>
                 </Grid>
 
