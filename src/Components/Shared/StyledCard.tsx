@@ -58,6 +58,8 @@ const useStyles = makeStyles(theme =>
             flexGrow: 1,
             display: 'flex',
             flexDirection: 'column',
+            zIndex: 1,
+            position: 'relative',
         },
     })
 )
