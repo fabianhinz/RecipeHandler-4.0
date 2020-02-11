@@ -26,4 +26,3 @@ jobs:
         npm run build:cra
       env:
         CI: true
-        BUNDLE_ANALYZER_TOKEN: ${{ secrets.BUNDLE_ANALYZER_TOKEN }}
