@@ -100,6 +100,7 @@ const useMostCookedPaperStyles = makeStyles(theme =>
         typography: {
             fontFamily: "'Lato', sans-serif",
             color: (props: StyleProps) => theme.palette.getContrastText(props.backgroundColor),
+            maxWidth: 300,
         },
     })
 )

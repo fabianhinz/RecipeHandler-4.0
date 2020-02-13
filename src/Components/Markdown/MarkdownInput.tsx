@@ -1,46 +1,21 @@
-import {
-    createStyles,
-    Divider,
-    Grid,
-    IconButton,
-    List,
-    ListItem,
-    ListItemText,
-    makeStyles,
-    Popover,
-    PopoverProps,
-    TextField,
-    useTheme,
-    withStyles,
-} from '@material-ui/core'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
-import FormatBoldIcon from '@material-ui/icons/FormatBold'
-import FormatItalicIcon from '@material-ui/icons/FormatItalic'
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted'
-import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
-import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough'
-import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
-import TextFormatIcon from '@material-ui/icons/TextFormat'
-import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
-import clsx from 'clsx'
+import { createStyles, Divider, List, makeStyles, TextField, useTheme } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 
-const StyledToggleButtonGroup = withStyles(theme => ({
-    grouped: {
-        border: 'none',
-        padding: theme.spacing(0, 1),
-        marginRight: theme.spacing(1),
-        '&:not(:first-child)': {
-            borderRadius: theme.shape.borderRadius,
-        },
-        '&:first-child': {
-            borderRadius: theme.shape.borderRadius,
-        },
-        '&:last-child': {
-            marginRight: 0,
-        },
-    },
-}))(ToggleButtonGroup)
+import MarkdownEmojiToggle from './Toggles/MarkdownEmojiToggle'
+import MarkdownHeadingToggle, { Heading } from './Toggles/MarkdownHeadingToggle'
+import MarkdownLinkToggle from './Toggles/MarkdownLinkToggle'
+import MarkdownListToggles from './Toggles/MarkdownListToggles'
+import MarkdownTextToggles from './Toggles/MarkdownTextToggles'
+
+type Toggles = 'text' | 'list' | 'heading' | 'emoji' | 'link'
+
+export interface ToggleChangeHandler {
+    onToggleChange: (toggle: Toggles) => (_event: any, formatOrEmoji: Format) => void
+}
+
+export interface CurrentFormats {
+    formats: Format[]
+}
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -53,43 +28,8 @@ const useStyles = makeStyles(theme =>
             height: 'auto',
             margin: theme.spacing(1, 0.5),
         },
-        popoverPaper: {
-            padding: theme.spacing(1),
-            [theme.breakpoints.only('xs')]: {
-                maxWidth: 150,
-            },
-            [theme.breakpoints.up('sm')]: {
-                maxWidth: 300,
-            },
-            maxHeight: 300,
-            overflowY: 'auto',
-        },
         textField: {
             marginTop: theme.spacing(2),
-        },
-        emojiLabel: {
-            width: theme.spacing(4),
-            heigth: theme.spacing(4),
-        },
-        iconButtonRoot: {
-            padding: theme.spacing(1),
-        },
-        hRoot: {
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-        },
-        h1: {
-            fontSize: 32,
-        },
-        h2: {
-            fontSize: 24,
-        },
-        h3: {
-            fontSize: 18.72,
-        },
-        h4: {
-            fontSize: 16,
         },
     })
 )
@@ -99,22 +39,9 @@ interface Props {
     onChange: (value: string) => void
 }
 
-type Heading = 'h1' | 'h2' | 'h3' | 'h4'
 type List = 'bulletedList' | 'numberedList'
 type Text = 'bold' | 'italic' | 'strikethrough'
 type Format = Text | List | Heading
-
-interface HeadingToggle {
-    heading: Heading
-    label: string
-}
-
-const HEADINGS: HeadingToggle[] = [
-    { heading: 'h1', label: 'Überschrift 1' },
-    { heading: 'h2', label: 'Überschrift 2' },
-    { heading: 'h3', label: 'Überschrift 3' },
-    { heading: 'h4', label: 'Überschrift 4' },
-]
 
 const MARKDOWN: Record<Format, string> = {
     bold: '**',
@@ -126,40 +53,6 @@ const MARKDOWN: Record<Format, string> = {
     h2: '## ',
     h3: '### ',
     h4: '#### ',
-}
-
-const EMOJIS = [
-    '😀',
-    '😂',
-    '😅',
-    '😛',
-    '🤑',
-    '🤓',
-    '⏲',
-    '🚫',
-    '❌',
-    '✅',
-    '✌',
-    '👌',
-    '👏',
-    '✍',
-    '🖖',
-    '🍽',
-    '🍻',
-    '🍸',
-    '🍪',
-    '🎂',
-]
-
-const popoverOriginProps: Pick<PopoverProps, 'anchorOrigin' | 'transformOrigin'> = {
-    anchorOrigin: {
-        vertical: 'bottom',
-        horizontal: 'left',
-    },
-    transformOrigin: {
-        vertical: 'top',
-        horizontal: 'left',
-    },
 }
 
 const FORMAT_REGEXP = /(?<bold>^\*{2}.*\*{2}$)|(?<italic>^_{1}.*_{1}$)|(?<strikethrough>^~{2}.*~{2}$)|(?<bulletedList>^-\s.*)|(?<numberedList>^\d{1,}.\s.*)|(?<h1>^#\s.*)|(?<h2>^#{2}\s.*)|(?<h3>^#{3}\s.*)|(?<h4>^#{4}\s.*)/g
@@ -174,9 +67,6 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
 
     const inputRef = useRef<any>(null)
 
-    const [headingAnchorEl, setHeadingAnchorEl] = useState<HTMLButtonElement | null>(null)
-    const [emoticonAnchorEl, setEmoticonAnchorEl] = useState<HTMLButtonElement | null>(null)
-
     const classes = useStyles()
     const theme = useTheme()
 
@@ -184,7 +74,6 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
         const handleSelectionChange = () => {
             if (inFocus) setMarkdownSelection(document.getSelection()?.toString())
         }
-
         document.addEventListener('selectionchange', handleSelectionChange)
         return () => document.removeEventListener('selectionchange', handleSelectionChange)
     }, [inFocus, markdownSelection])
@@ -204,11 +93,7 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
         setFormats(newFormat)
     }, [markdownSelection])
 
-    // ! ToDo handle links
-    const handleTogglesChange = (type: 'text' | 'list' | 'heading' | 'emoji') => (
-        _event: React.MouseEvent<HTMLElement, MouseEvent>,
-        formatOrEmoji: Format
-    ) => {
+    const handleTogglesChange = (type: Toggles) => (_event: any, formatOrEmoji: Format) => {
         if (formattingDisabled) return
         setFormattingDisabled(true)
 
@@ -269,7 +154,6 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                             afterSelection
                     )
                 }
-                setHeadingAnchorEl(null)
                 break
             }
             case 'emoji': {
@@ -277,7 +161,11 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                     ++selectionStart
                     ++selectionEnd
                 }
-                setEmoticonAnchorEl(null)
+                setValue(beforeSelection + selection + formatOrEmoji + afterSelection)
+                break
+            }
+            case 'link': {
+                selectionEnd += formatOrEmoji.length
                 setValue(beforeSelection + selection + formatOrEmoji + afterSelection)
                 break
             }
@@ -298,58 +186,19 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
             }}
             onFocus={() => setInFocus(true)}>
             <div className={classes.paper}>
-                <StyledToggleButtonGroup
-                    size="small"
-                    value={formats}
-                    exclusive
-                    onChange={handleTogglesChange('text')}>
-                    <ToggleButton value="bold">
-                        <FormatBoldIcon />
-                    </ToggleButton>
-                    <ToggleButton value="italic">
-                        <FormatItalicIcon />
-                    </ToggleButton>
-                    <ToggleButton value="strikethrough">
-                        <FormatStrikethroughIcon />
-                    </ToggleButton>
-                </StyledToggleButtonGroup>
+                <MarkdownTextToggles formats={formats} onToggleChange={handleTogglesChange} />
 
                 <Divider className={classes.divider} orientation="vertical" />
-
-                <StyledToggleButtonGroup
-                    value={formats}
-                    exclusive
-                    size="small"
-                    onChange={handleTogglesChange('list')}>
-                    <ToggleButton value="bulletedList">
-                        <FormatListBulletedIcon />
-                    </ToggleButton>
-                    <ToggleButton value="numberedList">
-                        <FormatListNumberedIcon />
-                    </ToggleButton>
-                </StyledToggleButtonGroup>
+                <MarkdownListToggles formats={formats} onToggleChange={handleTogglesChange} />
 
                 <Divider className={classes.divider} orientation="vertical" />
-
-                <StyledToggleButtonGroup size="small" value={formats}>
-                    <ToggleButton
-                        onClick={e => setHeadingAnchorEl(e.currentTarget)}
-                        value="textFormat">
-                        <TextFormatIcon />
-                        <ArrowDropDownIcon />
-                    </ToggleButton>
-                </StyledToggleButtonGroup>
+                <MarkdownHeadingToggle formats={formats} onToggleChange={handleTogglesChange} />
 
                 <Divider className={classes.divider} orientation="vertical" />
+                <MarkdownEmojiToggle onToggleChange={handleTogglesChange} />
 
-                <StyledToggleButtonGroup size="small">
-                    <ToggleButton
-                        onClick={e => setEmoticonAnchorEl(e.currentTarget)}
-                        value="emoticonFormat">
-                        <InsertEmoticonIcon />
-                        <ArrowDropDownIcon />
-                    </ToggleButton>
-                </StyledToggleButtonGroup>
+                <Divider className={classes.divider} orientation="vertical" />
+                <MarkdownLinkToggle onToggleChange={handleTogglesChange} />
             </div>
 
             <TextField
@@ -362,55 +211,6 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
                 multiline
                 variant="outlined"
             />
-
-            <Popover
-                classes={{ paper: classes.popoverPaper }}
-                open={Boolean(headingAnchorEl)}
-                anchorEl={headingAnchorEl}
-                onClose={() => setHeadingAnchorEl(null)}
-                {...popoverOriginProps}>
-                <List>
-                    {HEADINGS.map(({ heading, label }) => (
-                        <ListItem
-                            key={heading}
-                            button
-                            selected={formats.some(format => format === heading)}
-                            onClick={() => handleTogglesChange('heading')({} as any, heading)}>
-                            <ListItemText
-                                primary={
-                                    <div className={clsx(classes.hRoot, classes[heading])}>
-                                        {label}
-                                    </div>
-                                }
-                            />
-                        </ListItem>
-                    ))}
-                </List>
-            </Popover>
-
-            <Popover
-                classes={{ paper: classes.popoverPaper }}
-                open={Boolean(emoticonAnchorEl)}
-                anchorEl={emoticonAnchorEl}
-                onClose={() => setEmoticonAnchorEl(null)}
-                {...popoverOriginProps}>
-                <Grid justify="space-evenly" container spacing={1}>
-                    {EMOJIS.map(emoji => (
-                        <Grid item key={emoji}>
-                            <IconButton
-                                onClick={() =>
-                                    handleTogglesChange('emoji')({} as any, emoji as any)
-                                }
-                                classes={{
-                                    label: classes.emojiLabel,
-                                    root: classes.iconButtonRoot,
-                                }}>
-                                {emoji}
-                            </IconButton>
-                        </Grid>
-                    ))}
-                </Grid>
-            </Popover>
         </div>
     )
 }
