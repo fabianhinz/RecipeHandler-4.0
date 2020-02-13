@@ -3,6 +3,7 @@ import {
     Checkbox,
     createStyles,
     Divider,
+    Link,
     List,
     ListItem,
     ListItemAvatar,
@@ -38,12 +39,6 @@ const useStyles = makeStyles(theme =>
         markdown: {
             fontSize: '1rem',
             lineHeight: '1.5rem',
-        },
-        markdownLink: {
-            color:
-                theme.palette.type === 'dark'
-                    ? theme.palette.primary.main
-                    : theme.palette.primary.dark,
         },
     })
 )
@@ -99,15 +94,7 @@ const MarkdownRenderer = (props: Props) => {
     return (
         <ReactMarkdown
             renderers={{
-                link: renderProps => (
-                    <a
-                        className={classes.markdownLink}
-                        href={renderProps.href}
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        {renderProps.children}
-                    </a>
-                ),
+                link: renderProps => <Link href={renderProps.href}>{renderProps.children}</Link>,
                 list: renderProps => <List>{renderProps.children}</List>,
                 listItem: renderProps => (
                     <ListItem>

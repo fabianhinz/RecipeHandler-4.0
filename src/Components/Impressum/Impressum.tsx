@@ -1,11 +1,14 @@
 import { Grid, Link, ListSubheader, Typography } from '@material-ui/core'
 import React from 'react'
 
+import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { useGridContext } from '../Provider/GridProvider'
 import StyledCard from '../Shared/StyledCard'
 
 const Impressum = () => {
     const { gridBreakpointProps } = useGridContext()
+
+    useDocumentTitle('Impressum')
 
     return (
         <Grid container spacing={4}>

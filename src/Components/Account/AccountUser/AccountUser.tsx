@@ -3,6 +3,7 @@ import { LogoutVariant } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useMemo } from 'react'
 
+import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import useProgress from '../../../hooks/useProgress'
 import { ShoppingList, User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
@@ -42,6 +43,8 @@ const AccountUser = () => {
     const userDoc = useMemo(() => FirebaseService.firestore.collection('users').doc(user.uid), [
         user.uid,
     ])
+
+    useDocumentTitle(user.username)
 
     const handleLogout = () => {
         setProgress(true)

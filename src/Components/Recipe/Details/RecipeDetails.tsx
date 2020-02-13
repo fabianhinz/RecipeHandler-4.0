@@ -1,6 +1,7 @@
 import EditIcon from '@material-ui/icons/Edit'
 import React, { FC } from 'react'
 
+import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import { useRecipeDoc } from '../../../hooks/useRecipeDoc'
 import { RouteWithRecipeName } from '../../../model/model'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -12,6 +13,8 @@ import RecipeResult from '../Result/RecipeResult'
 const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps })
     const { user } = useFirebaseAuthContext()
+
+    useDocumentTitle(recipeDoc ? recipeDoc.name : 'Wird geladen...')
 
     return (
         <>

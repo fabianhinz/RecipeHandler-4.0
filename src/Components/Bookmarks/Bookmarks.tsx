@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
+import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import MarkdownRenderer from '../Markdown/MarkdownRenderer'
@@ -79,6 +80,8 @@ const Bookmarks = () => {
     const { bookmarks } = useBookmarkContext()
     const { gridLayout } = useGridContext()
     const classes = useStyles()
+
+    useDocumentTitle(`${bookmarks.size} Lesezeichen`)
 
     return (
         <Grid container spacing={4} alignItems="center">

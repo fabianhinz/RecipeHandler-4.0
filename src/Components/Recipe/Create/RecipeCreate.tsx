@@ -4,6 +4,7 @@ import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
 
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
+import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import CategoryWrapper from '../../Category/CategoryWrapper'
@@ -35,6 +36,8 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     const { user } = useFirebaseAuthContext()
     const { history } = useRouterContext()
     const { gridBreakpointProps } = useGridContext()
+
+    useDocumentTitle(props.recipe ? props.recipe.name : 'Rezept erstellen')
 
     useEffect(() => {
         dispatch({ type: 'categoriesChange', selectedCategories })
