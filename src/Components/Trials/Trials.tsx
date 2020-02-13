@@ -16,6 +16,7 @@ import { useDropzone } from 'react-dropzone'
 
 import { getFileExtension } from '../../hooks/useAttachment'
 import { readDocumentAsync } from '../../hooks/useAttachmentDropzone'
+import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -56,6 +57,8 @@ const Trials = () => {
             if (pagedTrials.size > 0) setLastTrial([...pagedTrials.values()].pop())
         },
     })
+
+    useDocumentTitle('Rezeptideen')
 
     useEffect(() => {
         setQuerying(true)

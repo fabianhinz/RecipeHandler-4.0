@@ -3,6 +3,7 @@ import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
+import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { DocumentId, OrderByKey, OrderByRecord, Recipe } from '../../model/model'
 import ConfigService from '../../services/configService'
@@ -33,6 +34,8 @@ const Home = () => {
             if (pagedRecipes.size > 0) setLastRecipe([...pagedRecipes.values()].pop())
         },
     })
+
+    useDocumentTitle('RecipeHandler 4.0')
 
     useEffect(() => {
         setPagedRecipes(new Map())
