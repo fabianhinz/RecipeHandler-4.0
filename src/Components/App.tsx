@@ -9,6 +9,7 @@ import { isSafari } from '../util/constants'
 import Footer from './Footer'
 import Header from './Header'
 import Main from './Main'
+import OnRouteChangeScrollToTop from './OnRouteChangeScrollToTop'
 import AttachmentGalleryProvider from './Provider/AttachmentGalleryProvider'
 import BookmarkProvider from './Provider/BookmarkProvider'
 import { useBreakpointsContext } from './Provider/BreakpointsProvider'
@@ -75,6 +76,7 @@ const App: FC = () => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
+            <OnRouteChangeScrollToTop />
             <SnackbarProvider
                 preventDuplicate
                 autoHideDuration={3000}
