@@ -35,8 +35,13 @@ const useStyles = makeStyles(theme =>
             },
         },
         cookCounter: {
-            height: 48,
             minWidth: 150,
+            [theme.breakpoints.only('xs')]: {
+                height: 44,
+            },
+            [theme.breakpoints.up('sm')]: {
+                height: 48,
+            },
         },
     })
 )
