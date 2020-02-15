@@ -1,4 +1,5 @@
-import { Backdrop, createStyles, makeStyles, Slide } from '@material-ui/core'
+import { Backdrop, Card, createStyles, makeStyles, Slide } from '@material-ui/core'
+import { Skeleton } from '@material-ui/lab'
 import React, { FC, useContext, useEffect, useState } from 'react'
 
 import { DataUrl } from '../../model/model'
@@ -39,17 +40,45 @@ const useStyles = makeStyles(theme =>
                 maxWidth: '60%',
             },
             [theme.breakpoints.up('xl')]: {
-                maxHeight: '60%',
+                maxHeight: '80%',
             },
             borderRadius: BORDER_RADIUS,
+        },
+        skeletonCard: {
+            height: '80%',
+            [theme.breakpoints.only('xs')]: {
+                width: '90%',
+            },
+            [theme.breakpoints.only('sm')]: {
+                width: '80%',
+            },
+            [theme.breakpoints.only('md')]: {
+                width: '70%',
+            },
+            [theme.breakpoints.only('lg')]: {
+                width: '60%',
+            },
+            [theme.breakpoints.up('xl')]: {
+                width: '30%',
+            },
         },
     })
 )
 
 const SelectedAttachementProvider: FC = ({ children }) => {
     const [selectedAttachment, setSelectedAttachment] = useState<DataUrl | null>(null)
+    const [imgSrc, setImgSrc] = useState<string | undefined>()
+
     const { location } = useRouterContext()
     const classes = useStyles()
+
+    useEffect(() => {
+        if (!selectedAttachment) return setImgSrc(undefined)
+
+        const img = new Image()
+        img.onload = () => setImgSrc(img.src)
+        img.src = selectedAttachment.dataUrl
+    }, [selectedAttachment])
 
     useEffect(() => {
         setSelectedAttachment(null)
@@ -69,12 +98,12 @@ const SelectedAttachementProvider: FC = ({ children }) => {
                     open
                     onClick={() => setSelectedAttachment(null)}
                     className={classes.backdrop}>
-                    {selectedAttachment && (
-                        <img
-                            src={selectedAttachment.dataUrl}
-                            className={classes.attachment}
-                            alt="selected"
-                        />
+                    {imgSrc ? (
+                        <img src={imgSrc} className={classes.attachment} alt="selected" />
+                    ) : (
+                        <Card className={classes.skeletonCard}>
+                            <Skeleton width="100%" height="100%" variant="rect" />
+                        </Card>
                     )}
                 </Backdrop>
             </Slide>

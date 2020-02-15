@@ -18,10 +18,10 @@ const useStyles = makeStyles(theme =>
         },
         iconBackground: {
             opacity: 0.3,
-            [theme.breakpoints.down('xs')]: {
-                width: '80%',
+            [theme.breakpoints.down('sm')]: {
+                width: 0,
             },
-            [theme.breakpoints.between('sm', 'lg')]: {
+            [theme.breakpoints.between('md', 'lg')]: {
                 width: '50%',
             },
             [theme.breakpoints.up('xl')]: {

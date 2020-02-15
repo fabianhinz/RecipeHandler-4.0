@@ -9,6 +9,7 @@ import {
     ListSubheader,
     makeStyles,
     TextField,
+    Tooltip,
 } from '@material-ui/core'
 import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCartTwoTone'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCartTwoTone'
@@ -29,6 +30,7 @@ const useStyles = makeStyles(() =>
             flexGrow: 1,
             flexDirection: 'column',
             justifyContent: 'space-between',
+            minHeight: 150,
         },
         listSubHeader: {
             fontSize: '1rem',
@@ -95,9 +97,13 @@ const AccountUserShoppingList = () => {
                         <div key={recipe}>
                             <ListSubheader className={classes.listSubHeader}>
                                 {recipe}
-                                <IconButton onClick={handleRemove(recipe)}>
-                                    <RemoveFromShoppingCartIcon color="secondary" />
-                                </IconButton>
+                                <Tooltip
+                                    placement="left"
+                                    title={`${recipe} von Einkaufsliste entfernen`}>
+                                    <IconButton onClick={handleRemove(recipe)}>
+                                        <RemoveFromShoppingCartIcon color="secondary" />
+                                    </IconButton>
+                                </Tooltip>
                             </ListSubheader>
                             {groceries?.list.map(grocery => (
                                 <ListItem key={grocery}>
@@ -126,7 +132,6 @@ const AccountUserShoppingList = () => {
                         value={textFieldValue}
                         onChange={e => setTextFieldValue(e.target.value)}
                         variant="outlined"
-                        helperText="Die Liste kann beliebig erweitert werden"
                         fullWidth
                         label="Sonstiges"
                     />

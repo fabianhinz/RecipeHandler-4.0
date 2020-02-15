@@ -2,7 +2,6 @@ import { List } from '@material-ui/core'
 import SecurityIcon from '@material-ui/icons/SecurityTwoTone'
 import React, { memo, useEffect, useState } from 'react'
 
-import useProgress from '../../../hooks/useProgress'
 import { FirebaseService } from '../../../services/firebase'
 import { useUsersContext } from '../../Provider/UsersProvider'
 import StyledCard from '../../Shared/StyledCard'
@@ -12,17 +11,14 @@ const editorsCollection = FirebaseService.firestore.collection('editors')
 
 const AccountUserAdmin = () => {
     const [editors, setEditors] = useState<Set<string>>(new Set())
-    const { ProgressComponent, setProgress } = useProgress()
 
     const { userIds } = useUsersContext()
 
     useEffect(() => {
-        setProgress(true)
-        return editorsCollection.onSnapshot(snapshot => {
+        return editorsCollection.onSnapshot(snapshot =>
             setEditors(new Set(snapshot.docs.map(doc => doc.id)))
-            setProgress(false)
-        })
-    }, [setProgress])
+        )
+    }, [])
 
     const handleEditorChange = (uid: string) => {
         if (editors.has(uid)) editorsCollection.doc(uid).delete()
@@ -30,23 +26,19 @@ const AccountUserAdmin = () => {
     }
 
     return (
-        <>
-            <StyledCard header="Editoren" BackgroundIcon={SecurityIcon}>
-                <List>
-                    {userIds.map(uid => (
-                        <AccountListItem
-                            key={uid}
-                            uid={uid}
-                            variant="admin"
-                            checked={editors.has(uid)}
-                            onChange={handleEditorChange}
-                        />
-                    ))}
-                </List>
-            </StyledCard>
-
-            <ProgressComponent />
-        </>
+        <StyledCard header="Editoren" BackgroundIcon={SecurityIcon}>
+            <List>
+                {userIds.map(uid => (
+                    <AccountListItem
+                        key={uid}
+                        uid={uid}
+                        variant="admin"
+                        checked={editors.has(uid)}
+                        onChange={handleEditorChange}
+                    />
+                ))}
+            </List>
+        </StyledCard>
     )
 }
 
