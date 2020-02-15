@@ -84,7 +84,7 @@ const Home = () => {
 
     return (
         <>
-            <Grid container spacing={4} justify="space-between" alignItems="center">
+            <Grid container spacing={4} justify="space-between">
                 <HomeMostCooked />
                 <HomeRecentlyAdded />
                 <HomeRecipeSelection

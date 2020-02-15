@@ -200,7 +200,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
 
                     <Divider />
 
-                    <Box padding={2} paddingLeft={1}>
+                    <Box padding={2} paddingLeft={1} paddingRight={6}>
                         <CategoryResult categories={recipe.categories} />
                     </Box>
                 </Paper>

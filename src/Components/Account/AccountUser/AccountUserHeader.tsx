@@ -266,7 +266,7 @@ const AccountUserHeader = ({ user, userDoc, onUserSettingChange }: AccountUserHe
                 <Grid container spacing={1} justify="space-between">
                     <Grid item xs="auto">
                         <Typography variant="h4" display="inline">
-                            Willkommen zurück {user.username}
+                            {user.username}
                         </Typography>
                     </Grid>
                     <Grid item xs="auto">

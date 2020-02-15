@@ -18,7 +18,7 @@ import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        buttonGroupText: {
+        buttonGroupContained: {
             '&:not(:first-child), &:not(:last-child)': {
                 borderRight: 'none',
                 borderBottom: 'none',
@@ -79,8 +79,8 @@ const HomeRecipeSelection = ({
                 <ButtonGroup
                     size={isMobile ? 'small' : 'medium'}
                     classes={{
-                        groupedTextHorizontal: classes.buttonGroupText,
-                        groupedTextVertical: classes.buttonGroupText,
+                        groupedContainedHorizontal: classes.buttonGroupContained,
+                        groupedContainedVertical: classes.buttonGroupContained,
                         root: classes.buttonGroupRoot,
                     }}
                     variant="contained">
