@@ -78,8 +78,6 @@ const AccountUserChangelog = () => {
     const getRelatedIssues = (pullrequest: Pullrequest) =>
         issues.filter(issue => pullrequest.issueNumbers?.includes(issue.number.toString()))
 
-    const isNotOnDependabotVersion = () => pullrequests.map(pr => pr.shortSha).includes(__VERSION__)
-
     return (
         <>
             <Chip
@@ -87,8 +85,7 @@ const AccountUserChangelog = () => {
                 icon={<UpdateIconRounded />}
                 label={__VERSION__}
                 color={
-                    pullrequests.length > 0 &&
-                    isNotOnDependabotVersion() &&
+                    pullrequests.some(pr => pr.shortSha === __VERSION__) &&
                     pullrequests[0]?.shortSha !== __VERSION__
                         ? 'secondary'
                         : 'default'
