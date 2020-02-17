@@ -2,7 +2,6 @@ import {
     Card,
     CardContent,
     createStyles,
-    Fade,
     makeStyles,
     SvgIconProps,
     Typography,
@@ -75,20 +74,18 @@ const StyledCard = ({ header, children, BackgroundIcon, action }: Props) => {
     const classes = useStyles({ action: Boolean(action) })
 
     return (
-        <Fade in>
-            <Card className={classes.root}>
-                {header && (
-                    <div className={classes.header}>
-                        <div className={classes.action}>{action}</div>
-                        <Typography noWrap variant="h5">
-                            {header}
-                        </Typography>
-                    </div>
-                )}
-                <CardContent className={classes.cardContent}>{children}</CardContent>
-                {BackgroundIcon && <BackgroundIcon className={classes.backgroundIcon} />}
-            </Card>
-        </Fade>
+        <Card className={classes.root}>
+            {header && (
+                <div className={classes.header}>
+                    <div className={classes.action}>{action}</div>
+                    <Typography noWrap variant="h5">
+                        {header}
+                    </Typography>
+                </div>
+            )}
+            <CardContent className={classes.cardContent}>{children}</CardContent>
+            {BackgroundIcon && <BackgroundIcon className={classes.backgroundIcon} />}
+        </Card>
     )
 }
 

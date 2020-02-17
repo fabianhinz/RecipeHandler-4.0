@@ -71,11 +71,9 @@ const useStyles = makeStyles(theme =>
         recipeItem: {
             marginLeft: theme.spacing(2),
         },
-        paper: {
-            position: 'relative',
-        },
-        popoverPaper: {
-            padding: theme.spacing(1),
+        focusHighlight: {
+            borderBottomRightRadius: 0,
+            borderBottomLeftRadius: 0,
         },
     })
 )
@@ -117,8 +115,11 @@ const HomeRecipeCard = ({ recipe }: Props) => {
 
     return (
         <Grid {...gridBreakpointProps} item>
-            <Paper className={classes.paper}>
+            <Paper>
                 <CardActionArea
+                    classes={{
+                        focusHighlight: classes.focusHighlight,
+                    }}
                     onClick={() => history.push(PATHS.details(recipe.name), { recipe })}>
                     <Grid container wrap="nowrap" alignItems="center">
                         <Grid item>
