@@ -6,29 +6,8 @@ import {
     makeStyles,
     Paper,
     Typography,
-    useTheme,
 } from '@material-ui/core'
-import {
-    amber,
-    blue,
-    blueGrey,
-    brown,
-    cyan,
-    deepOrange,
-    deepPurple,
-    green,
-    grey,
-    indigo,
-    lightBlue,
-    lightGreen,
-    lime,
-    orange,
-    pink,
-    purple,
-    red,
-    teal,
-    yellow,
-} from '@material-ui/core/colors'
+import { yellow } from '@material-ui/core/colors'
 import { ChevronLeft, ChevronRight } from 'mdi-material-ui'
 import React, { memo, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -43,48 +22,19 @@ import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
 import Skeletons from '../Shared/Skeletons'
 
-const COLOR_PALETTE_DARK = [
-    amber[300],
-    blue[300],
-    blueGrey[300],
-    brown[300],
-    cyan[300],
-    deepOrange[300],
-    deepPurple[300],
-    green[300],
-    grey[300],
-    indigo[300],
-    lightBlue[300],
-    lightGreen[300],
-    lime[300],
-    orange[300],
-    pink[300],
-    purple[300],
-    red[300],
-    teal[300],
+// ! the length of COLOR_PALETTE must equal the number of MOST_COOKED_LIMIT
+const MOST_COOKED_LIMIT = 10
+const COLOR_PALETTE = [
+    yellow[900],
+    yellow[800],
+    yellow[700],
+    yellow[600],
+    yellow[500],
+    yellow[400],
     yellow[300],
-]
-
-const COLOR_PALETTE_LIGHT = [
-    amber[100],
-    blue[100],
-    blueGrey[100],
-    brown[100],
-    cyan[100],
-    deepOrange[100],
-    deepPurple[100],
-    green[100],
-    grey[100],
-    indigo[100],
-    lightBlue[100],
-    lightGreen[100],
-    lime[100],
-    orange[100],
-    pink[100],
-    purple[100],
-    red[100],
-    teal[100],
+    yellow[200],
     yellow[100],
+    yellow[50],
 ]
 
 interface StyleProps {
@@ -108,17 +58,12 @@ const useMostCookedPaperStyles = makeStyles(theme =>
 interface MostCookedPaperProps {
     recipeName: string
     counter: MostCooked<number>
+    paletteIndex: number
 }
 
-const MostCookedPaper = ({ recipeName, counter }: MostCookedPaperProps) => {
-    const theme = useTheme()
-    const paletteIndexRef = useRef(Math.floor(Math.random() * COLOR_PALETTE_LIGHT.length))
-
+const MostCookedPaper = ({ recipeName, counter, paletteIndex }: MostCookedPaperProps) => {
     const classes = useMostCookedPaperStyles({
-        backgroundColor:
-            theme.palette.type === 'light'
-                ? COLOR_PALETTE_LIGHT[paletteIndexRef.current]
-                : COLOR_PALETTE_DARK[paletteIndexRef.current],
+        backgroundColor: COLOR_PALETTE[paletteIndex],
     })
 
     const { gridBreakpointProps } = useGridContext()
@@ -137,7 +82,7 @@ const MostCookedPaper = ({ recipeName, counter }: MostCookedPaperProps) => {
     )
 }
 
-const useHomeMostCookedStyles = makeStyles(theme =>
+const useHomeMostCookedStyles = makeStyles(() =>
     createStyles({
         mostCookedGridContainer: {
             overflowX: 'auto',
@@ -150,11 +95,11 @@ const useHomeMostCookedStyles = makeStyles(theme =>
 
 type MostCookedMap = Map<DocumentId, MostCooked<number>>
 
-const MOST_COOKED_LIMIT = 10
 const MOST_COOKED_CONTAIER_ID = elementIdService.getId()
 
 const HomeMostCooked = () => {
     const [mostCooked, setMostCooked] = useState<MostCookedMap>(new Map())
+    const [counterValues, setCounterValues] = useState<Set<number>>(new Set())
     const [containerScrollLeft, setContainerScrollLeft] = useState(0)
     const [scrollRightDisabled, setScrollRightDisabled] = useState(false)
     const [scrollLeftDisabled, setScrollLeftDisabled] = useState(false)
@@ -181,11 +126,16 @@ const HomeMostCooked = () => {
             .collection('cookCounter')
             .orderBy('value', 'desc')
             .limit(MOST_COOKED_LIMIT)
-            .onSnapshot(querySnapshot =>
-                setMostCooked(
-                    new Map(querySnapshot.docs.map(doc => [doc.id, doc.data()])) as MostCookedMap
+            .onSnapshot(querySnapshot => {
+                const newMostCookedMap = new Map(
+                    querySnapshot.docs.map(doc => [doc.id, doc.data()])
+                ) as MostCookedMap
+
+                setCounterValues(
+                    new Set([...newMostCookedMap.values()].map(mostCooked => mostCooked.value))
                 )
-            )
+                setMostCooked(newMostCookedMap)
+            })
     }, [user])
 
     if (user && !user.showMostCooked) return <></>
@@ -243,6 +193,7 @@ const HomeMostCooked = () => {
                     {[...mostCooked.entries()].map(([recipeName, counter]) => (
                         <MostCookedPaper
                             key={recipeName}
+                            paletteIndex={[...counterValues].indexOf(counter.value)}
                             recipeName={recipeName}
                             counter={counter}
                         />
