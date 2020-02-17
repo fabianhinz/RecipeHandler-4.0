@@ -189,7 +189,7 @@ const HomeMostCooked = () => {
                     spacing={3}
                     id={MOST_COOKED_CONTAIER_ID}
                     wrap="nowrap">
-                    <LeftTrigger />
+                    {mostCooked.size > 0 && <LeftTrigger />}
                     {[...mostCooked.entries()].map(([recipeName, counter]) => (
                         <MostCookedPaper
                             key={recipeName}
@@ -198,7 +198,7 @@ const HomeMostCooked = () => {
                             counter={counter}
                         />
                     ))}
-                    <RightTrigger />
+                    {mostCooked.size > 0 && <RightTrigger />}
                     <Skeletons
                         variant="cookCounter"
                         visible={mostCooked.size === 0}
