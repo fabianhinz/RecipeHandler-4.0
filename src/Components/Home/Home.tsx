@@ -61,7 +61,7 @@ const Home = () => {
             (value, type) => (query = query.where(`categories.${type}`, '==', value))
         )
 
-        return query.limit(6).onSnapshot(querySnapshot => {
+        return query.limit(12).onSnapshot(querySnapshot => {
             const changes: ChangesRecord = {
                 added: new Map(),
                 modified: new Map(),
@@ -103,7 +103,7 @@ const Home = () => {
                             variant="recipe"
                             visible={querying && pagedRecipes.size === 0}
                             numberOfSkeletons={
-                                pagedRecipesSize.current > 0 ? pagedRecipesSize.current : 6
+                                pagedRecipesSize.current > 0 ? pagedRecipesSize.current : 12
                             }
                         />
 

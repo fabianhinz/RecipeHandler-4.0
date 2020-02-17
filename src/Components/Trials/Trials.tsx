@@ -70,7 +70,7 @@ const Trials = () => {
 
         if (lastTrial) query = query.startAfter(lastTrial.createdDate)
         // ToDo refactor below --> merge with Home.tsx 69 ff.
-        return query.limit(6).onSnapshot(querySnapshot => {
+        return query.limit(12).onSnapshot(querySnapshot => {
             const changes = {
                 added: new Map(),
                 modified: new Map(),

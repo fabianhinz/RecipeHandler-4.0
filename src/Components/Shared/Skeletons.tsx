@@ -53,7 +53,7 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
     return (
         <>
             {visible &&
-                new Array(numberOfSkeletons || 6).fill(1).map((_skeleton, index) => (
+                new Array(numberOfSkeletons || 12).fill(1).map((_skeleton, index) => (
                     <Grid {...gridBreakpointProps} item key={index}>
                         <Grid container spacing={2} justify="space-between" alignItems="center">
                             <Grid xs={12} item>

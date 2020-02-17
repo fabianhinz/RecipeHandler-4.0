@@ -5,8 +5,6 @@ import React from 'react'
 import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { CategoryResult } from '../../Category/CategoryResult'
-import { Navigate } from '../../Routes/Navigate'
-import { PATHS } from '../../Routes/Routes'
 import { RecipeResultAction, RecipeVariants } from './Action/RecipeResultAction'
 
 interface Props extends RecipeVariants {
@@ -32,17 +30,13 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
             <Grid item xs={variant === 'related' ? 12 : 7} md={variant === 'related' ? 12 : 8}>
                 <Grid container spacing={1} direction="column" justify="center">
                     <Grid item>
-                        <Navigate
-                            disabled={variant === 'related' || variant === 'preview'}
-                            to={PATHS.details(recipe.name)}>
-                            <Typography
-                                gutterBottom
-                                className={classes.recipeName}
-                                display="inline"
-                                variant={variant === 'related' ? 'h6' : 'h5'}>
-                                {recipe.name}
-                            </Typography>
-                        </Navigate>
+                        <Typography
+                            gutterBottom
+                            className={classes.recipeName}
+                            display="inline"
+                            variant={variant === 'related' ? 'h6' : 'h5'}>
+                            {recipe.name}
+                        </Typography>
                     </Grid>
                     <Grid item>
                         <Grid container spacing={1} alignItems="center">

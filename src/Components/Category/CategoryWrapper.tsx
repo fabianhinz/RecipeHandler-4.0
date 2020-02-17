@@ -36,6 +36,10 @@ import {
     Leaf,
     Pasta,
     Pizza,
+    WeatherPartlyCloudy,
+    WeatherPouring,
+    WeatherSnowy,
+    WeatherSunny,
 } from 'mdi-material-ui'
 import React, { FC, memo, useState } from 'react'
 
@@ -76,6 +80,14 @@ export const iconFromCategory = (category: string) => {
             return <Barley />
         case 'Vegetarisch':
             return <EggEaster />
+        case 'Frühling':
+            return <WeatherPartlyCloudy />
+        case 'Sommer':
+            return <WeatherSunny />
+        case 'Herbst':
+            return <WeatherPouring />
+        case 'Winter':
+            return <WeatherSnowy />
         default:
             return <AvTimer />
     }
@@ -188,7 +200,7 @@ interface CategoryWrapperProps {
     onCategoryChange: (type: string, value: string) => void
 }
 
-const SKELETON_CATEGORIES = ['art', 'ernährung', 'zeit']
+const SKELETON_CATEGORIES = ['art', 'ernährung', 'zeit', 'saison']
 
 const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedCategories }) => {
     const { categoriesCollection, categoriesLoading } = useCategoriesCollectionContext()
@@ -197,7 +209,7 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
     return (
         <Grid container spacing={3}>
             {Object.keys(categoriesCollection).map(type => (
-                <Grid key={type} item xs={landscape ? 4 : 12} sm={4}>
+                <Grid key={type} item xs={landscape ? 3 : 6} sm={6} md={3}>
                     <CategoryDialog
                         categories={categoriesCollection[type]}
                         onCategoryChange={onCategoryChange}
@@ -208,7 +220,7 @@ const CategoryWrapper: FC<CategoryWrapperProps> = ({ onCategoryChange, selectedC
             ))}
             {categoriesLoading &&
                 SKELETON_CATEGORIES.map(dummy => (
-                    <Grid key={dummy} item xs={landscape ? 4 : 12} sm={4}>
+                    <Grid key={dummy} item xs={landscape ? 3 : 6} sm={6} md={3}>
                         <ListItem>
                             <ListItemIcon>
                                 <Skeleton variant="circle" width={40} height={40} />
