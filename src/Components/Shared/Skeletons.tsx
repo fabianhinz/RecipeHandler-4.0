@@ -14,9 +14,9 @@ const useStyles = makeStyles(theme =>
     createStyles({
         recipe: {
             [theme.breakpoints.down('sm')]: {
-                height: 120 + 57,
+                height: 120 + 89,
             },
-            [theme.breakpoints.between('sm', 'lg')]: {
+            [theme.breakpoints.between('md', 'lg')]: {
                 height: 150 + 57,
             },
             [theme.breakpoints.up('xl')]: {
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme =>
             [theme.breakpoints.down('sm')]: {
                 height: 283,
             },
-            [theme.breakpoints.between('sm', 'lg')]: {
+            [theme.breakpoints.between('md', 'lg')]: {
                 height: 333,
             },
             [theme.breakpoints.up('xl')]: {

@@ -9,6 +9,7 @@ import {
     Tooltip,
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import {
     BookmarkMultipleOutline,
     InformationOutline,
@@ -19,6 +20,7 @@ import React, { useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { useBookmarkContext } from './Provider/BookmarkProvider'
+import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import { useGridContext } from './Provider/GridProvider'
 import { PATHS } from './Routes/Routes'
 import Search, { AlgoliaDocSearchRef } from './Search/Search'
@@ -68,6 +70,7 @@ const Header = () => {
 
     const { setGridLayout, gridLayout } = useGridContext()
     const { bookmarks } = useBookmarkContext()
+    const { user, shoppingList } = useFirebaseAuthContext()
     const history = useHistory()
 
     const openDrawer = () => setDrawer(true)
@@ -75,32 +78,51 @@ const Header = () => {
 
     const actions = useMemo(
         () => (
-            <>
-                <Tooltip title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
-                    <IconButton
-                        onClick={() => setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))}>
-                        {gridLayout === 'grid' ? <ViewAgendaOutline /> : <ViewGridOutline />}
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Lesezeichen">
-                    <IconButton onClick={() => history.push(PATHS.bookmarks)}>
-                        <BadgeWrapper badgeContent={bookmarks.size}>
-                            <BookmarkMultipleOutline />
-                        </BadgeWrapper>
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Impressum">
-                    <IconButton onClick={() => history.push(PATHS.impressum)}>
-                        <InformationOutline />
-                    </IconButton>
-                </Tooltip>
-            </>
+            <Grid container spacing={1}>
+                <Grid item>
+                    <Tooltip title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
+                        <IconButton
+                            onClick={() =>
+                                setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
+                            }>
+                            {gridLayout === 'grid' ? <ViewAgendaOutline /> : <ViewGridOutline />}
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+                <Grid item>
+                    <Tooltip title="Lesezeichen">
+                        <IconButton onClick={() => history.push(PATHS.bookmarks)}>
+                            <BadgeWrapper badgeContent={bookmarks.size}>
+                                <BookmarkMultipleOutline />
+                            </BadgeWrapper>
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+                {user && (
+                    <Grid item>
+                        <Tooltip title="Einkaufsliste">
+                            <IconButton onClick={() => history.push(PATHS.shoppingList)}>
+                                <BadgeWrapper badgeContent={shoppingList.size}>
+                                    <ShoppingCartIcon />
+                                </BadgeWrapper>
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
+                )}
+                <Grid item>
+                    <Tooltip title="Impressum">
+                        <IconButton onClick={() => history.push(PATHS.impressum)}>
+                            <InformationOutline />
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+            </Grid>
         ),
-        [bookmarks.size, gridLayout, history, setGridLayout]
+        [bookmarks.size, gridLayout, history, setGridLayout, shoppingList.size, user]
     )
 
     return (
-        <>
+        <header>
             <div className={classes.header}>
                 <Grid container spacing={3} justify="center" alignItems="center">
                     <Grid item xs={12} sm={8} lg={6}>
@@ -136,7 +158,7 @@ const Header = () => {
                     {AlgoliaDocSearchRef}
                 </SwipeableDrawer>
             </Hidden>
-        </>
+        </header>
     )
 }
 

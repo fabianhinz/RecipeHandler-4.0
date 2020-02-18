@@ -15,7 +15,7 @@ interface RecipeResultActionProps {
 }
 
 export const RecipeResultAction: FC<RecipeResultActionProps> = ({ name, numberOfComments }) => (
-    <Grid justify="flex-end" container spacing={1} {...stopPropagationProps}>
+    <Grid justify="space-evenly" container spacing={1} {...stopPropagationProps}>
         <Grid item>
             <RecipeResultBookmark name={name} />
         </Grid>

@@ -5,6 +5,7 @@ import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { memo } from 'react'
 
 import { Recipe } from '../../../model/model'
+import { FirebaseService } from '../../../services/firebase'
 import AccountChip from '../../Account/AccountChip'
 import Attachments from '../../Attachments/Attachments'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
@@ -89,7 +90,13 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
             )}
 
             <Grid item xs={12} container justify="center">
-                <AccountChip variant="outlined" uid={recipe.editorUid} />
+                <AccountChip
+                    variant="outlined"
+                    uid={recipe.editorUid}
+                    enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
+                        recipe.createdDate
+                    ).toLocaleDateString()}`}
+                />
             </Grid>
         </Grid>
     )

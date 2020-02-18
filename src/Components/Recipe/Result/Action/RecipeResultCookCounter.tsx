@@ -35,8 +35,6 @@ export const RecipeResultCookCounter: FC<Pick<Recipe, 'name'>> = ({ name }) => {
             .catch(console.error)
     }
 
-    if (!user) return <></>
-
     return (
         <Tooltip title={disabled ? 'Zähler erhöht' : 'Gekocht Zähler erhöhen'}>
             <div>

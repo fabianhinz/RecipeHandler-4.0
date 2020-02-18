@@ -43,11 +43,6 @@ const useStyles = makeStyles(theme =>
                 duration: theme.transitions.duration.enteringScreen,
                 easing: theme.transitions.easing.easeIn,
             }),
-            '@media (pointer: fine)': {
-                '&:hover': {
-                    transform: 'scale(1.03,1.03)',
-                },
-            },
         },
         selectedRecipeHeader: {
             backgroundColor: 'rgb(90, 139, 92, 0.3)',

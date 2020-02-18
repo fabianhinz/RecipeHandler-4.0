@@ -27,35 +27,47 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
 
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">
-            <Grid item xs={variant === 'related' ? 12 : 7} md={variant === 'related' ? 12 : 8}>
-                <Grid container spacing={1} direction="column" justify="center">
-                    <Grid item>
-                        <Typography
-                            gutterBottom
-                            className={classes.recipeName}
-                            display="inline"
-                            variant={variant === 'related' ? 'h6' : 'h5'}>
-                            {recipe.name}
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Grid container spacing={1} alignItems="center">
-                            <Grid item>
-                                <CalendarMonth />
-                            </Grid>
-                            <Grid item>
-                                <Typography className={classes.recipeDate} color="textSecondary">
-                                    {FirebaseService.createDateFromTimestamp(
-                                        recipe.createdDate
-                                    ).toLocaleDateString()}
-                                </Typography>
+            <Grid item xs={12} sm={variant === 'related' ? 12 : 6} md={8} lg={9}>
+                {variant !== 'related' ? (
+                    <Typography
+                        gutterBottom
+                        className={classes.recipeName}
+                        display="inline"
+                        variant="h5">
+                        {recipe.name}
+                    </Typography>
+                ) : (
+                    <Grid container spacing={1} direction="column" justify="center">
+                        <Grid item>
+                            <Typography
+                                gutterBottom
+                                className={classes.recipeName}
+                                display="inline"
+                                variant="h6">
+                                {recipe.name}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Grid container spacing={1} alignItems="center">
+                                <Grid item>
+                                    <CalendarMonth />
+                                </Grid>
+                                <Grid item>
+                                    <Typography
+                                        className={classes.recipeDate}
+                                        color="textSecondary">
+                                        {FirebaseService.createDateFromTimestamp(
+                                            recipe.createdDate
+                                        ).toLocaleDateString()}
+                                    </Typography>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
+                )}
             </Grid>
             {variant === 'details' && (
-                <Grid item xs={5} md={4}>
+                <Grid item xs={12} sm="auto">
                     <RecipeResultAction
                         name={recipe.name}
                         numberOfComments={recipe.numberOfComments}
@@ -63,7 +75,7 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
                 </Grid>
             )}
             <Grid item xs={12}>
-                <CategoryResult categories={recipe.categories} />
+                <CategoryResult color="secondary" categories={recipe.categories} />
             </Grid>
         </Grid>
     )

@@ -10,9 +10,14 @@ export const RecipeResultShare: FC<Pick<Recipe, 'name'>> = ({ name }) => {
     const [copied, setCopied] = useState(false)
 
     const handleShareBtnClick = () => {
-        copy(encodeURI(`${document.location.origin}${PATHS.details(name)}`)).then(() => {
-            setCopied(true)
-        })
+        const url = encodeURI(`${document.location.origin}${PATHS.details(name)}`)
+        if (navigator.share)
+            navigator.share({
+                title: 'RecipeHandler',
+                text: name,
+                url,
+            })
+        else copy(url).then(() => setCopied(true))
     }
 
     return (

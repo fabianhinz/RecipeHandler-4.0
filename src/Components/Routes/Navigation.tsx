@@ -6,7 +6,6 @@ import React, { memo, useState } from 'react'
 
 import AccountAuthentication from '../Account/AccountAuthentication'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { BadgeWrapper } from '../Shared/BadgeWrapper'
 import { Navigate } from './Navigate'
 import { PATHS } from './Routes'
 
@@ -29,7 +28,7 @@ const useStyles = makeStyles(theme =>
 const Navigation = () => {
     const [authenticationOpen, setAuthenticationOpen] = useState(false)
 
-    const { user, loginEnabled, shoppingList } = useFirebaseAuthContext()
+    const { user, loginEnabled } = useFirebaseAuthContext()
 
     const classes = useStyles()
 
@@ -56,11 +55,7 @@ const Navigation = () => {
                                 if (!user) setAuthenticationOpen(true)
                             }}
                             size="large"
-                            startIcon={
-                                <BadgeWrapper badgeContent={shoppingList.size}>
-                                    <AccountIcon />
-                                </BadgeWrapper>
-                            }>
+                            startIcon={<AccountIcon />}>
                             {!user ? 'Einloggen' : 'Account'}
                         </Button>
                     </Navigate>
@@ -85,9 +80,7 @@ const Navigation = () => {
                             onClick={() => {
                                 if (!user) setAuthenticationOpen(true)
                             }}>
-                            <BadgeWrapper badgeContent={shoppingList.size}>
-                                <AccountIcon />
-                            </BadgeWrapper>
+                            <AccountIcon />
                         </IconButton>
                     </Navigate>
                 </Hidden>

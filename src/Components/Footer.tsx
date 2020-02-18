@@ -28,12 +28,12 @@ const Footer = () => {
     const classes = useStyles()
 
     return (
-        <>
+        <footer>
             <AppBar className={classes.appbar} color="default">
                 <Navigation />
             </AppBar>
             <div className={classes.safeAreaIos} />
-        </>
+        </footer>
     )
 }
 

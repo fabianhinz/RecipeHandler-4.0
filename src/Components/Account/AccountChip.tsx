@@ -11,6 +11,7 @@ interface Props extends Pick<ChipProps, 'variant'> {
     position?: 'default' | 'absolute'
     onFilterChange?: (uid: string) => void
     selected?: boolean
+    enhanceLabel?: string
 }
 
 const useStyles = makeStyles(theme =>
@@ -26,7 +27,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const AccountChip = ({ uid, variant, position }: Props) => {
+const AccountChip = ({ uid, variant, position, enhanceLabel }: Props) => {
     const { getByUid } = useUsersContext()
     const user: User | undefined = getByUid(uid)
 
@@ -39,7 +40,7 @@ const AccountChip = ({ uid, variant, position }: Props) => {
                     variant={variant}
                     className={clsx(position === 'absolute' && classes.absolute)}
                     avatar={<Avatar src={user.profilePicture}>{user.username.slice(0, 1)}</Avatar>}
-                    label={user.username}
+                    label={`${user.username} ${enhanceLabel || ''}`}
                 />
             )}
         </>

@@ -8,6 +8,7 @@ import { ReactComponent as DetailsIcon } from '../../icons/details.svg'
 import { ReactComponent as EditIcon } from '../../icons/edit.svg'
 import { ReactComponent as HomeIcon } from '../../icons/home.svg'
 import { ReactComponent as ImpressumIcon } from '../../icons/impressum.svg'
+import { ReactComponent as ShoppingIcon } from '../../icons/shopping.svg'
 import { ReactComponent as TrialIcon } from '../../icons/trial.svg'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { BackgroundIcon } from '../Shared/BackgroundIcon'
@@ -22,6 +23,7 @@ export const PATHS = {
     account: '/account',
     bookmarks: '/bookmarks',
     impressum: '/impressum',
+    shoppingList: '/shopping',
 }
 
 interface AppRoute {
@@ -73,6 +75,11 @@ const securedRoutes: AppRoute[] = [
         path: PATHS.account,
         Component: lazy(() => import('../Account/AccountUser/AccountUser')),
         Background: () => <BackgroundIcon Icon={AccountIcon} />,
+    },
+    {
+        path: PATHS.shoppingList,
+        Component: lazy(() => import('../Account/AccountUser/AccountUserShoppingList')),
+        Background: () => <BackgroundIcon Icon={ShoppingIcon} />,
     },
 ]
 

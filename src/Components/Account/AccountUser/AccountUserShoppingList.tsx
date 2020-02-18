@@ -1,31 +1,35 @@
 import {
     Checkbox,
     createStyles,
+    Grid,
     IconButton,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
-    ListSubheader,
     makeStyles,
     TextField,
     Tooltip,
+    Typography,
+    useTheme,
 } from '@material-ui/core'
 import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCartTwoTone'
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCartTwoTone'
 import clsx from 'clsx'
 import React, { useMemo, useState } from 'react'
 
+import useDocumentTitle from '../../../hooks/useDocumentTitle'
+import useScrollButtons from '../../../hooks/useScrollButtons'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { useGridContext } from '../../Provider/GridProvider'
 import StyledCard from '../../Shared/StyledCard'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         checked: {
             textDecoration: 'line-through',
         },
-        root: {
+        sonstigesRoot: {
             display: 'flex',
             flexGrow: 1,
             flexDirection: 'column',
@@ -37,14 +41,40 @@ const useStyles = makeStyles(() =>
             display: 'flex',
             justifyContent: 'space-between',
         },
+        recipeContainer: {
+            overflowX: 'auto',
+            '&::-webkit-scrollbar': {
+                display: 'none',
+            },
+        },
+        recipeItem: {
+            [theme.breakpoints.down('xs')]: {
+                width: 340,
+            },
+            [theme.breakpoints.up('sm')]: {
+                width: 600,
+            },
+        },
     })
 )
 
 const AccountUserShoppingList = () => {
-    const classes = useStyles()
     const [textFieldValue, setTextFieldValue] = useState('')
 
+    const theme = useTheme()
+    const classes = useStyles()
+
     const { user, shoppingList, shoppingTracker } = useFirebaseAuthContext()
+    const { gridLayout } = useGridContext()
+
+    // ? no internal state (on initial render) >> we cannot use useRef here
+    const [containerRef, setContainerRef] = useState<any | undefined>()
+    const { ScrollButtons, ScrollLeftTrigger, ScrollRightTrigger } = useScrollButtons({
+        element: containerRef as HTMLDivElement,
+        delta: theme.breakpoints.down('xs') ? 340 : 600,
+    })
+
+    useDocumentTitle(`Einkaufsliste (${shoppingList.size})`)
 
     const shoppingListDocRef = useMemo(
         () =>
@@ -90,54 +120,89 @@ const AccountUserShoppingList = () => {
         Boolean(shoppingTracker.get(recipe)?.tracker?.some(trackerEl => trackerEl === grocery))
 
     return (
-        <StyledCard header="Einkaufsliste" BackgroundIcon={ShoppingCartIcon}>
-            <div className={classes.root}>
-                <List>
+        <Grid container spacing={4} alignItems="center">
+            <Grid item xs={10} md={9}>
+                <Typography variant="h4">Einkaufsliste</Typography>
+            </Grid>
+            <Grid item xs={2} md={3}>
+                <ScrollButtons />
+            </Grid>
+            <Grid item xs={12}>
+                <Grid
+                    container
+                    spacing={3}
+                    ref={ref => setContainerRef(ref)}
+                    wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}
+                    className={classes.recipeContainer}>
+                    <ScrollLeftTrigger />
                     {[...shoppingList.entries()].map(([recipe, groceries]) => (
-                        <div key={recipe}>
-                            <ListSubheader className={classes.listSubHeader}>
-                                {recipe}
-                                <Tooltip
-                                    placement="left"
-                                    title={`${recipe} von Einkaufsliste entfernen`}>
-                                    <IconButton onClick={handleRemove(recipe)}>
-                                        <RemoveFromShoppingCartIcon color="secondary" />
-                                    </IconButton>
-                                </Tooltip>
-                            </ListSubheader>
-                            {groceries?.list.map(grocery => (
-                                <ListItem key={grocery}>
-                                    <ListItemIcon>
-                                        <Checkbox
-                                            checked={listItemChecked(recipe, grocery)}
-                                            onChange={handleCheckboxChange(recipe, grocery)}
-                                            edge="start"
-                                        />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        classes={{
-                                            primary: clsx(
-                                                listItemChecked(recipe, grocery) && classes.checked
-                                            ),
-                                        }}
-                                        primary={grocery}
-                                    />
-                                </ListItem>
-                            ))}
-                        </div>
+                        <Grid item xs={gridLayout === 'list' ? 12 : 'auto'} key={recipe}>
+                            <div className={clsx(gridLayout === 'grid' && classes.recipeItem)}>
+                                <StyledCard
+                                    header={recipe}
+                                    action={
+                                        <Tooltip
+                                            placement="left"
+                                            title={`${recipe} von Einkaufsliste entfernen`}>
+                                            <IconButton onClick={handleRemove(recipe)}>
+                                                <RemoveFromShoppingCartIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    }>
+                                    <div
+                                        className={clsx(
+                                            recipe === 'Sonstiges' && classes.sonstigesRoot
+                                        )}>
+                                        <List>
+                                            {groceries?.list.map(grocery => (
+                                                <ListItem key={grocery}>
+                                                    <ListItemIcon>
+                                                        <Checkbox
+                                                            checked={listItemChecked(
+                                                                recipe,
+                                                                grocery
+                                                            )}
+                                                            onChange={handleCheckboxChange(
+                                                                recipe,
+                                                                grocery
+                                                            )}
+                                                            edge="start"
+                                                        />
+                                                    </ListItemIcon>
+                                                    <ListItemText
+                                                        classes={{
+                                                            primary: clsx(
+                                                                listItemChecked(recipe, grocery) &&
+                                                                    classes.checked
+                                                            ),
+                                                        }}
+                                                        primary={grocery}
+                                                    />
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                        {recipe === 'Sonstiges' && (
+                                            <form onSubmit={handleFormSubmit}>
+                                                <TextField
+                                                    value={textFieldValue}
+                                                    onChange={e =>
+                                                        setTextFieldValue(e.target.value)
+                                                    }
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    label="Sonstiges"
+                                                />
+                                            </form>
+                                        )}
+                                    </div>
+                                </StyledCard>
+                            </div>
+                        </Grid>
                     ))}
-                </List>
-                <form onSubmit={handleFormSubmit}>
-                    <TextField
-                        value={textFieldValue}
-                        onChange={e => setTextFieldValue(e.target.value)}
-                        variant="outlined"
-                        fullWidth
-                        label="Sonstiges"
-                    />
-                </form>
-            </div>
-        </StyledCard>
+                    <ScrollRightTrigger />
+                </Grid>
+            </Grid>
+        </Grid>
     )
 }
 
