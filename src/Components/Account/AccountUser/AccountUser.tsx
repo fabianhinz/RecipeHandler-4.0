@@ -14,7 +14,6 @@ import { NavigateFab } from '../../Routes/Navigate'
 import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
 import AccountUserRecipes from './AccountUserRecipes'
-import AccountUserShoppingList from './AccountUserShoppingList'
 
 type SettingKeys = keyof Pick<
     User,
@@ -121,10 +120,6 @@ const AccountUser = () => {
                         userDoc={userDoc}
                         onUserSettingChange={handleUserSettingChange}
                     />
-                </Grid>
-
-                <Grid item {...gridBreakpointProps}>
-                    <AccountUserShoppingList />
                 </Grid>
 
                 <Grid item {...gridBreakpointProps}>

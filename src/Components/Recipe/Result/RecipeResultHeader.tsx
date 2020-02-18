@@ -67,7 +67,7 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => {
                 )}
             </Grid>
             {variant === 'details' && (
-                <Grid item xs={12} sm={6} md={4} lg={3}>
+                <Grid item xs={12} sm="auto">
                     <RecipeResultAction
                         name={recipe.name}
                         numberOfComments={recipe.numberOfComments}

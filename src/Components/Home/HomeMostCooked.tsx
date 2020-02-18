@@ -2,21 +2,17 @@ import {
     CardActionArea,
     createStyles,
     Grid,
-    IconButton,
     makeStyles,
     Paper,
     Typography,
 } from '@material-ui/core'
 import { yellow } from '@material-ui/core/colors'
-import { ChevronLeft, ChevronRight } from 'mdi-material-ui'
 import React, { memo, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import useIntersectionObserver from '../../hooks/useIntersectionObserver'
+import useScrollButtons from '../../hooks/useScrollButtons'
 import { DocumentId, MostCooked } from '../../model/model'
-import elementIdService from '../../services/elementIdService'
 import { FirebaseService } from '../../services/firebase'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
@@ -95,29 +91,19 @@ const useHomeMostCookedStyles = makeStyles(() =>
 
 type MostCookedMap = Map<DocumentId, MostCooked<number>>
 
-const MOST_COOKED_CONTAIER_ID = elementIdService.getId()
-
 const HomeMostCooked = () => {
     const [mostCooked, setMostCooked] = useState<MostCookedMap>(new Map())
     const [counterValues, setCounterValues] = useState<Set<number>>(new Set())
-    const [containerScrollLeft, setContainerScrollLeft] = useState(0)
-    const [scrollRightDisabled, setScrollRightDisabled] = useState(false)
-    const [scrollLeftDisabled, setScrollLeftDisabled] = useState(false)
 
     const containerRef = useRef<any | undefined>()
+    const { ScrollButtons, ScrollLeftTrigger, ScrollRightTrigger } = useScrollButtons({
+        element: containerRef.current as HTMLDivElement,
+        delta: 300,
+    })
 
     const classes = useHomeMostCookedStyles()
 
     const { user } = useFirebaseAuthContext()
-    const { isMobile } = useBreakpointsContext()
-    const { IntersectionObserverTrigger: RightTrigger } = useIntersectionObserver({
-        onIsIntersecting: () => setScrollRightDisabled(true),
-        onLeave: () => setScrollRightDisabled(false),
-    })
-    const { IntersectionObserverTrigger: LeftTrigger } = useIntersectionObserver({
-        onIsIntersecting: () => setScrollLeftDisabled(true),
-        onLeave: () => setScrollLeftDisabled(false),
-    })
 
     useEffect(() => {
         if (user && !user.showMostCooked) return
@@ -140,46 +126,13 @@ const HomeMostCooked = () => {
 
     if (user && !user.showMostCooked) return <></>
 
-    const handleScrollLeft = () => {
-        ;(containerRef.current as HTMLDivElement).scroll({
-            left: containerScrollLeft - 300,
-            behavior: 'smooth',
-        })
-        setContainerScrollLeft(prev => prev - 300)
-    }
-
-    const handleScrollRight = () => {
-        ;(containerRef.current as HTMLDivElement).scroll({
-            left: containerScrollLeft + 300,
-            behavior: 'smooth',
-        })
-        setContainerScrollLeft(prev => prev + 300)
-    }
-
     return (
         <>
             <Grid item xs={10} md={9}>
                 <Typography variant="h4">Am häufigsten gekocht</Typography>
             </Grid>
             <Grid item xs={2} md={3}>
-                <Grid container justify="flex-end" wrap="nowrap">
-                    <Grid item>
-                        <IconButton
-                            size={isMobile ? 'small' : 'medium'}
-                            disabled={scrollLeftDisabled}
-                            onClick={handleScrollLeft}>
-                            <ChevronLeft />
-                        </IconButton>
-                    </Grid>
-                    <Grid item>
-                        <IconButton
-                            size={isMobile ? 'small' : 'medium'}
-                            disabled={scrollRightDisabled}
-                            onClick={handleScrollRight}>
-                            <ChevronRight />
-                        </IconButton>
-                    </Grid>
-                </Grid>
+                <ScrollButtons />
             </Grid>
             <Grid item xs={12}>
                 <Grid
@@ -187,9 +140,8 @@ const HomeMostCooked = () => {
                     className={classes.mostCookedGridContainer}
                     container
                     spacing={3}
-                    id={MOST_COOKED_CONTAIER_ID}
                     wrap="nowrap">
-                    {mostCooked.size > 0 && <LeftTrigger />}
+                    <ScrollLeftTrigger />
                     {[...mostCooked.entries()].map(([recipeName, counter]) => (
                         <MostCookedPaper
                             key={recipeName}
@@ -198,7 +150,7 @@ const HomeMostCooked = () => {
                             counter={counter}
                         />
                     ))}
-                    {mostCooked.size > 0 && <RightTrigger />}
+                    <ScrollRightTrigger />
                     <Skeletons
                         variant="cookCounter"
                         visible={mostCooked.size === 0}

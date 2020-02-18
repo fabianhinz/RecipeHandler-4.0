@@ -1,4 +1,4 @@
-import { createStyles, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
+import { createStyles, Grid, makeStyles, Tab, Tabs, Typography, useTheme } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import { Skeleton } from '@material-ui/lab'
@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
+import useScrollButtons from '../../hooks/useScrollButtons'
 import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import MarkdownRenderer from '../Markdown/MarkdownRenderer'
@@ -28,6 +29,9 @@ const useStyles = makeStyles(theme =>
         },
         recipeContainer: {
             overflowX: 'auto',
+            '&::-webkit-scrollbar': {
+                display: 'none',
+            },
         },
     })
 )
@@ -79,26 +83,41 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
 const Bookmarks = () => {
     const { bookmarks } = useBookmarkContext()
     const { gridLayout } = useGridContext()
-    const classes = useStyles()
 
-    useDocumentTitle(`${bookmarks.size} Lesezeichen`)
+    const classes = useStyles()
+    const theme = useTheme()
+
+    // ? no internal state >> we cannot use useRef here
+    const [containerRef, setContainerRef] = useState<any | undefined>()
+    const { ScrollButtons, ScrollLeftTrigger, ScrollRightTrigger } = useScrollButtons({
+        element: containerRef as HTMLDivElement,
+        delta: theme.breakpoints.down('xs') ? 340 : 600,
+    })
+
+    useDocumentTitle(`Lesezeichen (${bookmarks.size})`)
 
     return (
         <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12}>
+            <Grid item xs={10} md={9}>
                 <Typography variant="h4">Lesezeichen</Typography>
+            </Grid>
+            <Grid item xs={2} md={3}>
+                <ScrollButtons />
             </Grid>
             <Grid item xs={12}>
                 <Grid
                     container
                     spacing={3}
+                    ref={ref => setContainerRef(ref)}
                     wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}
                     className={classes.recipeContainer}>
+                    <ScrollLeftTrigger />
                     {[...bookmarks.values()].map(recipeName => (
                         <Grid item xs={gridLayout === 'list' ? 12 : 'auto'} key={recipeName}>
                             <Bookmark gridLayout={gridLayout} recipeName={recipeName} />
                         </Grid>
                     ))}
+                    <ScrollRightTrigger />
                 </Grid>
                 <NotFound visible={bookmarks.size === 0} />
             </Grid>
