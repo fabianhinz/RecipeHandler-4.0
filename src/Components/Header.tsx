@@ -100,7 +100,7 @@ const Header = () => {
     )
 
     return (
-        <>
+        <header>
             <div className={classes.header}>
                 <Grid container spacing={3} justify="center" alignItems="center">
                     <Grid item xs={12} sm={8} lg={6}>
@@ -136,7 +136,7 @@ const Header = () => {
                     {AlgoliaDocSearchRef}
                 </SwipeableDrawer>
             </Hidden>
-        </>
+        </header>
     )
 }
 
