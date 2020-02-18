@@ -85,7 +85,8 @@ const AccountUserChangelog = () => {
                 icon={<UpdateIconRounded />}
                 label={__VERSION__}
                 color={
-                    pullrequests.length > 0 && pullrequests[0]?.shortSha !== __VERSION__
+                    pullrequests.some(pr => pr.shortSha === __VERSION__) &&
+                    pullrequests[0]?.shortSha !== __VERSION__
                         ? 'secondary'
                         : 'default'
                 }
