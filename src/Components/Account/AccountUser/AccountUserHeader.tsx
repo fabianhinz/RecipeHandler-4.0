@@ -69,7 +69,6 @@ const useStyles = makeStyles(theme =>
             justifyContent: 'center',
             alignItems: 'center',
         },
-        showInfoBtn: { position: 'absolute', top: 12, left: 12 },
     })
 )
 
@@ -275,12 +274,14 @@ const AccountUserHeader = ({ user, userDoc, onUserSettingChange }: AccountUserHe
                 </Grid>
             </Grid>
             <Grid item xs={12}>
-                <StyledCard BackgroundIcon={SettingsOutline}>
-                    <IconButton
-                        className={classes.showInfoBtn}
-                        onClick={() => setShowInfo(prev => !prev)}>
-                        <Information />
-                    </IconButton>
+                <StyledCard
+                    header="Einstellungen"
+                    action={
+                        <IconButton onClick={() => setShowInfo(prev => !prev)}>
+                            <Information />
+                        </IconButton>
+                    }
+                    BackgroundIcon={SettingsOutline}>
                     <Grid container spacing={3}>
                         <Grid className={classes.profilePictureItem} item xs={12} md={4}>
                             <CardActionArea

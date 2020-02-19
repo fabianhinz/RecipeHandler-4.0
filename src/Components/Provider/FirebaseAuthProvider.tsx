@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme =>
         avatar: {
             backgroundColor: '#2C384A',
             padding: theme.spacing(4),
+            margin: theme.spacing(1),
             width: theme.spacing(8),
             height: theme.spacing(8),
             boxShadow: theme.shadows[8],

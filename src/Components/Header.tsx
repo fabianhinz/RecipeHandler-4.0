@@ -3,6 +3,10 @@ import {
     Grid,
     Hidden,
     IconButton,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
     makeStyles,
     Paper,
     SwipeableDrawer,
@@ -16,7 +20,7 @@ import {
     ViewAgendaOutline,
     ViewGridOutline,
 } from 'mdi-material-ui'
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { useBookmarkContext } from './Provider/BookmarkProvider'
@@ -56,10 +60,7 @@ const useStyles = makeStyles(theme =>
             display: 'flex',
             justifyContent: 'space-between',
             flexDirection: 'column',
-        },
-        drawerActions: {
-            display: 'flex',
-            justifyContent: 'space-between',
+            minWidth: 250,
         },
     })
 )
@@ -76,89 +77,143 @@ const Header = () => {
     const openDrawer = () => setDrawer(true)
     const closeDrawer = () => setDrawer(false)
 
-    const actions = useMemo(
-        () => (
-            <Grid container spacing={1}>
-                <Grid item>
-                    <Tooltip title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
-                        <IconButton
-                            onClick={() =>
-                                setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
-                            }>
-                            {gridLayout === 'grid' ? <ViewAgendaOutline /> : <ViewGridOutline />}
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
-                <Grid item>
-                    <Tooltip title="Lesezeichen">
-                        <IconButton onClick={() => history.push(PATHS.bookmarks)}>
-                            <BadgeWrapper badgeContent={bookmarks.size}>
-                                <BookmarkMultipleOutline />
-                            </BadgeWrapper>
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
-                {user && (
-                    <Grid item>
-                        <Tooltip title="Einkaufsliste">
-                            <IconButton onClick={() => history.push(PATHS.shoppingList)}>
-                                <BadgeWrapper badgeContent={shoppingList.size}>
-                                    <ShoppingCartIcon />
-                                </BadgeWrapper>
-                            </IconButton>
-                        </Tooltip>
-                    </Grid>
-                )}
-                <Grid item>
-                    <Tooltip title="Impressum">
-                        <IconButton onClick={() => history.push(PATHS.impressum)}>
-                            <InformationOutline />
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
-            </Grid>
-        ),
-        [bookmarks.size, gridLayout, history, setGridLayout, shoppingList.size, user]
-    )
-
     return (
-        <header>
-            <div className={classes.header}>
+        <>
+            <header className={classes.header}>
                 <Grid container spacing={3} justify="center" alignItems="center">
+                    <Hidden smDown>
+                        <Grid item>
+                            <Paper className={classes.buttonPaper}>
+                                <Tooltip title="Impressum">
+                                    <IconButton onClick={() => history.push(PATHS.impressum)}>
+                                        <InformationOutline />
+                                    </IconButton>
+                                </Tooltip>
+                            </Paper>
+                        </Grid>
+                    </Hidden>
                     <Grid item xs={12} sm={8} lg={6}>
                         <Paper className={classes.searchPaper}>
                             <Search />
-                            <Hidden smUp>
+                            <Hidden mdUp>
                                 <IconButton onClick={openDrawer} size="small">
-                                    <BadgeWrapper badgeContent={bookmarks.size}>
-                                        <MenuIcon />
-                                    </BadgeWrapper>
+                                    <MenuIcon />
                                 </IconButton>
                             </Hidden>
                         </Paper>
                     </Grid>
-                    <Hidden xsDown>
+                    <Hidden smDown>
                         <Grid item>
-                            <Paper className={classes.buttonPaper}>{actions}</Paper>
+                            <Paper className={classes.buttonPaper}>
+                                <Grid container spacing={1}>
+                                    <Grid item>
+                                        <Tooltip
+                                            title={
+                                                gridLayout === 'grid'
+                                                    ? 'Listenansicht'
+                                                    : 'Gridansicht'
+                                            }>
+                                            <IconButton
+                                                onClick={() =>
+                                                    setGridLayout(prev =>
+                                                        prev === 'grid' ? 'list' : 'grid'
+                                                    )
+                                                }>
+                                                {gridLayout === 'grid' ? (
+                                                    <ViewAgendaOutline />
+                                                ) : (
+                                                    <ViewGridOutline />
+                                                )}
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                    <Grid item>
+                                        <Tooltip title="Lesezeichen">
+                                            <IconButton
+                                                onClick={() => history.push(PATHS.bookmarks)}>
+                                                <BadgeWrapper badgeContent={bookmarks.size}>
+                                                    <BookmarkMultipleOutline />
+                                                </BadgeWrapper>
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                    <Grid item>
+                                        <Tooltip title="Einkaufsliste">
+                                            <div>
+                                                <IconButton
+                                                    disabled={!user}
+                                                    onClick={() =>
+                                                        history.push(PATHS.shoppingList)
+                                                    }>
+                                                    <BadgeWrapper badgeContent={shoppingList.size}>
+                                                        <ShoppingCartIcon />
+                                                    </BadgeWrapper>
+                                                </IconButton>
+                                            </div>
+                                        </Tooltip>
+                                    </Grid>
+                                </Grid>
+                            </Paper>
                         </Grid>
                     </Hidden>
                 </Grid>
-            </div>
+            </header>
 
-            <Hidden smUp>
+            <Hidden mdUp>
                 <SwipeableDrawer
                     anchor="right"
                     open={drawer}
                     classes={{ paper: classes.drawerPaper }}
+                    disableSwipeToOpen={false}
                     onOpen={openDrawer}
                     onClose={closeDrawer}>
-                    <div onClick={closeDrawer} className={classes.drawerActions}>
-                        {actions}
-                    </div>
                     {AlgoliaDocSearchRef}
+                    <List>
+                        <ListItem button onClick={() => history.push(PATHS.impressum)}>
+                            <ListItemIcon>
+                                <InformationOutline />
+                            </ListItemIcon>
+                            <ListItemText primary="Impressum" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() =>
+                                setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
+                            }>
+                            <ListItemIcon>
+                                {gridLayout === 'grid' ? (
+                                    <ViewAgendaOutline />
+                                ) : (
+                                    <ViewGridOutline />
+                                )}
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}
+                            />
+                        </ListItem>
+                        <ListItem button onClick={() => history.push(PATHS.bookmarks)}>
+                            <ListItemIcon>
+                                <BadgeWrapper badgeContent={bookmarks.size}>
+                                    <BookmarkMultipleOutline />
+                                </BadgeWrapper>
+                            </ListItemIcon>
+                            <ListItemText primary="Lesezeichen" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            disabled={!user}
+                            onClick={() => history.push(PATHS.shoppingList)}>
+                            <ListItemIcon>
+                                <BadgeWrapper badgeContent={shoppingList.size}>
+                                    <ShoppingCartIcon />
+                                </BadgeWrapper>
+                            </ListItemIcon>
+                            <ListItemText primary="Einkaufsliste" />
+                        </ListItem>
+                    </List>
                 </SwipeableDrawer>
             </Hidden>
-        </header>
+        </>
     )
 }
 

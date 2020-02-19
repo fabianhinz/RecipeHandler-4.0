@@ -1,4 +1,4 @@
-import { Chip, ChipProps, Grid } from '@material-ui/core'
+import { Chip, ChipProps, createStyles, Grid, makeStyles } from '@material-ui/core'
 import React, { FC } from 'react'
 
 import { Categories } from '../../model/model'
@@ -10,8 +10,21 @@ interface CategoryResultProps extends Pick<ChipProps, 'color'> {
     fullWidth?: boolean
 }
 
+interface StyleProps {
+    fixedWidth: boolean
+}
+
+const useStyles = makeStyles(() =>
+    createStyles({
+        chip: {
+            width: ({ fixedWidth }: StyleProps) => (fixedWidth ? 130 : 'inherit'),
+        },
+    })
+)
+
 export const CategoryResult: FC<CategoryResultProps> = ({ categories, color }) => {
     const { isLowRes } = useBreakpointsContext()
+    const classes = useStyles({ fixedWidth: isLowRes })
 
     return (
         <Grid container spacing={1} justify={isLowRes ? 'center' : 'flex-start'}>
@@ -19,7 +32,7 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories, color }) =
                 <Grid item key={type}>
                     {categories[type].length > 0 && (
                         <Chip
-                            style={{ width: 130 }}
+                            className={classes.chip}
                             icon={iconFromCategory(categories[type])}
                             size="small"
                             color={color}

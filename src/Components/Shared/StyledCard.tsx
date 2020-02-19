@@ -46,9 +46,7 @@ const useStyles = makeStyles(theme =>
         action: {
             position: 'absolute',
             display: 'flex',
-            top: 0,
-            right: 0,
-            bottom: 0,
+            right: theme.spacing(0.5),
             '& > *': {
                 color: theme.palette.getContrastText(theme.palette.primary.main),
             },
