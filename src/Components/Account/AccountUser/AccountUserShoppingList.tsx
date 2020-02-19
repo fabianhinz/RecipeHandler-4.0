@@ -22,6 +22,7 @@ import useScrollButtons from '../../../hooks/useScrollButtons'
 import { FirebaseService } from '../../../services/firebase'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
+import NotFound from '../../Shared/NotFound'
 import StyledCard from '../../Shared/StyledCard'
 
 const useStyles = makeStyles(theme =>
@@ -201,6 +202,7 @@ const AccountUserShoppingList = () => {
                     ))}
                     <ScrollRightTrigger />
                 </Grid>
+                <NotFound visible={shoppingList.size === 0} />
             </Grid>
         </Grid>
     )
