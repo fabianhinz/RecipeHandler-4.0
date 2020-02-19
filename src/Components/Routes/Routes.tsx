@@ -78,7 +78,7 @@ const securedRoutes: AppRoute[] = [
     },
     {
         path: PATHS.shoppingList,
-        Component: lazy(() => import('../Account/AccountUser/AccountUserShoppingList')),
+        Component: lazy(() => import('../Account/AccountShoppingList')),
         Background: () => <BackgroundIcon Icon={ShoppingIcon} />,
     },
 ]

@@ -17,13 +17,13 @@ import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCartTwo
 import clsx from 'clsx'
 import React, { useMemo, useState } from 'react'
 
-import useDocumentTitle from '../../../hooks/useDocumentTitle'
-import useScrollButtons from '../../../hooks/useScrollButtons'
-import { FirebaseService } from '../../../services/firebase'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import { useGridContext } from '../../Provider/GridProvider'
-import NotFound from '../../Shared/NotFound'
-import StyledCard from '../../Shared/StyledCard'
+import useDocumentTitle from '../../hooks/useDocumentTitle'
+import useScrollButtons from '../../hooks/useScrollButtons'
+import { FirebaseService } from '../../services/firebase'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useGridContext } from '../Provider/GridProvider'
+import NotFound from '../Shared/NotFound'
+import StyledCard from '../Shared/StyledCard'
 
 const useStyles = makeStyles(theme =>
     createStyles({
