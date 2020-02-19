@@ -141,7 +141,7 @@ const UserStettings = ({ user, onUserSettingChange, showInfo }: UserSettingsProp
                 <FavoriteIcon />
             </ListItemIcon>
             <ListItemText
-                primary="Am häufigsten gekochte Rezepte"
+                primary="Häufig gekochte Rezepte"
                 secondaryTypographyProps={{ component: 'div' } as TypographyProps}
                 secondary={
                     <>

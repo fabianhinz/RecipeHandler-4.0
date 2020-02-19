@@ -2,6 +2,7 @@ import {
     Button,
     ButtonGroup,
     createStyles,
+    Fab,
     Grid,
     makeStyles,
     Typography,
@@ -9,6 +10,8 @@ import {
 } from '@material-ui/core'
 import DescIcon from '@material-ui/icons/ArrowDownwardRounded'
 import AscIcon from '@material-ui/icons/ArrowUpwardRounded'
+import FilterIcon from '@material-ui/icons/FilterList'
+import { Filter, FilterMenu } from 'mdi-material-ui'
 import React from 'react'
 
 import { OrderByRecord } from '../../model/model'
@@ -72,11 +75,17 @@ const HomeRecipeSelection = ({
 
     return (
         <>
-            <Grid item xs={6}>
-                <Typography variant="h4">Rezeptauswahl</Typography>
+            <Grid item>
+                <Typography display="inline" variant="h4">
+                    Rezeptauswahl
+                </Typography>
             </Grid>
             <Grid item>
-                <ButtonGroup
+                <Fab variant="extended" size="medium">
+                    <Filter style={{ marginRight: 4 }} />
+                    Filter
+                </Fab>
+                {/* <ButtonGroup
                     size={isMobile ? 'small' : 'medium'}
                     classes={{
                         groupedContainedHorizontal: classes.buttonGroupContained,
@@ -98,14 +107,14 @@ const HomeRecipeSelection = ({
                         {...getStartIcon(orderBy.createdDate)}>
                         Datum
                     </Button>
-                </ButtonGroup>
+                </ButtonGroup> */}
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
                 <CategoryWrapper
                     selectedCategories={selectedCategories}
                     onCategoryChange={onSelectedCategoriesChange}
                 />
-            </Grid>
+            </Grid> */}
         </>
     )
 }

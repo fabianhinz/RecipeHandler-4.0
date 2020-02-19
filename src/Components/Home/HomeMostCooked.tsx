@@ -46,7 +46,7 @@ const useMostCookedPaperStyles = makeStyles(theme =>
         typography: {
             fontFamily: "'Lato', sans-serif",
             color: (props: StyleProps) => theme.palette.getContrastText(props.backgroundColor),
-            maxWidth: 300,
+            maxWidth: '100%',
         },
     })
 )
@@ -66,7 +66,7 @@ const MostCookedPaper = ({ recipeName, counter, paletteIndex }: MostCookedPaperP
     const history = useHistory()
 
     return (
-        <Grid {...gridBreakpointProps} item key={recipeName}>
+        <Grid item {...gridBreakpointProps} key={recipeName}>
             <CardActionArea onClick={() => history.push(PATHS.details(recipeName))}>
                 <Paper className={classes.paper}>
                     <Typography className={classes.typography} noWrap variant="h6">
@@ -97,6 +97,7 @@ const HomeMostCooked = () => {
 
     const containerRef = useRef<any | undefined>()
     const { ScrollButtons, ScrollLeftTrigger, ScrollRightTrigger } = useScrollButtons({
+        disabled: mostCooked.size === 0,
         element: containerRef.current as HTMLDivElement,
         delta: 300,
     })
@@ -104,6 +105,7 @@ const HomeMostCooked = () => {
     const classes = useHomeMostCookedStyles()
 
     const { user } = useFirebaseAuthContext()
+    const { gridLayout } = useGridContext()
 
     useEffect(() => {
         if (user && !user.showMostCooked) return
@@ -129,7 +131,7 @@ const HomeMostCooked = () => {
     return (
         <>
             <Grid item xs={10} md={9}>
-                <Typography variant="h4">Am häufigsten gekocht</Typography>
+                <Typography variant="h4">Häufig gekocht</Typography>
             </Grid>
             <Grid item xs={2} md={3}>
                 <ScrollButtons />
@@ -140,21 +142,23 @@ const HomeMostCooked = () => {
                     className={classes.mostCookedGridContainer}
                     container
                     spacing={3}
-                    wrap="nowrap">
+                    wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}>
                     <ScrollLeftTrigger />
-                    {[...mostCooked.entries()].map(([recipeName, counter]) => (
-                        <MostCookedPaper
-                            key={recipeName}
-                            paletteIndex={[...counterValues].indexOf(counter.value)}
-                            recipeName={recipeName}
-                            counter={counter}
-                        />
-                    ))}
+                    {[...mostCooked.entries()]
+                        .slice(0, gridLayout === 'grid' ? mostCooked.size : 6)
+                        .map(([recipeName, counter]) => (
+                            <MostCookedPaper
+                                key={recipeName}
+                                paletteIndex={[...counterValues].indexOf(counter.value)}
+                                recipeName={recipeName}
+                                counter={counter}
+                            />
+                        ))}
                     <ScrollRightTrigger />
                     <Skeletons
                         variant="cookCounter"
                         visible={mostCooked.size === 0}
-                        numberOfSkeletons={MOST_COOKED_LIMIT}
+                        numberOfSkeletons={gridLayout === 'grid' ? MOST_COOKED_LIMIT : 6}
                     />
                 </Grid>
             </Grid>

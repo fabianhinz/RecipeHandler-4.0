@@ -1,5 +1,6 @@
 import {
     createStyles,
+    Divider,
     Grid,
     Hidden,
     IconButton,
@@ -62,6 +63,10 @@ const useStyles = makeStyles(theme =>
             flexDirection: 'column',
             minWidth: 250,
         },
+        divider: {
+            marginTop: theme.spacing(1),
+            marginBottom: theme.spacing(1),
+        },
     })
 )
 
@@ -81,27 +86,6 @@ const Header = () => {
         <>
             <header className={classes.header}>
                 <Grid container spacing={3} justify="center" alignItems="center">
-                    <Hidden smDown>
-                        <Grid item>
-                            <Paper className={classes.buttonPaper}>
-                                <Tooltip title="Impressum">
-                                    <IconButton onClick={() => history.push(PATHS.impressum)}>
-                                        <InformationOutline />
-                                    </IconButton>
-                                </Tooltip>
-                            </Paper>
-                        </Grid>
-                    </Hidden>
-                    <Grid item xs={12} sm={8} lg={6}>
-                        <Paper className={classes.searchPaper}>
-                            <Search />
-                            <Hidden mdUp>
-                                <IconButton onClick={openDrawer} size="small">
-                                    <MenuIcon />
-                                </IconButton>
-                            </Hidden>
-                        </Paper>
-                    </Grid>
                     <Hidden smDown>
                         <Grid item>
                             <Paper className={classes.buttonPaper}>
@@ -156,6 +140,27 @@ const Header = () => {
                             </Paper>
                         </Grid>
                     </Hidden>
+                    <Grid item xs={12} sm={8} lg={6}>
+                        <Paper className={classes.searchPaper}>
+                            <Search />
+                            <Hidden mdUp>
+                                <IconButton onClick={openDrawer} size="small">
+                                    <MenuIcon />
+                                </IconButton>
+                            </Hidden>
+                        </Paper>
+                    </Grid>
+                    <Hidden smDown>
+                        <Grid item>
+                            <Paper className={classes.buttonPaper}>
+                                <Tooltip title="Impressum">
+                                    <IconButton onClick={() => history.push(PATHS.impressum)}>
+                                        <InformationOutline />
+                                    </IconButton>
+                                </Tooltip>
+                            </Paper>
+                        </Grid>
+                    </Hidden>
                 </Grid>
             </header>
 
@@ -168,13 +173,7 @@ const Header = () => {
                     onOpen={openDrawer}
                     onClose={closeDrawer}>
                     {AlgoliaDocSearchRef}
-                    <List>
-                        <ListItem button onClick={() => history.push(PATHS.impressum)}>
-                            <ListItemIcon>
-                                <InformationOutline />
-                            </ListItemIcon>
-                            <ListItemText primary="Impressum" />
-                        </ListItem>
+                    <List onClick={closeDrawer}>
                         <ListItem
                             button
                             onClick={() =>
@@ -209,6 +208,15 @@ const Header = () => {
                                 </BadgeWrapper>
                             </ListItemIcon>
                             <ListItemText primary="Einkaufsliste" />
+                        </ListItem>
+
+                        <Divider className={classes.divider} />
+
+                        <ListItem button onClick={() => history.push(PATHS.impressum)}>
+                            <ListItemIcon>
+                                <InformationOutline />
+                            </ListItemIcon>
+                            <ListItemText primary="Impressum" />
                         </ListItem>
                     </List>
                 </SwipeableDrawer>

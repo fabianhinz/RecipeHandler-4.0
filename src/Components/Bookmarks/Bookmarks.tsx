@@ -90,6 +90,7 @@ const Bookmarks = () => {
     // ? no internal state >> we cannot use useRef here
     const [containerRef, setContainerRef] = useState<any | undefined>()
     const { ScrollButtons, ScrollLeftTrigger, ScrollRightTrigger } = useScrollButtons({
+        disabled: bookmarks.size === 0,
         element: containerRef as HTMLDivElement,
         delta: theme.breakpoints.down('xs') ? 340 : 600,
     })

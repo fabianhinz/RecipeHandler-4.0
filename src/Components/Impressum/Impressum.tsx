@@ -11,7 +11,7 @@ const Impressum = () => {
     useDocumentTitle('Impressum')
 
     return (
-        <Grid container spacing={4}>
+        <Grid container spacing={4} alignItems="center">
             <Grid item xs={12}>
                 <Typography variant="h4">Impressum</Typography>
             </Grid>
