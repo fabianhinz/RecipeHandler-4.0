@@ -1,6 +1,7 @@
 import {
     Checkbox,
     createStyles,
+    Fab,
     Grid,
     IconButton,
     List,
@@ -12,7 +13,9 @@ import {
     Tooltip,
     Typography,
     useTheme,
+    Zoom,
 } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add'
 import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCartTwoTone'
 import clsx from 'clsx'
 import React, { useMemo, useState } from 'react'
@@ -55,6 +58,12 @@ const useStyles = makeStyles(theme =>
             [theme.breakpoints.up('sm')]: {
                 width: 600,
             },
+        },
+        fab: {
+            zIndex: theme.zIndex.drawer + 1,
+            position: 'fixed',
+            right: theme.spacing(2),
+            bottom: `calc(env(safe-area-inset-bottom) + ${theme.spacing(4.5)}px)`,
         },
     })
 )
@@ -122,90 +131,105 @@ const AccountUserShoppingList = () => {
         Boolean(shoppingTracker.get(recipe)?.tracker?.some(trackerEl => trackerEl === grocery))
 
     return (
-        <Grid container spacing={4} alignItems="center">
-            <Grid item xs={10} md={9}>
-                <Typography variant="h4">Einkaufsliste</Typography>
-            </Grid>
-            <Grid item xs={2} md={3}>
-                <ScrollButtons />
-            </Grid>
-            <Grid item xs={12}>
-                <Grid
-                    container
-                    spacing={3}
-                    ref={ref => setContainerRef(ref)}
-                    wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}
-                    className={classes.recipeContainer}>
-                    <ScrollLeftTrigger />
-                    {[...shoppingList.entries()].map(([recipe, groceries]) => (
-                        <Grid item xs={gridLayout === 'list' ? 12 : 'auto'} key={recipe}>
-                            <div className={clsx(gridLayout === 'grid' && classes.recipeItem)}>
-                                <StyledCard
-                                    header={recipe}
-                                    action={
-                                        <Tooltip
-                                            placement="left"
-                                            title={`${recipe} von Einkaufsliste entfernen`}>
-                                            <IconButton onClick={handleRemove(recipe)}>
-                                                <RemoveFromShoppingCartIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                    }>
-                                    <div
-                                        className={clsx(
-                                            recipe === 'Sonstiges' && classes.sonstigesRoot
-                                        )}>
-                                        <List>
-                                            {groceries?.list.map(grocery => (
-                                                <ListItem key={grocery}>
-                                                    <ListItemIcon>
-                                                        <Checkbox
-                                                            checked={listItemChecked(
-                                                                recipe,
-                                                                grocery
-                                                            )}
-                                                            onChange={handleCheckboxChange(
-                                                                recipe,
-                                                                grocery
-                                                            )}
-                                                            edge="start"
-                                                        />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        classes={{
-                                                            primary: clsx(
-                                                                listItemChecked(recipe, grocery) &&
-                                                                    classes.checked
-                                                            ),
-                                                        }}
-                                                        primary={grocery}
-                                                    />
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                        {recipe === 'Sonstiges' && (
-                                            <form onSubmit={handleFormSubmit}>
-                                                <TextField
-                                                    value={textFieldValue}
-                                                    onChange={e =>
-                                                        setTextFieldValue(e.target.value)
-                                                    }
-                                                    variant="outlined"
-                                                    fullWidth
-                                                    label="Sonstiges"
-                                                />
-                                            </form>
-                                        )}
-                                    </div>
-                                </StyledCard>
-                            </div>
-                        </Grid>
-                    ))}
-                    <ScrollRightTrigger />
+        <>
+            <Grid container spacing={4} alignItems="center">
+                <Grid item xs={10} md={9}>
+                    <Typography variant="h4">Einkaufsliste</Typography>
                 </Grid>
-                <NotFound visible={shoppingList.size === 0} />
+                <Grid item xs={2} md={3}>
+                    <ScrollButtons />
+                </Grid>
+                <Grid item xs={12}>
+                    <Grid
+                        container
+                        spacing={3}
+                        ref={ref => setContainerRef(ref)}
+                        wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}
+                        className={classes.recipeContainer}>
+                        <ScrollLeftTrigger />
+                        {[...shoppingList.entries()].map(([recipe, groceries]) => (
+                            <Grid item xs={gridLayout === 'list' ? 12 : 'auto'} key={recipe}>
+                                <div className={clsx(gridLayout === 'grid' && classes.recipeItem)}>
+                                    <StyledCard
+                                        header={recipe}
+                                        action={
+                                            <Tooltip
+                                                placement="left"
+                                                title={`${recipe} von Einkaufsliste entfernen`}>
+                                                <IconButton onClick={handleRemove(recipe)}>
+                                                    <RemoveFromShoppingCartIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        }>
+                                        <div
+                                            className={clsx(
+                                                recipe === 'Sonstiges' && classes.sonstigesRoot
+                                            )}>
+                                            <List>
+                                                {groceries?.list.map(grocery => (
+                                                    <ListItem key={grocery}>
+                                                        <ListItemIcon>
+                                                            <Checkbox
+                                                                checked={listItemChecked(
+                                                                    recipe,
+                                                                    grocery
+                                                                )}
+                                                                onChange={handleCheckboxChange(
+                                                                    recipe,
+                                                                    grocery
+                                                                )}
+                                                                edge="start"
+                                                            />
+                                                        </ListItemIcon>
+                                                        <ListItemText
+                                                            classes={{
+                                                                primary: clsx(
+                                                                    listItemChecked(
+                                                                        recipe,
+                                                                        grocery
+                                                                    ) && classes.checked
+                                                                ),
+                                                            }}
+                                                            primary={grocery}
+                                                        />
+                                                    </ListItem>
+                                                ))}
+                                            </List>
+                                            {recipe === 'Sonstiges' && (
+                                                <form onSubmit={handleFormSubmit}>
+                                                    <TextField
+                                                        value={textFieldValue}
+                                                        onChange={e =>
+                                                            setTextFieldValue(e.target.value)
+                                                        }
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        label="Sonstiges"
+                                                    />
+                                                </form>
+                                            )}
+                                        </div>
+                                    </StyledCard>
+                                </div>
+                            </Grid>
+                        ))}
+                        <ScrollRightTrigger />
+                    </Grid>
+                    <NotFound visible={shoppingList.size === 0} />
+                </Grid>
             </Grid>
-        </Grid>
+
+            <Zoom in={!shoppingList.get('Sonstiges')}>
+                <Tooltip title="Liste ergänzen" placement="left">
+                    <Fab
+                        onClick={() => shoppingListDocRef.doc('Sonstiges').set({ list: [] })}
+                        className={classes.fab}
+                        color="secondary">
+                        <AddIcon />
+                    </Fab>
+                </Tooltip>
+            </Zoom>
+        </>
     )
 }
 
