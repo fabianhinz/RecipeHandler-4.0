@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core'
+import { Box, Grid } from '@material-ui/core'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
@@ -7,7 +7,7 @@ import { useCategorySelect } from '../../../hooks/useCategorySelect'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
-import CategoryWrapper from '../../Category/CategoryWrapper'
+import CategorySelection from '../../Category/CategorySelection'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
@@ -105,10 +105,13 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <CategoryWrapper
-                            selectedCategories={selectedCategories}
-                            onCategoryChange={setSelectedCategories}
-                        />
+                        <Box display="flex" justifyContent="center">
+                            <CategorySelection
+                                fabLabel="Rezeptkategorien"
+                                selectedCategories={selectedCategories}
+                                onCategoryChange={setSelectedCategories}
+                            />
+                        </Box>
                     </Grid>
 
                     <Grid item {...gridBreakpointProps}>
@@ -127,13 +130,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         />
                     </Grid>
 
-                    {state.relatedRecipes.length > 0 && (
-                        <Grid item {...gridBreakpointProps}>
-                            <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                                <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
-                            </StyledCard>
-                        </Grid>
-                    )}
+                    <Grid item {...gridBreakpointProps}>
+                        <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
+                            <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                        </StyledCard>
+                    </Grid>
                 </Grid>
             )}
 

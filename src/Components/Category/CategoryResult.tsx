@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 
 import { Categories } from '../../model/model'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { iconFromCategory } from './CategoryWrapper'
+import getIconByCategory from './CategoryIcons'
 
 interface CategoryResultProps extends Pick<ChipProps, 'color'> {
     categories: Categories<string>
@@ -33,7 +33,7 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories, color }) =
                     {categories[type].length > 0 && (
                         <Chip
                             className={classes.chip}
-                            icon={iconFromCategory(categories[type])}
+                            icon={getIconByCategory(categories[type])}
                             size="small"
                             color={color}
                             label={categories[type]}

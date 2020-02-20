@@ -1,39 +1,22 @@
-import {
-    Button,
-    ButtonGroup,
-    createStyles,
-    Fab,
-    Grid,
-    makeStyles,
-    Typography,
-    Zoom,
-} from '@material-ui/core'
-import DescIcon from '@material-ui/icons/ArrowDownwardRounded'
-import AscIcon from '@material-ui/icons/ArrowUpwardRounded'
-import FilterIcon from '@material-ui/icons/FilterList'
-import { Filter, FilterMenu } from 'mdi-material-ui'
+import { Button, createStyles, Grid, makeStyles, Typography } from '@material-ui/core'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import clsx from 'clsx'
 import React from 'react'
 
 import { OrderByRecord } from '../../model/model'
 import configService from '../../services/configService'
-import CategoryWrapper from '../Category/CategoryWrapper'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
+import CategorySelection from '../Category/CategorySelection'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        buttonGroupContained: {
-            '&:not(:first-child), &:not(:last-child)': {
-                borderRight: 'none',
-                borderBottom: 'none',
-            },
+        orderByAsc: {
+            transform: 'rotate(0deg)',
+            transition: theme.transitions.create('transform', {
+                duration: theme.transitions.duration.complex,
+            }),
         },
-        buttonGroupRoot: {
-            borderRadius: 20,
-            height: 40,
-            boxShadow: theme.shadows[6],
-        },
-        button: {
-            borderRadius: 20,
+        orderByDesc: {
+            transform: 'rotate(180deg)',
         },
     })
 )
@@ -52,15 +35,6 @@ const HomeRecipeSelection = ({
     onOrderByChange,
 }: Props) => {
     const classes = useStyles()
-    const { isMobile } = useBreakpointsContext()
-
-    const getStartIcon = (orderBy?: 'asc' | 'desc') => {
-        if (!orderBy) return {}
-
-        return {
-            startIcon: <Zoom in>{orderBy === 'asc' ? <AscIcon /> : <DescIcon />}</Zoom>,
-        }
-    }
 
     const handleOrderByChange = (key: keyof OrderByRecord) => () => {
         let newOrderBy: OrderByRecord
@@ -76,45 +50,56 @@ const HomeRecipeSelection = ({
     return (
         <>
             <Grid item>
-                <Typography display="inline" variant="h4">
+                <Typography gutterBottom display="inline" variant="h4">
                     Rezeptauswahl
                 </Typography>
             </Grid>
             <Grid item>
-                <Fab variant="extended" size="medium">
-                    <Filter style={{ marginRight: 4 }} />
-                    Filter
-                </Fab>
-                {/* <ButtonGroup
-                    size={isMobile ? 'small' : 'medium'}
-                    classes={{
-                        groupedContainedHorizontal: classes.buttonGroupContained,
-                        groupedContainedVertical: classes.buttonGroupContained,
-                        root: classes.buttonGroupRoot,
-                    }}
-                    variant="contained">
-                    <Button
-                        className={classes.button}
-                        onClick={handleOrderByChange('name')}
-                        color={orderBy.name ? 'primary' : 'default'}
-                        {...getStartIcon(orderBy.name)}>
-                        Name
-                    </Button>
-                    <Button
-                        className={classes.button}
-                        onClick={handleOrderByChange('createdDate')}
-                        color={orderBy.createdDate ? 'primary' : 'default'}
-                        {...getStartIcon(orderBy.createdDate)}>
-                        Datum
-                    </Button>
-                </ButtonGroup> */}
-            </Grid>
-            {/* <Grid item xs={12}>
-                <CategoryWrapper
-                    selectedCategories={selectedCategories}
+                <CategorySelection
                     onCategoryChange={onSelectedCategoriesChange}
+                    selectedCategories={selectedCategories}
+                    fabLabel="Filter"
+                    header={
+                        <Grid justify="center" wrap="nowrap" container spacing={2}>
+                            <Grid item xs={6} md={4} lg={2}>
+                                <Button
+                                    fullWidth
+                                    variant="outlined"
+                                    onClick={handleOrderByChange('name')}
+                                    color={orderBy.name ? 'primary' : 'default'}
+                                    startIcon={
+                                        <ArrowUpwardIcon
+                                            className={clsx(
+                                                classes.orderByAsc,
+                                                orderBy.name === 'desc' && classes.orderByDesc
+                                            )}
+                                        />
+                                    }>
+                                    Name
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6} md={4} lg={2}>
+                                <Button
+                                    fullWidth
+                                    variant="outlined"
+                                    onClick={handleOrderByChange('createdDate')}
+                                    color={orderBy.createdDate ? 'primary' : 'default'}
+                                    startIcon={
+                                        <ArrowUpwardIcon
+                                            className={clsx(
+                                                classes.orderByAsc,
+                                                orderBy.createdDate === 'desc' &&
+                                                    classes.orderByDesc
+                                            )}
+                                        />
+                                    }>
+                                    Datum
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    }
                 />
-            </Grid> */}
+            </Grid>
         </>
     )
 }

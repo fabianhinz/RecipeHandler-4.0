@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme =>
             flexDirection: 'column',
             zIndex: 1,
             position: 'relative',
+            minHeight: 200,
         },
     })
 )
