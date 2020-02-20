@@ -113,7 +113,7 @@ const AccountUser = () => {
 
     return (
         <>
-            <Grid container spacing={4}>
+            <Grid container spacing={4} alignItems="center">
                 <Grid item xs={12}>
                     <AccountUserHeader
                         user={user}

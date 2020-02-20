@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme =>
         avatar: {
             backgroundColor: '#2C384A',
             padding: theme.spacing(4),
+            margin: theme.spacing(1),
             width: theme.spacing(8),
             height: theme.spacing(8),
             boxShadow: theme.shadows[8],
@@ -87,8 +88,14 @@ const FirebaseAuthProvider: FC = ({ children }) => {
                         const newShoppingTracker: ShoppingTracker = new Map()
 
                         querySnapshot.docs.forEach(doc => {
-                            const { list, tracker } = doc.data()
-                            newShoppingList.set(doc.id, { list })
+                            const { list, tracker } = doc.data() as {
+                                list: string[]
+                                tracker: string[]
+                            }
+                            newShoppingList.set(doc.id, {
+                                // ? creating the recipe "Sonstiges" will create an item with a lenght of zero
+                                list: list.filter(item => item.length > 0),
+                            })
                             newShoppingTracker.set(doc.id, { tracker })
                         })
 

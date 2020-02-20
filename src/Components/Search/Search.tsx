@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme =>
 
 export const AlgoliaDocSearchRef = (
     <a
-        style={{ lineHeight: 0, width: '100%' }}
+        style={{ lineHeight: 0, width: '100%', textAlign: 'center' }}
         target="_blank"
         rel="noopener noreferrer"
         href="https://www.algolia.com/docsearch">
@@ -120,7 +120,7 @@ const Search = () => {
                     </InputAdornment>
                 }
                 endAdornment={
-                    <Hidden xsDown>
+                    <Hidden smDown>
                         <InputAdornment position="end">{AlgoliaDocSearchRef}</InputAdornment>
                     </Hidden>
                 }

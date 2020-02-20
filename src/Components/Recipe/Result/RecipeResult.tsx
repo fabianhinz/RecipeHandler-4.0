@@ -52,36 +52,29 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 </Grid>
             )}
 
-            {recipe.ingredients.length > 0 && (
-                <Grid {...gridBreakpointProps} item>
-                    <StyledCard
-                        header={
-                            <>
-                                Zutaten für {recipe.amount}{' '}
-                                {recipe.amount < 2 ? 'Person' : 'Personen'}
-                            </>
-                        }
-                        BackgroundIcon={AssignmentIcon}>
-                        <MarkdownRenderer recipeName={recipe.name} source={recipe.ingredients} />
-                    </StyledCard>
-                </Grid>
-            )}
+            <Grid {...gridBreakpointProps} item>
+                <StyledCard
+                    header={
+                        <>
+                            Zutaten für {recipe.amount} {recipe.amount < 2 ? 'Person' : 'Personen'}
+                        </>
+                    }
+                    BackgroundIcon={AssignmentIcon}>
+                    <MarkdownRenderer recipeName={recipe.name} source={recipe.ingredients} />
+                </StyledCard>
+            </Grid>
 
-            {recipe.description.length > 0 && (
-                <Grid {...gridBreakpointProps} item>
-                    <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
-                        <MarkdownRenderer recipeName={recipe.name} source={recipe.description} />
-                    </StyledCard>
-                </Grid>
-            )}
+            <Grid {...gridBreakpointProps} item>
+                <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
+                    <MarkdownRenderer recipeName={recipe.name} source={recipe.description} />
+                </StyledCard>
+            </Grid>
 
-            {recipe.relatedRecipes.length > 0 && (
-                <Grid {...gridBreakpointProps} item>
-                    <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                        <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
-                    </StyledCard>
-                </Grid>
-            )}
+            <Grid {...gridBreakpointProps} item>
+                <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
+                    <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+                </StyledCard>
+            </Grid>
 
             {variant !== 'preview' && (
                 <Grid xs={12} item>

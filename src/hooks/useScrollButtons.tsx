@@ -1,4 +1,4 @@
-import { Grid, IconButton } from '@material-ui/core'
+import { Fab, Grid } from '@material-ui/core'
 import { ChevronLeft, ChevronRight } from 'mdi-material-ui'
 import React, { useState } from 'react'
 
@@ -8,9 +8,10 @@ import useIntersectionObserver from './useIntersectionObserver'
 interface useScrollButtonsOptions {
     element: HTMLDivElement
     delta: number
+    disabled?: boolean
 }
 
-const useScrollButtons = ({ element, delta }: useScrollButtonsOptions) => {
+const useScrollButtons = ({ element, delta, disabled }: useScrollButtonsOptions) => {
     const [containerScrollLeft, setContainerScrollLeft] = useState(0)
     const [scrollRightDisabled, setScrollRightDisabled] = useState(false)
     const [scrollLeftDisabled, setScrollLeftDisabled] = useState(false)
@@ -46,22 +47,22 @@ const useScrollButtons = ({ element, delta }: useScrollButtonsOptions) => {
         ScrollLeftTrigger: () => <>{element && <LeftTrigger />}</>,
         ScrollRightTrigger: () => <>{element && <RightTrigger />} </>,
         ScrollButtons: () => (
-            <Grid container justify="flex-end" alignItems="center" wrap="nowrap">
+            <Grid container spacing={1} justify="flex-end" alignItems="center" wrap="nowrap">
                 <Grid item>
-                    <IconButton
+                    <Fab
                         size="small"
-                        disabled={scrollLeftDisabled || gridLayout === 'list'}
+                        disabled={scrollLeftDisabled || gridLayout === 'list' || disabled}
                         onClick={handleScrollLeft}>
                         <ChevronLeft />
-                    </IconButton>
+                    </Fab>
                 </Grid>
                 <Grid item>
-                    <IconButton
+                    <Fab
                         size="small"
-                        disabled={scrollRightDisabled || gridLayout === 'list'}
+                        disabled={scrollRightDisabled || gridLayout === 'list' || disabled}
                         onClick={handleScrollRight}>
                         <ChevronRight />
-                    </IconButton>
+                    </Fab>
                 </Grid>
             </Grid>
         ),
