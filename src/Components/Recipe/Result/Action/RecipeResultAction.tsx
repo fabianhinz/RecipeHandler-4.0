@@ -7,8 +7,6 @@ import { RecipeResultBookmark } from './RecipeResultBookmark'
 import { RecipeResultCookCounter } from './RecipeResultCookCounter'
 import { RecipeResultShare } from './RecipeResultShare'
 
-export type RecipeVariants = { variant: 'details' | 'preview' | 'related' }
-
 interface RecipeResultActionProps {
     name: string
     numberOfComments: number

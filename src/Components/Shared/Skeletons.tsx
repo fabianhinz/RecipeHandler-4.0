@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme =>
                 height: 296,
             },
             [theme.breakpoints.up('sm')]: {
-                height: 250,
+                height: 200,
             },
             width: '100%',
         },

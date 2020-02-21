@@ -16,9 +16,11 @@ import React, { useEffect, useState } from 'react'
 import { useAttachment } from '../../hooks/useAttachment'
 import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { BORDER_RADIUS } from '../../theme'
 import { CategoryResult } from '../Category/CategoryResult'
 import { useGridContext } from '../Provider/GridProvider'
 import { useRouterContext } from '../Provider/RouterProvider'
+import { RecipeResultBookmark } from '../Recipe/Result/Action/RecipeResultBookmark'
 import { PATHS } from '../Routes/Routes'
 
 const useStyles = makeStyles(theme =>
@@ -27,21 +29,32 @@ const useStyles = makeStyles(theme =>
             width: '100%',
             height: '100%',
             fontSize: theme.typography.pxToRem(60),
+
+            [theme.breakpoints.only('xs')]: {
+                borderBottomLeftRadius: BORDER_RADIUS,
+                borderBottomRightRadius: BORDER_RADIUS,
+            },
+            [theme.breakpoints.up('sm')]: {
+                borderTopLeftRadius: BORDER_RADIUS,
+                borderBottomLeftRadius: BORDER_RADIUS,
+            },
         },
         avatarContainer: {
             [theme.breakpoints.only('xs')]: {
                 height: 150,
             },
             [theme.breakpoints.up('sm')]: {
-                height: 250,
+                height: 200,
             },
         },
-        recipeItem: {
-            marginLeft: theme.spacing(2),
+        cardHeader: {
+            padding: 0,
         },
-        focusHighlight: {
-            borderBottomRightRadius: 0,
-            borderBottomLeftRadius: 0,
+        cardContentItem: {
+            padding: theme.spacing(2),
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
         },
     })
 )
@@ -85,24 +98,26 @@ const HomeRecipeCard = ({ recipe }: Props) => {
         <Grid {...gridBreakpointProps} item>
             <Card>
                 <Grid container direction="row-reverse">
-                    <Grid item xs={12} sm={8}>
+                    <Grid className={classes.cardContentItem} item xs={12} sm={8}>
                         <CardHeader
                             title={recipe.name}
+                            className={classes.cardHeader}
                             subheader={recipe.createdDate.toDate().toLocaleDateString()}
                             action={
-                                <Tooltip placement="bottom" title="Details">
-                                    <IconButton
-                                        onClick={() =>
-                                            history.push(PATHS.details(recipe.name), { recipe })
-                                        }>
-                                        <Eye />
-                                    </IconButton>
-                                </Tooltip>
+                                <>
+                                    <Tooltip placement="bottom" title="Details">
+                                        <IconButton
+                                            onClick={() =>
+                                                history.push(PATHS.details(recipe.name), { recipe })
+                                            }>
+                                            <Eye />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <RecipeResultBookmark name={recipe.name} />
+                                </>
                             }
                         />
-                        <CardContent>
-                            <CategoryResult categories={recipe.categories} variant="outlined" />
-                        </CardContent>
+                        <CategoryResult categories={recipe.categories} variant="outlined" />
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <div className={classes.avatarContainer}>

@@ -88,7 +88,7 @@ const TrialsCard = ({ trial, index }: Props) => {
         <>
             <Grid item {...gridBreakpointProps} key={trial.name}>
                 <Card className={classes.card}>
-                    <AccountChip uid={trial.editorUid} position="absolute" />
+                    <AccountChip uid={trial.editorUid} position="absolute" placement="top" />
 
                     <CardActionArea
                         disabled={!dataUrls}
