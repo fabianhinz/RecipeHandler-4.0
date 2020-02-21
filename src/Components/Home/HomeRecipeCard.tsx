@@ -1,14 +1,16 @@
 import {
     Avatar,
     Card,
-    CardActionArea,
     CardContent,
     CardHeader,
     createStyles,
     Grid,
+    IconButton,
     makeStyles,
+    Tooltip,
 } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
+import { Eye } from 'mdi-material-ui'
 import React, { useEffect, useState } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
@@ -82,36 +84,41 @@ const HomeRecipeCard = ({ recipe }: Props) => {
     return (
         <Grid {...gridBreakpointProps} item>
             <Card>
-                <CardActionArea
-                    onClick={() => history.push(PATHS.details(recipe.name), { recipe })}>
-                    <Grid container direction="row-reverse">
-                        <Grid item xs={12} sm={8}>
-                            <CardHeader
-                                title={recipe.name}
-                                subheader={recipe.createdDate.toDate().toLocaleDateString()}
-                            />
-                            <CardContent>
-                                <CategoryResult categories={recipe.categories} variant="outlined" />
-                            </CardContent>
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <div className={classes.avatarContainer}>
-                                {attachmentRefLoading ? (
-                                    <Skeleton className={classes.avatar} variant="rect" />
-                                ) : (
-                                    <Avatar
-                                        variant="square"
-                                        className={classes.avatar}
-                                        src={
-                                            recipe.previewAttachment || attachmentRef.smallDataUrl
+                <Grid container direction="row-reverse">
+                    <Grid item xs={12} sm={8}>
+                        <CardHeader
+                            title={recipe.name}
+                            subheader={recipe.createdDate.toDate().toLocaleDateString()}
+                            action={
+                                <Tooltip placement="bottom" title="Details">
+                                    <IconButton
+                                        onClick={() =>
+                                            history.push(PATHS.details(recipe.name), { recipe })
                                         }>
-                                        {recipe.name.slice(0, 1).toUpperCase()}
-                                    </Avatar>
-                                )}
-                            </div>
-                        </Grid>
+                                        <Eye />
+                                    </IconButton>
+                                </Tooltip>
+                            }
+                        />
+                        <CardContent>
+                            <CategoryResult categories={recipe.categories} variant="outlined" />
+                        </CardContent>
                     </Grid>
-                </CardActionArea>
+                    <Grid item xs={12} sm={4}>
+                        <div className={classes.avatarContainer}>
+                            {attachmentRefLoading ? (
+                                <Skeleton className={classes.avatar} variant="rect" />
+                            ) : (
+                                <Avatar
+                                    variant="square"
+                                    className={classes.avatar}
+                                    src={recipe.previewAttachment || attachmentRef.smallDataUrl}>
+                                    {recipe.name.slice(0, 1).toUpperCase()}
+                                </Avatar>
+                            )}
+                        </div>
+                    </Grid>
+                </Grid>
             </Card>
         </Grid>
     )

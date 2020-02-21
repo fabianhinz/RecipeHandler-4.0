@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme =>
     createStyles({
         recipe: {
             [theme.breakpoints.down('xs')]: {
-                height: 336.76,
+                height: 296,
             },
             [theme.breakpoints.up('sm')]: {
                 height: 250,

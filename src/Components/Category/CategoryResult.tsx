@@ -2,6 +2,7 @@ import { Chip, ChipProps, createStyles, Grid, makeStyles } from '@material-ui/co
 import React, { FC } from 'react'
 
 import { Categories } from '../../model/model'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import getIconByCategory from './CategoryIcons'
 
 const useStyles = makeStyles(() =>
@@ -21,9 +22,14 @@ interface CategoryResultProps extends Pick<ChipProps, 'color' | 'variant' | 'siz
 
 export const CategoryResult: FC<CategoryResultProps> = ({ categories, ...chipProps }) => {
     const classes = useStyles()
+    const { isMobile } = useBreakpointsContext()
 
     return (
-        <Grid container className={classes.container} spacing={1}>
+        <Grid
+            container
+            wrap={isMobile ? 'nowrap' : 'wrap'}
+            className={classes.container}
+            spacing={1}>
             {Object.keys(categories).map(type => (
                 <Grid item key={type}>
                     {categories[type].length > 0 && (
