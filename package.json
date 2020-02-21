@@ -38,7 +38,7 @@
 		"react-swipeable-views": "^0.13.9",
 		"stacktrace-js": "^2.0.2",
 		"typeface-roboto": "0.0.75",
-		"typescript": "3.7.5",
+		"typescript": "3.8.2",
 		"web-animations-js": "^2.3.2"
 	},
 	"scripts": {
