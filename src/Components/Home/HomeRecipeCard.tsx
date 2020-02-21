@@ -1,23 +1,19 @@
 import {
     Avatar,
-    Box,
+    Card,
     CardActionArea,
+    CardContent,
+    CardHeader,
     createStyles,
-    Divider,
     Grid,
     makeStyles,
-    Paper,
-    Typography,
 } from '@material-ui/core'
-import PeopleIcon from '@material-ui/icons/People'
 import Skeleton from '@material-ui/lab/Skeleton'
-import { CalendarMonth } from 'mdi-material-ui'
 import React, { useEffect, useState } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
 import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS } from '../../theme'
 import { CategoryResult } from '../Category/CategoryResult'
 import { useGridContext } from '../Provider/GridProvider'
 import { useRouterContext } from '../Provider/RouterProvider'
@@ -26,47 +22,17 @@ import { PATHS } from '../Routes/Routes'
 const useStyles = makeStyles(theme =>
     createStyles({
         avatar: {
-            [theme.breakpoints.down('sm')]: {
-                width: 120,
-                height: 120,
-            },
-            [theme.breakpoints.between('sm', 'lg')]: {
-                width: 150,
-                height: 150,
-            },
-            [theme.breakpoints.up('xl')]: {
-                width: 180,
-                height: 180,
-            },
-            borderTopRightRadius: 0,
-            borderBottomRightRadius: 0,
-            borderBottomLeftRadius: 0,
-            borderRadius: BORDER_RADIUS,
+            width: '100%',
+            height: '100%',
             fontSize: theme.typography.pxToRem(60),
         },
-        skeleton: {
-            [theme.breakpoints.down('sm')]: {
-                width: 120,
-                height: 120,
-            },
-            [theme.breakpoints.between('sm', 'lg')]: {
-                width: 150,
+        avatarContainer: {
+            [theme.breakpoints.only('xs')]: {
                 height: 150,
             },
-            [theme.breakpoints.up('xl')]: {
-                width: 180,
-                height: 180,
+            [theme.breakpoints.up('sm')]: {
+                height: 250,
             },
-            borderTopRightRadius: 0,
-            borderBottomRightRadius: 0,
-            borderBottomLeftRadius: 0,
-            borderRadius: BORDER_RADIUS,
-        },
-        recipeName: {
-            fontFamily: "'Lato', sans-serif",
-        },
-        recipeDate: {
-            fontFamily: "'Raleway', sans-serif",
         },
         recipeItem: {
             marginLeft: theme.spacing(2),
@@ -115,75 +81,38 @@ const HomeRecipeCard = ({ recipe }: Props) => {
 
     return (
         <Grid {...gridBreakpointProps} item>
-            <Paper>
+            <Card>
                 <CardActionArea
-                    classes={{
-                        focusHighlight: classes.focusHighlight,
-                    }}
                     onClick={() => history.push(PATHS.details(recipe.name), { recipe })}>
-                    <Grid container wrap="nowrap" alignItems="center">
-                        <Grid item>
-                            {attachmentRefLoading ? (
-                                <Skeleton className={classes.skeleton} variant="rect" />
-                            ) : (
-                                <Avatar
-                                    variant="rounded"
-                                    className={classes.avatar}
-                                    src={recipe.previewAttachment || attachmentRef.smallDataUrl}>
-                                    {recipe.name.slice(0, 1).toUpperCase()}
-                                </Avatar>
-                            )}
+                    <Grid container direction="row-reverse">
+                        <Grid item xs={12} sm={8}>
+                            <CardHeader
+                                title={recipe.name}
+                                subheader={recipe.createdDate.toDate().toLocaleDateString()}
+                            />
+                            <CardContent>
+                                <CategoryResult categories={recipe.categories} variant="outlined" />
+                            </CardContent>
                         </Grid>
-                        <Grid className={classes.recipeItem} item zeroMinWidth>
-                            <Grid container spacing={1}>
-                                <Grid item xs={12}>
-                                    <Typography
-                                        gutterBottom
-                                        className={classes.recipeName}
-                                        variant="h6"
-                                        noWrap>
-                                        {recipe.name}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Grid container spacing={1} alignItems="center">
-                                        <Grid item>
-                                            <CalendarMonth />
-                                        </Grid>
-                                        <Grid item>
-                                            <Typography
-                                                className={classes.recipeDate}
-                                                color="textSecondary">
-                                                {recipe.createdDate.toDate().toLocaleDateString()}
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Grid container spacing={1} alignItems="center">
-                                        <Grid item>
-                                            <PeopleIcon />
-                                        </Grid>
-                                        <Grid item>
-                                            <Typography
-                                                className={classes.recipeDate}
-                                                color="textSecondary">
-                                                {recipe.amount}
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <div className={classes.avatarContainer}>
+                                {attachmentRefLoading ? (
+                                    <Skeleton className={classes.avatar} variant="rect" />
+                                ) : (
+                                    <Avatar
+                                        variant="square"
+                                        className={classes.avatar}
+                                        src={
+                                            recipe.previewAttachment || attachmentRef.smallDataUrl
+                                        }>
+                                        {recipe.name.slice(0, 1).toUpperCase()}
+                                    </Avatar>
+                                )}
+                            </div>
                         </Grid>
                     </Grid>
                 </CardActionArea>
-
-                <Divider />
-
-                <Box padding={2} paddingLeft={1} paddingRight={1}>
-                    <CategoryResult categories={recipe.categories} />
-                </Box>
-            </Paper>
+            </Card>
         </Grid>
     )
 }

@@ -76,6 +76,26 @@ const sharedTheme: Partial<ThemeOptions> = {
                 fontSize: '0.725rem',
             },
         },
+        MuiTypography: {
+            h5: {
+                fontFamily: 'Ubuntu',
+            },
+            h6: {
+                fontFamily: 'Ubuntu',
+            },
+        },
+        MuiChip: {
+            label: {
+                letterSpacing: '0.025rem',
+                fontWeight: 500,
+                fontFamily: 'Ubuntu',
+            },
+            labelSmall: {
+                letterSpacing: '0.025rem',
+                fontWeight: 500,
+                fontFamily: 'Ubuntu',
+            },
+        },
     },
 }
 

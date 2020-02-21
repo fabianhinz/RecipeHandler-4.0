@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme =>
             },
             overflowY: 'auto',
             overflowX: 'hidden',
-
+            zIndex: theme.zIndex.modal,
             boxShadow: theme.shadows[2],
         },
     })

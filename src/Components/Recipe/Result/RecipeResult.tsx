@@ -1,7 +1,7 @@
 import { createStyles, Divider, Grid, makeStyles } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
-import LabelIcon from '@material-ui/icons/LabelTwoTone'
+import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
 import React, { memo } from 'react'
 
 import { Recipe } from '../../../model/model'
@@ -70,11 +70,13 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 </StyledCard>
             </Grid>
 
-            <Grid {...gridBreakpointProps} item>
-                <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                    <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
-                </StyledCard>
-            </Grid>
+            {recipe.relatedRecipes.length > 0 && (
+                <Grid {...gridBreakpointProps} item>
+                    <StyledCard header="Passt gut zu" BackgroundIcon={SwapIcon}>
+                        <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+                    </StyledCard>
+                </Grid>
+            )}
 
             {variant !== 'preview' && (
                 <Grid xs={12} item>

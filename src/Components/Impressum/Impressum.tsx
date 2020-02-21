@@ -1,8 +1,9 @@
-import { Grid, Link, ListSubheader, Typography } from '@material-ui/core'
+import { Box, Grid, Link, ListSubheader, Typography } from '@material-ui/core'
 import React from 'react'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { useGridContext } from '../Provider/GridProvider'
+import BuiltWithFirebase from '../Shared/BuiltWithFirebase'
 import StyledCard from '../Shared/StyledCard'
 
 const Impressum = () => {
@@ -15,6 +16,7 @@ const Impressum = () => {
             <Grid item xs={12}>
                 <Typography variant="h4">Impressum</Typography>
             </Grid>
+
             <Grid item xs={12}>
                 <Grid container spacing={3}>
                     <Grid item {...gridBreakpointProps}>
@@ -100,11 +102,31 @@ const Impressum = () => {
                 <Typography align="center">
                     <i>
                         Icons made by{' '}
-                        <Link href="https://www.flaticon.com/authors/freepik">Freepik</Link> and{' '}
-                        <Link href="https://www.flaticon.com/authors/smashicons">Smashicons</Link>{' '}
-                        from <Link href="https://www.flaticon.com/">www.flaticon.com</Link>
+                        <Link target="_blank" href="https://www.flaticon.com/authors/freepik">
+                            Freepik
+                        </Link>{' '}
+                        and{' '}
+                        <Link target="_blank" href="https://www.flaticon.com/authors/smashicons">
+                            Smashicons
+                        </Link>{' '}
+                        from{' '}
+                        <Link target="_blank" href="https://www.flaticon.com/">
+                            www.flaticon.com
+                        </Link>{' '}
+                        and firebase from{' '}
+                        <Link
+                            target="_blank"
+                            href="https://github.com/firebase/quickstart-js/blob/master/firestore/images/guy_fireats.png">
+                            github
+                        </Link>
                     </i>
                 </Typography>
+            </Grid>
+
+            <Grid item xs={12}>
+                <Box display="flex" justifyContent="center">
+                    <BuiltWithFirebase />
+                </Box>
             </Grid>
         </Grid>
     )

@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme =>
             ...theme.typography.h5,
         },
         inputBaseInput: {
-            fontFamily: "'Lato', sans-serif",
+            fontFamily: 'Ubuntu',
         },
     })
 )

@@ -14,9 +14,9 @@ const useStyles = makeStyles(theme =>
     createStyles({
         attachmentsGridContainer: {
             overflowX: 'auto',
-            // '&::-webkit-scrollbar': {
-            //     display: 'none',
-            // },
+            '&::-webkit-scrollbar': {
+                display: 'none',
+            },
         },
         addAvatar: {
             [theme.breakpoints.down('sm')]: {
