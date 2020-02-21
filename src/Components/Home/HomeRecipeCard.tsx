@@ -1,7 +1,6 @@
 import {
     Avatar,
     Card,
-    CardContent,
     CardHeader,
     createStyles,
     Grid,
