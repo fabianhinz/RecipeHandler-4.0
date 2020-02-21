@@ -1,6 +1,7 @@
 import {
     Avatar,
     Card,
+    CardContent,
     CardHeader,
     createStyles,
     Grid,
@@ -42,18 +43,21 @@ const useStyles = makeStyles(theme =>
             [theme.breakpoints.only('xs')]: {
                 height: 150,
             },
-            [theme.breakpoints.up('sm')]: {
+            [theme.breakpoints.only('sm')]: {
                 height: 200,
             },
+            [theme.breakpoints.up('md')]: {
+                height: 250,
+            },
         },
-        cardHeader: {
-            padding: 0,
-        },
-        cardContentItem: {
-            padding: theme.spacing(2),
+        cardItem: {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
+        },
+        cardAction: {
+            display: 'flex',
+            flexDirection: 'column',
         },
     })
 )
@@ -97,28 +101,35 @@ const HomeRecipeCard = ({ recipe }: Props) => {
         <Grid {...gridBreakpointProps} item>
             <Card>
                 <Grid container direction="row-reverse">
-                    <Grid className={classes.cardContentItem} item xs={12} sm={8}>
+                    <Grid className={classes.cardItem} item xs={12} sm={9} xl={7}>
                         <CardHeader
+                            classes={{ action: classes.cardAction }}
                             title={recipe.name}
-                            className={classes.cardHeader}
                             subheader={recipe.createdDate.toDate().toLocaleDateString()}
                             action={
                                 <>
-                                    <Tooltip placement="bottom" title="Details">
+                                    <Tooltip placement="left" title="Details">
                                         <IconButton
                                             onClick={() =>
-                                                history.push(PATHS.details(recipe.name), { recipe })
+                                                history.push(PATHS.details(recipe.name), {
+                                                    recipe,
+                                                })
                                             }>
                                             <Eye />
                                         </IconButton>
                                     </Tooltip>
-                                    <RecipeResultBookmark name={recipe.name} />
+                                    <RecipeResultBookmark
+                                        tooltipProps={{ placement: 'left' }}
+                                        name={recipe.name}
+                                    />
                                 </>
                             }
                         />
-                        <CategoryResult categories={recipe.categories} variant="outlined" />
+                        <CardContent>
+                            <CategoryResult categories={recipe.categories} variant="outlined" />
+                        </CardContent>
                     </Grid>
-                    <Grid item xs={12} sm={4}>
+                    <Grid item xs={12} sm={3} xl={5}>
                         <div className={classes.avatarContainer}>
                             {attachmentRefLoading ? (
                                 <Skeleton className={classes.avatar} variant="rect" />

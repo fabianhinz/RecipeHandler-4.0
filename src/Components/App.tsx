@@ -1,4 +1,4 @@
-import { useMediaQuery } from '@material-ui/core'
+import { Container, useMediaQuery } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
@@ -20,7 +20,6 @@ import GridProvider from './Provider/GridProvider'
 import RouterProvider from './Provider/RouterProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
-import Container from './Shared/Container'
 
 const AppProvider: FC = ({ children }) => (
     <RouterProvider>
@@ -85,7 +84,7 @@ const App: FC = () => {
                     horizontal: 'right',
                 }}>
                 <AppProvider>
-                    <Container>
+                    <Container maxWidth="xl">
                         <Header />
                         <Main />
                         <Footer />

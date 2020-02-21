@@ -13,11 +13,14 @@ interface Props {
 const useStyles = makeStyles(theme =>
     createStyles({
         recipe: {
-            [theme.breakpoints.down('xs')]: {
+            [theme.breakpoints.only('xs')]: {
                 height: 296,
             },
-            [theme.breakpoints.up('sm')]: {
+            [theme.breakpoints.only('sm')]: {
                 height: 200,
+            },
+            [theme.breakpoints.up('md')]: {
+                height: 250,
             },
             width: '100%',
         },
