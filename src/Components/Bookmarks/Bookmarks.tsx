@@ -1,9 +1,21 @@
-import { createStyles, Grid, makeStyles, Tab, Tabs, Typography, useTheme } from '@material-ui/core'
+import {
+    createStyles,
+    Grid,
+    IconButton,
+    makeStyles,
+    Tab,
+    Tabs,
+    Tooltip,
+    Typography,
+    useTheme,
+} from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
+import { Eye } from 'mdi-material-ui'
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import SwipeableViews from 'react-swipeable-views'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
@@ -12,9 +24,12 @@ import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import MarkdownRenderer from '../Markdown/MarkdownRenderer'
 import { useBookmarkContext } from '../Provider/BookmarkProvider'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { GridLayout, useGridContext } from '../Provider/GridProvider'
 import { RecipeResultBookmark } from '../Recipe/Result/Action/RecipeResultBookmark'
+import { PATHS } from '../Routes/Routes'
 import NotFound from '../Shared/NotFound'
+import Skeletons from '../Shared/Skeletons'
 import StyledCard from '../Shared/StyledCard'
 
 const useStyles = makeStyles(theme =>
@@ -47,6 +62,8 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
 
     const classes = useStyles()
 
+    const history = useHistory()
+
     useEffect(() => {
         FirebaseService.firestore
             .collection('recipes')
@@ -56,7 +73,21 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
 
     return (
         <div className={clsx(gridLayout === 'grid' && classes.recipeItem)}>
-            <StyledCard header={recipeName} action={<RecipeResultBookmark name={recipeName} />}>
+            <StyledCard
+                header={recipeName}
+                action={
+                    <>
+                        <Tooltip title="Details">
+                            <IconButton
+                                onClick={() => {
+                                    if (recipe) history.push(PATHS.details(recipe.name), { recipe })
+                                }}>
+                                <Eye />
+                            </IconButton>
+                        </Tooltip>
+                        <RecipeResultBookmark name={recipeName} />
+                    </>
+                }>
                 <>
                     <Tabs
                         style={{ flexGrow: 1 }}
@@ -81,6 +112,7 @@ const Bookmark = ({ recipeName, gridLayout }: BookmarkProps) => {
 }
 
 const Bookmarks = () => {
+    const { loginEnabled } = useFirebaseAuthContext()
     const { bookmarks } = useBookmarkContext()
     const { gridLayout } = useGridContext()
 
@@ -118,9 +150,16 @@ const Bookmarks = () => {
                             <Bookmark gridLayout={gridLayout} recipeName={recipeName} />
                         </Grid>
                     ))}
+
+                    <Skeletons
+                        variant="bookmark"
+                        visible={bookmarks.size === 0 && !loginEnabled}
+                        numberOfSkeletons={4}
+                    />
+
                     <ScrollRightTrigger />
                 </Grid>
-                <NotFound visible={bookmarks.size === 0} />
+                <NotFound visible={bookmarks.size === 0 && loginEnabled} />
             </Grid>
         </Grid>
     )

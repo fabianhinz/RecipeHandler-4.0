@@ -18,7 +18,7 @@ import { Hits } from '../../model/model'
 import { index } from '../../services/algolia'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import NotFound from '../Shared/NotFound'
-import Progress from '../Shared/Progress'
+import Skeletons from '../Shared/Skeletons'
 import SearchResult from './SearchResult'
 
 const useStyles = makeStyles(theme =>
@@ -100,6 +100,7 @@ const Search = () => {
         event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
     ) => {
         setLoading(true)
+        setResults([])
         setValue(event.target.value)
     }
 
@@ -137,9 +138,9 @@ const Search = () => {
                                 searchValue={value}
                             />
                         ))}
+                        <Skeletons variant="search" visible={loading} numberOfSkeletons={3} />
                     </List>
 
-                    {loading && <Progress variant="cover" />}
                     <NotFound visible={!loading && results.length === 0 && value.length > 0} />
 
                     {!loading && error && (
