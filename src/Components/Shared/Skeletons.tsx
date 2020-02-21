@@ -14,13 +14,19 @@ const useStyles = makeStyles(theme =>
     createStyles({
         recipe: {
             [theme.breakpoints.only('xs')]: {
-                height: 296,
+                height: 224,
             },
             [theme.breakpoints.only('sm')]: {
-                height: 200,
+                height: 184,
             },
-            [theme.breakpoints.up('md')]: {
-                height: 250,
+            [theme.breakpoints.only('md')]: {
+                height: 224,
+            },
+            [theme.breakpoints.only('lg')]: {
+                height: 184,
+            },
+            [theme.breakpoints.only('xl')]: {
+                height: 224,
             },
             width: '100%',
         },

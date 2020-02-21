@@ -1,17 +1,8 @@
-import {
-    Avatar,
-    CardActionArea,
-    Chip,
-    createStyles,
-    Grid,
-    makeStyles,
-    Typography,
-} from '@material-ui/core'
-import { CameraImage, LogoutVariant } from 'mdi-material-ui'
+import { Grid, Typography } from '@material-ui/core'
+import { LogoutVariant } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
-import { useAttachmentDropzone } from '../../../hooks/useAttachmentDropzone'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import useProgress from '../../../hooks/useProgress'
 import { ShoppingList, User } from '../../../model/model'
@@ -21,9 +12,9 @@ import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
 import { NavigateFab } from '../../Routes/Navigate'
 import AccountUserAdmin from './AccountUserAdmin'
-import AccountUserChangelog from './AccountUserChangelog'
 import AccountUserHeader from './AccountUserHeader'
 import AccountUserRecipes from './AccountUserRecipes'
+import AccountUserSettings from './AccountUserSettings'
 
 type SettingKeys = keyof Pick<
     User,
@@ -38,38 +29,7 @@ type SettingKeys = keyof Pick<
 
 export type UserSettingChangeHandler = (key: SettingKeys) => (uid?: any) => void
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        avatar: {
-            width: 80,
-            height: 80,
-        },
-        actionArea: {
-            borderRadius: '50%',
-            width: 'fit-content',
-        },
-        chip: {
-            boxShadow: theme.shadows[1],
-            backgroundColor: '#2C384A',
-            height: theme.spacing(10),
-            borderRadius: theme.spacing(5),
-        },
-        chipLabel: {
-            ...theme.typography.h6,
-            paddingRight: 24,
-            '& > *': {
-                color: theme.palette.getContrastText('#2C384A'),
-            },
-        },
-        chipIcon: {
-            margin: 0,
-        },
-    })
-)
-
 const AccountUser = () => {
-    const classes = useStyles()
-
     // ? we won't load this component without an existing user - pinky promise -_-
     const { user } = useFirebaseAuthContext() as {
         user: User
@@ -80,27 +40,11 @@ const AccountUser = () => {
     const { ProgressComponent, setProgress } = useProgress()
     const { enqueueSnackbar } = useSnackbar()
 
-    const { dropzoneAttachments, dropzoneProps } = useAttachmentDropzone({
-        attachmentMaxWidth: 1920,
-        attachmentLimit: 1,
-    })
-
     useDocumentTitle(user.username)
 
     const userDoc = useMemo(() => FirebaseService.firestore.collection('users').doc(user.uid), [
         user.uid,
     ])
-
-    useEffect(() => {
-        if (dropzoneAttachments.length > 0) {
-            const { dataUrl, size } = dropzoneAttachments[0]
-            if (size > 500000) {
-                enqueueSnackbar('Maximale Größe überschritten (500kb)', { variant: 'warning' })
-            } else {
-                userDoc.update({ profilePicture: dataUrl })
-            }
-        }
-    }, [dropzoneAttachments, enqueueSnackbar, userDoc])
 
     const handleLogout = () => {
         setProgress(true)
@@ -172,41 +116,15 @@ const AccountUser = () => {
         <>
             <Grid container spacing={4}>
                 <Grid item xs={12}>
-                    <Grid container spacing={1} justify="space-between">
-                        <Grid item xs="auto">
-                            <Typography variant="h4" display="inline">
-                                Account
-                            </Typography>
-                        </Grid>
-                        <Grid item xs="auto">
-                            <AccountUserChangelog />
-                        </Grid>
-                    </Grid>
+                    <Typography variant="h4">Account</Typography>
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Chip
-                        classes={{
-                            root: classes.chip,
-                            label: classes.chipLabel,
-                            icon: classes.chipIcon,
-                        }}
-                        icon={
-                            <CardActionArea
-                                className={classes.actionArea}
-                                {...dropzoneProps.getRootProps()}>
-                                <Avatar className={classes.avatar} src={user.profilePicture}>
-                                    <CameraImage fontSize="large" />
-                                </Avatar>
-                                <input {...dropzoneProps.getInputProps()} />
-                            </CardActionArea>
-                        }
-                        label={user.username}
-                    />
+                    <AccountUserHeader user={user} userDoc={userDoc} />
                 </Grid>
 
                 <Grid item {...gridBreakpointProps}>
-                    <AccountUserHeader
+                    <AccountUserSettings
                         user={user}
                         userDoc={userDoc}
                         onUserSettingChange={handleUserSettingChange}

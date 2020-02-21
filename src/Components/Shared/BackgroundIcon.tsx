@@ -16,14 +16,17 @@ const useStyles = makeStyles(theme =>
             zIndex: -1,
             opacity: theme.palette.type === 'dark' ? 0.2 : 0.4,
             position: 'fixed',
-            bottom: theme.spacing(12),
-            right: '30%',
-            left: '30%',
-            [theme.breakpoints.only('xs')]: {
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            [theme.breakpoints.between('xs', 'sm')]: {
                 display: 'none',
             },
-            [theme.breakpoints.up('sm')]: {
+            [theme.breakpoints.between('md', 'lg')]: {
                 width: '40%',
+            },
+            [theme.breakpoints.up('xl')]: {
+                width: '30%',
             },
         },
     })

@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme =>
             width: '100%',
             height: '100%',
             fontSize: theme.typography.pxToRem(60),
-
             [theme.breakpoints.only('xs')]: {
                 borderBottomLeftRadius: BORDER_RADIUS,
                 borderBottomRightRadius: BORDER_RADIUS,
@@ -40,20 +39,7 @@ const useStyles = makeStyles(theme =>
             },
         },
         avatarContainer: {
-            [theme.breakpoints.only('xs')]: {
-                height: 150,
-            },
-            [theme.breakpoints.only('sm')]: {
-                height: 200,
-            },
-            [theme.breakpoints.up('md')]: {
-                height: 250,
-            },
-        },
-        cardItem: {
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
+            height: '100%',
         },
         cardAction: {
             display: 'flex',
@@ -100,8 +86,22 @@ const HomeRecipeCard = ({ recipe }: Props) => {
     return (
         <Grid {...gridBreakpointProps} item>
             <Card>
-                <Grid container direction="row-reverse">
-                    <Grid className={classes.cardItem} item xs={12} sm={9} xl={7}>
+                <Grid container>
+                    <Grid item xs={3} xl={5}>
+                        <div className={classes.avatarContainer}>
+                            {attachmentRefLoading ? (
+                                <Skeleton className={classes.avatar} variant="rect" />
+                            ) : (
+                                <Avatar
+                                    variant="square"
+                                    className={classes.avatar}
+                                    src={recipe.previewAttachment || attachmentRef.smallDataUrl}>
+                                    {recipe.name.slice(0, 1).toUpperCase()}
+                                </Avatar>
+                            )}
+                        </div>
+                    </Grid>
+                    <Grid item xs={9} xl={7}>
                         <CardHeader
                             classes={{ action: classes.cardAction }}
                             title={recipe.name}
@@ -128,20 +128,6 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                         <CardContent>
                             <CategoryResult categories={recipe.categories} variant="outlined" />
                         </CardContent>
-                    </Grid>
-                    <Grid item xs={12} sm={3} xl={5}>
-                        <div className={classes.avatarContainer}>
-                            {attachmentRefLoading ? (
-                                <Skeleton className={classes.avatar} variant="rect" />
-                            ) : (
-                                <Avatar
-                                    variant="square"
-                                    className={classes.avatar}
-                                    src={recipe.previewAttachment || attachmentRef.smallDataUrl}>
-                                    {recipe.name.slice(0, 1).toUpperCase()}
-                                </Avatar>
-                            )}
-                        </div>
                     </Grid>
                 </Grid>
             </Card>

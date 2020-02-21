@@ -9,7 +9,6 @@ import {
     ListItemText,
     makeStyles,
     Slide,
-    useTheme,
 } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
 import clsx from 'clsx'
@@ -23,22 +22,28 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        attachmentUploadAvatar: {
+        avatar: {
             position: 'relative',
             transition: theme.transitions.create('all', {
                 duration: theme.transitions.duration.standard,
             }),
         },
-        attachmentUploadProgress: {
+        progress: {
             position: 'absolute',
         },
-        attachmentUploadDone: {
+        done: {
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.getContrastText(theme.palette.primary.main),
         },
-        attachmentUploadError: {
+        error: {
             backgroundColor: theme.palette.error.main,
             color: theme.palette.getContrastText(theme.palette.primary.main),
+        },
+        card: {
+            position: 'fixed',
+            top: 'calc(env(safe-area-inset-top) + 24px)',
+            right: 24,
+            zIndex: theme.zIndex.modal,
         },
     })
 )
@@ -107,15 +112,15 @@ const AttachmentUploadListItem = ({
                 <ListItemAvatar>
                     <Avatar
                         className={clsx(
-                            classes.attachmentUploadAvatar,
-                            !uploading && classes.attachmentUploadDone,
-                            error && classes.attachmentUploadError
+                            classes.avatar,
+                            !uploading && classes.done,
+                            error && classes.error
                         )}>
                         {uploading ? error ? <HeartBroken /> : <CloudUpload /> : <CheckIcon />}
                         {uploading && !error && (
                             <CircularProgress
                                 disableShrink
-                                className={classes.attachmentUploadProgress}
+                                className={classes.progress}
                                 size={40}
                                 thickness={5}
                             />
@@ -148,7 +153,7 @@ const AttachmentUpload = ({
     recipeName,
 }: UploadContainerProps) => {
     const [uploads, setUploads] = useState<Map<string, AttachmentDoc & DataUrl>>(new Map())
-    const theme = useTheme()
+    const classes = useStyles()
 
     useEffect(() => {
         if (dropzoneAttachments.length === 0) return
@@ -170,9 +175,7 @@ const AttachmentUpload = ({
 
     return (
         <Slide in={Boolean(dropzoneAlert || dropzoneAttachments.length > 0)} direction="left">
-            <Card
-                style={{ position: 'fixed', top: 24, right: 24, zIndex: theme.zIndex.modal }}
-                elevation={8}>
+            <Card className={classes.card} elevation={8}>
                 {uploads.size > 0 && (
                     <List>
                         {[...uploads.values()].map(attachment => (
