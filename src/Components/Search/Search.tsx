@@ -38,7 +38,8 @@ const useStyles = makeStyles(theme =>
             top: theme.spacing(9),
             width: '100%',
             padding: theme.spacing(2),
-            height: '40vh',
+            minHeight: '20vh',
+            maxHeight: '40vh',
             [theme.breakpoints.down('xs')]: {
                 maxHeight: '30vh',
             },
