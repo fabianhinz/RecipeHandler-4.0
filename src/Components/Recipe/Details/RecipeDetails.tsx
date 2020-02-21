@@ -14,7 +14,7 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
     const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps })
     const { user } = useFirebaseAuthContext()
 
-    useDocumentTitle(recipeDoc ? recipeDoc.name : 'Wird geladen...')
+    useDocumentTitle(recipeDoc ? recipeDoc.name : recipeDocLoading ? 'Wird geladen...' : '404')
 
     return (
         <>
