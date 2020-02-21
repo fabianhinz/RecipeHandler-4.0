@@ -58,7 +58,7 @@ const Trials = () => {
         },
     })
 
-    useDocumentTitle('Rezeptideen')
+    useDocumentTitle('Ideen')
 
     useEffect(() => {
         setQuerying(true)
@@ -159,7 +159,7 @@ const Trials = () => {
         <>
             <Grid container spacing={4} alignItems="center">
                 <Grid item xs={12}>
-                    <Typography variant="h4">Rezeptideen</Typography>
+                    <Typography variant="h4">Ideen</Typography>
                 </Grid>
 
                 {[...pagedTrials.values()].map((trial, index) => (

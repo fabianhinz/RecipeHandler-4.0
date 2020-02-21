@@ -7,7 +7,7 @@ import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
 const useStyles = makeStyles(theme =>
     createStyles({
         chip: {
-            boxShadow: theme.shadows[8],
+            boxShadow: theme.shadows[4],
             backgroundColor: '#2C384A',
             height: theme.spacing(10),
             borderRadius: theme.spacing(5),

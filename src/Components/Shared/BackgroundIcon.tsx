@@ -3,21 +3,27 @@ import React, { FC } from 'react'
 
 const useStyles = makeStyles(theme =>
     createStyles({
+        '@keyframes background-icon-appear': {
+            from: {
+                opacity: 0,
+            },
+            to: {
+                opacity: theme.palette.type === 'dark' ? 0.2 : 0.4,
+            },
+        },
         icon: {
+            animation: `$background-icon-appear 0.5s ease-in`,
             zIndex: -1,
-            opacity: theme.palette.type === 'dark' ? 0.4 : 0.6,
+            opacity: theme.palette.type === 'dark' ? 0.2 : 0.4,
             position: 'fixed',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
+            bottom: theme.spacing(12),
+            right: '30%',
+            left: '30%',
             [theme.breakpoints.only('xs')]: {
                 display: 'none',
             },
-            [theme.breakpoints.between('sm', 'lg')]: {
-                width: 512,
-            },
-            [theme.breakpoints.only('xl')]: {
-                width: 640,
+            [theme.breakpoints.up('sm')]: {
+                width: '40%',
             },
         },
     })
