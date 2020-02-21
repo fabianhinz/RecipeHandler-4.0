@@ -13,14 +13,11 @@ interface Props {
 const useStyles = makeStyles(theme =>
     createStyles({
         recipe: {
-            [theme.breakpoints.down('sm')]: {
-                height: 120 + 89,
+            [theme.breakpoints.down('xs')]: {
+                height: 296,
             },
-            [theme.breakpoints.between('md', 'lg')]: {
-                height: 150 + 57,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: 180 + 57,
+            [theme.breakpoints.up('sm')]: {
+                height: 250,
             },
         },
         trial: {
@@ -37,7 +34,7 @@ const useStyles = makeStyles(theme =>
         cookCounter: {
             minWidth: 150,
             [theme.breakpoints.only('xs')]: {
-                height: 44,
+                height: 44.86,
             },
             [theme.breakpoints.up('sm')]: {
                 height: 48,
@@ -45,7 +42,7 @@ const useStyles = makeStyles(theme =>
         },
     })
 )
-
+// ? todo Search should make use of this
 const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
     const classes = useStyles()
     const { gridBreakpointProps } = useGridContext()

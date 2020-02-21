@@ -14,19 +14,20 @@ const initialDataUrlsAndMetadata = {
 
 export const getFileExtension = (fullpath: string) => fullpath.split('.').slice(-1)[0]
 
-export const getRefPaths = (fullPath: string) => {
+const getRefPaths = (fullPath: string) => {
     // ? the fullPath Field in firestore always looks something like [whatever].jpg|png
     const extension = getFileExtension(fullPath)
     const basePath = fullPath.replace(`.${extension}`, '')
 
     return {
         mediumPath: `${basePath}_1000x1000.${extension}`,
-        smallPath: `${basePath}_400x400.${extension}`,
+        smallPath: `${basePath}_500x500.${extension}`,
+        smallPathFallback: `${basePath}_400x400.${extension}`,
     }
 }
 
 export const getResizedImagesWithMetadata = async (fullPath: string) => {
-    const { smallPath, mediumPath } = getRefPaths(fullPath)
+    const { smallPath, smallPathFallback, mediumPath } = getRefPaths(fullPath)
     const urlsAndMetadata: AllDataUrls & Metadata = { ...initialDataUrlsAndMetadata }
 
     try {
@@ -38,7 +39,12 @@ export const getResizedImagesWithMetadata = async (fullPath: string) => {
 
         urlsAndMetadata.fullDataUrl = await storage.ref(fullPath).getDownloadURL()
         urlsAndMetadata.mediumDataUrl = await storage.ref(mediumPath).getDownloadURL()
-        urlsAndMetadata.smallDataUrl = await storage.ref(smallPath).getDownloadURL()
+
+        try {
+            urlsAndMetadata.smallDataUrl = await storage.ref(smallPath).getDownloadURL()
+        } catch (e) {
+            urlsAndMetadata.smallDataUrl = await storage.ref(smallPathFallback).getDownloadURL()
+        }
     } catch (e) {
         // ? happens after creating an attachment. just load the full version
         urlsAndMetadata.mediumDataUrl = urlsAndMetadata.fullDataUrl

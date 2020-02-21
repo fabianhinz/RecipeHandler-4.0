@@ -1,9 +1,9 @@
-import { Avatar, CircularProgress, createStyles, makeStyles } from '@material-ui/core'
+import { createStyles, makeStyles } from '@material-ui/core'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
-import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
 import { ShoppingList, ShoppingTracker, User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import BuiltWithFirebase from '../Shared/BuiltWithFirebase'
 
 interface AuthContext {
     user: User | undefined
@@ -21,26 +21,13 @@ const Context = React.createContext<AuthContext>({
 
 export const useFirebaseAuthContext = () => useContext(Context)
 
-const useStyles = makeStyles(theme =>
+const useStyles = makeStyles(() =>
     createStyles({
-        auth: {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            width: '100vw',
-        },
-        avatar: {
-            backgroundColor: '#2C384A',
-            padding: theme.spacing(4),
-            margin: theme.spacing(1),
-            width: theme.spacing(8),
-            height: theme.spacing(8),
-            boxShadow: theme.shadows[8],
-        },
-        progress: {
-            position: 'absolute',
-            color: '#ffcd34',
+        chip: {
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%,-50%)',
         },
         main: {
             paddingTop: 'env(safe-area-inset-top)',
@@ -137,11 +124,8 @@ const FirebaseAuthProvider: FC = ({ children }) => {
             {authReady ? (
                 <div className={classes.main}>{children}</div>
             ) : (
-                <div className={classes.auth}>
-                    <Avatar className={classes.avatar}>
-                        <FirebaseIcon height="100%" />
-                        <CircularProgress disableShrink size={130} className={classes.progress} />
-                    </Avatar>
+                <div className={classes.chip}>
+                    <BuiltWithFirebase loading />
                 </div>
             )}
         </Context.Provider>

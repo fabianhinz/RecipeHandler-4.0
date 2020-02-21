@@ -10,17 +10,14 @@ const useStyles = makeStyles(theme =>
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%)',
-            [theme.breakpoints.down('sm')]: {
+            [theme.breakpoints.only('xs')]: {
                 display: 'none',
             },
-            [theme.breakpoints.only('md')]: {
+            [theme.breakpoints.between('sm', 'lg')]: {
                 width: 512,
             },
-            [theme.breakpoints.only('lg')]: {
-                width: 640,
-            },
             [theme.breakpoints.only('xl')]: {
-                width: 768,
+                width: 640,
             },
         },
     })

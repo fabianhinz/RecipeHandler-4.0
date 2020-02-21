@@ -5,38 +5,38 @@ import { Categories } from '../../model/model'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import getIconByCategory from './CategoryIcons'
 
-interface CategoryResultProps extends Pick<ChipProps, 'color'> {
-    categories: Categories<string>
-    fullWidth?: boolean
-}
-
-interface StyleProps {
-    fixedWidth: boolean
-}
-
 const useStyles = makeStyles(() =>
     createStyles({
-        chip: {
-            width: ({ fixedWidth }: StyleProps) => (fixedWidth ? 130 : 'inherit'),
+        container: {
+            overflowX: 'auto',
+            '&::-webkit-scrollbar': {
+                display: 'none',
+            },
         },
     })
 )
 
-export const CategoryResult: FC<CategoryResultProps> = ({ categories, color }) => {
-    const { isLowRes } = useBreakpointsContext()
-    const classes = useStyles({ fixedWidth: isLowRes })
+interface CategoryResultProps extends Pick<ChipProps, 'color' | 'variant' | 'size'> {
+    categories: Categories<string>
+}
+
+export const CategoryResult: FC<CategoryResultProps> = ({ categories, ...chipProps }) => {
+    const classes = useStyles()
+    const { isMobile } = useBreakpointsContext()
 
     return (
-        <Grid container spacing={1} justify={isLowRes ? 'center' : 'flex-start'}>
+        <Grid
+            container
+            wrap={isMobile ? 'nowrap' : 'wrap'}
+            className={classes.container}
+            spacing={1}>
             {Object.keys(categories).map(type => (
                 <Grid item key={type}>
                     {categories[type].length > 0 && (
                         <Chip
-                            className={classes.chip}
                             icon={getIconByCategory(categories[type])}
-                            size="small"
-                            color={color}
                             label={categories[type]}
+                            {...chipProps}
                         />
                     )}
                 </Grid>
