@@ -11,6 +11,7 @@ import { useBookmarkContext } from '../../Provider/BookmarkProvider'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
 import { NavigateFab } from '../../Routes/Navigate'
+import EntryGridContainer from '../../Shared/EntryGridContainer'
 import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
 import AccountUserRecipes from './AccountUserRecipes'
@@ -114,7 +115,7 @@ const AccountUser = () => {
 
     return (
         <>
-            <Grid container spacing={4}>
+            <EntryGridContainer>
                 <Grid item xs={12}>
                     <AccountUserHeader user={user} userDoc={userDoc} />
                 </Grid>
@@ -134,7 +135,7 @@ const AccountUser = () => {
                         <AccountUserAdmin />
                     </Grid>
                 )}
-            </Grid>
+            </EntryGridContainer>
 
             <NavigateFab onClick={handleLogout} icon={<LogoutVariant />} tooltipTitle="Ausloggen" />
             <ProgressComponent />

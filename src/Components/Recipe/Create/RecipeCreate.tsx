@@ -12,6 +12,7 @@ import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
+import EntryGridContainer from '../../Shared/EntryGridContainer'
 import StyledCard from '../../Shared/StyledCard'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
@@ -95,7 +96,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     }}
                 />
             ) : (
-                <Grid container spacing={4} alignContent="stretch">
+                <EntryGridContainer>
                     <Grid item xs={12}>
                         <RecipeCreateHeader
                             inputDisabled={props.edit}
@@ -137,7 +138,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             </StyledCard>
                         </Grid>
                     )}
-                </Grid>
+                </EntryGridContainer>
             )}
 
             <RecipeCreateRelatedDialog

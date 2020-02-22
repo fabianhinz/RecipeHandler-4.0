@@ -9,6 +9,9 @@ import App from './Components/App'
 import ErrorBoundary from './Components/ErrorBoundary'
 import BreakpointsProvider from './Components/Provider/BreakpointsProvider'
 import FirebaseAuthProvider from './Components/Provider/FirebaseAuthProvider'
+import { register } from './serviceWorker'
+
+register()
 
 ReactDOM.render(
     <ErrorBoundary>

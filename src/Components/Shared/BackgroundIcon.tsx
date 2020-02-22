@@ -1,4 +1,4 @@
-import { createStyles, makeStyles } from '@material-ui/core'
+import { createStyles, Fade, makeStyles } from '@material-ui/core'
 import React, { FC } from 'react'
 
 const useStyles = makeStyles(theme =>
@@ -30,5 +30,11 @@ interface BackgroundIconProps {
 export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon }) => {
     const classes = useStyles()
 
-    return <Icon className={classes.icon} />
+    return (
+        <Fade in>
+            <div>
+                <Icon className={classes.icon} />
+            </div>
+        </Fade>
+    )
 }

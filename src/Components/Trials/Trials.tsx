@@ -21,6 +21,7 @@ import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
 import TrialsCard from './TrialsCard'
@@ -157,7 +158,7 @@ const Trials = () => {
 
     return (
         <>
-            <Grid container spacing={4} alignItems="center">
+            <EntryGridContainer>
                 <Grid item xs={12}>
                     <Typography variant="h4">Ideen</Typography>
                 </Grid>
@@ -174,7 +175,7 @@ const Trials = () => {
                     {querying && <LinearProgress variant="query" color="secondary" />}
                     <IntersectionObserverTrigger />
                 </Grid>
-            </Grid>
+            </EntryGridContainer>
 
             {user && (
                 <Zoom in>

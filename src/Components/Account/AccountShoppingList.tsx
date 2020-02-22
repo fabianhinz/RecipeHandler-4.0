@@ -25,6 +25,7 @@ import useScrollButtons from '../../hooks/useScrollButtons'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
+import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import StyledCard from '../Shared/StyledCard'
 
@@ -132,7 +133,7 @@ const AccountUserShoppingList = () => {
 
     return (
         <>
-            <Grid container spacing={4} alignItems="center">
+            <EntryGridContainer>
                 <Grid item xs={10} md={9}>
                     <Typography variant="h4">Einkaufsliste</Typography>
                 </Grid>
@@ -217,7 +218,7 @@ const AccountUserShoppingList = () => {
                     </Grid>
                     <NotFound visible={shoppingList.size === 0} />
                 </Grid>
-            </Grid>
+            </EntryGridContainer>
 
             <Zoom in={!shoppingList.get('Sonstiges')}>
                 <Tooltip title="Liste ergänzen" placement="left">

@@ -11,6 +11,7 @@ import Attachments from '../../Attachments/Attachments'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
 import { useGridContext } from '../../Provider/GridProvider'
 import Satisfaction from '../../Satisfaction/Satisfaction'
+import EntryGridContainer from '../../Shared/EntryGridContainer'
 import NotFound from '../../Shared/NotFound'
 import StyledCard from '../../Shared/StyledCard'
 import RecipeResultHeader from './RecipeResultHeader'
@@ -21,22 +22,13 @@ interface RecipeResultProps extends RecipeVariants {
     divider?: boolean
 }
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        recipeContainer: {
-            overflowX: 'hidden',
-        },
-    })
-)
-
 const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
-    const classes = useStyles()
     const { gridBreakpointProps } = useGridContext()
 
     if (!recipe) return <NotFound visible />
 
     return (
-        <Grid container spacing={4} className={classes.recipeContainer}>
+        <EntryGridContainer>
             <Grid item xs={12}>
                 <RecipeResultHeader recipe={recipe} variant={variant} />
             </Grid>
@@ -92,7 +84,7 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                     ).toLocaleDateString()}`}
                 />
             </Grid>
-        </Grid>
+        </EntryGridContainer>
     )
 }
 
