@@ -9,6 +9,7 @@ import {
     ListItemText,
     makeStyles,
     Slide,
+    Typography,
 } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
 import clsx from 'clsx'
@@ -42,8 +43,21 @@ const useStyles = makeStyles(theme =>
         card: {
             position: 'fixed',
             top: 'calc(env(safe-area-inset-top) + 24px)',
-            right: 24,
+            [theme.breakpoints.only('xs')]: {
+                right: 16,
+            },
+            [theme.breakpoints.up('sm')]: {
+                right: 24,
+            },
             zIndex: theme.zIndex.modal,
+        },
+        attachmentName: {
+            [theme.breakpoints.only('xs')]: {
+                maxWidth: '50vw',
+            },
+            [theme.breakpoints.up('sm')]: {
+                maxWidth: '25vw',
+            },
         },
     })
 )
@@ -128,7 +142,11 @@ const AttachmentUploadListItem = ({
                     </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                    primary={attachment.name}
+                    primary={
+                        <Typography variant="h6" className={classes.attachmentName} noWrap>
+                            {attachment.name}
+                        </Typography>
+                    }
                     secondary={`${(attachment.size / 1000).toFixed(0)} KB`}
                 />
             </ListItem>

@@ -23,7 +23,16 @@ export const useFirebaseAuthContext = () => useContext(Context)
 
 const useStyles = makeStyles(() =>
     createStyles({
+        '@keyframes chip-appear': {
+            from: {
+                opacity: 0,
+            },
+            to: {
+                opacity: 1,
+            },
+        },
         chip: {
+            animation: `$chip-appear 0.25s ease-in`,
             position: 'fixed',
             top: '50%',
             left: '50%',

@@ -3,16 +3,7 @@ import React, { FC } from 'react'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        '@keyframes background-icon-appear': {
-            from: {
-                opacity: 0,
-            },
-            to: {
-                opacity: theme.palette.type === 'dark' ? 0.2 : 0.4,
-            },
-        },
         icon: {
-            animation: `$background-icon-appear 0.5s ease-in`,
             zIndex: -1,
             opacity: theme.palette.type === 'dark' ? 0.2 : 0.4,
             position: 'fixed',
