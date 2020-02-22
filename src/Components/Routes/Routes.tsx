@@ -1,7 +1,5 @@
-import { createStyles, makeStyles } from '@material-ui/core'
-import clsx from 'clsx'
-import React, { FC, lazy, LazyExoticComponent, Suspense, useEffect, useState } from 'react'
-import { Redirect, Route, RouteComponentProps, Switch, useLocation } from 'react-router-dom'
+import React, { FC, lazy, LazyExoticComponent, Suspense } from 'react'
+import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import { ReactComponent as AccountIcon } from '../../icons/account.svg'
 import { ReactComponent as BookmarksIcon } from '../../icons/bookmarks.svg'
