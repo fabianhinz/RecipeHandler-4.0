@@ -123,13 +123,11 @@ const AccountUser = () => {
                     <AccountUserHeader user={user} userDoc={userDoc} />
                 </Grid>
 
-                <Grid item {...gridBreakpointProps}>
-                    <AccountUserSettings
-                        user={user}
-                        userDoc={userDoc}
-                        onUserSettingChange={handleUserSettingChange}
-                    />
-                </Grid>
+                <AccountUserSettings
+                    user={user}
+                    userDoc={userDoc}
+                    onUserSettingChange={handleUserSettingChange}
+                />
 
                 <Grid item {...gridBreakpointProps}>
                     <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
