@@ -1,5 +1,7 @@
-import React, { FC, lazy, LazyExoticComponent, Suspense } from 'react'
-import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
+import { createStyles, makeStyles } from '@material-ui/core'
+import clsx from 'clsx'
+import React, { FC, lazy, LazyExoticComponent, Suspense, useEffect, useState } from 'react'
+import { Redirect, Route, RouteComponentProps, Switch, useLocation } from 'react-router-dom'
 
 import { ReactComponent as AccountIcon } from '../../icons/account.svg'
 import { ReactComponent as BookmarksIcon } from '../../icons/bookmarks.svg'
@@ -97,14 +99,40 @@ const renderRoute = ({ path, Component, Background }: AppRoute) => (
     />
 )
 
+const useStyles = makeStyles(() =>
+    createStyles({
+        '@keyframes route-appear': {
+            from: {
+                opacity: 0,
+            },
+            to: {
+                opacity: 1,
+            },
+        },
+        appear: {
+            animation: `$route-appear 0.5s ease-in`,
+        },
+    })
+)
+
 export const Routes: FC = () => {
+    const [appear, setAppear] = useState(true)
+    const classes = useStyles()
+
+    const location = useLocation()
     const { user } = useFirebaseAuthContext()
 
+    useEffect(() => {
+        setAppear(true)
+    }, [location.pathname])
+
     return (
-        <Switch>
-            {anonymousRoutes.map(renderRoute)}
-            {user && securedRoutes.map(renderRoute)}
-            <Route render={() => <Redirect to="/" />} />
-        </Switch>
+        <div className={clsx(appear && classes.appear)} onTransitionEnd={() => setAppear(false)}>
+            <Switch>
+                {anonymousRoutes.map(renderRoute)}
+                {user && securedRoutes.map(renderRoute)}
+                <Route render={() => <Redirect to="/" />} />
+            </Switch>
+        </div>
     )
 }
