@@ -75,7 +75,7 @@ const CategorySelection = ({ onCategoryChange, selectedCategories, header, fabLa
             <Drawer open={drawerOpen} onClose={closeDrawer} anchor="top">
                 <div className={classes.drawerHeader}>{header}</div>
 
-                <Container className={classes.containerCategoryWrapper}>
+                <Container maxWidth="xl" className={classes.containerCategoryWrapper}>
                     <Grid container>
                         {Object.keys(categoriesCollection).map(type => (
                             <Grid key={type} item xs={12} sm={6} lg={3}>

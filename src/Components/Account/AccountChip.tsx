@@ -6,14 +6,6 @@ import React from 'react'
 import { User } from '../../model/model'
 import { useUsersContext } from '../Provider/UsersProvider'
 
-interface Props extends Pick<ChipProps, 'variant'> {
-    uid: string
-    position?: 'default' | 'absolute'
-    onFilterChange?: (uid: string) => void
-    selected?: boolean
-    enhanceLabel?: string
-}
-
 const useStyles = makeStyles(theme =>
     createStyles({
         absolute: {
@@ -22,23 +14,43 @@ const useStyles = makeStyles(theme =>
             left: ' 50%',
             transform: 'translate(-50%, 0)',
             zIndex: 1,
-            top: theme.spacing(1),
+        },
+        top: {
+            top: theme.spacing(2),
+        },
+        bottom: {
+            bottom: theme.spacing(2),
         },
     })
 )
 
-const AccountChip = ({ uid, variant, position, enhanceLabel }: Props) => {
+interface Props extends Pick<ChipProps, 'variant'> {
+    uid: string
+    position?: 'default' | 'absolute'
+    placement?: 'top' | 'bottom'
+    onFilterChange?: (uid: string) => void
+    selected?: boolean
+    enhanceLabel?: string
+}
+
+const AccountChip = ({ uid, variant, position, enhanceLabel, placement }: Props) => {
     const { getByUid } = useUsersContext()
     const user: User | undefined = getByUid(uid)
 
     const classes = useStyles()
+
+    if (position === 'absolute' && !placement)
+        console.error('When positioning absolute, placement is required')
 
     return (
         <>
             {user && (
                 <Chip
                     variant={variant}
-                    className={clsx(position === 'absolute' && classes.absolute)}
+                    className={clsx(
+                        position === 'absolute' && classes.absolute,
+                        placement && classes[placement]
+                    )}
                     avatar={<Avatar src={user.profilePicture}>{user.username.slice(0, 1)}</Avatar>}
                     label={`${user.username} ${enhanceLabel || ''}`}
                 />

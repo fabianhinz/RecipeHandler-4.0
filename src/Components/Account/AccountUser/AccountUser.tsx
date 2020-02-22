@@ -14,6 +14,7 @@ import { NavigateFab } from '../../Routes/Navigate'
 import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
 import AccountUserRecipes from './AccountUserRecipes'
+import AccountUserSettings from './AccountUserSettings'
 
 type SettingKeys = keyof Pick<
     User,
@@ -39,11 +40,11 @@ const AccountUser = () => {
     const { ProgressComponent, setProgress } = useProgress()
     const { enqueueSnackbar } = useSnackbar()
 
+    useDocumentTitle(user.username)
+
     const userDoc = useMemo(() => FirebaseService.firestore.collection('users').doc(user.uid), [
         user.uid,
     ])
-
-    useDocumentTitle(user.username)
 
     const handleLogout = () => {
         setProgress(true)
@@ -113,14 +114,16 @@ const AccountUser = () => {
 
     return (
         <>
-            <Grid container spacing={4} alignItems="center">
+            <Grid container spacing={4}>
                 <Grid item xs={12}>
-                    <AccountUserHeader
-                        user={user}
-                        userDoc={userDoc}
-                        onUserSettingChange={handleUserSettingChange}
-                    />
+                    <AccountUserHeader user={user} userDoc={userDoc} />
                 </Grid>
+
+                <AccountUserSettings
+                    user={user}
+                    userDoc={userDoc}
+                    onUserSettingChange={handleUserSettingChange}
+                />
 
                 <Grid item {...gridBreakpointProps}>
                     <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />

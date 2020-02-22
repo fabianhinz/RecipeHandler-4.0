@@ -30,9 +30,6 @@ const useStyles = makeStyles(theme =>
         },
         popoverPaper: {
             padding: theme.spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-            maxWidth: 'fit-content',
         },
     })
 )
@@ -70,7 +67,7 @@ const RecipeCreateIngredients = ({ amount, ingredients, onIngredientsChange, dis
                     vertical: 'top',
                     horizontal: 'center',
                 }}>
-                <Grid container spacing={1} alignItems="center">
+                <Grid container wrap="nowrap" spacing={1} alignItems="center">
                     <Grid item>
                         <Typography variant="h5">Personen</Typography>
                     </Grid>

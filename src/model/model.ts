@@ -140,3 +140,5 @@ export interface FirestoreDocPath {
 export interface MostCooked<T> {
     value: T
 }
+
+export type RecipeVariants = { variant: 'details' | 'preview' | 'related' }

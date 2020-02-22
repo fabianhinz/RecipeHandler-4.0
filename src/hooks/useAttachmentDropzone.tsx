@@ -22,10 +22,15 @@ export type DropzoneProps = Record<
 
 interface Options {
     attachmentLimit: number
+    attachmentMaxSize?: number
     attachmentMaxWidth: number
 }
 
-export const useAttachmentDropzone = ({ attachmentLimit, attachmentMaxWidth }: Options) => {
+export const useAttachmentDropzone = ({
+    attachmentLimit,
+    attachmentMaxWidth,
+    attachmentMaxSize,
+}: Options) => {
     const [attachments, setAttachments] = useState<Array<AttachmentDoc & DataUrl>>([])
     const [attachmentAlert, setAttachmentAlert] = useState<JSX.Element | undefined>()
 
@@ -34,6 +39,13 @@ export const useAttachmentDropzone = ({ attachmentLimit, attachmentMaxWidth }: O
     const onDrop = useCallback(
         async (acceptedFiles: File[], rejectedFiles: File[]) => {
             const closeAlert = () => setAttachmentAlert(undefined)
+
+            if (!user)
+                return setAttachmentAlert(
+                    <Alert severity="error" onClose={closeAlert}>
+                        Fehlende Berechtigungen
+                    </Alert>
+                )
 
             if (rejectedFiles.length > 0)
                 return setAttachmentAlert(
@@ -53,8 +65,9 @@ export const useAttachmentDropzone = ({ attachmentLimit, attachmentMaxWidth }: O
 
             const newAttachments: Array<AttachmentDoc & DataUrl> = []
             for (const file of acceptedFiles) {
+                console.log(attachmentMaxSize || 1)
                 const compressedFile: Blob = await compressImage(file, {
-                    maxSizeMB: 1,
+                    maxSizeMB: attachmentMaxSize || 1,
                     maxWidthOrHeight: attachmentMaxWidth,
                 })
                 const dataUrl: string = await readDocumentAsync(compressedFile)
@@ -62,7 +75,7 @@ export const useAttachmentDropzone = ({ attachmentLimit, attachmentMaxWidth }: O
                     name: file.name,
                     dataUrl,
                     fullPath: '',
-                    size: file.size,
+                    size: compressedFile.size,
                     editorUid: user ? user.uid : 'unkown',
                     createdDate: FirebaseService.createTimestampFromDate(new Date()),
                 })
@@ -70,7 +83,7 @@ export const useAttachmentDropzone = ({ attachmentLimit, attachmentMaxWidth }: O
             setAttachments(newAttachments)
             closeAlert()
         },
-        [attachmentLimit, attachmentMaxWidth, user]
+        [attachmentLimit, attachmentMaxSize, attachmentMaxWidth, user]
     )
 
     const { getRootProps, getInputProps } = useDropzone({

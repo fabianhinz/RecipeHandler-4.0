@@ -164,7 +164,7 @@ const SwipeableAttachment = ({ attachment }: SwipeableAttachmentProps) => {
                     </Grid>
                 </div>
             </Slide>
-            <AccountChip position="absolute" uid={attachment.editorUid} />
+            <AccountChip position="absolute" placement="top" uid={attachment.editorUid} />
         </div>
     )
 }
