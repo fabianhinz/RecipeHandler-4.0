@@ -130,11 +130,13 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         />
                     </Grid>
 
-                    <Grid item {...gridBreakpointProps}>
-                        <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                            <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
-                        </StyledCard>
-                    </Grid>
+                    {state.relatedRecipes.length > 0 && (
+                        <Grid item {...gridBreakpointProps}>
+                            <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
+                                <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                            </StyledCard>
+                        </Grid>
+                    )}
                 </Grid>
             )}
 

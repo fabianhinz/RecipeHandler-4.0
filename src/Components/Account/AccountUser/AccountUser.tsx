@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { LogoutVariant } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import React, { useMemo } from 'react'
@@ -115,10 +115,6 @@ const AccountUser = () => {
     return (
         <>
             <Grid container spacing={4}>
-                <Grid item xs={12}>
-                    <Typography variant="h4">Account</Typography>
-                </Grid>
-
                 <Grid item xs={12}>
                     <AccountUserHeader user={user} userDoc={userDoc} />
                 </Grid>

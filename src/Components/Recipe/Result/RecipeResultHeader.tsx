@@ -16,9 +16,13 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => (
             <Typography gutterBottom display="inline" variant="h5">
                 {recipe.name}
             </Typography>
-            <Typography color="textSecondary">
-                {FirebaseService.createDateFromTimestamp(recipe.createdDate).toLocaleDateString()}
-            </Typography>
+            {variant === 'related' && (
+                <Typography color="textSecondary">
+                    {FirebaseService.createDateFromTimestamp(
+                        recipe.createdDate
+                    ).toLocaleDateString()}
+                </Typography>
+            )}
         </Grid>
         {variant === 'details' && (
             <Grid item xs={12} sm="auto">

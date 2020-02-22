@@ -22,15 +22,15 @@ const useStyles = makeStyles(theme =>
     createStyles({
         attachmentPreview: {
             [theme.breakpoints.down('sm')]: {
-                width: 180,
+                width: 320,
                 height: 180,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 225,
+                width: 400,
                 height: 225,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 280,
+                width: 498,
                 height: 280,
             },
             borderRadius: BORDER_RADIUS,
@@ -38,15 +38,15 @@ const useStyles = makeStyles(theme =>
         },
         actionArea: {
             [theme.breakpoints.down('sm')]: {
-                width: 180,
+                width: 320,
                 height: 180,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 225,
+                width: 400,
                 height: 225,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 280,
+                width: 498,
                 height: 280,
             },
             borderRadius: BORDER_RADIUS,

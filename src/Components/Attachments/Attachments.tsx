@@ -20,15 +20,15 @@ const useStyles = makeStyles(theme =>
         },
         addAvatar: {
             [theme.breakpoints.down('sm')]: {
-                width: 180,
+                width: 90,
                 height: 180,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 225,
+                width: 112.5,
                 height: 225,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 280,
+                width: 140,
                 height: 280,
             },
             borderRadius: BORDER_RADIUS,
@@ -40,15 +40,15 @@ const useStyles = makeStyles(theme =>
         },
         actionArea: {
             [theme.breakpoints.down('sm')]: {
-                width: 180,
+                width: 90,
                 height: 180,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 225,
+                width: 112.5,
                 height: 225,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 280,
+                width: 140,
                 height: 280,
             },
             borderRadius: BORDER_RADIUS,
@@ -127,18 +127,16 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                         key={attachment.docPath}
                     />
                 ))}
-                {user && (
-                    <Zoom in>
-                        <Grid item>
-                            <CardActionArea
-                                className={classes.actionArea}
-                                {...dropzoneProps.getRootProps()}>
-                                <Avatar className={classes.addAvatar}>+</Avatar>
-                                <input {...dropzoneProps.getInputProps()} />
-                            </CardActionArea>
-                        </Grid>
-                    </Zoom>
-                )}
+                <Zoom in>
+                    <Grid item>
+                        <CardActionArea
+                            className={classes.actionArea}
+                            {...dropzoneProps.getRootProps()}>
+                            <Avatar className={classes.addAvatar}>+</Avatar>
+                            <input {...dropzoneProps.getInputProps()} />
+                        </CardActionArea>
+                    </Grid>
+                </Zoom>
             </Grid>
             <AttachmentUpload
                 recipeName={recipeName}

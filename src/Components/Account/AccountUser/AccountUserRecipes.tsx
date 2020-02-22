@@ -18,7 +18,7 @@ const AccountUserRecipes = ({ onUserSettingChange }: Props) => {
     const { user } = useFirebaseAuthContext() as { user: User }
 
     return (
-        <StyledCard header="Rezeptanzeige" BackgroundIcon={BookIcon}>
+        <StyledCard header="Rezepte von" BackgroundIcon={BookIcon}>
             <List>
                 {userIds.map(id => (
                     <AccountListItem

@@ -40,6 +40,13 @@ export const useAttachmentDropzone = ({
         async (acceptedFiles: File[], rejectedFiles: File[]) => {
             const closeAlert = () => setAttachmentAlert(undefined)
 
+            if (!user)
+                return setAttachmentAlert(
+                    <Alert severity="error" onClose={closeAlert}>
+                        Fehlende Berechtigungen
+                    </Alert>
+                )
+
             if (rejectedFiles.length > 0)
                 return setAttachmentAlert(
                     <Alert severity="error" onClose={closeAlert}>

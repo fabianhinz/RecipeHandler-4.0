@@ -1,4 +1,11 @@
-import { Avatar, Chip, Grid } from '@material-ui/core'
+import {
+    Avatar,
+    CardActionArea,
+    createStyles,
+    Grid,
+    makeStyles,
+    Typography,
+} from '@material-ui/core'
 import { useSnackbar } from 'notistack'
 import React, { useEffect } from 'react'
 
@@ -6,14 +13,30 @@ import { useAttachmentDropzone } from '../../../hooks/useAttachmentDropzone'
 import { User } from '../../../model/model'
 import AccountUserChangelog from './AccountUserChangelog'
 
+const useStyles = makeStyles(theme =>
+    createStyles({
+        userAvatar: {
+            [theme.breakpoints.between('xs', 'md')]: {
+                height: 100,
+                width: 100,
+            },
+            [theme.breakpoints.up('lg')]: {
+                height: 120,
+                width: 120,
+            },
+        },
+    })
+)
+
 interface Props {
     user: User
     userDoc: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
 }
 
 const AccountUserHeader = ({ userDoc, user }: Props) => {
-    const { enqueueSnackbar } = useSnackbar()
+    const classes = useStyles()
 
+    const { enqueueSnackbar } = useSnackbar()
     const { dropzoneAttachments, dropzoneProps } = useAttachmentDropzone({
         attachmentMaxWidth: 1280,
         attachmentMaxSize: 0.5,
@@ -34,19 +57,25 @@ const AccountUserHeader = ({ userDoc, user }: Props) => {
 
     return (
         <>
-            <Grid container spacing={1}>
-                <Grid item {...dropzoneProps.getRootProps()}>
-                    <Chip
-                        avatar={<Avatar src={user.profilePicture} />}
-                        onClick={() => null}
-                        label={user.username}
-                    />
+            <Grid container spacing={3} alignItems="center">
+                <Grid item>
+                    <CardActionArea {...dropzoneProps.getRootProps()}>
+                        <Avatar
+                            variant="rounded"
+                            className={classes.userAvatar}
+                            src={user.profilePicture}
+                        />
+                    </CardActionArea>
                 </Grid>
 
                 <Grid item>
+                    <Typography gutterBottom variant="h4">
+                        {user.username}
+                    </Typography>
                     <AccountUserChangelog />
                 </Grid>
             </Grid>
+
             <input {...dropzoneProps.getInputProps()} />
         </>
     )

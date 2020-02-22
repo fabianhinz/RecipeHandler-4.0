@@ -29,14 +29,8 @@ const useStyles = makeStyles(theme =>
             width: '100%',
             height: '100%',
             fontSize: theme.typography.pxToRem(60),
-            [theme.breakpoints.only('xs')]: {
-                borderBottomLeftRadius: BORDER_RADIUS,
-                borderBottomRightRadius: BORDER_RADIUS,
-            },
-            [theme.breakpoints.up('sm')]: {
-                borderTopLeftRadius: BORDER_RADIUS,
-                borderBottomLeftRadius: BORDER_RADIUS,
-            },
+            borderTopLeftRadius: BORDER_RADIUS,
+            borderBottomLeftRadius: BORDER_RADIUS,
         },
         avatarContainer: {
             height: '100%',
@@ -59,7 +53,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
 
     const { attachmentRef, attachmentRefLoading } = useAttachment(attachmentDoc)
     const { history } = useRouterContext()
-    const { gridBreakpointProps } = useGridContext()
+    const { gridBreakpointProps, gridLayout } = useGridContext()
 
     useEffect(() => {
         // ? default preview is overwritten, don't query for attachments
@@ -87,7 +81,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
         <Grid {...gridBreakpointProps} item>
             <Card>
                 <Grid container>
-                    <Grid item xs={3} xl={5}>
+                    <Grid item xs={3} xl={gridLayout === 'list' ? 2 : 5}>
                         <div className={classes.avatarContainer}>
                             {attachmentRefLoading ? (
                                 <Skeleton className={classes.avatar} variant="rect" />
@@ -101,7 +95,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                             )}
                         </div>
                     </Grid>
-                    <Grid item xs={9} xl={7}>
+                    <Grid item xs={9} xl={gridLayout === 'list' ? 10 : 7}>
                         <CardHeader
                             classes={{ action: classes.cardAction }}
                             title={recipe.name}

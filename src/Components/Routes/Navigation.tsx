@@ -1,4 +1,4 @@
-import { Button, createStyles, Hidden, IconButton, makeStyles } from '@material-ui/core'
+import { Avatar, Button, createStyles, Hidden, IconButton, makeStyles } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import HomeIcon from '@material-ui/icons/HomeRounded'
 import { Lightbulb } from 'mdi-material-ui'
@@ -21,6 +21,10 @@ const useStyles = makeStyles(theme =>
                 paddingLeft: theme.spacing(4),
                 paddingRight: theme.spacing(4),
             },
+        },
+        userAvatar: {
+            height: 22,
+            width: 22,
         },
     })
 )
@@ -55,8 +59,17 @@ const Navigation = () => {
                                 if (!user) setAuthenticationOpen(true)
                             }}
                             size="large"
-                            startIcon={<AccountIcon />}>
-                            {!user ? 'Einloggen' : 'Account'}
+                            startIcon={
+                                !user ? (
+                                    <AccountIcon />
+                                ) : (
+                                    <Avatar
+                                        className={classes.userAvatar}
+                                        src={user.profilePicture}
+                                    />
+                                )
+                            }>
+                            {!user ? 'Einloggen' : user.username}
                         </Button>
                     </Navigate>
                 </Hidden>
