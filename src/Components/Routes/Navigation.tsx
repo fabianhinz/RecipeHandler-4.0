@@ -2,7 +2,7 @@ import { Avatar, Button, createStyles, Hidden, IconButton, makeStyles } from '@m
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import HomeIcon from '@material-ui/icons/HomeRounded'
 import { Lightbulb } from 'mdi-material-ui'
-import React, { memo, useState } from 'react'
+import React, { memo, useMemo, useState } from 'react'
 
 import AccountAuthentication from '../Account/AccountAuthentication'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -36,6 +36,16 @@ const Navigation = () => {
 
     const classes = useStyles()
 
+    const userIcon = useMemo(
+        () =>
+            user ? (
+                <Avatar className={classes.userAvatar} src={user.profilePicture} />
+            ) : (
+                <AccountIcon />
+            ),
+        [classes.userAvatar, user]
+    )
+
     return (
         <>
             <div className={classes.container}>
@@ -59,16 +69,7 @@ const Navigation = () => {
                                 if (!user) setAuthenticationOpen(true)
                             }}
                             size="large"
-                            startIcon={
-                                !user ? (
-                                    <AccountIcon />
-                                ) : (
-                                    <Avatar
-                                        className={classes.userAvatar}
-                                        src={user.profilePicture}
-                                    />
-                                )
-                            }>
+                            startIcon={userIcon}>
                             {!user ? 'Einloggen' : user.username}
                         </Button>
                     </Navigate>
@@ -93,7 +94,7 @@ const Navigation = () => {
                             onClick={() => {
                                 if (!user) setAuthenticationOpen(true)
                             }}>
-                            <AccountIcon />
+                            {userIcon}
                         </IconButton>
                     </Navigate>
                 </Hidden>

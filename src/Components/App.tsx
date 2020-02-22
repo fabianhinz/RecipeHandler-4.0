@@ -1,4 +1,4 @@
-import { Container, useMediaQuery } from '@material-ui/core'
+import { Container, createStyles, makeStyles, useMediaQuery } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
@@ -39,8 +39,19 @@ const AppProvider: FC = ({ children }) => (
     </RouterProvider>
 )
 
+const useStyles = makeStyles(() =>
+    createStyles({
+        root: {
+            userSelect: 'none',
+        },
+    })
+)
+
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
+
+    const classes = useStyles()
+
     const { user } = useFirebaseAuthContext()
     const { isMobile } = useBreakpointsContext()
     const colorSchemeDark = useMediaQuery('(prefers-color-scheme: dark)')
@@ -84,7 +95,7 @@ const App: FC = () => {
                     horizontal: 'right',
                 }}>
                 <AppProvider>
-                    <Container maxWidth="xl">
+                    <Container className={classes.root} maxWidth="xl">
                         <Header />
                         <Main />
                         <Footer />
