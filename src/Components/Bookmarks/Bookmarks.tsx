@@ -28,6 +28,7 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { GridLayout, useGridContext } from '../Provider/GridProvider'
 import { RecipeResultBookmark } from '../Recipe/Result/Action/RecipeResultBookmark'
 import { PATHS } from '../Routes/Routes'
+import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
 import StyledCard from '../Shared/StyledCard'
@@ -130,7 +131,7 @@ const Bookmarks = () => {
     useDocumentTitle(`Lesezeichen (${bookmarks.size})`)
 
     return (
-        <Grid container spacing={4} alignItems="center">
+        <EntryGridContainer>
             <Grid item xs={10} md={9}>
                 <Typography variant="h4">Lesezeichen</Typography>
             </Grid>
@@ -161,7 +162,7 @@ const Bookmarks = () => {
                 </Grid>
                 <NotFound visible={bookmarks.size === 0 && loginEnabled} />
             </Grid>
-        </Grid>
+        </EntryGridContainer>
     )
 }
 

@@ -11,6 +11,7 @@ import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { NavigateFab } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
+import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
 import HomeMostCooked from './HomeMostCooked'
@@ -84,7 +85,7 @@ const Home = () => {
 
     return (
         <>
-            <Grid container spacing={4} justify="space-between" alignItems="center">
+            <EntryGridContainer>
                 <HomeMostCooked />
                 <HomeRecentlyAdded />
                 <HomeRecipeSelection
@@ -115,7 +116,7 @@ const Home = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
+            </EntryGridContainer>
 
             <NavigateFab
                 to={PATHS.recipeCreate}

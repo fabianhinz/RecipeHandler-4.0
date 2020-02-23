@@ -4,6 +4,7 @@ import React from 'react'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { useGridContext } from '../Provider/GridProvider'
 import BuiltWithFirebase from '../Shared/BuiltWithFirebase'
+import EntryGridContainer from '../Shared/EntryGridContainer'
 import StyledCard from '../Shared/StyledCard'
 
 const Impressum = () => {
@@ -12,7 +13,7 @@ const Impressum = () => {
     useDocumentTitle('Impressum')
 
     return (
-        <Grid container spacing={4} alignItems="center">
+        <EntryGridContainer>
             <Grid item xs={12}>
                 <Typography variant="h4">Impressum</Typography>
             </Grid>
@@ -128,7 +129,7 @@ const Impressum = () => {
                     <BuiltWithFirebase />
                 </Box>
             </Grid>
-        </Grid>
+        </EntryGridContainer>
     )
 }
 
