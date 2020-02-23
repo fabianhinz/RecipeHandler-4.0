@@ -1,4 +1,4 @@
-import { Divider, Grid } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
@@ -31,10 +31,6 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
         <EntryGridContainer>
             <Grid item xs={12}>
                 <RecipeResultHeader recipe={recipe} variant={variant} />
-            </Grid>
-
-            <Grid item xs={12}>
-                <Divider />
             </Grid>
 
             {variant !== 'preview' && (

@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme =>
         header: {
             padding: theme.spacing(1.5),
             paddingBottom: 0,
-            maxHeight: 55,
+            maxHeight: 43,
             display: 'flex',
             alignItems: 'center',
             justifyContent: ({ action }: StyleProps) => (action ? 'space-between' : 'center'),

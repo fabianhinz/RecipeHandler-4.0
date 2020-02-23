@@ -1,5 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core'
-import React, { FC } from 'react'
+import React from 'react'
+
+import { ReactComponent as Background } from '../../icons/background.svg'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -10,32 +12,23 @@ const useStyles = makeStyles(theme =>
             left: 0,
             width: '100vw',
             height: '40vh',
-            padding: theme.spacing(3),
-            backgroundColor: theme.palette.primary.main,
+            backgroundImage: 'linear-gradient(90deg, #74B276 30%,#81c784 70%)',
+            padding: theme.spacing(1),
         },
         icon: {
             opacity: 0.9,
             filter: 'brightness(90%)',
-            [theme.breakpoints.between('xs', 'lg')]: {
-                display: 'none',
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: '100%',
-            },
+            height: '100%',
         },
     })
 )
 
-interface BackgroundIconProps {
-    Icon: FC<React.SVGProps<SVGSVGElement>>
-}
-
-export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon }) => {
+export const BackgroundIcon = () => {
     const classes = useStyles()
 
     return (
         <div className={classes.iconContainer}>
-            <Icon className={classes.icon} />
+            <Background className={classes.icon} />
         </div>
     )
 }
