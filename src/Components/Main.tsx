@@ -9,6 +9,7 @@ const useStyles = makeStyles(theme =>
     createStyles({
         main: {
             marginBottom: theme.spacing(8),
+            marginTop: theme.spacing(3),
             backgroundColor: theme.palette.background.default,
             borderRadius: BORDER_RADIUS,
             [theme.breakpoints.only('xs')]: {
