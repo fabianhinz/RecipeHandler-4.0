@@ -31,7 +31,8 @@ const useStyles = makeStyles(theme =>
             backgroundColor: theme.palette.background.paper,
         },
         containerCategoryWrapper: {
-            maxHeight: '40vh',
+            // ? about the same height as BackgroundIcon
+            maxHeight: '31vh',
             overflowY: 'auto',
         },
         drawerHeader: {
@@ -72,7 +73,12 @@ const CategorySelection = ({ onCategoryChange, selectedCategories, header, fabLa
                 {fabLabel}
             </Fab>
 
-            <Drawer open={drawerOpen} onClose={closeDrawer} anchor="top">
+            <Drawer
+                BackdropProps={{ invisible: true }}
+                ModalProps={{ disableScrollLock: true }}
+                open={drawerOpen}
+                onClose={closeDrawer}
+                anchor="top">
                 <div className={classes.drawerHeader}>{header}</div>
 
                 <Container maxWidth="xl" className={classes.containerCategoryWrapper}>

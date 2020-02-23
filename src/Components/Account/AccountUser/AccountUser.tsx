@@ -120,21 +120,25 @@ const AccountUser = () => {
                     <AccountUserHeader user={user} userDoc={userDoc} />
                 </Grid>
 
-                <AccountUserSettings
-                    user={user}
-                    userDoc={userDoc}
-                    onUserSettingChange={handleUserSettingChange}
-                />
+                <Grid item xs={12}>
+                    <Grid container spacing={3}>
+                        <AccountUserSettings
+                            user={user}
+                            userDoc={userDoc}
+                            onUserSettingChange={handleUserSettingChange}
+                        />
 
-                <Grid item {...gridBreakpointProps}>
-                    <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
-                </Grid>
+                        <Grid item {...gridBreakpointProps}>
+                            <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
+                        </Grid>
 
-                {user.admin && (
-                    <Grid item {...gridBreakpointProps}>
-                        <AccountUserAdmin />
+                        {user.admin && (
+                            <Grid item {...gridBreakpointProps}>
+                                <AccountUserAdmin />
+                            </Grid>
+                        )}
                     </Grid>
-                )}
+                </Grid>
             </EntryGridContainer>
 
             <NavigateFab onClick={handleLogout} icon={<LogoutVariant />} tooltipTitle="Ausloggen" />

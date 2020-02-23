@@ -19,10 +19,8 @@ const useStyles = makeStyles(theme =>
             flexDirection: 'column',
         },
         header: {
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.getContrastText(theme.palette.primary.main),
             padding: theme.spacing(1.5),
-            boxShadow: theme.shadows[4],
+            paddingBottom: 0,
             maxHeight: 55,
             display: 'flex',
             alignItems: 'center',
@@ -38,9 +36,6 @@ const useStyles = makeStyles(theme =>
         },
         action: {
             display: 'flex',
-            '& > *': {
-                color: theme.palette.getContrastText(theme.palette.primary.main),
-            },
         },
         cardContent: {
             flexGrow: 1,

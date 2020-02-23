@@ -25,7 +25,6 @@ interface Props extends RecipeCreateDispatch {
 const useStyles = makeStyles(theme =>
     createStyles({
         headerButton: {
-            color: theme.palette.common.black,
             textTransform: 'none',
         },
         popoverPaper: {

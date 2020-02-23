@@ -81,7 +81,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
         <Grid {...gridBreakpointProps} item>
             <Card>
                 <Grid container>
-                    <Grid item xs={3} xl={gridLayout === 'list' ? 2 : 5}>
+                    <Grid item xs={2} sm={3} xl={gridLayout === 'list' ? 2 : 5}>
                         <div className={classes.avatarContainer}>
                             {attachmentRefLoading ? (
                                 <Skeleton className={classes.avatar} variant="rect" />
@@ -95,7 +95,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                             )}
                         </div>
                     </Grid>
-                    <Grid item xs={9} xl={gridLayout === 'list' ? 10 : 7}>
+                    <Grid item xs={10} sm={9} xl={gridLayout === 'list' ? 10 : 7}>
                         <CardHeader
                             classes={{ action: classes.cardAction }}
                             title={recipe.name}

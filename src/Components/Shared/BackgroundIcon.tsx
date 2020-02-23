@@ -3,21 +3,24 @@ import React, { FC } from 'react'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        icon: {
+        iconContainer: {
             zIndex: -1,
-            opacity: theme.palette.type === 'dark' ? 0.2 : 0.4,
             position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            [theme.breakpoints.between('xs', 'sm')]: {
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '40vh',
+            padding: theme.spacing(3),
+            backgroundColor: theme.palette.primary.main,
+        },
+        icon: {
+            opacity: 0.9,
+            filter: 'brightness(90%)',
+            [theme.breakpoints.between('xs', 'lg')]: {
                 display: 'none',
             },
-            [theme.breakpoints.between('md', 'lg')]: {
-                width: '40%',
-            },
             [theme.breakpoints.up('xl')]: {
-                width: '30%',
+                height: '100%',
             },
         },
     })
@@ -30,5 +33,9 @@ interface BackgroundIconProps {
 export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon }) => {
     const classes = useStyles()
 
-    return <Icon className={classes.icon} />
+    return (
+        <div className={classes.iconContainer}>
+            <Icon className={classes.icon} />
+        </div>
+    )
 }

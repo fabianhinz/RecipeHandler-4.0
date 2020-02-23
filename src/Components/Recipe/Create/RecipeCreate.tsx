@@ -115,29 +115,35 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                         </Box>
                     </Grid>
 
-                    <Grid item {...gridBreakpointProps}>
-                        <RecipeCreateIngredients
-                            amount={state.amount}
-                            ingredients={state.ingredients}
-                            dispatch={dispatch}
-                            onIngredientsChange={handleTextFieldChange('ingredients')}
-                        />
-                    </Grid>
+                    <Grid item xs={12}>
+                        <Grid container spacing={3}>
+                            <Grid item {...gridBreakpointProps}>
+                                <RecipeCreateIngredients
+                                    amount={state.amount}
+                                    ingredients={state.ingredients}
+                                    dispatch={dispatch}
+                                    onIngredientsChange={handleTextFieldChange('ingredients')}
+                                />
+                            </Grid>
 
-                    <Grid item {...gridBreakpointProps}>
-                        <RecipeCreateDescription
-                            description={state.description}
-                            onDescriptionChange={handleTextFieldChange('description')}
-                        />
-                    </Grid>
+                            <Grid item {...gridBreakpointProps}>
+                                <RecipeCreateDescription
+                                    description={state.description}
+                                    onDescriptionChange={handleTextFieldChange('description')}
+                                />
+                            </Grid>
 
-                    {state.relatedRecipes.length > 0 && (
-                        <Grid item {...gridBreakpointProps}>
-                            <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                                <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
-                            </StyledCard>
+                            {state.relatedRecipes.length > 0 && (
+                                <Grid item {...gridBreakpointProps}>
+                                    <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
+                                        <RecipeResultRelated
+                                            relatedRecipes={state.relatedRecipes}
+                                        />
+                                    </StyledCard>
+                                </Grid>
+                            )}
                         </Grid>
-                    )}
+                    </Grid>
                 </EntryGridContainer>
             )}
 

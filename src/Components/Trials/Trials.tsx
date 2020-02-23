@@ -163,17 +163,21 @@ const Trials = () => {
                     <Typography variant="h4">Ideen</Typography>
                 </Grid>
 
-                {[...pagedTrials.values()].map((trial, index) => (
-                    <TrialsCard index={index} trial={trial} key={trial.name} />
-                ))}
-
-                <Skeletons variant="trial" visible={querying && pagedTrials.size === 0} />
-
-                <NotFound visible={!querying && pagedTrials.size === 0} />
-
                 <Grid item xs={12}>
-                    {querying && <LinearProgress variant="query" color="secondary" />}
-                    <IntersectionObserverTrigger />
+                    <Grid container spacing={3}>
+                        {[...pagedTrials.values()].map((trial, index) => (
+                            <TrialsCard index={index} trial={trial} key={trial.name} />
+                        ))}
+
+                        <Skeletons variant="trial" visible={querying && pagedTrials.size === 0} />
+
+                        <NotFound visible={!querying && pagedTrials.size === 0} />
+
+                        <Grid item xs={12}>
+                            {querying && <LinearProgress variant="query" color="secondary" />}
+                            <IntersectionObserverTrigger />
+                        </Grid>
+                    </Grid>
                 </Grid>
             </EntryGridContainer>
 

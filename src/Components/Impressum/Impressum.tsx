@@ -21,8 +21,7 @@ const Impressum = () => {
             <Grid item xs={12}>
                 <Grid container spacing={3}>
                     <Grid item {...gridBreakpointProps}>
-                        <StyledCard>
-                            <ListSubheader disableGutters>Haftung für Inhalte</ListSubheader>
+                        <StyledCard header="Haftung für Inhalte">
                             <Typography gutterBottom>
                                 Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte
                                 auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach
@@ -42,8 +41,7 @@ const Impressum = () => {
                         </StyledCard>
                     </Grid>
                     <Grid item {...gridBreakpointProps}>
-                        <StyledCard>
-                            <ListSubheader disableGutters>Haftung für Links</ListSubheader>
+                        <StyledCard header="Haftung für Links">
                             <Typography gutterBottom>
                                 Unser Angebot enthält Links zu externen Websites Dritter, auf deren
                                 Inhalte wir keinen Einfluss haben. Deshalb können wir für diese
@@ -63,8 +61,7 @@ const Impressum = () => {
                         </StyledCard>
                     </Grid>
                     <Grid item {...gridBreakpointProps}>
-                        <StyledCard>
-                            <ListSubheader disableGutters>Urheberrecht</ListSubheader>
+                        <StyledCard header="Urheberrecht">
                             <Typography gutterBottom>
                                 Die durch die Seitenbetreiber erstellten Inhalte und Werke auf
                                 diesen Seiten unterliegen dem deutschen Urheberrecht. Die
@@ -85,8 +82,7 @@ const Impressum = () => {
                         </StyledCard>
                     </Grid>
                     <Grid item {...gridBreakpointProps}>
-                        <StyledCard>
-                            <ListSubheader disableGutters>Angaben gemäß § 5 TMG</ListSubheader>
+                        <StyledCard header="Angaben gemäß § 5 TMG">
                             <Typography>Fabian Hinz</Typography>
                             <Typography>Wiggenhauser Weg 36</Typography>
                             <Typography>88046 Friedrichshafen</Typography>
