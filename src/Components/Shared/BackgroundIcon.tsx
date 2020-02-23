@@ -1,34 +1,34 @@
 import { createStyles, makeStyles } from '@material-ui/core'
-import React, { FC } from 'react'
+import React from 'react'
+
+import { ReactComponent as Background } from '../../icons/background.svg'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        icon: {
+        iconContainer: {
             zIndex: -1,
-            opacity: theme.palette.type === 'dark' ? 0.2 : 0.4,
             position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            [theme.breakpoints.between('xs', 'sm')]: {
-                display: 'none',
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                width: '40%',
-            },
-            [theme.breakpoints.up('xl')]: {
-                width: '30%',
-            },
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '40vh',
+            backgroundImage: 'linear-gradient(90deg, #74B276 30%,#81c784 70%)',
+            padding: theme.spacing(1),
+        },
+        icon: {
+            opacity: 0.9,
+            filter: 'brightness(90%)',
+            height: '100%',
         },
     })
 )
 
-interface BackgroundIconProps {
-    Icon: FC<React.SVGProps<SVGSVGElement>>
-}
-
-export const BackgroundIcon: FC<BackgroundIconProps> = ({ Icon }) => {
+export const BackgroundIcon = () => {
     const classes = useStyles()
 
-    return <Icon className={classes.icon} />
+    return (
+        <div className={classes.iconContainer}>
+            <Background className={classes.icon} />
+        </div>
+    )
 }

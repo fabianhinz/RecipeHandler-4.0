@@ -23,6 +23,10 @@ import { useRouterContext } from '../Provider/RouterProvider'
 import { RecipeResultBookmark } from '../Recipe/Result/Action/RecipeResultBookmark'
 import { PATHS } from '../Routes/Routes'
 
+interface StyleProps {
+    fixedCardHeight?: boolean
+}
+
 const useStyles = makeStyles(theme =>
     createStyles({
         avatar: {
@@ -39,6 +43,9 @@ const useStyles = makeStyles(theme =>
             display: 'flex',
             flexDirection: 'column',
         },
+        cardRoot: {
+            height: ({ fixedCardHeight }: StyleProps) => (fixedCardHeight ? 184 : 'fit-content'),
+        },
     })
 )
 
@@ -49,11 +56,11 @@ interface Props {
 const HomeRecipeCard = ({ recipe }: Props) => {
     const [attachmentDoc, setAttachmentDoc] = useState<AttachmentDoc | undefined>()
 
-    const classes = useStyles()
-
     const { attachmentRef, attachmentRefLoading } = useAttachment(attachmentDoc)
     const { history } = useRouterContext()
     const { gridBreakpointProps, gridLayout } = useGridContext()
+
+    const classes = useStyles({ fixedCardHeight: gridLayout === 'list' })
 
     useEffect(() => {
         // ? default preview is overwritten, don't query for attachments
@@ -79,9 +86,9 @@ const HomeRecipeCard = ({ recipe }: Props) => {
 
     return (
         <Grid {...gridBreakpointProps} item>
-            <Card>
+            <Card className={classes.cardRoot}>
                 <Grid container>
-                    <Grid item xs={3} xl={gridLayout === 'list' ? 2 : 5}>
+                    <Grid item xs={2} sm={3} xl={gridLayout === 'list' ? 2 : 5}>
                         <div className={classes.avatarContainer}>
                             {attachmentRefLoading ? (
                                 <Skeleton className={classes.avatar} variant="rect" />
@@ -95,7 +102,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                             )}
                         </div>
                     </Grid>
-                    <Grid item xs={9} xl={gridLayout === 'list' ? 10 : 7}>
+                    <Grid item xs={10} sm={9} xl={gridLayout === 'list' ? 10 : 7}>
                         <CardHeader
                             classes={{ action: classes.cardAction }}
                             title={recipe.name}

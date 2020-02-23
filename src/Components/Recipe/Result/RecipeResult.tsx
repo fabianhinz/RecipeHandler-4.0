@@ -1,4 +1,4 @@
-import { Divider, Grid } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
 import BookIcon from '@material-ui/icons/BookTwoTone'
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
@@ -33,41 +33,48 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                 <RecipeResultHeader recipe={recipe} variant={variant} />
             </Grid>
 
-            <Grid item xs={12}>
-                <Divider />
-            </Grid>
-
             {variant !== 'preview' && (
                 <Grid item xs={12}>
                     <Attachments recipeName={recipe.name} />
                 </Grid>
             )}
 
-            <Grid {...gridBreakpointProps} item>
-                <StyledCard
-                    header={
-                        <>
-                            Zutaten für {recipe.amount} {recipe.amount < 2 ? 'Person' : 'Personen'}
-                        </>
-                    }
-                    BackgroundIcon={AssignmentIcon}>
-                    <MarkdownRenderer recipeName={recipe.name} source={recipe.ingredients} />
-                </StyledCard>
-            </Grid>
+            <Grid item xs={12}>
+                <Grid container spacing={3}>
+                    <Grid {...gridBreakpointProps} item>
+                        <StyledCard
+                            header={
+                                <>
+                                    Zutaten für {recipe.amount}{' '}
+                                    {recipe.amount < 2 ? 'Person' : 'Personen'}
+                                </>
+                            }
+                            BackgroundIcon={AssignmentIcon}>
+                            <MarkdownRenderer
+                                recipeName={recipe.name}
+                                source={recipe.ingredients}
+                            />
+                        </StyledCard>
+                    </Grid>
 
-            <Grid {...gridBreakpointProps} item>
-                <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
-                    <MarkdownRenderer recipeName={recipe.name} source={recipe.description} />
-                </StyledCard>
-            </Grid>
+                    <Grid {...gridBreakpointProps} item>
+                        <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
+                            <MarkdownRenderer
+                                recipeName={recipe.name}
+                                source={recipe.description}
+                            />
+                        </StyledCard>
+                    </Grid>
 
-            {recipe.relatedRecipes.length > 0 && (
-                <Grid {...gridBreakpointProps} item>
-                    <StyledCard header="Passt gut zu" BackgroundIcon={SwapIcon}>
-                        <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
-                    </StyledCard>
+                    {recipe.relatedRecipes.length > 0 && (
+                        <Grid {...gridBreakpointProps} item>
+                            <StyledCard header="Passt gut zu" BackgroundIcon={SwapIcon}>
+                                <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+                            </StyledCard>
+                        </Grid>
+                    )}
                 </Grid>
-            )}
+            </Grid>
 
             {variant !== 'preview' && (
                 <Grid xs={12} item>

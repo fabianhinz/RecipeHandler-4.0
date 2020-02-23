@@ -41,6 +41,7 @@ const useStyles = makeStyles(theme =>
             },
             top: 'env(safe-area-inset-top)',
             zIndex: theme.zIndex.appBar + 1,
+            minHeight: 'calc(20vh)',
         },
         searchPaper: {
             padding: theme.spacing(2),

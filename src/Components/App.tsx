@@ -39,7 +39,7 @@ const AppProvider: FC = ({ children }) => (
     </RouterProvider>
 )
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         root: {
             userSelect: 'none',

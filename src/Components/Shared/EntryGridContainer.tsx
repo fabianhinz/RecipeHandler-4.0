@@ -5,7 +5,7 @@ interface Props {
     children: React.ReactNode
 }
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles(theme =>
     createStyles({
         container: {
             overflowX: 'hidden',
