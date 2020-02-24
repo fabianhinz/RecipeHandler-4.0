@@ -1,5 +1,5 @@
 import { createStyles, Grid, InputBase, makeStyles, Typography } from '@material-ui/core'
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 
 import { PATHS } from '../../Routes/Routes'
