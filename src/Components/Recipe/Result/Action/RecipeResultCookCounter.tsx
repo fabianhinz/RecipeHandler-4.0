@@ -25,7 +25,7 @@ export const RecipeResultCookCounter: FC<Pick<Recipe, 'name'>> = ({ name }) => {
     const handleClick = () => {
         if (!user) return
         setDisabled(true)
-        // Todo might wanna track individuall cooking history via subcollection
+
         FirebaseService.firestore
             .collection('cookCounter')
             .doc(name)

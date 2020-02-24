@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme =>
 interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
     recipeName: string
 }
-// ToDo handle ordered and unordered List in same Renderer
+
 const MarkdownRenderer = (props: Props) => {
     const { user, shoppingList } = useFirebaseAuthContext()
     const match = useRouteMatch()
