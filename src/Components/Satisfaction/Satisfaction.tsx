@@ -1,11 +1,13 @@
-import { Grid } from '@material-ui/core'
+import { Grid, Tooltip } from '@material-ui/core'
 import SatisfactionBackgroundIcon from '@material-ui/icons/SentimentVerySatisfied'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Rating } from '@material-ui/lab'
+import React, { ReactText, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
 import StyledCard from '../Shared/StyledCard'
+import SatisfactionIconContainer from './SatisfactionIconContainer'
 import SatisfactionUser from './SatisfactionUser'
 
 interface Props {
@@ -13,9 +15,10 @@ interface Props {
 }
 
 const Satisfaction = ({ recipeName }: Props) => {
-    const { user } = useFirebaseAuthContext()
     const [satisfaction, setSatisfaction] = useState<Map<string, number>>(new Map())
+    const [tooltipTitle, setTooltipTitle] = useState<ReactText>('')
 
+    const { user } = useFirebaseAuthContext()
     const { userIds } = useUsersContext()
 
     const memoSatisfactionCollection = useMemo(
@@ -45,19 +48,60 @@ const Satisfaction = ({ recipeName }: Props) => {
         satisfaction,
     ])
 
+    const handleActiveChange = (_event: React.ChangeEvent<{}>, value: number) => {
+        switch (value) {
+            case 1: {
+                setTooltipTitle('Das war wohl nix')
+                break
+            }
+            case 2: {
+                setTooltipTitle('Geht so')
+                break
+            }
+            case 3: {
+                setTooltipTitle('Nomnomnom')
+                break
+            }
+            case 4: {
+                setTooltipTitle('Wie - nichts mehr da?')
+                break
+            }
+            case 5: {
+                setTooltipTitle('Ich will meeeehr')
+                break
+            }
+        }
+    }
+
     return (
-        <StyledCard header="Bewertungen" BackgroundIcon={SatisfactionBackgroundIcon}>
-            <Grid container spacing={2} alignItems="center">
-                {userIds.map(uid => (
-                    <Grid item key={uid}>
-                        <SatisfactionUser
-                            disabled={uid !== user?.uid}
-                            value={satisfactionValueOrNull(uid)}
+        <StyledCard
+            header="Bewertungen"
+            BackgroundIcon={SatisfactionBackgroundIcon}
+            action={
+                user && (
+                    <Tooltip title={tooltipTitle} placement="bottom-start">
+                        <Rating
+                            value={satisfactionValueOrNull(user.uid)}
                             onChange={handleSatisfactionChange}
-                            uid={uid}
+                            onChangeActive={handleActiveChange}
+                            size="large"
+                            IconContainerComponent={SatisfactionIconContainer}
                         />
-                    </Grid>
-                ))}
+                    </Tooltip>
+                )
+            }>
+            <Grid container spacing={2} alignItems="center">
+                {userIds
+                    .filter(uid => uid !== user?.uid)
+                    .map(uid => (
+                        <Grid item key={uid}>
+                            <SatisfactionUser
+                                disabled
+                                value={satisfactionValueOrNull(uid)}
+                                uid={uid}
+                            />
+                        </Grid>
+                    ))}
             </Grid>
         </StyledCard>
     )
