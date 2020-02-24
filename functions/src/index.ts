@@ -1,4 +1,4 @@
-import * as algoliasearch from 'algoliasearch'
+import algoliasearch from 'algoliasearch'
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 import * as path from 'path'
@@ -29,7 +29,7 @@ export const addToAlgolia = functions
     .onCreate(snapshot => {
         const { description, ingredients, name } = snapshot.data() as Recipe
         const objectID = snapshot.id
-        return index.addObject({ description, ingredients, name, objectID })
+        return index.saveObject({ description, ingredients, name, objectID })
     })
 
 export const updateAlgolia = functions

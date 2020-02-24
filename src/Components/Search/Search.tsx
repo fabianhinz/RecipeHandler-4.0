@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react'
 import useDebounce from '../../hooks/useDebounce'
 import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
 import { ReactComponent as Logo } from '../../icons/logo.svg'
-import { Hits } from '../../model/model'
+import { Hit, Hits } from '../../model/model'
 import { index } from '../../services/algolia'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import NotFound from '../Shared/NotFound'
@@ -77,8 +77,7 @@ const Search = () => {
     useEffect(() => {
         if (debouncedValue.length > 0) {
             index
-                .search({
-                    query: debouncedValue,
+                .search<Hit>(debouncedValue, {
                     advancedSyntax: user && user.algoliaAdvancedSyntax ? true : false,
                 })
                 .then(({ hits }) => {
