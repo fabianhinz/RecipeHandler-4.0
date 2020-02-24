@@ -28,23 +28,17 @@ const RecipeCreateHeader = ({ inputDisabled, name, onNameChange }: Props) => {
     const classes = useStyles()
     const match = useRouteMatch()
 
-    const NameInput = () => (
-        <InputBase
-            disabled={inputDisabled}
-            classes={{ root: classes.inputBaseRoot, input: classes.inputBaseInput }}
-            value={value}
-            placeholder="Name"
-            onChange={e => setValue(e.target.value)}
-            onBlur={() => onNameChange(value)}
-        />
-    )
-
-    if (match.path === PATHS.recipeEdit()) return <NameInput />
-
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={match.path === PATHS.recipeCreate ? 2 : 0}>
             <Grid item xs={12}>
-                <NameInput />
+                <InputBase
+                    disabled={inputDisabled}
+                    classes={{ root: classes.inputBaseRoot, input: classes.inputBaseInput }}
+                    value={value}
+                    placeholder="Name"
+                    onChange={e => setValue(e.target.value)}
+                    onBlur={() => onNameChange(value)}
+                />
             </Grid>
             {match.path === PATHS.recipeCreate && (
                 <Grid item xs={12}>

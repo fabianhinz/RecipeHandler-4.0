@@ -1,6 +1,6 @@
-import { Avatar, createStyles, Grid, makeStyles, Tooltip, Typography } from '@material-ui/core'
+import { Avatar, createStyles, Grid, makeStyles, Typography } from '@material-ui/core'
 import { Rating, RatingProps } from '@material-ui/lab'
-import React, { ReactText, useState } from 'react'
+import React from 'react'
 
 import { useUsersContext } from '../Provider/UsersProvider'
 import SatisfactionIconContainer from './SatisfactionIconContainer'
@@ -20,39 +20,12 @@ interface Props extends Pick<RatingProps, 'value' | 'onChange' | 'disabled'> {
 }
 
 const SatisfactionUser = ({ uid, ...ratingProps }: Props) => {
-    const [tooltipTitle, setTooltipTitle] = useState<ReactText>('')
-
     const classes = useStyles()
 
     const { getByUid } = useUsersContext()
     const user = getByUid(uid)
 
     if (!user) return <></>
-
-    const handleActiveChange = (_event: React.ChangeEvent<{}>, value: number) => {
-        switch (value) {
-            case 1: {
-                setTooltipTitle('Das war wohl nix')
-                break
-            }
-            case 2: {
-                setTooltipTitle('Geht so')
-                break
-            }
-            case 3: {
-                setTooltipTitle('Nomnomnom')
-                break
-            }
-            case 4: {
-                setTooltipTitle('Wie - nichts mehr da?')
-                break
-            }
-            case 5: {
-                setTooltipTitle('Ich will meeeehr')
-                break
-            }
-        }
-    }
 
     return (
         <Grid container wrap="nowrap" spacing={2} alignItems="center">
@@ -65,15 +38,12 @@ const SatisfactionUser = ({ uid, ...ratingProps }: Props) => {
                 <Typography gutterBottom noWrap>
                     {user.username}
                 </Typography>
-                <Tooltip title={tooltipTitle} placement="bottom-start">
-                    <Rating
-                        {...ratingProps}
-                        onChangeActive={handleActiveChange}
-                        name="recipe-user-satisfaction"
-                        size="large"
-                        IconContainerComponent={SatisfactionIconContainer}
-                    />
-                </Tooltip>
+                <Rating
+                    {...ratingProps}
+                    name="recipe-user-satisfaction"
+                    size="large"
+                    IconContainerComponent={SatisfactionIconContainer}
+                />
             </Grid>
         </Grid>
     )
