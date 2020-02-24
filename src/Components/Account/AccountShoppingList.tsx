@@ -115,7 +115,6 @@ const AccountUserShoppingList = () => {
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        // ToDo try to stay dry :(
         let list = shoppingList.get('Sonstiges')?.list
 
         if (!list) list = [textFieldValue]
