@@ -45,7 +45,6 @@ const MarkdownLinkToggle = ({ onToggleChange }: ToggleChangeHandler) => {
                 <Grid container direction="column" spacing={2} alignItems="flex-end">
                     <Grid item>
                         <TextField
-                            autoFocus
                             label="Text"
                             fullWidth
                             variant="outlined"

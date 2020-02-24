@@ -73,14 +73,14 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                             </StyledCard>
                         </Grid>
                     )}
+
+                    {variant !== 'preview' && (
+                        <Grid {...gridBreakpointProps} item>
+                            <Satisfaction recipeName={recipe.name} />
+                        </Grid>
+                    )}
                 </Grid>
             </Grid>
-
-            {variant !== 'preview' && (
-                <Grid xs={12} item>
-                    <Satisfaction recipeName={recipe.name} />
-                </Grid>
-            )}
 
             <Grid item xs={12} container justify="center">
                 <AccountChip
