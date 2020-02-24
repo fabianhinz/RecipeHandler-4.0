@@ -97,7 +97,7 @@ const MarkdownRenderer = (props: Props) => {
                 link: renderProps => <Link href={renderProps.href}>{renderProps.children}</Link>,
                 list: renderProps => <List>{renderProps.children}</List>,
                 listItem: renderProps => (
-                    <ListItem>
+                    <ListItem disableGutters>
                         {renderProps.ordered ? (
                             <ListItemAvatar>
                                 <Avatar>{renderProps.index + 1}</Avatar>

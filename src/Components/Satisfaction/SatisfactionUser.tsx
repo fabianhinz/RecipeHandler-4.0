@@ -62,8 +62,8 @@ const SatisfactionUser = ({ uid, ...ratingProps }: Props) => {
                 </Avatar>
             </Grid>
             <Grid item zeroMinWidth>
-                <Typography gutterBottom noWrap variant="subtitle1">
-                    {user.username}{' '}
+                <Typography gutterBottom noWrap>
+                    {user.username}
                 </Typography>
                 <Tooltip title={tooltipTitle} placement="bottom-start">
                     <Rating

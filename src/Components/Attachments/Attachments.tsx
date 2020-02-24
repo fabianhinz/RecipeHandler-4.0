@@ -20,15 +20,15 @@ const useStyles = makeStyles(theme =>
         },
         addAvatar: {
             [theme.breakpoints.down('sm')]: {
-                width: 90,
+                width: 320,
                 height: 180,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 112.5,
+                width: 400,
                 height: 225,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 140,
+                width: 498,
                 height: 280,
             },
             borderRadius: BORDER_RADIUS,
@@ -40,15 +40,15 @@ const useStyles = makeStyles(theme =>
         },
         actionArea: {
             [theme.breakpoints.down('sm')]: {
-                width: 90,
+                width: 320,
                 height: 180,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 112.5,
+                width: 400,
                 height: 225,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 140,
+                width: 498,
                 height: 280,
             },
             borderRadius: BORDER_RADIUS,
@@ -116,7 +116,7 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
 
     return (
         <>
-            <Grid wrap="nowrap" className={classes.attachmentsGridContainer} container spacing={3}>
+            <Grid wrap="nowrap" className={classes.attachmentsGridContainer} container spacing={2}>
                 {savedAttachments.map((attachment, index) => (
                     <AttachmentPreview
                         onClick={originId => handlePreviewClick(originId, index)}

@@ -41,7 +41,7 @@ const TrialsDeleteAlert = ({ open, onConfirm, onAbort, title }: Props) => {
                 <Button startIcon={<CloseIcon />} onClick={onAbort}>
                     Nein
                 </Button>
-                <Button startIcon={<DeleteIcon />} onClick={onConfirm} color="secondary" autoFocus>
+                <Button startIcon={<DeleteIcon />} onClick={onConfirm} color="secondary">
                     Ja
                 </Button>
             </DialogActions>

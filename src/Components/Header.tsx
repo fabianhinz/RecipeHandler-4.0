@@ -13,8 +13,8 @@ import {
     SwipeableDrawer,
     Tooltip,
 } from '@material-ui/core'
+import ShoppingCartIcon from '@material-ui/icons/AddShoppingCart'
 import MenuIcon from '@material-ui/icons/Menu'
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import {
     BookmarkMultipleOutline,
     InformationOutline,
