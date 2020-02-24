@@ -73,7 +73,7 @@ export type Hit = Pick<Recipe, 'name' | 'description' | 'ingredients'> & {
     }
 }
 
-export type Hits = Array<Hit>
+export type Hits = ReadonlyArray<Hit>
 
 export type DocumentId = string
 
