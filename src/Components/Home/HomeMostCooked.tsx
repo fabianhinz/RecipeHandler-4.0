@@ -44,7 +44,8 @@ const useMostCookedPaperStyles = makeStyles(theme =>
             backgroundColor: (props: StyleProps) => props.backgroundColor,
         },
         typography: {
-            color: (props: StyleProps) => theme.palette.getContrastText(props.backgroundColor),
+            color: (props: StyleProps) =>
+                theme.palette.getContrastText(props.backgroundColor || COLOR_PALETTE[0]),
             maxWidth: '100%',
         },
     })

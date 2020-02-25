@@ -16,8 +16,8 @@ import {
     Zoom,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCartTwoTone'
 import clsx from 'clsx'
+import { CartOff } from 'mdi-material-ui'
 import React, { useMemo, useState } from 'react'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
@@ -114,6 +114,7 @@ const AccountUserShoppingList = () => {
 
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        setTextFieldValue('')
 
         let list = shoppingList.get('Sonstiges')?.list
 
@@ -123,8 +124,6 @@ const AccountUserShoppingList = () => {
 
         if (list.length === 0) await shoppingListDocRef.doc('Sonstiges').delete()
         else await shoppingListDocRef.doc('Sonstiges').set({ list }, { merge: true })
-
-        setTextFieldValue('')
     }
 
     const listItemChecked = (recipe: string, grocery: string) =>
@@ -157,7 +156,7 @@ const AccountUserShoppingList = () => {
                                                 placement="left"
                                                 title={`${recipe} von Einkaufsliste entfernen`}>
                                                 <IconButton onClick={handleRemove(recipe)}>
-                                                    <RemoveFromShoppingCartIcon />
+                                                    <CartOff />
                                                 </IconButton>
                                             </Tooltip>
                                         }>
