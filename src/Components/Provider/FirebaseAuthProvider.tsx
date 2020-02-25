@@ -47,9 +47,6 @@ const useStyles = makeStyles(() =>
     })
 )
 
-let userDocUnsubscribe: any = undefined
-let shoppingListUnsubscribe: any = undefined
-
 const FirebaseAuthProvider: FC = ({ children }) => {
     const [authReady, setAuthReady] = useState(false)
     const [loginEnabled, setLoginEnabled] = useState(false)
@@ -59,47 +56,52 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
     const classes = useStyles()
 
-    const handleAuthStateChange = useCallback(async (user: firebase.User | null) => {
-        if (user) {
-            setAuthReady(true)
-            if (user.isAnonymous) {
-                setUser(undefined)
-                setLoginEnabled(true)
-            } else {
-                const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
-                await userDocRef.update({ emailVerified: user.emailVerified })
+    const handleAuthStateChange = useCallback((user: firebase.User | null) => {
+        if (!user) return FirebaseService.auth.signInAnonymously()
 
-                userDocUnsubscribe = userDocRef.onSnapshot(doc => {
-                    setUser({
-                        ...(doc.data() as Omit<User, 'uid'>),
-                        uid: user.uid,
+        setAuthReady(true)
+        if (user.isAnonymous) {
+            setUser(undefined)
+            setLoginEnabled(true)
+            return
+        }
+
+        const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
+
+        const userDocUnsubscribe = userDocRef.onSnapshot(doc => {
+            setUser({
+                ...(doc.data() as Omit<User, 'uid'>),
+                uid: user.uid,
+            })
+            setLoginEnabled(true)
+        })
+
+        const shoppingListUnsubscribe = userDocRef
+            .collection('shoppingList')
+            .onSnapshot(querySnapshot => {
+                const newShoppingList: ShoppingList = new Map()
+                const newShoppingTracker: ShoppingTracker = new Map()
+
+                querySnapshot.docs.forEach(doc => {
+                    const { list, tracker } = doc.data() as {
+                        list: string[]
+                        tracker: string[]
+                    }
+                    newShoppingList.set(doc.id, {
+                        // ? creating the recipe "Sonstiges" will create an item with a lenght of zero
+                        list: list.filter(item => item.length > 0),
                     })
-                    setLoginEnabled(true)
+                    newShoppingTracker.set(doc.id, { tracker })
                 })
 
-                shoppingListUnsubscribe = userDocRef
-                    .collection('shoppingList')
-                    .onSnapshot(querySnapshot => {
-                        const newShoppingList: ShoppingList = new Map()
-                        const newShoppingTracker: ShoppingTracker = new Map()
+                setShoppingList(newShoppingList)
+                setShoppingTracker(newShoppingTracker)
+            })
 
-                        querySnapshot.docs.forEach(doc => {
-                            const { list, tracker } = doc.data() as {
-                                list: string[]
-                                tracker: string[]
-                            }
-                            newShoppingList.set(doc.id, {
-                                // ? creating the recipe "Sonstiges" will create an item with a lenght of zero
-                                list: list.filter(item => item.length > 0),
-                            })
-                            newShoppingTracker.set(doc.id, { tracker })
-                        })
-
-                        setShoppingList(newShoppingList)
-                        setShoppingTracker(newShoppingTracker)
-                    })
-            }
-        } else FirebaseService.auth.signInAnonymously()
+        return () => {
+            userDocUnsubscribe()
+            shoppingListUnsubscribe()
+        }
     }, [])
 
     const signInWithCustomToken = useCallback(async () => {
@@ -114,15 +116,17 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     }, [user])
 
     useEffect(() => {
-        signInWithCustomToken()
-    }, [signInWithCustomToken])
+        if (!user || user.emailVerified) return
+
+        FirebaseService.firestore
+            .collection('users')
+            .doc(user.uid)
+            .update({ emailVerified: user.emailVerified })
+    }, [user])
 
     useEffect(() => {
-        return () => {
-            if (userDocUnsubscribe) userDocUnsubscribe()
-            if (shoppingListUnsubscribe) shoppingListUnsubscribe()
-        }
-    }, [])
+        signInWithCustomToken()
+    }, [signInWithCustomToken])
 
     useEffect(() => {
         return FirebaseService.auth.onAuthStateChanged(handleAuthStateChange)
