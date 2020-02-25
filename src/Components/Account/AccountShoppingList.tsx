@@ -16,7 +16,7 @@ import {
     Zoom,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCartTwoTone'
+import RemoveFromShoppingCartIcon from '@material-ui/icons/RemoveShoppingCart'
 import clsx from 'clsx'
 import React, { useMemo, useState } from 'react'
 
