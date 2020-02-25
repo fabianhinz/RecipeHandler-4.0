@@ -203,7 +203,7 @@ const AccountUserShoppingList = () => {
                                                         }
                                                         variant="outlined"
                                                         fullWidth
-                                                        label="Sonstiges"
+                                                        placeholder="Um Einträge ergänzen"
                                                     />
                                                 </form>
                                             )}
