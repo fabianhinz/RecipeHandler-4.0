@@ -1,13 +1,15 @@
 import { IconButton, Tooltip } from '@material-ui/core/'
 import FavoriteIcon from '@material-ui/icons/Favorite'
-import React, { FC, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { MostCooked, Recipe } from '../../../../model/model'
-import { FirebaseService } from '../../../../services/firebase'
-import { useFirebaseAuthContext } from '../../../Provider/FirebaseAuthProvider'
-import { BadgeWrapper } from '../../../Shared/BadgeWrapper'
+import { MostCooked, Recipe } from '../../model/model'
+import { FirebaseService } from '../../services/firebase'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { BadgeWrapper } from '../Shared/BadgeWrapper'
 
-export const RecipeResultCookCounter: FC<Pick<Recipe, 'name'>> = ({ name }) => {
+type Props = Pick<Recipe, 'name'>
+
+const RecipeCookCounterButton = ({ name }: Props) => {
     const [numberOfCooks, setNumberOfCooks] = useState(0)
     const [disabled, setDisabled] = useState(false)
 
@@ -47,3 +49,5 @@ export const RecipeResultCookCounter: FC<Pick<Recipe, 'name'>> = ({ name }) => {
         </Tooltip>
     )
 }
+
+export default RecipeCookCounterButton

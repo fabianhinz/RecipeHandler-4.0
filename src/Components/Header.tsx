@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme =>
         header: {
             position: 'sticky',
             paddingTop: theme.spacing(3),
-            '@media (max-width: 1023px) and (orientation: landscape)': {
+            '@media (max-width: 959px) and (orientation: landscape)': {
                 position: 'static',
             },
             top: 'env(safe-area-inset-top)',

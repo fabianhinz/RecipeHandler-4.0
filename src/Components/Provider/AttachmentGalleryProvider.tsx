@@ -23,6 +23,7 @@ import { useAttachment } from '../../hooks/useAttachment'
 import { AttachmentDoc } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
+import { isSafari } from '../../util/constants'
 import AccountChip from '../Account/AccountChip'
 import { useBreakpointsContext } from './BreakpointsProvider'
 import { useRouterContext } from './RouterProvider'
@@ -56,6 +57,12 @@ const useStyles = makeStyles(theme =>
             display: 'flex',
             justifyContent: 'space-evenly',
             alignItems: 'center',
+            [theme.breakpoints.only('xs')]: {
+                flexDirection: 'column',
+            },
+            [theme.breakpoints.up('sm')]: {
+                flexDirection: 'row',
+            },
         },
         backgroundVisible: {
             zIndex: theme.zIndex.modal + 2,
@@ -63,8 +70,8 @@ const useStyles = makeStyles(theme =>
         },
         destination: {
             [theme.breakpoints.only('xs')]: {
-                width: 280,
-                height: 157.5,
+                width: 320,
+                height: 180,
             },
             [theme.breakpoints.only('sm')]: {
                 width: 480,
@@ -347,7 +354,7 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
 
     const handleDownload = async () => {
         if (!attachments) return
-
+        // ToDo: does not work on iOS 13, just don't render the button for now
         const link = document.createElement('a')
         link.href = await FirebaseService.storageRef
             .child(attachments[activeAttachment].fullPath)
@@ -395,15 +402,17 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
                             </div>
                         </Tooltip>
                     </Grid>
-                    <Grid item>
-                        <Tooltip placement="bottom" title="Herunterladen">
-                            <div>
-                                <IconButton disabled={alert.open} onClick={handleDownload}>
-                                    <Download />
-                                </IconButton>
-                            </div>
-                        </Tooltip>
-                    </Grid>
+                    {!isSafari && (
+                        <Grid item>
+                            <Tooltip placement="bottom" title="Herunterladen">
+                                <div>
+                                    <IconButton disabled={alert.open} onClick={handleDownload}>
+                                        <Download />
+                                    </IconButton>
+                                </div>
+                            </Tooltip>
+                        </Grid>
+                    )}
                     <Grid item>
                         <Tooltip placement="bottom" title="Löschen">
                             <div>

@@ -25,6 +25,7 @@ import useScrollButtons from '../../hooks/useScrollButtons'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
+import RecipeDetailsButton from '../Recipe/RecipeDetailsButton'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import StyledCard from '../Shared/StyledCard'
@@ -146,23 +147,27 @@ const AccountUserShoppingList = () => {
                         wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}
                         className={classes.recipeContainer}>
                         <ScrollLeftTrigger />
-                        {[...shoppingList.entries()].map(([recipe, groceries]) => (
-                            <Grid item xs={gridLayout === 'list' ? 12 : 'auto'} key={recipe}>
+                        {[...shoppingList.entries()].map(([recipeName, groceries]) => (
+                            <Grid item xs={gridLayout === 'list' ? 12 : 'auto'} key={recipeName}>
                                 <div className={clsx(gridLayout === 'grid' && classes.recipeItem)}>
                                     <StyledCard
-                                        header={recipe}
+                                        header={recipeName}
                                         action={
-                                            <Tooltip
-                                                placement="left"
-                                                title={`${recipe} von Einkaufsliste entfernen`}>
-                                                <IconButton onClick={handleRemove(recipe)}>
-                                                    <CartOff />
-                                                </IconButton>
-                                            </Tooltip>
+                                            <>
+                                                {recipeName !== 'Sonstiges' && (
+                                                    <RecipeDetailsButton name={recipeName} />
+                                                )}
+                                                <Tooltip
+                                                    title={`${recipeName} von Einkaufsliste entfernen`}>
+                                                    <IconButton onClick={handleRemove(recipeName)}>
+                                                        <CartOff />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </>
                                         }>
                                         <div
                                             className={clsx(
-                                                recipe === 'Sonstiges' && classes.sonstigesRoot
+                                                recipeName === 'Sonstiges' && classes.sonstigesRoot
                                             )}>
                                             <List>
                                                 {groceries?.list.map(grocery => (
@@ -170,11 +175,11 @@ const AccountUserShoppingList = () => {
                                                         <ListItemIcon>
                                                             <Checkbox
                                                                 checked={listItemChecked(
-                                                                    recipe,
+                                                                    recipeName,
                                                                     grocery
                                                                 )}
                                                                 onChange={handleCheckboxChange(
-                                                                    recipe,
+                                                                    recipeName,
                                                                     grocery
                                                                 )}
                                                                 edge="start"
@@ -184,7 +189,7 @@ const AccountUserShoppingList = () => {
                                                             classes={{
                                                                 primary: clsx(
                                                                     listItemChecked(
-                                                                        recipe,
+                                                                        recipeName,
                                                                         grocery
                                                                     ) && classes.checked
                                                                 ),
@@ -194,7 +199,7 @@ const AccountUserShoppingList = () => {
                                                     </ListItem>
                                                 ))}
                                             </List>
-                                            {recipe === 'Sonstiges' && (
+                                            {recipeName === 'Sonstiges' && (
                                                 <form onSubmit={handleFormSubmit}>
                                                     <TextField
                                                         value={textFieldValue}

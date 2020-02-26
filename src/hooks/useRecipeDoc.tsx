@@ -6,10 +6,11 @@ import { FirebaseService } from '../services/firebase'
 type RecipesCollectionState = { loading: boolean; recipe: Recipe | null }
 type RecipeLocation = Pick<RecipesCollectionState, 'recipe'>
 
-export const useRecipeDoc = (options: {
-    routeProps?: RouteWithRecipeName
-    recipeName?: string | null
-}) => {
+interface Options {
+    routeProps: RouteWithRecipeName
+}
+
+export const useRecipeDoc = ({ routeProps }: Options) => {
     const [state, setState] = useState<RecipesCollectionState>({
         loading: true,
         recipe: null,
@@ -18,29 +19,15 @@ export const useRecipeDoc = (options: {
     useEffect(() => {
         let mounted = true
 
-        if (options.routeProps) {
-            const { location, match } = options.routeProps
-            const recipe = location.state && (location.state as RecipeLocation).recipe
+        const { location, match } = routeProps
+        const recipe = location.state && (location.state as RecipeLocation).recipe
 
-            if (recipe) {
-                setState({ loading: false, recipe })
-            } else {
-                FirebaseService.firestore
-                    .collection('recipes')
-                    .doc(match.params.name)
-                    .get()
-                    .then(documentSnapshot => {
-                        if (!mounted) return
-                        setState({
-                            loading: false,
-                            recipe: documentSnapshot.data() as Recipe,
-                        })
-                    })
-            }
-        } else if (options.recipeName) {
+        if (recipe) {
+            setState({ loading: false, recipe })
+        } else {
             FirebaseService.firestore
                 .collection('recipes')
-                .doc(options.recipeName)
+                .doc(match.params.name)
                 .get()
                 .then(documentSnapshot => {
                     if (!mounted) return
@@ -54,7 +41,7 @@ export const useRecipeDoc = (options: {
         return () => {
             mounted = false
         }
-    }, [options.recipeName, options.routeProps])
+    }, [routeProps])
 
     return { recipeDoc: state.recipe, recipeDocLoading: state.loading }
 }

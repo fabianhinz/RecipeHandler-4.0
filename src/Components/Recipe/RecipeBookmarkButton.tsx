@@ -1,15 +1,15 @@
 import { IconButton, Tooltip, TooltipProps } from '@material-ui/core/'
-import { BookmarkMinus, BookmarkPlus } from 'mdi-material-ui'
-import React, { FC } from 'react'
+import { Bookmark, BookmarkOff } from 'mdi-material-ui'
+import React from 'react'
 
-import { useBookmarkContext } from '../../../Provider/BookmarkProvider'
+import { useBookmarkContext } from '../Provider/BookmarkProvider'
 
-interface RecipeResultPinProps {
+interface Props {
     name: string
     tooltipProps?: Pick<TooltipProps, 'placement'>
 }
 
-export const RecipeResultBookmark: FC<RecipeResultPinProps> = ({ name, tooltipProps }) => {
+const RecipeBookmarkButton = ({ name, tooltipProps }: Props) => {
     const { bookmarks, handleBookmarkChange } = useBookmarkContext()
 
     return (
@@ -19,8 +19,10 @@ export const RecipeResultBookmark: FC<RecipeResultPinProps> = ({ name, tooltipPr
                 bookmarks.has(name) ? 'Von den Lesezeichen entfernen' : 'Zu Lesezeichen hinzufügen'
             }>
             <IconButton onClick={() => handleBookmarkChange(name)}>
-                {bookmarks.has(name) ? <BookmarkMinus /> : <BookmarkPlus />}
+                {bookmarks.has(name) ? <BookmarkOff /> : <Bookmark />}
             </IconButton>
         </Tooltip>
     )
 }
+
+export default RecipeBookmarkButton

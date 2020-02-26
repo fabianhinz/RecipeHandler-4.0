@@ -4,7 +4,7 @@ import React from 'react'
 import { Recipe, RecipeVariants } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import { CategoryResult } from '../../Category/CategoryResult'
-import { RecipeResultAction } from './Action/RecipeResultAction'
+import RecipeResultButtons from './RecipeResultButtons'
 
 interface Props extends RecipeVariants {
     recipe: Recipe
@@ -26,7 +26,10 @@ const RecipeResultHeader = ({ recipe, variant }: Props) => (
         </Grid>
         {variant === 'details' && (
             <Grid item xs={12} sm="auto">
-                <RecipeResultAction name={recipe.name} numberOfComments={recipe.numberOfComments} />
+                <RecipeResultButtons
+                    name={recipe.name}
+                    numberOfComments={recipe.numberOfComments}
+                />
             </Grid>
         )}
         <Grid item xs={12}>

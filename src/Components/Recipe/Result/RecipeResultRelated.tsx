@@ -12,7 +12,8 @@ import {
 import brown from '@material-ui/core/colors/brown'
 import React, { FC } from 'react'
 
-import { RecipeResultBookmark } from './Action/RecipeResultBookmark'
+import RecipeBookmarkButton from '../RecipeBookmarkButton'
+import RecipeDetailsButton from '../RecipeDetailsButton'
 
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === 'light' ? brown[200] : brown[400]
@@ -21,6 +22,9 @@ const useStyles = makeStyles(theme => {
         avatar: {
             background,
             color: theme.palette.getContrastText(background),
+        },
+        secondaryAction: {
+            display: 'flex',
         },
     })
 })
@@ -39,8 +43,9 @@ export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ rel
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText primary={recipeName} />
-                        <ListItemSecondaryAction>
-                            <RecipeResultBookmark name={recipeName} />
+                        <ListItemSecondaryAction className={classes.secondaryAction}>
+                            <RecipeDetailsButton name={recipeName} />
+                            <RecipeBookmarkButton name={recipeName} />
                         </ListItemSecondaryAction>
                     </ListItem>
                     {index !== relatedRecipes.length - 1 && <Divider />}

@@ -16,10 +16,10 @@ const useStyles = makeStyles(theme =>
             zIndex: 1,
         },
         top: {
-            top: theme.spacing(2),
+            top: theme.spacing(1),
         },
         bottom: {
-            bottom: theme.spacing(2),
+            bottom: theme.spacing(1),
         },
     })
 )
