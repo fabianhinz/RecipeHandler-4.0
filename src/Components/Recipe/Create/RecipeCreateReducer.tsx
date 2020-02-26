@@ -1,6 +1,6 @@
 import { Reducer, useReducer } from 'react'
 
-import { Categories, Recipe } from '../../../model/model'
+import { Categories, Recipe, Trial } from '../../../model/model'
 
 export interface RecipeCreateState {
     name: string
@@ -14,6 +14,7 @@ export interface RecipeCreateState {
     numberOfComments: number
     relatedRecipes: Array<string>
     relatedRecipesDialog: boolean
+    selectedTrial?: Trial
 }
 
 export type CreateChangeKey = keyof Pick<RecipeCreateState, 'ingredients' | 'description' | 'name'>
@@ -34,6 +35,7 @@ type Action =
     | { type: 'relatedRecipesChange'; relatedRecipes: Array<string> }
     | { type: 'openRelatedRecipesDialog' }
     | { type: 'closeRelatedRecipesDialog' }
+    | { type: 'selectedTrialChange'; selectedTrial?: Trial }
 
 const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
     switch (action.type) {
@@ -74,6 +76,9 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
         }
         case 'closeRelatedRecipesDialog': {
             return { ...state, relatedRecipesDialog: false }
+        }
+        case 'selectedTrialChange': {
+            return { ...state, selectedTrial: action.selectedTrial }
         }
     }
 }

@@ -44,6 +44,13 @@ const useStyles = makeStyles(theme =>
             justifyContent: 'center',
             marginBottom: theme.spacing(2),
         },
+        filterFab: {
+            fontFamily: 'Ubuntu',
+            textTransform: 'unset',
+            [theme.breakpoints.only('xs')]: {
+                width: '100% !important',
+            },
+        },
         filterFabIcon: {
             marginRight: theme.spacing(0.5),
         },
@@ -68,7 +75,13 @@ const CategorySelection = ({ onCategoryChange, selectedCategories, header, fabLa
 
     return (
         <>
-            <Fab onClick={openDrawer} disabled={categoriesLoading} variant="extended" size="medium">
+            <Fab
+                color={selectedCategories.size > 0 ? 'secondary' : 'default'}
+                onClick={openDrawer}
+                disabled={categoriesLoading}
+                variant="extended"
+                size="medium"
+                className={classes.filterFab}>
                 <Filter className={classes.filterFabIcon} />
                 {fabLabel}
             </Fab>

@@ -55,8 +55,7 @@ export interface CommentReaction extends Editor, CreatedDate {
     emoji: string
 }
 
-export interface Trial extends CommentsDocument {
-    editorUid: string
+export interface Trial extends Editor, CommentsDocument {
     fullPath: string
     createdDate: firebase.firestore.Timestamp
 }

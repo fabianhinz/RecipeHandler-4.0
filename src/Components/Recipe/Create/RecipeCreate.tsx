@@ -1,4 +1,4 @@
-import { Box, Grid } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import LabelIcon from '@material-ui/icons/LabelTwoTone'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
@@ -14,6 +14,7 @@ import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import EntryGridContainer from '../../Shared/EntryGridContainer'
 import StyledCard from '../../Shared/StyledCard'
+import TrialsSelection from '../../Trials/TrialsSelection'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
 import RecipeCreateDescription from './RecipeCreateDescription'
@@ -106,13 +107,23 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <Box display="flex" justifyContent="center">
-                            <CategorySelection
-                                fabLabel="Rezeptkategorien"
-                                selectedCategories={selectedCategories}
-                                onCategoryChange={setSelectedCategories}
-                            />
-                        </Box>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm="auto">
+                                <TrialsSelection
+                                    selectedTrial={state.selectedTrial}
+                                    onSelectedTrialChange={selectedTrial =>
+                                        dispatch({ type: 'selectedTrialChange', selectedTrial })
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm="auto">
+                                <CategorySelection
+                                    fabLabel="Kategorien auswählen"
+                                    selectedCategories={selectedCategories}
+                                    onCategoryChange={setSelectedCategories}
+                                />
+                            </Grid>
+                        </Grid>
                     </Grid>
 
                     <Grid item xs={12}>
