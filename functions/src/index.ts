@@ -177,3 +177,30 @@ export const onRemoveImageDeleteResizedOnes = functions
         console.log('deleted', mediumFilePath, smallFilePath, smallFilePathFallback)
         return
     })
+
+export const handleRecipesCounter = functions
+    .region('europe-west1')
+    .pubsub.schedule('every 24 hours')
+    .onRun(async () => {
+        const firestore = admin.firestore()
+        const recipesCounter = new Map<string, { value: number }>()
+
+        const usersSnapshot = await firestore.collection('users').get()
+
+        for (const userDoc of usersSnapshot.docs) {
+            const recipesSnapshot = await firestore
+                .collection('recipes')
+                .where('editorUid', '==', userDoc.id)
+                .get()
+            recipesCounter.set(userDoc.id, { value: recipesSnapshot.docs.length })
+        }
+
+        for (const [userUid, value] of recipesCounter) {
+            await firestore
+                .collection('recipesCounter')
+                .doc(userUid)
+                .set(value)
+        }
+
+        return
+    })

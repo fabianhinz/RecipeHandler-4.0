@@ -20,7 +20,7 @@ import { BORDER_RADIUS } from '../../theme'
 import { CategoryResult } from '../Category/CategoryResult'
 import { useGridContext } from '../Provider/GridProvider'
 import { useRouterContext } from '../Provider/RouterProvider'
-import { RecipeResultBookmark } from '../Recipe/Result/Action/RecipeResultBookmark'
+import RecipeBookmarkButton from '../Recipe/RecipeBookmarkButton'
 import { PATHS } from '../Routes/Routes'
 
 interface StyleProps {
@@ -119,7 +119,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                                             <Eye />
                                         </IconButton>
                                     </Tooltip>
-                                    <RecipeResultBookmark
+                                    <RecipeBookmarkButton
                                         tooltipProps={{ placement: 'left' }}
                                         name={recipe.name}
                                     />

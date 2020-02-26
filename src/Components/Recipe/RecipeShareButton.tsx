@@ -1,12 +1,14 @@
 import { IconButton, Tooltip } from '@material-ui/core'
 import ShareIcon from '@material-ui/icons/Share'
 import copy from 'clipboard-copy'
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 
-import { Recipe } from '../../../../model/model'
-import { PATHS } from '../../../Routes/Routes'
+import { Recipe } from '../../model/model'
+import { PATHS } from '../Routes/Routes'
 
-export const RecipeResultShare: FC<Pick<Recipe, 'name'>> = ({ name }) => {
+type Props = Pick<Recipe, 'name'>
+
+const RecipeShareButton = ({ name }: Props) => {
     const [copied, setCopied] = useState(false)
 
     const handleShareBtnClick = () => {
@@ -30,3 +32,5 @@ export const RecipeResultShare: FC<Pick<Recipe, 'name'>> = ({ name }) => {
         </Tooltip>
     )
 }
+
+export default RecipeShareButton

@@ -2,15 +2,15 @@ import {
     Avatar,
     CardActionArea,
     createStyles,
+    Fab,
     Grid,
-    IconButton,
     makeStyles,
     Tooltip,
     Zoom,
 } from '@material-ui/core'
 import BugIcon from '@material-ui/icons/BugReport'
-import CheckIcon from '@material-ui/icons/CheckCircle'
 import { Skeleton } from '@material-ui/lab'
+import { FileImage } from 'mdi-material-ui'
 import React, { useRef, useState } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
@@ -57,7 +57,11 @@ const useStyles = makeStyles(theme =>
         gridItem: {
             position: 'relative',
         },
-        selectionButton: { position: 'absolute', top: 0, left: 0 },
+        selectionButton: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+        },
     })
 )
 
@@ -105,12 +109,13 @@ const AttachmentPreview = ({
                     </CardActionArea>
                     <Zoom in={showSelection && !previewChangeDisabled}>
                         <Tooltip
+                            placement="right"
                             title={
                                 previewAttachment === attachmentRef.smallDataUrl
-                                    ? ''
+                                    ? 'Vorschaubild'
                                     : 'Als Vorschaubild setzen'
                             }>
-                            <IconButton
+                            <Fab
                                 className={classes.selectionButton}
                                 onClick={() =>
                                     onPreviewAttachmentChange(attachmentRef.smallDataUrl)
@@ -121,8 +126,8 @@ const AttachmentPreview = ({
                                         : 'default'
                                 }
                                 size="small">
-                                <CheckIcon />
-                            </IconButton>
+                                <FileImage />
+                            </Fab>
                         </Tooltip>
                     </Zoom>
                 </>

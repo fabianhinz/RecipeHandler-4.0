@@ -1,4 +1,4 @@
-import { Avatar, CardActionArea, createStyles, Grid, makeStyles, Zoom } from '@material-ui/core'
+import { Avatar, CardActionArea, createStyles, Grid, makeStyles } from '@material-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
@@ -127,16 +127,14 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                         key={attachment.docPath}
                     />
                 ))}
-                <Zoom in>
-                    <Grid item>
-                        <CardActionArea
-                            className={classes.actionArea}
-                            {...dropzoneProps.getRootProps()}>
-                            <Avatar className={classes.addAvatar}>+</Avatar>
-                            <input {...dropzoneProps.getInputProps()} />
-                        </CardActionArea>
-                    </Grid>
-                </Zoom>
+                <Grid item>
+                    <CardActionArea
+                        className={classes.actionArea}
+                        {...dropzoneProps.getRootProps()}>
+                        <Avatar className={classes.addAvatar}>+</Avatar>
+                        <input {...dropzoneProps.getInputProps()} />
+                    </CardActionArea>
+                </Grid>
             </Grid>
             <AttachmentUpload
                 recipeName={recipeName}

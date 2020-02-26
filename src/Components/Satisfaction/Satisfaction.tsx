@@ -84,6 +84,7 @@ const Satisfaction = ({ recipeName }: Props) => {
                             value={satisfactionValueOrNull(user.uid)}
                             onChange={handleSatisfactionChange}
                             onChangeActive={handleActiveChange}
+                            name="recipe-editor-satisfaction"
                             size="large"
                             IconContainerComponent={SatisfactionIconContainer}
                         />

@@ -11,7 +11,8 @@ import {
     TypographyProps,
 } from '@material-ui/core'
 import EmailIcon from '@material-ui/icons/EmailRounded'
-import React from 'react'
+import { Skeleton } from '@material-ui/lab'
+import React, { useEffect, useState } from 'react'
 
 import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -45,15 +46,38 @@ const useStyles = makeStyles(theme =>
 )
 
 const AccountListItem = ({ uid, onChange, checked, variant }: Props) => {
+    const [recipesCounter, setRecipesCounter] = useState<null | number>(null)
+
     const { getByUid } = useUsersContext()
     const { username, profilePicture, createdDate, emailVerified } = getByUid(uid) as User
 
     const classes = useStyles()
 
+    useEffect(
+        () =>
+            FirebaseService.firestore
+                .collection('recipesCounter')
+                .doc(uid)
+                .onSnapshot(docSnapshot => {
+                    const data = docSnapshot.data()
+                    if (data) setRecipesCounter(data.value)
+                    else setRecipesCounter(0)
+                }),
+
+        [variant, uid]
+    )
+
     const textProps: Pick<ListItemTextProps, 'secondary'> =
         variant === 'admin'
             ? { secondary: FirebaseService.createDateFromTimestamp(createdDate).toLocaleString() }
-            : {}
+            : {
+                  secondary:
+                      recipesCounter === null ? (
+                          <Skeleton width="30%" variant="text" />
+                      ) : (
+                          `${recipesCounter} ${recipesCounter === 1 ? 'Rezept' : 'Rezepte'}`
+                      ),
+              }
 
     return (
         <ListItem>
