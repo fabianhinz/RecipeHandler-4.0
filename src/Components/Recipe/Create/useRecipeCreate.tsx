@@ -77,6 +77,15 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                     .set({ value: 0 } as MostCooked<number>)
             }
 
+            if (state.selectedTrial) {
+                await FirebaseService.firestore
+                    .collection('trials')
+                    .doc(state.selectedTrial.name)
+                    .delete()
+
+                await FirebaseService.storageRef.child(state.selectedTrial.fullPath).delete()
+            }
+
             enqueueSnackbar(`${state.name} gespeichert`, {
                 variant: 'success',
             })

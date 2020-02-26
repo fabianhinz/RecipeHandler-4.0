@@ -1,8 +1,5 @@
 import { createStyles, Grid, InputBase, makeStyles, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
-import { useRouteMatch } from 'react-router-dom'
-
-import { PATHS } from '../../Routes/Routes'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -26,10 +23,9 @@ interface Props {
 const RecipeCreateHeader = ({ inputDisabled, name, onNameChange }: Props) => {
     const [value, setValue] = useState(name)
     const classes = useStyles()
-    const match = useRouteMatch()
 
     return (
-        <Grid container spacing={match.path === PATHS.recipeCreate ? 2 : 0}>
+        <Grid container spacing={2}>
             <Grid item xs={12}>
                 <InputBase
                     disabled={inputDisabled}
@@ -40,14 +36,14 @@ const RecipeCreateHeader = ({ inputDisabled, name, onNameChange }: Props) => {
                     onBlur={() => onNameChange(value)}
                 />
             </Grid>
-            {match.path === PATHS.recipeCreate && (
-                <Grid item xs={12}>
-                    <Typography component="span" color="textSecondary">
-                        Ein Rezept sollte mindestens einen Namen und Kategorie aufweisen. Nach
-                        erfolgter Speicherung ist die Änderung des Rezeptnamens nicht mehr möglich.
-                    </Typography>
-                </Grid>
-            )}
+            <Grid item xs={12}>
+                <Typography component="span" color="textSecondary">
+                    Ein Rezept sollte mindestens einen Namen und Kategorie aufweisen. Nach erfolgter
+                    Speicherung ist die Änderung des Rezeptnamens nicht mehr möglich. Erfolgt eine
+                    Verknüpfung zu einer Idee, so wird diese nach dem Speichern des Rezepts
+                    gelöscht.
+                </Typography>
+            </Grid>
         </Grid>
     )
 }

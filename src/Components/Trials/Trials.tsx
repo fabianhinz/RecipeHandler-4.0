@@ -165,8 +165,8 @@ const Trials = () => {
 
                 <Grid item xs={12}>
                     <Grid container spacing={3}>
-                        {[...pagedTrials.values()].map((trial, index) => (
-                            <TrialsCard index={index} trial={trial} key={trial.name} />
+                        {[...pagedTrials.values()].map(trial => (
+                            <TrialsCard trial={trial} key={trial.name} />
                         ))}
 
                         <Skeletons variant="trial" visible={querying && pagedTrials.size === 0} />

@@ -5,7 +5,7 @@ import React from 'react'
 import { useGridContext } from '../Provider/GridProvider'
 
 interface Props {
-    variant: 'recipe' | 'trial' | 'cookCounter' | 'search' | 'bookmark'
+    variant: 'recipe' | 'trial' | 'cookCounter' | 'search' | 'bookmark' | 'recipeTrial'
     visible: boolean
     numberOfSkeletons?: number
 }
@@ -29,6 +29,10 @@ const useStyles = makeStyles(theme =>
                 height: 224,
             },
             width: '100%',
+        },
+        recipeTrial: {
+            width: 320,
+            height: 180,
         },
         trial: {
             [theme.breakpoints.down('sm')]: {
@@ -77,19 +81,8 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
 
     return (
         <>
-            {variant !== 'search'
+            {variant === 'search'
                 ? new Array(numberOfSkeletons || 12).fill(1).map((_skeleton, index) => (
-                      <Grid {...gridBreakpointProps} item key={index}>
-                          <Grid container spacing={2} justify="space-between" alignItems="center">
-                              <Grid xs={12} item>
-                                  <Card>
-                                      <Skeleton className={classes[variant]} variant="rect" />
-                                  </Card>
-                              </Grid>
-                          </Grid>
-                      </Grid>
-                  ))
-                : new Array(numberOfSkeletons || 12).fill(1).map((_skeleton, index) => (
                       <ListItem key={index}>
                           <ListItemText
                               primary={<Skeleton width="30%" />}
@@ -101,6 +94,17 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
                               }
                           />
                       </ListItem>
+                  ))
+                : new Array(numberOfSkeletons || 12).fill(1).map((_skeleton, index) => (
+                      <Grid {...gridBreakpointProps} item key={index}>
+                          <Grid container spacing={2} justify="space-between" alignItems="center">
+                              <Grid xs={12} item>
+                                  <Card>
+                                      <Skeleton className={classes[variant]} variant="rect" />
+                                  </Card>
+                              </Grid>
+                          </Grid>
+                      </Grid>
                   ))}
         </>
     )

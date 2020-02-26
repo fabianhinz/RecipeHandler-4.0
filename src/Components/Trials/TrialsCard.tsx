@@ -9,7 +9,9 @@ import {
     Slide,
     Tooltip,
 } from '@material-ui/core'
+import CheckIcon from '@material-ui/icons/Check'
 import DeleteIcon from '@material-ui/icons/Delete'
+import clsx from 'clsx'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 
@@ -30,6 +32,7 @@ const useStyles = makeStyles(theme =>
             paddingTop: '56.25%', // 16:9,
         },
         card: {
+            minWidth: 320,
             position: 'relative',
         },
         actions: {
@@ -37,15 +40,36 @@ const useStyles = makeStyles(theme =>
             bottom: theme.spacing(1),
             right: theme.spacing(1),
         },
+        selectionCard: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: theme.palette.secondary.main,
+            opacity: 0,
+            transition: theme.transitions.create('opacity', {
+                duration: theme.transitions.duration.standard,
+            }),
+        },
+        selectionCardActive: {
+            zIndex: 2,
+            opacity: 1,
+        },
     })
 )
 
 interface Props {
     trial: Trial
-    index: number
+    onClick?: (trial: Trial) => void
+    selected?: boolean
+    loadSmallAttachment?: boolean
 }
 
-const TrialsCard = ({ trial, index }: Props) => {
+const TrialsCard = ({ trial, onClick, selected, loadSmallAttachment }: Props) => {
     const [deleteAlert, setDeleteAlert] = useState(false)
     const [dataUrls, setDataUrls] = useState<AllDataUrls | undefined>()
 
@@ -86,17 +110,39 @@ const TrialsCard = ({ trial, index }: Props) => {
 
     return (
         <>
-            <Grid item {...gridBreakpointProps} key={trial.name}>
+            <Grid item {...gridBreakpointProps}>
                 <Card className={classes.card}>
-                    <AccountChip uid={trial.editorUid} position="absolute" placement="top" />
+                    <AccountChip
+                        uid={trial.editorUid}
+                        enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
+                            trial.createdDate
+                        ).toLocaleDateString()}`}
+                        position="absolute"
+                        placement="top"
+                    />
 
                     <CardActionArea
                         disabled={!dataUrls}
                         onClick={() => {
-                            if (dataUrls) setSelectedAttachment({ dataUrl: dataUrls.fullDataUrl })
+                            // custom onClick handler, by default we open the Trial in a Modal
+                            if (onClick) onClick(trial)
+                            else if (dataUrls)
+                                setSelectedAttachment({ dataUrl: dataUrls.fullDataUrl })
                         }}>
+                        <Card
+                            className={clsx(
+                                classes.selectionCard,
+                                selected && classes.selectionCardActive
+                            )}>
+                            <CheckIcon fontSize="large" />
+                        </Card>
+
                         <CardMedia
-                            image={dataUrls && dataUrls.mediumDataUrl}
+                            image={
+                                loadSmallAttachment
+                                    ? dataUrls?.smallDataUrl
+                                    : dataUrls?.mediumDataUrl
+                            }
                             className={classes.img}>
                             {/* make mui happy */}
                             <></>
