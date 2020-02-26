@@ -9,13 +9,15 @@ import {
     Paper,
     Typography,
 } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
 
 import useDebounce from '../../hooks/useDebounce'
 import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
 import { ReactComponent as Logo } from '../../icons/logo.svg'
 import { Hit, Hits } from '../../model/model'
-import { index } from '../../services/algolia'
+import algolia from '../../services/algolia'
+import { BORDER_RADIUS } from '../../theme'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
@@ -48,6 +50,9 @@ const useStyles = makeStyles(theme =>
             zIndex: theme.zIndex.modal,
             boxShadow: theme.shadows[2],
         },
+        alert: {
+            borderRadius: BORDER_RADIUS,
+        },
     })
 )
 
@@ -76,7 +81,7 @@ const Search = () => {
 
     useEffect(() => {
         if (debouncedValue.length > 0) {
-            index
+            algolia
                 .search<Hit>(debouncedValue, {
                     advancedSyntax: user && user.algoliaAdvancedSyntax ? true : false,
                 })
@@ -139,6 +144,12 @@ const Search = () => {
                         ))}
                         <Skeletons variant="search" visible={loading} numberOfSkeletons={3} />
                     </List>
+
+                    {results.length >= 20 && (
+                        <Alert className={classes.alert} color="info">
+                            Für weitere Ergebnisse Suche detaillieren
+                        </Alert>
+                    )}
 
                     <NotFound visible={!loading && results.length === 0 && value.length > 0} />
 
