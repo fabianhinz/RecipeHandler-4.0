@@ -73,7 +73,7 @@ const AccountListItem = ({ uid, onChange, checked, variant }: Props) => {
             : {
                   secondary:
                       recipesCounter === null ? (
-                          <Skeleton width="30%" variant="text" />
+                          <Skeleton width="5rem" variant="text" />
                       ) : (
                           `${recipesCounter} ${recipesCounter === 1 ? 'Rezept' : 'Rezepte'}`
                       ),
