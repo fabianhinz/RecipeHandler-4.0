@@ -1,5 +1,6 @@
 import {
     Avatar,
+    Button,
     Container,
     createStyles,
     Drawer,
@@ -44,15 +45,12 @@ const useStyles = makeStyles(theme =>
             justifyContent: 'center',
             marginBottom: theme.spacing(2),
         },
-        filterFab: {
+        btn: {
             fontFamily: 'Ubuntu',
             textTransform: 'unset',
             [theme.breakpoints.only('xs')]: {
                 width: '100% !important',
             },
-        },
-        filterFabIcon: {
-            marginRight: theme.spacing(0.5),
         },
     })
 )
@@ -75,16 +73,16 @@ const CategorySelection = ({ onCategoryChange, selectedCategories, header, fabLa
 
     return (
         <>
-            <Fab
+            <Button
                 color={selectedCategories.size > 0 ? 'secondary' : 'default'}
                 onClick={openDrawer}
                 disabled={categoriesLoading}
-                variant="extended"
-                size="medium"
-                className={classes.filterFab}>
-                <Filter className={classes.filterFabIcon} />
+                variant="contained"
+                size="large"
+                startIcon={<Filter />}
+                className={classes.btn}>
                 {fabLabel}
-            </Fab>
+            </Button>
 
             <Drawer
                 BackdropProps={{ invisible: true }}

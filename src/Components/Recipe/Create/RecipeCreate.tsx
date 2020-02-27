@@ -14,6 +14,7 @@ import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import EntryGridContainer from '../../Shared/EntryGridContainer'
 import StyledCard from '../../Shared/StyledCard'
+import TesseractSelection from '../../Tesseract/TesseractSelection'
 import TrialsSelection from '../../Trials/TrialsSelection'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
@@ -108,6 +109,9 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
 
                     <Grid item xs={12}>
                         <Grid container spacing={2}>
+                            <Grid item xs={12} sm="auto">
+                                <TesseractSelection />
+                            </Grid>
                             <Grid item xs={12} sm="auto">
                                 <TrialsSelection
                                     selectedTrial={state.selectedTrial}

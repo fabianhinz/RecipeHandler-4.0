@@ -1,4 +1,4 @@
-import { createStyles, Drawer, Fab, Grid, makeStyles } from '@material-ui/core'
+import { Button, createStyles, Drawer, Grid, makeStyles } from '@material-ui/core'
 import { Lightbulb } from 'mdi-material-ui'
 import React, { useEffect, useState } from 'react'
 
@@ -10,13 +10,10 @@ import TrialsCard from './TrialsCard'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        trialsFab: {
+        btn: {
             fontFamily: 'Ubuntu',
             textTransform: 'unset',
             width: '100% !important',
-        },
-        trialsFabIcon: {
-            marginRight: theme.spacing(0.5),
         },
         containerSelectionWrapper: {
             // ? about the same height as BackgroundIcon
@@ -69,14 +66,15 @@ const TrialsSelection = ({ selectedTrial, onSelectedTrialChange }: Props) => {
 
     return (
         <>
-            <Fab
+            <Button
                 onClick={openDrawer}
-                variant="extended"
-                size="medium"
+                variant="contained"
+                size="large"
+                startIcon={<Lightbulb />}
                 color={selectedTrial ? 'secondary' : 'default'}
-                className={classes.trialsFab}>
-                <Lightbulb className={classes.trialsFabIcon} /> Idee verknüpfen
-            </Fab>
+                className={classes.btn}>
+                Idee verknüpfen
+            </Button>
 
             <Drawer
                 PaperProps={{ className: classes.drawerPaper }}
