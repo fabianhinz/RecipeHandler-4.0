@@ -38,6 +38,7 @@
 		"react-scripts": "^3.4.0",
 		"react-swipeable-views": "^0.13.9",
 		"stacktrace-js": "^2.0.2",
+		"tesseract.js": "^2.0.2",
 		"typeface-roboto": "0.0.75",
 		"typescript": "3.8.2",
 		"web-animations-js": "^2.3.2"
