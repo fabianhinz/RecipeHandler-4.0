@@ -4,7 +4,6 @@ import {
     Container,
     createStyles,
     Drawer,
-    Fab,
     Grid,
     IconButton,
     List,
