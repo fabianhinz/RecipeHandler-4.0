@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme =>
         },
         drawerPaper: {
             padding: theme.spacing(2),
+            paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
             '&::-webkit-scrollbar': {
                 display: 'none',
             },
@@ -88,10 +89,12 @@ const TrialsSelection = ({ selectedTrial, onSelectedTrialChange }: Props) => {
                 <Grid container spacing={2} wrap="nowrap">
                     {trials.map(trial => (
                         <TrialsCard
-                            loadSmallAttachment
-                            selected={trial.name === selectedTrial?.name}
+                            selectionProps={{
+                                loadSmallAttachment: true,
+                                selected: trial.name === selectedTrial?.name,
+                                onClick: handleTrialCardClick,
+                            }}
                             key={trial.name}
-                            onClick={handleTrialCardClick}
                             trial={trial}
                         />
                     ))}
