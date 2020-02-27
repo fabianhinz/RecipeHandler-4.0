@@ -59,17 +59,23 @@ const useStyles = makeStyles(theme =>
             zIndex: 2,
             opacity: 1,
         },
+        selectionCheckIcon: {
+            color: theme.palette.getContrastText(theme.palette.secondary.main),
+        },
     })
 )
 
 interface Props {
     trial: Trial
-    onClick?: (trial: Trial) => void
-    selected?: boolean
-    loadSmallAttachment?: boolean
+    // ? selectionProps are used to overwrite the default click behaviour and also result in some layout changes
+    selectionProps?: {
+        onClick: (trial: Trial) => void
+        selected?: boolean
+        loadSmallAttachment?: boolean
+    }
 }
 
-const TrialsCard = ({ trial, onClick, selected, loadSmallAttachment }: Props) => {
+const TrialsCard = ({ trial, selectionProps }: Props) => {
     const [deleteAlert, setDeleteAlert] = useState(false)
     const [dataUrls, setDataUrls] = useState<AllDataUrls | undefined>()
 
@@ -124,22 +130,21 @@ const TrialsCard = ({ trial, onClick, selected, loadSmallAttachment }: Props) =>
                     <CardActionArea
                         disabled={!dataUrls}
                         onClick={() => {
-                            // custom onClick handler, by default we open the Trial in a Modal
-                            if (onClick) onClick(trial)
+                            if (selectionProps) selectionProps.onClick(trial)
                             else if (dataUrls)
                                 setSelectedAttachment({ dataUrl: dataUrls.fullDataUrl })
                         }}>
                         <Card
                             className={clsx(
                                 classes.selectionCard,
-                                selected && classes.selectionCardActive
+                                selectionProps?.selected && classes.selectionCardActive
                             )}>
-                            <CheckIcon fontSize="large" />
+                            <CheckIcon className={classes.selectionCheckIcon} fontSize="large" />
                         </Card>
 
                         <CardMedia
                             image={
-                                loadSmallAttachment
+                                selectionProps?.loadSmallAttachment
                                     ? dataUrls?.smallDataUrl
                                     : dataUrls?.mediumDataUrl
                             }
@@ -149,7 +154,7 @@ const TrialsCard = ({ trial, onClick, selected, loadSmallAttachment }: Props) =>
                         </CardMedia>
                     </CardActionArea>
 
-                    {user && (
+                    {user && !selectionProps && (
                         <Slide direction="up" in>
                             <Grid
                                 container
