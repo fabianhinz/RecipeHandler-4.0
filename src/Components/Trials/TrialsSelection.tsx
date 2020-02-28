@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import SelectionDrawer from '../Shared/SelectionDrawer'
 import Skeletons from '../Shared/Skeletons'
 import TrialsCard from './TrialsCard'
@@ -19,20 +18,17 @@ const TrialsSelection = ({ selectedTrial, onSelectedTrialChange }: Props) => {
     const [shouldLoad, setShouldLoad] = useState(false)
     const [trials, setTrials] = useState<Trial[]>([])
 
-    const { user } = useFirebaseAuthContext()
-
     useEffect(() => {
-        if (!user || !shouldLoad) return
+        if (!shouldLoad) return
 
         return FirebaseService.firestore
             .collection('trials')
             .orderBy('createdDate', 'desc')
-            .where('editorUid', '==', user.uid)
             .onSnapshot(querySnapshot => {
                 setLoading(false)
                 setTrials(querySnapshot.docs.map(doc => doc.data() as Trial))
             })
-    }, [shouldLoad, user])
+    }, [shouldLoad])
 
     const handleTrialCardClick = (trial: Trial) => {
         if (trial.name !== selectedTrial?.name) onSelectedTrialChange(trial)

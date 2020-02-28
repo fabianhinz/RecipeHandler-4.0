@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme =>
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
+            overflow: 'hidden',
         },
         header: {
             padding: theme.spacing(1),
@@ -31,12 +32,13 @@ const useStyles = makeStyles(theme =>
             paddingTop: 0,
             maxHeight: '100%',
             overflowY: 'auto',
+            overflowX: 'hidden',
         },
         action: {
             display: 'flex',
             justifyContent: 'center',
             padding: theme.spacing(1),
-            paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
+            paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
         },
     })
 )

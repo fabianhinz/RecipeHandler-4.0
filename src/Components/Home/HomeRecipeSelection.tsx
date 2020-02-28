@@ -60,7 +60,7 @@ const HomeRecipeSelection = ({
                     selectedCategories={selectedCategories}
                     label="Filter"
                     header={
-                        <Grid justify="center" wrap="nowrap" container spacing={2}>
+                        <Grid wrap="nowrap" container spacing={2}>
                             <Grid item xs={12}>
                                 <Button
                                     fullWidth
