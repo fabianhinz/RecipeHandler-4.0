@@ -73,7 +73,8 @@ const sharedTheme: Partial<ThemeOptions> = {
         },
         MuiTooltip: {
             tooltip: {
-                fontSize: '0.725rem',
+                fontSize: '0.825rem',
+                fontWeight: 400,
             },
         },
         MuiTypography: {
