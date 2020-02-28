@@ -47,9 +47,6 @@ const useStyles = makeStyles(theme =>
         btn: {
             fontFamily: 'Ubuntu',
             textTransform: 'unset',
-            [theme.breakpoints.only('xs')]: {
-                width: '100% !important',
-            },
         },
     })
 )
@@ -79,7 +76,8 @@ const CategorySelection = ({ onCategoryChange, selectedCategories, header, fabLa
                 variant="contained"
                 size="large"
                 startIcon={<Filter />}
-                className={classes.btn}>
+                className={classes.btn}
+                fullWidth>
                 {fabLabel}
             </Button>
 

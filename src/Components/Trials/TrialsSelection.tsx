@@ -13,7 +13,6 @@ const useStyles = makeStyles(theme =>
         btn: {
             fontFamily: 'Ubuntu',
             textTransform: 'unset',
-            width: '100% !important',
         },
         containerSelectionWrapper: {
             // ? about the same height as BackgroundIcon
@@ -72,7 +71,8 @@ const TrialsSelection = ({ selectedTrial, onSelectedTrialChange }: Props) => {
                 size="large"
                 startIcon={<Lightbulb />}
                 color={selectedTrial ? 'secondary' : 'default'}
-                className={classes.btn}>
+                className={classes.btn}
+                fullWidth>
                 Idee verknüpfen
             </Button>
 

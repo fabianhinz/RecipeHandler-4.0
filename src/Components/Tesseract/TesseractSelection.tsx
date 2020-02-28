@@ -7,7 +7,6 @@ const useStyles = makeStyles(() =>
         btn: {
             fontFamily: 'Ubuntu',
             textTransform: 'unset',
-            width: '100% !important',
         },
     })
 )
@@ -20,6 +19,7 @@ const TesseractSelection = () => {
                 size="large"
                 variant="contained"
                 startIcon={<ImageSearch />}
+                fullWidth
                 className={classes.btn}>
                 Einscannen
             </Button>
