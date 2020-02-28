@@ -16,8 +16,13 @@ const useStyles = makeStyles(theme =>
             textTransform: 'unset',
         },
         paper: {
-            paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
-            minWidth: 320,
+            paddingTop: 'calc(env(safe-area-inset-top) + 8px)',
+            [theme.breakpoints.between('xs', 'sm')]: {
+                minWidth: 320,
+            },
+            [theme.breakpoints.up('md')]: {
+                minWidth: 480,
+            },
             width: '33vw',
             display: 'flex',
             flexDirection: 'column',
@@ -28,6 +33,7 @@ const useStyles = makeStyles(theme =>
             padding: theme.spacing(1),
         },
         container: {
+            flexGrow: 1,
             padding: theme.spacing(2),
             paddingTop: 0,
             maxHeight: '100%',
@@ -36,7 +42,7 @@ const useStyles = makeStyles(theme =>
         },
         action: {
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'space-evenly',
             padding: theme.spacing(1),
             paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
         },
@@ -49,11 +55,12 @@ interface Props {
     buttonProps: Omit<ButtonProps, 'children'> & { label: React.ReactText; highlight?: boolean }
     children: React.ReactNode | RenderProp
     header?: React.ReactNode
+    action?: React.ReactNode
     onOpen?: () => void
     onClose?: () => void
 }
 
-const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose }: Props) => {
+const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose, action }: Props) => {
     const [open, setOpen] = useState(false)
     const prevOpen = useRef(open)
 
@@ -100,6 +107,7 @@ const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose }: Pro
                     <IconButton onClick={closeDrawer}>
                         <CloseIcon />
                     </IconButton>
+                    <div onClick={closeDrawer}>{action}</div>
                 </div>
             </Drawer>
         </>

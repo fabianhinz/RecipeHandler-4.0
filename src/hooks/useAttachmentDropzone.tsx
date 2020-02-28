@@ -65,7 +65,6 @@ export const useAttachmentDropzone = ({
 
             const newAttachments: Array<AttachmentDoc & DataUrl> = []
             for (const file of acceptedFiles) {
-                console.log(attachmentMaxSize || 1)
                 const compressedFile: Blob = await compressImage(file, {
                     maxSizeMB: attachmentMaxSize || 1,
                     maxWidthOrHeight: attachmentMaxWidth,
