@@ -50,7 +50,7 @@ const RecipeCreateIngredients = ({ amount, ingredients, onIngredientsChange, dis
                     </Button>
                 }
                 BackgroundIcon={AssignmentIcon}>
-                <MarkdownInput defaultValue={ingredients} onChange={onIngredientsChange} />
+                <MarkdownInput outerValue={ingredients} onChange={onIngredientsChange} />
             </StyledCard>
 
             <Popover

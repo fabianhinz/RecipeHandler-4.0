@@ -1,7 +1,6 @@
 import {
     Chip,
     createStyles,
-    Fab,
     Grid,
     IconButton,
     makeStyles,
@@ -25,7 +24,6 @@ import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
 import { isSafari } from '../../util/constants'
 import AccountChip from '../Account/AccountChip'
-import { useBreakpointsContext } from './BreakpointsProvider'
 import { useRouterContext } from './RouterProvider'
 
 interface AnimationHandler {
@@ -193,7 +191,6 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
     const theme = useTheme()
 
     const { location } = useRouterContext()
-    const { isMobile } = useBreakpointsContext()
 
     useEffect(() => {
         if (!attachments || attachments.length === 0) return
@@ -370,12 +367,11 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
         <>
             <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
             <div className={clsx(classes.background, originId && classes.backgroundVisible)}>
-                <Fab
-                    size={isMobile ? 'small' : 'large'}
+                <IconButton
                     onClick={() => setActiveAttachment(prev => --prev)}
                     disabled={activeAttachment === 0}>
                     <ChevronLeft />
-                </Fab>
+                </IconButton>
                 <div id="destination" className={classes.destination}>
                     {attachments && (
                         <SwipeableViews disabled index={activeAttachment}>
@@ -385,12 +381,11 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
                         </SwipeableViews>
                     )}
                 </div>
-                <Fab
-                    size={isMobile ? 'small' : 'large'}
+                <IconButton
                     onClick={() => setActiveAttachment(prev => ++prev)}
                     disabled={attachments && activeAttachment === attachments.length - 1}>
                     <ChevronRight />
-                </Fab>
+                </IconButton>
 
                 <Grid className={classes.btnContainer} container justify="flex-end" spacing={1}>
                     <Grid item>

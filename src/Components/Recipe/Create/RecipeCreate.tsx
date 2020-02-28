@@ -14,6 +14,7 @@ import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import EntryGridContainer from '../../Shared/EntryGridContainer'
 import StyledCard from '../../Shared/StyledCard'
+import TesseractSelection, { TesseractResults } from '../../Tesseract/TesseractSelection'
 import TrialsSelection from '../../Trials/TrialsSelection'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
@@ -79,6 +80,10 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         }
     }
 
+    const handleTesseractSave = (results: TesseractResults) => {
+        results.forEach(result => dispatch({ type: 'tesseractResultSave', result }))
+    }
+
     return (
         <>
             {state.preview && user ? (
@@ -109,6 +114,9 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     <Grid item xs={12}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm="auto">
+                                <TesseractSelection onSave={handleTesseractSave} />
+                            </Grid>
+                            <Grid item xs={12} sm="auto">
                                 <TrialsSelection
                                     selectedTrial={state.selectedTrial}
                                     onSelectedTrialChange={selectedTrial =>
@@ -118,7 +126,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             </Grid>
                             <Grid item xs={12} sm="auto">
                                 <CategorySelection
-                                    fabLabel="Kategorien auswählen"
+                                    label="Kategorien auswählen"
                                     selectedCategories={selectedCategories}
                                     onCategoryChange={setSelectedCategories}
                                 />

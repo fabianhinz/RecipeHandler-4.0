@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme =>
 )
 
 interface Props {
-    defaultValue: string
+    outerValue: string
     onChange: (value: string) => void
 }
 
@@ -57,8 +57,8 @@ const MARKDOWN: Record<Format, string> = {
 
 const FORMAT_REGEXP = /(?<bold>^\*{2}.*\*{2}$)|(?<italic>^_{1}.*_{1}$)|(?<strikethrough>^~{2}.*~{2}$)|(?<bulletedList>^-\s.*)|(?<numberedList>^\d{1,}.\s.*)|(?<h1>^#\s.*)|(?<h2>^#{2}\s.*)|(?<h3>^#{3}\s.*)|(?<h4>^#{4}\s.*)/g
 
-const MarkdownInput = ({ defaultValue, onChange }: Props) => {
-    const [value, setValue] = useState(defaultValue)
+const MarkdownInput = ({ outerValue, onChange }: Props) => {
+    const [value, setValue] = useState('')
     const [inFocus, setInFocus] = useState(false)
     const [formattingDisabled, setFormattingDisabled] = useState(false)
 
@@ -69,6 +69,10 @@ const MarkdownInput = ({ defaultValue, onChange }: Props) => {
 
     const classes = useStyles()
     const theme = useTheme()
+
+    useEffect(() => {
+        setValue(outerValue)
+    }, [outerValue])
 
     useEffect(() => {
         const handleSelectionChange = () => {

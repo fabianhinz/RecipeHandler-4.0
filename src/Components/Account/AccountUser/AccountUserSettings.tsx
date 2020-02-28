@@ -28,6 +28,7 @@ import {
 import React, { useState } from 'react'
 
 import { User } from '../../../model/model'
+import { isSafari } from '../../../util/constants'
 import { useGridContext } from '../../Provider/GridProvider'
 import StyledCard from '../../Shared/StyledCard'
 import { UserSettingChangeHandler } from './AccountUser'
@@ -56,7 +57,10 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                     }
                     BackgroundIcon={SettingsOutline}>
                     <List disablePadding>
-                        <ListItem button onClick={onUserSettingChange('muiTheme')}>
+                        <ListItem
+                            disabled={isSafari}
+                            button
+                            onClick={onUserSettingChange('muiTheme')}>
                             <ListItemIcon>
                                 {user.muiTheme === 'dynamic' ? (
                                     <DynamicThemeIcon />
@@ -75,7 +79,9 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                                             gutterBottom
                                             variant="body2"
                                             color="textSecondary">
-                                            {user.muiTheme === 'dynamic'
+                                            {isSafari
+                                                ? 'nicht unterstützt'
+                                                : user.muiTheme === 'dynamic'
                                                 ? 'Dynamisch'
                                                 : user.muiTheme === 'dark'
                                                 ? 'Dunkel'

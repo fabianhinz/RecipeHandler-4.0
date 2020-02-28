@@ -1,6 +1,7 @@
 import {
     createStyles,
     Divider,
+    Drawer,
     Grid,
     Hidden,
     IconButton,
@@ -10,7 +11,6 @@ import {
     ListItemText,
     makeStyles,
     Paper,
-    SwipeableDrawer,
     Tooltip,
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
@@ -166,12 +166,10 @@ const Header = () => {
             </header>
 
             <Hidden mdUp>
-                <SwipeableDrawer
+                <Drawer
                     anchor="right"
                     open={drawer}
                     classes={{ paper: classes.drawerPaper }}
-                    disableSwipeToOpen={false}
-                    onOpen={openDrawer}
                     onClose={closeDrawer}>
                     {AlgoliaDocSearchRef}
                     <List onClick={closeDrawer}>
@@ -220,7 +218,7 @@ const Header = () => {
                             <ListItemText primary="Impressum" />
                         </ListItem>
                     </List>
-                </SwipeableDrawer>
+                </Drawer>
             </Hidden>
         </>
     )

@@ -1,4 +1,4 @@
-import { Fab, Grid } from '@material-ui/core'
+import { Grid, IconButton } from '@material-ui/core'
 import { ChevronLeft, ChevronRight } from 'mdi-material-ui'
 import React, { useState } from 'react'
 
@@ -49,20 +49,18 @@ const useScrollButtons = ({ element, delta, disabled }: useScrollButtonsOptions)
         ScrollButtons: () => (
             <Grid container spacing={1} justify="flex-end" alignItems="center" wrap="nowrap">
                 <Grid item>
-                    <Fab
-                        size="small"
+                    <IconButton
                         disabled={scrollLeftDisabled || gridLayout === 'list' || disabled}
                         onClick={handleScrollLeft}>
                         <ChevronLeft />
-                    </Fab>
+                    </IconButton>
                 </Grid>
                 <Grid item>
-                    <Fab
-                        size="small"
+                    <IconButton
                         disabled={scrollRightDisabled || gridLayout === 'list' || disabled}
                         onClick={handleScrollRight}>
                         <ChevronRight />
-                    </Fab>
+                    </IconButton>
                 </Grid>
             </Grid>
         ),

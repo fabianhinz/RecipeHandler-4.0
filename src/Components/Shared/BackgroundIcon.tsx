@@ -12,12 +12,14 @@ const useStyles = makeStyles(theme =>
             left: 0,
             width: '100vw',
             height: '40vh',
-            backgroundImage: 'linear-gradient(90deg, #74B276 30%,#81c784 70%)',
+            backgroundImage: `linear-gradient(90deg,${
+                theme.palette.type === 'light' ? '#8EDB91' : '#74B377'
+            } 30%,#81c784 70%)`,
             padding: theme.spacing(1),
         },
         icon: {
             opacity: 0.9,
-            filter: 'brightness(90%)',
+            filter: theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
             height: '100%',
         },
     })

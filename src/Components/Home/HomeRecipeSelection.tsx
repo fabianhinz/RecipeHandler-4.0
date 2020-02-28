@@ -58,10 +58,10 @@ const HomeRecipeSelection = ({
                 <CategorySelection
                     onCategoryChange={onSelectedCategoriesChange}
                     selectedCategories={selectedCategories}
-                    fabLabel="Filter"
+                    label="Filter"
                     header={
-                        <Grid justify="center" wrap="nowrap" container spacing={2}>
-                            <Grid item xs={6} md={4} lg={2}>
+                        <Grid wrap="nowrap" container spacing={2}>
+                            <Grid item xs={12}>
                                 <Button
                                     fullWidth
                                     variant="outlined"
@@ -78,7 +78,7 @@ const HomeRecipeSelection = ({
                                     Name
                                 </Button>
                             </Grid>
-                            <Grid item xs={6} md={4} lg={2}>
+                            <Grid item xs={12}>
                                 <Button
                                     fullWidth
                                     variant="outlined"
