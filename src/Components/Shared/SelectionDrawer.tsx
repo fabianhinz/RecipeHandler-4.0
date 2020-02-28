@@ -36,6 +36,7 @@ const useStyles = makeStyles(theme =>
             display: 'flex',
             justifyContent: 'center',
             padding: theme.spacing(1),
+            paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
         },
     })
 )
