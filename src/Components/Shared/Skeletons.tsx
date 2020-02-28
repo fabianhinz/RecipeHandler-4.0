@@ -1,4 +1,13 @@
-import { Card, createStyles, Grid, ListItem, ListItemText, makeStyles } from '@material-ui/core'
+import {
+    Card,
+    createStyles,
+    Grid,
+    GridSize,
+    ListItem,
+    ListItemText,
+    makeStyles,
+} from '@material-ui/core'
+import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 
@@ -31,8 +40,8 @@ const useStyles = makeStyles(theme =>
             width: '100%',
         },
         recipeTrial: {
-            width: 320,
-            height: 180,
+            width: 460,
+            height: 260,
         },
         trial: {
             [theme.breakpoints.down('sm')]: {
@@ -79,6 +88,9 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
 
     if (!visible) return <></>
 
+    const variantAvareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
+        variant === 'recipeTrial' ? { xs: 12 } : gridBreakpointProps
+
     return (
         <>
             {variant === 'search'
@@ -96,7 +108,7 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
                       </ListItem>
                   ))
                 : new Array(numberOfSkeletons || 12).fill(1).map((_skeleton, index) => (
-                      <Grid {...gridBreakpointProps} item key={index}>
+                      <Grid {...variantAvareBreakpoints} item key={index}>
                           <Grid container spacing={2} justify="space-between" alignItems="center">
                               <Grid xs={12} item>
                                   <Card>

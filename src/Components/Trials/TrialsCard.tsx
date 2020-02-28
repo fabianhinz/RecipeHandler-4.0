@@ -5,10 +5,12 @@ import {
     createStyles,
     Fab,
     Grid,
+    GridSize,
     makeStyles,
     Slide,
     Tooltip,
 } from '@material-ui/core'
+import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import CheckIcon from '@material-ui/icons/Check'
 import DeleteIcon from '@material-ui/icons/Delete'
 import clsx from 'clsx'
@@ -32,13 +34,13 @@ const useStyles = makeStyles(theme =>
             paddingTop: '56.25%', // 16:9,
         },
         card: {
-            minWidth: 320,
             position: 'relative',
         },
         actions: {
             position: 'absolute',
             bottom: theme.spacing(1),
             right: theme.spacing(1),
+            width: 'fit-content',
         },
         selectionCard: {
             position: 'absolute',
@@ -61,6 +63,7 @@ const useStyles = makeStyles(theme =>
         },
         selectionCheckIcon: {
             color: theme.palette.getContrastText(theme.palette.secondary.main),
+            fontSize: theme.typography.pxToRem(60),
         },
     })
 )
@@ -114,9 +117,14 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
         }
     }
 
+    const selectionAwareBreakpoints: Partial<Record<
+        Breakpoint,
+        boolean | GridSize
+    >> = selectionProps ? { xs: 12 } : gridBreakpointProps
+
     return (
         <>
-            <Grid item {...gridBreakpointProps}>
+            <Grid item {...selectionAwareBreakpoints}>
                 <Card className={classes.card}>
                     <AccountChip
                         uid={trial.editorUid}
@@ -139,22 +147,16 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
                                 classes.selectionCard,
                                 selectionProps?.selected && classes.selectionCardActive
                             )}>
-                            <CheckIcon className={classes.selectionCheckIcon} fontSize="large" />
+                            <CheckIcon className={classes.selectionCheckIcon} />
                         </Card>
 
-                        <CardMedia
-                            image={
-                                selectionProps?.loadSmallAttachment
-                                    ? dataUrls?.smallDataUrl
-                                    : dataUrls?.mediumDataUrl
-                            }
-                            className={classes.img}>
+                        <CardMedia image={dataUrls?.mediumDataUrl} className={classes.img}>
                             {/* make mui happy */}
                             <></>
                         </CardMedia>
                     </CardActionArea>
 
-                    {user && !selectionProps && (
+                    {user && (
                         <Slide direction="up" in>
                             <Grid
                                 container
@@ -170,13 +172,15 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs="auto">
-                                    <Tooltip title="Löschen">
-                                        <Fab size="small" onClick={() => setDeleteAlert(true)}>
-                                            <DeleteIcon />
-                                        </Fab>
-                                    </Tooltip>
-                                </Grid>
+                                {!selectionProps && (
+                                    <Grid item xs="auto">
+                                        <Tooltip title="Löschen">
+                                            <Fab size="small" onClick={() => setDeleteAlert(true)}>
+                                                <DeleteIcon />
+                                            </Fab>
+                                        </Tooltip>
+                                    </Grid>
+                                )}
                             </Grid>
                         </Slide>
                     )}
