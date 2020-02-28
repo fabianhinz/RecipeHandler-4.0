@@ -6,6 +6,7 @@ import {
     Chip,
     createStyles,
     Grid,
+    IconButton,
     List,
     ListItem,
     ListItemIcon,
@@ -13,9 +14,10 @@ import {
     ListSubheader,
     makeStyles,
     Slide,
+    Tooltip,
     Typography,
 } from '@material-ui/core'
-import { Camera, ImageSearch } from 'mdi-material-ui'
+import { Camera, ContentSave, ImageSearch } from 'mdi-material-ui'
 import React, { useState } from 'react'
 
 import { Recipe } from '../../model/model'
@@ -31,6 +33,7 @@ const useStyles = makeStyles(theme =>
         actionContainer: {
             display: 'flex',
             justifyContent: 'center',
+            marginBottom: theme.spacing(1),
         },
         actionCameraIcon: {
             color: theme.palette.getContrastText(theme.palette.secondary.main),
@@ -47,8 +50,13 @@ const useStyles = makeStyles(theme =>
 
 type RecipeParts = keyof Pick<Recipe, 'ingredients' | 'description'> | undefined
 type Item = string
+export type TesseractResult = { item: Item; recipePart: RecipeParts }
+export type TesseractResults = TesseractResult[]
+interface Props {
+    onSave: (results: TesseractResults) => void
+}
 
-const TesseractSelection = () => {
+const TesseractSelection = ({ onSave }: Props) => {
     const [checkedItems, setCheckedItems] = useState<Set<Item>>(new Set())
     const [memberOf, setMemberOf] = useState<Map<Item, RecipeParts>>(new Map())
 
@@ -87,6 +95,11 @@ const TesseractSelection = () => {
         )
     }
 
+    const getResult = () =>
+        [...memberOf.entries()]
+            .filter(([item]) => checkedItems.has(item))
+            .map(([item, recipePart]) => ({ item, recipePart } as TesseractResult))
+
     return (
         <SelectionDrawer
             buttonProps={{
@@ -113,33 +126,52 @@ const TesseractSelection = () => {
                     </Grid>
                 </Grid>
             }>
-            <div className={classes.actionContainer}>
-                <ButtonBase>
-                    <Avatar variant="rounded" className={classes.avatar}>
-                        <Camera className={classes.actionCameraIcon} />
-                    </Avatar>
-                </ButtonBase>
-            </div>
-            <ListSubheader className={classes.subheader}>Ergebnisse</ListSubheader>
-            <List>
-                {[
-                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam',
-                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyamdd',
-                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyamaa',
-                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyamffff',
-                ].map(item => (
-                    <ListItem button onClick={handleListItemClick(item)} disableGutters key={item}>
-                        <ListItemIcon>
-                            <Checkbox checked={checkedItems.has(item)} disableRipple />
-                        </ListItemIcon>
-                        <ListItemText
-                            disableTypography
-                            primary={<Typography noWrap>{item}</Typography>}
-                            secondary={renderChipByItem(item)}
-                        />
-                    </ListItem>
-                ))}
-            </List>
+            {closeDrawer => (
+                <>
+                    <div className={classes.actionContainer}>
+                        <ButtonBase>
+                            <Avatar variant="rounded" className={classes.avatar}>
+                                <Camera className={classes.actionCameraIcon} />
+                            </Avatar>
+                        </ButtonBase>
+                    </div>
+                    <ListSubheader className={classes.subheader}>
+                        Ergebnisse{' '}
+                        <Tooltip
+                            placement="left"
+                            title={checkedItems.size === 0 ? '' : 'In Rezept übernehmen'}>
+                            <div>
+                                <IconButton
+                                    onClick={() => {
+                                        onSave(getResult())
+                                        closeDrawer()
+                                    }}
+                                    disabled={checkedItems.size === 0}>
+                                    <ContentSave />
+                                </IconButton>
+                            </div>
+                        </Tooltip>
+                    </ListSubheader>
+                    <List>
+                        {['1', '2', '3'].map((item, index) => (
+                            <ListItem
+                                button
+                                onClick={handleListItemClick(item)}
+                                disableGutters
+                                key={index}>
+                                <ListItemIcon>
+                                    <Checkbox checked={checkedItems.has(item)} disableRipple />
+                                </ListItemIcon>
+                                <ListItemText
+                                    disableTypography
+                                    primary={<Typography noWrap>{item}</Typography>}
+                                    secondary={renderChipByItem(item)}
+                                />
+                            </ListItem>
+                        ))}
+                    </List>
+                </>
+            )}
         </SelectionDrawer>
     )
 }

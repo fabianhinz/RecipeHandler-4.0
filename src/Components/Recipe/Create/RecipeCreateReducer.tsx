@@ -1,6 +1,7 @@
 import { Reducer, useReducer } from 'react'
 
 import { Categories, Recipe, Trial } from '../../../model/model'
+import { TesseractResult } from '../../Tesseract/TesseractSelection'
 
 export interface RecipeCreateState {
     name: string
@@ -36,6 +37,7 @@ type Action =
     | { type: 'openRelatedRecipesDialog' }
     | { type: 'closeRelatedRecipesDialog' }
     | { type: 'selectedTrialChange'; selectedTrial?: Trial }
+    | { type: 'tesseractResultSave'; result: TesseractResult }
 
 const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
     switch (action.type) {
@@ -79,6 +81,13 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
         }
         case 'selectedTrialChange': {
             return { ...state, selectedTrial: action.selectedTrial }
+        }
+        case 'tesseractResultSave': {
+            const key = action.result.recipePart
+            if (!key) return state
+
+            if (state[key].length === 0) return { ...state, [key]: action.result.item }
+            else return { ...state, [key]: state[key] + '\n\n' + action.result.item }
         }
     }
 }

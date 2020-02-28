@@ -43,9 +43,11 @@ const useStyles = makeStyles(theme =>
     })
 )
 
+type RenderProp = (closeDrawer: () => void) => React.ReactNode
+
 interface Props {
     buttonProps: Omit<ButtonProps, 'children'> & { label: React.ReactText; highlight?: boolean }
-    children: React.ReactNode
+    children: React.ReactNode | RenderProp
     header?: React.ReactNode
     onOpen?: () => void
     onClose?: () => void
@@ -91,7 +93,9 @@ const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose }: Pro
                 anchor="right"
                 keepMounted>
                 {header && <div className={classes.header}>{header}</div>}
-                <div className={classes.container}>{children}</div>
+                <div className={classes.container}>
+                    {typeof children === 'function' ? children(closeDrawer) : children}
+                </div>
                 <div className={classes.action}>
                     <IconButton onClick={closeDrawer}>
                         <CloseIcon />

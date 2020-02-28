@@ -12,7 +12,7 @@ interface Props {
 const RecipeCreateDescription = ({ description, onDescriptionChange }: Props) => {
     return (
         <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
-            <MarkdownInput defaultValue={description} onChange={onDescriptionChange} />
+            <MarkdownInput outerValue={description} onChange={onDescriptionChange} />
         </StyledCard>
     )
 }
