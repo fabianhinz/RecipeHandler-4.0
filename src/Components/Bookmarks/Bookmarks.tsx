@@ -1,6 +1,6 @@
 import { createStyles, Grid, makeStyles, Tab, Tabs, Typography, useTheme } from '@material-ui/core'
-import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
-import BookIcon from '@material-ui/icons/BookTwoTone'
+import AssignmentIcon from '@material-ui/icons/Assignment'
+import BookIcon from '@material-ui/icons/Book'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'

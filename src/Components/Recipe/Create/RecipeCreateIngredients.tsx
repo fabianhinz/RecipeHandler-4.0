@@ -8,7 +8,7 @@ import {
     Typography,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/AddCircle'
-import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
+import AssignmentIcon from '@material-ui/icons/Assignment'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
 import React, { useState } from 'react'
 

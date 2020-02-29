@@ -10,9 +10,9 @@ import {
     makeStyles,
     TextField,
 } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/CloseTwoTone'
-import DeleteIcon from '@material-ui/icons/DeleteTwoTone'
-import SaveIcon from '@material-ui/icons/SaveTwoTone'
+import CloseIcon from '@material-ui/icons/Close'
+import DeleteIcon from '@material-ui/icons/Delete'
+import SaveIcon from '@material-ui/icons/Save'
 import clsx from 'clsx'
 import React, { FC, useEffect, useState } from 'react'
 

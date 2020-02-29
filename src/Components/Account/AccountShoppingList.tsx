@@ -208,7 +208,7 @@ const AccountUserShoppingList = () => {
                                                         }
                                                         variant="outlined"
                                                         fullWidth
-                                                        placeholder="Um Einträge ergänzen"
+                                                        placeholder="Ergänzen"
                                                     />
                                                 </form>
                                             )}

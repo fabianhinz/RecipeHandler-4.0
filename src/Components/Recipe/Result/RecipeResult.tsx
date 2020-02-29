@@ -1,6 +1,6 @@
 import { Grid } from '@material-ui/core'
-import AssignmentIcon from '@material-ui/icons/AssignmentTwoTone'
-import BookIcon from '@material-ui/icons/BookTwoTone'
+import AssignmentIcon from '@material-ui/icons/Assignment'
+import BookIcon from '@material-ui/icons/Book'
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
 import React, { memo } from 'react'
 

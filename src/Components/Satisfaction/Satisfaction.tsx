@@ -1,5 +1,5 @@
 import { Grid, Tooltip } from '@material-ui/core'
-import SatisfactionBackgroundIcon from '@material-ui/icons/SentimentVerySatisfied'
+import SatisfactionBackgroundIcon from '@material-ui/icons/SupervisedUserCircle'
 import { Rating } from '@material-ui/lab'
 import React, { ReactText, useCallback, useEffect, useMemo, useState } from 'react'
 

@@ -8,7 +8,7 @@ import {
     Typography,
     Zoom,
 } from '@material-ui/core'
-import CameraIcon from '@material-ui/icons/CameraTwoTone'
+import CameraIcon from '@material-ui/icons/Camera'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
 import React, { useCallback, useEffect, useState } from 'react'

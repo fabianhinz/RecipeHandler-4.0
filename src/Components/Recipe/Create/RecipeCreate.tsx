@@ -1,5 +1,5 @@
 import { Grid } from '@material-ui/core'
-import LabelIcon from '@material-ui/icons/LabelTwoTone'
+import LabelIcon from '@material-ui/icons/Label'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Prompt, RouteComponentProps } from 'react-router'
 
