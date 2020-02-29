@@ -107,7 +107,7 @@ const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose, actio
                     <IconButton onClick={closeDrawer}>
                         <CloseIcon />
                     </IconButton>
-                    <div onClick={closeDrawer}>{action}</div>
+                    {action && <div onClick={closeDrawer}>{action}</div>}
                 </div>
             </Drawer>
         </>
