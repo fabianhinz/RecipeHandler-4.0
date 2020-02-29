@@ -60,13 +60,12 @@ const useStyles = makeStyles(theme =>
             backgroundColor: '#81c784',
             transition: theme.transitions.create('height', {
                 duration: theme.transitions.duration.standard,
-                easing: theme.transitions.easing.sharp,
+                easing: theme.transitions.easing.easeIn,
             }),
         },
         progressHeight: {
             height: ({ progress }: StyleProps) => {
-                if (!progress) return '0%'
-                else if (progress === 1) return '0%'
+                if (!progress || progress === 0) return '0%'
                 else return `${progress * 100}%`
             },
         },
@@ -146,7 +145,7 @@ const TesseractSelection = ({ onSave }: Props) => {
         ;(async () => {
             for (const { dataUrl } of dropzoneAttachments) {
                 const { data } = await workerRef.current!.recognize(dataUrl)
-                console.log(data.text)
+                console.log(data)
                 setTextItems(prev => [...prev, data.text])
             }
         })()
