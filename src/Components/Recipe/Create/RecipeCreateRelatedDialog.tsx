@@ -39,9 +39,9 @@ const useStyles = makeStyles(theme =>
             cursor: 'pointer',
             padding: theme.spacing(2),
             borderRadius: BORDER_RADIUS,
-            transition: theme.transitions.create('background-color,transform', {
-                duration: theme.transitions.duration.enteringScreen,
-                easing: theme.transitions.easing.easeIn,
+            transition: theme.transitions.create('background-color', {
+                duration: theme.transitions.duration.standard,
+                easing: theme.transitions.easing.easeOut,
             }),
         },
         selectedRecipeHeader: {

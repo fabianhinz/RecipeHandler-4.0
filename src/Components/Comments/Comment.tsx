@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme =>
         },
         emojiLabel: {
             width: theme.spacing(4),
-            heigth: theme.spacing(4),
+            height: theme.spacing(4),
         },
         iconButtonRoot: {
             padding: theme.spacing(1),

@@ -5,7 +5,7 @@ import { Prompt, RouteComponentProps } from 'react-router'
 
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
-import { Recipe } from '../../../model/model'
+import { Recipe, TesseractResult } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import CategorySelection from '../../Category/CategorySelection'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -14,7 +14,7 @@ import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import EntryGridContainer from '../../Shared/EntryGridContainer'
 import StyledCard from '../../Shared/StyledCard'
-import TesseractSelection, { TesseractResults } from '../../Tesseract/TesseractSelection'
+import TesseractSelection from '../../Tesseract/TesseractSelection'
 import TrialsSelection from '../../Trials/TrialsSelection'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
@@ -80,7 +80,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         }
     }
 
-    const handleTesseractSave = (results: TesseractResults) => {
+    const handleTesseractSave = (results: TesseractResult[]) => {
         results.forEach(result => dispatch({ type: 'tesseractResultSave', result }))
     }
 
@@ -152,15 +152,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                                 />
                             </Grid>
 
-                            {state.relatedRecipes.length > 0 && (
-                                <Grid item {...gridBreakpointProps}>
-                                    <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                                        <RecipeResultRelated
-                                            relatedRecipes={state.relatedRecipes}
-                                        />
-                                    </StyledCard>
-                                </Grid>
-                            )}
+                            <Grid item {...gridBreakpointProps}>
+                                <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
+                                    <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                                </StyledCard>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </EntryGridContainer>
