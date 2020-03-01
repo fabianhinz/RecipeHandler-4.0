@@ -15,7 +15,7 @@ import CheckIcon from '@material-ui/icons/Check'
 import DeleteIcon from '@material-ui/icons/Delete'
 import clsx from 'clsx'
 import { useSnackbar } from 'notistack'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { getResizedImagesWithMetadata } from '../../hooks/useAttachment'
 import { AllDataUrls, Trial } from '../../model/model'
@@ -29,9 +29,16 @@ import TrialsDeleteAlert from './TrialsDeleteAlert'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        img: {
-            height: 0,
-            paddingTop: '56.25%', // 16:9,
+        cardMedia: {
+            [theme.breakpoints.down('sm')]: {
+                height: 283,
+            },
+            [theme.breakpoints.between('md', 'lg')]: {
+                height: 333,
+            },
+            [theme.breakpoints.up('xl')]: {
+                height: 383,
+            },
         },
         card: {
             position: 'relative',
@@ -42,7 +49,7 @@ const useStyles = makeStyles(theme =>
             right: theme.spacing(1),
             width: 'fit-content',
         },
-        selectionCard: {
+        selectionRoot: {
             position: 'absolute',
             top: 0,
             left: 0,
@@ -57,7 +64,7 @@ const useStyles = makeStyles(theme =>
                 duration: theme.transitions.duration.standard,
             }),
         },
-        selectionCardActive: {
+        selectionActive: {
             zIndex: 2,
             opacity: 1,
         },
@@ -74,7 +81,6 @@ interface Props {
     selectionProps?: {
         onClick: (trial: Trial) => void
         selected?: boolean
-        loadSmallAttachment?: boolean
     }
 }
 
@@ -82,12 +88,12 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
     const [deleteAlert, setDeleteAlert] = useState(false)
     const [dataUrls, setDataUrls] = useState<AllDataUrls | undefined>()
 
-    const classes = useStyles()
-
     const { user } = useFirebaseAuthContext()
-    const { gridBreakpointProps } = useGridContext()
+    const { gridBreakpointProps, gridLayout } = useGridContext()
     const { enqueueSnackbar } = useSnackbar()
     const { setSelectedAttachment } = useSelectedAttachement()
+
+    const classes = useStyles({ fixedCardHeight: gridLayout === 'list' })
 
     useEffect(() => {
         let mounted = true
@@ -117,10 +123,18 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
         }
     }
 
-    const selectionAwareBreakpoints: Partial<Record<
-        Breakpoint,
-        boolean | GridSize
-    >> = selectionProps ? { xs: 12 } : gridBreakpointProps
+    const selectionAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = useMemo(
+        () => (selectionProps ? { xs: 12 } : gridBreakpointProps),
+        [gridBreakpointProps, selectionProps]
+    )
+
+    const handleAttachmentClick = useCallback(() => {
+        if (selectionProps) {
+            selectionProps.onClick(trial)
+        } else if (dataUrls) {
+            setSelectedAttachment({ dataUrl: dataUrls.fullDataUrl })
+        }
+    }, [dataUrls, selectionProps, setSelectedAttachment, trial])
 
     return (
         <>
@@ -135,22 +149,16 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
                         placement="top"
                     />
 
-                    <CardActionArea
-                        disabled={!dataUrls}
-                        onClick={() => {
-                            if (selectionProps) selectionProps.onClick(trial)
-                            else if (dataUrls)
-                                setSelectedAttachment({ dataUrl: dataUrls.fullDataUrl })
-                        }}>
-                        <Card
+                    <CardActionArea disabled={!dataUrls} onClick={handleAttachmentClick}>
+                        <div
                             className={clsx(
-                                classes.selectionCard,
-                                selectionProps?.selected && classes.selectionCardActive
+                                classes.selectionRoot,
+                                selectionProps?.selected && classes.selectionActive
                             )}>
                             <CheckIcon className={classes.selectionCheckIcon} />
-                        </Card>
+                        </div>
 
-                        <CardMedia image={dataUrls?.mediumDataUrl} className={classes.img}>
+                        <CardMedia image={dataUrls?.mediumDataUrl} className={classes.cardMedia}>
                             {/* make mui happy */}
                             <></>
                         </CardMedia>

@@ -16,21 +16,21 @@ const useStyles = makeStyles(theme =>
             textTransform: 'unset',
         },
         paper: {
-            paddingTop: 'calc(env(safe-area-inset-top) + 8px)',
-            [theme.breakpoints.between('xs', 'sm')]: {
-                minWidth: 320,
+            [theme.breakpoints.between('xs', 'md')]: {
+                width: 320,
             },
-            [theme.breakpoints.up('md')]: {
-                minWidth: 480,
+            [theme.breakpoints.up('lg')]: {
+                width: 480,
             },
-            width: '33vw',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
             overflow: 'hidden',
+            userSelect: 'none',
         },
         header: {
             padding: theme.spacing(1),
+            paddingTop: 'calc(env(safe-area-inset-top) + 8px)',
         },
         container: {
             flexGrow: 1,
@@ -99,7 +99,7 @@ const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose, actio
                 onClose={closeDrawer}
                 anchor="right"
                 keepMounted>
-                {header && <div className={classes.header}>{header}</div>}
+                <div className={classes.header}>{header}</div>
                 <div className={classes.container}>
                     {typeof children === 'function' ? children(closeDrawer) : children}
                 </div>

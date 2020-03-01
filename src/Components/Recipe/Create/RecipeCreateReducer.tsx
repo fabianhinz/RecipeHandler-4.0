@@ -86,8 +86,8 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
             const key = action.result.recipePart
             if (!key) return state
 
-            if (state[key].length === 0) return { ...state, [key]: action.result.item }
-            else return { ...state, [key]: state[key] + '\n\n' + action.result.item }
+            if (state[key].length === 0) return { ...state, [key]: action.result.text }
+            else return { ...state, [key]: state[key] + '\n\n' + action.result.text }
         }
     }
 }

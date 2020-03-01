@@ -11,16 +11,30 @@ import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 
+import { FirebaseService } from '../../services/firebase'
 import { useGridContext } from '../Provider/GridProvider'
 
 interface Props {
-    variant: 'recipe' | 'trial' | 'cookCounter' | 'search' | 'bookmark' | 'recipeTrial'
+    variant: 'recipe' | 'trial' | 'cookCounter' | 'search' | 'bookmark' | 'trialsSelection'
     visible: boolean
     numberOfSkeletons?: number
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
+const useStyles = makeStyles(theme => {
+    const trial = {
+        [theme.breakpoints.down('sm')]: {
+            height: 283,
+        },
+        [theme.breakpoints.between('md', 'lg')]: {
+            height: 333,
+        },
+        [theme.breakpoints.up('xl')]: {
+            height: 383,
+        },
+        width: '100%',
+    }
+
+    return createStyles({
         recipe: {
             [theme.breakpoints.only('xs')]: {
                 height: 224,
@@ -39,22 +53,8 @@ const useStyles = makeStyles(theme =>
             },
             width: '100%',
         },
-        recipeTrial: {
-            width: 460,
-            height: 260,
-        },
-        trial: {
-            [theme.breakpoints.down('sm')]: {
-                height: 283,
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                height: 333,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: 383,
-            },
-            width: '100%',
-        },
+        trialsSelection: trial,
+        trial,
         cookCounter: {
             minWidth: 150,
             [theme.breakpoints.only('xs')]: {
@@ -80,7 +80,7 @@ const useStyles = makeStyles(theme =>
             height: 600,
         },
     })
-)
+})
 
 const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
     const classes = useStyles()
@@ -89,35 +89,43 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
     if (!visible) return <></>
 
     const variantAvareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
-        variant === 'recipeTrial' ? { xs: 12 } : gridBreakpointProps
+        variant === 'trialsSelection' ? { xs: 12 } : gridBreakpointProps
 
     return (
         <>
             {variant === 'search'
-                ? new Array(numberOfSkeletons || 12).fill(1).map((_skeleton, index) => (
-                      <ListItem key={index}>
-                          <ListItemText
-                              primary={<Skeleton width="30%" />}
-                              secondary={
-                                  <>
-                                      <Skeleton width="60%" />
-                                      <Skeleton width="80%" />
-                                  </>
-                              }
-                          />
-                      </ListItem>
-                  ))
-                : new Array(numberOfSkeletons || 12).fill(1).map((_skeleton, index) => (
-                      <Grid {...variantAvareBreakpoints} item key={index}>
-                          <Grid container spacing={2} justify="space-between" alignItems="center">
-                              <Grid xs={12} item>
-                                  <Card>
-                                      <Skeleton className={classes[variant]} variant="rect" />
-                                  </Card>
+                ? new Array(numberOfSkeletons || FirebaseService.QUERY_LIMIT)
+                      .fill(1)
+                      .map((_skeleton, index) => (
+                          <ListItem key={index}>
+                              <ListItemText
+                                  primary={<Skeleton width="30%" />}
+                                  secondary={
+                                      <>
+                                          <Skeleton width="60%" />
+                                          <Skeleton width="80%" />
+                                      </>
+                                  }
+                              />
+                          </ListItem>
+                      ))
+                : new Array(numberOfSkeletons || FirebaseService.QUERY_LIMIT)
+                      .fill(1)
+                      .map((_skeleton, index) => (
+                          <Grid {...variantAvareBreakpoints} item key={index}>
+                              <Grid
+                                  container
+                                  spacing={2}
+                                  justify="space-between"
+                                  alignItems="center">
+                                  <Grid xs={12} item>
+                                      <Card>
+                                          <Skeleton className={classes[variant]} variant="rect" />
+                                      </Card>
+                                  </Grid>
                               </Grid>
                           </Grid>
-                      </Grid>
-                  ))}
+                      ))}
         </>
     )
 }

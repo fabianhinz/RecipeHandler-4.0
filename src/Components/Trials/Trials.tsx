@@ -71,7 +71,7 @@ const Trials = () => {
 
         if (lastTrial) query = query.startAfter(lastTrial.createdDate)
 
-        return query.limit(12).onSnapshot(querySnapshot => {
+        return query.limit(FirebaseService.QUERY_LIMIT).onSnapshot(querySnapshot => {
             const changes = {
                 added: new Map(),
                 modified: new Map(),
@@ -142,6 +142,10 @@ const Trials = () => {
                         } as Trial)
                 } catch (e) {
                     enqueueSnackbar(e.message, { variant: 'error' })
+                } finally {
+                    setPagedTrials(new Map())
+                    setLastTrial(null)
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
                 }
             }
             closeSnackbar(snackKey as string)

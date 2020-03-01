@@ -9,6 +9,7 @@ import {
     List,
     ListItem,
     ListItemText,
+    ListSubheader,
     makeStyles,
     Typography,
 } from '@material-ui/core'
@@ -17,7 +18,7 @@ import BookIcon from '@material-ui/icons/Book'
 import clsx from 'clsx'
 import { ContentSave, ImageSearch } from 'mdi-material-ui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { createWorker } from 'tesseract.js'
+import { createWorker, Paragraph } from 'tesseract.js'
 
 import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
 import { Recipe } from '../../model/model'
@@ -39,8 +40,6 @@ const useStyles = makeStyles(theme =>
         },
         actionContainer: {
             width: '100%',
-            marginBottom: theme.spacing(1),
-            marginTop: theme.spacing(1),
         },
         baseButton: {
             width: '100%',
@@ -53,18 +52,18 @@ const useStyles = makeStyles(theme =>
         },
         progress: {
             position: 'absolute',
-            width: '100%',
-            height: '0%',
+            width: '0%',
+            height: '100%',
             bottom: 0,
             left: 0,
             backgroundColor: '#81c784',
-            transition: theme.transitions.create('height', {
+            transition: theme.transitions.create('width', {
                 duration: theme.transitions.duration.standard,
                 easing: theme.transitions.easing.easeIn,
             }),
         },
         progressHeight: {
-            height: ({ progress }: StyleProps) => {
+            width: ({ progress }: StyleProps) => {
                 if (!progress || progress === 0) return '0%'
                 else return `${progress * 100}%`
             },
@@ -75,12 +74,18 @@ const useStyles = makeStyles(theme =>
             right: theme.spacing(2),
             bottom: `calc(env(safe-area-inset-bottom) + ${theme.spacing(4.5)}px)`,
         },
+        subheader: {
+            backgroundColor: theme.palette.background.paper,
+            marginLeft: -theme.spacing(2),
+            marginRight: -theme.spacing(2),
+        },
+        text: {
+            marginBottom: theme.spacing(1),
+        },
     })
 )
 
-type RecipeParts = keyof Pick<Recipe, 'ingredients' | 'description'> | undefined
-type TextItem = string
-export type TesseractResult = { item: TextItem; recipePart: RecipeParts }
+export type TesseractResult = { text: Text; recipePart: RecipeParts }
 export type TesseractResults = TesseractResult[]
 
 interface TesseractLog {
@@ -97,33 +102,38 @@ interface TesseractLog {
     progress: number
 }
 
+type RecipeParts = keyof Pick<Recipe, 'ingredients' | 'description'> | undefined
+type Text = string
+type JobId = string
+type ParagraphsMap = Map<JobId, Pick<Paragraph, 'text' | 'confidence'>[]>
+type ResultsMap = Map<Text, RecipeParts>
+
 interface Props {
     onSave: (results: TesseractResults) => void
 }
 
 const TesseractSelection = ({ onSave }: Props) => {
-    const [tesseractLog, setTesseractLog] = useState<TesseractLog | undefined>()
-    const [textItems, setTextItems] = useState<string[]>([])
-    const [results, setResults] = useState<Map<TextItem, RecipeParts>>(new Map())
+    const [log, setLog] = useState<TesseractLog | undefined>()
+    const [paragraphs, setParagraphs] = useState<ParagraphsMap>(new Map())
+    const [results, setResults] = useState<ResultsMap>(new Map())
 
     const workerRef = useRef<Tesseract.Worker | null>(null)
 
     const { dropzoneAttachments, dropzoneProps } = useAttachmentDropzone({
         attachmentLimit: 5,
-        attachmentMaxWidth: 3840,
     })
 
     const tesseractReady = Boolean(
-        tesseractLog?.status === 'initialized api' || tesseractLog?.status === 'recognizing text'
+        log?.status === 'initialized api' || log?.status === 'recognizing text'
     )
     const classes = useStyles({
         ready: tesseractReady,
-        progress: tesseractLog?.status === 'recognizing text' ? tesseractLog.progress : undefined,
+        progress: log?.status === 'recognizing text' ? log.progress : undefined,
     })
 
     const initTesseract = useCallback(async () => {
         const worker = createWorker({
-            logger: (log: TesseractLog) => setTesseractLog(log),
+            logger: (log: TesseractLog) => setLog(log),
         })
         await worker.load()
         await worker.loadLanguage('deu')
@@ -144,9 +154,22 @@ const TesseractSelection = ({ onSave }: Props) => {
         if (dropzoneAttachments.length === 0 || !workerRef.current) return
         ;(async () => {
             for (const { dataUrl } of dropzoneAttachments) {
-                const { data } = await workerRef.current!.recognize(dataUrl)
-                console.log(data)
-                setTextItems(prev => [...prev, data.text])
+                const {
+                    jobId,
+                    data: { paragraphs },
+                } = await workerRef.current!.recognize(dataUrl)
+                setParagraphs(
+                    prev =>
+                        new Map(
+                            prev.set(
+                                jobId,
+                                paragraphs.map(({ text, confidence }) => ({
+                                    text,
+                                    confidence,
+                                }))
+                            )
+                        )
+                )
             }
         })()
     }, [dropzoneAttachments])
@@ -164,7 +187,7 @@ const TesseractSelection = ({ onSave }: Props) => {
     const getValidResults = () =>
         [...results.entries()]
             .filter(([, recipePart]) => Boolean(recipePart))
-            .map(([item, recipePart]) => ({ item, recipePart } as TesseractResult))
+            .map(([item, recipePart]) => ({ text: item, recipePart } as TesseractResult))
 
     return (
         <SelectionDrawer
@@ -176,69 +199,97 @@ const TesseractSelection = ({ onSave }: Props) => {
             buttonProps={{
                 startIcon: <ImageSearch />,
                 label: 'Einscannen',
-            }}>
-            <div className={classes.actionContainer}>
-                <ButtonBase
-                    className={classes.baseButton}
-                    disabled={!tesseractReady}
-                    {...dropzoneProps.getRootProps()}>
-                    <Avatar variant="rounded" className={classes.avatar}>
-                        {tesseractReady ? (
-                            <ImageSearch className={classes.actionCameraIcon} />
-                        ) : (
-                            <CircularProgress
-                                color="secondary"
-                                disableShrink
-                                size={60}
-                                thickness={5.4}
-                            />
-                        )}
-                        <div className={clsx(classes.progress, classes.progressHeight)} />
-                    </Avatar>
-                    <input {...dropzoneProps.getInputProps()} />
-                </ButtonBase>
-            </div>
+            }}
+            header={
+                <div className={classes.actionContainer}>
+                    <ButtonBase
+                        className={classes.baseButton}
+                        disabled={!tesseractReady}
+                        {...dropzoneProps.getRootProps()}>
+                        <Avatar variant="rounded" className={classes.avatar}>
+                            {tesseractReady ? (
+                                <ImageSearch className={classes.actionCameraIcon} />
+                            ) : (
+                                <CircularProgress
+                                    color="secondary"
+                                    disableShrink
+                                    size={60}
+                                    thickness={5.4}
+                                />
+                            )}
+                            <div className={clsx(classes.progress, classes.progressHeight)} />
+                        </Avatar>
+                        <input {...dropzoneProps.getInputProps()} />
+                    </ButtonBase>
+                </div>
+            }>
+            <List disablePadding>
+                {[...paragraphs.entries()].map(([jobId, paragraph], index) => (
+                    <div key={jobId}>
+                        <ListSubheader className={classes.subheader}>Nr. {++index}</ListSubheader>
+                        {paragraph.map(({ text, confidence }, index) => (
+                            <ListItem disableGutters key={index}>
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        zIndex: -1,
+                                        height: '95%',
+                                        backgroundColor: 'rgba(255, 183, 77, 0.15)',
+                                        marginLeft: -16,
+                                        width: `calc(100% + 32px)`,
+                                    }}>
+                                    <div
+                                        style={{
+                                            width: `${confidence}%`,
+                                            height: '100%',
+                                            backgroundColor: 'rgba(255, 183, 77, 0.3)',
+                                        }}
+                                    />
+                                </div>
 
-            <List>
-                {textItems.map((item, index) => (
-                    <ListItem disableGutters key={index}>
-                        <ListItemText
-                            disableTypography
-                            primary={
-                                <Typography gutterBottom noWrap>
-                                    {item}
-                                </Typography>
-                            }
-                            secondary={
-                                <Grid container spacing={1}>
-                                    <Grid item>
-                                        <Chip
-                                            icon={<AssignmentIcon />}
-                                            color={
-                                                results.get(item) === 'description'
-                                                    ? 'secondary'
-                                                    : 'default'
-                                            }
-                                            onClick={handleMemberButtonsClick(item, 'description')}
-                                            label="Beschreibung"
-                                        />
-                                    </Grid>
-                                    <Grid item>
-                                        <Chip
-                                            icon={<BookIcon />}
-                                            color={
-                                                results.get(item) === 'ingredients'
-                                                    ? 'secondary'
-                                                    : 'default'
-                                            }
-                                            onClick={handleMemberButtonsClick(item, 'ingredients')}
-                                            label="Zutaten"
-                                        />
-                                    </Grid>
-                                </Grid>
-                            }
-                        />
-                    </ListItem>
+                                <ListItemText
+                                    disableTypography
+                                    primary={
+                                        <Typography className={classes.text}>{text}</Typography>
+                                    }
+                                    secondary={
+                                        <Grid container justify="flex-end" spacing={1}>
+                                            <Grid item>
+                                                <Chip
+                                                    icon={<AssignmentIcon />}
+                                                    color={
+                                                        results.get(text) === 'description'
+                                                            ? 'secondary'
+                                                            : 'default'
+                                                    }
+                                                    onClick={handleMemberButtonsClick(
+                                                        text,
+                                                        'description'
+                                                    )}
+                                                    label="Beschreibung"
+                                                />
+                                            </Grid>
+                                            <Grid item>
+                                                <Chip
+                                                    icon={<BookIcon />}
+                                                    color={
+                                                        results.get(text) === 'ingredients'
+                                                            ? 'secondary'
+                                                            : 'default'
+                                                    }
+                                                    onClick={handleMemberButtonsClick(
+                                                        text,
+                                                        'ingredients'
+                                                    )}
+                                                    label="Zutaten"
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    }
+                                />
+                            </ListItem>
+                        ))}
+                    </div>
                 ))}
             </List>
         </SelectionDrawer>
