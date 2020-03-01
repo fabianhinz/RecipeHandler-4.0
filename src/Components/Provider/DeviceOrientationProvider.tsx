@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import CloseIcon from '@material-ui/icons/Close'
 import React, { FC, useContext, useEffect, useState } from 'react'
 
 import { SlideUp } from '../Shared/Transitions'

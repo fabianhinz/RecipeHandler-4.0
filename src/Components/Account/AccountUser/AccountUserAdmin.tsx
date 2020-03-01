@@ -1,5 +1,5 @@
 import { List } from '@material-ui/core'
-import SecurityIcon from '@material-ui/icons/SecurityTwoTone'
+import SecurityIcon from '@material-ui/icons/VerifiedUser'
 import React, { memo, useEffect, useState } from 'react'
 
 import { FirebaseService } from '../../../services/firebase'

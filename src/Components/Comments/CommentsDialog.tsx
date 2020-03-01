@@ -10,9 +10,9 @@ import {
     TextField,
 } from '@material-ui/core'
 import Paper, { PaperProps } from '@material-ui/core/Paper'
-import CloseIcon from '@material-ui/icons/CloseTwoTone'
-import ScrollToLatestIcon from '@material-ui/icons/ExpandMoreTwoTone'
-import SaveIcon from '@material-ui/icons/SaveTwoTone'
+import CloseIcon from '@material-ui/icons/Close'
+import ScrollToLatestIcon from '@material-ui/icons/ExpandMore'
+import SaveIcon from '@material-ui/icons/Save'
 import Skeleton from '@material-ui/lab/Skeleton'
 import clsx from 'clsx'
 import React, { FC, useEffect, useState } from 'react'

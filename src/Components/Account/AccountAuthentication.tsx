@@ -11,7 +11,7 @@ import {
     useTheme,
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
-import CloseIcon from '@material-ui/icons/CloseTwoTone'
+import CloseIcon from '@material-ui/icons/Close'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useState } from 'react'
 

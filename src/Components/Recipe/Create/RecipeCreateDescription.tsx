@@ -1,4 +1,4 @@
-import BookIcon from '@material-ui/icons/BookTwoTone'
+import BookIcon from '@material-ui/icons/Book'
 import React from 'react'
 
 import MarkdownInput from '../../Markdown/MarkdownInput'

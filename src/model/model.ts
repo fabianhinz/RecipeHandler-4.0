@@ -141,3 +141,23 @@ export interface MostCooked<T> {
 }
 
 export type RecipeVariants = { variant: 'details' | 'preview' | 'related' }
+
+export type TesseractText = string
+
+export type TesseractPart = keyof Pick<Recipe, 'ingredients' | 'description'> | undefined
+
+export type TesseractResult = { text: TesseractText; tesseractPart: TesseractPart }
+
+export interface TesseractLog {
+    workerId?: string
+    status:
+        | 'loading tesseract core'
+        | 'initializing tesseract'
+        | 'initialized tesseract'
+        | 'loading language traineddata'
+        | 'loaded language traineddata'
+        | 'initializing api'
+        | 'initialized api'
+        | 'recognizing text'
+    progress?: number
+}

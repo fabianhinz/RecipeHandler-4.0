@@ -17,8 +17,8 @@ import {
     TableRow,
     Tooltip,
 } from '@material-ui/core'
-import AddCircleIcon from '@material-ui/icons/AddCircleTwoTone'
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircleTwoTone'
+import AddCircleIcon from '@material-ui/icons/AddCircle'
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
 import React, { useMemo } from 'react'
 import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown'
 import { useRouteMatch } from 'react-router-dom'

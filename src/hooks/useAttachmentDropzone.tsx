@@ -23,7 +23,7 @@ export type DropzoneProps = Record<
 interface Options {
     attachmentLimit: number
     attachmentMaxSize?: number
-    attachmentMaxWidth: number
+    attachmentMaxWidth?: number
 }
 
 export const useAttachmentDropzone = ({
@@ -65,16 +65,20 @@ export const useAttachmentDropzone = ({
 
             const newAttachments: Array<AttachmentDoc & DataUrl> = []
             for (const file of acceptedFiles) {
-                const compressedFile: Blob = await compressImage(file, {
-                    maxSizeMB: attachmentMaxSize || 1,
-                    maxWidthOrHeight: attachmentMaxWidth,
-                })
-                const dataUrl: string = await readDocumentAsync(compressedFile)
+                let compressedFile: Blob | null = null
+                if (attachmentMaxSize || attachmentMaxWidth) {
+                    compressedFile = await compressImage(file, {
+                        maxSizeMB: attachmentMaxSize || 1,
+                        maxWidthOrHeight: attachmentMaxWidth || 3840,
+                    })
+                }
+
+                const dataUrl: string = await readDocumentAsync(compressedFile || file)
                 newAttachments.push({
                     name: file.name,
                     dataUrl,
                     fullPath: '',
-                    size: compressedFile.size,
+                    size: compressedFile?.size || file.size,
                     editorUid: user ? user.uid : 'unkown',
                     createdDate: FirebaseService.createTimestampFromDate(new Date()),
                 })

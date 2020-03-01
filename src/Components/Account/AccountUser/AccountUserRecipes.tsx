@@ -1,5 +1,5 @@
 import { List } from '@material-ui/core'
-import BookIcon from '@material-ui/icons/BookTwoTone'
+import BookIcon from '@material-ui/icons/SupervisedUserCircle'
 import React from 'react'
 
 import { User } from '../../../model/model'

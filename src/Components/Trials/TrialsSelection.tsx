@@ -48,7 +48,6 @@ const TrialsSelection = ({ selectedTrial, onSelectedTrialChange }: Props) => {
                 {trials.map(trial => (
                     <TrialsCard
                         selectionProps={{
-                            loadSmallAttachment: true,
                             selected: trial.name === selectedTrial?.name,
                             onClick: handleTrialCardClick,
                         }}
@@ -56,7 +55,7 @@ const TrialsSelection = ({ selectedTrial, onSelectedTrialChange }: Props) => {
                         trial={trial}
                     />
                 ))}
-                <Skeletons visible={loading} variant="recipeTrial" />
+                <Skeletons visible={loading} variant="trialsSelection" />
             </Grid>
         </SelectionDrawer>
     )

@@ -1,130 +1,85 @@
-import {
-    Avatar,
-    ButtonBase,
-    Chip,
-    CircularProgress,
-    createStyles,
-    Grid,
-    IconButton,
-    List,
-    ListItem,
-    ListItemText,
-    makeStyles,
-    Typography,
-} from '@material-ui/core'
-import AssignmentIcon from '@material-ui/icons/Assignment'
-import BookIcon from '@material-ui/icons/Book'
+import { Avatar, ButtonBase, createStyles, IconButton, makeStyles } from '@material-ui/core'
 import clsx from 'clsx'
 import { ContentSave, ImageSearch } from 'mdi-material-ui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { createWorker } from 'tesseract.js'
+import { createWorker, Paragraph } from 'tesseract.js'
 
 import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
-import { Recipe } from '../../model/model'
+import { TesseractLog, TesseractPart, TesseractResult, TesseractText } from '../../model/model'
 import SelectionDrawer from '../Shared/SelectionDrawer'
+import TesseractParagraph from './TesseractParagraph'
 
 interface StyleProps {
-    ready: boolean
+    apiInitialized: boolean
     progress?: number
 }
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        avatar: {
+        dropzoneAvatar: {
             width: '100%',
-            height: 125,
+            height: 100,
             position: 'relative',
-            backgroundColor: ({ ready }: StyleProps) =>
-                ready ? theme.palette.secondary.main : 'inherhit',
+            backgroundColor: ({ apiInitialized }: StyleProps) =>
+                apiInitialized ? theme.palette.secondary.main : 'inherhit',
         },
-        actionContainer: {
-            width: '100%',
-            marginBottom: theme.spacing(1),
-            marginTop: theme.spacing(1),
-        },
-        baseButton: {
+        dropzoneButton: {
             width: '100%',
         },
-        actionCameraIcon: {
-            color: ({ ready }: StyleProps) =>
-                ready ? theme.palette.getContrastText(theme.palette.secondary.main) : 'inherit',
+        dropzoneIcon: {
+            color: ({ apiInitialized }: StyleProps) =>
+                apiInitialized
+                    ? theme.palette.getContrastText(theme.palette.secondary.main)
+                    : 'inherit',
             fontSize: theme.typography.pxToRem(60),
+
             zIndex: 1,
         },
-        progress: {
+        progressRoot: {
             position: 'absolute',
-            width: '100%',
-            height: '0%',
+            width: '0%',
+            height: '100%',
             bottom: 0,
             left: 0,
-            backgroundColor: '#81c784',
-            transition: theme.transitions.create('height', {
+            backgroundColor: theme.palette.primary.main,
+            transition: theme.transitions.create('width', {
                 duration: theme.transitions.duration.standard,
-                easing: theme.transitions.easing.sharp,
+                easing: theme.transitions.easing.easeOut,
             }),
         },
-        progressHeight: {
-            height: ({ progress }: StyleProps) => {
-                if (!progress) return '0%'
-                else if (progress === 1) return '0%'
+        progressAnimated: {
+            width: ({ progress }: StyleProps) => {
+                if (!progress || progress === 0) return '0%'
                 else return `${progress * 100}%`
             },
-        },
-        fab: {
-            zIndex: theme.zIndex.drawer + 1,
-            position: 'fixed',
-            right: theme.spacing(2),
-            bottom: `calc(env(safe-area-inset-bottom) + ${theme.spacing(4.5)}px)`,
         },
     })
 )
 
-type RecipeParts = keyof Pick<Recipe, 'ingredients' | 'description'> | undefined
-type TextItem = string
-export type TesseractResult = { item: TextItem; recipePart: RecipeParts }
-export type TesseractResults = TesseractResult[]
-
-interface TesseractLog {
-    workerId: string
-    status:
-        | 'loading tesseract core'
-        | 'initializing tesseract'
-        | 'initialized tesseract'
-        | 'loading language traineddata'
-        | 'loaded language traineddata'
-        | 'initializing api'
-        | 'initialized api'
-        | 'recognizing text'
-    progress: number
-}
-
 interface Props {
-    onSave: (results: TesseractResults) => void
+    onSave: (results: TesseractResult[]) => void
 }
 
 const TesseractSelection = ({ onSave }: Props) => {
-    const [tesseractLog, setTesseractLog] = useState<TesseractLog | undefined>()
-    const [textItems, setTextItems] = useState<string[]>([])
-    const [results, setResults] = useState<Map<TextItem, RecipeParts>>(new Map())
+    const [log, setLog] = useState<TesseractLog | undefined>()
+    const [paragraphs, setParagraphs] = useState<Pick<Paragraph, 'text' | 'confidence'>[]>([])
+    const [results, setResults] = useState<Map<TesseractText, TesseractPart>>(new Map())
 
     const workerRef = useRef<Tesseract.Worker | null>(null)
 
     const { dropzoneAttachments, dropzoneProps } = useAttachmentDropzone({
         attachmentLimit: 5,
-        attachmentMaxWidth: 3840,
     })
 
-    const tesseractReady = Boolean(
-        tesseractLog?.status === 'initialized api' || tesseractLog?.status === 'recognizing text'
-    )
+    const apiInitialized = Boolean(log?.status === 'initialized api')
     const classes = useStyles({
-        ready: tesseractReady,
-        progress: tesseractLog?.status === 'recognizing text' ? tesseractLog.progress : undefined,
+        apiInitialized,
+        progress: log?.status === 'recognizing text' ? log.progress : undefined,
     })
 
     const initTesseract = useCallback(async () => {
         const worker = createWorker({
-            logger: (log: TesseractLog) => setTesseractLog(log),
+            logger: (log: TesseractLog) => setLog(log),
         })
         await worker.load()
         await worker.loadLanguage('deu')
@@ -146,17 +101,19 @@ const TesseractSelection = ({ onSave }: Props) => {
         ;(async () => {
             for (const { dataUrl } of dropzoneAttachments) {
                 const { data } = await workerRef.current!.recognize(dataUrl)
-                console.log(data.text)
-                setTextItems(prev => [...prev, data.text])
+                setParagraphs(prev => [
+                    ...prev,
+                    ...data.paragraphs.map(({ text, confidence }) => ({ text, confidence })),
+                ])
             }
+            setLog({ status: 'initialized api' })
         })()
     }, [dropzoneAttachments])
 
-    const handleMemberButtonsClick = (item: string, recipeParts: RecipeParts) => () => {
+    const handleChipClick = (text: TesseractText, parts: TesseractPart) => () => {
         setResults(previous => {
-            if (previous.get(item) && previous.get(item) === recipeParts)
-                previous.set(item, undefined)
-            else previous.set(item, recipeParts)
+            if (previous.get(text) && previous.get(text) === parts) previous.set(text, undefined)
+            else previous.set(text, parts)
 
             return new Map(previous)
         })
@@ -165,7 +122,10 @@ const TesseractSelection = ({ onSave }: Props) => {
     const getValidResults = () =>
         [...results.entries()]
             .filter(([, recipePart]) => Boolean(recipePart))
-            .map(([item, recipePart]) => ({ item, recipePart } as TesseractResult))
+            .map(
+                ([text, tesseractParts]) =>
+                    ({ text, tesseractPart: tesseractParts } as TesseractResult)
+            )
 
     return (
         <SelectionDrawer
@@ -178,70 +138,24 @@ const TesseractSelection = ({ onSave }: Props) => {
                 startIcon: <ImageSearch />,
                 label: 'Einscannen',
             }}>
-            <div className={classes.actionContainer}>
-                <ButtonBase
-                    className={classes.baseButton}
-                    disabled={!tesseractReady}
-                    {...dropzoneProps.getRootProps()}>
-                    <Avatar variant="rounded" className={classes.avatar}>
-                        {tesseractReady ? (
-                            <ImageSearch className={classes.actionCameraIcon} />
-                        ) : (
-                            <CircularProgress
-                                color="secondary"
-                                disableShrink
-                                size={60}
-                                thickness={5.4}
-                            />
-                        )}
-                        <div className={clsx(classes.progress, classes.progressHeight)} />
-                    </Avatar>
-                    <input {...dropzoneProps.getInputProps()} />
-                </ButtonBase>
-            </div>
-
-            <List>
-                {textItems.map((item, index) => (
-                    <ListItem disableGutters key={index}>
-                        <ListItemText
-                            disableTypography
-                            primary={
-                                <Typography gutterBottom noWrap>
-                                    {item}
-                                </Typography>
-                            }
-                            secondary={
-                                <Grid container spacing={1}>
-                                    <Grid item>
-                                        <Chip
-                                            icon={<AssignmentIcon />}
-                                            color={
-                                                results.get(item) === 'description'
-                                                    ? 'secondary'
-                                                    : 'default'
-                                            }
-                                            onClick={handleMemberButtonsClick(item, 'description')}
-                                            label="Beschreibung"
-                                        />
-                                    </Grid>
-                                    <Grid item>
-                                        <Chip
-                                            icon={<BookIcon />}
-                                            color={
-                                                results.get(item) === 'ingredients'
-                                                    ? 'secondary'
-                                                    : 'default'
-                                            }
-                                            onClick={handleMemberButtonsClick(item, 'ingredients')}
-                                            label="Zutaten"
-                                        />
-                                    </Grid>
-                                </Grid>
-                            }
-                        />
-                    </ListItem>
-                ))}
-            </List>
+            <ButtonBase
+                className={classes.dropzoneButton}
+                disabled={!apiInitialized}
+                {...dropzoneProps.getRootProps()}>
+                <Avatar variant="rounded" className={classes.dropzoneAvatar}>
+                    <ImageSearch className={classes.dropzoneIcon} />
+                    <div className={clsx(classes.progressRoot, classes.progressAnimated)} />
+                </Avatar>
+                <input {...dropzoneProps.getInputProps()} />
+            </ButtonBase>
+            {paragraphs.map((paragraph, index) => (
+                <TesseractParagraph
+                    key={index}
+                    onChipClick={handleChipClick}
+                    results={results}
+                    {...paragraph}
+                />
+            ))}
         </SelectionDrawer>
     )
 }
