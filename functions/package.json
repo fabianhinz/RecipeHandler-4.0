@@ -20,7 +20,7 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "typescript": "^3.8.2",
+    "typescript": "^3.8.3",
     "firebase-functions-test": "^0.2.0"
   },
   "private": true
