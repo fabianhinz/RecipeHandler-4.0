@@ -16,13 +16,13 @@ import EntryGridContainer from '../../Shared/EntryGridContainer'
 import StyledCard from '../../Shared/StyledCard'
 import TesseractSelection from '../../Tesseract/TesseractSelection'
 import TrialsSelection from '../../Trials/TrialsSelection'
+import RelatedRecipesSelection from '../RelatedRecipesSelection'
 import RecipeResult from '../Result/RecipeResult'
 import { RecipeResultRelated } from '../Result/RecipeResultRelated'
 import RecipeCreateDescription from './RecipeCreateDescription'
 import RecipeCreateHeader from './RecipeCreateHeader'
 import RecipeCreateIngredients from './RecipeCreateIngredients'
 import { CreateChangeKey, useRecipeCreateReducer } from './RecipeCreateReducer'
-import { RecipeCreateRelatedDialog } from './RecipeCreateRelatedDialog'
 import RecipeCreateSpeedDial from './RecipeCreateSpeedDial'
 import { useRecipeCreate } from './useRecipeCreate'
 
@@ -62,6 +62,11 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         dispatch({ type: 'textFieldChange', key, value })
     }
 
+    const handlePreviewChange = async () => {
+        const valid = await recipeCreateService.validate(selectedCategories)
+        if (valid) dispatch({ type: 'previewChange' })
+    }
+
     const warnOnLocationChange = () => {
         if (props.recipe && !recipeCreateService.changesSaved) {
             return true
@@ -88,7 +93,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         <>
             {state.preview && user ? (
                 <RecipeResult
-                    variant="preview"
                     recipe={{
                         name: state.name,
                         createdDate: FirebaseService.createTimestampFromDate(new Date()),
@@ -126,9 +130,17 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             </Grid>
                             <Grid item xs={12} sm="auto">
                                 <CategorySelection
-                                    label="Kategorien auswählen"
+                                    label="Kategorien"
                                     selectedCategories={selectedCategories}
                                     onCategoryChange={setSelectedCategories}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm="auto">
+                                <RelatedRecipesSelection
+                                    relatedRecipes={state.relatedRecipes}
+                                    onRelatedRecipesChange={relatedRecipes =>
+                                        dispatch({ type: 'relatedRecipesChange', relatedRecipes })
+                                    }
                                 />
                             </Grid>
                         </Grid>
@@ -152,36 +164,26 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                                 />
                             </Grid>
 
-                            <Grid item {...gridBreakpointProps}>
-                                <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                                    <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
-                                </StyledCard>
-                            </Grid>
+                            {state.relatedRecipes.length > 0 && (
+                                <Grid item {...gridBreakpointProps}>
+                                    <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
+                                        <RecipeResultRelated
+                                            relatedRecipes={state.relatedRecipes}
+                                        />
+                                    </StyledCard>
+                                </Grid>
+                            )}
                         </Grid>
                     </Grid>
                 </EntryGridContainer>
             )}
-
-            <RecipeCreateRelatedDialog
-                defaultValues={state.relatedRecipes}
-                currentRecipeName={state.name}
-                open={state.relatedRecipesDialog}
-                onSave={relatedRecipes =>
-                    dispatch({ type: 'relatedRecipesChange', relatedRecipes })
-                }
-                onClose={() => dispatch({ type: 'closeRelatedRecipesDialog' })}
-            />
 
             <Prompt
                 when={warnOnLocationChange()}
                 message="Nicht gespeicherte Änderungen gehen verloren. Trotzdem die Seite verlassen?"
             />
 
-            <RecipeCreateSpeedDial
-                onRelated={() => dispatch({ type: 'openRelatedRecipesDialog' })}
-                onPreview={() => dispatch({ type: 'previewChange' })}
-                onSave={handleSaveRecipe}
-            />
+            <RecipeCreateSpeedDial onPreview={handlePreviewChange} onSave={handleSaveRecipe} />
         </>
     )
 }

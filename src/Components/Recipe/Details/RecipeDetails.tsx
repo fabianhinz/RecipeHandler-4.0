@@ -18,11 +18,7 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
 
     return (
         <>
-            {recipeDocLoading ? (
-                <Progress variant="fixed" />
-            ) : (
-                <RecipeResult variant="details" recipe={recipeDoc} />
-            )}
+            {recipeDocLoading ? <Progress variant="fixed" /> : <RecipeResult recipe={recipeDoc} />}
 
             {recipeDoc && user && (user.uid === recipeDoc.editorUid || user.admin) && (
                 <NavigateFab

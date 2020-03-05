@@ -2,7 +2,6 @@ import { createStyles, makeStyles } from '@material-ui/core'
 import SpeedDialIcon from '@material-ui/icons/ClassRounded'
 import EyeIcon from '@material-ui/icons/RemoveRedEye'
 import SaveIcon from '@material-ui/icons/Save'
-import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
 import { SpeedDial, SpeedDialAction } from '@material-ui/lab'
 import React, { useState } from 'react'
 
@@ -18,12 +17,11 @@ const useStyles = makeStyles(theme =>
 )
 
 interface Props {
-    onRelated: () => void
     onPreview: () => void
     onSave: () => void
 }
 
-const RecipeCreateSpeedDial = ({ onRelated, onPreview, onSave }: Props) => {
+const RecipeCreateSpeedDial = ({ onPreview, onSave }: Props) => {
     const [speedDialOpen, setSpeedDialOpen] = useState(false)
     const classes = useStyles()
 
@@ -37,12 +35,6 @@ const RecipeCreateSpeedDial = ({ onRelated, onPreview, onSave }: Props) => {
             onClose={() => setSpeedDialOpen(false)}
             icon={<SpeedDialIcon />}
             openIcon={<SpeedDialIcon />}>
-            <SpeedDialAction
-                onClick={onRelated}
-                tooltipTitle="Passt gut zu bearbeiten"
-                FabProps={{ size: 'medium' }}
-                icon={<SwapIcon />}
-            />
             <SpeedDialAction
                 icon={<EyeIcon />}
                 onClick={onPreview}

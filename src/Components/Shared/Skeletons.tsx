@@ -15,7 +15,14 @@ import { FirebaseService } from '../../services/firebase'
 import { useGridContext } from '../Provider/GridProvider'
 
 interface Props {
-    variant: 'recipe' | 'trial' | 'cookCounter' | 'search' | 'bookmark' | 'trialsSelection'
+    variant:
+        | 'recipe'
+        | 'trial'
+        | 'cookCounter'
+        | 'search'
+        | 'bookmark'
+        | 'trialsSelection'
+        | 'relatedRecipesSelection'
     visible: boolean
     numberOfSkeletons?: number
 }
@@ -79,6 +86,10 @@ const useStyles = makeStyles(theme => {
             },
             height: 600,
         },
+        relatedRecipesSelection: {
+            height: 103,
+            width: '100%',
+        },
     })
 })
 
@@ -89,7 +100,9 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
     if (!visible) return <></>
 
     const variantAvareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
-        variant === 'trialsSelection' ? { xs: 12 } : gridBreakpointProps
+        variant === 'trialsSelection' || variant === 'relatedRecipesSelection'
+            ? { xs: 12 }
+            : gridBreakpointProps
 
     return (
         <>

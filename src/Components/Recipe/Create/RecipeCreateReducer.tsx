@@ -33,8 +33,6 @@ type Action =
     | { type: 'decreaseAmount' }
     | { type: 'storageDeleteRefsChange'; ref: firebase.storage.Reference }
     | { type: 'relatedRecipesChange'; relatedRecipes: Array<string> }
-    | { type: 'openRelatedRecipesDialog' }
-    | { type: 'closeRelatedRecipesDialog' }
     | { type: 'selectedTrialChange'; selectedTrial?: Trial }
     | { type: 'tesseractResultSave'; result: TesseractResult }
 
@@ -71,12 +69,6 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
         }
         case 'relatedRecipesChange': {
             return { ...state, relatedRecipes: action.relatedRecipes, relatedRecipesDialog: false }
-        }
-        case 'openRelatedRecipesDialog': {
-            return { ...state, relatedRecipesDialog: true }
-        }
-        case 'closeRelatedRecipesDialog': {
-            return { ...state, relatedRecipesDialog: false }
         }
         case 'selectedTrialChange': {
             return { ...state, selectedTrial: action.selectedTrial }
