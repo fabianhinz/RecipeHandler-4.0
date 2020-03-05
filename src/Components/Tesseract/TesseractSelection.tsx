@@ -61,6 +61,7 @@ interface Props {
 }
 
 const TesseractSelection = ({ onSave }: Props) => {
+    const [shouldLoad, setShouldLoad] = useState(false)
     const [log, setLog] = useState<TesseractLog | undefined>()
     const [paragraphs, setParagraphs] = useState<Pick<Paragraph, 'text' | 'confidence'>[]>([])
     const [results, setResults] = useState<Map<TesseractText, TesseractPart>>(new Map())
@@ -89,12 +90,12 @@ const TesseractSelection = ({ onSave }: Props) => {
     }, [])
 
     useEffect(() => {
-        initTesseract()
+        if (shouldLoad) initTesseract()
 
         return () => {
             workerRef.current?.terminate()
         }
-    }, [initTesseract])
+    }, [initTesseract, shouldLoad])
 
     useEffect(() => {
         if (dropzoneAttachments.length === 0 || !workerRef.current) return
@@ -129,6 +130,8 @@ const TesseractSelection = ({ onSave }: Props) => {
 
     return (
         <SelectionDrawer
+            onOpen={() => setShouldLoad(true)}
+            onClose={() => setShouldLoad(false)}
             action={
                 <IconButton onClick={() => onSave(getValidResults())}>
                     <ContentSave />

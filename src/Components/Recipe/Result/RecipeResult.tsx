@@ -4,7 +4,7 @@ import BookIcon from '@material-ui/icons/Book'
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
 import React, { memo } from 'react'
 
-import { Recipe, RecipeVariants } from '../../../model/model'
+import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import AccountChip from '../../Account/AccountChip'
 import Attachments from '../../Attachments/Attachments'
@@ -17,12 +17,12 @@ import StyledCard from '../../Shared/StyledCard'
 import RecipeResultHeader from './RecipeResultHeader'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
-interface RecipeResultProps extends RecipeVariants {
+interface RecipeResultProps {
     recipe: Recipe | null
     divider?: boolean
 }
 
-const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
+const RecipeResult = ({ recipe }: RecipeResultProps) => {
     const { gridBreakpointProps } = useGridContext()
 
     if (!recipe) return <NotFound visible />
@@ -30,14 +30,12 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
     return (
         <EntryGridContainer>
             <Grid item xs={12}>
-                <RecipeResultHeader recipe={recipe} variant={variant} />
+                <RecipeResultHeader recipe={recipe} />
             </Grid>
 
-            {variant !== 'preview' && (
-                <Grid item xs={12}>
-                    <Attachments recipeName={recipe.name} />
-                </Grid>
-            )}
+            <Grid item xs={12}>
+                <Attachments recipeName={recipe.name} />
+            </Grid>
 
             <Grid item xs={12}>
                 <Grid container spacing={3}>
@@ -74,11 +72,9 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
                         </Grid>
                     )}
 
-                    {variant !== 'preview' && (
-                        <Grid {...gridBreakpointProps} item>
-                            <Satisfaction recipeName={recipe.name} />
-                        </Grid>
-                    )}
+                    <Grid {...gridBreakpointProps} item>
+                        <Satisfaction recipeName={recipe.name} />
+                    </Grid>
                 </Grid>
             </Grid>
 
@@ -97,8 +93,5 @@ const RecipeResult = ({ recipe, variant }: RecipeResultProps) => {
 
 export default memo(
     RecipeResult,
-    (prev, next) =>
-        prev.recipe === next.recipe &&
-        prev.variant === next.variant &&
-        prev.divider === next.divider
+    (prev, next) => prev.recipe === next.recipe && prev.divider === next.divider
 )

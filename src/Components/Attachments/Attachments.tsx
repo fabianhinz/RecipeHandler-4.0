@@ -98,10 +98,11 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
     useEffect(
         () =>
             recipeDocRef.onSnapshot(querySnapshot => {
-                const { editorUid, previewAttachment } = querySnapshot.data() as Recipe
+                const data = querySnapshot.data() as Recipe | undefined
+                if (!data) return
                 setRecipePreview({
-                    smallDataUrl: previewAttachment,
-                    disabled: !user || (user.uid !== editorUid && !user.admin),
+                    smallDataUrl: data.previewAttachment,
+                    disabled: !user || (user.uid !== data.editorUid && !user.admin),
                 })
             }),
         [recipeDocRef, recipeName, user]

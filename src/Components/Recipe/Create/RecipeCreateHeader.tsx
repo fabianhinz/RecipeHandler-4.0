@@ -28,6 +28,7 @@ const RecipeCreateHeader = ({ inputDisabled, name, onNameChange }: Props) => {
         <Grid container spacing={2}>
             <Grid item xs={12}>
                 <InputBase
+                    autoFocus
                     disabled={inputDisabled}
                     classes={{ root: classes.inputBaseRoot, input: classes.inputBaseInput }}
                     value={value}

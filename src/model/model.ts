@@ -140,8 +140,6 @@ export interface MostCooked<T> {
     value: T
 }
 
-export type RecipeVariants = { variant: 'details' | 'preview' | 'related' }
-
 export type TesseractText = string
 
 export type TesseractPart = keyof Pick<Recipe, 'ingredients' | 'description'> | undefined
