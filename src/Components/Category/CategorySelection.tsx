@@ -54,7 +54,7 @@ const CategorySelection = ({ onCategoryChange, selectedCategories, header, label
                 {Object.keys(categoriesCollection).map(type => (
                     <Grid key={type} item xs={12}>
                         <ListSubheader className={classes.subheader}>{type}</ListSubheader>
-                        <List>
+                        <List disablePadding>
                             {categoriesCollection[type].map(category => (
                                 <ListItem
                                     onClick={() => onCategoryChange(type, category)}

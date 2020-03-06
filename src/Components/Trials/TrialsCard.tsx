@@ -20,6 +20,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getResizedImagesWithMetadata } from '../../hooks/useAttachment'
 import { AllDataUrls, Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { BORDER_RADIUS } from '../../theme'
 import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -50,6 +51,7 @@ const useStyles = makeStyles(theme =>
             width: 'fit-content',
         },
         selectionRoot: {
+            borderRadius: BORDER_RADIUS,
             position: 'absolute',
             top: 0,
             left: 0,

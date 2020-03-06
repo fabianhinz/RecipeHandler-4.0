@@ -11,9 +11,12 @@ import React, { useEffect, useRef, useState } from 'react'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        button: {
+        buttonRoot: {
             fontFamily: 'Ubuntu',
             textTransform: 'unset',
+        },
+        buttonLabel: {
+            justifyContent: 'flex-start',
         },
         paper: {
             [theme.breakpoints.between('xs', 'md')]: {
@@ -84,9 +87,9 @@ const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose, actio
         <>
             <Button
                 onClick={openDrawer}
-                variant="contained"
+                variant="outlined"
                 size="large"
-                className={classes.button}
+                classes={{ root: classes.buttonRoot, label: classes.buttonLabel }}
                 fullWidth
                 color={highlight ? 'secondary' : 'default'}
                 {...muiButtonProps}>

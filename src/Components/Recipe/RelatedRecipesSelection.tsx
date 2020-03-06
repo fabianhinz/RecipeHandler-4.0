@@ -1,42 +1,32 @@
 import {
-    CardActionArea,
+    Avatar,
     createStyles,
-    Grid,
     InputBase,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
     makeStyles,
-    Typography,
 } from '@material-ui/core'
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
+import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 
 import useDebounce from '../../hooks/useDebounce'
 import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS } from '../../theme'
 import SelectionDrawer from '../Shared/SelectionDrawer'
-import Skeletons from '../Shared/Skeletons'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        recipeHeader: {
-            cursor: 'pointer',
-            padding: theme.spacing(2),
-            borderRadius: BORDER_RADIUS,
-            transition: theme.transitions.create('background-color', {
-                duration: theme.transitions.duration.standard,
-                easing: theme.transitions.easing.easeOut,
-            }),
-        },
-        selectedRecipeHeader: {
-            backgroundColor: 'rgb(90, 139, 92, 0.3)',
-            '&:hover': {
-                backgroundColor: 'rgb(90, 139, 92, 0.45)',
-            },
+        avatarSelected: {
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.getContrastText(theme.palette.secondary.main),
         },
         inputBaseRoot: {
             width: '100%',
-            ...theme.typography.h5,
+            ...theme.typography.h6,
         },
         inputBaseInput: {
             fontFamily: 'Ubuntu',
@@ -70,7 +60,9 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
 
         let query:
             | firebase.firestore.CollectionReference
-            | firebase.firestore.Query = FirebaseService.firestore.collection('recipes').limit(10)
+            | firebase.firestore.Query = FirebaseService.firestore
+            .collection('recipes')
+            .limit(FirebaseService.QUERY_LIMIT * 2)
 
         const handleSnapshot = (querySnapshot: firebase.firestore.QuerySnapshot) => {
             setLoading(false)
@@ -104,44 +96,59 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
             onClose={() => setShouldLoad(false)}
             buttonProps={{
                 startIcon: <SwapIcon />,
-                label: 'Passende Rezepte',
+                label: 'Passende Rezepte ergänzen',
                 highlight: relatedRecipes.length > 0,
             }}
             header={
                 <InputBase
                     classes={{ root: classes.inputBaseRoot, input: classes.inputBaseInput }}
                     value={searchValue}
-                    placeholder="Name"
+                    placeholder="Nach Rezeptnamen filtern"
                     onChange={e => setSearchValue(e.target.value)}
                 />
             }>
-            <Grid container spacing={2} direction="column">
+            <List disablePadding>
                 {recipes.map(recipe => (
-                    <Grid item key={recipe.name} onClick={() => handleSelectedChange(recipe.name)}>
-                        <CardActionArea
-                            className={clsx(
-                                classes.recipeHeader,
-                                relatedRecipes.some(name => name === recipe.name) &&
-                                    classes.selectedRecipeHeader
-                            )}>
-                            <Typography gutterBottom display="inline" variant="h5">
-                                {recipe.name}
-                            </Typography>
-
-                            <Typography color="textSecondary">
-                                {FirebaseService.createDateFromTimestamp(
-                                    recipe.createdDate
-                                ).toLocaleDateString()}
-                            </Typography>
-                        </CardActionArea>
-                    </Grid>
+                    <ListItem
+                        button
+                        key={recipe.name}
+                        onClick={() => handleSelectedChange(recipe.name)}>
+                        <ListItemAvatar>
+                            <Avatar
+                                src={
+                                    relatedRecipes.some(name => name === recipe.name)
+                                        ? undefined
+                                        : recipe.previewAttachment
+                                }
+                                className={clsx(
+                                    relatedRecipes.some(name => name === recipe.name) &&
+                                        classes.avatarSelected
+                                )}>
+                                {recipe.name.slice(0, 1)}
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={recipe.name}
+                            secondary={FirebaseService.createDateFromTimestamp(
+                                recipe.createdDate
+                            ).toLocaleDateString()}
+                        />
+                    </ListItem>
                 ))}
-                <Skeletons
-                    visible={loading}
-                    variant="relatedRecipesSelection"
-                    numberOfSkeletons={10}
-                />
-            </Grid>
+
+                {loading &&
+                    new Array(FirebaseService.QUERY_LIMIT * 2).fill(1).map((_dummy, index) => (
+                        <ListItem key={index}>
+                            <ListItemAvatar>
+                                <Skeleton variant="circle" height={40} width={40} />
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={<Skeleton variant="text" width="80%" />}
+                                secondary={<Skeleton variant="text" width="30%" />}
+                            />
+                        </ListItem>
+                    ))}
+            </List>
         </SelectionDrawer>
     )
 }

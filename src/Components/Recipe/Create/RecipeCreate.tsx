@@ -130,7 +130,7 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                             </Grid>
                             <Grid item xs={12} sm="auto">
                                 <CategorySelection
-                                    label="Kategorien"
+                                    label="Kategorien auswählen"
                                     selectedCategories={selectedCategories}
                                     onCategoryChange={setSelectedCategories}
                                 />

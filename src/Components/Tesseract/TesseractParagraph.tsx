@@ -66,7 +66,9 @@ const TesseractParagraph = ({ text, confidence, onChipClick, results }: Props) =
                 </div>
             </Grid>
             <Grid item>
-                <Typography>{text}</Typography>
+                <Typography>
+                    {confidence > 80 ? text : <i>Erkennungsgenauigkeit zu niedrig</i>}
+                </Typography>
             </Grid>
         </Grid>
     )
