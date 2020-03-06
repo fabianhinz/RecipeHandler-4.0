@@ -20,6 +20,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getResizedImagesWithMetadata } from '../../hooks/useAttachment'
 import { AllDataUrls, Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { BORDER_RADIUS } from '../../theme'
 import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -50,6 +51,7 @@ const useStyles = makeStyles(theme =>
             width: 'fit-content',
         },
         selectionRoot: {
+            borderRadius: BORDER_RADIUS,
             position: 'absolute',
             top: 0,
             left: 0,
@@ -158,7 +160,11 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
                             <CheckIcon className={classes.selectionCheckIcon} />
                         </div>
 
-                        <CardMedia image={dataUrls?.mediumDataUrl} className={classes.cardMedia}>
+                        <CardMedia
+                            image={
+                                selectionProps ? dataUrls?.smallDataUrl : dataUrls?.mediumDataUrl
+                            }
+                            className={classes.cardMedia}>
                             {/* make mui happy */}
                             <></>
                         </CardMedia>
