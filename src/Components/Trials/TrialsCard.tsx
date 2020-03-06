@@ -160,11 +160,7 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
                             <CheckIcon className={classes.selectionCheckIcon} />
                         </div>
 
-                        <CardMedia
-                            image={
-                                selectionProps ? dataUrls?.smallDataUrl : dataUrls?.mediumDataUrl
-                            }
-                            className={classes.cardMedia}>
+                        <CardMedia image={dataUrls?.mediumDataUrl} className={classes.cardMedia}>
                             {/* make mui happy */}
                             <></>
                         </CardMedia>
