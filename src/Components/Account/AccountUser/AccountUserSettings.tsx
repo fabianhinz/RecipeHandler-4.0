@@ -85,6 +85,8 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                                                 ? 'Dynamisch'
                                                 : user.muiTheme === 'dark'
                                                 ? 'Dunkel'
+                                                : user.muiTheme === 'black'
+                                                ? 'Schwarz'
                                                 : 'Hell'}
                                         </Typography>
                                         <Collapse in={showInfoView}>
@@ -92,10 +94,8 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                                                 gutterBottom
                                                 variant="body2"
                                                 color="textSecondary">
-                                                Den Augen zu liebe gibt es ein sogenanntes{' '}
-                                                <i>Darktheme</i>. Dem Nutzer zuliebe auch ein{' '}
-                                                <i>Lighttheme</i>. Bei <i>Dynamisch</i> entscheidet
-                                                das Betriebssystem über das Design.
+                                                Folgende Ausprägungen des Designs existieren:
+                                                Dynamisch, Dunkel, Schwarz und Hell
                                             </Typography>
                                         </Collapse>
                                     </>

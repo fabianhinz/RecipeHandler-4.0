@@ -8,7 +8,6 @@ import {
     makeStyles,
     TextField,
     Typography,
-    useTheme,
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import CloseIcon from '@material-ui/icons/Close'
@@ -20,6 +19,7 @@ import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useUsersContext } from '../Provider/UsersProvider'
 import { SlideUp } from '../Shared/Transitions'
 
 const useStyles = makeStyles(() =>
@@ -48,8 +48,8 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
     const { ProgressComponent, setProgress } = useProgress('cover')
     const { isDialogFullscreen } = useBreakpointsContext()
     const { user } = useFirebaseAuthContext()
+    const { userIds } = useUsersContext()
 
-    const theme = useTheme()
     const { enqueueSnackbar } = useSnackbar()
 
     const classes = useStyles()
@@ -114,14 +114,15 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
                             .set({
                                 username,
                                 admin: false,
-                                muiTheme: theme.palette.type,
-                                selectedUsers: [],
+                                muiTheme: 'dynamic',
+                                selectedUsers: userIds,
                                 showRecentlyAdded: true,
                                 showMostCooked: true,
                                 notifications: false,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
                                 algoliaAdvancedSyntax: false,
                                 bookmarkSync: false,
+                                emailVerified: false,
                                 bookmarks: [],
                             } as Omit<User, 'uid'>)
                         // send a verification email to the newly created user

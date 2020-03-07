@@ -4,7 +4,7 @@ import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
-import { responsiveDarkTheme, responsiveLightTheme } from '../theme'
+import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import { isSafari } from '../util/constants'
 import Footer from './Footer'
 import Header from './Header'
@@ -62,10 +62,16 @@ const App: FC = () => {
         metaThemeColor.setAttribute('content', '#424242')
     }, [])
 
-    const setLigthTheme = useCallback(() => {
+    const setLightTheme = useCallback(() => {
         const metaThemeColor = document.getElementsByName('theme-color')[0]
         setTheme(responsiveLightTheme)
         metaThemeColor.setAttribute('content', '#FFFFFF')
+    }, [])
+
+    const setBlackTheme = useCallback(() => {
+        const metaThemeColor = document.getElementsByName('theme-color')[0]
+        setTheme(responsiveBlackTheme)
+        metaThemeColor.setAttribute('content', '#000')
     }, [])
 
     useEffect(() => {
@@ -73,15 +79,17 @@ const App: FC = () => {
             setDarkTheme()
         } else if (user && user.muiTheme === 'dynamic') {
             if (colorSchemeDark) setDarkTheme()
-            else setLigthTheme()
+            else setLightTheme()
         } else if (user && user.muiTheme === 'dark') {
             setDarkTheme()
         } else if (user && user.muiTheme === 'light') {
-            setLigthTheme()
+            setLightTheme()
+        } else if (user && user.muiTheme === 'black') {
+            setBlackTheme()
         } else {
-            setLigthTheme()
+            setLightTheme()
         }
-    }, [colorSchemeDark, setDarkTheme, setLigthTheme, user])
+    }, [colorSchemeDark, setBlackTheme, setDarkTheme, setLightTheme, user])
 
     return (
         <ThemeProvider theme={theme}>
