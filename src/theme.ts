@@ -103,6 +103,21 @@ const sharedTheme: Partial<ThemeOptions> = {
 export const PRIMARY_COLOR = '#81c784'
 export const SECONDARY_COLOR = '#ffb74d'
 
+const blackTheme = createMuiTheme({
+    palette: {
+        type: 'dark',
+        primary: { main: PRIMARY_COLOR },
+        secondary: { main: SECONDARY_COLOR },
+        background: {
+            paper: '#1B1B1D',
+            default: '#000',
+        },
+    },
+    ...sharedTheme,
+})
+
+export const responsiveBlackTheme = responsiveFontSizes(blackTheme, { factor: 3 })
+
 const darkTheme = createMuiTheme({
     palette: {
         type: 'dark',

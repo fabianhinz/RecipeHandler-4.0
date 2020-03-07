@@ -63,6 +63,8 @@ const AccountUser = () => {
                             ? 'dark'
                             : user.muiTheme === 'dark'
                             ? 'light'
+                            : user.muiTheme === 'light'
+                            ? 'black'
                             : 'dynamic',
                 })
                 break

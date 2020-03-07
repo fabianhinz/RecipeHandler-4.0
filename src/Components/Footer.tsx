@@ -1,15 +1,25 @@
 import { AppBar, createStyles, makeStyles } from '@material-ui/core'
 import React from 'react'
 
+import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import Navigation from './Routes/Navigation'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
+interface StyleProps {
+    isBlackTheme: boolean
+}
+
+const useStyles = makeStyles(theme => {
+    const getBackgroundColor = ({ isBlackTheme }: StyleProps) => {
+        return theme.palette.type === 'dark' ? (isBlackTheme ? '#1B1B1D' : '#212121') : '#f5f5f5'
+    }
+
+    return createStyles({
         appbar: {
             position: 'fixed',
             top: 'auto',
             bottom: 'env(safe-area-inset-bottom)',
             height: theme.spacing(8),
+            backgroundColor: getBackgroundColor,
         },
         safeAreaIos: {
             zIndex: theme.zIndex.appBar,
@@ -19,13 +29,14 @@ const useStyles = makeStyles(theme =>
             left: 0,
             right: 0,
             height: 'env(safe-area-inset-bottom)',
-            background: theme.palette.type === 'dark' ? '#212121' : '#f5f5f5',
+            backgroundColor: getBackgroundColor,
         },
     })
-)
+})
 
 const Footer = () => {
-    const classes = useStyles()
+    const { user } = useFirebaseAuthContext()
+    const classes = useStyles({ isBlackTheme: Boolean(user?.muiTheme === 'black') })
 
     return (
         <footer>

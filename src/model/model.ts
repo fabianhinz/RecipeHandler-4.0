@@ -79,14 +79,14 @@ export type DocumentId = string
 export type User = {
     uid: string
     username: string
-    muiTheme: PaletteType | 'dynamic'
+    muiTheme: PaletteType | 'dynamic' | 'black'
     selectedUsers: string[]
     showRecentlyAdded: boolean
     showMostCooked: boolean
     notifications: boolean
     admin?: boolean
     profilePicture?: string
-    emailVerified?: boolean
+    emailVerified: boolean
     createdDate: firebase.firestore.Timestamp
     algoliaAdvancedSyntax: boolean
     bookmarkSync: boolean
