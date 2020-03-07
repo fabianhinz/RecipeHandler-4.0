@@ -133,11 +133,15 @@ const AccountUserShoppingList = () => {
     return (
         <>
             <EntryGridContainer>
-                <Grid item xs={10} md={9}>
-                    <Typography variant="h4">Einkaufsliste</Typography>
-                </Grid>
-                <Grid item xs={2} md={3}>
-                    <ScrollButtons />
+                <Grid item xs={12}>
+                    <Grid container alignItems="center" justify="space-between">
+                        <Grid item>
+                            <Typography variant="h4">Einkaufsliste</Typography>
+                        </Grid>
+                        <Grid item>
+                            <ScrollButtons />
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     <Grid

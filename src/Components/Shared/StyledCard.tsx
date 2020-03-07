@@ -8,8 +8,6 @@ import {
 } from '@material-ui/core'
 import React from 'react'
 
-type StyleProps = Pick<Props, 'action'>
-
 const useStyles = makeStyles(theme =>
     createStyles({
         root: {
@@ -24,7 +22,7 @@ const useStyles = makeStyles(theme =>
             maxHeight: 43,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: ({ action }: StyleProps) => (action ? 'space-between' : 'center'),
+            justifyContent: 'center',
         },
         backgroundIcon: {
             color:
@@ -56,7 +54,7 @@ interface Props {
 }
 
 const StyledCard = ({ header, children, BackgroundIcon, action }: Props) => {
-    const classes = useStyles({ action })
+    const classes = useStyles()
 
     return (
         <Card className={classes.root}>

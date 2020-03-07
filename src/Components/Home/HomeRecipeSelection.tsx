@@ -48,59 +48,61 @@ const HomeRecipeSelection = ({
     }
 
     return (
-        <>
-            <Grid item>
-                <Typography gutterBottom display="inline" variant="h4">
-                    Rezeptauswahl
-                </Typography>
-            </Grid>
-            <Grid item>
-                <CategorySelection
-                    onCategoryChange={onSelectedCategoriesChange}
-                    selectedCategories={selectedCategories}
-                    label="Filter"
-                    header={
-                        <Grid wrap="nowrap" container spacing={1}>
-                            <Grid item xs={12}>
-                                <Button
-                                    fullWidth
-                                    variant="outlined"
-                                    onClick={handleOrderByChange('name')}
-                                    color={orderBy.name ? 'secondary' : 'default'}
-                                    startIcon={
-                                        <ArrowUpwardIcon
-                                            className={clsx(
-                                                classes.orderByAsc,
-                                                orderBy.name === 'desc' && classes.orderByDesc
-                                            )}
-                                        />
-                                    }>
-                                    Name
-                                </Button>
+        <Grid item xs={12}>
+            <Grid container alignItems="center" justify="space-between">
+                <Grid item>
+                    <Typography gutterBottom display="inline" variant="h4">
+                        Rezeptauswahl
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <CategorySelection
+                        onCategoryChange={onSelectedCategoriesChange}
+                        selectedCategories={selectedCategories}
+                        label="Filter"
+                        header={
+                            <Grid wrap="nowrap" container spacing={1}>
+                                <Grid item xs={12}>
+                                    <Button
+                                        fullWidth
+                                        variant="outlined"
+                                        onClick={handleOrderByChange('name')}
+                                        color={orderBy.name ? 'secondary' : 'default'}
+                                        startIcon={
+                                            <ArrowUpwardIcon
+                                                className={clsx(
+                                                    classes.orderByAsc,
+                                                    orderBy.name === 'desc' && classes.orderByDesc
+                                                )}
+                                            />
+                                        }>
+                                        Name
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button
+                                        fullWidth
+                                        variant="outlined"
+                                        onClick={handleOrderByChange('createdDate')}
+                                        color={orderBy.createdDate ? 'secondary' : 'default'}
+                                        startIcon={
+                                            <ArrowUpwardIcon
+                                                className={clsx(
+                                                    classes.orderByAsc,
+                                                    orderBy.createdDate === 'desc' &&
+                                                        classes.orderByDesc
+                                                )}
+                                            />
+                                        }>
+                                        Datum
+                                    </Button>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12}>
-                                <Button
-                                    fullWidth
-                                    variant="outlined"
-                                    onClick={handleOrderByChange('createdDate')}
-                                    color={orderBy.createdDate ? 'secondary' : 'default'}
-                                    startIcon={
-                                        <ArrowUpwardIcon
-                                            className={clsx(
-                                                classes.orderByAsc,
-                                                orderBy.createdDate === 'desc' &&
-                                                    classes.orderByDesc
-                                            )}
-                                        />
-                                    }>
-                                    Datum
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    }
-                />
+                        }
+                    />
+                </Grid>
             </Grid>
-        </>
+        </Grid>
     )
 }
 
