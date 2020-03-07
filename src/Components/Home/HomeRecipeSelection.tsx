@@ -60,13 +60,13 @@ const HomeRecipeSelection = ({
                     selectedCategories={selectedCategories}
                     label="Filter"
                     header={
-                        <Grid wrap="nowrap" container spacing={2}>
+                        <Grid wrap="nowrap" container spacing={1}>
                             <Grid item xs={12}>
                                 <Button
                                     fullWidth
                                     variant="outlined"
                                     onClick={handleOrderByChange('name')}
-                                    color={orderBy.name ? 'primary' : 'default'}
+                                    color={orderBy.name ? 'secondary' : 'default'}
                                     startIcon={
                                         <ArrowUpwardIcon
                                             className={clsx(
@@ -83,7 +83,7 @@ const HomeRecipeSelection = ({
                                     fullWidth
                                     variant="outlined"
                                     onClick={handleOrderByChange('createdDate')}
-                                    color={orderBy.createdDate ? 'primary' : 'default'}
+                                    color={orderBy.createdDate ? 'secondary' : 'default'}
                                     startIcon={
                                         <ArrowUpwardIcon
                                             className={clsx(

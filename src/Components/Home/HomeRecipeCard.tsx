@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { Eye } from 'mdi-material-ui'
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
 import { AttachmentDoc, Recipe } from '../../model/model'
@@ -136,4 +136,11 @@ const HomeRecipeCard = ({ recipe }: Props) => {
     )
 }
 
-export default HomeRecipeCard
+export default memo(
+    HomeRecipeCard,
+    (prev, next) =>
+        prev.recipe.name === next.recipe.name &&
+        prev.recipe.previewAttachment === next.recipe.previewAttachment &&
+        prev.recipe.createdDate === next.recipe.createdDate &&
+        prev.recipe.categories === next.recipe.categories
+)

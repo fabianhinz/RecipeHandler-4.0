@@ -1,6 +1,7 @@
 import {
     Chip,
     createStyles,
+    Fab,
     Grid,
     IconButton,
     makeStyles,
@@ -367,11 +368,12 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
         <>
             <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
             <div className={clsx(classes.background, originId && classes.backgroundVisible)}>
-                <IconButton
+                <Fab
+                    size="medium"
                     onClick={() => setActiveAttachment(prev => --prev)}
                     disabled={activeAttachment === 0}>
                     <ChevronLeft />
-                </IconButton>
+                </Fab>
                 <div id="destination" className={classes.destination}>
                     {attachments && (
                         <SwipeableViews disabled index={activeAttachment}>
@@ -381,11 +383,12 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
                         </SwipeableViews>
                     )}
                 </div>
-                <IconButton
+                <Fab
+                    size="medium"
                     onClick={() => setActiveAttachment(prev => ++prev)}
                     disabled={attachments && activeAttachment === attachments.length - 1}>
                     <ChevronRight />
-                </IconButton>
+                </Fab>
 
                 <Grid className={classes.btnContainer} container justify="flex-end" spacing={1}>
                     <Grid item>
