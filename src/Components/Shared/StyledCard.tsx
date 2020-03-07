@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme =>
             maxHeight: 43,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'space-between',
         },
         backgroundIcon: {
             color:
