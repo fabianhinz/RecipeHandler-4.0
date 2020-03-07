@@ -22,9 +22,10 @@ import HomeRecipeSelection from './HomeRecipeSelection'
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, Recipe>>
 
 const Home = () => {
+    const pagedRecipesSize = useRef(0)
+
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, Recipe>>(new Map())
     const [lastRecipe, setLastRecipe] = useState<Recipe | undefined | null>(null)
-    const pagedRecipesSize = useRef(0)
     const [orderBy, setOrderBy] = useState<OrderByRecord>(ConfigService.orderBy)
     const [querying, setQuerying] = useState(false)
 
@@ -42,7 +43,7 @@ const Home = () => {
         setPagedRecipes(new Map())
         setLastRecipe(null)
         // ? clear intersection observer trigger and recipes when any of following change
-    }, [user, orderBy, selectedCategories])
+    }, [orderBy, selectedCategories])
 
     useEffect(() => {
         setQuerying(true)
@@ -53,8 +54,8 @@ const Home = () => {
             .collection('recipes')
             .orderBy(orderByKey, orderBy[orderByKey])
 
-        if (user?.selectedUsers && user?.selectedUsers.length > 0)
-            query = query.where('editorUid', 'in', user?.selectedUsers)
+        if (user && user.selectedUsers.length > 0)
+            query = query.where('editorUid', 'in', user.selectedUsers)
 
         if (lastRecipe) query = query.startAfter(lastRecipe[orderByKey])
 
