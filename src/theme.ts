@@ -116,7 +116,7 @@ const blackTheme = createMuiTheme({
     ...sharedTheme,
 })
 
-export const responsiveBlackTheme = responsiveFontSizes(blackTheme, { factor: 3 })
+export const responsiveBlackTheme = responsiveFontSizes(blackTheme)
 
 const darkTheme = createMuiTheme({
     palette: {
