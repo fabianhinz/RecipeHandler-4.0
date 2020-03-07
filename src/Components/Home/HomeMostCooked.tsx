@@ -130,12 +130,19 @@ const HomeMostCooked = () => {
 
     return (
         <>
-            <Grid item xs={10} md={9}>
-                <Typography variant="h4">Häufig gekocht</Typography>
+            <Grid item xs={12}>
+                <Grid container alignItems="center" justify="space-between">
+                    <Grid item>
+                        <Typography noWrap variant="h4">
+                            Häufig gekocht
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <ScrollButtons />
+                    </Grid>
+                </Grid>
             </Grid>
-            <Grid item xs={2} md={3}>
-                <ScrollButtons />
-            </Grid>
+
             <Grid item xs={12}>
                 <Grid
                     ref={containerRef}

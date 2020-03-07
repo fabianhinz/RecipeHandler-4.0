@@ -5,7 +5,6 @@ import { SnackbarProvider } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
 import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '../theme'
-import { isSafari } from '../util/constants'
 import Footer from './Footer'
 import Header from './Header'
 import Main from './Main'
@@ -75,7 +74,7 @@ const App: FC = () => {
     }, [])
 
     useEffect(() => {
-        if ((!user && colorSchemeDark) || isSafari) {
+        if (!user && colorSchemeDark) {
             setDarkTheme()
         } else if (user && user.muiTheme === 'dynamic') {
             if (colorSchemeDark) setDarkTheme()
