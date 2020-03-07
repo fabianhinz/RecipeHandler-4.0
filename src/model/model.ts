@@ -140,11 +140,10 @@ export interface MostCooked<T> {
     value: T
 }
 
-export type TesseractText = string
-
-export type TesseractPart = keyof Pick<Recipe, 'ingredients' | 'description'> | undefined
-
-export type TesseractResult = { text: TesseractText; tesseractPart: TesseractPart }
+export type TesseractResult = {
+    text: string
+    tesseractPart: keyof Pick<Recipe, 'ingredients' | 'description'>
+}
 
 export interface TesseractLog {
     workerId?: string

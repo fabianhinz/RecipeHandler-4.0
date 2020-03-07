@@ -4,7 +4,7 @@ import BookIcon from '@material-ui/icons/Book'
 import React from 'react'
 import { Paragraph } from 'tesseract.js'
 
-import { TesseractPart, TesseractText } from '../../model/model'
+import { TesseractResult } from '../../model/model'
 import { BORDER_RADIUS } from '../../theme'
 
 type StyleProps = Pick<Props, 'confidence'>
@@ -28,11 +28,18 @@ const useStyles = makeStyles(theme =>
 )
 
 interface Props extends Pick<Paragraph, 'text' | 'confidence'> {
-    onChipClick: (text: TesseractText, parts: TesseractPart) => () => void
-    results: Map<string, TesseractPart>
+    onChipClick: (tesseractResult: TesseractResult) => void
+    descriptionChecked: boolean
+    ingredientsChecked: boolean
 }
 
-const TesseractParagraph = ({ text, confidence, onChipClick, results }: Props) => {
+const TesseractParagraph = ({
+    text,
+    confidence,
+    onChipClick,
+    descriptionChecked,
+    ingredientsChecked,
+}: Props) => {
     const classes = useStyles({ confidence })
 
     return (
@@ -44,18 +51,18 @@ const TesseractParagraph = ({ text, confidence, onChipClick, results }: Props) =
                 <Grid container spacing={1}>
                     <Grid item>
                         <Chip
-                            icon={<AssignmentIcon />}
-                            color={results.get(text) === 'description' ? 'secondary' : 'default'}
-                            onClick={onChipClick(text, 'description')}
-                            label="Beschreibung"
+                            icon={<BookIcon />}
+                            color={ingredientsChecked ? 'secondary' : 'default'}
+                            onClick={() => onChipClick({ text, tesseractPart: 'ingredients' })}
+                            label="Zutaten"
                         />
                     </Grid>
                     <Grid item>
                         <Chip
-                            icon={<BookIcon />}
-                            color={results.get(text) === 'ingredients' ? 'secondary' : 'default'}
-                            onClick={onChipClick(text, 'ingredients')}
-                            label="Zutaten"
+                            icon={<AssignmentIcon />}
+                            color={descriptionChecked ? 'secondary' : 'default'}
+                            onClick={() => onChipClick({ text, tesseractPart: 'description' })}
+                            label="Beschreibung"
                         />
                     </Grid>
                 </Grid>

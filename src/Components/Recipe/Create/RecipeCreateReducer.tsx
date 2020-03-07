@@ -34,7 +34,7 @@ type Action =
     | { type: 'storageDeleteRefsChange'; ref: firebase.storage.Reference }
     | { type: 'relatedRecipesChange'; relatedRecipes: Array<string> }
     | { type: 'selectedTrialChange'; selectedTrial?: Trial }
-    | { type: 'tesseractResultSave'; result: TesseractResult }
+    | { type: 'tesseractResultChange'; result: TesseractResult }
 
 const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
     switch (action.type) {
@@ -73,12 +73,14 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
         case 'selectedTrialChange': {
             return { ...state, selectedTrial: action.selectedTrial }
         }
-        case 'tesseractResultSave': {
-            const key = action.result.tesseractPart
-            if (!key) return state
+        case 'tesseractResultChange': {
+            const { text, tesseractPart: key } = action.result
 
-            if (state[key].length === 0) return { ...state, [key]: action.result.text }
-            else return { ...state, [key]: state[key] + '\n\n' + action.result.text }
+            if (state[key].includes(text)) {
+                return { ...state, [key]: state[key].replace(text, '') }
+            } else {
+                return { ...state, [key]: state[key] + text }
+            }
         }
     }
 }
