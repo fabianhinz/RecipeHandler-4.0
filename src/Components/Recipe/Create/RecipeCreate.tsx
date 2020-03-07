@@ -5,7 +5,7 @@ import { Prompt, RouteComponentProps } from 'react-router'
 
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
-import { Recipe, TesseractResult } from '../../../model/model'
+import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import CategorySelection from '../../Category/CategorySelection'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
@@ -85,10 +85,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
         }
     }
 
-    const handleTesseractSave = (results: TesseractResult[]) => {
-        results.forEach(result => dispatch({ type: 'tesseractResultSave', result }))
-    }
-
     return (
         <>
             {state.preview && user ? (
@@ -118,7 +114,13 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     <Grid item xs={12}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm="auto">
-                                <TesseractSelection onSave={handleTesseractSave} />
+                                <TesseractSelection
+                                    description={state.description}
+                                    ingredients={state.ingredients}
+                                    onChange={result =>
+                                        dispatch({ type: 'tesseractResultChange', result })
+                                    }
+                                />
                             </Grid>
                             <Grid item xs={12} sm="auto">
                                 <TrialsSelection

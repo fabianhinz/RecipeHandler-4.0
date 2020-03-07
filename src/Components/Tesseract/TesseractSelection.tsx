@@ -1,11 +1,11 @@
-import { Avatar, ButtonBase, createStyles, IconButton, makeStyles } from '@material-ui/core'
+import { Avatar, ButtonBase, createStyles, makeStyles } from '@material-ui/core'
 import clsx from 'clsx'
-import { ContentSave, ImageSearch } from 'mdi-material-ui'
+import { ImageSearch } from 'mdi-material-ui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { createWorker, Paragraph } from 'tesseract.js'
 
 import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
-import { TesseractLog, TesseractPart, TesseractResult, TesseractText } from '../../model/model'
+import { Recipe, TesseractLog, TesseractResult } from '../../model/model'
 import SelectionDrawer from '../Shared/SelectionDrawer'
 import TesseractParagraph from './TesseractParagraph'
 
@@ -56,15 +56,14 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface Props {
-    onSave: (results: TesseractResult[]) => void
+interface Props extends Pick<Recipe, 'description' | 'ingredients'> {
+    onChange: (result: TesseractResult) => void
 }
 
-const TesseractSelection = ({ onSave }: Props) => {
+const TesseractSelection = ({ onChange, ingredients, description }: Props) => {
     const [shouldLoad, setShouldLoad] = useState(false)
     const [log, setLog] = useState<TesseractLog | undefined>()
     const [paragraphs, setParagraphs] = useState<Pick<Paragraph, 'text' | 'confidence'>[]>([])
-    const [results, setResults] = useState<Map<TesseractText, TesseractPart>>(new Map())
 
     const workerRef = useRef<Tesseract.Worker | null>(null)
 
@@ -104,39 +103,19 @@ const TesseractSelection = ({ onSave }: Props) => {
                 const { data } = await workerRef.current!.recognize(dataUrl)
                 setParagraphs(prev => [
                     ...prev,
-                    ...data.paragraphs.map(({ text, confidence }) => ({ text, confidence })),
+                    ...data.paragraphs
+                        .filter(({ text }) => !prev.find(({ text: prevText }) => prevText === text))
+                        .map(({ text, confidence }) => ({ text, confidence })),
                 ])
             }
             setLog({ status: 'initialized api' })
         })()
     }, [dropzoneAttachments])
 
-    const handleChipClick = (text: TesseractText, parts: TesseractPart) => () => {
-        setResults(previous => {
-            if (previous.get(text) && previous.get(text) === parts) previous.set(text, undefined)
-            else previous.set(text, parts)
-
-            return new Map(previous)
-        })
-    }
-
-    const getValidResults = () =>
-        [...results.entries()]
-            .filter(([, recipePart]) => Boolean(recipePart))
-            .map(
-                ([text, tesseractParts]) =>
-                    ({ text, tesseractPart: tesseractParts } as TesseractResult)
-            )
-
     return (
         <SelectionDrawer
             onOpen={() => setShouldLoad(true)}
             onClose={() => setShouldLoad(false)}
-            action={
-                <IconButton onClick={() => onSave(getValidResults())}>
-                    <ContentSave />
-                </IconButton>
-            }
             buttonProps={{
                 startIcon: <ImageSearch />,
                 label: 'Einscannen',
@@ -153,9 +132,10 @@ const TesseractSelection = ({ onSave }: Props) => {
             </ButtonBase>
             {paragraphs.map((paragraph, index) => (
                 <TesseractParagraph
+                    descriptionChecked={description.includes(paragraph.text)}
+                    ingredientsChecked={ingredients.includes(paragraph.text)}
                     key={index}
-                    onChipClick={handleChipClick}
-                    results={results}
+                    onChipClick={onChange}
                     {...paragraph}
                 />
             ))}
