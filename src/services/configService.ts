@@ -1,4 +1,4 @@
-import { OrderByRecord } from '../model/model'
+import { DocumentId, OrderByRecord, Recipe } from '../model/model'
 
 class ConfigService {
     private _selectedCategories: Map<string, string>
@@ -17,9 +17,27 @@ class ConfigService {
         this._orderBy = newOrderBy
     }
 
+    private _pagedRecipes: Map<DocumentId, Recipe>
+    get pagedRecipes() {
+        return this._pagedRecipes
+    }
+    set pagedRecipes(newPagedRecipes: Map<DocumentId, Recipe>) {
+        this._pagedRecipes = newPagedRecipes
+    }
+
+    private _scrollPosition: number
+    get scrollPosition() {
+        return this._scrollPosition
+    }
+    set scrollPosition(newScrollPosition: number) {
+        this._scrollPosition = newScrollPosition
+    }
+
     constructor() {
         this._selectedCategories = new Map()
         this._orderBy = { name: 'asc' }
+        this._pagedRecipes = new Map()
+        this._scrollPosition = window.scrollX
     }
 }
 
