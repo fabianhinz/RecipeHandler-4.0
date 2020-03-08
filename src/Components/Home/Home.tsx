@@ -24,7 +24,9 @@ type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentI
 const Home = () => {
     const pagedRecipesSize = useRef(0)
 
-    const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, Recipe>>(new Map())
+    const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, Recipe>>(
+        ConfigService.pagedRecipes
+    )
     const [lastRecipe, setLastRecipe] = useState<Recipe | undefined | null>(null)
     const [orderBy, setOrderBy] = useState<OrderByRecord>(ConfigService.orderBy)
     const [querying, setQuerying] = useState(false)
@@ -40,10 +42,14 @@ const Home = () => {
     useDocumentTitle('RecipeHandler 4.0')
 
     useEffect(() => {
-        setPagedRecipes(new Map())
-        setLastRecipe(null)
-        // ? clear intersection observer trigger and recipes when any of following change
-    }, [orderBy, selectedCategories])
+        window.scrollTo({ top: ConfigService.scrollPosition })
+    }, [])
+
+    useEffect(() => {
+        return () => {
+            ConfigService.scrollPosition = window.scrollY
+        }
+    }, [])
 
     useEffect(() => {
         setQuerying(true)
@@ -78,6 +84,7 @@ const Home = () => {
                 const newRecipes = new Map([...recipes, ...changes.added, ...changes.modified])
                 pagedRecipesSize.current = newRecipes.size
 
+                ConfigService.pagedRecipes = newRecipes
                 return newRecipes
             })
             setQuerying(false)
@@ -91,9 +98,17 @@ const Home = () => {
                 <HomeRecentlyAdded />
                 <HomeRecipeSelection
                     selectedCategories={selectedCategories}
-                    onSelectedCategoriesChange={setSelectedCategories}
+                    onSelectedCategoriesChange={(type, value) => {
+                        setSelectedCategories(type, value)
+                        setPagedRecipes(new Map())
+                        setLastRecipe(null)
+                    }}
                     orderBy={orderBy}
-                    onOrderByChange={setOrderBy}
+                    onOrderByChange={newOrderBy => {
+                        setOrderBy(newOrderBy)
+                        setPagedRecipes(new Map())
+                        setLastRecipe(null)
+                    }}
                 />
                 <Grid item xs={12}>
                     <Grid container spacing={3}>
