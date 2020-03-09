@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import React from 'react'
 
 import { OrderByRecord } from '../../model/model'
-import configService from '../../services/configService'
+import recipeService from '../../services/recipeService'
 import CategorySelection from '../Category/CategorySelection'
 
 const useStyles = makeStyles(theme =>
@@ -44,7 +44,7 @@ const HomeRecipeSelection = ({
         else newOrderBy = { [key]: 'asc' }
 
         onOrderByChange(newOrderBy)
-        configService.orderBy = newOrderBy
+        recipeService.orderBy = newOrderBy
     }
 
     return (

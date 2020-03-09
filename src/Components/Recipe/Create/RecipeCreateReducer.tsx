@@ -10,10 +10,8 @@ export interface RecipeCreateState {
     amount: number
     description: string
     preview: boolean
-    storageDeleteRefs: Array<firebase.storage.Reference>
     numberOfComments: number
     relatedRecipes: Array<string>
-    relatedRecipesDialog: boolean
     selectedTrial?: Trial
 }
 
@@ -31,7 +29,6 @@ type Action =
     | { type: 'categoriesChange'; selectedCategories: Map<string, string> }
     | { type: 'increaseAmount' }
     | { type: 'decreaseAmount' }
-    | { type: 'storageDeleteRefsChange'; ref: firebase.storage.Reference }
     | { type: 'relatedRecipesChange'; relatedRecipes: Array<string> }
     | { type: 'selectedTrialChange'; selectedTrial?: Trial }
     | { type: 'tesseractResultChange'; result: TesseractResult }
@@ -61,12 +58,6 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
         case 'decreaseAmount': {
             return { ...state, amount: state.amount === 1 ? state.amount : --state.amount }
         }
-        case 'storageDeleteRefsChange': {
-            return {
-                ...state,
-                storageDeleteRefs: [...state.storageDeleteRefs, action.ref],
-            }
-        }
         case 'relatedRecipesChange': {
             return { ...state, relatedRecipes: action.relatedRecipes, relatedRecipesDialog: false }
         }
@@ -92,13 +83,11 @@ const initialState: RecipeCreateState = {
     amount: 1,
     description: '',
     preview: false,
-    storageDeleteRefs: [],
     numberOfComments: 0,
     relatedRecipes: [],
-    relatedRecipesDialog: false,
 }
 
-export const useRecipeCreateReducer = (recipe?: Recipe | null) => {
+export const useRecipeCreateReducer = (recipe?: RecipeCreateState | Recipe | null) => {
     const [state, dispatch] = useReducer(reducer, { ...initialState, ...recipe })
     return { state, dispatch }
 }

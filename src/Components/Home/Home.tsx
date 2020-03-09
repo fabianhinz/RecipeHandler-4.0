@@ -6,8 +6,8 @@ import { useCategorySelect } from '../../hooks/useCategorySelect'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { DocumentId, OrderByKey, OrderByRecord, Recipe } from '../../model/model'
-import ConfigService from '../../services/configService'
 import { FirebaseService } from '../../services/firebase'
+import RecipeService from '../../services/recipeService'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { NavigateFab } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
@@ -25,10 +25,10 @@ const Home = () => {
     const pagedRecipesSize = useRef(0)
 
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, Recipe>>(
-        ConfigService.pagedRecipes
+        RecipeService.pagedRecipes
     )
     const [lastRecipe, setLastRecipe] = useState<Recipe | undefined | null>(null)
-    const [orderBy, setOrderBy] = useState<OrderByRecord>(ConfigService.orderBy)
+    const [orderBy, setOrderBy] = useState<OrderByRecord>(RecipeService.orderBy)
     const [querying, setQuerying] = useState(false)
 
     const { selectedCategories, setSelectedCategories } = useCategorySelect()
@@ -42,12 +42,12 @@ const Home = () => {
     useDocumentTitle('RecipeHandler 4.0')
 
     useEffect(() => {
-        window.scrollTo({ top: ConfigService.scrollPosition })
+        window.scrollTo({ top: RecipeService.scrollPosition })
     }, [])
 
     useEffect(() => {
         return () => {
-            ConfigService.scrollPosition = window.scrollY
+            RecipeService.scrollPosition = window.scrollY
         }
     }, [])
 
@@ -84,7 +84,7 @@ const Home = () => {
                 const newRecipes = new Map([...recipes, ...changes.added, ...changes.modified])
                 pagedRecipesSize.current = newRecipes.size
 
-                ConfigService.pagedRecipes = newRecipes
+                RecipeService.pagedRecipes = newRecipes
                 return newRecipes
             })
             setQuerying(false)
@@ -126,7 +126,7 @@ const Home = () => {
 
                         <NotFound visible={!querying && pagedRecipes.size === 0} />
 
-                        <Grid item xs={12}>
+                        <Grid item xs={12} style={{ minHeight: 29 }}>
                             {querying && <LinearProgress variant="query" color="secondary" />}
                             <IntersectionObserverTrigger />
                         </Grid>

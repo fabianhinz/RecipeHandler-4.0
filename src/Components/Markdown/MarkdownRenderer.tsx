@@ -94,7 +94,11 @@ const MarkdownRenderer = (props: Props) => {
     return (
         <ReactMarkdown
             renderers={{
-                link: renderProps => <Link href={renderProps.href}>{renderProps.children}</Link>,
+                link: renderProps => (
+                    <Link target="_blank" href={renderProps.href}>
+                        {renderProps.children}
+                    </Link>
+                ),
                 list: renderProps => <List>{renderProps.children}</List>,
                 listItem: renderProps => (
                     <ListItem disableGutters>
