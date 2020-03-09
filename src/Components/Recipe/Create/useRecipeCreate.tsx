@@ -1,16 +1,14 @@
 import { useSnackbar } from 'notistack'
-import { useState } from 'react'
 
 import { MostCooked, Recipe, User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
+import recipeService from '../../../services/recipeService'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import { RecipeCreateState } from './RecipeCreateReducer'
 
 export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean) => {
-    const [changesSaved, setChangesSaved] = useState(false)
-
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
     const { history } = useRouterContext()
 
@@ -86,10 +84,11 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                 await FirebaseService.storageRef.child(state.selectedTrial.fullPath).delete()
             }
 
+            recipeService.recipeCreateState = null
             enqueueSnackbar(`${state.name} gespeichert`, {
                 variant: 'success',
             })
-            setChangesSaved(true)
+
             history.push(PATHS.home)
         } catch (e) {
             enqueueSnackbar('fehlende Berechtigungen', { variant: 'error' })
@@ -98,5 +97,5 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
         }
     }
 
-    return { validate, saveRecipeDocument, changesSaved }
+    return { validate, saveRecipeDocument }
 }
