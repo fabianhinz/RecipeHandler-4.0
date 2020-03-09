@@ -126,7 +126,7 @@ const Home = () => {
 
                         <NotFound visible={!querying && pagedRecipes.size === 0} />
 
-                        <Grid item xs={12}>
+                        <Grid item xs={12} style={{ minHeight: 29 }}>
                             {querying && <LinearProgress variant="query" color="secondary" />}
                             <IntersectionObserverTrigger />
                         </Grid>
