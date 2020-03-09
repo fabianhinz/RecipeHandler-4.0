@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 
+import { RecipeCreateState } from '../Components/Recipe/Create/RecipeCreateReducer'
 import { PATHS } from '../Components/Routes/Routes'
 import { Recipe } from '../model/model'
-import ConfigService from '../services/configService'
+import RecipeService from '../services/recipeService'
 
-export const useCategorySelect = (recipe?: Recipe | null) => {
+export const useCategorySelect = (recipe?: Recipe | RecipeCreateState | null) => {
     const match = useRouteMatch()
 
     const [state, setState] = useState<Map<string, string>>(() => {
-        if (match.path === PATHS.home) return ConfigService.selectedCategories
+        if (match.path === PATHS.home) return RecipeService.selectedCategories
         else if (!recipe) return new Map()
 
         return new Map(Object.keys(recipe.categories).map(type => [type, recipe.categories[type]]))
@@ -26,7 +27,7 @@ export const useCategorySelect = (recipe?: Recipe | null) => {
                 newState = new Map(previous.set(type, value))
             }
 
-            if (match.path === PATHS.home) ConfigService.selectedCategories = newState
+            if (match.path === PATHS.home) RecipeService.selectedCategories = newState
             return newState
         })
     }

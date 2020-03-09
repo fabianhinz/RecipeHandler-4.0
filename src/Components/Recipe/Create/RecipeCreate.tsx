@@ -1,12 +1,13 @@
 import { Grid } from '@material-ui/core'
 import LabelIcon from '@material-ui/icons/Label'
-import React, { FC, useCallback, useEffect } from 'react'
-import { Prompt, RouteComponentProps } from 'react-router'
+import React, { useCallback, useEffect } from 'react'
+import { RouteComponentProps, useRouteMatch } from 'react-router'
 
 import { useCategorySelect } from '../../../hooks/useCategorySelect'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
+import recipeService from '../../../services/recipeService'
 import CategorySelection from '../../Category/CategorySelection'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
@@ -26,21 +27,32 @@ import { CreateChangeKey, useRecipeCreateReducer } from './RecipeCreateReducer'
 import RecipeCreateSpeedDial from './RecipeCreateSpeedDial'
 import { useRecipeCreate } from './useRecipeCreate'
 
-interface RecipeCreateProps extends Pick<RouteComponentProps, 'history' | 'location'> {
+interface Props extends Pick<RouteComponentProps, 'history' | 'location'> {
     recipe?: Recipe | null
     edit?: boolean
 }
 
-const RecipeCreate: FC<RecipeCreateProps> = props => {
-    const { state, dispatch } = useRecipeCreateReducer(props.recipe)
+const fromPropsOrPreviousState = ({ recipe }: Props) => recipe || recipeService.recipeCreateState
+
+const RecipeCreate = (props: Props) => {
+    const { state, dispatch } = useRecipeCreateReducer(fromPropsOrPreviousState(props))
 
     const recipeCreateService = useRecipeCreate(state, props.edit)
-    const { selectedCategories, setSelectedCategories } = useCategorySelect(props.recipe)
+    const { selectedCategories, setSelectedCategories } = useCategorySelect(
+        fromPropsOrPreviousState(props)
+    )
     const { user } = useFirebaseAuthContext()
     const { history } = useRouterContext()
     const { gridBreakpointProps } = useGridContext()
 
+    const match = useRouteMatch()
+
     useDocumentTitle(props.recipe ? props.recipe.name : 'Rezept erstellen')
+
+    useEffect(() => {
+        if (match.path === PATHS.recipeEdit()) return
+        recipeService.recipeCreateState = state
+    }, [match.path, state])
 
     useEffect(() => {
         dispatch({ type: 'categoriesChange', selectedCategories })
@@ -65,24 +77,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
     const handlePreviewChange = async () => {
         const valid = await recipeCreateService.validate(selectedCategories)
         if (valid) dispatch({ type: 'previewChange' })
-    }
-
-    const warnOnLocationChange = () => {
-        if (props.recipe && !recipeCreateService.changesSaved) {
-            return true
-        } else if (
-            (state.name.length > 0 ||
-                Object.keys(state.categories).length > 0 ||
-                state.amount > 1 ||
-                state.ingredients.length > 0 ||
-                state.description.length > 0 ||
-                state.relatedRecipes.length > 0) &&
-            !recipeCreateService.changesSaved
-        )
-            return true
-        else {
-            return false
-        }
     }
 
     return (
@@ -179,11 +173,6 @@ const RecipeCreate: FC<RecipeCreateProps> = props => {
                     </Grid>
                 </EntryGridContainer>
             )}
-
-            <Prompt
-                when={warnOnLocationChange()}
-                message="Nicht gespeicherte Änderungen gehen verloren. Trotzdem die Seite verlassen?"
-            />
 
             <RecipeCreateSpeedDial onPreview={handlePreviewChange} onSave={handleSaveRecipe} />
         </>

@@ -1,6 +1,7 @@
+import { RecipeCreateState } from '../Components/Recipe/Create/RecipeCreateReducer'
 import { DocumentId, OrderByRecord, Recipe } from '../model/model'
 
-class ConfigService {
+class RecipeService {
     private _selectedCategories: Map<string, string>
     get selectedCategories() {
         return this._selectedCategories
@@ -33,12 +34,21 @@ class ConfigService {
         this._scrollPosition = newScrollPosition
     }
 
+    private _recipeCreateState: RecipeCreateState | null
+    get recipeCreateState() {
+        return this._recipeCreateState
+    }
+    set recipeCreateState(newTmpRecipe: RecipeCreateState | null) {
+        this._recipeCreateState = newTmpRecipe
+    }
+
     constructor() {
         this._selectedCategories = new Map()
         this._orderBy = { name: 'asc' }
         this._pagedRecipes = new Map()
         this._scrollPosition = window.scrollX
+        this._recipeCreateState = null
     }
 }
 
-export default new ConfigService()
+export default new RecipeService()
