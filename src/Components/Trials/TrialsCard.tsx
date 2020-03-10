@@ -134,7 +134,7 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
         if (selectionProps) {
             selectionProps.onClick(trial)
         } else if (dataUrls) {
-            setSelectedAttachment({ dataUrl: dataUrls.fullDataUrl })
+            setSelectedAttachment(dataUrls)
         }
     }, [dataUrls, selectionProps, setSelectedAttachment, trial])
 

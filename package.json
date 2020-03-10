@@ -40,6 +40,7 @@
 		"stacktrace-js": "^2.0.2",
 		"tesseract.js": "^2.0.2",
 		"typeface-roboto": "0.0.75",
+		"typeface-ubuntu": "0.0.65",
 		"typescript": "3.8.3",
 		"web-animations-js": "^2.3.2"
 	},

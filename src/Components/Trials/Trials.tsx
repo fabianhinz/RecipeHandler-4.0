@@ -130,6 +130,10 @@ const Trials = () => {
 
                     const fullPath = uploadTask.ref.fullPath
 
+                    setPagedTrials(new Map())
+                    setLastTrial(null)
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+
                     await FirebaseService.firestore
                         .collection('trials')
                         .doc(name)
@@ -142,10 +146,6 @@ const Trials = () => {
                         } as Trial)
                 } catch (e) {
                     enqueueSnackbar(e.message, { variant: 'error' })
-                } finally {
-                    setPagedTrials(new Map())
-                    setLastTrial(null)
-                    window.scrollTo({ top: 0, behavior: 'smooth' })
                 }
             }
             closeSnackbar(snackKey as string)

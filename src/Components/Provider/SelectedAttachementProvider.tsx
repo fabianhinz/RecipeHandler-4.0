@@ -1,18 +1,23 @@
-import { Backdrop, Card, createStyles, makeStyles, Slide } from '@material-ui/core'
-import { Skeleton } from '@material-ui/lab'
+import { Backdrop, createStyles, makeStyles, Slide } from '@material-ui/core'
 import React, { FC, useContext, useEffect, useState } from 'react'
 
-import { DataUrl } from '../../model/model'
+import { AllDataUrls } from '../../model/model'
 import { BORDER_RADIUS } from '../../theme'
 import { useRouterContext } from './RouterProvider'
 
+type SelectedAttachment = AllDataUrls | null
+
 interface AttachmentSelect {
-    setSelectedAttachment: React.Dispatch<React.SetStateAction<DataUrl | null>>
+    setSelectedAttachment: React.Dispatch<React.SetStateAction<SelectedAttachment>>
 }
 
 const Context = React.createContext<AttachmentSelect | null>(null)
 
 export const useSelectedAttachement = () => useContext(Context) as AttachmentSelect
+
+interface StyleProps {
+    blurImg: boolean
+}
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -25,6 +30,7 @@ const useStyles = makeStyles(theme =>
             cursor: 'pointer',
         },
         attachment: {
+            filter: ({ blurImg }: StyleProps) => (blurImg ? 'blur(5px)' : 'unset'),
             maxHeight: '100%',
             overflow: 'auto',
             [theme.breakpoints.only('xs')]: {
@@ -44,40 +50,22 @@ const useStyles = makeStyles(theme =>
             },
             borderRadius: BORDER_RADIUS,
         },
-        skeletonCard: {
-            height: '80%',
-            [theme.breakpoints.only('xs')]: {
-                width: '90%',
-            },
-            [theme.breakpoints.only('sm')]: {
-                width: '80%',
-            },
-            [theme.breakpoints.only('md')]: {
-                width: '70%',
-            },
-            [theme.breakpoints.only('lg')]: {
-                width: '60%',
-            },
-            [theme.breakpoints.up('xl')]: {
-                width: '30%',
-            },
-        },
     })
 )
 
 const SelectedAttachementProvider: FC = ({ children }) => {
-    const [selectedAttachment, setSelectedAttachment] = useState<DataUrl | null>(null)
+    const [selectedAttachment, setSelectedAttachment] = useState<SelectedAttachment>(null)
     const [imgSrc, setImgSrc] = useState<string | undefined>()
 
     const { location } = useRouterContext()
-    const classes = useStyles()
+    const classes = useStyles({ blurImg: !imgSrc })
 
     useEffect(() => {
         if (!selectedAttachment) return setImgSrc(undefined)
 
         const img = new Image()
         img.onload = () => setImgSrc(img.src)
-        img.src = selectedAttachment.dataUrl
+        img.src = selectedAttachment.fullDataUrl
     }, [selectedAttachment])
 
     useEffect(() => {
@@ -98,13 +86,11 @@ const SelectedAttachementProvider: FC = ({ children }) => {
                     open
                     onClick={() => setSelectedAttachment(null)}
                     className={classes.backdrop}>
-                    {imgSrc ? (
-                        <img src={imgSrc} className={classes.attachment} alt="selected" />
-                    ) : (
-                        <Card className={classes.skeletonCard}>
-                            <Skeleton width="100%" height="100%" variant="rect" />
-                        </Card>
-                    )}
+                    <img
+                        src={imgSrc || selectedAttachment?.mediumDataUrl}
+                        className={classes.attachment}
+                        alt="selected"
+                    />
                 </Backdrop>
             </Slide>
         </>
