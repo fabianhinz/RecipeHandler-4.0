@@ -31,7 +31,11 @@ const Home = () => {
     const [orderBy, setOrderBy] = useState<OrderByRecord>(RecipeService.orderBy)
     const [querying, setQuerying] = useState(false)
 
-    const { selectedCategories, setSelectedCategories } = useCategorySelect()
+    const {
+        selectedCategories,
+        setSelectedCategories,
+        removeSelectedCategories,
+    } = useCategorySelect()
     const { user } = useFirebaseAuthContext()
     const { IntersectionObserverTrigger } = useIntersectionObserver({
         onIsIntersecting: () => {
@@ -98,6 +102,7 @@ const Home = () => {
                 <HomeRecentlyAdded />
                 <HomeRecipeSelection
                     selectedCategories={selectedCategories}
+                    removeSelectedCategories={removeSelectedCategories}
                     onSelectedCategoriesChange={(type, value) => {
                         setSelectedCategories(type, value)
                         setPagedRecipes(new Map())
