@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme =>
 
 interface Props {
     selectedCategories: Map<string, string>
+    removeSelectedCategories: () => void
     onSelectedCategoriesChange: (type: string, value: string) => void
     orderBy: OrderByRecord
     onOrderByChange: (orderBy: OrderByRecord) => void
@@ -31,6 +32,7 @@ interface Props {
 const HomeRecipeSelection = ({
     onSelectedCategoriesChange,
     selectedCategories,
+    removeSelectedCategories,
     orderBy,
     onOrderByChange,
 }: Props) => {
@@ -59,6 +61,7 @@ const HomeRecipeSelection = ({
                     <CategorySelection
                         onCategoryChange={onSelectedCategoriesChange}
                         selectedCategories={selectedCategories}
+                        removeSelectedCategories={removeSelectedCategories}
                         label="Filter"
                         header={
                             <Grid wrap="nowrap" container spacing={1}>
