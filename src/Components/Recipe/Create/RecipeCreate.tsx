@@ -1,4 +1,5 @@
-import { Grid } from '@material-ui/core'
+import { Grid, GridSize } from '@material-ui/core'
+import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import LabelIcon from '@material-ui/icons/Label'
 import React, { useCallback, useEffect } from 'react'
 import { RouteComponentProps, useRouteMatch } from 'react-router'
@@ -43,7 +44,7 @@ const RecipeCreate = (props: Props) => {
     )
     const { user } = useFirebaseAuthContext()
     const { history } = useRouterContext()
-    const { gridBreakpointProps } = useGridContext()
+    const { gridBreakpointProps: breakpointsFromContext } = useGridContext()
 
     const match = useRouteMatch()
 
@@ -78,6 +79,9 @@ const RecipeCreate = (props: Props) => {
         const valid = await recipeCreateService.validate(selectedCategories)
         if (valid) dispatch({ type: 'previewChange' })
     }
+
+    const relatedAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
+        state.relatedRecipes.length > 0 ? breakpointsFromContext : { xs: 12, md: 6 }
 
     return (
         <>
@@ -144,7 +148,7 @@ const RecipeCreate = (props: Props) => {
 
                     <Grid item xs={12}>
                         <Grid container spacing={3}>
-                            <Grid item {...gridBreakpointProps}>
+                            <Grid item {...relatedAwareBreakpoints}>
                                 <RecipeCreateIngredients
                                     amount={state.amount}
                                     ingredients={state.ingredients}
@@ -153,7 +157,7 @@ const RecipeCreate = (props: Props) => {
                                 />
                             </Grid>
 
-                            <Grid item {...gridBreakpointProps}>
+                            <Grid item {...relatedAwareBreakpoints}>
                                 <RecipeCreateDescription
                                     description={state.description}
                                     onDescriptionChange={handleTextFieldChange('description')}
@@ -161,7 +165,7 @@ const RecipeCreate = (props: Props) => {
                             </Grid>
 
                             {state.relatedRecipes.length > 0 && (
-                                <Grid item {...gridBreakpointProps}>
+                                <Grid item {...relatedAwareBreakpoints}>
                                     <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
                                         <RecipeResultRelated
                                             relatedRecipes={state.relatedRecipes}

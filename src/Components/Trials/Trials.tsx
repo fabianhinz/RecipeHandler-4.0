@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme =>
         },
     })
 )
-
+// ToDo should use AttachmentDropzone hook
 const Trials = () => {
     const [pagedTrials, setPagedTrials] = useState<Map<string, Trial>>(new Map())
     const [lastTrial, setLastTrial] = useState<Trial | undefined | null>(null)
@@ -126,7 +126,9 @@ const Trials = () => {
                 try {
                     const uploadTask = await FirebaseService.storageRef
                         .child(`trials/${file.name}`)
-                        .putString(dataUrl, 'data_url')
+                        .putString(dataUrl, 'data_url', {
+                            cacheControl: 'public, max-age=31536000',
+                        })
 
                     const fullPath = uploadTask.ref.fullPath
 

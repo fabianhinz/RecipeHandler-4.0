@@ -7,6 +7,7 @@ import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import useProgress from '../../../hooks/useProgress'
 import { ShoppingList, User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
+import recipeService from '../../../services/recipeService'
 import { useBookmarkContext } from '../../Provider/BookmarkProvider'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
@@ -71,6 +72,10 @@ const AccountUser = () => {
             }
             case 'selectedUsers': {
                 if (typeof uid !== 'string') throw new Error('whoops we need a string for this')
+
+                // ? throw away all "cached" recipes
+                recipeService.scrollPosition = 0
+                recipeService.pagedRecipes = new Map()
 
                 let selectedIds = [...user.selectedUsers]
                 const idExists = selectedIds.some(id => id === uid)

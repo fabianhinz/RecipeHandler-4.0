@@ -11,6 +11,7 @@ import Attachments from '../../Attachments/Attachments'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
 import { useGridContext } from '../../Provider/GridProvider'
 import Satisfaction from '../../Satisfaction/Satisfaction'
+import CopyButton from '../../Shared/CopyButton'
 import EntryGridContainer from '../../Shared/EntryGridContainer'
 import NotFound from '../../Shared/NotFound'
 import StyledCard from '../../Shared/StyledCard'
@@ -47,6 +48,7 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                                     {recipe.amount < 2 ? 'Person' : 'Personen'}
                                 </>
                             }
+                            action={<CopyButton text={recipe.ingredients} />}
                             BackgroundIcon={AssignmentIcon}>
                             <MarkdownRenderer
                                 recipeName={recipe.name}
@@ -56,7 +58,10 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                     </Grid>
 
                     <Grid {...gridBreakpointProps} item>
-                        <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
+                        <StyledCard
+                            header="Beschreibung"
+                            BackgroundIcon={BookIcon}
+                            action={<CopyButton text={recipe.description} />}>
                             <MarkdownRenderer
                                 recipeName={recipe.name}
                                 source={recipe.description}

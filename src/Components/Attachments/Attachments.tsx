@@ -1,4 +1,5 @@
 import { Avatar, CardActionArea, createStyles, Grid, makeStyles } from '@material-ui/core'
+import { CloudUploadOutline } from 'mdi-material-ui'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
@@ -20,38 +21,21 @@ const useStyles = makeStyles(theme =>
         },
         addAvatar: {
             [theme.breakpoints.down('sm')]: {
-                width: 320,
+                width: 90,
                 height: 180,
             },
             [theme.breakpoints.between('sm', 'lg')]: {
-                width: 400,
+                width: 112.5,
                 height: 225,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 498,
+                width: 140,
                 height: 280,
             },
             borderRadius: BORDER_RADIUS,
-            fontSize: theme.typography.pxToRem(100),
-            backgroundColor:
-                theme.palette.type === 'dark'
-                    ? 'rgba(117, 117, 117, 0.75)'
-                    : 'rgb(189, 189, 189, 0.75)',
         },
-        actionArea: {
-            [theme.breakpoints.down('sm')]: {
-                width: 320,
-                height: 180,
-            },
-            [theme.breakpoints.between('sm', 'lg')]: {
-                width: 400,
-                height: 225,
-            },
-            [theme.breakpoints.up('xl')]: {
-                width: 498,
-                height: 280,
-            },
-            borderRadius: BORDER_RADIUS,
+        addIcon: {
+            fontSize: theme.typography.pxToRem(60),
         },
     })
 )
@@ -129,10 +113,10 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                     />
                 ))}
                 <Grid item>
-                    <CardActionArea
-                        className={classes.actionArea}
-                        {...dropzoneProps.getRootProps()}>
-                        <Avatar className={classes.addAvatar}>+</Avatar>
+                    <CardActionArea {...dropzoneProps.getRootProps()}>
+                        <Avatar className={classes.addAvatar}>
+                            <CloudUploadOutline className={classes.addIcon} />
+                        </Avatar>
                         <input {...dropzoneProps.getInputProps()} />
                     </CardActionArea>
                 </Grid>
