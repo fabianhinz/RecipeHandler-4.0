@@ -36,24 +36,7 @@ const useStyles = makeStyles(theme =>
             borderRadius: BORDER_RADIUS,
             boxShadow: theme.shadows[1],
         },
-        actionArea: {
-            [theme.breakpoints.down('sm')]: {
-                width: 320,
-                height: 180,
-            },
-            [theme.breakpoints.between('sm', 'lg')]: {
-                width: 400,
-                height: 225,
-            },
-            [theme.breakpoints.up('xl')]: {
-                width: 498,
-                height: 280,
-            },
-            borderRadius: BORDER_RADIUS,
-            transition: theme.transitions.create('border', {
-                duration: theme.transitions.duration.standard,
-            }),
-        },
+
         gridItem: {
             position: 'relative',
         },
@@ -97,9 +80,7 @@ const AttachmentPreview = ({
                 <Skeleton variant="circle" className={classes.attachmentPreview} />
             ) : (
                 <>
-                    <CardActionArea
-                        onClick={() => onClick(originIdRef.current)}
-                        className={classes.actionArea}>
+                    <CardActionArea onClick={() => onClick(originIdRef.current)}>
                         <Avatar
                             id={originIdRef.current}
                             className={classes.attachmentPreview}
