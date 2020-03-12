@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme =>
         logo: {
             marginRight: theme.spacing(0.5),
             height: 40,
+            cursor: 'pointer',
         },
         searchContainer: {
             flexGrow: 1,
@@ -42,9 +43,6 @@ const useStyles = makeStyles(theme =>
             padding: theme.spacing(2),
             minHeight: '20vh',
             maxHeight: '40vh',
-            [theme.breakpoints.down('xs')]: {
-                maxHeight: '30vh',
-            },
             overflowY: 'auto',
             overflowX: 'hidden',
             zIndex: theme.zIndex.modal,
@@ -106,6 +104,7 @@ const Search = () => {
         setLoading(true)
         setResults([])
         setValue(event.target.value)
+        openResults()
     }
 
     const closeResults = () => setResultsOpen(false)
@@ -113,15 +112,20 @@ const Search = () => {
     const openResults = () => setResultsOpen(true)
 
     return (
-        <div className={classes.searchContainer} onFocus={openResults} onBlur={closeResults}>
+        <div className={classes.searchContainer}>
             <InputBase
+                onFocus={openResults}
+                onBlur={closeResults}
                 fullWidth
                 placeholder="Suchen"
                 value={value}
                 onChange={handleInputChange}
                 startAdornment={
                     <InputAdornment position="start">
-                        <Logo className={classes.logo} />
+                        <Logo
+                            onClick={() => setResultsOpen(prev => !prev)}
+                            className={classes.logo}
+                        />
                     </InputAdornment>
                 }
                 endAdornment={

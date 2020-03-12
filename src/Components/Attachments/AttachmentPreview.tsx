@@ -80,7 +80,9 @@ const AttachmentPreview = ({
                 <Skeleton variant="circle" className={classes.attachmentPreview} />
             ) : (
                 <>
-                    <CardActionArea onClick={() => onClick(originIdRef.current)}>
+                    <CardActionArea
+                        className={classes.attachmentPreview}
+                        onClick={() => onClick(originIdRef.current)}>
                         <Avatar
                             id={originIdRef.current}
                             className={classes.attachmentPreview}
