@@ -1,8 +1,6 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
+import { Dialog, Typography } from '@material-ui/core'
 import React, { FC, useContext, useEffect, useState } from 'react'
 
-import { SlideUp } from '../Shared/Transitions'
 import { useBreakpointsContext } from './BreakpointsProvider'
 
 interface Orientation {
@@ -15,14 +13,14 @@ const Context = React.createContext<Orientation | null>(null)
 export const useDeviceOrientationContext = () => useContext(Context) as Orientation
 
 const DeviceOrientationProvider: FC = ({ children }) => {
-    const { isMobile } = useBreakpointsContext()
+    const { isLowRes } = useBreakpointsContext()
     const [suggestionDialog, setSuggestionDialog] = useState(
-        (window.orientation === 90 || window.orientation === -90) && isMobile
+        (window.orientation === 90 || window.orientation === -90) && isLowRes
     )
 
     useEffect(() => {
         const handleOrientationChange = () => {
-            if ((window.orientation === 90 || window.orientation === -90) && isMobile)
+            if ((window.orientation === 90 || window.orientation === -90) && isLowRes)
                 (async () => {
                     try {
                         await window.screen.orientation.lock('portrait')
@@ -36,27 +34,22 @@ const DeviceOrientationProvider: FC = ({ children }) => {
 
         window.addEventListener('orientationchange', handleOrientationChange)
         return () => window.removeEventListener('orientationchange', handleOrientationChange)
-    }, [isMobile])
+    }, [isLowRes])
 
     return (
         <>
             <Context.Provider value={{ landscape: false, portrait: false }}>
                 {children}
             </Context.Provider>
-            <Dialog TransitionComponent={SlideUp} open={suggestionDialog}>
-                <DialogContent>
-                    <DialogContentText>
-                        Auf Smartphones ist die Anzeige im Landscape-Modus nicht zu empfehlen
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        startIcon={<CloseIcon />}
-                        onClick={() => setSuggestionDialog(false)}
-                        color="secondary">
-                        mir egal, ich weis was ich tue
-                    </Button>
-                </DialogActions>
+            <Dialog
+                open={suggestionDialog}
+                fullScreen
+                PaperProps={{
+                    style: { display: 'flex', justifyContent: 'center', flexDirection: 'column' },
+                }}>
+                <Typography variant="h4" align="center">
+                    Anzeige im Landscape wird nicht unterstützt
+                </Typography>
             </Dialog>
         </>
     )

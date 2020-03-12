@@ -17,7 +17,7 @@ const EntryGridContainer = ({ children }: Props) => {
     const classes = useStyles()
 
     return (
-        <Fade in>
+        <Fade in unmountOnExit>
             <Grid container className={classes.container} spacing={4} justify="space-between">
                 {children}
             </Grid>
