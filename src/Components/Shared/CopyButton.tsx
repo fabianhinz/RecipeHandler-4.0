@@ -7,7 +7,7 @@ interface Props {
     text: string
 }
 
-export default ({ text }: Props) => {
+export default function CopyButton({ text }: Props) {
     const [copied, setCopied] = useState(false)
 
     return (

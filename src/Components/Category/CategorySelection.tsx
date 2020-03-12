@@ -13,7 +13,7 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete'
 import clsx from 'clsx'
 import { Filter } from 'mdi-material-ui'
-import React, { memo } from 'react'
+import React from 'react'
 
 import { useCategoriesCollectionContext } from '../Provider/CategoriesCollectionProvider'
 import SelectionDrawer from '../Shared/SelectionDrawer'
@@ -35,17 +35,17 @@ interface Props {
     header?: React.ReactNode
     label: React.ReactText
     selectedCategories: Map<string, string>
-    removeSelectedCategories: () => void
+    onRemoveSelectedCategories: () => void
     onCategoryChange: (type: string, value: string) => void
 }
 
-const CategorySelection = ({
+export default function CategorySelection({
     onCategoryChange,
     selectedCategories,
-    removeSelectedCategories,
+    onRemoveSelectedCategories,
     header,
     label,
-}: Props) => {
+}: Props) {
     const classes = useStyles()
 
     const { categoriesLoading, categoriesCollection } = useCategoriesCollectionContext()
@@ -60,7 +60,7 @@ const CategorySelection = ({
                 disabled: categoriesLoading,
             }}
             action={
-                <IconButton onClick={removeSelectedCategories}>
+                <IconButton onClick={onRemoveSelectedCategories}>
                     <DeleteIcon />
                 </IconButton>
             }>
@@ -93,11 +93,3 @@ const CategorySelection = ({
         </SelectionDrawer>
     )
 }
-
-export default memo(
-    CategorySelection,
-    (prev, next) =>
-        prev.onCategoryChange === next.onCategoryChange &&
-        prev.selectedCategories === next.selectedCategories &&
-        prev.header === next.header
-)
