@@ -1,4 +1,4 @@
-import { Avatar, ButtonBase, createStyles, makeStyles } from '@material-ui/core'
+import { Avatar, ButtonBase, CircularProgress, createStyles, makeStyles } from '@material-ui/core'
 import clsx from 'clsx'
 import { ImageSearch } from 'mdi-material-ui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -10,7 +10,6 @@ import SelectionDrawer from '../Shared/SelectionDrawer'
 import TesseractParagraph from './TesseractParagraph'
 
 interface StyleProps {
-    apiInitialized: boolean
     progress?: number
 }
 
@@ -20,17 +19,11 @@ const useStyles = makeStyles(theme =>
             width: '100%',
             height: 100,
             position: 'relative',
-            backgroundColor: ({ apiInitialized }: StyleProps) =>
-                apiInitialized ? theme.palette.secondary.main : 'inherhit',
         },
         dropzoneButton: {
             width: '100%',
         },
         dropzoneIcon: {
-            color: ({ apiInitialized }: StyleProps) =>
-                apiInitialized
-                    ? theme.palette.getContrastText(theme.palette.secondary.main)
-                    : 'inherit',
             fontSize: theme.typography.pxToRem(60),
 
             zIndex: 1,
@@ -69,11 +62,10 @@ const TesseractSelection = ({ onChange, ingredients, description }: Props) => {
 
     const { dropzoneAttachments, dropzoneProps } = useAttachmentDropzone({
         attachmentLimit: 5,
+        attachmentMaxSize: 0.5,
     })
 
-    const apiInitialized = Boolean(log?.status === 'initialized api')
     const classes = useStyles({
-        apiInitialized,
         progress: log?.status === 'recognizing text' ? log.progress : undefined,
     })
 
@@ -122,10 +114,19 @@ const TesseractSelection = ({ onChange, ingredients, description }: Props) => {
             }}>
             <ButtonBase
                 className={classes.dropzoneButton}
-                disabled={!apiInitialized}
+                disabled={log?.status !== 'initialized api'}
                 {...dropzoneProps.getRootProps()}>
                 <Avatar variant="rounded" className={classes.dropzoneAvatar}>
-                    <ImageSearch className={classes.dropzoneIcon} />
+                    {log?.status === 'initialized api' || log?.status === 'recognizing text' ? (
+                        <ImageSearch className={classes.dropzoneIcon} />
+                    ) : (
+                        <CircularProgress
+                            color="secondary"
+                            disableShrink
+                            size={60}
+                            thickness={5.4}
+                        />
+                    )}
                     <div className={clsx(classes.progressRoot, classes.progressAnimated)} />
                 </Avatar>
                 <input {...dropzoneProps.getInputProps()} />

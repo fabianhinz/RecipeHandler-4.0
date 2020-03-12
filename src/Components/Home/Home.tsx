@@ -1,6 +1,6 @@
 import { Grid, LinearProgress } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
@@ -95,6 +95,11 @@ const Home = () => {
         })
     }, [lastRecipe, orderBy, selectedCategories, setQuerying, user])
 
+    const resetRecipeState = useCallback(() => {
+        setPagedRecipes(new Map())
+        setLastRecipe(null)
+    }, [])
+
     return (
         <>
             <EntryGridContainer>
@@ -102,17 +107,18 @@ const Home = () => {
                 <HomeRecentlyAdded />
                 <HomeRecipeSelection
                     selectedCategories={selectedCategories}
-                    removeSelectedCategories={removeSelectedCategories}
+                    onRemoveSelectedCategories={() => {
+                        removeSelectedCategories()
+                        resetRecipeState()
+                    }}
                     onSelectedCategoriesChange={(type, value) => {
                         setSelectedCategories(type, value)
-                        setPagedRecipes(new Map())
-                        setLastRecipe(null)
+                        resetRecipeState()
                     }}
                     orderBy={orderBy}
                     onOrderByChange={newOrderBy => {
                         setOrderBy(newOrderBy)
-                        setPagedRecipes(new Map())
-                        setLastRecipe(null)
+                        resetRecipeState()
                     }}
                 />
                 <Grid item xs={12}>

@@ -134,7 +134,7 @@ const RecipeCreate = (props: Props) => {
                                 <CategorySelection
                                     label="Kategorien auswählen"
                                     selectedCategories={selectedCategories}
-                                    removeSelectedCategories={removeSelectedCategories}
+                                    onRemoveSelectedCategories={removeSelectedCategories}
                                     onCategoryChange={setSelectedCategories}
                                 />
                             </Grid>
