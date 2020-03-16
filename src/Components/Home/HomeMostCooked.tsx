@@ -7,10 +7,9 @@ import {
     Typography,
 } from '@material-ui/core'
 import { yellow } from '@material-ui/core/colors'
-import React, { memo, useEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import useScrollButtons from '../../hooks/useScrollButtons'
 import { DocumentId, MostCooked } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -19,7 +18,7 @@ import { PATHS } from '../Routes/Routes'
 import Skeletons from '../Shared/Skeletons'
 
 // ! the length of COLOR_PALETTE must equal the number of MOST_COOKED_LIMIT
-const MOST_COOKED_LIMIT = 10
+const MOST_COOKED_LIMIT = 6
 const COLOR_PALETTE = [
     yellow[900],
     yellow[800],
@@ -95,13 +94,6 @@ const HomeMostCooked = () => {
     const [mostCooked, setMostCooked] = useState<MostCookedMap>(new Map())
     const [counterValues, setCounterValues] = useState<Set<number>>(new Set())
 
-    const containerRef = useRef<any | undefined>()
-    const { ScrollButtons, ScrollLeftTrigger, ScrollRightTrigger } = useScrollButtons({
-        disabled: mostCooked.size === 0,
-        element: containerRef.current as HTMLDivElement,
-        delta: 300,
-    })
-
     const classes = useHomeMostCookedStyles()
 
     const { user } = useFirebaseAuthContext()
@@ -131,26 +123,13 @@ const HomeMostCooked = () => {
     return (
         <>
             <Grid item xs={12}>
-                <Grid container alignItems="center" justify="space-between">
-                    <Grid item>
-                        <Typography noWrap variant="h4">
-                            Häufig gekocht
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <ScrollButtons />
-                    </Grid>
-                </Grid>
+                <Typography noWrap variant="h4">
+                    Häufig gekocht
+                </Typography>
             </Grid>
 
             <Grid item xs={12}>
-                <Grid
-                    ref={containerRef}
-                    className={classes.mostCookedGridContainer}
-                    container
-                    spacing={3}
-                    wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}>
-                    <ScrollLeftTrigger />
+                <Grid className={classes.mostCookedGridContainer} container spacing={3}>
                     {[...mostCooked.entries()]
                         .slice(0, gridLayout === 'grid' ? mostCooked.size : 6)
                         .map(([recipeName, counter]) => (
@@ -161,7 +140,7 @@ const HomeMostCooked = () => {
                                 counter={counter}
                             />
                         ))}
-                    <ScrollRightTrigger />
+
                     <Skeletons
                         variant="cookCounter"
                         visible={mostCooked.size === 0}

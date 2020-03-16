@@ -5,7 +5,6 @@ import {
     LinearProgress,
     makeStyles,
     Tooltip,
-    Typography,
     Zoom,
 } from '@material-ui/core'
 import CameraIcon from '@material-ui/icons/Camera'
@@ -165,10 +164,6 @@ const Trials = () => {
     return (
         <>
             <EntryGridContainer>
-                <Grid item xs={12}>
-                    <Typography variant="h4">Ideen</Typography>
-                </Grid>
-
                 <Grid item xs={12}>
                     <Grid container spacing={3}>
                         {[...pagedTrials.values()].map(trial => (

@@ -1,4 +1,10 @@
 import { AppBar, createStyles, makeStyles } from '@material-ui/core'
+import BottomNavigation from '@material-ui/core/BottomNavigation'
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction'
+import FavoriteIcon from '@material-ui/icons/Favorite'
+import FolderIcon from '@material-ui/icons/Folder'
+import LocationOnIcon from '@material-ui/icons/LocationOn'
+import RestoreIcon from '@material-ui/icons/Restore'
 import React from 'react'
 
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
@@ -40,10 +46,20 @@ const Footer = () => {
 
     return (
         <footer>
-            <AppBar className={classes.appbar} color="default">
+            {/* <BottomNavigation value="recents">
+                <BottomNavigationAction label="Recents" value="recents" icon={<RestoreIcon />} />
+                <BottomNavigationAction
+                    label="Favorites"
+                    value="favorites"
+                    icon={<FavoriteIcon />}
+                />
+                <BottomNavigationAction label="Nearby" value="nearby" icon={<LocationOnIcon />} />
+                <BottomNavigationAction label="Folder" value="folder" icon={<FolderIcon />} />
+            </BottomNavigation> */}
+            {/* <AppBar className={classes.appbar} color="default">
                 <Navigation />
             </AppBar>
-            <div className={classes.safeAreaIos} />
+            <div className={classes.safeAreaIos} /> */}
         </footer>
     )
 }

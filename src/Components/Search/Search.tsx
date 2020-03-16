@@ -1,4 +1,5 @@
 import {
+    ClickAwayListener,
     createStyles,
     Grow,
     Hidden,
@@ -32,8 +33,11 @@ const useStyles = makeStyles(theme =>
         },
         searchContainer: {
             flexGrow: 1,
-
+            height: 48,
             display: 'flex',
+        },
+        searchInput: {
+            ...theme.typography.h6,
         },
         searchResultsPaper: {
             position: 'absolute',
@@ -104,7 +108,6 @@ const Search = () => {
         setLoading(true)
         setResults([])
         setValue(event.target.value)
-        openResults()
     }
 
     const closeResults = () => setResultsOpen(false)
@@ -113,38 +116,32 @@ const Search = () => {
 
     return (
         <div className={classes.searchContainer}>
-            <InputBase
-                onFocus={openResults}
-                onBlur={closeResults}
-                fullWidth
-                placeholder="Suchen"
-                value={value}
-                onChange={handleInputChange}
-                startAdornment={
-                    <InputAdornment position="start">
-                        <Logo
-                            onClick={() => setResultsOpen(prev => !prev)}
-                            className={classes.logo}
-                        />
-                    </InputAdornment>
-                }
-                endAdornment={
-                    <Hidden smDown>
-                        <InputAdornment position="end">{AlgoliaDocSearchRef}</InputAdornment>
-                    </Hidden>
-                }
-            />
+            <ClickAwayListener onClickAway={closeResults}>
+                <InputBase
+                    onFocus={openResults}
+                    className={classes.searchInput}
+                    fullWidth
+                    placeholder="Suchen"
+                    value={value}
+                    onChange={handleInputChange}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <Logo className={classes.logo} />
+                        </InputAdornment>
+                    }
+                    endAdornment={
+                        <Hidden smDown>
+                            <InputAdornment position="end">{AlgoliaDocSearchRef}</InputAdornment>
+                        </Hidden>
+                    }
+                />
+            </ClickAwayListener>
 
             <Grow in={value.length > 0 && resultsOpen}>
                 <Paper className={classes.searchResultsPaper}>
                     <List disablePadding>
                         {results.map(result => (
-                            <SearchResult
-                                key={result.name}
-                                result={result}
-                                onResultClick={closeResults}
-                                searchValue={value}
-                            />
+                            <SearchResult key={result.name} result={result} searchValue={value} />
                         ))}
                         <Skeletons variant="search" visible={loading} numberOfSkeletons={3} />
                     </List>

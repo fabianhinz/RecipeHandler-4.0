@@ -5,13 +5,11 @@ import { SnackbarProvider } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
 import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '../theme'
-import Footer from './Footer'
 import Header from './Header'
 import Main from './Main'
 import OnRouteChangeScrollToTop from './OnRouteChangeScrollToTop'
 import AttachmentGalleryProvider from './Provider/AttachmentGalleryProvider'
 import BookmarkProvider from './Provider/BookmarkProvider'
-import { useBreakpointsContext } from './Provider/BreakpointsProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
 import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
@@ -38,9 +36,9 @@ const AppProvider: FC = ({ children }) => (
     </RouterProvider>
 )
 
-const useStyles = makeStyles(theme =>
+const useStyles = makeStyles(() =>
     createStyles({
-        root: {
+        container: {
             userSelect: 'none',
         },
     })
@@ -52,7 +50,6 @@ const App: FC = () => {
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
-    const { isMobile } = useBreakpointsContext()
     const colorSchemeDark = useMediaQuery('(prefers-color-scheme: dark)')
 
     const setDarkTheme = useCallback(() => {
@@ -98,14 +95,13 @@ const App: FC = () => {
                 preventDuplicate
                 autoHideDuration={3000}
                 anchorOrigin={{
-                    vertical: isMobile ? 'bottom' : 'top',
-                    horizontal: 'right',
+                    vertical: 'bottom',
+                    horizontal: 'center',
                 }}>
                 <AppProvider>
-                    <Container className={classes.root} maxWidth="xl">
+                    <Container className={classes.container} maxWidth="xl">
                         <Header />
                         <Main />
-                        <Footer />
                     </Container>
                 </AppProvider>
             </SnackbarProvider>

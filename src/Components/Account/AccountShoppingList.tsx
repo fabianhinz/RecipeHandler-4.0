@@ -11,8 +11,6 @@ import {
     makeStyles,
     TextField,
     Tooltip,
-    Typography,
-    useTheme,
     Zoom,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
@@ -21,7 +19,6 @@ import { CartOff } from 'mdi-material-ui'
 import React, { useMemo, useState } from 'react'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
-import useScrollButtons from '../../hooks/useScrollButtons'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
@@ -73,19 +70,10 @@ const useStyles = makeStyles(theme =>
 const AccountUserShoppingList = () => {
     const [textFieldValue, setTextFieldValue] = useState('')
 
-    const theme = useTheme()
     const classes = useStyles()
 
     const { user, shoppingList, shoppingTracker } = useFirebaseAuthContext()
     const { gridLayout } = useGridContext()
-
-    // ? no internal state (on initial render) >> we cannot use useRef here
-    const [containerRef, setContainerRef] = useState<any | undefined>()
-    const { ScrollButtons, ScrollLeftTrigger, ScrollRightTrigger } = useScrollButtons({
-        disabled: shoppingList.size === 0,
-        element: containerRef as HTMLDivElement,
-        delta: theme.breakpoints.down('xs') ? 340 : 600,
-    })
 
     useDocumentTitle(`Einkaufsliste (${shoppingList.size})`)
 
@@ -134,23 +122,7 @@ const AccountUserShoppingList = () => {
         <>
             <EntryGridContainer>
                 <Grid item xs={12}>
-                    <Grid container alignItems="center" justify="space-between">
-                        <Grid item>
-                            <Typography variant="h4">Einkaufsliste</Typography>
-                        </Grid>
-                        <Grid item>
-                            <ScrollButtons />
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                    <Grid
-                        container
-                        spacing={3}
-                        ref={ref => setContainerRef(ref)}
-                        wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}
-                        className={classes.recipeContainer}>
-                        <ScrollLeftTrigger />
+                    <Grid container spacing={3} className={classes.recipeContainer}>
                         {[...shoppingList.entries()].map(([recipeName, groceries]) => (
                             <Grid item xs={gridLayout === 'list' ? 12 : 'auto'} key={recipeName}>
                                 <div className={clsx(gridLayout === 'grid' && classes.recipeItem)}>
@@ -221,7 +193,6 @@ const AccountUserShoppingList = () => {
                                 </div>
                             </Grid>
                         ))}
-                        <ScrollRightTrigger />
                     </Grid>
                     <NotFound visible={shoppingList.size === 0} />
                 </Grid>

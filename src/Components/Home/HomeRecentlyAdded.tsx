@@ -1,9 +1,8 @@
 import { Grid, Typography } from '@material-ui/core'
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 
 import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import Skeletons from '../Shared/Skeletons'
 import HomeRecipeCard from './HomeRecipeCard'
@@ -12,9 +11,6 @@ const HomeRecentlyAdded = () => {
     const [recipes, setRecipes] = useState<Array<Recipe>>([])
 
     const { user } = useFirebaseAuthContext()
-    const { isLowRes } = useBreakpointsContext()
-
-    const limit = useMemo(() => (isLowRes ? 3 : 6), [isLowRes])
 
     useEffect(() => {
         if (user && !user.showRecentlyAdded) return
@@ -25,14 +21,14 @@ const HomeRecentlyAdded = () => {
 
         return query
             .orderBy('createdDate', 'desc')
-            .limit(limit)
+            .limit(6)
             .onSnapshot(
                 querySnapshot => {
                     setRecipes(querySnapshot.docs.map(doc => doc.data() as Recipe))
                 },
                 error => console.error(error)
             )
-    }, [limit, user])
+    }, [user])
 
     if (user && !user.showRecentlyAdded) return <></>
 
@@ -49,7 +45,7 @@ const HomeRecentlyAdded = () => {
                     <Skeletons
                         variant="recipe"
                         visible={recipes.length === 0}
-                        numberOfSkeletons={limit}
+                        numberOfSkeletons={6}
                     />
                 </Grid>
             </Grid>
