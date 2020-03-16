@@ -1,5 +1,5 @@
 import { RecipeCreateState } from '../Components/Recipe/Create/RecipeCreateReducer'
-import { DocumentId, OrderByRecord, Recipe } from '../model/model'
+import { DocumentId, OrderByRecord, Recipe, Trial } from '../model/model'
 
 class RecipeService {
     private _selectedCategories: Map<string, string>
@@ -26,11 +26,19 @@ class RecipeService {
         this._pagedRecipes = newPagedRecipes
     }
 
-    private _scrollPosition: number
+    private _pagedTrials: Map<string, Trial>
+    get pagedTrials() {
+        return this._pagedTrials
+    }
+    set pagedTrials(newPagedTrials: Map<string, Trial>) {
+        this._pagedTrials = newPagedTrials
+    }
+
+    private _scrollPosition: Map<string, number>
     get scrollPosition() {
         return this._scrollPosition
     }
-    set scrollPosition(newScrollPosition: number) {
+    set scrollPosition(newScrollPosition: Map<string, number>) {
         this._scrollPosition = newScrollPosition
     }
 
@@ -46,8 +54,9 @@ class RecipeService {
         this._selectedCategories = new Map()
         this._orderBy = { name: 'asc' }
         this._pagedRecipes = new Map()
-        this._scrollPosition = window.scrollX
+        this._scrollPosition = new Map()
         this._recipeCreateState = null
+        this._pagedTrials = new Map()
     }
 }
 

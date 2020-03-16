@@ -28,10 +28,17 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
     const [value, setValue] = useState(0)
 
     useEffect(() => {
+        let mounted = true
         FirebaseService.firestore
             .collection('recipes')
             .doc(recipeName)
-            .onSnapshot(doc => setRecipe({ name: doc.id, ...doc.data() } as Recipe))
+            .onSnapshot(doc => {
+                if (mounted) setRecipe({ name: doc.id, ...doc.data() } as Recipe)
+            })
+
+        return () => {
+            mounted = false
+        }
     }, [recipeName])
 
     return (

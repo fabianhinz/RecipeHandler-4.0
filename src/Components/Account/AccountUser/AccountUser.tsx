@@ -12,6 +12,7 @@ import { useBookmarkContext } from '../../Provider/BookmarkProvider'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
 import { NavigateFab } from '../../Routes/Navigate'
+import { PATHS } from '../../Routes/Routes'
 import EntryGridContainer from '../../Shared/EntryGridContainer'
 import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
@@ -74,7 +75,7 @@ const AccountUser = () => {
                 if (typeof uid !== 'string') throw new Error('whoops we need a string for this')
 
                 // ? throw away all "cached" recipes
-                recipeService.scrollPosition = 0
+                recipeService.scrollPosition.set(PATHS.home, 0)
                 recipeService.pagedRecipes = new Map()
 
                 let selectedIds = [...user.selectedUsers]

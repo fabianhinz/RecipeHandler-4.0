@@ -28,15 +28,23 @@ import Search, { AlgoliaDocSearchRef } from './Search/Search'
 const useStyles = makeStyles(theme =>
     createStyles({
         header: {
-            marginTop: theme.spacing(3),
+            position: 'sticky',
+            paddingTop: theme.spacing(3),
+            '@media (max-width: 959px) and (orientation: landscape)': {
+                position: 'static',
+            },
+            top: 'env(safe-area-inset-top)',
+            zIndex: theme.zIndex.appBar,
         },
         searchPaper: {
             padding: theme.spacing(1),
             display: 'flex',
             position: 'relative',
+            boxShadow: theme.shadows[4],
         },
         buttonPaper: {
             padding: theme.spacing(1),
+            boxShadow: theme.shadows[4],
         },
         drawerPaper: {
             padding: theme.spacing(3),

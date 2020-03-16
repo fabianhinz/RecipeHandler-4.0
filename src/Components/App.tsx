@@ -3,7 +3,9 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
+import recipeService from '../services/recipeService'
 import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import Header from './Header'
 import Main from './Main'
@@ -50,6 +52,7 @@ const App: FC = () => {
 
     const { user } = useFirebaseAuthContext()
     const colorSchemeDark = useMediaQuery('(prefers-color-scheme: dark)')
+    const location = useLocation()
 
     const setDarkTheme = useCallback(() => {
         const metaThemeColor = document.getElementsByName('theme-color')[0]
@@ -85,6 +88,21 @@ const App: FC = () => {
             setLightTheme()
         }
     }, [colorSchemeDark, setBlackTheme, setDarkTheme, setLightTheme, user])
+
+    useEffect(() => {
+        const scrollPosition = recipeService.scrollPosition.get(location.pathname)
+        if (scrollPosition) window.scrollTo({ top: scrollPosition, behavior: 'auto' })
+    }, [location.pathname])
+
+    useEffect(() => {
+        window.onscroll = () => {
+            recipeService.scrollPosition.set(location.pathname, window.scrollY)
+        }
+
+        return () => {
+            window.onscroll = null
+        }
+    }, [location.pathname])
 
     return (
         <ThemeProvider theme={theme}>

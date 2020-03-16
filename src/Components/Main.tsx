@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core'
 import BookIcon from '@material-ui/icons/Book'
 import { BookmarkMultiple, Cart, Lightbulb } from 'mdi-material-ui'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { BORDER_RADIUS } from '../theme'
@@ -18,14 +18,13 @@ const useStyles = makeStyles(theme =>
     createStyles({
         main: {
             minHeight: '40vh',
-            overflowY: 'auto',
-            maxHeight: `calc(100vh - 64px - 112px )`,
             [theme.breakpoints.only('xs')]: {
                 padding: theme.spacing(2),
             },
             [theme.breakpoints.up('sm')]: {
                 padding: theme.spacing(3),
             },
+            position: 'relative',
         },
         root: {
             marginTop: theme.spacing(3),
@@ -36,11 +35,16 @@ const useStyles = makeStyles(theme =>
                 marginRight: -16,
             },
         },
-
+        nav: {
+            position: 'sticky',
+            top: 'calc(env(safe-area-inset-top) + 24px)',
+            zIndex: theme.zIndex.appBar,
+        },
         navigation: {
             height: 64,
             borderTopLeftRadius: BORDER_RADIUS,
             borderTopRightRadius: BORDER_RADIUS,
+            boxShadow: theme.shadows[4],
         },
         navigationActionRoot: {
             borderRadius: 0,
@@ -66,14 +70,10 @@ const Main = () => {
     const history = useHistory()
     const { user } = useFirebaseAuthContext()
 
-    const handleMainScroll = (event: React.UIEvent<HTMLElement>) => {
-        if (location.pathname === PATHS.home) console.log(event.currentTarget.scrollTop)
-    }
-
     return (
         <>
             <div className={classes.root}>
-                <nav>
+                <nav className={classes.nav}>
                     <BottomNavigation
                         className={classes.navigation}
                         value={location.pathname}
@@ -118,7 +118,7 @@ const Main = () => {
                     </BottomNavigation>
                 </nav>
 
-                <main onScroll={handleMainScroll} className={classes.main}>
+                <main className={classes.main}>
                     <Routes />
                 </main>
             </div>

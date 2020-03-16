@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import useDebounce from '../../hooks/useDebounce'
 import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
@@ -20,6 +21,7 @@ import { Hit, Hits } from '../../model/model'
 import algolia from '../../services/algolia'
 import { BORDER_RADIUS } from '../../theme'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { PATHS } from '../Routes/Routes'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
 import SearchResult from './SearchResult'
@@ -77,8 +79,8 @@ const Search = () => {
 
     const classes = useStyles()
 
+    const history = useHistory()
     const debouncedValue = useDebounce(value, 500)
-
     const { user } = useFirebaseAuthContext()
 
     useEffect(() => {
@@ -126,7 +128,10 @@ const Search = () => {
                     onChange={handleInputChange}
                     startAdornment={
                         <InputAdornment position="start">
-                            <Logo className={classes.logo} />
+                            <Logo
+                                onClick={() => history.push(PATHS.home)}
+                                className={classes.logo}
+                            />
                         </InputAdornment>
                     }
                     endAdornment={
