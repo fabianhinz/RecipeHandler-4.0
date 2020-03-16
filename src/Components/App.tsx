@@ -7,7 +7,6 @@ import React, { FC, useCallback, useEffect, useState } from 'react'
 import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import Header from './Header'
 import Main from './Main'
-import OnRouteChangeScrollToTop from './OnRouteChangeScrollToTop'
 import AttachmentGalleryProvider from './Provider/AttachmentGalleryProvider'
 import BookmarkProvider from './Provider/BookmarkProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
@@ -90,7 +89,6 @@ const App: FC = () => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <OnRouteChangeScrollToTop />
             <SnackbarProvider
                 preventDuplicate
                 autoHideDuration={3000}

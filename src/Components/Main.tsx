@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core'
 import BookIcon from '@material-ui/icons/Book'
 import { BookmarkMultiple, Cart, Lightbulb } from 'mdi-material-ui'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { BORDER_RADIUS } from '../theme'
@@ -66,6 +66,10 @@ const Main = () => {
     const history = useHistory()
     const { user } = useFirebaseAuthContext()
 
+    const handleMainScroll = (event: React.UIEvent<HTMLElement>) => {
+        if (location.pathname === PATHS.home) console.log(event.currentTarget.scrollTop)
+    }
+
     return (
         <>
             <div className={classes.root}>
@@ -114,7 +118,7 @@ const Main = () => {
                     </BottomNavigation>
                 </nav>
 
-                <main className={classes.main}>
+                <main onScroll={handleMainScroll} className={classes.main}>
                     <Routes />
                 </main>
             </div>
