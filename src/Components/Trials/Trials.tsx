@@ -5,7 +5,6 @@ import {
     LinearProgress,
     makeStyles,
     Tooltip,
-    Typography,
     Zoom,
 } from '@material-ui/core'
 import CameraIcon from '@material-ui/icons/Camera'
@@ -20,6 +19,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle'
 import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { Trial } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import recipeService from '../../services/recipeService'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
@@ -38,14 +38,20 @@ const useStyles = makeStyles(theme =>
             outline: 'none',
             zIndex: theme.zIndex.drawer + 1,
             position: 'fixed',
-            right: theme.spacing(2),
-            bottom: `calc(env(safe-area-inset-bottom) + ${theme.spacing(4.5)}px)`,
+            [theme.breakpoints.down('md')]: {
+                right: theme.spacing(2),
+                bottom: `max(env(safe-area-inset-bottom), ${theme.spacing(2)}px)`,
+            },
+            [theme.breakpoints.up('lg')]: {
+                right: theme.spacing(4),
+                bottom: theme.spacing(4),
+            },
         },
     })
 )
 // ToDo should use AttachmentDropzone hook
 const Trials = () => {
-    const [pagedTrials, setPagedTrials] = useState<Map<string, Trial>>(new Map())
+    const [pagedTrials, setPagedTrials] = useState<Map<string, Trial>>(recipeService.pagedTrials)
     const [lastTrial, setLastTrial] = useState<Trial | undefined | null>(null)
     const [querying, setQuerying] = useState(false)
 
@@ -83,9 +89,10 @@ const Trials = () => {
 
             setPagedTrials(trials => {
                 changes.removed.forEach((_v, key) => trials.delete(key))
-                const newRecipes = new Map([...trials, ...changes.added, ...changes.modified])
+                const newTrials = new Map([...trials, ...changes.added, ...changes.modified])
 
-                return newRecipes
+                recipeService.pagedTrials = newTrials
+                return newTrials
             })
             setQuerying(false)
         })
@@ -165,10 +172,6 @@ const Trials = () => {
     return (
         <>
             <EntryGridContainer>
-                <Grid item xs={12}>
-                    <Typography variant="h4">Ideen</Typography>
-                </Grid>
-
                 <Grid item xs={12}>
                     <Grid container spacing={3}>
                         {[...pagedTrials.values()].map(trial => (

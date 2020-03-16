@@ -12,9 +12,12 @@ const HomeRecentlyAdded = () => {
     const [recipes, setRecipes] = useState<Array<Recipe>>([])
 
     const { user } = useFirebaseAuthContext()
-    const { isLowRes } = useBreakpointsContext()
+    const { isMobile } = useBreakpointsContext()
 
-    const limit = useMemo(() => (isLowRes ? 3 : 6), [isLowRes])
+    const numberOfDocs = useMemo(
+        () => (isMobile ? FirebaseService.QUERY_LIMIT_MOBILE : FirebaseService.QUERY_LIMIT),
+        [isMobile]
+    )
 
     useEffect(() => {
         if (user && !user.showRecentlyAdded) return
@@ -25,14 +28,14 @@ const HomeRecentlyAdded = () => {
 
         return query
             .orderBy('createdDate', 'desc')
-            .limit(limit)
+            .limit(numberOfDocs)
             .onSnapshot(
                 querySnapshot => {
                     setRecipes(querySnapshot.docs.map(doc => doc.data() as Recipe))
                 },
                 error => console.error(error)
             )
-    }, [limit, user])
+    }, [numberOfDocs, user])
 
     if (user && !user.showRecentlyAdded) return <></>
 
@@ -49,7 +52,7 @@ const HomeRecentlyAdded = () => {
                     <Skeletons
                         variant="recipe"
                         visible={recipes.length === 0}
-                        numberOfSkeletons={limit}
+                        numberOfSkeletons={numberOfDocs}
                     />
                 </Grid>
             </Grid>

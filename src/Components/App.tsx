@@ -3,15 +3,14 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
+import recipeService from '../services/recipeService'
 import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '../theme'
-import Footer from './Footer'
 import Header from './Header'
 import Main from './Main'
-import OnRouteChangeScrollToTop from './OnRouteChangeScrollToTop'
 import AttachmentGalleryProvider from './Provider/AttachmentGalleryProvider'
 import BookmarkProvider from './Provider/BookmarkProvider'
-import { useBreakpointsContext } from './Provider/BreakpointsProvider'
 import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
 import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
@@ -38,9 +37,9 @@ const AppProvider: FC = ({ children }) => (
     </RouterProvider>
 )
 
-const useStyles = makeStyles(theme =>
+const useStyles = makeStyles(() =>
     createStyles({
-        root: {
+        container: {
             userSelect: 'none',
         },
     })
@@ -52,8 +51,8 @@ const App: FC = () => {
     const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
-    const { isMobile } = useBreakpointsContext()
     const colorSchemeDark = useMediaQuery('(prefers-color-scheme: dark)')
+    const location = useLocation()
 
     const setDarkTheme = useCallback(() => {
         const metaThemeColor = document.getElementsByName('theme-color')[0]
@@ -90,22 +89,35 @@ const App: FC = () => {
         }
     }, [colorSchemeDark, setBlackTheme, setDarkTheme, setLightTheme, user])
 
+    useEffect(() => {
+        const scrollPosition = recipeService.scrollPosition.get(location.pathname)
+        if (scrollPosition) window.scrollTo({ top: scrollPosition, behavior: 'auto' })
+    }, [location.pathname])
+
+    useEffect(() => {
+        window.onscroll = () => {
+            recipeService.scrollPosition.set(location.pathname, window.scrollY)
+        }
+
+        return () => {
+            window.onscroll = null
+        }
+    }, [location.pathname])
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <OnRouteChangeScrollToTop />
             <SnackbarProvider
                 preventDuplicate
                 autoHideDuration={3000}
                 anchorOrigin={{
-                    vertical: isMobile ? 'bottom' : 'top',
-                    horizontal: 'right',
+                    vertical: 'bottom',
+                    horizontal: 'center',
                 }}>
                 <AppProvider>
-                    <Container className={classes.root} maxWidth="xl">
+                    <Container className={classes.container} maxWidth="xl">
                         <Header />
                         <Main />
-                        <Footer />
                     </Container>
                 </AppProvider>
             </SnackbarProvider>

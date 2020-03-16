@@ -7,19 +7,17 @@ import {
     Typography,
 } from '@material-ui/core'
 import { yellow } from '@material-ui/core/colors'
-import React, { memo, useEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import useScrollButtons from '../../hooks/useScrollButtons'
 import { DocumentId, MostCooked } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
 import Skeletons from '../Shared/Skeletons'
 
-// ! the length of COLOR_PALETTE must equal the number of MOST_COOKED_LIMIT
-const MOST_COOKED_LIMIT = 10
 const COLOR_PALETTE = [
     yellow[900],
     yellow[800],
@@ -95,17 +93,15 @@ const HomeMostCooked = () => {
     const [mostCooked, setMostCooked] = useState<MostCookedMap>(new Map())
     const [counterValues, setCounterValues] = useState<Set<number>>(new Set())
 
-    const containerRef = useRef<any | undefined>()
-    const { ScrollButtons, ScrollLeftTrigger, ScrollRightTrigger } = useScrollButtons({
-        disabled: mostCooked.size === 0,
-        element: containerRef.current as HTMLDivElement,
-        delta: 300,
-    })
-
     const classes = useHomeMostCookedStyles()
 
     const { user } = useFirebaseAuthContext()
-    const { gridLayout } = useGridContext()
+    const { isMobile } = useBreakpointsContext()
+
+    const numberOfDocs = useMemo(
+        () => (isMobile ? FirebaseService.QUERY_LIMIT_MOBILE : FirebaseService.QUERY_LIMIT),
+        [isMobile]
+    )
 
     useEffect(() => {
         if (user && !user.showMostCooked) return
@@ -113,7 +109,7 @@ const HomeMostCooked = () => {
         return FirebaseService.firestore
             .collection('cookCounter')
             .orderBy('value', 'desc')
-            .limit(MOST_COOKED_LIMIT)
+            .limit(numberOfDocs)
             .onSnapshot(querySnapshot => {
                 const newMostCookedMap = new Map(
                     querySnapshot.docs.map(doc => [doc.id, doc.data()])
@@ -124,48 +120,33 @@ const HomeMostCooked = () => {
                 )
                 setMostCooked(newMostCookedMap)
             })
-    }, [user])
+    }, [isMobile, numberOfDocs, user])
 
     if (user && !user.showMostCooked) return <></>
 
     return (
         <>
             <Grid item xs={12}>
-                <Grid container alignItems="center" justify="space-between">
-                    <Grid item>
-                        <Typography noWrap variant="h4">
-                            Häufig gekocht
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <ScrollButtons />
-                    </Grid>
-                </Grid>
+                <Typography noWrap variant="h4">
+                    Häufig gekocht
+                </Typography>
             </Grid>
 
             <Grid item xs={12}>
-                <Grid
-                    ref={containerRef}
-                    className={classes.mostCookedGridContainer}
-                    container
-                    spacing={3}
-                    wrap={gridLayout === 'grid' ? 'nowrap' : 'wrap'}>
-                    <ScrollLeftTrigger />
-                    {[...mostCooked.entries()]
-                        .slice(0, gridLayout === 'grid' ? mostCooked.size : 6)
-                        .map(([recipeName, counter]) => (
-                            <MostCookedPaper
-                                key={recipeName}
-                                paletteIndex={[...counterValues].indexOf(counter.value)}
-                                recipeName={recipeName}
-                                counter={counter}
-                            />
-                        ))}
-                    <ScrollRightTrigger />
+                <Grid className={classes.mostCookedGridContainer} container spacing={3}>
+                    {[...mostCooked.entries()].map(([recipeName, counter]) => (
+                        <MostCookedPaper
+                            key={recipeName}
+                            paletteIndex={[...counterValues].indexOf(counter.value)}
+                            recipeName={recipeName}
+                            counter={counter}
+                        />
+                    ))}
+
                     <Skeletons
                         variant="cookCounter"
                         visible={mostCooked.size === 0}
-                        numberOfSkeletons={gridLayout === 'grid' ? MOST_COOKED_LIMIT : 6}
+                        numberOfSkeletons={numberOfDocs}
                     />
                 </Grid>
             </Grid>

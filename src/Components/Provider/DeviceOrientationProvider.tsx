@@ -1,5 +1,4 @@
-import { Dialog, Typography } from '@material-ui/core'
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 
 import { useBreakpointsContext } from './BreakpointsProvider'
 
@@ -14,9 +13,6 @@ export const useDeviceOrientationContext = () => useContext(Context) as Orientat
 
 const DeviceOrientationProvider: FC = ({ children }) => {
     const { isLowRes } = useBreakpointsContext()
-    const [suggestionDialog, setSuggestionDialog] = useState(
-        (window.orientation === 90 || window.orientation === -90) && isLowRes
-    )
 
     useEffect(() => {
         const handleOrientationChange = () => {
@@ -25,11 +21,9 @@ const DeviceOrientationProvider: FC = ({ children }) => {
                     try {
                         await window.screen.orientation.lock('portrait')
                     } catch {
-                        // ? on unsupported devices fallback to a simple Dialog: https://developer.mozilla.org/en-US/docs/Web/API/ScreenOrientation/lock#Browser_compatibility
-                        setSuggestionDialog(true)
+                        // ? on unsupported devices do nothing - https://developer.mozilla.org/en-US/docs/Web/API/ScreenOrientation/lock#Browser_compatibility
                     }
                 })()
-            else setSuggestionDialog(false)
         }
 
         window.addEventListener('orientationchange', handleOrientationChange)
@@ -41,16 +35,6 @@ const DeviceOrientationProvider: FC = ({ children }) => {
             <Context.Provider value={{ landscape: false, portrait: false }}>
                 {children}
             </Context.Provider>
-            <Dialog
-                open={suggestionDialog}
-                fullScreen
-                PaperProps={{
-                    style: { display: 'flex', justifyContent: 'center', flexDirection: 'column' },
-                }}>
-                <Typography variant="h4" align="center">
-                    Anzeige im Landscape wird nicht unterstützt
-                </Typography>
-            </Dialog>
         </>
     )
 }

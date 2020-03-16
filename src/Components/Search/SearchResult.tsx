@@ -47,15 +47,13 @@ const getHighlightedIngredients = (ingredients: string) => {
 
 interface Props {
     result: Hit
-    onResultClick: () => void
     searchValue: string
 }
 
-const SearchResult = ({ result, onResultClick, searchValue }: Props) => {
+const SearchResult = ({ result, searchValue }: Props) => {
     const { history } = useRouterContext()
 
     const handleListItemClick = () => {
-        onResultClick()
         history.push(PATHS.details(result.name))
     }
 

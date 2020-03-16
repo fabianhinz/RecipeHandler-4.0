@@ -46,16 +46,6 @@ const Home = () => {
     useDocumentTitle('RecipeHandler 4.0')
 
     useEffect(() => {
-        window.scrollTo({ top: RecipeService.scrollPosition })
-    }, [])
-
-    useEffect(() => {
-        return () => {
-            RecipeService.scrollPosition = window.scrollY
-        }
-    }, [])
-
-    useEffect(() => {
         setQuerying(true)
         const orderByKey = Object.keys(orderBy)[0] as OrderByKey
         let query:

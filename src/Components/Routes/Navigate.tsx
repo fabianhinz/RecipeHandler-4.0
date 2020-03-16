@@ -31,8 +31,14 @@ const useStyles = makeStyles(theme =>
         fab: {
             zIndex: theme.zIndex.drawer + 1,
             position: 'fixed',
-            right: theme.spacing(2),
-            bottom: `calc(env(safe-area-inset-bottom) + ${theme.spacing(4.5)}px)`,
+            [theme.breakpoints.down('md')]: {
+                right: theme.spacing(2),
+                bottom: `max(env(safe-area-inset-bottom), ${theme.spacing(2)}px)`,
+            },
+            [theme.breakpoints.up('lg')]: {
+                right: theme.spacing(4),
+                bottom: theme.spacing(4),
+            },
         },
     })
 )

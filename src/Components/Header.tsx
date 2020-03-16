@@ -1,6 +1,6 @@
 import {
+    Avatar,
     createStyles,
-    Divider,
     Drawer,
     Grid,
     Hidden,
@@ -13,23 +13,17 @@ import {
     Paper,
     Tooltip,
 } from '@material-ui/core'
+import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import MenuIcon from '@material-ui/icons/Menu'
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCartOutlined'
-import {
-    BookmarkMultipleOutline,
-    InformationOutline,
-    ViewAgendaOutline,
-    ViewGridOutline,
-} from 'mdi-material-ui'
-import React, { useState } from 'react'
+import { InformationOutline, ViewAgendaOutline, ViewGridOutline } from 'mdi-material-ui'
+import React, { useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { useBookmarkContext } from './Provider/BookmarkProvider'
+import AccountAuthentication from './Account/AccountAuthentication'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import { useGridContext } from './Provider/GridProvider'
 import { PATHS } from './Routes/Routes'
 import Search, { AlgoliaDocSearchRef } from './Search/Search'
-import { BadgeWrapper } from './Shared/BadgeWrapper'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -40,20 +34,17 @@ const useStyles = makeStyles(theme =>
                 position: 'static',
             },
             top: 'env(safe-area-inset-top)',
-            zIndex: theme.zIndex.appBar + 1,
-            minHeight: 'calc(20vh - 24px)',
+            zIndex: theme.zIndex.appBar,
         },
         searchPaper: {
-            padding: theme.spacing(2),
+            padding: theme.spacing(1),
             display: 'flex',
             position: 'relative',
-            boxShadow: theme.shadows[2],
+            boxShadow: theme.shadows[4],
         },
         buttonPaper: {
             padding: theme.spacing(1),
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            boxShadow: theme.shadows[2],
+            boxShadow: theme.shadows[4],
         },
         drawerPaper: {
             padding: theme.spacing(3),
@@ -68,103 +59,94 @@ const useStyles = makeStyles(theme =>
             marginTop: theme.spacing(1),
             marginBottom: theme.spacing(1),
         },
+        userAvatar: {
+            height: 24,
+            width: 24,
+        },
+        drawerIcon: {
+            flexShrink: 0,
+            flexBasis: 48,
+        },
     })
 )
 
 const Header = () => {
+    const [authenticationOpen, setAuthenticationOpen] = useState(false)
     const [drawer, setDrawer] = useState(false)
     const classes = useStyles()
 
     const { setGridLayout, gridLayout } = useGridContext()
-    const { bookmarks } = useBookmarkContext()
-    const { user, shoppingList } = useFirebaseAuthContext()
+    const { user, loginEnabled } = useFirebaseAuthContext()
     const history = useHistory()
 
     const openDrawer = () => setDrawer(true)
     const closeDrawer = () => setDrawer(false)
 
-    return (
-        <>
-            <header className={classes.header}>
-                <Grid container spacing={3} justify="center" alignItems="center">
-                    <Hidden smDown>
-                        <Grid item>
-                            <Paper className={classes.buttonPaper}>
-                                <Grid container spacing={1}>
-                                    <Grid item>
-                                        <Tooltip
-                                            title={
-                                                gridLayout === 'grid'
-                                                    ? 'Listenansicht'
-                                                    : 'Gridansicht'
-                                            }>
-                                            <IconButton
-                                                onClick={() =>
-                                                    setGridLayout(prev =>
-                                                        prev === 'grid' ? 'list' : 'grid'
-                                                    )
-                                                }>
-                                                {gridLayout === 'grid' ? (
-                                                    <ViewAgendaOutline />
-                                                ) : (
-                                                    <ViewGridOutline />
-                                                )}
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Grid>
-                                    <Grid item>
-                                        <Tooltip title="Lesezeichen">
-                                            <IconButton
-                                                onClick={() => history.push(PATHS.bookmarks)}>
-                                                <BadgeWrapper badgeContent={bookmarks.size}>
-                                                    <BookmarkMultipleOutline />
-                                                </BadgeWrapper>
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Grid>
-                                    <Grid item>
-                                        <Tooltip title="Einkaufsliste">
-                                            <div>
-                                                <IconButton
-                                                    disabled={!user}
-                                                    onClick={() =>
-                                                        history.push(PATHS.shoppingList)
-                                                    }>
-                                                    <BadgeWrapper badgeContent={shoppingList.size}>
-                                                        <ShoppingCartIcon />
-                                                    </BadgeWrapper>
-                                                </IconButton>
-                                            </div>
-                                        </Tooltip>
-                                    </Grid>
-                                </Grid>
-                            </Paper>
-                        </Grid>
-                    </Hidden>
-                    <Grid item xs={12} sm={8} lg={6}>
-                        <Paper className={classes.searchPaper}>
-                            <Search />
-                            <Hidden mdUp>
-                                <IconButton onClick={openDrawer} size="small">
-                                    <MenuIcon />
-                                </IconButton>
-                            </Hidden>
-                        </Paper>
-                    </Grid>
-                    <Hidden smDown>
-                        <Grid item>
-                            <Paper className={classes.buttonPaper}>
+    const mdUpActions = useMemo(
+        () => (
+            <Hidden smDown>
+                <Grid item>
+                    <Paper className={classes.buttonPaper}>
+                        <Grid container spacing={1} alignItems="center">
+                            <Grid item>
+                                <Tooltip
+                                    title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
+                                    <IconButton
+                                        onClick={() =>
+                                            setGridLayout(prev =>
+                                                prev === 'grid' ? 'list' : 'grid'
+                                            )
+                                        }>
+                                        {gridLayout === 'grid' ? (
+                                            <ViewAgendaOutline />
+                                        ) : (
+                                            <ViewGridOutline />
+                                        )}
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                            <Grid item>
                                 <Tooltip title="Impressum">
                                     <IconButton onClick={() => history.push(PATHS.impressum)}>
                                         <InformationOutline />
                                     </IconButton>
                                 </Tooltip>
-                            </Paper>
+                            </Grid>
+                            <Grid item>
+                                <IconButton
+                                    disabled={!loginEnabled}
+                                    onClick={() => {
+                                        if (user) history.push(PATHS.account)
+                                        else setAuthenticationOpen(true)
+                                    }}>
+                                    {user ? (
+                                        <Avatar
+                                            className={classes.userAvatar}
+                                            src={user.profilePicture}
+                                        />
+                                    ) : (
+                                        <AccountIcon />
+                                    )}
+                                </IconButton>
+                            </Grid>
                         </Grid>
-                    </Hidden>
+                    </Paper>
                 </Grid>
-            </header>
+            </Hidden>
+        ),
+        [
+            classes.buttonPaper,
+            classes.userAvatar,
+            gridLayout,
+            history,
+            loginEnabled,
+            setGridLayout,
+            user,
+        ]
+    )
 
+    const smDownActions = useMemo(
+        () => (
             <Hidden mdUp>
                 <Drawer
                     anchor="right"
@@ -189,27 +171,6 @@ const Header = () => {
                                 primary={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}
                             />
                         </ListItem>
-                        <ListItem button onClick={() => history.push(PATHS.bookmarks)}>
-                            <ListItemIcon>
-                                <BadgeWrapper badgeContent={bookmarks.size}>
-                                    <BookmarkMultipleOutline />
-                                </BadgeWrapper>
-                            </ListItemIcon>
-                            <ListItemText primary="Lesezeichen" />
-                        </ListItem>
-                        <ListItem
-                            button
-                            disabled={!user}
-                            onClick={() => history.push(PATHS.shoppingList)}>
-                            <ListItemIcon>
-                                <BadgeWrapper badgeContent={shoppingList.size}>
-                                    <ShoppingCartIcon />
-                                </BadgeWrapper>
-                            </ListItemIcon>
-                            <ListItemText primary="Einkaufsliste" />
-                        </ListItem>
-
-                        <Divider className={classes.divider} />
 
                         <ListItem button onClick={() => history.push(PATHS.impressum)}>
                             <ListItemIcon>
@@ -217,9 +178,64 @@ const Header = () => {
                             </ListItemIcon>
                             <ListItemText primary="Impressum" />
                         </ListItem>
+                        <ListItem
+                            button
+                            disabled={!loginEnabled}
+                            onClick={() => {
+                                if (user) history.push(PATHS.account)
+                                else setAuthenticationOpen(true)
+                            }}>
+                            <ListItemIcon>
+                                {user ? (
+                                    <Avatar
+                                        className={classes.userAvatar}
+                                        src={user.profilePicture}
+                                    />
+                                ) : (
+                                    <AccountIcon />
+                                )}
+                            </ListItemIcon>
+                            <ListItemText primary={user?.username || 'Einloggen'} />
+                        </ListItem>
                     </List>
                 </Drawer>
             </Hidden>
+        ),
+        [
+            classes.drawerPaper,
+            classes.userAvatar,
+            drawer,
+            gridLayout,
+            history,
+            loginEnabled,
+            setGridLayout,
+            user,
+        ]
+    )
+
+    return (
+        <>
+            <header className={classes.header}>
+                <Grid container spacing={3} justify="space-between">
+                    <Grid item xs={12} md={8} lg={6}>
+                        <Paper className={classes.searchPaper}>
+                            <Search />
+                            <Hidden mdUp>
+                                <IconButton className={classes.drawerIcon} onClick={openDrawer}>
+                                    <MenuIcon />
+                                </IconButton>
+                            </Hidden>
+                        </Paper>
+                    </Grid>
+                    {mdUpActions}
+                </Grid>
+            </header>
+
+            {smDownActions}
+            <AccountAuthentication
+                open={authenticationOpen}
+                onClose={() => setAuthenticationOpen(false)}
+            />
         </>
     )
 }
