@@ -2,7 +2,6 @@ import {
     AppBar,
     Avatar,
     createStyles,
-    Hidden,
     IconButton,
     makeStyles,
     Toolbar,
@@ -34,6 +33,7 @@ const useStyles = makeStyles(theme =>
             left: 0,
             right: 0,
             backgroundColor: theme.palette.background.paper,
+            zIndex: theme.zIndex.appBar,
         },
         appbar: {
             top: 'env(safe-area-inset-top)',
@@ -64,6 +64,7 @@ const useStyles = makeStyles(theme =>
 
 const Header = () => {
     const [authenticationOpen, setAuthenticationOpen] = useState(false)
+    const [drawerOpen, setDrawerOpen] = useState(false)
 
     const classes = useStyles()
 
@@ -78,7 +79,7 @@ const Header = () => {
                 <Toolbar className={classes.toolbar}>
                     <header className={classes.header}>
                         <div className={classes.menuIcon}>
-                            <IconButton>
+                            <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
                                 <MenuIcon />
                             </IconButton>
                         </div>
@@ -133,9 +134,7 @@ const Header = () => {
                 onClose={() => setAuthenticationOpen(false)}
             />
 
-            <Hidden xsDown>
-                <Nav />
-            </Hidden>
+            <Nav drawerOpen={drawerOpen} onDrawerClose={() => setDrawerOpen(false)} />
         </>
     )
 }

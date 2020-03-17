@@ -74,7 +74,7 @@ const renderRoute = ({ path, Component }: AppRoute) => (
         path={path}
         exact
         render={routeProps => (
-            <Suspense fallback={<Progress variant="fixed" />}>
+            <Suspense fallback={<Progress variant="cover" />}>
                 <Component {...routeProps} />
             </Suspense>
         )}

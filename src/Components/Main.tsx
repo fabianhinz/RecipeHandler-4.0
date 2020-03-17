@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme =>
             [theme.breakpoints.up('sm')]: {
                 padding: theme.spacing(3),
                 borderRadius: BORDER_RADIUS,
-                marginLeft: 95,
+                marginLeft: 'calc(env(safe-area-inset-left) + 95px)',
             },
         },
         container: {
