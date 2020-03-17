@@ -73,51 +73,52 @@ const Main = () => {
     return (
         <>
             <div className={classes.root}>
-                <nav className={classes.nav}>
-                    <BottomNavigation
-                        className={classes.navigation}
-                        value={location.pathname}
-                        onChange={(_e, path) => history.push(path)}>
-                        <BottomNavigationAction
-                            classes={{
-                                root: classes.navigationActionRoot,
-                                selected: classes.navigationActionSelected,
-                            }}
-                            label="Rezepte"
-                            value={PATHS.home}
-                            icon={<BookIcon />}
-                        />
-                        <BottomNavigationAction
-                            classes={{
-                                root: classes.navigationActionRoot,
-                                selected: classes.navigationActionSelected,
-                            }}
-                            label="Ideen"
-                            value={PATHS.trials}
-                            icon={<Lightbulb />}
-                        />
-                        <BottomNavigationAction
-                            classes={{
-                                root: classes.navigationActionRoot,
-                                selected: classes.navigationActionSelected,
-                            }}
-                            label="Lesezeichen"
-                            value={PATHS.bookmarks}
-                            icon={<BookmarkMultiple />}
-                        />
-                        <BottomNavigationAction
-                            disabled={!user}
-                            classes={{
-                                root: classes.navigationActionRoot,
-                                selected: classes.navigationActionSelected,
-                            }}
-                            label="Einkaufsliste"
-                            value={PATHS.shoppingList}
-                            icon={<Cart />}
-                        />
-                    </BottomNavigation>
-                </nav>
-
+                {location.pathname !== PATHS.impressum && location.pathname !== PATHS.account && (
+                    <nav className={classes.nav}>
+                        <BottomNavigation
+                            className={classes.navigation}
+                            value={location.pathname}
+                            onChange={(_e, path) => history.push(path)}>
+                            <BottomNavigationAction
+                                classes={{
+                                    root: classes.navigationActionRoot,
+                                    selected: classes.navigationActionSelected,
+                                }}
+                                label="Rezepte"
+                                value={PATHS.home}
+                                icon={<BookIcon />}
+                            />
+                            <BottomNavigationAction
+                                classes={{
+                                    root: classes.navigationActionRoot,
+                                    selected: classes.navigationActionSelected,
+                                }}
+                                label="Ideen"
+                                value={PATHS.trials}
+                                icon={<Lightbulb />}
+                            />
+                            <BottomNavigationAction
+                                classes={{
+                                    root: classes.navigationActionRoot,
+                                    selected: classes.navigationActionSelected,
+                                }}
+                                label="Lesezeichen"
+                                value={PATHS.bookmarks}
+                                icon={<BookmarkMultiple />}
+                            />
+                            <BottomNavigationAction
+                                disabled={!user}
+                                classes={{
+                                    root: classes.navigationActionRoot,
+                                    selected: classes.navigationActionSelected,
+                                }}
+                                label="Einkaufsliste"
+                                value={PATHS.shoppingList}
+                                icon={<Cart />}
+                            />
+                        </BottomNavigation>
+                    </nav>
+                )}
                 <main className={classes.main}>
                     <Routes />
                 </main>
