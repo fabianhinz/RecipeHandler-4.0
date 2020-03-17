@@ -31,24 +31,26 @@
         <title>RecipeHandler 4.0</title>
     </head>
     <style>
-       ::-webkit-scrollbar {
-            background-color: #00000000;
-            width: 1em;
-            height: 1em;
+        @media (pointer: fine) {
+            ::-webkit-scrollbar {
+                background-color: #00000000;
+                width: 1em;
+                height: 1em;
+            }
+            ::-webkit-scrollbar-thumb {
+                background-color: #757575;
+                border-radius: 16px;
+                border: 0.375em solid rgba(0, 0, 0, 0);
+                background-clip: padding-box;
+            }
+            ::-webkit-scrollbar-button {
+                display: none;
+            }  
         }
-        ::-webkit-scrollbar-thumb {
-            background-color: #757575;
-            border-radius: 16px;
-            border: 0.375em solid rgba(0, 0, 0, 0);
-            background-clip: padding-box;
-        }
-        ::-webkit-scrollbar-button {
-            display: none;
-        }    
+         
         body {
             margin: 0;
             -webkit-text-size-adjust: 100%;
-            overflow-y: scroll;
         } 
     </style>
     <body>

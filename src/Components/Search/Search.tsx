@@ -12,16 +12,13 @@ import {
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
 
 import useDebounce from '../../hooks/useDebounce'
 import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
-import { ReactComponent as Logo } from '../../icons/logo.svg'
 import { Hit, Hits } from '../../model/model'
 import algolia from '../../services/algolia'
 import { BORDER_RADIUS } from '../../theme'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { PATHS } from '../Routes/Routes'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
 import SearchResult from './SearchResult'
@@ -30,13 +27,15 @@ const useStyles = makeStyles(theme =>
     createStyles({
         logo: {
             marginRight: theme.spacing(0.5),
-            height: 40,
+
             cursor: 'pointer',
         },
         searchContainer: {
-            flexGrow: 1,
-            height: 48,
             display: 'flex',
+            backgroundColor:
+                theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
+            borderRadius: BORDER_RADIUS,
+            padding: theme.spacing(1),
         },
         searchInput: {
             ...theme.typography.h6,
@@ -62,7 +61,7 @@ const useStyles = makeStyles(theme =>
 
 export const AlgoliaDocSearchRef = (
     <a
-        style={{ lineHeight: 0, width: '100%', textAlign: 'center' }}
+        style={{ lineHeight: 0 }}
         target="_blank"
         rel="noopener noreferrer"
         href="https://www.algolia.com/docsearch">
@@ -79,7 +78,6 @@ const Search = () => {
 
     const classes = useStyles()
 
-    const history = useHistory()
     const debouncedValue = useDebounce(value, 500)
     const { user } = useFirebaseAuthContext()
 
@@ -126,16 +124,8 @@ const Search = () => {
                     placeholder="Suchen"
                     value={value}
                     onChange={handleInputChange}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <Logo
-                                onClick={() => history.push(PATHS.home)}
-                                className={classes.logo}
-                            />
-                        </InputAdornment>
-                    }
                     endAdornment={
-                        <Hidden smDown>
+                        <Hidden xsDown>
                             <InputAdornment position="end">{AlgoliaDocSearchRef}</InputAdornment>
                         </Hidden>
                     }

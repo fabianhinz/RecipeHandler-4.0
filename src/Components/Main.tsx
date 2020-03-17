@@ -1,64 +1,34 @@
-import {
-    BottomNavigation,
-    BottomNavigationAction,
-    createStyles,
-    makeStyles,
-} from '@material-ui/core'
-import BookIcon from '@material-ui/icons/Book'
-import { BookmarkMultiple, Cart, Lightbulb } from 'mdi-material-ui'
+import { Container, createStyles, makeStyles } from '@material-ui/core'
 import React from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
 
 import { BORDER_RADIUS } from '../theme'
-import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
-import { PATHS, Routes } from './Routes/Routes'
+import { Routes } from './Routes/Routes'
 import { BackgroundIcon } from './Shared/BackgroundIcon'
 
 const useStyles = makeStyles(theme =>
     createStyles({
         main: {
-            minHeight: '40vh',
+            minHeight: '50vh',
+            position: 'relative',
+            backgroundColor: theme.palette.background.default,
             [theme.breakpoints.only('xs')]: {
+                borderRadius: 0,
                 padding: theme.spacing(2),
             },
             [theme.breakpoints.up('sm')]: {
                 padding: theme.spacing(3),
+                borderRadius: BORDER_RADIUS,
+                marginLeft: 95,
             },
-            position: 'relative',
         },
-        root: {
-            marginTop: theme.spacing(3),
-            backgroundColor: theme.palette.background.default,
-            borderRadius: BORDER_RADIUS,
+        container: {
+            userSelect: 'none',
+            marginTop: 88,
             [theme.breakpoints.only('xs')]: {
-                marginLeft: -16,
-                marginRight: -16,
+                marginTop: 64,
+                paddingLeft: 0,
+                paddingRight: 0,
             },
-        },
-        nav: {
-            position: 'sticky',
-            top: 'calc(env(safe-area-inset-top) + 24px)',
-            zIndex: theme.zIndex.appBar,
-        },
-        navigation: {
-            height: 64,
-            borderTopLeftRadius: BORDER_RADIUS,
-            borderTopRightRadius: BORDER_RADIUS,
-            boxShadow: theme.shadows[4],
-        },
-        navigationActionRoot: {
-            borderRadius: 0,
-            '&:first-child': {
-                borderTopLeftRadius: BORDER_RADIUS,
-            },
-            '&:last-child': {
-                borderTopRightRadius: BORDER_RADIUS,
-            },
-            minWidth: 'unset',
-            maxWidth: 'unset',
-        },
-        navigationActionSelected: {
-            fontWeight: 600,
         },
     })
 )
@@ -66,63 +36,13 @@ const useStyles = makeStyles(theme =>
 const Main = () => {
     const classes = useStyles()
 
-    const location = useLocation()
-    const history = useHistory()
-    const { user } = useFirebaseAuthContext()
-
     return (
         <>
-            <div className={classes.root}>
-                {location.pathname !== PATHS.impressum && location.pathname !== PATHS.account && (
-                    <nav className={classes.nav}>
-                        <BottomNavigation
-                            className={classes.navigation}
-                            value={location.pathname}
-                            onChange={(_e, path) => history.push(path)}>
-                            <BottomNavigationAction
-                                classes={{
-                                    root: classes.navigationActionRoot,
-                                    selected: classes.navigationActionSelected,
-                                }}
-                                label="Rezepte"
-                                value={PATHS.home}
-                                icon={<BookIcon />}
-                            />
-                            <BottomNavigationAction
-                                classes={{
-                                    root: classes.navigationActionRoot,
-                                    selected: classes.navigationActionSelected,
-                                }}
-                                label="Ideen"
-                                value={PATHS.trials}
-                                icon={<Lightbulb />}
-                            />
-                            <BottomNavigationAction
-                                classes={{
-                                    root: classes.navigationActionRoot,
-                                    selected: classes.navigationActionSelected,
-                                }}
-                                label="Lesezeichen"
-                                value={PATHS.bookmarks}
-                                icon={<BookmarkMultiple />}
-                            />
-                            <BottomNavigationAction
-                                disabled={!user}
-                                classes={{
-                                    root: classes.navigationActionRoot,
-                                    selected: classes.navigationActionSelected,
-                                }}
-                                label="Einkaufsliste"
-                                value={PATHS.shoppingList}
-                                icon={<Cart />}
-                            />
-                        </BottomNavigation>
-                    </nav>
-                )}
+            <Container className={classes.container} maxWidth="xl">
                 <main className={classes.main}>
                     <Routes />
                 </main>
-            </div>
+            </Container>
             <BackgroundIcon />
         </>
     )

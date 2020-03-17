@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme =>
             top: 0,
             left: 0,
             width: '100vw',
-            height: '40vh',
+            height: '50vh',
             backgroundImage: `linear-gradient(90deg,${
                 theme.palette.type === 'light' ? '#8EDB91' : '#74B377'
             } 30%,#81c784 70%)`,
@@ -19,8 +19,15 @@ const useStyles = makeStyles(theme =>
         },
         icon: {
             opacity: 0.9,
+            paddingTop: theme.spacing(9),
+            paddingLeft: theme.spacing(1),
             filter: theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
-            height: '100%',
+            [theme.breakpoints.only('xs')]: {
+                height: '0%',
+            },
+            [theme.breakpoints.up('sm')]: {
+                height: '100%',
+            },
         },
     })
 )
