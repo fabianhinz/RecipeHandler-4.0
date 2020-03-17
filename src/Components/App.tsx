@@ -92,6 +92,7 @@ const App: FC = () => {
     useEffect(() => {
         const scrollPosition = recipeService.scrollPosition.get(location.pathname)
         if (scrollPosition) window.scrollTo({ top: scrollPosition, behavior: 'auto' })
+        else window.scrollTo({ top: 0, behavior: 'auto' })
     }, [location.pathname])
 
     useEffect(() => {

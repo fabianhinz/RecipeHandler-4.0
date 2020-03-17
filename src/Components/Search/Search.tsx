@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme =>
             maxHeight: '40vh',
             overflowY: 'auto',
             overflowX: 'hidden',
-            zIndex: theme.zIndex.modal,
+            zIndex: theme.zIndex.appBar + 1,
             boxShadow: theme.shadows[2],
         },
         alert: {
