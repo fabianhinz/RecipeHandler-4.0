@@ -1,12 +1,4 @@
-import {
-    Card,
-    createStyles,
-    Grid,
-    GridSize,
-    ListItem,
-    ListItemText,
-    makeStyles,
-} from '@material-ui/core'
+import { Card, createStyles, Grid, GridSize, makeStyles } from '@material-ui/core'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
@@ -15,7 +7,7 @@ import { FirebaseService } from '../../services/firebase'
 import { useGridContext } from '../Provider/GridProvider'
 
 interface Props {
-    variant: 'recipe' | 'trial' | 'cookCounter' | 'search' | 'bookmark' | 'trialsSelection'
+    variant: 'recipe' | 'trial' | 'cookCounter' | 'bookmark' | 'trialsSelection'
     visible: boolean
     numberOfSkeletons?: number
 }
@@ -65,11 +57,6 @@ const useStyles = makeStyles(theme => {
             },
             width: '100%',
         },
-
-        search: {
-            width: '100%',
-            height: 50,
-        },
         bookmark: {
             [theme.breakpoints.down('xs')]: {
                 width: 340,
@@ -93,39 +80,19 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
 
     return (
         <>
-            {variant === 'search'
-                ? new Array(numberOfSkeletons || FirebaseService.QUERY_LIMIT)
-                      .fill(1)
-                      .map((_skeleton, index) => (
-                          <ListItem key={index}>
-                              <ListItemText
-                                  primary={<Skeleton width="30%" />}
-                                  secondary={
-                                      <>
-                                          <Skeleton width="60%" />
-                                          <Skeleton width="80%" />
-                                      </>
-                                  }
-                              />
-                          </ListItem>
-                      ))
-                : new Array(numberOfSkeletons || FirebaseService.QUERY_LIMIT)
-                      .fill(1)
-                      .map((_skeleton, index) => (
-                          <Grid {...variantAvareBreakpoints} item key={index}>
-                              <Grid
-                                  container
-                                  spacing={2}
-                                  justify="space-between"
-                                  alignItems="center">
-                                  <Grid xs={12} item>
-                                      <Card>
-                                          <Skeleton className={classes[variant]} variant="rect" />
-                                      </Card>
-                                  </Grid>
-                              </Grid>
-                          </Grid>
-                      ))}
+            {new Array(numberOfSkeletons || FirebaseService.QUERY_LIMIT)
+                .fill(1)
+                .map((_skeleton, index) => (
+                    <Grid {...variantAvareBreakpoints} item key={index}>
+                        <Grid container spacing={2} justify="space-between" alignItems="center">
+                            <Grid xs={12} item>
+                                <Card>
+                                    <Skeleton className={classes[variant]} variant="rect" />
+                                </Card>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                ))}
         </>
     )
 }

@@ -9,8 +9,8 @@ import { DocumentId, OrderByKey, OrderByRecord, Recipe } from '../../model/model
 import { FirebaseService } from '../../services/firebase'
 import RecipeService from '../../services/recipeService'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { NavigateFab } from '../Routes/Navigate'
 import { PATHS } from '../Routes/Routes'
+import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
@@ -43,7 +43,7 @@ const Home = () => {
         },
     })
 
-    useDocumentTitle('RecipeHandler 4.0')
+    useDocumentTitle('Rezepte')
 
     useEffect(() => {
         setQuerying(true)
@@ -135,8 +135,8 @@ const Home = () => {
                 </Grid>
             </EntryGridContainer>
 
-            <NavigateFab
-                to={PATHS.recipeCreate}
+            <SecouredRouteFab
+                pathname={PATHS.recipeCreate}
                 icon={<AddIcon />}
                 tooltipTitle="Rezept erstellen"
             />

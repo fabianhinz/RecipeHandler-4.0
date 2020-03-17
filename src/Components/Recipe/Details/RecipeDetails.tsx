@@ -5,8 +5,8 @@ import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import { useRecipeDoc } from '../../../hooks/useRecipeDoc'
 import { RouteWithRecipeName } from '../../../model/model'
 import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import { NavigateFab } from '../../Routes/Navigate'
 import { PATHS } from '../../Routes/Routes'
+import { SecouredRouteFab } from '../../Routes/SecouredRouteFab'
 import Progress from '../../Shared/Progress'
 import RecipeResult from '../Result/RecipeResult'
 
@@ -21,8 +21,8 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
             {recipeDocLoading ? <Progress variant="fixed" /> : <RecipeResult recipe={recipeDoc} />}
 
             {recipeDoc && user && (user.uid === recipeDoc.editorUid || user.admin) && (
-                <NavigateFab
-                    to={PATHS.recipeEdit(recipeDoc.name)}
+                <SecouredRouteFab
+                    pathname={PATHS.recipeEdit(recipeDoc.name)}
                     icon={<EditIcon />}
                     tooltipTitle="Rezept bearbeiten"
                 />

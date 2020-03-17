@@ -14,6 +14,7 @@ export const PATHS = {
     bookmarks: '/bookmarks',
     impressum: '/impressum',
     shoppingList: '/shopping',
+    searchResults: '/searchResults',
 }
 
 interface AppRoute {
@@ -41,6 +42,10 @@ const anonymousRoutes: AppRoute[] = [
     {
         path: PATHS.impressum,
         Component: lazy(() => import('../Impressum/Impressum')),
+    },
+    {
+        path: PATHS.searchResults,
+        Component: lazy(() => import('../Search/SearchResults')),
     },
 ]
 

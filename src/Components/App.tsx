@@ -1,4 +1,4 @@
-import { Container, createStyles, makeStyles, useMediaQuery } from '@material-ui/core'
+import { useMediaQuery } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
@@ -16,6 +16,7 @@ import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import GridProvider from './Provider/GridProvider'
 import RouterProvider from './Provider/RouterProvider'
+import SearchResultsProvider from './Provider/SearchResultsProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
 
@@ -27,7 +28,9 @@ const AppProvider: FC = ({ children }) => (
                     <GridProvider>
                         <SelectedAttachementProvider>
                             <AttachmentGalleryProvider>
-                                <BookmarkProvider>{children}</BookmarkProvider>
+                                <BookmarkProvider>
+                                    <SearchResultsProvider>{children}</SearchResultsProvider>
+                                </BookmarkProvider>
                             </AttachmentGalleryProvider>
                         </SelectedAttachementProvider>
                     </GridProvider>
@@ -37,18 +40,8 @@ const AppProvider: FC = ({ children }) => (
     </RouterProvider>
 )
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        container: {
-            userSelect: 'none',
-        },
-    })
-)
-
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
-
-    const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
     const colorSchemeDark = useMediaQuery('(prefers-color-scheme: dark)')
@@ -116,10 +109,8 @@ const App: FC = () => {
                     horizontal: 'center',
                 }}>
                 <AppProvider>
-                    <Container className={classes.container} maxWidth="xl">
-                        <Header />
-                        <Main />
-                    </Container>
+                    <Header />
+                    <Main />
                 </AppProvider>
             </SnackbarProvider>
         </ThemeProvider>
