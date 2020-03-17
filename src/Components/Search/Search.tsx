@@ -1,37 +1,28 @@
 import {
-    ClickAwayListener,
+    Container,
     createStyles,
-    Grow,
     Hidden,
     InputAdornment,
     InputBase,
-    List,
     makeStyles,
-    Paper,
-    Typography,
 } from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import useDebounce from '../../hooks/useDebounce'
 import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
-import { Hit, Hits } from '../../model/model'
+import { Hits } from '../../model/model'
 import algolia from '../../services/algolia'
 import { BORDER_RADIUS } from '../../theme'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import NotFound from '../Shared/NotFound'
-import Skeletons from '../Shared/Skeletons'
-import SearchResult from './SearchResult'
+import { useSearchResultsContext } from '../Provider/SearchResultsProvider'
+import { PATHS } from '../Routes/Routes'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        logo: {
-            marginRight: theme.spacing(0.5),
-
-            cursor: 'pointer',
-        },
         searchContainer: {
             display: 'flex',
+            position: 'relative',
             backgroundColor:
                 theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
             borderRadius: BORDER_RADIUS,
@@ -40,21 +31,12 @@ const useStyles = makeStyles(theme =>
         searchInput: {
             ...theme.typography.h6,
         },
-        searchResultsPaper: {
-            position: 'absolute',
-            left: 0,
-            top: theme.spacing(9),
-            width: '100%',
-            padding: theme.spacing(2),
-            minHeight: '20vh',
-            maxHeight: '40vh',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            zIndex: theme.zIndex.appBar + 1,
-            boxShadow: theme.shadows[2],
-        },
         alert: {
             borderRadius: BORDER_RADIUS,
+        },
+        container: {
+            paddingRight: theme.spacing(1),
+            paddingLeft: theme.spacing(1),
         },
     })
 )
@@ -71,54 +53,49 @@ export const AlgoliaDocSearchRef = (
 
 const Search = () => {
     const [value, setValue] = useState('')
-    const [results, setResults] = useState<Hits>([])
-    const [resultsOpen, setResultsOpen] = useState(false)
-    const [error, setError] = useState<any>(null)
-    const [loading, setLoading] = useState(false)
-
+    const history = useHistory()
     const classes = useStyles()
 
     const debouncedValue = useDebounce(value, 500)
     const { user } = useFirebaseAuthContext()
+    const { setError, setHits } = useSearchResultsContext()
 
-    useEffect(() => {
-        if (debouncedValue.length > 0) {
+    const searchAlgolia = useCallback(
+        () =>
             algolia
-                .search<Hit>(debouncedValue, {
+                .search<Hits>(debouncedValue, {
                     advancedSyntax: user && user.algoliaAdvancedSyntax ? true : false,
                 })
                 .then(({ hits }) => {
-                    setError(null)
-                    setResults(hits)
-                    setLoading(false)
+                    setHits(hits)
+                    history.push(PATHS.searchResults)
                 })
                 .catch(error => {
                     setError(error)
-                    setLoading(false)
-                })
-        } else {
-            setResults([])
-            setLoading(false)
-        }
-    }, [debouncedValue, user])
+                    history.push(PATHS.searchResults)
+                }),
+        [debouncedValue, history, setError, setHits, user]
+    )
 
-    const handleInputChange = (
-        event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-    ) => {
-        setLoading(true)
-        setResults([])
-        setValue(event.target.value)
+    useEffect(() => {
+        if (debouncedValue.length > 0) searchAlgolia()
+    }, [debouncedValue, searchAlgolia])
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value: newValue } = event.target
+        if (newValue.length === 0) history.goBack()
+        setValue(newValue)
     }
 
-    const closeResults = () => setResultsOpen(false)
-
-    const openResults = () => setResultsOpen(true)
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        searchAlgolia()
+    }
 
     return (
-        <div className={classes.searchContainer}>
-            <ClickAwayListener onClickAway={closeResults}>
+        <Container maxWidth="sm" className={classes.container}>
+            <form onSubmit={handleSubmit} className={classes.searchContainer}>
                 <InputBase
-                    onFocus={openResults}
                     className={classes.searchInput}
                     fullWidth
                     placeholder="Suchen"
@@ -130,33 +107,8 @@ const Search = () => {
                         </Hidden>
                     }
                 />
-            </ClickAwayListener>
-
-            <Grow in={value.length > 0 && resultsOpen}>
-                <Paper className={classes.searchResultsPaper}>
-                    <List disablePadding>
-                        {results.map(result => (
-                            <SearchResult key={result.name} result={result} searchValue={value} />
-                        ))}
-                        <Skeletons variant="search" visible={loading} numberOfSkeletons={3} />
-                    </List>
-
-                    {results.length >= 20 && (
-                        <Alert className={classes.alert} color="info">
-                            Für weitere Ergebnisse Suche detaillieren
-                        </Alert>
-                    )}
-
-                    <NotFound visible={!loading && results.length === 0 && value.length > 0} />
-
-                    {!loading && error && (
-                        <Typography gutterBottom align="center" variant="h6">
-                            Fehler beim Abruf der Daten
-                        </Typography>
-                    )}
-                </Paper>
-            </Grow>
-        </div>
+            </form>
+        </Container>
     )
 }
 

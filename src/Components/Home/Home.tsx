@@ -43,7 +43,7 @@ const Home = () => {
         },
     })
 
-    useDocumentTitle('RecipeHandler 4.0')
+    useDocumentTitle('Rezepte')
 
     useEffect(() => {
         setQuerying(true)

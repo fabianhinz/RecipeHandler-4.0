@@ -26,7 +26,6 @@ const RecipeCreateHeader = ({ inputDisabled, name, onNameChange }: Props) => {
 
     return (
         <InputBase
-            autoFocus
             disabled={inputDisabled}
             classes={{ root: classes.inputBaseRoot, input: classes.inputBaseInput }}
             value={value}

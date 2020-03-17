@@ -16,6 +16,7 @@ import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import GridProvider from './Provider/GridProvider'
 import RouterProvider from './Provider/RouterProvider'
+import SearchResultsProvider from './Provider/SearchResultsProvider'
 import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
 import UsersProvider from './Provider/UsersProvider'
 
@@ -27,7 +28,9 @@ const AppProvider: FC = ({ children }) => (
                     <GridProvider>
                         <SelectedAttachementProvider>
                             <AttachmentGalleryProvider>
-                                <BookmarkProvider>{children}</BookmarkProvider>
+                                <BookmarkProvider>
+                                    <SearchResultsProvider>{children}</SearchResultsProvider>
+                                </BookmarkProvider>
                             </AttachmentGalleryProvider>
                         </SelectedAttachementProvider>
                     </GridProvider>

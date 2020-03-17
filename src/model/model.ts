@@ -64,15 +64,13 @@ export interface CommentsCollections {
     collection: 'recipes' | 'trials'
 }
 
-export type Hit = Pick<Recipe, 'name' | 'description' | 'ingredients'> & {
+export type Hits = Pick<Recipe, 'name' | 'description' | 'ingredients'> & {
     _highlightResult: {
         name: { value: string }
         description: { value: string }
         ingredients: { value: string }
     }
 }
-
-export type Hits = ReadonlyArray<Hit>
 
 export type DocumentId = string
 

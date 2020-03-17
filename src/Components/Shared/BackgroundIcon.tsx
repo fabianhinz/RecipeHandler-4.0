@@ -8,10 +8,10 @@ const useStyles = makeStyles(theme =>
         iconContainer: {
             zIndex: -1,
             position: 'fixed',
-            top: 0,
+            top: 64,
             left: 0,
             width: '100vw',
-            height: '50vh',
+            height: '40vh',
             backgroundImage: `linear-gradient(90deg,${
                 theme.palette.type === 'light' ? '#8EDB91' : '#74B377'
             } 30%,#81c784 70%)`,
@@ -19,13 +19,12 @@ const useStyles = makeStyles(theme =>
         },
         icon: {
             opacity: 0.9,
-            paddingTop: theme.spacing(9),
-            paddingLeft: theme.spacing(1),
+            padding: theme.spacing(1),
             filter: theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
-            [theme.breakpoints.only('xs')]: {
+            [theme.breakpoints.between('xs', 'sm')]: {
                 height: '0%',
             },
-            [theme.breakpoints.up('sm')]: {
+            [theme.breakpoints.up('md')]: {
                 height: '100%',
             },
         },

@@ -27,8 +27,16 @@ const useStyles = makeStyles(theme =>
             height: 24,
             width: 24,
         },
+        safeArea: {
+            position: 'fixed',
+            height: 'env(safe-area-inset-top)',
+            top: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: theme.palette.background.paper,
+        },
         appbar: {
-            boxShadow: 'unset',
+            top: 'env(safe-area-inset-top)',
             backgroundColor: theme.palette.background.paper,
         },
         toolbar: {
@@ -52,7 +60,7 @@ const useStyles = makeStyles(theme =>
 const Header = () => {
     const [authenticationOpen, setAuthenticationOpen] = useState(false)
 
-    const classes = useStyles({})
+    const classes = useStyles()
 
     const history = useHistory()
     const { setGridLayout, gridLayout } = useGridContext()
@@ -60,6 +68,7 @@ const Header = () => {
 
     return (
         <>
+            <div className={classes.safeArea} />
             <AppBar className={classes.appbar} color="default" position="fixed">
                 <Toolbar className={classes.toolbar}>
                     <header className={classes.header}>

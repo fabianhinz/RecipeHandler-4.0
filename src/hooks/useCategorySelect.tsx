@@ -5,7 +5,7 @@ import { RecipeCreateState } from '../Components/Recipe/Create/RecipeCreateReduc
 import { PATHS } from '../Components/Routes/Routes'
 import { Recipe } from '../model/model'
 import recipeService from '../services/recipeService'
-
+// ToDo we don't need this hook anymore, merge with categoryselection
 export const useCategorySelect = (recipe?: Recipe | RecipeCreateState | null) => {
     const match = useRouteMatch()
 
