@@ -1,7 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core'
 import React from 'react'
 
-import { ReactComponent as Background } from '../../icons/background.svg'
+import { ReactComponent as Background } from '../../icons/details.svg'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -10,6 +10,9 @@ const useStyles = makeStyles(theme =>
             position: 'fixed',
             top: 64,
             left: 0,
+            [theme.breakpoints.up('md')]: {
+                left: 95,
+            },
             width: '100vw',
             height: '40vh',
             backgroundImage: `linear-gradient(90deg,${
@@ -19,7 +22,7 @@ const useStyles = makeStyles(theme =>
         },
         icon: {
             opacity: 0.9,
-            padding: theme.spacing(1),
+            padding: theme.spacing(3),
             filter: theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
             [theme.breakpoints.between('xs', 'sm')]: {
                 height: '0%',

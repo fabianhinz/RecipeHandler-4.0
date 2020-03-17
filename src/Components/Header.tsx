@@ -54,6 +54,11 @@ const useStyles = makeStyles(theme =>
         headerButtons: {
             display: 'flex',
         },
+        menuIcon: {
+            [theme.breakpoints.up('md')]: {
+                flexBasis: 239,
+            },
+        },
     })
 )
 
@@ -72,10 +77,11 @@ const Header = () => {
             <AppBar className={classes.appbar} color="default" position="fixed">
                 <Toolbar className={classes.toolbar}>
                     <header className={classes.header}>
-                        <IconButton>
-                            <MenuIcon />
-                        </IconButton>
-
+                        <div className={classes.menuIcon}>
+                            <IconButton>
+                                <MenuIcon />
+                            </IconButton>
+                        </div>
                         <Search />
                         <div className={classes.headerButtons}>
                             <Tooltip

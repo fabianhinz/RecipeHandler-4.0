@@ -93,7 +93,7 @@ const Search = () => {
     }
 
     return (
-        <Container maxWidth="sm" className={classes.container}>
+        <Container maxWidth="md" className={classes.container}>
             <form onSubmit={handleSubmit} className={classes.searchContainer}>
                 <InputBase
                     className={classes.searchInput}
