@@ -21,6 +21,7 @@ import { useBookmarkContext } from './Provider/BookmarkProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import { useSearchResultsContext } from './Provider/SearchResultsProvider'
 import { PATHS } from './Routes/Routes'
+import { AlgoliaDocSearchRef } from './Search/Search'
 
 interface StyleProps {
     active?: boolean
@@ -50,7 +51,12 @@ const useStyles = makeStyles(theme =>
             flexDirection: 'column',
             padding: 8,
             borderRadius: 0,
-            color: ({ active }: StyleProps) => (active ? theme.palette.primary.main : 'inherit'),
+            color: ({ active }: StyleProps) =>
+                active
+                    ? theme.palette.primary.main
+                    : theme.palette.type === 'light'
+                    ? 'rgba(0, 0, 0, 0.54)'
+                    : 'inherit',
             height: 95,
             '@media (pointer: fine)': {
                 '&:hover': {
@@ -67,11 +73,20 @@ const useStyles = makeStyles(theme =>
             paddingTop: 'env(safe-area-inset-top)',
             paddingLeft: 'env(safe-area-inset-left)',
             width: 320,
+            display: 'flex',
+            justifyContent: 'space-between',
         },
         listItem: {
             borderRadius: 0,
             paddingTop: theme.spacing(2),
             paddingBottom: theme.spacing(2),
+        },
+        algoliaDocSearchRef: {
+            padding: theme.spacing(2),
+            textAlign: 'center',
+            [theme.breakpoints.up('sm')]: {
+                display: 'none',
+            },
         },
     })
 )
@@ -209,6 +224,7 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                         </ListItemSecondaryAction>
                     </ListItem>
                 </List>
+                <div className={classes.algoliaDocSearchRef}>{AlgoliaDocSearchRef}</div>
             </Drawer>
         </>
     )
