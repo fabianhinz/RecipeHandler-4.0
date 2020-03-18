@@ -27,7 +27,6 @@ interface StyleProps {
     active?: boolean
 }
 
-// Todo save-env-area
 const useStyles = makeStyles(theme =>
     createStyles({
         nav: {
