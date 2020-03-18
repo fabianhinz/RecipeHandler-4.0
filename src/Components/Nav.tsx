@@ -27,7 +27,6 @@ interface StyleProps {
     active?: boolean
 }
 
-// Todo save-env-area
 const useStyles = makeStyles(theme =>
     createStyles({
         nav: {
@@ -40,11 +39,18 @@ const useStyles = makeStyles(theme =>
             width: 'calc(env(safe-area-inset-left) + 95px)',
             height: 'calc(100% - 64px)',
             paddingLeft: 'env(safe-area-inset-left)',
+            paddingBottom: 88,
             overflowY: 'auto',
             backgroundColor: theme.palette.background.paper,
             left: 0,
+            borderRight: `1px solid ${
+                theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
+            }`,
         },
-        label: { fontWeight: 600, fontFamily: 'Ubuntu' },
+        label: {
+            fontWeight: 600,
+            fontFamily: 'Ubuntu',
+        },
         button: {
             display: 'flex',
             justifyContent: 'center',
@@ -83,6 +89,7 @@ const useStyles = makeStyles(theme =>
         },
         algoliaDocSearchRef: {
             padding: theme.spacing(2),
+            paddingBottom: 'max(env(safe-area-inset-bottom), 16px)',
             textAlign: 'center',
             [theme.breakpoints.up('sm')]: {
                 display: 'none',
@@ -128,7 +135,7 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
 
     const { hits } = useSearchResultsContext()
     const { bookmarks } = useBookmarkContext()
-    const { shoppingList } = useFirebaseAuthContext()
+    const { shoppingList, user } = useFirebaseAuthContext()
 
     const navigateTo = (pathname: string) => () => {
         onDrawerClose()
@@ -151,11 +158,13 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                         label="Lesezeichen"
                         pathname={PATHS.bookmarks}
                     />
-                    <NavButton
-                        icon={<Cart />}
-                        label="Einkaufsliste"
-                        pathname={PATHS.shoppingList}
-                    />
+                    {user && (
+                        <NavButton
+                            icon={<Cart />}
+                            label="Einkaufsliste"
+                            pathname={PATHS.shoppingList}
+                        />
+                    )}
                 </nav>
             </Hidden>
 
@@ -208,21 +217,23 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                         </ListItemSecondaryAction>
                     </ListItem>
 
-                    <ListItem
-                        button
-                        className={classes.listItem}
-                        onClick={navigateTo(PATHS.shoppingList)}>
-                        <ListItemIcon>
-                            <Cart />
-                        </ListItemIcon>
-                        <ListItemText
-                            classes={{ primary: classes.label }}
-                            primary="Einkaufsliste"
-                        />
-                        <ListItemSecondaryAction>
-                            <Chip label={shoppingList.size} />
-                        </ListItemSecondaryAction>
-                    </ListItem>
+                    {user && (
+                        <ListItem
+                            button
+                            className={classes.listItem}
+                            onClick={navigateTo(PATHS.shoppingList)}>
+                            <ListItemIcon>
+                                <Cart />
+                            </ListItemIcon>
+                            <ListItemText
+                                classes={{ primary: classes.label }}
+                                primary="Einkaufsliste"
+                            />
+                            <ListItemSecondaryAction>
+                                <Chip label={shoppingList.size} />
+                            </ListItemSecondaryAction>
+                        </ListItem>
+                    )}
                 </List>
                 <div className={classes.algoliaDocSearchRef}>{AlgoliaDocSearchRef}</div>
             </Drawer>

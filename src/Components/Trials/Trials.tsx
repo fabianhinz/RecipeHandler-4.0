@@ -1,12 +1,4 @@
-import {
-    createStyles,
-    Fab,
-    Grid,
-    LinearProgress,
-    makeStyles,
-    Tooltip,
-    Zoom,
-} from '@material-ui/core'
+import { Fab, Grid, LinearProgress, Tooltip } from '@material-ui/core'
 import CameraIcon from '@material-ui/icons/Camera'
 import compressImage from 'browser-image-compression'
 import { useSnackbar } from 'notistack'
@@ -22,40 +14,16 @@ import { FirebaseService } from '../../services/firebase'
 import recipeService from '../../services/recipeService'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import EntryGridContainer from '../Shared/EntryGridContainer'
+import FabContainer from '../Shared/FabContainer'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
 import TrialsCard from './TrialsCard'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        backdrop: {
-            zIndex: theme.zIndex.drawer - 1,
-        },
-        dialogActions: {
-            position: 'relative',
-        },
-        fabContainer: {
-            outline: 'none',
-            zIndex: theme.zIndex.drawer + 1,
-            position: 'fixed',
-            [theme.breakpoints.down('md')]: {
-                right: theme.spacing(2),
-                bottom: `max(env(safe-area-inset-bottom), ${theme.spacing(2)}px)`,
-            },
-            [theme.breakpoints.up('lg')]: {
-                right: theme.spacing(4),
-                bottom: theme.spacing(4),
-            },
-        },
-    })
-)
 // ToDo should use AttachmentDropzone hook
 const Trials = () => {
     const [pagedTrials, setPagedTrials] = useState<Map<string, Trial>>(recipeService.pagedTrials)
     const [lastTrial, setLastTrial] = useState<Trial | undefined | null>(null)
     const [querying, setQuerying] = useState(false)
-
-    const classes = useStyles()
 
     const { user } = useFirebaseAuthContext()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
@@ -191,17 +159,18 @@ const Trials = () => {
             </EntryGridContainer>
 
             {user && (
-                <Zoom in>
-                    <div className={classes.fabContainer} {...getRootProps()}>
-                        <Tooltip title="Rezeptidee hinzufügen" placement="left">
+                <FabContainer>
+                    <Tooltip title="Rezeptidee hinzufügen" placement="left">
+                        <div {...getRootProps()}>
                             <Fab color="secondary">
-                                <input {...getInputProps()} />
                                 <CameraIcon />
                             </Fab>
-                        </Tooltip>
-                    </div>
-                </Zoom>
+                        </div>
+                    </Tooltip>
+                </FabContainer>
             )}
+
+            <input {...getInputProps()} />
         </>
     )
 }

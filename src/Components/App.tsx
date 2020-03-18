@@ -5,6 +5,7 @@ import { SnackbarProvider } from 'notistack'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import useIntersectionObserver from '../hooks/useIntersectionObserver'
 import recipeService from '../services/recipeService'
 import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '../theme'
 import Header from './Header'
@@ -42,10 +43,16 @@ const AppProvider: FC = ({ children }) => (
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
+    const [scrolled, setScrolled] = useState(false)
 
     const { user } = useFirebaseAuthContext()
     const colorSchemeDark = useMediaQuery('(prefers-color-scheme: dark)')
     const location = useLocation()
+
+    const { IntersectionObserverTrigger } = useIntersectionObserver({
+        onIsIntersecting: () => setScrolled(false),
+        onLeave: () => setScrolled(true),
+    })
 
     const setDarkTheme = useCallback(() => {
         const metaThemeColor = document.getElementsByName('theme-color')[0]
@@ -109,7 +116,8 @@ const App: FC = () => {
                     horizontal: 'center',
                 }}>
                 <AppProvider>
-                    <Header />
+                    <Header scrolled={scrolled} />
+                    <IntersectionObserverTrigger />
                     <Main />
                 </AppProvider>
             </SnackbarProvider>
