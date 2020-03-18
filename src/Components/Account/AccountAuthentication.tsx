@@ -45,7 +45,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
     const [username, setUsername] = useState('')
     const [newUser, setNewUser] = useState(false)
 
-    const { ProgressComponent, setProgress } = useProgress('cover')
+    const { ProgressComponent, setProgress } = useProgress('absolute')
     const { isDialogFullscreen } = useBreakpointsContext()
     const { user } = useFirebaseAuthContext()
     const { userIds } = useUsersContext()

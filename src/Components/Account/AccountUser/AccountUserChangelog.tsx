@@ -100,7 +100,7 @@ const AccountUserChangelog = () => {
                 maxWidth="sm"
                 fullWidth>
                 <DialogTitle>Changelog</DialogTitle>
-                {loading && <Progress variant="cover" />}
+                {loading && <Progress variant="absolute" />}
                 <DialogContent className={classes.dialogContent}>
                     {pullrequests.map(pr => (
                         <ExpansionPanel key={pr.shortSha}>
