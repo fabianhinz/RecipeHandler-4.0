@@ -2,6 +2,7 @@ import {
     AppBar,
     Avatar,
     createStyles,
+    Hidden,
     IconButton,
     makeStyles,
     Toolbar,
@@ -85,19 +86,23 @@ const Header = () => {
                         </div>
                         <Search />
                         <div className={classes.headerButtons}>
-                            <Tooltip
-                                title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
-                                <IconButton
-                                    onClick={() =>
-                                        setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
-                                    }>
-                                    {gridLayout === 'grid' ? (
-                                        <ViewAgendaOutline />
-                                    ) : (
-                                        <ViewGridOutline />
-                                    )}
-                                </IconButton>
-                            </Tooltip>
+                            <Hidden smDown>
+                                <Tooltip
+                                    title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
+                                    <IconButton
+                                        onClick={() =>
+                                            setGridLayout(prev =>
+                                                prev === 'grid' ? 'list' : 'grid'
+                                            )
+                                        }>
+                                        {gridLayout === 'grid' ? (
+                                            <ViewAgendaOutline />
+                                        ) : (
+                                            <ViewGridOutline />
+                                        )}
+                                    </IconButton>
+                                </Tooltip>
+                            </Hidden>
 
                             <Tooltip title="Impressum">
                                 <IconButton onClick={() => history.push(PATHS.impressum)}>

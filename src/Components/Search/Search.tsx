@@ -64,7 +64,7 @@ const Search = () => {
         () =>
             algolia
                 .search<Hits>(debouncedValue, {
-                    advancedSyntax: user && user.algoliaAdvancedSyntax ? true : false,
+                    advancedSyntax: user?.algoliaAdvancedSyntax ? true : false,
                 })
                 .then(({ hits }) => {
                     setHits(hits)
@@ -74,7 +74,9 @@ const Search = () => {
                     setError(error)
                     history.push(PATHS.searchResults)
                 }),
-        [debouncedValue, history, setError, setHits, user]
+        // ? we don't want this to change on every user change
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [debouncedValue, history, setError, setHits, user?.algoliaAdvancedSyntax]
     )
 
     useEffect(() => {
@@ -82,9 +84,7 @@ const Search = () => {
     }, [debouncedValue, searchAlgolia])
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value: newValue } = event.target
-        if (newValue.length === 0) history.goBack()
-        setValue(newValue)
+        setValue(event.target.value)
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

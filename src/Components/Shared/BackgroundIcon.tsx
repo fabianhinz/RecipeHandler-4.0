@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme =>
                 theme.palette.type === 'light' ? '#8EDB91' : '#74B377'
             } 30%,#81c784 70%)`,
             padding: theme.spacing(1),
+            display: theme.palette.type === 'light' ? 'none' : 'inherhit',
         },
         icon: {
             opacity: 0.9,
