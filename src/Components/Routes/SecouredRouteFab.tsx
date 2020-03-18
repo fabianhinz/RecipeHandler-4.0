@@ -1,25 +1,9 @@
-import { createStyles, Fab, makeStyles, Tooltip, Zoom } from '@material-ui/core'
+import { Fab, Tooltip } from '@material-ui/core'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        fab: {
-            zIndex: theme.zIndex.drawer + 1,
-            position: 'fixed',
-            [theme.breakpoints.down('md')]: {
-                right: theme.spacing(2),
-                bottom: `max(env(safe-area-inset-bottom), ${theme.spacing(2)}px)`,
-            },
-            [theme.breakpoints.up('lg')]: {
-                right: theme.spacing(4),
-                bottom: theme.spacing(4),
-            },
-        },
-    })
-)
+import FabContainer from '../Shared/FabContainer'
 
 interface Props {
     icon: JSX.Element
@@ -29,7 +13,6 @@ interface Props {
 }
 
 export const SecouredRouteFab = ({ icon, tooltipTitle, onClick, pathname }: Props) => {
-    const classes = useStyles({})
     const history = useHistory()
     const { user } = useFirebaseAuthContext()
 
@@ -41,13 +24,13 @@ export const SecouredRouteFab = ({ icon, tooltipTitle, onClick, pathname }: Prop
     return (
         <>
             {user && (
-                <Zoom in>
-                    <Tooltip title={tooltipTitle} placement="left">
-                        <Fab onClick={handleClick} className={classes.fab} color="secondary">
+                <FabContainer>
+                    <Tooltip title={tooltipTitle} placement="right">
+                        <Fab onClick={handleClick} color="secondary">
                             {icon}
                         </Fab>
                     </Tooltip>
-                </Zoom>
+                </FabContainer>
             )}
         </>
     )

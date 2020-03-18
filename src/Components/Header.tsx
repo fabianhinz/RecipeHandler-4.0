@@ -39,6 +39,10 @@ const useStyles = makeStyles(theme =>
         appbar: {
             top: 'env(safe-area-inset-top)',
             backgroundColor: theme.palette.background.paper,
+            borderBottom: `1px solid ${
+                theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
+            }`,
+            boxShadow: ({ scrolled }: Props) => (scrolled ? theme.shadows[4] : 'unset'),
         },
         toolbar: {
             minHeight: 64,
@@ -63,11 +67,15 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const Header = () => {
+interface Props {
+    scrolled: boolean
+}
+
+const Header = ({ scrolled }: Props) => {
     const [authenticationOpen, setAuthenticationOpen] = useState(false)
     const [drawerOpen, setDrawerOpen] = useState(false)
 
-    const classes = useStyles()
+    const classes = useStyles({ scrolled })
 
     const history = useHistory()
     const { setGridLayout, gridLayout } = useGridContext()

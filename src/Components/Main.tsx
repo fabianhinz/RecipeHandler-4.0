@@ -8,7 +8,7 @@ import { BackgroundIcon } from './Shared/BackgroundIcon'
 const useStyles = makeStyles(theme =>
     createStyles({
         main: {
-            minHeight: '50vh',
+            minHeight: '40vh',
             position: 'relative',
             backgroundColor: theme.palette.background.default,
             [theme.breakpoints.only('xs')]: {

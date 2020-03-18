@@ -10,14 +10,13 @@ const useStyles = makeStyles(theme =>
         speedDial: {
             zIndex: theme.zIndex.drawer + 1,
             position: 'fixed',
-            [theme.breakpoints.down('md')]: {
-                right: theme.spacing(2),
-                bottom: `max(env(safe-area-inset-bottom), ${theme.spacing(2)}px)`,
-            },
-            [theme.breakpoints.up('lg')]: {
-                right: theme.spacing(4),
-                bottom: theme.spacing(4),
-            },
+            width: 95,
+            display: 'flex',
+            padding: theme.spacing(2),
+            justifyContent: 'center',
+            alignItems: 'center',
+            left: 0,
+            bottom: `env(safe-area-inset-bottom)`,
         },
     })
 )
