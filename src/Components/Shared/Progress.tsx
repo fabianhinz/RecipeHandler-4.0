@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme =>
     createStyles({
         linearProgress: {
             position: 'fixed',
-            bottom: `calc(0px + env(safe-area-inset-bottom))`,
+            top: `max(0px, env(safe-area-inset-bottom))`,
             left: 0,
             width: '100vw',
             zIndex: theme.zIndex.appBar + 1,
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-export type ProgressVariant = 'fixed' | 'cover'
+export type ProgressVariant = 'fixed' | 'absolute'
 
 interface Props {
     variant: ProgressVariant
@@ -36,14 +36,15 @@ interface Props {
 const Progress = ({ variant }: Props) => {
     const classes = useStyles()
 
-    if (variant === 'cover')
+    if (variant === 'absolute')
         return (
             <div className={classes.circularProgress}>
                 <CircularProgress color="secondary" disableShrink size={60} thickness={5.4} />
             </div>
         )
 
-    if (variant === 'fixed') return <LinearProgress className={classes.linearProgress} />
+    if (variant === 'fixed')
+        return <LinearProgress variant="query" className={classes.linearProgress} />
 
     return <></>
 }

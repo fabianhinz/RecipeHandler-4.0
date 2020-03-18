@@ -15,8 +15,13 @@ const useStyles = makeStyles(theme =>
             padding: theme.spacing(2),
             justifyContent: 'center',
             alignItems: 'center',
-            left: 0,
             bottom: `env(safe-area-inset-bottom)`,
+            [theme.breakpoints.between('xs', 'sm')]: {
+                right: 0,
+            },
+            [theme.breakpoints.up('md')]: {
+                left: 0,
+            },
         },
     })
 )

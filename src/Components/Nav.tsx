@@ -13,6 +13,7 @@ import {
     Typography,
 } from '@material-ui/core'
 import BookIcon from '@material-ui/icons/Book'
+import clsx from 'clsx'
 import { BookmarkMultiple, BookSearch, Cart, Lightbulb } from 'mdi-material-ui'
 import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -35,11 +36,11 @@ const useStyles = makeStyles(theme =>
             position: 'fixed',
             justifyContent: 'flex-start',
             top: 'calc(env(safe-area-inset-top) + 64px)',
+            bottom: 0,
+            maxHeight: 'calc(100% - 64px)',
             zIndex: theme.zIndex.appBar,
             width: 'calc(env(safe-area-inset-left) + 95px)',
-            height: 'calc(100% - 64px)',
             paddingLeft: 'env(safe-area-inset-left)',
-            paddingBottom: 88,
             overflowY: 'auto',
             backgroundColor: theme.palette.background.paper,
             left: 0,
@@ -51,18 +52,20 @@ const useStyles = makeStyles(theme =>
             fontWeight: 600,
             fontFamily: 'Ubuntu',
         },
-        button: {
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            padding: 8,
-            borderRadius: 0,
+        routeAwareColor: {
             color: ({ active }: StyleProps) =>
                 active
                     ? theme.palette.primary.main
                     : theme.palette.type === 'light'
                     ? 'rgba(0, 0, 0, 0.54)'
                     : 'inherit',
+        },
+        button: {
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            padding: 8,
+            borderRadius: 0,
             height: 95,
             '@media (pointer: fine)': {
                 '&:hover': {
@@ -115,12 +118,45 @@ const NavButton = ({ pathname, label, icon }: NavButtonProps) => {
     }
 
     return (
-        <ButtonBase onClick={handleClick} className={classes.button}>
+        <ButtonBase onClick={handleClick} className={clsx(classes.button, classes.routeAwareColor)}>
             {icon}
             <Typography variant="caption" className={classes.label}>
                 {label}
             </Typography>
         </ButtonBase>
+    )
+}
+
+const NavListItem = ({
+    pathname,
+    label,
+    icon,
+    secondary,
+}: NavButtonProps & { secondary?: number }) => {
+    const history = useHistory()
+    const location = useLocation()
+    const classes = useStyles({ active: location.pathname === pathname })
+
+    const handleClick = () => {
+        if (location.pathname === pathname) return
+        history.push(pathname)
+    }
+
+    return (
+        <ListItem
+            button
+            className={clsx(classes.listItem, classes.routeAwareColor)}
+            onClick={handleClick}>
+            <ListItemIcon className={classes.routeAwareColor}>{icon}</ListItemIcon>
+            <ListItemText classes={{ primary: classes.label }} primary={label} />
+            {secondary ? (
+                <ListItemSecondaryAction>
+                    <Chip label={secondary} />
+                </ListItemSecondaryAction>
+            ) : (
+                <></>
+            )}
+        </ListItem>
     )
 }
 
@@ -131,16 +167,10 @@ interface NavProps {
 
 const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
     const classes = useStyles({})
-    const history = useHistory()
 
     const { hits } = useSearchResultsContext()
     const { bookmarks } = useBookmarkContext()
     const { shoppingList, user } = useFirebaseAuthContext()
-
-    const navigateTo = (pathname: string) => () => {
-        onDrawerClose()
-        history.push(pathname)
-    }
 
     return (
         <>
@@ -173,66 +203,28 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                 open={drawerOpen}
                 onClose={onDrawerClose}
                 PaperProps={{ className: classes.drawerPaper }}>
-                <List disablePadding>
-                    <ListItem className={classes.listItem} button onClick={navigateTo(PATHS.home)}>
-                        <ListItemIcon>
-                            <BookIcon />
-                        </ListItemIcon>
-                        <ListItemText classes={{ primary: classes.label }} primary="Rezepte" />
-                    </ListItem>
-
-                    <ListItem
-                        button
-                        className={classes.listItem}
-                        onClick={navigateTo(PATHS.searchResults)}>
-                        <ListItemIcon>
-                            <BookSearch />
-                        </ListItemIcon>
-                        <ListItemText classes={{ primary: classes.label }} primary="Ergebnisse" />
-                        <ListItemSecondaryAction>
-                            <Chip label={hits.length} />
-                        </ListItemSecondaryAction>
-                    </ListItem>
-
-                    <ListItem
-                        button
-                        className={classes.listItem}
-                        onClick={navigateTo(PATHS.trials)}>
-                        <ListItemIcon>
-                            <Lightbulb />
-                        </ListItemIcon>
-                        <ListItemText classes={{ primary: classes.label }} primary="Ideen" />
-                    </ListItem>
-
-                    <ListItem
-                        button
-                        className={classes.listItem}
-                        onClick={navigateTo(PATHS.bookmarks)}>
-                        <ListItemIcon>
-                            <BookmarkMultiple />
-                        </ListItemIcon>
-                        <ListItemText classes={{ primary: classes.label }} primary="Lesezeichen" />
-                        <ListItemSecondaryAction>
-                            <Chip label={bookmarks.size} />
-                        </ListItemSecondaryAction>
-                    </ListItem>
-
+                <List disablePadding onClick={onDrawerClose}>
+                    <NavListItem pathname={PATHS.home} icon={<BookIcon />} label="Rezepte" />
+                    <NavListItem
+                        pathname={PATHS.searchResults}
+                        icon={<BookSearch />}
+                        label="Ergebnisse"
+                        secondary={hits.length}
+                    />
+                    <NavListItem pathname={PATHS.trials} icon={<Lightbulb />} label="Ideen" />
+                    <NavListItem
+                        pathname={PATHS.bookmarks}
+                        icon={<BookmarkMultiple />}
+                        label="Lesezeichen"
+                        secondary={bookmarks.size}
+                    />
                     {user && (
-                        <ListItem
-                            button
-                            className={classes.listItem}
-                            onClick={navigateTo(PATHS.shoppingList)}>
-                            <ListItemIcon>
-                                <Cart />
-                            </ListItemIcon>
-                            <ListItemText
-                                classes={{ primary: classes.label }}
-                                primary="Einkaufsliste"
-                            />
-                            <ListItemSecondaryAction>
-                                <Chip label={shoppingList.size} />
-                            </ListItemSecondaryAction>
-                        </ListItem>
+                        <NavListItem
+                            pathname={PATHS.shoppingList}
+                            icon={<Cart />}
+                            label="Einkaufsliste"
+                            secondary={shoppingList.size}
+                        />
                     )}
                 </List>
                 <div className={classes.algoliaDocSearchRef}>{AlgoliaDocSearchRef}</div>
