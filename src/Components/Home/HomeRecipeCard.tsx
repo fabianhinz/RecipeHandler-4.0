@@ -1,13 +1,16 @@
 import {
     Avatar,
     Card,
+    CardActionArea,
     CardContent,
     CardHeader,
     createStyles,
     Grid,
     IconButton,
     makeStyles,
+    Paper,
     Tooltip,
+    Typography,
 } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { Eye } from 'mdi-material-ui'
@@ -46,6 +49,9 @@ const useStyles = makeStyles(theme =>
         cardRoot: {
             height: ({ fixedCardHeight }: StyleProps) => (fixedCardHeight ? 184 : 'fit-content'),
         },
+        compactPaper: {
+            padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+        },
     })
 )
 
@@ -58,7 +64,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
 
     const { attachmentRef, attachmentRefLoading } = useAttachment(attachmentDoc)
     const { history } = useRouterContext()
-    const { gridBreakpointProps, gridLayout } = useGridContext()
+    const { gridBreakpointProps, gridLayout, compactLayout } = useGridContext()
 
     const classes = useStyles({ fixedCardHeight: gridLayout === 'list' })
 
@@ -83,6 +89,24 @@ const HomeRecipeCard = ({ recipe }: Props) => {
             mounted = false
         }
     }, [recipe.name, recipe.previewAttachment])
+
+    const handleRecipeClick = () =>
+        history.push(PATHS.details(recipe.name), {
+            recipe,
+        })
+
+    if (compactLayout)
+        return (
+            <Grid {...gridBreakpointProps} item>
+                <CardActionArea onClick={handleRecipeClick}>
+                    <Paper className={classes.compactPaper}>
+                        <Typography noWrap variant="h6">
+                            {recipe.name}
+                        </Typography>
+                    </Paper>
+                </CardActionArea>
+            </Grid>
+        )
 
     return (
         <Grid {...gridBreakpointProps} item>
@@ -110,12 +134,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                             action={
                                 <>
                                     <Tooltip placement="left" title="Details">
-                                        <IconButton
-                                            onClick={() =>
-                                                history.push(PATHS.details(recipe.name), {
-                                                    recipe,
-                                                })
-                                            }>
+                                        <IconButton onClick={handleRecipeClick}>
                                             <Eye />
                                         </IconButton>
                                     </Tooltip>

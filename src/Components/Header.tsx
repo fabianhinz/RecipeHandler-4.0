@@ -8,9 +8,15 @@ import {
     Toolbar,
     Tooltip,
 } from '@material-ui/core'
-import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import MenuIcon from '@material-ui/icons/Menu'
-import { InformationOutline, ViewAgendaOutline, ViewGridOutline } from 'mdi-material-ui'
+import {
+    AccountCircleOutline,
+    EyeOffOutline,
+    EyeOutline,
+    InformationOutline,
+    ViewAgendaOutline,
+    ViewGridOutline,
+} from 'mdi-material-ui'
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -34,7 +40,7 @@ const useStyles = makeStyles(theme =>
             left: 0,
             right: 0,
             backgroundColor: theme.palette.background.paper,
-            zIndex: theme.zIndex.appBar,
+            zIndex: theme.zIndex.appBar + 1,
         },
         appbar: {
             top: 'env(safe-area-inset-top)',
@@ -78,7 +84,7 @@ const Header = ({ scrolled }: Props) => {
     const classes = useStyles({ scrolled })
 
     const history = useHistory()
-    const { setGridLayout, gridLayout } = useGridContext()
+    const { setGridLayout, gridLayout, compactLayout, setCompactLayout } = useGridContext()
     const { user, loginEnabled } = useFirebaseAuthContext()
 
     return (
@@ -94,6 +100,13 @@ const Header = ({ scrolled }: Props) => {
                         </div>
                         <Search />
                         <div className={classes.headerButtons}>
+                            <Hidden mdUp>
+                                <Tooltip title={compactLayout ? 'Detailansicht' : 'Kompaktansicht'}>
+                                    <IconButton onClick={() => setCompactLayout(prev => !prev)}>
+                                        {compactLayout ? <EyeOutline /> : <EyeOffOutline />}
+                                    </IconButton>
+                                </Tooltip>
+                            </Hidden>
                             <Hidden smDown>
                                 <Tooltip
                                     title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
@@ -132,7 +145,7 @@ const Header = ({ scrolled }: Props) => {
                                                 src={user.profilePicture}
                                             />
                                         ) : (
-                                            <AccountIcon />
+                                            <AccountCircleOutline />
                                         )}
                                     </IconButton>
                                 </div>
