@@ -12,7 +12,6 @@ const useStyles = makeStyles(theme =>
             position: 'relative',
             backgroundColor: theme.palette.background.default,
             [theme.breakpoints.only('xs')]: {
-                borderRadius: 0,
                 padding: theme.spacing(2),
             },
             [theme.breakpoints.up('sm')]: {

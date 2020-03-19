@@ -6,10 +6,8 @@ import React from 'react'
 import { FirebaseService } from '../../services/firebase'
 import { useGridContext } from '../Provider/GridProvider'
 
-interface Props {
-    variant: 'recipe' | 'trial' | 'cookCounter' | 'bookmark' | 'trialsSelection'
-    visible: boolean
-    numberOfSkeletons?: number
+interface StyleProps {
+    compactLayout: boolean
 }
 
 const useStyles = makeStyles(theme => {
@@ -29,19 +27,19 @@ const useStyles = makeStyles(theme => {
     return createStyles({
         recipe: {
             [theme.breakpoints.only('xs')]: {
-                height: 224,
+                height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 224),
             },
             [theme.breakpoints.only('sm')]: {
-                height: 184,
+                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 184),
             },
             [theme.breakpoints.only('md')]: {
-                height: 224,
+                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 224),
             },
             [theme.breakpoints.only('lg')]: {
-                height: 184,
+                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 184),
             },
             [theme.breakpoints.only('xl')]: {
-                height: 224,
+                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 224),
             },
             width: '100%',
         },
@@ -69,8 +67,16 @@ const useStyles = makeStyles(theme => {
     })
 })
 
+interface Props {
+    variant: 'recipe' | 'trial' | 'cookCounter' | 'bookmark' | 'trialsSelection'
+    visible: boolean
+    numberOfSkeletons?: number
+}
+
 const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
-    const classes = useStyles()
+    const { compactLayout } = useGridContext()
+
+    const classes = useStyles({ compactLayout })
     const { gridBreakpointProps } = useGridContext()
 
     if (!visible) return <></>
