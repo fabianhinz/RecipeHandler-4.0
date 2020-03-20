@@ -27,18 +27,9 @@ const useStyles = makeStyles(theme => {
     return createStyles({
         recipe: {
             [theme.breakpoints.only('xs')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 224),
+                height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 184),
             },
-            [theme.breakpoints.only('sm')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 184),
-            },
-            [theme.breakpoints.only('md')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 224),
-            },
-            [theme.breakpoints.only('lg')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 184),
-            },
-            [theme.breakpoints.only('xl')]: {
+            [theme.breakpoints.up('sm')]: {
                 height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 224),
             },
             width: '100%',
