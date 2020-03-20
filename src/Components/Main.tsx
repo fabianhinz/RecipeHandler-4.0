@@ -9,24 +9,23 @@ const useStyles = makeStyles(theme =>
     createStyles({
         main: {
             minHeight: '40vh',
-            position: 'relative',
             backgroundColor: theme.palette.background.default,
+            borderRadius: BORDER_RADIUS,
             [theme.breakpoints.only('xs')]: {
                 padding: theme.spacing(2),
             },
             [theme.breakpoints.up('sm')]: {
                 padding: theme.spacing(3),
-                borderRadius: BORDER_RADIUS,
                 marginLeft: 'calc(env(safe-area-inset-left) + 95px)',
             },
         },
         container: {
             userSelect: 'none',
-            marginTop: 88,
-            [theme.breakpoints.only('xs')]: {
-                marginTop: 64,
-                paddingLeft: 0,
-                paddingRight: 0,
+            padding: 0,
+            paddingTop: 64,
+            [theme.breakpoints.up('sm')]: {
+                padding: theme.spacing(3),
+                paddingTop: 64 + theme.spacing(3),
             },
         },
     })
