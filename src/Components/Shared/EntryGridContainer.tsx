@@ -17,7 +17,7 @@ const EntryGridContainer = ({ children }: Props) => {
     const classes = useStyles()
 
     return (
-        <Grid container className={classes.container} spacing={4} justify="space-between">
+        <Grid container className={classes.container} spacing={4}>
             {children}
         </Grid>
     )
