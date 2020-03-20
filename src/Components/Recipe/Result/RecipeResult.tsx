@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core'
+import { Divider, Grid } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import BookIcon from '@material-ui/icons/Book'
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
@@ -34,8 +34,10 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                 <RecipeResultHeader recipe={recipe} />
             </Grid>
 
+            <Attachments recipeName={recipe.name} />
+
             <Grid item xs={12}>
-                <Attachments recipeName={recipe.name} />
+                <Divider />
             </Grid>
 
             <Grid item xs={12}>

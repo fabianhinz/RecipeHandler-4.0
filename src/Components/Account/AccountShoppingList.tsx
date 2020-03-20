@@ -44,12 +44,6 @@ const useStyles = makeStyles(theme =>
             display: 'flex',
             justifyContent: 'space-between',
         },
-        recipeContainer: {
-            overflowX: 'auto',
-            '&::-webkit-scrollbar': {
-                display: 'none',
-            },
-        },
         fab: {
             zIndex: theme.zIndex.drawer + 1,
             position: 'fixed',
@@ -114,7 +108,7 @@ const AccountUserShoppingList = () => {
         <>
             <EntryGridContainer>
                 <Grid item xs={12}>
-                    <Grid container spacing={3} className={classes.recipeContainer}>
+                    <Grid container spacing={3}>
                         {[...shoppingList.entries()].map(([recipeName, groceries]) => (
                             <Grid item {...gridBreakpointProps} key={recipeName}>
                                 <StyledCard

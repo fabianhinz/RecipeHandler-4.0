@@ -1,39 +1,18 @@
-import { Avatar, CardActionArea, createStyles, Grid, makeStyles } from '@material-ui/core'
-import { CloudUploadOutline } from 'mdi-material-ui'
+import { createStyles, Grid, makeStyles } from '@material-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
 import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS } from '../../theme'
 import { useAttachmentGalleryContext } from '../Provider/AttachmentGalleryProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import AttachmentPreview from './AttachmentPreview'
-import AttachmentUpload from './AttachmentUpload'
 
 const useStyles = makeStyles(theme =>
     createStyles({
         attachmentsGridContainer: {
             overflowX: 'auto',
-            '&::-webkit-scrollbar': {
-                display: 'none',
-            },
         },
-        addAvatar: {
-            [theme.breakpoints.down('sm')]: {
-                width: 90,
-                height: 180,
-            },
-            [theme.breakpoints.between('sm', 'lg')]: {
-                width: 112.5,
-                height: 225,
-            },
-            [theme.breakpoints.up('xl')]: {
-                width: 140,
-                height: 280,
-            },
-            borderRadius: BORDER_RADIUS,
-        },
+
         addIcon: {
             fontSize: theme.typography.pxToRem(60),
         },
@@ -45,7 +24,7 @@ interface RecipeResultAttachmentsProps {
 }
 
 const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
-    const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[]>([])
+    const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[] | null>(null)
     const [recipePreview, setRecipePreview] = useState<
         { smallDataUrl?: string; disabled: boolean } | undefined
     >()
@@ -54,10 +33,6 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
 
     const { handleAnimation } = useAttachmentGalleryContext()
     const { user } = useFirebaseAuthContext()
-    const { dropzoneAttachments, dropzoneProps, dropzoneAlert } = useAttachmentDropzone({
-        attachmentMaxWidth: 3840,
-        attachmentLimit: 5,
-    })
 
     const recipeDocRef = useMemo(
         () => FirebaseService.firestore.collection('recipes').doc(recipeName),
@@ -69,13 +44,12 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
             recipeDocRef
                 .collection('attachments')
                 .orderBy('createdDate', 'asc')
-                .onSnapshot(querySnapshot =>
-                    setSavedAttachments(
-                        querySnapshot.docs.map(
-                            doc => ({ ...doc.data(), docPath: doc.ref.path } as AttachmentDoc)
-                        )
+                .onSnapshot(querySnapshot => {
+                    const newAttachments = querySnapshot.docs.map(
+                        doc => ({ ...doc.data(), docPath: doc.ref.path } as AttachmentDoc)
                     )
-                ),
+                    if (newAttachments.length > 0) setSavedAttachments(newAttachments)
+                }),
         [recipeDocRef, recipeName]
     )
 
@@ -93,7 +67,7 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
     )
 
     const handlePreviewClick = (originId: string, activeAttachment: number) =>
-        handleAnimation(originId, savedAttachments, activeAttachment)
+        handleAnimation(originId, savedAttachments!, activeAttachment)
 
     const handlePreviewAttachmentChange = (smallDataUrl: string) => {
         recipeDocRef.update({ previewAttachment: smallDataUrl } as Recipe)
@@ -101,31 +75,26 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
 
     return (
         <>
-            <Grid wrap="nowrap" className={classes.attachmentsGridContainer} container spacing={2}>
-                {savedAttachments.map((attachment, index) => (
-                    <AttachmentPreview
-                        onClick={originId => handlePreviewClick(originId, index)}
-                        attachment={attachment}
-                        previewAttachment={recipePreview?.smallDataUrl}
-                        previewChangeDisabled={recipePreview?.disabled}
-                        onPreviewAttachmentChange={handlePreviewAttachmentChange}
-                        key={attachment.docPath}
-                    />
-                ))}
-                <Grid item>
-                    <CardActionArea {...dropzoneProps.getRootProps()}>
-                        <Avatar className={classes.addAvatar}>
-                            <CloudUploadOutline className={classes.addIcon} />
-                        </Avatar>
-                        <input {...dropzoneProps.getInputProps()} />
-                    </CardActionArea>
+            {savedAttachments && (
+                <Grid item xs={12}>
+                    <Grid
+                        wrap="nowrap"
+                        className={classes.attachmentsGridContainer}
+                        container
+                        spacing={2}>
+                        {savedAttachments.map((attachment, index) => (
+                            <AttachmentPreview
+                                onClick={originId => handlePreviewClick(originId, index)}
+                                attachment={attachment}
+                                previewAttachment={recipePreview?.smallDataUrl}
+                                previewChangeDisabled={recipePreview?.disabled}
+                                onPreviewAttachmentChange={handlePreviewAttachmentChange}
+                                key={attachment.docPath}
+                            />
+                        ))}
+                    </Grid>
                 </Grid>
-            </Grid>
-            <AttachmentUpload
-                recipeName={recipeName}
-                dropzoneAttachments={dropzoneAttachments}
-                dropzoneAlert={dropzoneAlert}
-            />
+            )}
         </>
     )
 }

@@ -76,24 +76,11 @@ const MostCookedPaper = ({ recipeName, counter, paletteIndex }: MostCookedPaperP
     )
 }
 
-const useHomeMostCookedStyles = makeStyles(() =>
-    createStyles({
-        mostCookedGridContainer: {
-            overflowX: 'auto',
-            '&::-webkit-scrollbar': {
-                display: 'none',
-            },
-        },
-    })
-)
-
 type MostCookedMap = Map<DocumentId, MostCooked<number>>
 
 const HomeMostCooked = () => {
     const [mostCooked, setMostCooked] = useState<MostCookedMap>(new Map())
     const [counterValues, setCounterValues] = useState<Set<number>>(new Set())
-
-    const classes = useHomeMostCookedStyles()
 
     const { user } = useFirebaseAuthContext()
     const { isMobile } = useBreakpointsContext()
@@ -133,7 +120,7 @@ const HomeMostCooked = () => {
             </Grid>
 
             <Grid item xs={12}>
-                <Grid className={classes.mostCookedGridContainer} container spacing={3}>
+                <Grid container spacing={3}>
                     {[...mostCooked.entries()].map(([recipeName, counter]) => (
                         <MostCookedPaper
                             key={recipeName}

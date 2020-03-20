@@ -8,9 +8,6 @@ const useStyles = makeStyles(theme =>
     createStyles({
         container: {
             overflowX: 'auto',
-            '&::-webkit-scrollbar': {
-                display: 'none',
-            },
             [theme.breakpoints.only('xs')]: {
                 flexWrap: 'nowrap',
             },
