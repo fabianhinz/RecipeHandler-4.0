@@ -46,20 +46,11 @@ const useStyles = makeStyles(theme => {
             },
             width: '100%',
         },
-        bookmark: {
-            [theme.breakpoints.down('xs')]: {
-                width: 340,
-            },
-            [theme.breakpoints.up('sm')]: {
-                width: 600,
-            },
-            height: 600,
-        },
     })
 })
 
 interface Props {
-    variant: 'recipe' | 'trial' | 'cookCounter' | 'bookmark' | 'trialsSelection'
+    variant: 'recipe' | 'trial' | 'cookCounter' | 'trialsSelection'
     visible: boolean
     numberOfSkeletons?: number
 }
@@ -84,7 +75,11 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
                         <Grid container spacing={2} justify="space-between" alignItems="center">
                             <Grid xs={12} item>
                                 <Card>
-                                    <Skeleton className={classes[variant]} variant="rect" />
+                                    <Skeleton
+                                        animation="wave"
+                                        className={classes[variant]}
+                                        variant="rect"
+                                    />
                                 </Card>
                             </Grid>
                         </Grid>

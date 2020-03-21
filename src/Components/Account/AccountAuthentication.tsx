@@ -121,7 +121,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
                                 notifications: false,
                                 createdDate: FirebaseService.createTimestampFromDate(new Date()),
                                 algoliaAdvancedSyntax: false,
-                                bookmarkSync: false,
+                                bookmarkSync: true,
                                 emailVerified: false,
                                 bookmarks: [],
                             } as Omit<User, 'uid'>)

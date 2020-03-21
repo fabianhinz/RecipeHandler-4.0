@@ -1,5 +1,5 @@
-import { createStyles, makeStyles, Zoom } from '@material-ui/core'
-import React, { FC } from 'react'
+import { createStyles, makeStyles, Zoom, ZoomProps } from '@material-ui/core'
+import React, { ReactNode } from 'react'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -22,11 +22,15 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const FabContainer: FC = ({ children }) => {
+interface Props extends Pick<ZoomProps, 'in'> {
+    children: ReactNode
+}
+
+const FabContainer = ({ children, in: zoomin }: Props) => {
     const classes = useStyles()
 
     return (
-        <Zoom in>
+        <Zoom in={zoomin === undefined ? true : zoomin}>
             <div className={classes.container}>{children}</div>
         </Zoom>
     )

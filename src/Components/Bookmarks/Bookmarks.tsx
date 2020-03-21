@@ -16,7 +16,6 @@ import RecipeBookmarkButton from '../Recipe/RecipeBookmarkButton'
 import RecipeDetailsButton from '../Recipe/RecipeDetailsButton'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
-import Skeletons from '../Shared/Skeletons'
 import StyledCard from '../Shared/StyledCard'
 
 interface BookmarkProps {
@@ -42,35 +41,33 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
     }, [recipeName])
 
     return (
-        <div>
-            <StyledCard
-                header={recipeName}
-                action={
-                    <>
-                        <RecipeDetailsButton recipe={recipe} />
-                        <RecipeBookmarkButton name={recipeName} />
-                    </>
-                }>
-                <>
+        <>
+            {recipe ? (
+                <StyledCard
+                    header={recipeName}
+                    action={
+                        <>
+                            <RecipeDetailsButton recipe={recipe} />
+                            <RecipeBookmarkButton name={recipeName} />
+                        </>
+                    }>
                     <Tabs
-                        style={{ flexGrow: 1 }}
                         variant="fullWidth"
                         value={value}
                         onChange={(_e, newValue) => setValue(newValue)}>
-                        <Tab icon={<AssignmentIcon />} label="Zutaten" />
+                        <Tab icon={<AssignmentIcon />} label={`Zutaten für ${recipe?.amount}`} />
                         <Tab icon={<BookIcon />} label="Beschreibung" />
                     </Tabs>
-                    {recipe ? (
-                        <SwipeableViews animateHeight disabled index={value}>
-                            <MarkdownRenderer recipeName={recipeName} source={recipe.ingredients} />
-                            <MarkdownRenderer recipeName={recipeName} source={recipe.description} />
-                        </SwipeableViews>
-                    ) : (
-                        <Skeleton variant="rect" width="100%" height={400} />
-                    )}
-                </>
-            </StyledCard>
-        </div>
+
+                    <SwipeableViews disableLazyLoading index={value}>
+                        <MarkdownRenderer recipeName={recipeName} source={recipe.ingredients} />
+                        <MarkdownRenderer recipeName={recipeName} source={recipe.description} />
+                    </SwipeableViews>
+                </StyledCard>
+            ) : (
+                <Skeleton animation="wave" width="100%" height={400} variant="rect" />
+            )}
+        </>
     )
 }
 
@@ -90,12 +87,6 @@ const Bookmarks = () => {
                             <Bookmark recipeName={recipeName} />
                         </Grid>
                     ))}
-
-                    <Skeletons
-                        variant="bookmark"
-                        visible={bookmarks.size === 0 && !loginEnabled}
-                        numberOfSkeletons={3}
-                    />
                 </Grid>
                 <NotFound visible={bookmarks.size === 0 && loginEnabled} />
             </Grid>
