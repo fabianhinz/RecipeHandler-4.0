@@ -11,7 +11,6 @@ import {
     makeStyles,
     TextField,
     Tooltip,
-    Zoom,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import clsx from 'clsx'
@@ -24,6 +23,7 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import RecipeDetailsButton from '../Recipe/RecipeDetailsButton'
 import EntryGridContainer from '../Shared/EntryGridContainer'
+import FabContainer from '../Shared/FabContainer'
 import NotFound from '../Shared/NotFound'
 import StyledCard from '../Shared/StyledCard'
 
@@ -43,12 +43,6 @@ const useStyles = makeStyles(theme =>
             fontSize: '1rem',
             display: 'flex',
             justifyContent: 'space-between',
-        },
-        fab: {
-            zIndex: theme.zIndex.drawer + 1,
-            position: 'fixed',
-            right: theme.spacing(2),
-            bottom: `calc(env(safe-area-inset-bottom) + ${theme.spacing(4.5)}px)`,
         },
     })
 )
@@ -182,16 +176,15 @@ const AccountUserShoppingList = () => {
                 </Grid>
             </EntryGridContainer>
 
-            <Zoom in={!shoppingList.get('Sonstiges')}>
+            <FabContainer in={!shoppingList.get('Sonstiges')}>
                 <Tooltip title="Liste ergänzen" placement="left">
                     <Fab
                         onClick={() => shoppingListDocRef.doc('Sonstiges').set({ list: [] })}
-                        className={classes.fab}
                         color="secondary">
                         <AddIcon />
                     </Fab>
                 </Tooltip>
-            </Zoom>
+            </FabContainer>
         </>
     )
 }
