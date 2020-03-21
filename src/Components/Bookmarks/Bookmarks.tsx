@@ -59,7 +59,7 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
                         <Tab icon={<BookIcon />} label="Beschreibung" />
                     </Tabs>
 
-                    <SwipeableViews disableLazyLoading index={value}>
+                    <SwipeableViews disableLazyLoading disabled index={value}>
                         <MarkdownRenderer recipeName={recipeName} source={recipe.ingredients} />
                         <MarkdownRenderer recipeName={recipeName} source={recipe.description} />
                     </SwipeableViews>
