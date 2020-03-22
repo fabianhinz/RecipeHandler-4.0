@@ -59,6 +59,7 @@ const AccountUserChangelog = () => {
         return FirebaseService.firestore
             .collection('pullrequests')
             .orderBy('closedAt', 'desc')
+            .limit(20)
             .onSnapshot(querySnapshot => {
                 setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
                 setLoading(false)
