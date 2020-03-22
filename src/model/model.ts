@@ -34,6 +34,8 @@ export interface Recipe extends CommentsDocument, Editor, CreatedDate {
     previewAttachment?: string
 }
 
+export type AmountType = 'persons' | 'cakeForm' | 'muffins'
+
 export type CategoryType = string
 export interface Categories<T> {
     [type: string]: T

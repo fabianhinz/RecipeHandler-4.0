@@ -29,6 +29,10 @@ type Action =
     | { type: 'categoriesChange'; selectedCategories: Map<string, string> }
     | { type: 'increaseAmount' }
     | { type: 'decreaseAmount' }
+    | {
+          type: 'setAmount'
+          amount: number
+      }
     | { type: 'relatedRecipesChange'; relatedRecipes: Array<string> }
     | { type: 'selectedTrialChange'; selectedTrial?: Trial }
     | { type: 'tesseractResultChange'; result: TesseractResult }
@@ -57,6 +61,9 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
         }
         case 'decreaseAmount': {
             return { ...state, amount: state.amount === 1 ? state.amount : --state.amount }
+        }
+        case 'setAmount': {
+            return { ...state, amount: action.amount }
         }
         case 'relatedRecipesChange': {
             return { ...state, relatedRecipes: action.relatedRecipes, relatedRecipesDialog: false }

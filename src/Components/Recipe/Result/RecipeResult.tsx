@@ -28,6 +28,27 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
 
     if (!recipe) return <NotFound visible />
 
+    const calculateAmountText = () => {
+        switch (recipe.amount) {
+            case 21: {
+                return 'eine kleine Form'
+            }
+            case 22: {
+                return 'eine große Form'
+            }
+            case 23: {
+                return 'ein Blech'
+            }
+            case 1: {
+                return '1 Person'
+            }
+            default: {
+                if (recipe.amount > 30) return `${recipe.amount - 30} Stück`
+                else return `${recipe.amount} Personen`
+            }
+        }
+    }
+
     return (
         <EntryGridContainer>
             <Grid item xs={12}>
@@ -44,12 +65,7 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                 <Grid container spacing={3}>
                     <Grid {...gridBreakpointProps} item>
                         <StyledCard
-                            header={
-                                <>
-                                    Zutaten für {recipe.amount}{' '}
-                                    {recipe.amount < 2 ? 'Person' : 'Personen'}
-                                </>
-                            }
+                            header={<>Zutaten für {calculateAmountText()}</>}
                             action={<CopyButton text={recipe.ingredients} />}
                             BackgroundIcon={AssignmentIcon}>
                             <MarkdownRenderer

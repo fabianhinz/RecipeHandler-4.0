@@ -40,6 +40,30 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
         }
     }, [recipeName])
 
+    // TODO auslagern, wohin?
+    const calculateAmountText = () => {
+        if (recipe) {
+            switch (recipe.amount) {
+                case 21: {
+                    return 'eine kleine Form'
+                }
+                case 22: {
+                    return 'eine große Form'
+                }
+                case 23: {
+                    return 'ein Blech'
+                }
+                case 1: {
+                    return '1 Person'
+                }
+                default: {
+                    if (recipe.amount > 30) return `${recipe.amount - 30} Stück`
+                    else return `${recipe.amount} Personen`
+                }
+            }
+        }
+    }
+
     return (
         <>
             {recipe ? (
@@ -55,7 +79,10 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
                         variant="fullWidth"
                         value={value}
                         onChange={(_e, newValue) => setValue(newValue)}>
-                        <Tab icon={<AssignmentIcon />} label={`Zutaten für ${recipe?.amount}`} />
+                        <Tab
+                            icon={<AssignmentIcon />}
+                            label={`Zutaten für ${calculateAmountText()}`}
+                        />
                         <Tab icon={<BookIcon />} label="Beschreibung" />
                     </Tabs>
 
