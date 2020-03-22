@@ -27,6 +27,7 @@ interface Props extends Pick<RecipeCreateDispatch, 'dispatch'> {
 }
 
 const useStyles = makeStyles(theme =>
+    // TODO Aussehen auf Mobile überprüfen
     createStyles({
         headerButton: {
             textTransform: 'none',
@@ -48,6 +49,7 @@ const useStyles = makeStyles(theme =>
 const RecipeCreateChangeAmount = ({ amount, dispatch }: Props) => {
     const classes = useStyles()
     const [open, setOpen] = useState(false)
+    // TODO set to real value at beginning e.g. cakeForm if it is over 20
     const [typeOfAmount, setTypeOfAmount] = useState<AmountType>('persons')
     const [displayedText, setDisplayedText] = useState<string>('1 Person')
     const handleAmountChange = (amount: number) => {

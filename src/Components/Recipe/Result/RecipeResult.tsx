@@ -28,6 +28,7 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
 
     if (!recipe) return <NotFound visible />
 
+    // TODO auslagern, wohin?
     const calculateAmountText = () => {
         switch (recipe.amount) {
             case 21: {
