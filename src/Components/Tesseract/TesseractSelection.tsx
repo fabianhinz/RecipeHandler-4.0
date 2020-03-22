@@ -69,9 +69,11 @@ const TesseractSelection = ({ onChange, ingredients, description }: Props) => {
         progress: log?.status === 'recognizing text' ? log.progress : undefined,
     })
 
-    const initTesseract = useCallback(async () => {
+    const initTesseract = useCallback(async (mounted: boolean) => {
         const worker = createWorker({
-            logger: (log: TesseractLog) => setLog(log),
+            logger: (log: TesseractLog) => {
+                if (mounted) setLog(log)
+            },
         })
         await worker.load()
         await worker.loadLanguage('deu')
@@ -81,9 +83,11 @@ const TesseractSelection = ({ onChange, ingredients, description }: Props) => {
     }, [])
 
     useEffect(() => {
-        if (shouldLoad) initTesseract()
+        let mounted = true
+        if (shouldLoad) initTesseract(mounted)
 
         return () => {
+            mounted = false
             workerRef.current?.terminate()
         }
     }, [initTesseract, shouldLoad])

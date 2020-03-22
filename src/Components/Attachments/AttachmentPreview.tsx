@@ -21,7 +21,11 @@ import { BORDER_RADIUS } from '../../theme'
 const useStyles = makeStyles(theme =>
     createStyles({
         attachmentPreview: {
-            [theme.breakpoints.down('sm')]: {
+            [theme.breakpoints.only('xs')]: {
+                width: () => window.innerWidth - 32,
+                height: () => ((window.innerWidth - 32) / 16) * 9,
+            },
+            [theme.breakpoints.only('sm')]: {
                 width: 320,
                 height: 180,
             },
