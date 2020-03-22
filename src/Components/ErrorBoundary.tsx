@@ -25,6 +25,11 @@ class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
     }
 
     public async componentDidCatch(minError: Error, _errorInfo: React.ErrorInfo) {
+        // ? this might help iOS 13 (https://github.com/firebase/firebase-js-sdk/issues/2581)
+        if (minError.message.includes('INTERNAL ASSERTION FAILED')) {
+            window.location.reload()
+        }
+
         const trace = await StackTrace.fromError(minError)
 
         this.setState({
