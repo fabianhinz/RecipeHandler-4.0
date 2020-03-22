@@ -37,7 +37,11 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
                         <SpeedDialAction
                             icon={<EditIcon />}
                             tooltipTitle="Rezept bearbeiten"
-                            onClick={() => history.push(PATHS.recipeEdit(recipeDoc.name))}
+                            onClick={() =>
+                                history.push(PATHS.recipeEdit(recipeDoc.name), {
+                                    recipe: recipeDoc,
+                                })
+                            }
                             FabProps={{ size: 'medium' }}
                         />
                         <SpeedDialAction
