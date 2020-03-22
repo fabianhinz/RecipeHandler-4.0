@@ -35,8 +35,6 @@ jobs:
       - name: set short sha
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      - name: test
-        run: echo ${{ secrets.FIREBASE_TOKEN }}
       - name: deploy
         uses: w9jds/firebase-action@master
         with:
