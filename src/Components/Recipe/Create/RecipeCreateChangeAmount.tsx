@@ -17,17 +17,18 @@ import {
 import AddIcon from '@material-ui/icons/AddCircle'
 import CloseIcon from '@material-ui/icons/Close'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
-import { AmountType } from '../../../model/model'
+import { Quantity, QuantityType } from '../../../model/model'
+import { displayedQuantity } from '../../../util/constants'
 import { RecipeCreateDispatch } from './RecipeCreateReducer'
 
 interface Props extends Pick<RecipeCreateDispatch, 'dispatch'> {
-    amount: number
+    amount: number | undefined
+    quantity: Quantity
 }
 
 const useStyles = makeStyles(theme =>
-    // TODO Aussehen auf Mobile überprüfen
     createStyles({
         headerButton: {
             textTransform: 'none',
@@ -46,52 +47,30 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-const RecipeCreateChangeAmount = ({ amount, dispatch }: Props) => {
+const RecipeCreateChangeAmount = ({ amount, quantity, dispatch }: Props) => {
     const classes = useStyles()
     const [open, setOpen] = useState(false)
-    // TODO set to real value at beginning e.g. cakeForm if it is over 20
-    const [typeOfAmount, setTypeOfAmount] = useState<AmountType>('persons')
-    const [displayedText, setDisplayedText] = useState<string>('1 Person')
-    const handleAmountChange = (amount: number) => {
-        dispatch({ type: 'setAmount', amount: amount })
+    const handleAmountChange = (value: number) => {
+        dispatch({ type: 'quantityChange', quantity: { ...quantity, value: value } })
     }
-    const handleAmountTypeChange = (amountType: AmountType) => {
-        setTypeOfAmount(amountType)
-        if (amountType === 'cakeForm') dispatch({ type: 'setAmount', amount: 21 })
-        else if (amountType === 'muffins') dispatch({ type: 'setAmount', amount: 36 })
-        else dispatch({ type: 'setAmount', amount: 1 })
+    const handleQuantityTypeChange = (quantityType: QuantityType) => {
+        dispatch({
+            type: 'quantityChange',
+            quantity: { type: quantityType, value: quantityType === 'muffins' ? 6 : 1 },
+        })
     }
-    // TODO auslagern?
-    useEffect(() => {
-        switch (amount) {
-            case 21: {
-                setDisplayedText('eine kleine Form')
-                break
-            }
-            case 22: {
-                setDisplayedText('eine große Form')
-                break
-            }
-            case 23: {
-                setDisplayedText('ein Blech')
-                break
-            }
-            case 1: {
-                setDisplayedText('1 Person')
-                break
-            }
-            default: {
-                if (amount > 30) setDisplayedText(`${amount - 30} Stück`)
-                else setDisplayedText(`${amount} Personen`)
-                break
-            }
+
+    useState(() => {
+        if (!quantity) {
+            handleQuantityTypeChange('persons')
+            handleAmountChange(amount || 1)
         }
-    }, [amount])
+    })
 
     return (
         <>
             <Button onClick={() => setOpen(true)} variant="text" className={classes.headerButton}>
-                <Typography variant="h5">Zutaten für {displayedText}</Typography>
+                <Typography variant="h5">Zutaten für {displayedQuantity(quantity)}</Typography>
             </Button>
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogTitle>Mengenangabe definieren</DialogTitle>
@@ -100,9 +79,9 @@ const RecipeCreateChangeAmount = ({ amount, dispatch }: Props) => {
                         <FormControl className={classes.formControl}>
                             <Select
                                 id="amount-type"
-                                value={typeOfAmount}
+                                value={quantity.type}
                                 onChange={event =>
-                                    handleAmountTypeChange(event.target.value as AmountType)
+                                    handleQuantityTypeChange(event.target.value as QuantityType)
                                 }
                                 input={<Input />}>
                                 <MenuItem value="persons">Personen</MenuItem>
@@ -110,22 +89,22 @@ const RecipeCreateChangeAmount = ({ amount, dispatch }: Props) => {
                                 <MenuItem value="muffins">Muffins</MenuItem>
                             </Select>
                         </FormControl>
-                        {typeOfAmount === 'cakeForm' && (
+                        {quantity.type === 'cakeForm' && (
                             <FormControl className={classes.formControl}>
                                 <Select
                                     id="amount-value"
-                                    value={amount}
+                                    value={quantity.value}
                                     onChange={event =>
                                         handleAmountChange(event.target.value as number)
                                     }
                                     input={<Input />}>
-                                    <MenuItem value={21}>kleine Form</MenuItem>
-                                    <MenuItem value={22}>große Form</MenuItem>
-                                    <MenuItem value={23}>Blech</MenuItem>
+                                    <MenuItem value={1}>kleine Form</MenuItem>
+                                    <MenuItem value={2}>große Form</MenuItem>
+                                    <MenuItem value={3}>Blech</MenuItem>
                                 </Select>
                             </FormControl>
                         )}
-                        {typeOfAmount === 'persons' && (
+                        {quantity.type === 'persons' && (
                             <FormControl className={classes.formControl}>
                                 <Grid
                                     container
@@ -141,7 +120,7 @@ const RecipeCreateChangeAmount = ({ amount, dispatch }: Props) => {
                                         </IconButton>
                                     </Grid>
                                     <Grid item>
-                                        <Typography variant="h5">{amount}</Typography>
+                                        <Typography variant="h5">{quantity.value}</Typography>
                                     </Grid>
                                     <Grid item>
                                         <IconButton
@@ -153,18 +132,18 @@ const RecipeCreateChangeAmount = ({ amount, dispatch }: Props) => {
                                 </Grid>
                             </FormControl>
                         )}
-                        {typeOfAmount === 'muffins' && (
+                        {quantity.type === 'muffins' && (
                             <FormControl className={classes.formControl}>
                                 <Select
                                     id="amount-value"
-                                    value={amount}
+                                    value={quantity.value}
                                     onChange={event =>
                                         handleAmountChange(event.target.value as number)
                                     }
                                     input={<Input />}>
-                                    <MenuItem value={36}>6 Stück</MenuItem>
-                                    <MenuItem value={42}>12 Stück</MenuItem>
-                                    <MenuItem value={48}>18 Stück</MenuItem>
+                                    <MenuItem value={6}>6 Stück</MenuItem>
+                                    <MenuItem value={12}>12 Stück</MenuItem>
+                                    <MenuItem value={18}>18 Stück</MenuItem>
                                 </Select>
                             </FormControl>
                         )}

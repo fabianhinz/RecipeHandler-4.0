@@ -8,6 +8,7 @@ import SwipeableViews from 'react-swipeable-views'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { displayedQuantity } from '../../util/constants'
 import MarkdownRenderer from '../Markdown/MarkdownRenderer'
 import { useBookmarkContext } from '../Provider/BookmarkProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -40,30 +41,6 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
         }
     }, [recipeName])
 
-    // TODO auslagern, wohin?
-    const calculateAmountText = () => {
-        if (recipe) {
-            switch (recipe.amount) {
-                case 21: {
-                    return 'eine kleine Form'
-                }
-                case 22: {
-                    return 'eine große Form'
-                }
-                case 23: {
-                    return 'ein Blech'
-                }
-                case 1: {
-                    return '1 Person'
-                }
-                default: {
-                    if (recipe.amount > 30) return `${recipe.amount - 30} Stück`
-                    else return `${recipe.amount} Personen`
-                }
-            }
-        }
-    }
-
     return (
         <>
             {recipe ? (
@@ -79,10 +56,14 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
                         variant="fullWidth"
                         value={value}
                         onChange={(_e, newValue) => setValue(newValue)}>
-                        <Tab
-                            icon={<AssignmentIcon />}
-                            label={`Zutaten für ${calculateAmountText()}`}
-                        />
+                        {recipe.quantity ? (
+                            <Tab
+                                icon={<AssignmentIcon />}
+                                label={`Zutaten für ${displayedQuantity(recipe.quantity)}`}
+                            />
+                        ) : (
+                            <Tab icon={<AssignmentIcon />} label="Zutaten" />
+                        )}
                         <Tab icon={<BookIcon />} label="Beschreibung" />
                     </Tabs>
 

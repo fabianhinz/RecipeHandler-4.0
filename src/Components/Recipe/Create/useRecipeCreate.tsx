@@ -60,6 +60,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                     name: state.name,
                     ingredients: state.ingredients,
                     amount: state.amount,
+                    quantity: state.quantity,
                     description: state.description,
                     numberOfComments: state.numberOfComments,
                     categories: state.categories,

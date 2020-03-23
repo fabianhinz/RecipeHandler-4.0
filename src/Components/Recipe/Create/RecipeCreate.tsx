@@ -96,6 +96,7 @@ const RecipeCreate = (props: Props) => {
                         categories: state.categories,
                         ingredients: state.ingredients,
                         amount: state.amount,
+                        quantity: state.quantity,
                         description: state.description,
                         relatedRecipes: state.relatedRecipes,
                         editorUid: user.uid,
@@ -154,6 +155,7 @@ const RecipeCreate = (props: Props) => {
                             <Grid item {...relatedAwareBreakpoints}>
                                 <RecipeCreateIngredients
                                     amount={state.amount}
+                                    quantity={state.quantity}
                                     ingredients={state.ingredients}
                                     dispatch={dispatch}
                                     onIngredientsChange={handleTextFieldChange('ingredients')}

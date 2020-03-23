@@ -28,13 +28,19 @@ export interface CommentsDocument {
 export interface Recipe extends CommentsDocument, Editor, CreatedDate {
     categories: Categories<string>
     ingredients: string
-    amount: number
+    amount: number | undefined
+    quantity: Quantity
     description: string
     relatedRecipes: Array<string>
     previewAttachment?: string
 }
 
-export type AmountType = 'persons' | 'cakeForm' | 'muffins'
+export interface Quantity {
+    type: QuantityType
+    value: number
+}
+
+export type QuantityType = 'persons' | 'cakeForm' | 'muffins'
 
 export type CategoryType = string
 export interface Categories<T> {

@@ -1,13 +1,14 @@
 import { Reducer, useReducer } from 'react'
 
-import { Categories, Recipe, TesseractResult, Trial } from '../../../model/model'
+import { Categories, Quantity, Recipe, TesseractResult, Trial } from '../../../model/model'
 
 export interface RecipeCreateState {
     name: string
     editorUid?: string
     categories: Categories<string>
     ingredients: string
-    amount: number
+    amount: number | undefined
+    quantity: Quantity
     description: string
     preview: boolean
     numberOfComments: number
@@ -30,8 +31,8 @@ type Action =
     | { type: 'increaseAmount' }
     | { type: 'decreaseAmount' }
     | {
-          type: 'setAmount'
-          amount: number
+          type: 'quantityChange'
+          quantity: Quantity
       }
     | { type: 'relatedRecipesChange'; relatedRecipes: Array<string> }
     | { type: 'selectedTrialChange'; selectedTrial?: Trial }
@@ -56,14 +57,23 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
         case 'increaseAmount': {
             return {
                 ...state,
-                amount: state.amount < 20 ? ++state.amount : state.amount,
+                quantity:
+                    state.quantity.value < 20
+                        ? { ...state.quantity, value: ++state.quantity.value }
+                        : state.quantity,
             }
         }
         case 'decreaseAmount': {
-            return { ...state, amount: state.amount === 1 ? state.amount : --state.amount }
+            return {
+                ...state,
+                quantity:
+                    state.quantity.value === 1
+                        ? state.quantity
+                        : { ...state.quantity, value: --state.quantity.value },
+            }
         }
-        case 'setAmount': {
-            return { ...state, amount: action.amount }
+        case 'quantityChange': {
+            return { ...state, quantity: action.quantity }
         }
         case 'relatedRecipesChange': {
             return { ...state, relatedRecipes: action.relatedRecipes, relatedRecipesDialog: false }
@@ -87,7 +97,11 @@ const initialState: RecipeCreateState = {
     name: '',
     categories: {},
     ingredients: '',
-    amount: 1,
+    amount: undefined,
+    quantity: {
+        type: 'persons',
+        value: 1,
+    },
     description: '',
     preview: false,
     numberOfComments: 0,
