@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme =>
 
 const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
     const [recipe, setRecipe] = useState<Recipe | null>(null)
+    const [notFound, setNotFound] = useState(false)
 
     const { gridBreakpointProps, compactLayout } = useGridContext()
     const classes = useStyles({ compactLayout })
@@ -42,8 +43,13 @@ const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
             .collection('recipes')
             .doc(recipeName)
             .get()
-            .then(doc => setRecipe({ ...(doc.data() as Recipe), createdDate }))
+            .then(doc => {
+                if (doc.exists) setRecipe({ ...(doc.data() as Recipe), createdDate })
+                else setNotFound(true)
+            })
     }, [createdDate, recipeName])
+
+    if (notFound) return <></>
 
     return (
         <>
@@ -89,8 +95,8 @@ const AccountCookingHistory = () => {
                         <HistoryElement key={index} {...element} />
                     ))}
                 </Grid>
+                <NotFound visible={!loading && cookingHistory.length === 0} />
             </Grid>
-            <NotFound visible={!loading && cookingHistory.length === 0} />
         </EntryGridContainer>
     )
 }
