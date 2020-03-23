@@ -79,6 +79,7 @@ const AccountCookingHistory = () => {
             .collection('users')
             .doc(user.uid)
             .collection('cookingHistory')
+            .orderBy('createdDate', 'desc')
             .onSnapshot(snapshot => {
                 setCookingHistory(snapshot.docs.map(doc => doc.data() as CookingHistory))
                 setLoading(false)
