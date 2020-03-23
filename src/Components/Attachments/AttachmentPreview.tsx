@@ -21,6 +21,8 @@ import { BORDER_RADIUS } from '../../theme'
 const useStyles = makeStyles(theme =>
     createStyles({
         attachmentPreview: {
+            borderRadius: BORDER_RADIUS,
+            boxShadow: theme.shadows[1],
             [theme.breakpoints.only('xs')]: {
                 width: () => window.innerWidth - 32,
                 height: () => ((window.innerWidth - 32) / 16) * 9,
@@ -37,11 +39,17 @@ const useStyles = makeStyles(theme =>
                 width: 498,
                 height: 280,
             },
-            borderRadius: BORDER_RADIUS,
-            boxShadow: theme.shadows[1],
         },
-
+        '@keyframes grid-collapse': {
+            from: {
+                height: 0,
+            },
+            to: {
+                height: 180,
+            },
+        },
         gridItem: {
+            animation: '$grid-collapse 0.225s ease-out',
             position: 'relative',
         },
         selectionButton: {
