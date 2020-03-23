@@ -70,7 +70,7 @@ const AccountCookingHistory = () => {
 
     const { user } = useFirebaseAuthContext()
 
-    useDocumentTitle(`Kochverlauf ${cookingHistory.length}`)
+    useDocumentTitle(`Kochverlauf (${cookingHistory.length})`)
 
     useEffect(() => {
         if (!user) return setLoading(false)
