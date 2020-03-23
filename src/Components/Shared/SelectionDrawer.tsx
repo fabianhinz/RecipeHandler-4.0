@@ -5,6 +5,7 @@ import {
     Drawer,
     IconButton,
     makeStyles,
+    useTheme,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import React, { useEffect, useRef, useState } from 'react'
@@ -67,6 +68,7 @@ const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose, actio
     const [open, setOpen] = useState(false)
     const prevOpen = useRef(open)
 
+    const theme = useTheme()
     const classes = useStyles()
 
     useEffect(() => {
@@ -87,7 +89,7 @@ const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose, actio
         <>
             <Button
                 onClick={openDrawer}
-                variant="outlined"
+                variant={theme.palette.type === 'dark' ? 'outlined' : 'contained'}
                 size="large"
                 classes={{ root: classes.buttonRoot, label: classes.buttonLabel }}
                 fullWidth
