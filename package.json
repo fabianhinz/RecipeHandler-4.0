@@ -20,7 +20,7 @@
 		"browser-image-compression": "^1.0.8",
 		"clipboard-copy": "^3.1.0",
 		"clsx": "^1.1.0",
-		"eslint-config-prettier": "^6.10.0",
+		"eslint-config-prettier": "^6.10.1",
 		"eslint-plugin-prettier": "^3.1.2",
 		"eslint-plugin-simple-import-sort": "^5.0.2",
 		"firebase": "^7.12.0",
