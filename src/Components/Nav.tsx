@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core'
 import BookIcon from '@material-ui/icons/Book'
 import clsx from 'clsx'
-import { BookmarkMultiple, BookSearch, Cart, Lightbulb } from 'mdi-material-ui'
+import { BookmarkMultiple, BookSearch, Cart, History, Lightbulb } from 'mdi-material-ui'
 import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
@@ -189,11 +189,18 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                         pathname={PATHS.bookmarks}
                     />
                     {user && (
-                        <NavButton
-                            icon={<Cart />}
-                            label="Einkaufsliste"
-                            pathname={PATHS.shoppingList}
-                        />
+                        <>
+                            <NavButton
+                                icon={<Cart />}
+                                label="Einkaufsliste"
+                                pathname={PATHS.shoppingList}
+                            />
+                            <NavButton
+                                icon={<History />}
+                                label="Kochverlauf"
+                                pathname={PATHS.cookingHistory}
+                            />
+                        </>
                     )}
                 </nav>
             </Hidden>
@@ -219,12 +226,19 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                         secondary={bookmarks.size}
                     />
                     {user && (
-                        <NavListItem
-                            pathname={PATHS.shoppingList}
-                            icon={<Cart />}
-                            label="Einkaufsliste"
-                            secondary={shoppingList.size}
-                        />
+                        <>
+                            <NavListItem
+                                pathname={PATHS.shoppingList}
+                                icon={<Cart />}
+                                label="Einkaufsliste"
+                                secondary={shoppingList.size}
+                            />
+                            <NavListItem
+                                icon={<History />}
+                                label="Kochverlauf"
+                                pathname={PATHS.cookingHistory}
+                            />
+                        </>
                     )}
                 </List>
                 <div className={classes.algoliaDocSearchRef}>{AlgoliaDocSearchRef}</div>

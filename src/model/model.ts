@@ -164,3 +164,8 @@ export interface TesseractLog {
         | 'recognizing text'
     progress?: number
 }
+
+export interface CookingHistory {
+    createdDate: firebase.firestore.Timestamp
+    recipeName: string
+}

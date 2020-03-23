@@ -2,7 +2,7 @@ import { IconButton, Tooltip } from '@material-ui/core/'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import React, { useEffect, useState } from 'react'
 
-import { MostCooked, Recipe } from '../../model/model'
+import { CookingHistory, MostCooked, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { BadgeWrapper } from '../Shared/BadgeWrapper'
@@ -34,6 +34,17 @@ const RecipeCookCounterButton = ({ name }: Props) => {
             .update({ value: FirebaseService.incrementBy(1) } as MostCooked<
                 firebase.firestore.FieldValue
             >)
+            .catch(console.error)
+
+        FirebaseService.firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('cookingHistory')
+            .doc()
+            .set({
+                createdDate: FirebaseService.createTimestampFromDate(new Date()),
+                recipeName: name,
+            } as CookingHistory)
             .catch(console.error)
     }
 

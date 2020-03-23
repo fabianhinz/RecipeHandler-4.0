@@ -26,6 +26,10 @@ service cloud.firestore {
     match /users/{userId}/shoppingList/{recipeName} {
         allow write: if request.auth.uid == userId
     }
+
+    match /users/{userId}/cookingHistory/{docId} {
+        allow write: if request.auth.uid == userId
+    }
     
     match /recipes/{recipeName} {
         allow create: if isAdmin() || isEditor();

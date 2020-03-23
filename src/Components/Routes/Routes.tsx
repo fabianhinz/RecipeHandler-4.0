@@ -15,6 +15,7 @@ export const PATHS = {
     impressum: '/impressum',
     shoppingList: '/shopping',
     searchResults: '/searchResults',
+    cookingHistory: '/cookingHistory',
 }
 
 interface AppRoute {
@@ -65,6 +66,10 @@ const securedRoutes: AppRoute[] = [
     {
         path: PATHS.shoppingList,
         Component: lazy(() => import('../Account/AccountShoppingList')),
+    },
+    {
+        path: PATHS.cookingHistory,
+        Component: lazy(() => import('../Account/AccountCookingHistory')),
     },
 ]
 
