@@ -79,8 +79,9 @@ export type User = {
     username: string
     muiTheme: PaletteType | 'dynamic' | 'black'
     selectedUsers: string[]
-    showRecentlyAdded: boolean
+    showRecentlyEdited: boolean
     showMostCooked: boolean
+    showNew: boolean
     notifications: boolean
     admin?: boolean
     profilePicture?: string
@@ -136,6 +137,7 @@ export interface FirestoreDocPath {
 
 export interface MostCooked<T> {
     value: T
+    createdDate: firebase.firestore.Timestamp
 }
 
 export type TesseractResult = {

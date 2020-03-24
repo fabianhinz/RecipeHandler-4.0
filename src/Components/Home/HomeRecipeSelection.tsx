@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme =>
         orderByAsc: {
             transform: 'rotate(0deg)',
             transition: theme.transitions.create('transform', {
-                duration: theme.transitions.duration.complex,
+                easing: theme.transitions.easing.easeOut,
             }),
         },
         orderByDesc: {

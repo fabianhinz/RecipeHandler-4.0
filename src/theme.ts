@@ -48,6 +48,8 @@ const sharedTheme: Partial<ThemeOptions> = {
         MuiButton: {
             root: {
                 borderRadius: BORDER_RADIUS,
+                fontFamily: 'Ubuntu',
+                textTransform: 'unset',
             },
         },
         MuiButtonBase: {
