@@ -28,7 +28,7 @@ export interface CommentsDocument {
 export interface Recipe extends CommentsDocument, Editor, CreatedDate {
     categories: Categories<string>
     ingredients: string
-    amount: number | undefined
+    amount?: number
     quantity: Quantity
     description: string
     relatedRecipes: Array<string>

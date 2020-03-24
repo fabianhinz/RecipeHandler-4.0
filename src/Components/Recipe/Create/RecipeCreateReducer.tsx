@@ -7,7 +7,7 @@ export interface RecipeCreateState {
     editorUid?: string
     categories: Categories<string>
     ingredients: string
-    amount: number | undefined
+    amount?: number
     quantity: Quantity
     description: string
     preview: boolean
@@ -97,7 +97,6 @@ const initialState: RecipeCreateState = {
     name: '',
     categories: {},
     ingredients: '',
-    amount: undefined,
     quantity: {
         type: 'persons',
         value: 1,

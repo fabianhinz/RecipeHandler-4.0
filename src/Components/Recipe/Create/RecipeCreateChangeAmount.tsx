@@ -24,7 +24,7 @@ import { displayedQuantity } from '../../../util/constants'
 import { RecipeCreateDispatch } from './RecipeCreateReducer'
 
 interface Props extends Pick<RecipeCreateDispatch, 'dispatch'> {
-    amount: number | undefined
+    amount?: number
     quantity: Quantity
 }
 

@@ -8,7 +8,7 @@ import RecipeCreateChangeAmount from './RecipeCreateChangeAmount'
 import { RecipeCreateDispatch } from './RecipeCreateReducer'
 
 interface Props extends RecipeCreateDispatch {
-    amount: number | undefined
+    amount?: number
     quantity: Quantity
     ingredients: string
     onIngredientsChange: (value: string) => void
