@@ -12,10 +12,6 @@ import React, { useEffect, useRef, useState } from 'react'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        buttonRoot: {
-            fontFamily: 'Ubuntu',
-            textTransform: 'unset',
-        },
         buttonLabel: {
             justifyContent: 'flex-start',
         },
@@ -91,7 +87,7 @@ const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose, actio
                 onClick={openDrawer}
                 variant={theme.palette.type === 'dark' ? 'outlined' : 'contained'}
                 size="large"
-                classes={{ root: classes.buttonRoot, label: classes.buttonLabel }}
+                classes={{ label: classes.buttonLabel }}
                 fullWidth
                 color={highlight ? 'secondary' : 'default'}
                 {...muiButtonProps}>

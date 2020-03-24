@@ -52,6 +52,8 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
             variant: 'info',
         })
 
+        const createdDate = FirebaseService.createTimestampFromDate(new Date())
+
         try {
             await FirebaseService.firestore
                 .collection('recipes')
@@ -64,7 +66,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                     numberOfComments: state.numberOfComments,
                     categories: state.categories,
                     relatedRecipes: state.relatedRecipes,
-                    createdDate: FirebaseService.createTimestampFromDate(new Date()),
+                    createdDate,
                     editorUid: state.editorUid || user!.uid,
                 } as Recipe)
 
@@ -72,7 +74,10 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
                 await FirebaseService.firestore
                     .collection('cookCounter')
                     .doc(state.name)
-                    .set({ value: 0 } as MostCooked<number>)
+                    .set({
+                        value: 0,
+                        createdDate,
+                    } as MostCooked<number>)
             }
 
             if (state.selectedTrial) {

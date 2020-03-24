@@ -8,7 +8,7 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import Skeletons from '../Shared/Skeletons'
 import HomeRecipeCard from './HomeRecipeCard'
 
-const HomeRecentlyAdded = () => {
+const HomeRecentlyEdited = () => {
     const [recipes, setRecipes] = useState<Array<Recipe>>([])
 
     const { user } = useFirebaseAuthContext()
@@ -20,7 +20,7 @@ const HomeRecentlyAdded = () => {
     )
 
     useEffect(() => {
-        if (user && !user.showRecentlyAdded) return
+        if (user && !user.showRecentlyEdited) return
 
         let query:
             | firebase.firestore.CollectionReference
@@ -37,12 +37,12 @@ const HomeRecentlyAdded = () => {
             )
     }, [numberOfDocs, user])
 
-    if (user && !user.showRecentlyAdded) return <></>
+    if (user && !user.showRecentlyEdited) return <></>
 
     return (
         <>
             <Grid item>
-                <Typography variant="h4">Kürzlich hinzugefügt</Typography>
+                <Typography variant="h4">Kürzlich bearbeitet</Typography>
             </Grid>
             <Grid item xs={12}>
                 <Grid container spacing={3}>
@@ -60,4 +60,4 @@ const HomeRecentlyAdded = () => {
     )
 }
 
-export default memo(HomeRecentlyAdded)
+export default memo(HomeRecentlyEdited)

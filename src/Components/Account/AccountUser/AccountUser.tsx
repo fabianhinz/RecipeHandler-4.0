@@ -23,8 +23,9 @@ type SettingKeys = keyof Pick<
     User,
     | 'muiTheme'
     | 'selectedUsers'
-    | 'showRecentlyAdded'
+    | 'showRecentlyEdited'
     | 'showMostCooked'
+    | 'showNew'
     | 'notifications'
     | 'algoliaAdvancedSyntax'
     | 'bookmarkSync'
@@ -90,8 +91,12 @@ const AccountUser = () => {
                 userDoc.update({ [key]: selectedIds })
                 break
             }
-            case 'showRecentlyAdded': {
-                userDoc.update({ [key]: !user.showRecentlyAdded })
+            case 'showNew': {
+                userDoc.update({ [key]: !user.showNew })
+                break
+            }
+            case 'showRecentlyEdited': {
+                userDoc.update({ [key]: !user.showRecentlyEdited })
                 break
             }
             case 'showMostCooked': {

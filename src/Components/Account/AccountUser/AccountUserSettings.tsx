@@ -24,6 +24,7 @@ import {
     DatabaseSearch,
     Information,
     SettingsOutline,
+    StarCircle,
 } from 'mdi-material-ui'
 import React, { useState } from 'react'
 
@@ -97,12 +98,12 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                             />
                         </ListItem>
                         <Divider variant="inset" />
-                        <ListItem button onClick={onUserSettingChange('showRecentlyAdded')}>
+                        <ListItem button onClick={onUserSettingChange('showNew')}>
                             <ListItemIcon>
-                                <TimelapseIcon />
+                                <StarCircle />
                             </ListItemIcon>
                             <ListItemText
-                                primary="Kürzlich hinzugefügte Rezepte"
+                                primary="Neue Rezepte"
                                 secondaryTypographyProps={{ component: 'div' } as TypographyProps}
                                 secondary={
                                     <>
@@ -110,7 +111,7 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                                             gutterBottom
                                             variant="body2"
                                             color="textSecondary">
-                                            {user.showRecentlyAdded
+                                            {user.showNew
                                                 ? 'werden angezeigt'
                                                 : 'werden ausgeblendet'}
                                         </Typography>
@@ -119,7 +120,7 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                                                 gutterBottom
                                                 variant="body2"
                                                 color="textSecondary">
-                                                Je nach Bildschirmgröße werden die neuesten Rezepte
+                                                Je nach Bildschirmgröße werden neue Rezepte
                                                 unabhängig von Autor oder Filterung durch die
                                                 Kategorien angezeigt.
                                             </Typography>
@@ -154,6 +155,38 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                                                 Je nach Bildschirmgröße werden die am häufigsten
                                                 gekochte Rezepte unabhängig von Autor oder Filterung
                                                 durch die Kategorien angezeigt.
+                                            </Typography>
+                                        </Collapse>
+                                    </>
+                                }
+                            />
+                        </ListItem>
+                        <Divider variant="inset" />
+                        <ListItem button onClick={onUserSettingChange('showRecentlyEdited')}>
+                            <ListItemIcon>
+                                <TimelapseIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary="Kürzlich bearbeitete Rezepte"
+                                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                                secondary={
+                                    <>
+                                        <Typography
+                                            gutterBottom
+                                            variant="body2"
+                                            color="textSecondary">
+                                            {user.showRecentlyEdited
+                                                ? 'werden angezeigt'
+                                                : 'werden ausgeblendet'}
+                                        </Typography>
+                                        <Collapse in={showInfoView}>
+                                            <Typography
+                                                gutterBottom
+                                                variant="body2"
+                                                color="textSecondary">
+                                                Je nach Bildschirmgröße werden kürzlich bearbeitete
+                                                Rezepte unabhängig von Autor oder Filterung durch
+                                                die Kategorien angezeigt.
                                             </Typography>
                                         </Collapse>
                                     </>

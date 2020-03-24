@@ -15,7 +15,8 @@ import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
 import HomeMostCooked from './HomeMostCooked'
-import HomeRecentlyAdded from './HomeRecentlyAdded'
+import HomeNew from './HomeNew'
+import HomeRecentlyEdited from './HomeRecentlyEdited'
 import HomeRecipeCard from './HomeRecipeCard'
 import HomeRecipeSelection from './HomeRecipeSelection'
 
@@ -93,8 +94,9 @@ const Home = () => {
     return (
         <>
             <EntryGridContainer>
+                <HomeNew />
                 <HomeMostCooked />
-                <HomeRecentlyAdded />
+                <HomeRecentlyEdited />
                 <HomeRecipeSelection
                     selectedCategories={selectedCategories}
                     onRemoveSelectedCategories={() => {
