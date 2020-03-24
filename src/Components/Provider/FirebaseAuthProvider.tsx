@@ -32,7 +32,7 @@ const useStyles = makeStyles(() =>
             },
         },
         chip: {
-            animation: `$chip-appear 0.25s ease-in`,
+            animation: `$chip-appear 0.225s ease-out`,
             position: 'fixed',
             top: '50%',
             left: '50%',
