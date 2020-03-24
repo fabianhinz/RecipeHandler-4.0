@@ -50,20 +50,32 @@ const useStyles = makeStyles(theme =>
 const RecipeCreateChangeAmount = ({ amount, quantity, dispatch }: Props) => {
     const classes = useStyles()
     const [open, setOpen] = useState(false)
-    const handleAmountChange = (value: number) => {
-        dispatch({ type: 'quantityChange', quantity: { ...quantity, value: value } })
-    }
-    const handleQuantityTypeChange = (quantityType: QuantityType) => {
+    const handleAmountChange = (
+        event: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
+    ) => {
         dispatch({
             type: 'quantityChange',
-            quantity: { type: quantityType, value: quantityType === 'muffins' ? 6 : 1 },
+            quantity: { ...quantity, value: event.target.value as number },
+        })
+    }
+    const handleQuantityTypeChange = (
+        event: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
+    ) => {
+        dispatch({
+            type: 'quantityChange',
+            quantity: {
+                type: event.target.value as QuantityType,
+                value: event.target.value === 'muffins' ? 6 : 1,
+            },
         })
     }
 
     useState(() => {
-        if (!quantity) {
-            handleQuantityTypeChange('persons')
-            handleAmountChange(amount || 1)
+        if (!quantity && amount) {
+            dispatch({
+                type: 'quantityChange',
+                quantity: { type: 'persons', value: amount },
+            })
         }
     })
 
@@ -74,80 +86,72 @@ const RecipeCreateChangeAmount = ({ amount, quantity, dispatch }: Props) => {
             </Button>
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogTitle>Mengenangabe definieren</DialogTitle>
-                <DialogContent>
-                    <form className={classes.formContainer}>
+                <DialogContent className={classes.formContainer}>
+                    <FormControl className={classes.formControl}>
+                        <Select
+                            id="amount-type"
+                            value={quantity.type}
+                            onChange={handleQuantityTypeChange}
+                            input={<Input />}>
+                            <MenuItem value="persons">Personen</MenuItem>
+                            <MenuItem value="cakeForm">Kuchenform</MenuItem>
+                            <MenuItem value="muffins">Muffins</MenuItem>
+                        </Select>
+                    </FormControl>
+                    {quantity.type === 'cakeForm' && (
                         <FormControl className={classes.formControl}>
                             <Select
-                                id="amount-type"
-                                value={quantity.type}
-                                onChange={event =>
-                                    handleQuantityTypeChange(event.target.value as QuantityType)
-                                }
+                                id="amount-value"
+                                value={quantity.value}
+                                onChange={handleAmountChange}
                                 input={<Input />}>
-                                <MenuItem value="persons">Personen</MenuItem>
-                                <MenuItem value="cakeForm">Kuchenform</MenuItem>
-                                <MenuItem value="muffins">Muffins</MenuItem>
+                                <MenuItem value={1}>kleine Form</MenuItem>
+                                <MenuItem value={2}>große Form</MenuItem>
+                                <MenuItem value={3}>Blech</MenuItem>
                             </Select>
                         </FormControl>
-                        {quantity.type === 'cakeForm' && (
-                            <FormControl className={classes.formControl}>
-                                <Select
-                                    id="amount-value"
-                                    value={quantity.value}
-                                    onChange={event =>
-                                        handleAmountChange(event.target.value as number)
-                                    }
-                                    input={<Input />}>
-                                    <MenuItem value={1}>kleine Form</MenuItem>
-                                    <MenuItem value={2}>große Form</MenuItem>
-                                    <MenuItem value={3}>Blech</MenuItem>
-                                </Select>
-                            </FormControl>
-                        )}
-                        {quantity.type === 'persons' && (
-                            <FormControl className={classes.formControl}>
-                                <Grid
-                                    container
-                                    wrap="nowrap"
-                                    spacing={1}
-                                    alignItems="center"
-                                    className={classes.amountContainer}>
-                                    <Grid item>
-                                        <IconButton
-                                            onClick={() => dispatch({ type: 'decreaseAmount' })}
-                                            size="small">
-                                            <RemoveIcon />
-                                        </IconButton>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography variant="h5">{quantity.value}</Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <IconButton
-                                            onClick={() => dispatch({ type: 'increaseAmount' })}
-                                            size="small">
-                                            <AddIcon />
-                                        </IconButton>
-                                    </Grid>
+                    )}
+                    {quantity.type === 'persons' && (
+                        <FormControl className={classes.formControl}>
+                            <Grid
+                                container
+                                wrap="nowrap"
+                                spacing={1}
+                                alignItems="center"
+                                className={classes.amountContainer}>
+                                <Grid item>
+                                    <IconButton
+                                        onClick={() => dispatch({ type: 'decreaseAmount' })}
+                                        size="small">
+                                        <RemoveIcon />
+                                    </IconButton>
                                 </Grid>
-                            </FormControl>
-                        )}
-                        {quantity.type === 'muffins' && (
-                            <FormControl className={classes.formControl}>
-                                <Select
-                                    id="amount-value"
-                                    value={quantity.value}
-                                    onChange={event =>
-                                        handleAmountChange(event.target.value as number)
-                                    }
-                                    input={<Input />}>
-                                    <MenuItem value={6}>6 Stück</MenuItem>
-                                    <MenuItem value={12}>12 Stück</MenuItem>
-                                    <MenuItem value={18}>18 Stück</MenuItem>
-                                </Select>
-                            </FormControl>
-                        )}
-                    </form>
+                                <Grid item>
+                                    <Typography variant="h5">{quantity.value}</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <IconButton
+                                        onClick={() => dispatch({ type: 'increaseAmount' })}
+                                        size="small">
+                                        <AddIcon />
+                                    </IconButton>
+                                </Grid>
+                            </Grid>
+                        </FormControl>
+                    )}
+                    {quantity.type === 'muffins' && (
+                        <FormControl className={classes.formControl}>
+                            <Select
+                                id="amount-value"
+                                value={quantity.value}
+                                onChange={handleAmountChange}
+                                input={<Input />}>
+                                <MenuItem value={6}>6 Stück</MenuItem>
+                                <MenuItem value={12}>12 Stück</MenuItem>
+                                <MenuItem value={18}>18 Stück</MenuItem>
+                            </Select>
+                        </FormControl>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <IconButton onClick={() => setOpen(false)}>
