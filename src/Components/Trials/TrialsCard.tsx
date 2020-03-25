@@ -114,10 +114,7 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
         // ! this does not delete the comments collection --> should use https://firebase.google.com/docs/firestore/solutions/delete-collections
         // ! --> which is fine, we can recover comments even if the trial is lost
         try {
-            await FirebaseService.firestore
-                .collection('trials')
-                .doc(trial.name)
-                .delete()
+            await FirebaseService.firestore.collection('trials').doc(trial.name).delete()
 
             await FirebaseService.storageRef.child(trial.fullPath).delete()
         } catch (e) {
