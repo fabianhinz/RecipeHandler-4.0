@@ -59,10 +59,7 @@ const AccountUserShoppingList = () => {
 
     const shoppingListDocRef = useMemo(
         () =>
-            FirebaseService.firestore
-                .collection('users')
-                .doc(user?.uid)
-                .collection('shoppingList'),
+            FirebaseService.firestore.collection('users').doc(user?.uid).collection('shoppingList'),
         [user]
     )
 

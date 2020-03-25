@@ -255,8 +255,9 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
             {
                 transform: `
                     translate(-50%,-50%)
-                    scale(${destinationRect.width / originRect.width},${destinationRect.height /
-                    originRect.height})
+                    scale(${destinationRect.width / originRect.width},${
+                    destinationRect.height / originRect.height
+                })
                 `,
                 position: 'fixed',
                 top: '50%',
