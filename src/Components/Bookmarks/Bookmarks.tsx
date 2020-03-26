@@ -8,6 +8,7 @@ import SwipeableViews from 'react-swipeable-views'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { displayedQuantity } from '../../util/constants'
 import MarkdownRenderer from '../Markdown/MarkdownRenderer'
 import { useBookmarkContext } from '../Provider/BookmarkProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -55,7 +56,14 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
                         variant="fullWidth"
                         value={value}
                         onChange={(_e, newValue) => setValue(newValue)}>
-                        <Tab icon={<AssignmentIcon />} label={`Zutaten für ${recipe?.amount}`} />
+                        {recipe.quantity ? (
+                            <Tab
+                                icon={<AssignmentIcon />}
+                                label={`Zutaten für ${displayedQuantity(recipe.quantity)}`}
+                            />
+                        ) : (
+                            <Tab icon={<AssignmentIcon />} label="Zutaten" />
+                        )}
                         <Tab icon={<BookIcon />} label="Beschreibung" />
                     </Tabs>
 

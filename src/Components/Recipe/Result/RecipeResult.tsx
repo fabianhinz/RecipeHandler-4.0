@@ -2,10 +2,11 @@ import { Divider, Grid } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import BookIcon from '@material-ui/icons/Book'
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 
 import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
+import { displayedQuantity } from '../../../util/constants'
 import AccountChip from '../../Account/AccountChip'
 import Attachments from '../../Attachments/Attachments'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
@@ -26,6 +27,12 @@ interface RecipeResultProps {
 const RecipeResult = ({ recipe }: RecipeResultProps) => {
     const { gridBreakpointProps } = useGridContext()
 
+    useState(() => {
+        if (recipe && !recipe.quantity) {
+            recipe.quantity = { type: 'persons', value: recipe.amount || 1 }
+        }
+    })
+
     if (!recipe) return <NotFound visible />
 
     return (
@@ -44,12 +51,7 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                 <Grid container spacing={3}>
                     <Grid {...gridBreakpointProps} item>
                         <StyledCard
-                            header={
-                                <>
-                                    Zutaten für {recipe.amount}{' '}
-                                    {recipe.amount < 2 ? 'Person' : 'Personen'}
-                                </>
-                            }
+                            header={<>Zutaten für {displayedQuantity(recipe.quantity)}</>}
                             action={<CopyButton text={recipe.ingredients} />}
                             BackgroundIcon={AssignmentIcon}>
                             <MarkdownRenderer
