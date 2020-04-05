@@ -26,28 +26,18 @@ import { useRouterContext } from '../Provider/RouterProvider'
 import RecipeBookmarkButton from '../Recipe/RecipeBookmarkButton'
 import { PATHS } from '../Routes/Routes'
 
-interface StyleProps {
-    fixedCardHeight?: boolean
-}
-
 const useStyles = makeStyles(theme =>
     createStyles({
         avatar: {
             width: '100%',
-            height: '100%',
+            height: 250,
             fontSize: theme.typography.pxToRem(60),
             borderTopLeftRadius: BORDER_RADIUS,
             borderBottomLeftRadius: BORDER_RADIUS,
         },
-        avatarContainer: {
-            height: '100%',
-        },
         cardAction: {
             display: 'flex',
             flexDirection: 'column',
-        },
-        cardRoot: {
-            height: ({ fixedCardHeight }: StyleProps) => (fixedCardHeight ? 184 : 'fit-content'),
         },
         compactPaper: {
             padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
@@ -66,7 +56,7 @@ const HomeRecipeCard = ({ recipe }: Props) => {
     const { history } = useRouterContext()
     const { gridBreakpointProps, gridLayout, compactLayout } = useGridContext()
 
-    const classes = useStyles({ fixedCardHeight: gridLayout === 'list' })
+    const classes = useStyles()
 
     useEffect(() => {
         // ? default preview is overwritten, don't query for attachments
@@ -110,21 +100,19 @@ const HomeRecipeCard = ({ recipe }: Props) => {
 
     return (
         <Grid {...gridBreakpointProps} item>
-            <Card className={classes.cardRoot}>
+            <Card>
                 <Grid container>
                     <Grid item xs={2} sm={3} xl={gridLayout === 'list' ? 2 : 5}>
-                        <div className={classes.avatarContainer}>
-                            {attachmentRefLoading ? (
-                                <Skeleton className={classes.avatar} variant="rect" />
-                            ) : (
-                                <Avatar
-                                    variant="square"
-                                    className={classes.avatar}
-                                    src={recipe.previewAttachment || attachmentRef.smallDataUrl}>
-                                    {recipe.name.slice(0, 1).toUpperCase()}
-                                </Avatar>
-                            )}
-                        </div>
+                        {attachmentRefLoading ? (
+                            <Skeleton className={classes.avatar} variant="rect" />
+                        ) : (
+                            <Avatar
+                                variant="square"
+                                className={classes.avatar}
+                                src={recipe.previewAttachment || attachmentRef.smallDataUrl}>
+                                {recipe.name.slice(0, 1).toUpperCase()}
+                            </Avatar>
+                        )}
                     </Grid>
                     <Grid item xs={10} sm={9} xl={gridLayout === 'list' ? 10 : 7}>
                         <CardHeader
