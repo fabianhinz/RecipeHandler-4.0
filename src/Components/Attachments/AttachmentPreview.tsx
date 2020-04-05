@@ -1,14 +1,4 @@
-import {
-    Avatar,
-    CardActionArea,
-    createStyles,
-    Fab,
-    Grid,
-    makeStyles,
-    Tooltip,
-    Zoom,
-} from '@material-ui/core'
-import BugIcon from '@material-ui/icons/BugReport'
+import { createStyles, Fab, Grid, makeStyles, Tooltip, Zoom } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { FileImage } from 'mdi-material-ui'
 import React, { useRef, useState } from 'react'
@@ -20,42 +10,44 @@ import { BORDER_RADIUS } from '../../theme'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        attachmentPreview: {
+        skeleton: {
             borderRadius: BORDER_RADIUS,
-            boxShadow: theme.shadows[1],
-            [theme.breakpoints.only('xs')]: {
-                width: () => window.innerWidth - 32,
-                height: () => ((window.innerWidth - 32) / 16) * 9,
+
+            [theme.breakpoints.between('xs', 'sm')]: {
+                height: 250,
+                width: 250,
             },
-            [theme.breakpoints.only('sm')]: {
-                width: 320,
-                height: 180,
-            },
-            [theme.breakpoints.between('sm', 'lg')]: {
-                width: 400,
-                height: 225,
+            [theme.breakpoints.between('md', 'lg')]: {
+                height: 350,
+                width: 350,
             },
             [theme.breakpoints.up('xl')]: {
-                width: 498,
-                height: 280,
+                height: 500,
+                width: 500,
             },
         },
-        '@keyframes grid-collapse': {
-            from: {
-                height: 0,
+        img: {
+            borderRadius: BORDER_RADIUS,
+            boxShadow: theme.shadows[1],
+            cursor: 'pointer',
+            [theme.breakpoints.between('xs', 'sm')]: {
+                height: 250,
             },
-            to: {
-                height: 180,
+            [theme.breakpoints.between('md', 'lg')]: {
+                height: 350,
+            },
+            [theme.breakpoints.up('xl')]: {
+                height: 500,
             },
         },
         gridItem: {
-            animation: '$grid-collapse 0.225s ease-out',
             position: 'relative',
         },
         selectionButton: {
             position: 'absolute',
             top: 0,
             left: 0,
+            zIndex: 999,
         },
     })
 )
@@ -89,19 +81,17 @@ const AttachmentPreview = ({
             onMouseEnter={() => setShowSelection(true)}
             onMouseLeave={() => setShowSelection(false)}>
             {attachmentRefLoading ? (
-                <Skeleton variant="circle" className={classes.attachmentPreview} />
+                <Skeleton variant="circle" animation="pulse" className={classes.skeleton} />
             ) : (
                 <>
-                    <CardActionArea
-                        className={classes.attachmentPreview}
-                        onClick={() => onClick(originIdRef.current)}>
-                        <Avatar
-                            id={originIdRef.current}
-                            className={classes.attachmentPreview}
-                            src={attachmentRef.mediumDataUrl}>
-                            <BugIcon fontSize="large" />
-                        </Avatar>
-                    </CardActionArea>
+                    <img
+                        onClick={() => onClick(originIdRef.current)}
+                        className={classes.img}
+                        alt=""
+                        id={originIdRef.current}
+                        src={attachmentRef.mediumDataUrl}
+                    />
+
                     <Zoom in={showSelection && !previewChangeDisabled}>
                         <Tooltip
                             placement="right"

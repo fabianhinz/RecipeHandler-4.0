@@ -93,6 +93,12 @@ const useStyles = makeStyles(theme =>
         },
         attachment: {
             overflow: 'hidden',
+            display: 'flex',
+            justifyContent: 'center',
+        },
+        attachmentImg: {
+            height: '100%',
+            objectFit: 'contain',
         },
         attachmentMetadata: {
             position: 'absolute',
@@ -142,8 +148,8 @@ const SwipeableAttachment = ({ attachment }: SwipeableAttachmentProps) => {
             )}
             {!attachmentRefLoading && (
                 <img
-                    alt=""
-                    width="100%"
+                    alt="test"
+                    className={classes.attachmentImg}
                     onLoad={() => setImgLoaded(true)}
                     src={attachmentRef.fullDataUrl}
                 />
@@ -179,7 +185,7 @@ interface AttachmentAlert extends Partial<Pick<AlertProps, 'severity' | 'action'
     text?: ReactText
     open: boolean
 }
-
+// ? Redo this...
 const AttachmentGalleryProvider: FC = ({ children }) => {
     const [originId, setOriginId] = useState<string | undefined>()
     const [attachments, setAttachments] = useState<AttachmentDoc[] | undefined>()

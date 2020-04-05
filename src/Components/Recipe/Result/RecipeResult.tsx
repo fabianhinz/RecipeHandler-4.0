@@ -53,6 +53,7 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                             action={<CopyButton text={recipe.ingredients} />}
                             BackgroundIcon={AssignmentIcon}>
                             <MarkdownRenderer
+                                withShoppingList
                                 recipeName={recipe.name}
                                 source={recipe.ingredients}
                             />

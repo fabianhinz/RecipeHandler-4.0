@@ -45,6 +45,7 @@ const useStyles = makeStyles(theme =>
 
 interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
     recipeName: string
+    withShoppingList?: boolean
 }
 
 const MarkdownRenderer = (props: Props) => {
@@ -53,13 +54,13 @@ const MarkdownRenderer = (props: Props) => {
     const classes = useStyles()
 
     const shoppingListDocRef = useMemo(() => {
-        if (!user || !props.recipeName) return
+        if (!user || !props.recipeName || !props.withShoppingList) return
         return FirebaseService.firestore
             .collection('users')
             .doc(user.uid)
             .collection('shoppingList')
             .doc(props.recipeName)
-    }, [props.recipeName, user])
+    }, [props.recipeName, user, props.withShoppingList])
 
     const renderPropsToGrocery = (children: any) => children[0]?.props?.value as string | undefined
 
@@ -102,7 +103,7 @@ const MarkdownRenderer = (props: Props) => {
                 list: renderProps => <List>{renderProps.children}</List>,
                 listItem: renderProps => (
                     <ListItem disableGutters>
-                        {renderProps.ordered ? (
+                        {renderProps.ordered || !props.withShoppingList ? (
                             <ListItemAvatar>
                                 <Avatar>{renderProps.index + 1}</Avatar>
                             </ListItemAvatar>

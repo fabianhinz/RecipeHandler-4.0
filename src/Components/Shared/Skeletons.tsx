@@ -6,10 +6,6 @@ import React from 'react'
 import { FirebaseService } from '../../services/firebase'
 import { useGridContext } from '../Provider/GridProvider'
 
-interface StyleProps {
-    compactLayout: boolean
-}
-
 const useStyles = makeStyles(theme => {
     const trial = {
         [theme.breakpoints.down('sm')]: {
@@ -26,12 +22,7 @@ const useStyles = makeStyles(theme => {
 
     return createStyles({
         recipe: {
-            [theme.breakpoints.only('xs')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 184),
-            },
-            [theme.breakpoints.up('sm')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 224),
-            },
+            height: 250,
             width: '100%',
         },
         trialsSelection: trial,
@@ -56,9 +47,7 @@ interface Props {
 }
 
 const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
-    const { compactLayout } = useGridContext()
-
-    const classes = useStyles({ compactLayout })
+    const classes = useStyles()
     const { gridBreakpointProps } = useGridContext()
 
     if (!visible) return <></>
