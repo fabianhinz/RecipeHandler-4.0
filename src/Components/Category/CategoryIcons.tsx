@@ -10,6 +10,7 @@ import {
     Cupcake,
     EggEaster,
     Fish,
+    FoodCroissant,
     GlassCocktail,
     KettleOutline,
     Leaf,
@@ -42,6 +43,8 @@ const getIconByCategory = (category: string) => {
             return <Leaf />
         case 'Suppe':
             return <Bowl />
+        case 'Frühstück':
+            return <FoodCroissant />
         case 'Alkohol':
             return <GlassCocktail />
         case 'Alkoholfrei':
