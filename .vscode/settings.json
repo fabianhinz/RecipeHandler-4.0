@@ -6,7 +6,4 @@
             "prettier/prettier": "warn"
         }
     },
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    }
 }
