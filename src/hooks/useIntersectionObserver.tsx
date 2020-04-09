@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from '@material-ui/core'
-import React, { useEffect, useRef } from 'react'
+import React, { useLayoutEffect, useRef } from 'react'
 
 import ElementIdService from '../services/elementIdService'
 
@@ -21,7 +21,7 @@ const useIntersectionObserver = ({ onIsIntersecting, onLeave }: useIntersectionO
     const idRef = useRef(ElementIdService.getId())
     const classes = useStyles()
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const trigger = document.getElementById(idRef.current)
         if (!trigger) return
 
