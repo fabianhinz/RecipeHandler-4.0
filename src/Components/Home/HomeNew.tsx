@@ -114,7 +114,7 @@ const HomeNew = () => {
                                     className={clsx(classes.hidden, expanded && classes.expanded)}
                                 />
                             }>
-                            {expanded ? 'Ausblenden' : 'Einblenden'}
+                            {expanded ? 'weniger anzeigen' : 'alle anzeigen'}
                         </Button>
                     </Grid>
                 </Grid>

@@ -81,7 +81,7 @@ const AttachmentPreview = ({
             onMouseEnter={() => setShowSelection(true)}
             onMouseLeave={() => setShowSelection(false)}>
             {attachmentRefLoading ? (
-                <Skeleton variant="circle" animation="pulse" className={classes.skeleton} />
+                <Skeleton variant="circle" animation="wave" className={classes.skeleton} />
             ) : (
                 <>
                     <img
