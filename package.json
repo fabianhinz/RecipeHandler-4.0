@@ -39,7 +39,7 @@
 		"react-scripts": "^3.4.1",
 		"react-swipeable-views": "^0.13.9",
 		"stacktrace-js": "^2.0.2",
-		"tesseract.js": "^2.1.0",
+		"tesseract.js": "^2.1.1",
 		"typeface-roboto": "0.0.75",
 		"typeface-ubuntu": "0.0.65",
 		"typescript": "3.8.3",
