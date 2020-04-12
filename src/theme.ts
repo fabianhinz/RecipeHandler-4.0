@@ -36,7 +36,7 @@ const sharedTheme: Partial<ThemeOptions> = {
         MuiCardContent: {
             root: {
                 '&:last-child': {
-                    paddingBottom: 'inherhit',
+                    paddingBottom: 16,
                 },
             },
         },
