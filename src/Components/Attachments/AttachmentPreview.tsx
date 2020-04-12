@@ -4,6 +4,7 @@ import { FileImage } from 'mdi-material-ui'
 import React, { useRef, useState } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
+import useImgSrcLazy from '../../hooks/useImgSrcLazy'
 import { AttachmentDoc } from '../../model/model'
 import elementIdService from '../../services/elementIdService'
 import { BORDER_RADIUS } from '../../theme'
@@ -12,7 +13,6 @@ const useStyles = makeStyles(theme =>
     createStyles({
         skeleton: {
             borderRadius: BORDER_RADIUS,
-
             [theme.breakpoints.between('xs', 'sm')]: {
                 height: 250,
                 width: 250,
@@ -71,7 +71,8 @@ const AttachmentPreview = ({
 
     const originIdRef = useRef(elementIdService.getId('attachment-origin'))
 
-    const { attachmentRef, attachmentRefLoading } = useAttachment(attachment)
+    const { attachmentRef } = useAttachment(attachment)
+    const { imgLoading, imgSrc } = useImgSrcLazy({ src: attachmentRef.mediumDataUrl })
     const classes = useStyles()
 
     return (
@@ -80,8 +81,8 @@ const AttachmentPreview = ({
             className={classes.gridItem}
             onMouseEnter={() => setShowSelection(true)}
             onMouseLeave={() => setShowSelection(false)}>
-            {attachmentRefLoading ? (
-                <Skeleton variant="circle" animation="wave" className={classes.skeleton} />
+            {imgLoading ? (
+                <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
             ) : (
                 <>
                     <img
@@ -89,7 +90,7 @@ const AttachmentPreview = ({
                         className={classes.img}
                         alt=""
                         id={originIdRef.current}
-                        src={attachmentRef.mediumDataUrl}
+                        src={imgSrc}
                     />
 
                     <Zoom in={showSelection && !previewChangeDisabled}>

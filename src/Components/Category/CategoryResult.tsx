@@ -14,6 +14,7 @@ export const CategoryResult: FC<CategoryResultProps> = ({ categories, ...chipPro
             <Grid item key={type}>
                 {categories[type].length > 0 && (
                     <Chip
+                        size="small"
                         icon={getIconByCategory(categories[type])}
                         label={categories[type]}
                         {...chipProps}

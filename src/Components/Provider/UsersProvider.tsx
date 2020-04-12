@@ -15,7 +15,8 @@ export const useUsersContext = () => useContext(Context)
 
 const UsersProvider: FC = ({ children }) => {
     const [users, setUsers] = useState<Map<DocumentId, User>>(new Map())
-    // ! onShapshot would not scale ...
+    // ! onShapshot would not scale ..., ToDo >> only username and profile picture should be in users/{id}
+    // ! everything else as a subcollection
     useEffect(() => {
         FirebaseService.firestore
             .collection('users')
