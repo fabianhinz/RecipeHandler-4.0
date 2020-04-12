@@ -17,6 +17,7 @@ import { Eye } from 'mdi-material-ui'
 import React, { memo, useEffect, useMemo, useState } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
+import useImgSrcLazy from '../../hooks/useImgSrcLazy'
 import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
@@ -82,7 +83,11 @@ interface Props {
 const HomeRecipeCard = ({ recipe }: Props) => {
     const [attachmentDoc, setAttachmentDoc] = useState<AttachmentDoc | undefined>()
 
-    const { attachmentRef, attachmentRefLoading } = useAttachment(attachmentDoc)
+    const { attachmentRef } = useAttachment(attachmentDoc)
+    const { imgSrc, imgLoading } = useImgSrcLazy({
+        src: recipe.previewAttachment || attachmentRef.smallDataUrl,
+    })
+
     const { history } = useRouterContext()
     const { gridBreakpointProps, gridLayout, compactLayout } = useGridContext()
     const { getByUid } = useUsersContext()
@@ -136,14 +141,11 @@ const HomeRecipeCard = ({ recipe }: Props) => {
             <Card className={classes.card}>
                 <Grid container>
                     <Grid item xs={12} lg={3} xl={gridLayout === 'list' ? 2 : 5}>
-                        {attachmentRefLoading ? (
+                        {imgLoading ? (
                             <Skeleton className={classes.avatar} variant="rect" />
                         ) : (
                             <div className={classes.avatarContainer}>
-                                <Avatar
-                                    variant="square"
-                                    className={classes.avatar}
-                                    src={recipe.previewAttachment || attachmentRef.smallDataUrl}>
+                                <Avatar variant="square" className={classes.avatar} src={imgSrc}>
                                     {recipe.name.slice(0, 1).toUpperCase()}
                                 </Avatar>
                                 {editor && (
