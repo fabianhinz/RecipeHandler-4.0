@@ -21,9 +21,9 @@ import TimelapseIcon from '@material-ui/icons/TimelapseRounded'
 import {
     CloudOffOutline,
     CloudSync,
+    CogOutline,
     DatabaseSearch,
     Information,
-    SettingsOutline,
     StarCircle,
 } from 'mdi-material-ui'
 import React, { useState } from 'react'
@@ -55,7 +55,7 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                             <Information />
                         </IconButton>
                     }
-                    BackgroundIcon={SettingsOutline}>
+                    BackgroundIcon={CogOutline}>
                     <List disablePadding>
                         <ListItem button onClick={onUserSettingChange('muiTheme')}>
                             <ListItemIcon>
@@ -205,7 +205,7 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                             <Information />
                         </IconButton>
                     }
-                    BackgroundIcon={SettingsOutline}>
+                    BackgroundIcon={CogOutline}>
                     <List disablePadding>
                         <ListItem button onClick={onUserSettingChange('notifications')}>
                             <ListItemIcon>
