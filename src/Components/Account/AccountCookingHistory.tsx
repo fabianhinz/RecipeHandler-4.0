@@ -20,10 +20,13 @@ const useStyles = makeStyles(theme =>
     createStyles({
         skeleton: {
             [theme.breakpoints.only('xs')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 184),
+                height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 360),
             },
-            [theme.breakpoints.up('sm')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 224),
+            [theme.breakpoints.between('sm', 'md')]: {
+                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 360),
+            },
+            [theme.breakpoints.up('lg')]: {
+                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 200),
             },
             width: '100%',
             borderRadius: BORDER_RADIUS,

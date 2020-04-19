@@ -10,7 +10,8 @@ const useStyles = makeStyles(theme =>
         main: {
             minHeight: '40vh',
             backgroundColor: theme.palette.background.default,
-            borderRadius: BORDER_RADIUS,
+            borderTopLeftRadius: BORDER_RADIUS,
+            borderTopRightRadius: BORDER_RADIUS,
             [theme.breakpoints.only('xs')]: {
                 padding: theme.spacing(2),
             },
@@ -24,8 +25,12 @@ const useStyles = makeStyles(theme =>
             padding: 0,
             paddingTop: 64,
             [theme.breakpoints.up('sm')]: {
-                padding: theme.spacing(3),
+                paddingLeft: theme.spacing(3),
+                paddingRight: theme.spacing(3),
                 paddingTop: 64 + theme.spacing(3),
+            },
+            '@media (min-width: 2560px)': {
+                maxWidth: 2560,
             },
         },
     })

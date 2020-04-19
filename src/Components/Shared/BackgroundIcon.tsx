@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme =>
                 display: 'none',
             },
             [theme.breakpoints.up('md')]: {
-                display: theme.palette.type === 'light' ? 'none' : 'inherit',
                 left: 95,
             },
         },

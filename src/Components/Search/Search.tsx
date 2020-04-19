@@ -18,18 +18,33 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useSearchResultsContext } from '../Provider/SearchResultsProvider'
 import { PATHS } from '../Routes/Routes'
 
+interface StyleProps {
+    focused: boolean
+}
+
 const useStyles = makeStyles(theme =>
     createStyles({
         searchContainer: {
             display: 'flex',
             position: 'relative',
-            backgroundColor:
-                theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
+            backgroundColor: ({ focused }: StyleProps) =>
+                focused
+                    ? '#fff'
+                    : theme.palette.type === 'dark'
+                    ? 'rgba(255, 255, 255, 0.1)'
+                    : 'rgba(0, 0, 0, 0.08)',
+            boxShadow: ({ focused }: StyleProps) =>
+                theme.palette.type === 'light' && focused ? theme.shadows[1] : 'unset',
             borderRadius: BORDER_RADIUS,
             padding: theme.spacing(1),
+            transition: theme.transitions.create('background-color', {
+                easing: theme.transitions.easing.easeOut,
+            }),
         },
         searchInput: {
             ...theme.typography.h6,
+            color: ({ focused }: StyleProps) =>
+                focused || theme.palette.type === 'light' ? '#000' : '#fff',
         },
         alert: {
             borderRadius: BORDER_RADIUS,
@@ -52,11 +67,13 @@ export const AlgoliaDocSearchRef = (
 )
 
 const Search = () => {
+    const [focused, setFocused] = useState(false)
     const [value, setValue] = useState('')
-    const history = useHistory()
-    const classes = useStyles()
 
+    const history = useHistory()
+    const classes = useStyles({ focused })
     const debouncedValue = useDebounce(value, 500)
+
     const { user } = useFirebaseAuthContext()
     const { setError, setHits } = useSearchResultsContext()
 
@@ -92,10 +109,16 @@ const Search = () => {
         searchAlgolia()
     }
 
+    const handleFocusChange = (direction: 'in' | 'out') => () => {
+        setFocused(direction === 'in' ? true : false)
+    }
+
     return (
         <Container maxWidth="md" className={classes.container}>
             <form onSubmit={handleSubmit} className={classes.searchContainer}>
                 <InputBase
+                    onFocus={handleFocusChange('in')}
+                    onBlur={handleFocusChange('out')}
                     className={classes.searchInput}
                     fullWidth
                     placeholder="Suchen"
