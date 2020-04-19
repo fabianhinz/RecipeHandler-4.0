@@ -58,17 +58,20 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
             await FirebaseService.firestore
                 .collection('recipes')
                 .doc(state.name)
-                .set({
-                    name: state.name,
-                    ingredients: state.ingredients,
-                    amount: state.amount,
-                    description: state.description,
-                    numberOfComments: state.numberOfComments,
-                    categories: state.categories,
-                    relatedRecipes: state.relatedRecipes,
-                    createdDate,
-                    editorUid: state.editorUid || user!.uid,
-                } as Recipe)
+                .set(
+                    {
+                        name: state.name,
+                        ingredients: state.ingredients,
+                        amount: state.amount,
+                        description: state.description,
+                        numberOfComments: state.numberOfComments,
+                        categories: state.categories,
+                        relatedRecipes: state.relatedRecipes,
+                        createdDate,
+                        editorUid: state.editorUid || user!.uid,
+                    } as Recipe,
+                    { merge: true }
+                )
 
             if (!editedRecipe) {
                 await FirebaseService.firestore
