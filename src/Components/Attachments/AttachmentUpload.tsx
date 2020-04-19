@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme =>
         },
         card: {
             position: 'fixed',
-            top: 'calc(env(safe-area-inset-top) + 24px)',
+            bottom: 'calc(env(safe-area-inset-bottom) + 24px)',
             [theme.breakpoints.only('xs')]: {
                 right: 16,
             },
@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme =>
                 right: 24,
             },
             zIndex: theme.zIndex.modal,
+            boxShadow: theme.shadows[4],
         },
         attachmentName: {
             [theme.breakpoints.only('xs')]: {

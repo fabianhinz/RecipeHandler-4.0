@@ -7,7 +7,7 @@ import FabContainer from '../Shared/FabContainer'
 
 interface Props {
     icon: JSX.Element
-    tooltipTitle: React.ReactNode
+    tooltipTitle: React.ReactText
     onClick?: () => void
     pathname?: string
 }

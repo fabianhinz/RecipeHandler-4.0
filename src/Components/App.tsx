@@ -113,7 +113,7 @@ const App: FC = () => {
                 autoHideDuration={3000}
                 anchorOrigin={{
                     vertical: 'bottom',
-                    horizontal: 'center',
+                    horizontal: 'right',
                 }}>
                 <AppProvider>
                     <Header scrolled={scrolled} />
