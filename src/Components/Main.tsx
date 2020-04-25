@@ -3,7 +3,6 @@ import React from 'react'
 
 import { BORDER_RADIUS } from '../theme'
 import { Routes } from './Routes/Routes'
-import { BackgroundIcon } from './Shared/BackgroundIcon'
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -40,14 +39,11 @@ const Main = () => {
     const classes = useStyles()
 
     return (
-        <>
-            <Container className={classes.container} maxWidth="xl">
-                <main className={classes.main}>
-                    <Routes />
-                </main>
-            </Container>
-            <BackgroundIcon />
-        </>
+        <Container className={classes.container} maxWidth="xl">
+            <main className={classes.main}>
+                <Routes />
+            </main>
+        </Container>
     )
 }
 
