@@ -5,8 +5,10 @@ import {
     Hidden,
     IconButton,
     makeStyles,
+    Slide,
     Toolbar,
     Tooltip,
+    useScrollTrigger,
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import {
@@ -26,6 +28,10 @@ import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import { useGridContext } from './Provider/GridProvider'
 import { PATHS } from './Routes/Routes'
 import Search from './Search/Search'
+
+interface StyleProps {
+    scrolled: boolean
+}
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -48,7 +54,7 @@ const useStyles = makeStyles(theme =>
             borderBottom: `1px solid ${
                 theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
             }`,
-            boxShadow: ({ scrolled }: Props) => (scrolled ? theme.shadows[4] : 'unset'),
+            boxShadow: 'unset',
         },
         toolbar: {
             minHeight: 64,
@@ -73,94 +79,101 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface Props {
-    scrolled: boolean
-}
-
-const Header = ({ scrolled }: Props) => {
+const Header = () => {
     const [authenticationOpen, setAuthenticationOpen] = useState(false)
     const [drawerOpen, setDrawerOpen] = useState(false)
 
-    const classes = useStyles({ scrolled })
+    const scrolled = useScrollTrigger({ target: window })
+    const classes = useStyles()
 
     const history = useHistory()
+
     const { setGridLayout, gridLayout, compactLayout, setCompactLayout } = useGridContext()
     const { user, loginEnabled } = useFirebaseAuthContext()
 
     return (
         <>
             <div className={classes.safeArea} />
-            <AppBar className={classes.appbar} color="default" position="fixed">
-                <Toolbar className={classes.toolbar}>
-                    <header className={classes.header}>
-                        <div className={classes.menuIcon}>
-                            <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
-                                <MenuIcon />
-                            </IconButton>
-                        </div>
-                        <Search />
-                        <div className={classes.headerButtons}>
-                            <Hidden mdUp>
-                                <Tooltip title={compactLayout ? 'Detailansicht' : 'Kompaktansicht'}>
-                                    <IconButton onClick={() => setCompactLayout(prev => !prev)}>
-                                        {compactLayout ? <EyeOutline /> : <EyeOffOutline />}
-                                    </IconButton>
-                                </Tooltip>
-                            </Hidden>
-                            <Hidden smDown>
-                                <Tooltip
-                                    title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
-                                    <IconButton
-                                        onClick={() =>
-                                            setGridLayout(prev =>
-                                                prev === 'grid' ? 'list' : 'grid'
-                                            )
-                                        }>
-                                        {gridLayout === 'grid' ? (
-                                            <ViewAgendaOutline />
-                                        ) : (
-                                            <ViewGridOutline />
-                                        )}
-                                    </IconButton>
-                                </Tooltip>
-                            </Hidden>
-
-                            <Tooltip title="Impressum">
-                                <IconButton onClick={() => history.push(PATHS.impressum)}>
-                                    <InformationOutline />
+            <Slide appear={false} direction="down" in={!scrolled}>
+                <AppBar className={classes.appbar} color="default" position="fixed">
+                    <Toolbar className={classes.toolbar}>
+                        <header className={classes.header}>
+                            <div className={classes.menuIcon}>
+                                <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
+                                    <MenuIcon />
                                 </IconButton>
-                            </Tooltip>
+                            </div>
+                            <Search />
+                            <div className={classes.headerButtons}>
+                                <Hidden mdUp>
+                                    <Tooltip
+                                        title={compactLayout ? 'Detailansicht' : 'Kompaktansicht'}>
+                                        <IconButton onClick={() => setCompactLayout(prev => !prev)}>
+                                            {compactLayout ? <EyeOutline /> : <EyeOffOutline />}
+                                        </IconButton>
+                                    </Tooltip>
+                                </Hidden>
+                                <Hidden smDown>
+                                    <Tooltip
+                                        title={
+                                            gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'
+                                        }>
+                                        <IconButton
+                                            onClick={() =>
+                                                setGridLayout(prev =>
+                                                    prev === 'grid' ? 'list' : 'grid'
+                                                )
+                                            }>
+                                            {gridLayout === 'grid' ? (
+                                                <ViewAgendaOutline />
+                                            ) : (
+                                                <ViewGridOutline />
+                                            )}
+                                        </IconButton>
+                                    </Tooltip>
+                                </Hidden>
 
-                            <Tooltip title={user?.username || 'Einloggen'}>
-                                <div>
-                                    <IconButton
-                                        disabled={!loginEnabled}
-                                        onClick={() => {
-                                            if (user) history.push(PATHS.account)
-                                            else setAuthenticationOpen(true)
-                                        }}>
-                                        {user ? (
-                                            <Avatar
-                                                className={classes.userAvatar}
-                                                src={user.profilePicture}
-                                            />
-                                        ) : (
-                                            <AccountCircleOutline />
-                                        )}
+                                <Tooltip title="Impressum">
+                                    <IconButton onClick={() => history.push(PATHS.impressum)}>
+                                        <InformationOutline />
                                     </IconButton>
-                                </div>
-                            </Tooltip>
-                        </div>
-                    </header>
-                </Toolbar>
-            </AppBar>
+                                </Tooltip>
+
+                                <Tooltip title={user?.username || 'Einloggen'}>
+                                    <div>
+                                        <IconButton
+                                            disabled={!loginEnabled}
+                                            onClick={() => {
+                                                if (user) history.push(PATHS.account)
+                                                else setAuthenticationOpen(true)
+                                            }}>
+                                            {user ? (
+                                                <Avatar
+                                                    className={classes.userAvatar}
+                                                    src={user.profilePicture}
+                                                />
+                                            ) : (
+                                                <AccountCircleOutline />
+                                            )}
+                                        </IconButton>
+                                    </div>
+                                </Tooltip>
+                            </div>
+                        </header>
+                    </Toolbar>
+                </AppBar>
+            </Slide>
 
             <AccountAuthentication
                 open={authenticationOpen}
                 onClose={() => setAuthenticationOpen(false)}
             />
 
-            <Nav drawerOpen={drawerOpen} onDrawerClose={() => setDrawerOpen(false)} />
+            <Nav
+                scrolled={scrolled}
+                drawerOpen={drawerOpen}
+                onDrawerClose={() => setDrawerOpen(false)}
+            />
         </>
     )
 }

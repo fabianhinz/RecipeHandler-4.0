@@ -26,6 +26,7 @@ import { AlgoliaDocSearchRef } from './Search/Search'
 
 interface StyleProps {
     active?: boolean
+    scrolled?: boolean
 }
 
 const useStyles = makeStyles(theme =>
@@ -35,9 +36,15 @@ const useStyles = makeStyles(theme =>
             flexDirection: 'column',
             position: 'fixed',
             justifyContent: 'flex-start',
-            top: 'calc(env(safe-area-inset-top) + 64px)',
+            transition: theme.transitions.create('top', {
+                easing: theme.transitions.easing.easeOut,
+            }),
+            top: ({ scrolled }: StyleProps) =>
+                !scrolled
+                    ? 'calc(env(safe-area-inset-top) + 64px)'
+                    : 'calc(env(safe-area-inset-top) + 0px)',
             bottom: 0,
-            maxHeight: 'calc(100% - 64px)',
+            maxHeight: '100%',
             zIndex: theme.zIndex.appBar,
             width: 'calc(env(safe-area-inset-left) + 95px)',
             paddingLeft: 'env(safe-area-inset-left)',
@@ -163,10 +170,11 @@ const NavListItem = ({
 interface NavProps {
     drawerOpen: boolean
     onDrawerClose: () => void
+    scrolled: boolean
 }
 
-const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
-    const classes = useStyles({})
+const Nav = ({ drawerOpen, onDrawerClose, scrolled }: NavProps) => {
+    const classes = useStyles({ scrolled })
 
     const { hits } = useSearchResultsContext()
     const { bookmarks } = useBookmarkContext()
