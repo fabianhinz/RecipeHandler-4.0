@@ -54,9 +54,6 @@ const useStyles = makeStyles(theme =>
         expanded: {
             transform: 'rotate(180deg)',
         },
-        expandableGridContainer: {
-            padding: theme.spacing(2),
-        },
     })
 )
 
@@ -95,40 +92,36 @@ const ExpandableGridContainer = ({ titles, children, onExpandedChange }: Props) 
     )
 
     return (
-        <div className={classes.expandableGridContainer}>
-            <EntryGridContainer>
-                <Grid item xs={12}>
-                    <Grid container alignItems="center" justify="space-between">
-                        <Grid item>
-                            <Typography variant="h4">{titles.header}</Typography>
-                        </Grid>
-                        <Grid item>
-                            {isMobile ? (
-                                <IconButton {...sharedExpandBtnProps}>{chevron}</IconButton>
-                            ) : (
-                                <Button
-                                    {...sharedExpandBtnProps}
-                                    variant={
-                                        theme.palette.type === 'dark' ? 'outlined' : 'contained'
-                                    }
-                                    startIcon={chevron}>
-                                    {expanded ? titles.expanded : titles.notExpanded}
-                                </Button>
-                            )}
-                        </Grid>
+        <EntryGridContainer>
+            <Grid item xs={12}>
+                <Grid container alignItems="center" justify="space-between">
+                    <Grid item>
+                        <Typography variant="h4">{titles.header}</Typography>
+                    </Grid>
+                    <Grid item>
+                        {isMobile ? (
+                            <IconButton {...sharedExpandBtnProps}>{chevron}</IconButton>
+                        ) : (
+                            <Button
+                                {...sharedExpandBtnProps}
+                                variant={theme.palette.type === 'dark' ? 'outlined' : 'contained'}
+                                startIcon={chevron}>
+                                {expanded ? titles.expanded : titles.notExpanded}
+                            </Button>
+                        )}
                     </Grid>
                 </Grid>
+            </Grid>
 
-                <Grid item xs={12}>
-                    <Grid
-                        container
-                        className={clsx(classes.container, expanded && classes.containerExpanded)}
-                        spacing={3}>
-                        {children}
-                    </Grid>
+            <Grid item xs={12}>
+                <Grid
+                    container
+                    className={clsx(classes.container, expanded && classes.containerExpanded)}
+                    spacing={3}>
+                    {children}
                 </Grid>
-            </EntryGridContainer>
-        </div>
+            </Grid>
+        </EntryGridContainer>
     )
 }
 
