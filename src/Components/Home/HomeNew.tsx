@@ -25,7 +25,6 @@ const useStyles = makeStyles(theme =>
         },
         typography: {
             color: theme.palette.getContrastText(green.A100),
-            maxWidth: '100%',
         },
     })
 )
@@ -67,7 +66,7 @@ const HomeNew = () => {
                 <Grid item {...gridBreakpointProps} key={recipeName}>
                     <CardActionArea onClick={() => history.push(PATHS.details(recipeName))}>
                         <Paper className={classes.paper}>
-                            <Typography className={classes.typography} noWrap variant="h6">
+                            <Typography className={classes.typography} variant="h6">
                                 {recipeName}
                             </Typography>
                         </Paper>

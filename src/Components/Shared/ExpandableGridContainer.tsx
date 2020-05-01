@@ -1,8 +1,18 @@
-import { Button, createStyles, Grid, makeStyles, Typography, useTheme } from '@material-ui/core'
+import {
+    Button,
+    ButtonProps,
+    createStyles,
+    Grid,
+    IconButton,
+    makeStyles,
+    Typography,
+    useTheme,
+} from '@material-ui/core'
 import clsx from 'clsx'
 import { ChevronDown } from 'mdi-material-ui'
-import React, { ReactNode, ReactText, useMemo, useState } from 'react'
+import React, { ReactNode, ReactText, useCallback, useMemo, useState } from 'react'
 
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { GridLayout, useGridContext } from '../Provider/GridProvider'
 import EntryGridContainer from './EntryGridContainer'
 
@@ -27,10 +37,8 @@ const useStyles = makeStyles(theme =>
                 height: ({ gridItems }: StyleProps) => gridItems * 72,
             },
             [theme.breakpoints.between('md', 'lg')]: {
-                height: ({ gridItems, gridLayout }: StyleProps) => {
-                    console.log(gridItems)
-                    return gridLayout === 'list' ? gridItems * 72 : Math.ceil(gridItems / 2) * 72
-                },
+                height: ({ gridItems, gridLayout }: StyleProps) =>
+                    gridLayout === 'list' ? gridItems * 72 : Math.ceil(gridItems / 2) * 72,
             },
             [theme.breakpoints.up('xl')]: {
                 height: ({ gridItems, gridLayout }: StyleProps) =>
@@ -64,13 +72,27 @@ const ExpandableGridContainer = ({ titles, children, onExpandedChange }: Props) 
     const gridItems = useMemo(() => React.Children.toArray(children).length, [children])
     const { gridLayout } = useGridContext()
     const classes = useStyles({ gridLayout, gridItems })
+    const { isMobile } = useBreakpointsContext()
 
     const theme = useTheme()
 
-    const handleExpandBtnChange = () => {
+    const handleExpandBtnChange = useCallback(() => {
         setExpanded(!expanded)
         if (onExpandedChange) onExpandedChange(!expanded)
-    }
+    }, [expanded, onExpandedChange])
+
+    const chevron = useMemo(
+        () => <ChevronDown className={clsx(classes.hidden, expanded && classes.expanded)} />,
+        [classes.expanded, classes.hidden, expanded]
+    )
+
+    const sharedExpandBtnProps: Pick<ButtonProps, 'disabled' | 'onClick'> = useMemo(
+        () => ({
+            disabled: gridItems === 0,
+            onClick: handleExpandBtnChange,
+        }),
+        [gridItems, handleExpandBtnChange]
+    )
 
     return (
         <div className={classes.expandableGridContainer}>
@@ -81,20 +103,18 @@ const ExpandableGridContainer = ({ titles, children, onExpandedChange }: Props) 
                             <Typography variant="h4">{titles.header}</Typography>
                         </Grid>
                         <Grid item>
-                            <Button
-                                disabled={gridItems === 0}
-                                onClick={handleExpandBtnChange}
-                                variant={theme.palette.type === 'dark' ? 'outlined' : 'contained'}
-                                startIcon={
-                                    <ChevronDown
-                                        className={clsx(
-                                            classes.hidden,
-                                            expanded && classes.expanded
-                                        )}
-                                    />
-                                }>
-                                {expanded ? titles.expanded : titles.notExpanded}
-                            </Button>
+                            {isMobile ? (
+                                <IconButton {...sharedExpandBtnProps}>{chevron}</IconButton>
+                            ) : (
+                                <Button
+                                    {...sharedExpandBtnProps}
+                                    variant={
+                                        theme.palette.type === 'dark' ? 'outlined' : 'contained'
+                                    }
+                                    startIcon={chevron}>
+                                    {expanded ? titles.expanded : titles.notExpanded}
+                                </Button>
+                            )}
                         </Grid>
                     </Grid>
                 </Grid>
