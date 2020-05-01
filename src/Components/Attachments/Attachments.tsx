@@ -24,7 +24,7 @@ interface RecipeResultAttachmentsProps {
 }
 
 const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
-    const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[] | null>(null)
+    const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[]>([])
     const [recipePreview, setRecipePreview] = useState<
         { smallDataUrl?: string; disabled: boolean } | undefined
     >()
@@ -48,7 +48,7 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
                     const newAttachments = querySnapshot.docs.map(
                         doc => ({ ...doc.data(), docPath: doc.ref.path } as AttachmentDoc)
                     )
-                    if (newAttachments.length > 0) setSavedAttachments(newAttachments)
+                    setSavedAttachments(newAttachments)
                 }),
         [recipeDocRef, recipeName]
     )
@@ -75,7 +75,7 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
 
     return (
         <>
-            {savedAttachments && (
+            {savedAttachments.length > 0 && (
                 <Grid item xs={12}>
                     <Grid
                         wrap="nowrap"

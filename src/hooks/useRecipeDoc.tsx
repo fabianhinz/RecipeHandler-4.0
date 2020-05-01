@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { Recipe, RouteWithRecipeName } from '../model/model'
 import { FirebaseService } from '../services/firebase'
@@ -10,11 +11,18 @@ interface Options {
     routeProps: RouteWithRecipeName
 }
 
+const initialState: RecipesCollectionState = {
+    loading: true,
+    recipe: null,
+}
+
 export const useRecipeDoc = ({ routeProps }: Options) => {
-    const [state, setState] = useState<RecipesCollectionState>({
-        loading: true,
-        recipe: null,
-    })
+    const [state, setState] = useState<RecipesCollectionState>(initialState)
+    const { pathname } = useLocation()
+
+    useEffect(() => {
+        setState(initialState)
+    }, [pathname])
 
     useEffect(() => {
         let mounted = true
