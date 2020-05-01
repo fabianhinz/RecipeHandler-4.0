@@ -16,6 +16,7 @@ import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
+import ExpandableGridContainer from '../Shared/ExpandableGridContainer'
 import Skeletons from '../Shared/Skeletons'
 
 const COLOR_PALETTE = [
@@ -86,7 +87,7 @@ const HomeMostCooked = () => {
     const { isMobile } = useBreakpointsContext()
 
     const numberOfDocs = useMemo(
-        () => (isMobile ? FirebaseService.QUERY_LIMIT_MOBILE : FirebaseService.QUERY_LIMIT),
+        () => (isMobile ? 4 * FirebaseService.QUERY_LIMIT_MOBILE : 4 * FirebaseService.QUERY_LIMIT),
         [isMobile]
     )
 
@@ -112,32 +113,27 @@ const HomeMostCooked = () => {
     if (user && !user.showMostCooked) return <></>
 
     return (
-        <>
-            <Grid item xs={12}>
-                <Typography noWrap variant="h4">
-                    Häufig gekocht
-                </Typography>
-            </Grid>
+        <ExpandableGridContainer
+            titles={{
+                header: 'Häufig gekocht',
+                expanded: 'weniger anzeigen',
+                notExpanded: 'mehr anzeigen',
+            }}>
+            {[...mostCooked.entries()].map(([recipeName, counter]) => (
+                <MostCookedPaper
+                    key={recipeName}
+                    paletteIndex={[...counterValues].indexOf(counter.value)}
+                    recipeName={recipeName}
+                    counter={counter}
+                />
+            ))}
 
-            <Grid item xs={12}>
-                <Grid container spacing={3}>
-                    {[...mostCooked.entries()].map(([recipeName, counter]) => (
-                        <MostCookedPaper
-                            key={recipeName}
-                            paletteIndex={[...counterValues].indexOf(counter.value)}
-                            recipeName={recipeName}
-                            counter={counter}
-                        />
-                    ))}
-
-                    <Skeletons
-                        variant="cookCounter"
-                        visible={mostCooked.size === 0}
-                        numberOfSkeletons={numberOfDocs}
-                    />
-                </Grid>
-            </Grid>
-        </>
+            <Skeletons
+                variant="cookCounter"
+                visible={mostCooked.size === 0}
+                numberOfSkeletons={numberOfDocs}
+            />
+        </ExpandableGridContainer>
     )
 }
 
