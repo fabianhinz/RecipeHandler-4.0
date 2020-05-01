@@ -47,17 +47,17 @@ const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
             .doc(recipeName)
             .get()
             .then(doc => {
-                if (doc.exists) setRecipe({ ...(doc.data() as Recipe), createdDate })
+                if (doc.exists) setRecipe(doc.data() as Recipe)
                 else setNotFound(true)
             })
-    }, [createdDate, recipeName])
+    }, [recipeName])
 
     if (notFound) return <></>
 
     return (
         <>
             {recipe ? (
-                <HomeRecipeCard recipe={recipe} />
+                <HomeRecipeCard recipe={recipe} lastCookedDate={createdDate} />
             ) : (
                 <Grid item {...gridBreakpointProps}>
                     <Skeleton variant="rect" animation="wave" className={classes.skeleton} />

@@ -1,6 +1,5 @@
 import { createStyles, Grid, makeStyles } from '@material-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 
 import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'

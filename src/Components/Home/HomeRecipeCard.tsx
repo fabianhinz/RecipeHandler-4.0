@@ -78,9 +78,10 @@ const useStyles = makeStyles(theme =>
 
 interface Props {
     recipe: Recipe
+    lastCookedDate?: firebase.firestore.Timestamp
 }
 
-const HomeRecipeCard = ({ recipe }: Props) => {
+const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
     const [attachmentDoc, setAttachmentDoc] = useState<AttachmentDoc | undefined>()
 
     const { attachmentRef } = useAttachment(attachmentDoc)
@@ -169,7 +170,10 @@ const HomeRecipeCard = ({ recipe }: Props) => {
                         <CardHeader
                             classes={{ action: classes.cardAction, root: classes.cardHeader }}
                             title={recipe.name}
-                            subheader={recipe.createdDate.toDate().toLocaleDateString()}
+                            subheader={
+                                lastCookedDate?.toDate().toLocaleDateString() ||
+                                recipe.createdDate.toDate().toLocaleDateString()
+                            }
                             action={
                                 <>
                                     <Tooltip placement="left" title="Details">
