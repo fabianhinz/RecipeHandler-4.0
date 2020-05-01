@@ -45,7 +45,6 @@ const useMostCookedPaperStyles = makeStyles(theme =>
         typography: {
             color: (props: StyleProps) =>
                 theme.palette.getContrastText(props.backgroundColor || COLOR_PALETTE[0]),
-            maxWidth: '100%',
         },
     })
 )
@@ -68,7 +67,7 @@ const MostCookedPaper = ({ recipeName, counter, paletteIndex }: MostCookedPaperP
         <Grid item {...gridBreakpointProps} key={recipeName}>
             <CardActionArea onClick={() => history.push(PATHS.details(recipeName))}>
                 <Paper className={classes.paper}>
-                    <Typography className={classes.typography} noWrap variant="h6">
+                    <Typography className={classes.typography} variant="h6">
                         {counter.value}x {recipeName}
                     </Typography>
                 </Paper>
