@@ -112,27 +112,29 @@ const HomeMostCooked = () => {
     if (user && !user.showMostCooked) return <></>
 
     return (
-        <ExpandableGridContainer
-            titles={{
-                header: 'Häufig gekocht',
-                expanded: 'weniger anzeigen',
-                notExpanded: 'mehr anzeigen',
-            }}>
-            {[...mostCooked.entries()].map(([recipeName, counter]) => (
-                <MostCookedPaper
-                    key={recipeName}
-                    paletteIndex={[...counterValues].indexOf(counter.value)}
-                    recipeName={recipeName}
-                    counter={counter}
-                />
-            ))}
+        <Grid item xs={12}>
+            <ExpandableGridContainer
+                titles={{
+                    header: 'Häufig gekocht',
+                    expanded: 'weniger anzeigen',
+                    notExpanded: 'mehr anzeigen',
+                }}>
+                {[...mostCooked.entries()].map(([recipeName, counter]) => (
+                    <MostCookedPaper
+                        key={recipeName}
+                        paletteIndex={[...counterValues].indexOf(counter.value)}
+                        recipeName={recipeName}
+                        counter={counter}
+                    />
+                ))}
 
-            <Skeletons
-                variant="cookCounter"
-                visible={mostCooked.size === 0}
-                numberOfSkeletons={numberOfDocs}
-            />
-        </ExpandableGridContainer>
+                <Skeletons
+                    variant="cookCounter"
+                    visible={mostCooked.size === 0}
+                    numberOfSkeletons={numberOfDocs}
+                />
+            </ExpandableGridContainer>
+        </Grid>
     )
 }
 
