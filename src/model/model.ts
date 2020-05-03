@@ -32,6 +32,7 @@ export interface Recipe extends CommentsDocument, Editor, CreatedDate {
     description: string
     relatedRecipes: Array<string>
     previewAttachment?: string
+    numberOfAttachments: number
 }
 
 export type CategoryType = string
