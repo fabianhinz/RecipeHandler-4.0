@@ -122,9 +122,9 @@ export type OrderByKey = keyof Pick<Recipe, 'name' | 'createdDate'>
 export type OrderByRecord = Partial<Record<OrderByKey, 'asc' | 'desc'>>
 
 export interface AllDataUrls {
-    fullDataUrl: string
-    mediumDataUrl: string
-    smallDataUrl: string
+    fullDataUrl: string | undefined
+    mediumDataUrl: string | undefined
+    smallDataUrl: string | undefined
 }
 
 export interface Metadata {

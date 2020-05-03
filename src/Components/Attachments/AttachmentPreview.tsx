@@ -57,7 +57,7 @@ interface AttachmentPreviewProps {
     onClick: (originId: string) => void
     previewAttachment: string | undefined
     previewChangeDisabled?: boolean
-    onPreviewAttachmentChange: (smallDataUrl: string) => void
+    onPreviewAttachmentChange: (smallDataUrl: string | undefined) => void
 }
 
 const AttachmentPreview = ({

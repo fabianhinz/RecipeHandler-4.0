@@ -87,6 +87,7 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
     const { attachmentRef } = useAttachment(attachmentDoc)
     const { imgSrc, imgLoading } = useImgSrcLazy({
         src: recipe.previewAttachment || attachmentRef.smallDataUrl,
+        skipOnUndefined: true,
     })
 
     const { history } = useRouterContext()

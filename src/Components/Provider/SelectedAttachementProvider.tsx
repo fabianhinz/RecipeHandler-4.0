@@ -62,7 +62,7 @@ const SelectedAttachementProvider: FC = ({ children }) => {
     const classes = useStyles({ blurImg: !imgSrc })
 
     useEffect(() => {
-        if (!selectedAttachment) return setImgSrc(undefined)
+        if (!selectedAttachment || !selectedAttachment.fullDataUrl) return setImgSrc(undefined)
 
         const img = new Image()
         img.onload = () => setImgSrc(img.src)

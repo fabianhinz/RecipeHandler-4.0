@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { AllDataUrls, AttachmentDoc, Metadata } from '../model/model'
 import { FirebaseService } from '../services/firebase'
 
-const initialDataUrlsAndMetadata = {
-    fullDataUrl: '',
-    mediumDataUrl: '',
-    smallDataUrl: '',
+const initialDataUrlsAndMetadata: AllDataUrls & Metadata = {
+    fullDataUrl: undefined,
+    mediumDataUrl: undefined,
+    smallDataUrl: undefined,
     timeCreated: '',
     size: '',
 }

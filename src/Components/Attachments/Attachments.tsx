@@ -7,10 +7,14 @@ import { useAttachmentGalleryContext } from '../Provider/AttachmentGalleryProvid
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import AttachmentPreview from './AttachmentPreview'
 
+type StyleProps = Pick<Props, 'numberOfAttachments'>
+
 const useStyles = makeStyles(theme =>
     createStyles({
         attachmentsGridContainer: {
             overflowX: 'auto',
+            height: ({ numberOfAttachments }: StyleProps) =>
+                numberOfAttachments > 0 ? 'fit-content' : 0,
         },
 
         addIcon: {
@@ -19,17 +23,17 @@ const useStyles = makeStyles(theme =>
     })
 )
 
-interface RecipeResultAttachmentsProps {
+interface Props extends Pick<Recipe, 'numberOfAttachments'> {
     recipeName: string
 }
 
-const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
+const Attachments = ({ recipeName, numberOfAttachments }: Props) => {
     const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[]>([])
     const [recipePreview, setRecipePreview] = useState<
         { smallDataUrl?: string; disabled: boolean } | undefined
     >()
 
-    const classes = useStyles()
+    const classes = useStyles({ numberOfAttachments })
 
     const { handleAnimation } = useAttachmentGalleryContext()
     const { user } = useFirebaseAuthContext()
@@ -69,13 +73,13 @@ const Attachments = ({ recipeName }: RecipeResultAttachmentsProps) => {
     const handlePreviewClick = (originId: string, activeAttachment: number) =>
         handleAnimation(originId, savedAttachments!, activeAttachment)
 
-    const handlePreviewAttachmentChange = (smallDataUrl: string) => {
+    const handlePreviewAttachmentChange = (smallDataUrl: string | undefined) => {
         recipeDocRef.update({ previewAttachment: smallDataUrl } as Recipe)
     }
 
     return (
         <>
-            {savedAttachments.length > 0 && (
+            {numberOfAttachments > 0 && savedAttachments.length > 0 && (
                 <Grid item xs={12}>
                     <Grid
                         wrap="nowrap"

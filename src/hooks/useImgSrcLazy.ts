@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react'
 
 interface Options {
-    src: string
+    src: string | undefined
+    skipOnUndefined?: boolean
 }
 
-const useImgSrcLazy = ({ src }: Options) => {
+const useImgSrcLazy = ({ src, skipOnUndefined }: Options) => {
     const [imgLoading, setImgLoading] = useState(true)
     const [imgSrc, setImgSrc] = useState<string | undefined>()
 
     useEffect(() => {
+        if (!src) {
+            if (skipOnUndefined) setImgLoading(false)
+            return
+        }
+
         const img = new Image()
 
         img.onload = () => {
@@ -18,7 +24,7 @@ const useImgSrcLazy = ({ src }: Options) => {
         img.onerror = () => setImgLoading(false)
 
         img.src = src
-    }, [src])
+    }, [skipOnUndefined, src])
 
     return {
         imgSrc,
