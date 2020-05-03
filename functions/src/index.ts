@@ -94,6 +94,28 @@ export const handleNumberOfCommentsTrials = functions
             .update({ numberOfComments: admin.firestore.FieldValue.increment(1) })
     )
 
+export const handleNumberOfAttachmentsRecipeIncrease = functions
+    .region('europe-west1')
+    .firestore.document('/recipes/{recipeName}/attachments/{docId}')
+    .onCreate((_change, context) =>
+        admin
+            .firestore()
+            .collection('recipes')
+            .doc(context.params.recipeName)
+            .update({ numberOfAttachments: admin.firestore.FieldValue.increment(1) })
+    )
+
+export const handleNumberOfAttachmentsRecipeDecrease = functions
+    .region('europe-west1')
+    .firestore.document('/recipes/{recipeName}/attachments/{docId}')
+    .onDelete((_change, context) =>
+        admin
+            .firestore()
+            .collection('recipes')
+            .doc(context.params.recipeName)
+            .update({ numberOfAttachments: admin.firestore.FieldValue.increment(-1) })
+    )
+
 interface Label {
     name: string
     color: string
@@ -196,10 +218,7 @@ export const handleRecipesCounter = functions
         }
 
         for (const [userUid, value] of recipesCounter) {
-            await firestore
-                .collection('recipesCounter')
-                .doc(userUid)
-                .set(value)
+            await firestore.collection('recipesCounter').doc(userUid).set(value)
         }
 
         return

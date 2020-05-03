@@ -34,7 +34,10 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                 <RecipeResultHeader recipe={recipe} />
             </Grid>
 
-            <Attachments recipeName={recipe.name} />
+            <Attachments
+                recipeName={recipe.name}
+                numberOfAttachments={recipe.numberOfAttachments}
+            />
 
             <Grid item xs={12}>
                 <Grid container spacing={3}>
