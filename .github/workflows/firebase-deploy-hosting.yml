@@ -37,6 +37,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: build
+          path: build
       - name: set short sha
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
