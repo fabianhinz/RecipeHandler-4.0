@@ -70,6 +70,6 @@
 		]
 	},
 	"devDependencies": {
-		"react-app-rewired": "^2.1.5"
+		"react-app-rewired": "^2.1.6"
 	}
 }
