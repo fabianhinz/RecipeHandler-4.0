@@ -95,8 +95,11 @@ const AccountCookingHistory = () => {
         <EntryGridContainer>
             <Grid item xs={12}>
                 <Grid container spacing={3}>
-                    {cookingHistory.map((element, index) => (
-                        <HistoryElement key={index} {...element} />
+                    {cookingHistory.map(element => (
+                        <HistoryElement
+                            key={element.recipeName + element.createdDate.toMillis()}
+                            {...element}
+                        />
                     ))}
                 </Grid>
                 <NotFound visible={!loading && cookingHistory.length === 0} />

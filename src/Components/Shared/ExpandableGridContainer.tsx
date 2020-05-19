@@ -16,9 +16,8 @@ import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { GridLayout, useGridContext } from '../Provider/GridProvider'
 import EntryGridContainer from './EntryGridContainer'
 
-interface StyleProps {
+interface StyleProps extends Pick<Props, 'itemHeight' | 'rows'> {
     gridItems: number
-    expanded: boolean
     gridLayout: GridLayout
 }
 
@@ -26,23 +25,26 @@ const useStyles = makeStyles(theme =>
     createStyles({
         container: {
             overflowY: 'hidden',
-            // ? a grid item is around 72px in height
-            height: 3 * 72,
+            height: ({ itemHeight, rows }: StyleProps) => (rows ? rows * itemHeight : itemHeight),
             transition: theme.transitions.create('height', {
                 easing: theme.transitions.easing.easeOut,
             }),
         },
         containerExpanded: {
             [theme.breakpoints.between('xs', 'sm')]: {
-                height: ({ gridItems }: StyleProps) => gridItems * 72,
+                height: ({ gridItems, itemHeight }: StyleProps) => gridItems * itemHeight,
             },
             [theme.breakpoints.between('md', 'lg')]: {
-                height: ({ gridItems, gridLayout }: StyleProps) =>
-                    gridLayout === 'list' ? gridItems * 72 : Math.ceil(gridItems / 2) * 72,
+                height: ({ gridItems, gridLayout, itemHeight }: StyleProps) =>
+                    gridLayout === 'list'
+                        ? gridItems * itemHeight
+                        : Math.ceil(gridItems / 2) * itemHeight,
             },
             [theme.breakpoints.up('xl')]: {
-                height: ({ gridItems, gridLayout }: StyleProps) =>
-                    gridLayout === 'list' ? gridItems * 72 : Math.ceil(gridItems / 3) * 72,
+                height: ({ gridItems, gridLayout, itemHeight }: StyleProps) =>
+                    gridLayout === 'list'
+                        ? gridItems * itemHeight
+                        : Math.ceil(gridItems / 3) * itemHeight,
             },
         },
         hidden: {
@@ -58,17 +60,25 @@ const useStyles = makeStyles(theme =>
 )
 
 interface Props {
-    titles: { header: ReactText; expanded: ReactText; notExpanded: ReactText }
+    titles: { header?: ReactText; expanded: ReactText; notExpanded: ReactText }
+    itemHeight: number
+    rows?: number
     children: ReactNode
     onExpandedChange?: (expanded: boolean) => void
 }
 
-const ExpandableGridContainer = ({ titles, children, onExpandedChange }: Props) => {
+const ExpandableGridContainer = ({
+    titles,
+    children,
+    onExpandedChange,
+    itemHeight,
+    rows,
+}: Props) => {
     const [expanded, setExpanded] = useState(false)
 
     const gridItems = useMemo(() => React.Children.toArray(children).length, [children])
     const { gridLayout } = useGridContext()
-    const classes = useStyles({ gridLayout, gridItems })
+    const classes = useStyles({ gridLayout, gridItems, itemHeight, rows })
     const { isMobile } = useBreakpointsContext()
 
     const theme = useTheme()
@@ -98,6 +108,7 @@ const ExpandableGridContainer = ({ titles, children, onExpandedChange }: Props) 
                     <Grid item>
                         <Typography variant="h4">{titles.header}</Typography>
                     </Grid>
+
                     <Grid item>
                         {isMobile ? (
                             <IconButton {...sharedExpandBtnProps}>{chevron}</IconButton>

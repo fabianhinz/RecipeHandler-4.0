@@ -1,27 +1,12 @@
-import { createStyles, Grid, makeStyles } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useAttachmentGalleryContext } from '../Provider/AttachmentGalleryProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import ExpandableGridContainer from '../Shared/ExpandableGridContainer'
 import AttachmentPreview from './AttachmentPreview'
-
-type StyleProps = Pick<Props, 'numberOfAttachments'>
-
-const useStyles = makeStyles(theme =>
-    createStyles({
-        attachmentsGridContainer: {
-            overflowX: 'auto',
-            height: ({ numberOfAttachments }: StyleProps) =>
-                numberOfAttachments > 0 ? 'fit-content' : 0,
-        },
-
-        addIcon: {
-            fontSize: theme.typography.pxToRem(60),
-        },
-    })
-)
 
 interface Props extends Pick<Recipe, 'numberOfAttachments'> {
     recipeName: string
@@ -32,8 +17,6 @@ const Attachments = ({ recipeName, numberOfAttachments }: Props) => {
     const [recipePreview, setRecipePreview] = useState<
         { smallDataUrl?: string; disabled: boolean } | undefined
     >()
-
-    const classes = useStyles({ numberOfAttachments })
 
     const { handleAnimation } = useAttachmentGalleryContext()
     const { user } = useFirebaseAuthContext()
@@ -77,29 +60,29 @@ const Attachments = ({ recipeName, numberOfAttachments }: Props) => {
         recipeDocRef.update({ previewAttachment: smallDataUrl } as Recipe)
     }
 
+    if (numberOfAttachments === 0) return <></>
+
     return (
-        <>
-            {numberOfAttachments > 0 && savedAttachments.length > 0 && (
-                <Grid item xs={12}>
-                    <Grid
-                        wrap="nowrap"
-                        className={classes.attachmentsGridContainer}
-                        container
-                        spacing={2}>
-                        {savedAttachments.map((attachment, index) => (
-                            <AttachmentPreview
-                                onClick={originId => handlePreviewClick(originId, index)}
-                                attachment={attachment}
-                                previewAttachment={recipePreview?.smallDataUrl}
-                                previewChangeDisabled={recipePreview?.disabled}
-                                onPreviewAttachmentChange={handlePreviewAttachmentChange}
-                                key={attachment.docPath}
-                            />
-                        ))}
-                    </Grid>
-                </Grid>
-            )}
-        </>
+        <Grid item xs={12}>
+            <ExpandableGridContainer
+                titles={{
+                    expanded: 'weniger anzeigen',
+                    notExpanded: 'alle anzeigen',
+                }}
+                itemHeight={400}>
+                {savedAttachments.map((attachment, index) => (
+                    <AttachmentPreview
+                        itemHeight={400}
+                        onClick={originId => handlePreviewClick(originId, index)}
+                        attachment={attachment}
+                        previewAttachment={recipePreview?.smallDataUrl}
+                        previewChangeDisabled={recipePreview?.disabled}
+                        onPreviewAttachmentChange={handlePreviewAttachmentChange}
+                        key={attachment.docPath}
+                    />
+                ))}
+            </ExpandableGridContainer>
+        </Grid>
     )
 }
 

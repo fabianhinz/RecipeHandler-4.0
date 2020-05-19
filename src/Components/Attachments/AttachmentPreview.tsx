@@ -9,36 +9,22 @@ import { AttachmentDoc } from '../../model/model'
 import elementIdService from '../../services/elementIdService'
 import { BORDER_RADIUS } from '../../theme'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
+type StyleProps = Pick<Props, 'itemHeight'>
+
+const useStyles = makeStyles(theme => {
+    const height = ({ itemHeight }: StyleProps) => itemHeight - theme.spacing(4)
+
+    return createStyles({
         skeleton: {
             borderRadius: BORDER_RADIUS,
-            [theme.breakpoints.between('xs', 'sm')]: {
-                height: 250,
-                width: 250,
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                height: 350,
-                width: 350,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: 500,
-                width: 500,
-            },
+            width: 500,
+            height,
         },
         img: {
             borderRadius: BORDER_RADIUS,
             boxShadow: theme.shadows[1],
             cursor: 'pointer',
-            [theme.breakpoints.between('xs', 'sm')]: {
-                height: 250,
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                height: 350,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: 500,
-            },
+            height,
         },
         gridItem: {
             position: 'relative',
@@ -50,14 +36,15 @@ const useStyles = makeStyles(theme =>
             zIndex: 999,
         },
     })
-)
+})
 
-interface AttachmentPreviewProps {
+interface Props {
     attachment: AttachmentDoc
     onClick: (originId: string) => void
     previewAttachment: string | undefined
     previewChangeDisabled?: boolean
     onPreviewAttachmentChange: (smallDataUrl: string | undefined) => void
+    itemHeight: number
 }
 
 const AttachmentPreview = ({
@@ -66,14 +53,15 @@ const AttachmentPreview = ({
     previewAttachment,
     onPreviewAttachmentChange,
     previewChangeDisabled,
-}: AttachmentPreviewProps) => {
+    itemHeight,
+}: Props) => {
     const [showSelection, setShowSelection] = useState(false)
 
     const originIdRef = useRef(elementIdService.getId('attachment-origin'))
 
     const { attachmentRef } = useAttachment(attachment)
     const { imgLoading, imgSrc } = useImgSrcLazy({ src: attachmentRef.mediumDataUrl })
-    const classes = useStyles()
+    const classes = useStyles({ itemHeight })
 
     return (
         <Grid
