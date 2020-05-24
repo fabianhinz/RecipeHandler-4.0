@@ -34,13 +34,10 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                 <RecipeResultHeader recipe={recipe} />
             </Grid>
 
-            <Attachments
-                recipeName={recipe.name}
-                numberOfAttachments={recipe.numberOfAttachments}
-            />
+            <Attachments recipe={recipe} />
 
             <Grid item xs={12}>
-                <Grid container spacing={3}>
+                <Grid container spacing={2}>
                     <Grid {...gridBreakpointProps} item>
                         <StyledCard
                             header={
