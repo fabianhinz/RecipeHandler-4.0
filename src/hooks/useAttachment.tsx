@@ -14,7 +14,7 @@ const initialDataUrlsAndMetadata: AllDataUrls & Metadata = {
 
 export const getFileExtension = (fullpath: string) => fullpath.split('.').slice(-1)[0]
 
-const getRefPaths = (fullPath: string) => {
+const getAttachmentRefs = (fullPath: string) => {
     // ? the fullPath Field in firestore always looks something like [whatever].jpg|png
     const extension = getFileExtension(fullPath)
     const basePath = fullPath.replace(`.${extension}`, '')
@@ -27,7 +27,7 @@ const getRefPaths = (fullPath: string) => {
 }
 
 export const getResizedImagesWithMetadata = async (fullPath: string) => {
-    const { smallPath, smallPathFallback, mediumPath } = getRefPaths(fullPath)
+    const { smallPath, smallPathFallback, mediumPath } = getAttachmentRefs(fullPath)
     const urlsAndMetadata: AllDataUrls & Metadata = { ...initialDataUrlsAndMetadata }
 
     try {

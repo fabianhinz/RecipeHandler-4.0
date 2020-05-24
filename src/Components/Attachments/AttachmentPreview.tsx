@@ -1,74 +1,48 @@
-import { createStyles, Fab, Grid, makeStyles, Tooltip, Zoom } from '@material-ui/core'
+import { createStyles, Grid, makeStyles } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
-import { FileImage } from 'mdi-material-ui'
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
 import useImgSrcLazy from '../../hooks/useImgSrcLazy'
 import { AttachmentDoc } from '../../model/model'
 import elementIdService from '../../services/elementIdService'
-import { BORDER_RADIUS } from '../../theme'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
+const useStyles = makeStyles(theme => {
+    const responsiveDimenstions = {
+        [theme.breakpoints.between('xs', 'sm')]: {
+            width: 250 - theme.spacing(4),
+            height: 250 - theme.spacing(4),
+        },
+        [theme.breakpoints.between('md', 'lg')]: {
+            width: 300 - theme.spacing(4),
+            height: 300 - theme.spacing(4),
+        },
+        [theme.breakpoints.up('xl')]: {
+            width: 350 - theme.spacing(4),
+            height: 350 - theme.spacing(4),
+        },
+    }
+
+    return createStyles({
         skeleton: {
-            borderRadius: BORDER_RADIUS,
-            [theme.breakpoints.between('xs', 'sm')]: {
-                height: 250,
-                width: 250,
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                height: 350,
-                width: 350,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: 500,
-                width: 500,
-            },
+            ...responsiveDimenstions,
         },
         img: {
-            borderRadius: BORDER_RADIUS,
-            boxShadow: theme.shadows[1],
+            ...responsiveDimenstions,
             cursor: 'pointer',
-            [theme.breakpoints.between('xs', 'sm')]: {
-                height: 250,
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                height: 350,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: 500,
-            },
-        },
-        gridItem: {
-            position: 'relative',
-        },
-        selectionButton: {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            zIndex: 999,
+            borderRadius: '50%',
+            boxShadow: theme.shadows[2],
+            objectFit: 'cover',
         },
     })
-)
+})
 
-interface AttachmentPreviewProps {
+interface Props {
     attachment: AttachmentDoc
     onClick: (originId: string) => void
-    previewAttachment: string | undefined
-    previewChangeDisabled?: boolean
-    onPreviewAttachmentChange: (smallDataUrl: string | undefined) => void
 }
 
-const AttachmentPreview = ({
-    attachment,
-    onClick,
-    previewAttachment,
-    onPreviewAttachmentChange,
-    previewChangeDisabled,
-}: AttachmentPreviewProps) => {
-    const [showSelection, setShowSelection] = useState(false)
-
+const AttachmentPreview = ({ attachment, onClick }: Props) => {
     const originIdRef = useRef(elementIdService.getId('attachment-origin'))
 
     const { attachmentRef } = useAttachment(attachment)
@@ -76,47 +50,17 @@ const AttachmentPreview = ({
     const classes = useStyles()
 
     return (
-        <Grid
-            item
-            className={classes.gridItem}
-            onMouseEnter={() => setShowSelection(true)}
-            onMouseLeave={() => setShowSelection(false)}>
+        <Grid item>
             {imgLoading ? (
-                <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
+                <Skeleton variant="circle" animation="wave" className={classes.skeleton} />
             ) : (
-                <>
-                    <img
-                        onClick={() => onClick(originIdRef.current)}
-                        className={classes.img}
-                        alt=""
-                        id={originIdRef.current}
-                        src={imgSrc}
-                    />
-
-                    <Zoom in={showSelection && !previewChangeDisabled}>
-                        <Tooltip
-                            placement="right"
-                            title={
-                                previewAttachment === attachmentRef.smallDataUrl
-                                    ? 'Vorschaubild'
-                                    : 'Als Vorschaubild setzen'
-                            }>
-                            <Fab
-                                className={classes.selectionButton}
-                                onClick={() =>
-                                    onPreviewAttachmentChange(attachmentRef.smallDataUrl)
-                                }
-                                color={
-                                    previewAttachment === attachmentRef.smallDataUrl
-                                        ? 'primary'
-                                        : 'default'
-                                }
-                                size="small">
-                                <FileImage />
-                            </Fab>
-                        </Tooltip>
-                    </Zoom>
-                </>
+                <img
+                    onClick={() => onClick(originIdRef.current)}
+                    className={classes.img}
+                    alt=""
+                    id={originIdRef.current}
+                    src={imgSrc}
+                />
             )}
         </Grid>
     )

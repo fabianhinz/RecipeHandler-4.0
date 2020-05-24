@@ -1,51 +1,59 @@
 import { createStyles, Grid, makeStyles } from '@material-ui/core'
-import React, { useEffect, useMemo, useState } from 'react'
+import Skeleton from '@material-ui/lab/Skeleton'
+import React, { useEffect, useState } from 'react'
 
 import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useAttachmentGalleryContext } from '../Provider/AttachmentGalleryProvider'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import AttachmentPreview from './AttachmentPreview'
 
-type StyleProps = Pick<Props, 'numberOfAttachments'>
+interface Props {
+    recipe: Recipe
+}
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        attachmentsGridContainer: {
+        container: {
             overflowX: 'auto',
-            height: ({ numberOfAttachments }: StyleProps) =>
-                numberOfAttachments > 0 ? 'fit-content' : 0,
+            [theme.breakpoints.between('xs', 'sm')]: {
+                height: 250,
+            },
+            [theme.breakpoints.between('md', 'lg')]: {
+                height: 300,
+            },
+            [theme.breakpoints.up('xl')]: {
+                height: 350,
+            },
         },
-
-        addIcon: {
-            fontSize: theme.typography.pxToRem(60),
+        skeleton: {
+            [theme.breakpoints.between('xs', 'sm')]: {
+                width: 250 - theme.spacing(4),
+                height: 250 - theme.spacing(4),
+            },
+            [theme.breakpoints.between('md', 'lg')]: {
+                width: 300 - theme.spacing(4),
+                height: 300 - theme.spacing(4),
+            },
+            [theme.breakpoints.up('xl')]: {
+                width: 350 - theme.spacing(4),
+                height: 350 - theme.spacing(4),
+            },
         },
     })
 )
 
-interface Props extends Pick<Recipe, 'numberOfAttachments'> {
-    recipeName: string
-}
-
-const Attachments = ({ recipeName, numberOfAttachments }: Props) => {
+const Attachments = ({ recipe }: Props) => {
     const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[]>([])
-    const [recipePreview, setRecipePreview] = useState<
-        { smallDataUrl?: string; disabled: boolean } | undefined
-    >()
-
-    const classes = useStyles({ numberOfAttachments })
 
     const { handleAnimation } = useAttachmentGalleryContext()
-    const { user } = useFirebaseAuthContext()
 
-    const recipeDocRef = useMemo(
-        () => FirebaseService.firestore.collection('recipes').doc(recipeName),
-        [recipeName]
-    )
+    const classes = useStyles()
 
     useEffect(
         () =>
-            recipeDocRef
+            FirebaseService.firestore
+                .collection('recipes')
+                .doc(recipe.name)
                 .collection('attachments')
                 .orderBy('createdDate', 'asc')
                 .onSnapshot(querySnapshot => {
@@ -54,52 +62,32 @@ const Attachments = ({ recipeName, numberOfAttachments }: Props) => {
                     )
                     setSavedAttachments(newAttachments)
                 }),
-        [recipeDocRef, recipeName]
-    )
-
-    useEffect(
-        () =>
-            recipeDocRef.onSnapshot(querySnapshot => {
-                const data = querySnapshot.data() as Recipe | undefined
-                if (!data) return
-                setRecipePreview({
-                    smallDataUrl: data.previewAttachment,
-                    disabled: !user || (user.uid !== data.editorUid && !user.admin),
-                })
-            }),
-        [recipeDocRef, recipeName, user]
+        [recipe.name]
     )
 
     const handlePreviewClick = (originId: string, activeAttachment: number) =>
         handleAnimation(originId, savedAttachments!, activeAttachment)
 
-    const handlePreviewAttachmentChange = (smallDataUrl: string | undefined) => {
-        recipeDocRef.update({ previewAttachment: smallDataUrl } as Recipe)
-    }
+    if (recipe.numberOfAttachments === 0) return <></>
 
     return (
-        <>
-            {numberOfAttachments > 0 && savedAttachments.length > 0 && (
-                <Grid item xs={12}>
-                    <Grid
-                        wrap="nowrap"
-                        className={classes.attachmentsGridContainer}
-                        container
-                        spacing={2}>
-                        {savedAttachments.map((attachment, index) => (
-                            <AttachmentPreview
-                                onClick={originId => handlePreviewClick(originId, index)}
-                                attachment={attachment}
-                                previewAttachment={recipePreview?.smallDataUrl}
-                                previewChangeDisabled={recipePreview?.disabled}
-                                onPreviewAttachmentChange={handlePreviewAttachmentChange}
-                                key={attachment.docPath}
-                            />
-                        ))}
-                    </Grid>
-                </Grid>
-            )}
-        </>
+        <Grid item xs={12}>
+            <Grid wrap="nowrap" className={classes.container} container spacing={2}>
+                {savedAttachments.length === 0 &&
+                    new Array(recipe.numberOfAttachments).fill(1).map((_, index) => (
+                        <Grid item key={index}>
+                            <Skeleton variant="circle" className={classes.skeleton} />
+                        </Grid>
+                    ))}
+                {savedAttachments.map((attachment, index) => (
+                    <AttachmentPreview
+                        onClick={originId => handlePreviewClick(originId, index)}
+                        attachment={attachment}
+                        key={attachment.docPath}
+                    />
+                ))}
+            </Grid>
+        </Grid>
     )
 }
 

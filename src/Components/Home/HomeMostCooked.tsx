@@ -118,7 +118,9 @@ const HomeMostCooked = () => {
                     header: 'Häufig gekocht',
                     expanded: 'weniger anzeigen',
                     notExpanded: 'mehr anzeigen',
-                }}>
+                }}
+                itemHeight={72}
+                rows={3}>
                 {[...mostCooked.entries()].map(([recipeName, counter]) => (
                     <MostCookedPaper
                         key={recipeName}

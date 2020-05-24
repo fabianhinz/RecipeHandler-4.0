@@ -15,16 +15,18 @@ import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { Alert, AlertProps, Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
-import { CalendarMonth, ChevronLeft, ChevronRight, Download, Sd } from 'mdi-material-ui'
-import React, { FC, ReactText, useContext, useEffect, useRef, useState } from 'react'
+import { CalendarMonth, ChevronLeft, ChevronRight, Download, FileImage, Sd } from 'mdi-material-ui'
+import React, { FC, ReactText, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useRouteMatch } from 'react-router-dom'
 import SwipeableViews from 'react-swipeable-views'
 
 import { useAttachment } from '../../hooks/useAttachment'
-import { AttachmentDoc } from '../../model/model'
+import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
 import { isSafari } from '../../util/constants'
 import AccountChip from '../Account/AccountChip'
+import { PATHS } from '../Routes/Routes'
 import { useRouterContext } from './RouterProvider'
 
 interface AnimationHandler {
@@ -129,12 +131,22 @@ const useStyles = makeStyles(theme =>
 
 interface SwipeableAttachmentProps {
     attachment: AttachmentDoc
+    index: number
+    onPossiblePreviewLoad: (index: number, smallDataUrl: string) => void
 }
 
-const SwipeableAttachment = ({ attachment }: SwipeableAttachmentProps) => {
+const SwipeableAttachment = ({
+    attachment,
+    onPossiblePreviewLoad,
+    index,
+}: SwipeableAttachmentProps) => {
     const [imgLoaded, setImgLoaded] = useState(false)
     const { attachmentRef, attachmentRefLoading } = useAttachment(attachment)
     const classes = useStyles()
+
+    useEffect(() => {
+        if (attachmentRef.smallDataUrl) onPossiblePreviewLoad(index, attachmentRef.smallDataUrl)
+    }, [attachmentRef.smallDataUrl, index, onPossiblePreviewLoad])
 
     return (
         <div className={clsx(classes.destination, classes.attachment)}>
@@ -191,6 +203,9 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
     const [attachments, setAttachments] = useState<AttachmentDoc[] | undefined>()
     const [activeAttachment, setActiveAttachment] = useState(0)
     const [alert, setAlert] = useState<AttachmentAlert>({ open: false })
+    const [possiblePreviews, setPossiblePreviews] = useState<Map<number, string>>(new Map())
+
+    const routeMatch = useRouteMatch<{ name: string }>(PATHS.details())
 
     const animationRef = useRef<Animation | undefined>()
 
@@ -225,6 +240,10 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
         if (originId) root.setAttribute('style', 'overflow: hidden;')
         if (!originId) root.removeAttribute('style')
     }, [originId])
+
+    const handlePossiblePreviewLoad = useCallback((loadIndex: number, possiblePreview: string) => {
+        setPossiblePreviews(prev => new Map(prev.set(loadIndex, possiblePreview)))
+    }, [])
 
     const initAnimation = (
         newOriginId?: string,
@@ -371,6 +390,19 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
         document.body.removeChild(link)
     }
 
+    const handlePreviewChange = async () => {
+        if (!attachments || !routeMatch?.params.name) return
+
+        setAlert({ open: true, text: 'Vorschaubild wird gesetzt', severity: 'info' })
+        await FirebaseService.firestore
+            .collection('recipes')
+            .doc(routeMatch.params.name)
+            .update({
+                previewAttachment: possiblePreviews.get(activeAttachment),
+            } as Recipe)
+        setTimeout(() => setAlert(prev => ({ ...prev, open: false })), 500)
+    }
+
     return (
         <>
             <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
@@ -385,7 +417,12 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
                     {attachments && (
                         <SwipeableViews disabled index={activeAttachment}>
                             {attachments.map((attachment, index) => (
-                                <SwipeableAttachment key={index} attachment={attachment} />
+                                <SwipeableAttachment
+                                    onPossiblePreviewLoad={handlePossiblePreviewLoad}
+                                    index={index}
+                                    key={index}
+                                    attachment={attachment}
+                                />
                             ))}
                         </SwipeableViews>
                     )}
@@ -405,6 +442,13 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
                                     <CloseIcon />
                                 </IconButton>
                             </div>
+                        </Tooltip>
+                    </Grid>
+                    <Grid item>
+                        <Tooltip placement="bottom" title="Als Vorschaubild setzen">
+                            <IconButton disabled={alert.open} onClick={handlePreviewChange}>
+                                <FileImage />
+                            </IconButton>
                         </Tooltip>
                     </Grid>
                     {!isSafari && (

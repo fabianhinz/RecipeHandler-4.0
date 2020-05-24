@@ -62,7 +62,9 @@ const HomeNew = () => {
                     header: 'Neu',
                     expanded: 'weniger anzeigen',
                     notExpanded: 'alle anzeigen',
-                }}>
+                }}
+                itemHeight={72}
+                rows={3}>
                 {recipeNames.map(recipeName => (
                     <Grid item {...gridBreakpointProps} key={recipeName}>
                         <CardActionArea onClick={() => history.push(PATHS.details(recipeName))}>
