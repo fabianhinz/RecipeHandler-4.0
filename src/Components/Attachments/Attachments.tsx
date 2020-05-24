@@ -1,4 +1,4 @@
-import { createStyles, Grid, LinearProgress, makeStyles } from '@material-ui/core'
+import { createStyles, Grid, makeStyles } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
 import React, { useEffect, useState } from 'react'
 
