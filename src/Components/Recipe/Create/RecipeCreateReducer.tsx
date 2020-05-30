@@ -11,6 +11,7 @@ export interface RecipeCreateState {
     description: string
     preview: boolean
     numberOfComments: number
+    numberOfAttachments: number
     relatedRecipes: Array<string>
     selectedTrial?: Trial
 }
@@ -84,6 +85,7 @@ const initialState: RecipeCreateState = {
     description: '',
     preview: false,
     numberOfComments: 0,
+    numberOfAttachments: 0,
     relatedRecipes: [],
 }
 

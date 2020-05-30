@@ -274,8 +274,9 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
                     scale(1,1)
                 `,
                 boxShadow: 'unset',
-                zIndex: theme.zIndex.modal + 3,
-                opacity: 1,
+                width: originRect.width,
+                height: originRect.height,
+                zIndex: theme.zIndex.modal - 1,
             },
             {
                 transform: `
@@ -288,8 +289,8 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
                 top: '50%',
                 left: '50%',
                 boxShadow: 'unset',
-                zIndex: theme.zIndex.modal + 3,
-                opacity: 0,
+                width: destinationRect.width,
+                zIndex: theme.zIndex.modal - 1,
             },
         ]
 
