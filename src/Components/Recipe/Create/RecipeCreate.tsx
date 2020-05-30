@@ -92,8 +92,8 @@ const RecipeCreate = (props: Props) => {
                     recipe={{
                         name: state.name,
                         createdDate: FirebaseService.createTimestampFromDate(new Date()),
-                        numberOfComments: 0,
-                        numberOfAttachments: 0,
+                        numberOfComments: state.numberOfComments,
+                        numberOfAttachments: state.numberOfAttachments,
                         categories: state.categories,
                         ingredients: state.ingredients,
                         amount: state.amount,
