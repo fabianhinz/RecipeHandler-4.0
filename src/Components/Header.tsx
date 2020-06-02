@@ -36,8 +36,10 @@ interface StyleProps {
 const useStyles = makeStyles(theme =>
     createStyles({
         userAvatar: {
-            height: 24,
-            width: 24,
+            height: 40,
+            width: 40,
+            border: `2px solid ${theme.palette.divider}`,
+            marginLeft: theme.spacing(1),
         },
         safeArea: {
             position: 'fixed',
@@ -70,11 +72,15 @@ const useStyles = makeStyles(theme =>
         },
         headerButtons: {
             display: 'flex',
+            alignItems: 'center',
         },
         menuIcon: {
             [theme.breakpoints.up('md')]: {
                 flexBasis: 239,
             },
+        },
+        accountContainer: {
+            cursor: 'pointer',
         },
     })
 )
@@ -140,22 +146,22 @@ const Header = () => {
                                 </Tooltip>
 
                                 <Tooltip title={user?.username || 'Einloggen'}>
-                                    <div>
-                                        <IconButton
-                                            disabled={!loginEnabled}
-                                            onClick={() => {
-                                                if (user) history.push(PATHS.account)
-                                                else setAuthenticationOpen(true)
-                                            }}>
-                                            {user ? (
-                                                <Avatar
-                                                    className={classes.userAvatar}
-                                                    src={user.profilePicture}
-                                                />
-                                            ) : (
+                                    <div
+                                        className={classes.accountContainer}
+                                        onClick={() => {
+                                            if (user) history.push(PATHS.account)
+                                            else setAuthenticationOpen(true)
+                                        }}>
+                                        {user ? (
+                                            <Avatar
+                                                className={classes.userAvatar}
+                                                src={user.profilePicture}
+                                            />
+                                        ) : (
+                                            <IconButton disabled={!loginEnabled}>
                                                 <AccountCircleOutline />
-                                            )}
-                                        </IconButton>
+                                            </IconButton>
+                                        )}
                                     </div>
                                 </Tooltip>
                             </div>

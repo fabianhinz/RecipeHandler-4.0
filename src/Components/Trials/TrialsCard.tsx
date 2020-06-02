@@ -25,7 +25,7 @@ import AccountChip from '../Account/AccountChip'
 import { Comments } from '../Comments/Comments'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
-import { useSelectedAttachement } from '../Provider/SelectedAttachementProvider'
+import { useSelectedAttachementContext } from '../Provider/SelectedAttachementProvider'
 import TrialsDeleteAlert from './TrialsDeleteAlert'
 
 const useStyles = makeStyles(theme =>
@@ -79,6 +79,7 @@ const useStyles = makeStyles(theme =>
 
 interface Props {
     trial: Trial
+    onDelete?: (trialName: string) => void
     // ? selectionProps are used to overwrite the default click behaviour and also result in some layout changes
     selectionProps?: {
         onClick: (trial: Trial) => void
@@ -86,14 +87,15 @@ interface Props {
     }
 }
 
-const TrialsCard = ({ trial, selectionProps }: Props) => {
+const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
     const [deleteAlert, setDeleteAlert] = useState(false)
     const [dataUrls, setDataUrls] = useState<AllDataUrls | undefined>()
+    const [deleteDisabled, setDeleteDisabled] = useState(false)
 
     const { user } = useFirebaseAuthContext()
     const { gridBreakpointProps, gridLayout } = useGridContext()
     const { enqueueSnackbar } = useSnackbar()
-    const { setSelectedAttachment } = useSelectedAttachement()
+    const { setSelectedAttachment } = useSelectedAttachementContext()
 
     const classes = useStyles({ fixedCardHeight: gridLayout === 'list' })
 
@@ -114,11 +116,15 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
         // ! this does not delete the comments collection --> should use https://firebase.google.com/docs/firestore/solutions/delete-collections
         // ! --> which is fine, we can recover comments even if the trial is lost
         try {
+            setDeleteDisabled(true)
             await FirebaseService.firestore.collection('trials').doc(trial.name).delete()
-
             await FirebaseService.storageRef.child(trial.fullPath).delete()
+            setDeleteAlert(false)
         } catch (e) {
             enqueueSnackbar(e.message, { variant: 'error' })
+        } finally {
+            setDeleteDisabled(false)
+            if (onDelete) onDelete(trial.name)
         }
     }
 
@@ -195,6 +201,7 @@ const TrialsCard = ({ trial, selectionProps }: Props) => {
             </Grid>
             <TrialsDeleteAlert
                 open={deleteAlert}
+                disabled={deleteDisabled}
                 title={trial.name}
                 onAbort={() => setDeleteAlert(false)}
                 onConfirm={handleDeleteBtnClick}

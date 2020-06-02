@@ -20,6 +20,11 @@ import SelectionDrawer from '../Shared/SelectionDrawer'
 
 const useStyles = makeStyles(theme =>
     createStyles({
+        avatarRoot: {
+            height: 40,
+            width: 40,
+            border: `2px solid ${theme.palette.divider}`,
+        },
         avatarSelected: {
             backgroundColor: theme.palette.secondary.main,
             color: theme.palette.getContrastText(theme.palette.secondary.main),
@@ -95,10 +100,10 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
             onOpen={() => setShouldLoad(true)}
             onClose={() => setShouldLoad(false)}
             buttonProps={{
-                startIcon: <SwapIcon />,
-                label: 'Passende Rezepte ergänzen',
-                highlight: relatedRecipes.length > 0,
+                icon: <SwapIcon />,
+                label: 'Passende Rezepte',
             }}
+            legend="Über Verknüpfungen werden Menüs erstellt"
             header={
                 <InputBase
                     classes={{ root: classes.inputBaseRoot, input: classes.inputBaseInput }}
@@ -106,7 +111,8 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
                     placeholder="Nach Rezeptnamen filtern"
                     onChange={e => setSearchValue(e.target.value)}
                 />
-            }>
+            }
+            highlight={relatedRecipes.length > 0}>
             <List disablePadding>
                 {recipes.map(recipe => (
                     <ListItem
@@ -121,6 +127,7 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
                                         : recipe.previewAttachment
                                 }
                                 className={clsx(
+                                    classes.avatarRoot,
                                     relatedRecipes.some(name => name === recipe.name) &&
                                         classes.avatarSelected
                                 )}>

@@ -14,7 +14,9 @@ import DynamicThemeIcon from '@material-ui/icons/BrightnessAutoRounded'
 import LightThemeIcon from '@material-ui/icons/BrightnessHighRounded'
 import DarkThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 import FavoriteIcon from '@material-ui/icons/Favorite'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import NotificationsOffIcon from '@material-ui/icons/NotificationsOffRounded'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import NotificationsIcon from '@material-ui/icons/NotificationsRounded'
 import SearchIcon from '@material-ui/icons/SearchRounded'
 import TimelapseIcon from '@material-ui/icons/TimelapseRounded'
@@ -207,7 +209,7 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                     }
                     BackgroundIcon={CogOutline}>
                     <List disablePadding>
-                        <ListItem button onClick={onUserSettingChange('notifications')}>
+                        {/* <ListItem button onClick={onUserSettingChange('notifications')}>
                             <ListItemIcon>
                                 {user.notifications ? (
                                     <NotificationsIcon />
@@ -239,8 +241,8 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                                     </>
                                 }
                             />
-                        </ListItem>
-                        <Divider variant="inset" />
+                        </ListItem> 
+                        <Divider variant="inset" /> */}
                         <ListItem button onClick={onUserSettingChange('algoliaAdvancedSyntax')}>
                             <ListItemIcon>
                                 {user.algoliaAdvancedSyntax ? <DatabaseSearch /> : <SearchIcon />}

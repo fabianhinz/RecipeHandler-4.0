@@ -1,4 +1,4 @@
-import { Backdrop, createStyles, Fade, makeStyles } from '@material-ui/core'
+import { Backdrop, createStyles, makeStyles, Slide } from '@material-ui/core'
 import React, { FC, useContext, useEffect, useState } from 'react'
 
 import { AllDataUrls } from '../../model/model'
@@ -13,7 +13,7 @@ interface AttachmentSelect {
 
 const Context = React.createContext<AttachmentSelect | null>(null)
 
-export const useSelectedAttachement = () => useContext(Context) as AttachmentSelect
+export const useSelectedAttachementContext = () => useContext(Context) as AttachmentSelect
 
 interface StyleProps {
     blurImg: boolean
@@ -82,7 +82,7 @@ const SelectedAttachementProvider: FC = ({ children }) => {
     return (
         <>
             <Context.Provider value={{ setSelectedAttachment }}>{children}</Context.Provider>
-            <Fade in={Boolean(selectedAttachment)}>
+            <Slide direction="up" in={Boolean(selectedAttachment)}>
                 <Backdrop
                     open
                     onClick={() => setSelectedAttachment(null)}
@@ -93,7 +93,7 @@ const SelectedAttachementProvider: FC = ({ children }) => {
                         alt="selected"
                     />
                 </Backdrop>
-            </Fade>
+            </Slide>
         </>
     )
 }

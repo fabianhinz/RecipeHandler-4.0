@@ -34,12 +34,12 @@ const useStyles = makeStyles(theme =>
             position: 'relative',
         },
         userAvatar: {
-            height: 25,
-            width: 25,
+            height: 40,
+            width: 40,
+            border: `2px solid ${theme.palette.divider}`,
             position: 'absolute',
             top: 8,
             right: 8,
-            border: `1px solid ${theme.palette.divider}`,
         },
         avatar: {
             width: '100%',
