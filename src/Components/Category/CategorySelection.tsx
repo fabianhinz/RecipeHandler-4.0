@@ -37,6 +37,7 @@ interface Props {
     selectedCategories: Map<string, string>
     onRemoveSelectedCategories: () => void
     onCategoryChange: (type: string, value: string) => void
+    legend?: React.ReactText
 }
 
 export default function CategorySelection({
@@ -45,6 +46,7 @@ export default function CategorySelection({
     onRemoveSelectedCategories,
     header,
     label,
+    legend,
 }: Props) {
     const classes = useStyles()
 
@@ -54,16 +56,17 @@ export default function CategorySelection({
         <SelectionDrawer
             header={header}
             buttonProps={{
-                highlight: selectedCategories.size > 0,
-                startIcon: <Filter />,
+                icon: <Filter />,
                 label,
                 disabled: categoriesLoading,
             }}
+            legend={legend}
             action={
                 <IconButton onClick={onRemoveSelectedCategories}>
                     <DeleteIcon />
                 </IconButton>
-            }>
+            }
+            highlight={selectedCategories.size > 0}>
             <Grid container>
                 {Object.keys(categoriesCollection).map(type => (
                     <Grid key={type} item xs={12}>

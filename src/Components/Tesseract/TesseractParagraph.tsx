@@ -1,4 +1,5 @@
 import { Chip, createStyles, Divider, Grid, makeStyles, Typography } from '@material-ui/core'
+import { red } from '@material-ui/core/colors'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import BookIcon from '@material-ui/icons/Book'
 import React from 'react'
@@ -13,7 +14,8 @@ const useStyles = makeStyles(theme =>
     createStyles({
         confidenceContainer: {
             height: 12,
-            backgroundColor: '#81c78480',
+            backgroundColor: ({ confidence }: StyleProps) =>
+                confidence > 80 ? '#81c78480' : red[500] + '80',
             borderRadius: BORDER_RADIUS,
             width: '100%',
         },
@@ -22,7 +24,8 @@ const useStyles = makeStyles(theme =>
             height: '100%',
             borderTopLeftRadius: BORDER_RADIUS,
             borderBottomLeftRadius: BORDER_RADIUS,
-            backgroundColor: '#81c784',
+            backgroundColor: ({ confidence }: StyleProps) =>
+                confidence > 80 ? '#81c784' : red[500] + '80',
         },
     })
 )
@@ -73,9 +76,7 @@ const TesseractParagraph = ({
                 </div>
             </Grid>
             <Grid item>
-                <Typography>
-                    {confidence > 80 ? text : <i>Erkennungsgenauigkeit zu niedrig</i>}
-                </Typography>
+                <Typography>{text}</Typography>
             </Grid>
         </Grid>
     )

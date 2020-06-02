@@ -113,9 +113,11 @@ const TesseractSelection = ({ onChange, ingredients, description }: Props) => {
             onOpen={() => setShouldLoad(true)}
             onClose={() => setShouldLoad(false)}
             buttonProps={{
-                startIcon: <ImageSearch />,
+                icon: <ImageSearch />,
                 label: 'Einscannen',
-            }}>
+            }}
+            highlight={paragraphs.length > 0}
+            legend="Aus abfotografierten Bildern Texte extrahieren">
             <ButtonBase
                 className={classes.dropzoneButton}
                 disabled={log?.status !== 'initialized api'}

@@ -6,7 +6,6 @@ import {
     IconButton,
     makeStyles,
     Typography,
-    useTheme,
 } from '@material-ui/core'
 import clsx from 'clsx'
 import { ChevronDown } from 'mdi-material-ui'
@@ -81,8 +80,6 @@ const ExpandableGridContainer = ({
     const classes = useStyles({ gridLayout, gridItems, itemHeight, rows })
     const { isMobile } = useBreakpointsContext()
 
-    const theme = useTheme()
-
     const handleExpandBtnChange = useCallback(() => {
         setExpanded(!expanded)
         if (onExpandedChange) onExpandedChange(!expanded)
@@ -115,7 +112,7 @@ const ExpandableGridContainer = ({
                         ) : (
                             <Button
                                 {...sharedExpandBtnProps}
-                                variant={theme.palette.type === 'dark' ? 'outlined' : 'contained'}
+                                variant="contained"
                                 startIcon={chevron}>
                                 {expanded ? titles.expanded : titles.notExpanded}
                             </Button>

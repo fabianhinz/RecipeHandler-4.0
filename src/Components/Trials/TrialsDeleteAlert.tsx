@@ -16,11 +16,12 @@ import { SlideUp } from '../Shared/Transitions'
 interface Props {
     title: ReactNode
     open: boolean
+    disabled: boolean
     onConfirm: () => void
     onAbort: () => void
 }
 
-const TrialsDeleteAlert = ({ open, onConfirm, onAbort, title }: Props) => {
+const TrialsDeleteAlert = ({ open, onConfirm, onAbort, title, disabled }: Props) => {
     const { isDialogFullscreen } = useBreakpointsContext()
 
     return (
@@ -38,10 +39,14 @@ const TrialsDeleteAlert = ({ open, onConfirm, onAbort, title }: Props) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button startIcon={<CloseIcon />} onClick={onAbort}>
+                <Button disabled={disabled} startIcon={<CloseIcon />} onClick={onAbort}>
                     Nein
                 </Button>
-                <Button startIcon={<DeleteIcon />} onClick={onConfirm} color="secondary">
+                <Button
+                    disabled={disabled}
+                    startIcon={<DeleteIcon />}
+                    onClick={onConfirm}
+                    color="secondary">
                     Ja
                 </Button>
             </DialogActions>

@@ -40,10 +40,11 @@ const TrialsSelection = ({ selectedTrial, onSelectedTrialChange }: Props) => {
             onOpen={() => setShouldLoad(true)}
             onClose={() => setShouldLoad(false)}
             buttonProps={{
-                startIcon: <Lightbulb />,
+                icon: <Lightbulb />,
                 label: 'Idee verknüpfen',
-                highlight: Boolean(selectedTrial),
-            }}>
+            }}
+            legend="Beim Speichern wird die Idee gelöscht"
+            highlight={Boolean(selectedTrial)}>
             <Grid container spacing={2}>
                 {trials.map(trial => (
                     <TrialsCard

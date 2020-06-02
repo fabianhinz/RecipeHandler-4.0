@@ -46,7 +46,7 @@ const Trials = () => {
         if (lastTrial) query = query.startAfter(lastTrial.createdDate)
 
         return query.limit(FirebaseService.QUERY_LIMIT).onSnapshot(querySnapshot => {
-            const changes = {
+            const changes: Record<'added' | 'modified' | 'removed', Map<string, Trial>> = {
                 added: new Map(),
                 modified: new Map(),
                 removed: new Map(),
@@ -137,13 +137,25 @@ const Trials = () => {
         noDrag: true,
     })
 
+    const handleTrialDelete = (trialName: string) => {
+        // ? hacky...
+        setPagedTrials(prev => {
+            prev.delete(trialName)
+            return new Map(prev)
+        })
+    }
+
     return (
         <>
             <EntryGridContainer>
                 <Grid item xs={12}>
                     <Grid container spacing={3}>
                         {[...pagedTrials.values()].map(trial => (
-                            <TrialsCard trial={trial} key={trial.name} />
+                            <TrialsCard
+                                onDelete={handleTrialDelete}
+                                trial={trial}
+                                key={trial.name}
+                            />
                         ))}
 
                         <Skeletons variant="trial" visible={querying && pagedTrials.size === 0} />

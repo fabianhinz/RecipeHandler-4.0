@@ -46,7 +46,7 @@ const RecipeCreate = (props: Props) => {
     } = useCategorySelect(fromPropsOrPreviousState(props))
     const { user } = useFirebaseAuthContext()
     const { history } = useRouterContext()
-    const { gridBreakpointProps: breakpointsFromContext } = useGridContext()
+    const { gridBreakpointProps: breakpointsFromContext, gridLayout } = useGridContext()
 
     const match = useRouteMatch()
 
@@ -83,7 +83,9 @@ const RecipeCreate = (props: Props) => {
     }
 
     const relatedAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
-        state.relatedRecipes.length > 0 ? breakpointsFromContext : { xs: 12, md: 6 }
+        gridLayout === 'list' || state.relatedRecipes.length > 0
+            ? breakpointsFromContext
+            : { xs: 12, md: 6 }
 
     return (
         <>
@@ -114,7 +116,7 @@ const RecipeCreate = (props: Props) => {
 
                     <Grid item xs={12}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm="auto">
+                            <Grid item xs={12} sm={6} md="auto">
                                 <TesseractSelection
                                     description={state.description}
                                     ingredients={state.ingredients}
@@ -123,7 +125,7 @@ const RecipeCreate = (props: Props) => {
                                     }
                                 />
                             </Grid>
-                            <Grid item xs={12} sm="auto">
+                            <Grid item xs={12} sm={6} md="auto">
                                 <TrialsSelection
                                     selectedTrial={state.selectedTrial}
                                     onSelectedTrialChange={selectedTrial =>
@@ -131,15 +133,16 @@ const RecipeCreate = (props: Props) => {
                                     }
                                 />
                             </Grid>
-                            <Grid item xs={12} sm="auto">
+                            <Grid item xs={12} sm={6} md="auto">
                                 <CategorySelection
-                                    label="Kategorien auswählen"
+                                    label="Kategorien"
+                                    legend="Ein Rezept hat mindestens eine Kategorie"
                                     selectedCategories={selectedCategories}
                                     onRemoveSelectedCategories={removeSelectedCategories}
                                     onCategoryChange={setSelectedCategories}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm="auto">
+                            <Grid item xs={12} sm={6} md="auto">
                                 <RelatedRecipesSelection
                                     relatedRecipes={state.relatedRecipes}
                                     onRelatedRecipesChange={relatedRecipes =>

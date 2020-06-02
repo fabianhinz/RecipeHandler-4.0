@@ -3,18 +3,16 @@ import {
     ButtonProps,
     createStyles,
     Drawer,
+    Grid,
     IconButton,
     makeStyles,
-    useTheme,
+    Typography,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { ReactText, useEffect, useRef, useState } from 'react'
 
 const useStyles = makeStyles(theme =>
     createStyles({
-        buttonLabel: {
-            justifyContent: 'flex-start',
-        },
         paper: {
             [theme.breakpoints.between('xs', 'md')]: {
                 width: 320,
@@ -46,13 +44,21 @@ const useStyles = makeStyles(theme =>
             padding: theme.spacing(1),
             paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
         },
+        iconGridItem: {
+            lineHeight: 0,
+        },
     })
 )
 
 type RenderProp = (closeDrawer: () => void) => React.ReactNode
 
 interface Props {
-    buttonProps: Omit<ButtonProps, 'children'> & { label: React.ReactText; highlight?: boolean }
+    buttonProps: Omit<ButtonProps, 'children' | 'startIcon'> & {
+        label: React.ReactText
+        icon: React.ReactNode
+    }
+    legend?: ReactText
+    highlight?: boolean
     children: React.ReactNode | RenderProp
     header?: React.ReactNode
     action?: React.ReactNode
@@ -60,11 +66,19 @@ interface Props {
     onClose?: () => void
 }
 
-const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose, action }: Props) => {
+const SelectionDrawer = ({
+    buttonProps,
+    children,
+    header,
+    onOpen,
+    onClose,
+    action,
+    legend,
+    highlight,
+}: Props) => {
     const [open, setOpen] = useState(false)
     const prevOpen = useRef(open)
 
-    const theme = useTheme()
     const classes = useStyles()
 
     useEffect(() => {
@@ -79,19 +93,32 @@ const SelectionDrawer = ({ buttonProps, children, header, onOpen, onClose, actio
     const closeDrawer = () => setOpen(false)
     const openDrawer = () => setOpen(true)
 
-    const { label, highlight, ...muiButtonProps } = buttonProps
+    const { label, icon, ...muiButtonProps } = buttonProps
 
     return (
         <>
             <Button
                 onClick={openDrawer}
-                variant={theme.palette.type === 'dark' ? 'outlined' : 'contained'}
+                variant="contained"
+                color={highlight ? 'secondary' : undefined}
                 size="large"
-                classes={{ label: classes.buttonLabel }}
                 fullWidth
-                color={highlight ? 'secondary' : 'default'}
                 {...muiButtonProps}>
-                {label}
+                <Grid container direction="column">
+                    <Grid item>
+                        <Grid container spacing={1} justify="flex-end" alignItems="center">
+                            <Grid item className={classes.iconGridItem}>
+                                {icon}
+                            </Grid>
+                            <Grid item>{label}</Grid>
+                        </Grid>
+                    </Grid>
+                    {legend && (
+                        <Grid item>
+                            <Typography variant="caption">{legend}</Typography>
+                        </Grid>
+                    )}
+                </Grid>
             </Button>
 
             <Drawer
