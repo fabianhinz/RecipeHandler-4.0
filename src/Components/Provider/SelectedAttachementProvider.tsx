@@ -1,4 +1,4 @@
-import { Backdrop, createStyles, makeStyles, Slide } from '@material-ui/core'
+import { Backdrop, makeStyles, Slide } from '@material-ui/core'
 import React, { FC, useContext, useEffect, useState } from 'react'
 
 import { AllDataUrls } from '../../model/model'
@@ -19,40 +19,38 @@ interface StyleProps {
     blurImg: boolean
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        backdrop: {
-            paddingBottom: theme.spacing(8),
-            paddingTop: theme.spacing(8),
-            zIndex: theme.zIndex.modal,
-            display: 'flex',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            backgroundColor: theme.palette.background.paper,
+const useStyles = makeStyles(theme => ({
+    backdrop: {
+        paddingBottom: theme.spacing(8),
+        paddingTop: theme.spacing(8),
+        zIndex: theme.zIndex.modal,
+        display: 'flex',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        backgroundColor: theme.palette.background.paper,
+    },
+    attachment: {
+        filter: ({ blurImg }: StyleProps) => (blurImg ? 'blur(5px)' : 'unset'),
+        maxHeight: '100%',
+        overflow: 'auto',
+        [theme.breakpoints.only('xs')]: {
+            maxWidth: '90%',
         },
-        attachment: {
-            filter: ({ blurImg }: StyleProps) => (blurImg ? 'blur(5px)' : 'unset'),
-            maxHeight: '100%',
-            overflow: 'auto',
-            [theme.breakpoints.only('xs')]: {
-                maxWidth: '90%',
-            },
-            [theme.breakpoints.only('sm')]: {
-                maxWidth: '80%',
-            },
-            [theme.breakpoints.only('md')]: {
-                maxWidth: '70%',
-            },
-            [theme.breakpoints.only('lg')]: {
-                maxWidth: '60%',
-            },
-            [theme.breakpoints.up('xl')]: {
-                maxHeight: '80%',
-            },
-            borderRadius: BORDER_RADIUS,
+        [theme.breakpoints.only('sm')]: {
+            maxWidth: '80%',
         },
-    })
-)
+        [theme.breakpoints.only('md')]: {
+            maxWidth: '70%',
+        },
+        [theme.breakpoints.only('lg')]: {
+            maxWidth: '60%',
+        },
+        [theme.breakpoints.up('xl')]: {
+            maxHeight: '80%',
+        },
+        borderRadius: BORDER_RADIUS,
+    },
+}))
 
 const SelectedAttachementProvider: FC = ({ children }) => {
     const [selectedAttachment, setSelectedAttachment] = useState<SelectedAttachment>(null)

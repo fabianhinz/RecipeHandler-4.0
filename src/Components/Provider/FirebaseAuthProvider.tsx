@@ -1,4 +1,4 @@
-import { createStyles, makeStyles } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
 import { ShoppingList, ShoppingTracker, User } from '../../model/model'
@@ -21,31 +21,29 @@ const Context = React.createContext<AuthContext>({
 
 export const useFirebaseAuthContext = () => useContext(Context)
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        '@keyframes chip-appear': {
-            from: {
-                opacity: 0,
-            },
-            to: {
-                opacity: 1,
-            },
+const useStyles = makeStyles(() => ({
+    '@keyframes chip-appear': {
+        from: {
+            opacity: 0,
         },
-        chip: {
-            animation: `$chip-appear 0.225s ease-out`,
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%,-50%)',
+        to: {
+            opacity: 1,
         },
-        main: {
-            paddingTop: 'env(safe-area-inset-top)',
-            paddingLeft: 'env(safe-area-inset-left)',
-            paddingRight: 'env(safe-area-inset-right)',
-            paddingBottom: 'env(safe-area-inset-bottom)',
-        },
-    })
-)
+    },
+    chip: {
+        animation: `$chip-appear 0.225s ease-out`,
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%,-50%)',
+    },
+    main: {
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        paddingRight: 'env(safe-area-inset-right)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+    },
+}))
 
 const FirebaseAuthProvider: FC = ({ children }) => {
     const [authReady, setAuthReady] = useState(false)

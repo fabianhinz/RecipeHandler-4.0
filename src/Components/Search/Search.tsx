@@ -1,11 +1,4 @@
-import {
-    Container,
-    createStyles,
-    Hidden,
-    InputAdornment,
-    InputBase,
-    makeStyles,
-} from '@material-ui/core'
+import { Container, Hidden, InputAdornment, InputBase, makeStyles } from '@material-ui/core'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -22,39 +15,37 @@ interface StyleProps {
     focused: boolean
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        searchContainer: {
-            display: 'flex',
-            position: 'relative',
-            backgroundColor: ({ focused }: StyleProps) =>
-                focused
-                    ? '#fff'
-                    : theme.palette.type === 'dark'
-                    ? 'rgba(255, 255, 255, 0.1)'
-                    : 'rgba(0, 0, 0, 0.08)',
-            boxShadow: ({ focused }: StyleProps) =>
-                theme.palette.type === 'light' && focused ? theme.shadows[1] : 'unset',
-            borderRadius: BORDER_RADIUS,
-            padding: theme.spacing(1),
-            transition: theme.transitions.create('background-color', {
-                easing: theme.transitions.easing.easeOut,
-            }),
-        },
-        searchInput: {
-            ...theme.typography.h6,
-            color: ({ focused }: StyleProps) =>
-                focused || theme.palette.type === 'light' ? '#000' : '#fff',
-        },
-        alert: {
-            borderRadius: BORDER_RADIUS,
-        },
-        container: {
-            paddingRight: theme.spacing(1),
-            paddingLeft: theme.spacing(1),
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    searchContainer: {
+        display: 'flex',
+        position: 'relative',
+        backgroundColor: ({ focused }: StyleProps) =>
+            focused
+                ? '#fff'
+                : theme.palette.type === 'dark'
+                ? 'rgba(255, 255, 255, 0.1)'
+                : 'rgba(0, 0, 0, 0.08)',
+        boxShadow: ({ focused }: StyleProps) =>
+            theme.palette.type === 'light' && focused ? theme.shadows[1] : 'unset',
+        borderRadius: BORDER_RADIUS,
+        padding: theme.spacing(1),
+        transition: theme.transitions.create('background-color', {
+            easing: theme.transitions.easing.easeOut,
+        }),
+    },
+    searchInput: {
+        ...theme.typography.h6,
+        color: ({ focused }: StyleProps) =>
+            focused || theme.palette.type === 'light' ? '#000' : '#fff',
+    },
+    alert: {
+        borderRadius: BORDER_RADIUS,
+    },
+    container: {
+        paddingRight: theme.spacing(1),
+        paddingLeft: theme.spacing(1),
+    },
+}))
 
 export const AlgoliaDocSearchRef = (
     <a

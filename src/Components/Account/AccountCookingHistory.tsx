@@ -1,4 +1,4 @@
-import { createStyles, Grid, makeStyles } from '@material-ui/core'
+import { Grid, makeStyles } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
 
@@ -16,23 +16,21 @@ interface StyleProps {
     compactLayout: boolean
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        skeleton: {
-            [theme.breakpoints.only('xs')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 360),
-            },
-            [theme.breakpoints.between('sm', 'md')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 360),
-            },
-            [theme.breakpoints.up('lg')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 200),
-            },
-            width: '100%',
-            borderRadius: BORDER_RADIUS,
+const useStyles = makeStyles(theme => ({
+    skeleton: {
+        [theme.breakpoints.only('xs')]: {
+            height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 360),
         },
-    })
-)
+        [theme.breakpoints.between('sm', 'md')]: {
+            height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 360),
+        },
+        [theme.breakpoints.up('lg')]: {
+            height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 200),
+        },
+        width: '100%',
+        borderRadius: BORDER_RADIUS,
+    },
+}))
 
 const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
     const [recipe, setRecipe] = useState<Recipe | null>(null)

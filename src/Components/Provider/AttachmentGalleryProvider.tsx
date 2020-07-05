@@ -1,6 +1,5 @@
 import {
     Chip,
-    createStyles,
     Fab,
     Grid,
     IconButton,
@@ -41,93 +40,91 @@ const Context = React.createContext<AnimationHandler | null>(null)
 
 export const useAttachmentGalleryContext = () => useContext(Context) as AnimationHandler
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        background: {
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            zIndex: -1,
-            opacity: 0,
-            height: '100vh',
-            width: '100vw',
-            backgroundColor: theme.palette.background.paper,
-            transition: theme.transitions.create('opacity', {
-                duration: theme.transitions.duration.enteringScreen,
-            }),
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            alignItems: 'center',
-            [theme.breakpoints.only('xs')]: {
-                flexDirection: 'column',
-            },
-            [theme.breakpoints.up('sm')]: {
-                flexDirection: 'row',
-            },
+const useStyles = makeStyles(theme => ({
+    background: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: -1,
+        opacity: 0,
+        height: '100vh',
+        width: '100vw',
+        backgroundColor: theme.palette.background.paper,
+        transition: theme.transitions.create('opacity', {
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+        display: 'flex',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        [theme.breakpoints.only('xs')]: {
+            flexDirection: 'column',
         },
-        backgroundVisible: {
-            zIndex: theme.zIndex.modal + 2,
-            opacity: 1,
+        [theme.breakpoints.up('sm')]: {
+            flexDirection: 'row',
         },
-        destination: {
-            [theme.breakpoints.only('xs')]: {
-                width: 320,
-                height: 180,
-            },
-            [theme.breakpoints.only('sm')]: {
-                width: 480,
-                height: 270,
-            },
-            [theme.breakpoints.only('md')]: {
-                width: 700,
-                height: 393.75,
-            },
-            [theme.breakpoints.only('lg')]: {
-                width: 900,
-                height: 506.25,
-            },
-            [theme.breakpoints.up('xl')]: {
-                width: 1280,
-                height: 720,
-            },
-            borderRadius: BORDER_RADIUS,
-            position: 'relative',
+    },
+    backgroundVisible: {
+        zIndex: theme.zIndex.modal + 2,
+        opacity: 1,
+    },
+    destination: {
+        [theme.breakpoints.only('xs')]: {
+            width: 320,
+            height: 180,
         },
-        attachment: {
-            overflow: 'hidden',
-            display: 'flex',
-            justifyContent: 'center',
+        [theme.breakpoints.only('sm')]: {
+            width: 480,
+            height: 270,
         },
-        attachmentImg: {
-            height: '100%',
-            objectFit: 'contain',
+        [theme.breakpoints.only('md')]: {
+            width: 700,
+            height: 393.75,
         },
-        attachmentMetadata: {
-            position: 'absolute',
-            bottom: theme.spacing(1),
-            right: theme.spacing(1),
-            width: '100%',
+        [theme.breakpoints.only('lg')]: {
+            width: 900,
+            height: 506.25,
         },
-        attachmentChipMetadata: {
-            boxShadow: theme.shadows[4],
+        [theme.breakpoints.up('xl')]: {
+            width: 1280,
+            height: 720,
         },
-        btnContainer: {
-            position: 'absolute',
-            top: `calc(0px + env(safe-area-inset-top))`,
-            right: 0,
-            padding: theme.spacing(2),
-        },
-        alertContainer: {
-            position: 'absolute',
-            padding: theme.spacing(3),
-            top: `calc(0px + env(safe-area-inset-top))`,
-            right: 0,
-            left: 0,
-            display: 'flex',
-            justifyContent: 'center',
-        },
-    })
-)
+        borderRadius: BORDER_RADIUS,
+        position: 'relative',
+    },
+    attachment: {
+        overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    attachmentImg: {
+        height: '100%',
+        objectFit: 'contain',
+    },
+    attachmentMetadata: {
+        position: 'absolute',
+        bottom: theme.spacing(1),
+        right: theme.spacing(1),
+        width: '100%',
+    },
+    attachmentChipMetadata: {
+        boxShadow: theme.shadows[4],
+    },
+    btnContainer: {
+        position: 'absolute',
+        top: `calc(0px + env(safe-area-inset-top))`,
+        right: 0,
+        padding: theme.spacing(2),
+    },
+    alertContainer: {
+        position: 'absolute',
+        padding: theme.spacing(3),
+        top: `calc(0px + env(safe-area-inset-top))`,
+        right: 0,
+        left: 0,
+        display: 'flex',
+        justifyContent: 'center',
+    },
+}))
 
 interface SwipeableAttachmentProps {
     attachment: AttachmentDoc

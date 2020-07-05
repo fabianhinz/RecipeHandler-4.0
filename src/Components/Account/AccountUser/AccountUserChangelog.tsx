@@ -1,6 +1,5 @@
 import {
     Chip,
-    createStyles,
     Dialog,
     DialogActions,
     DialogContent,
@@ -27,21 +26,19 @@ import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
 import Progress from '../../Shared/Progress'
 import { SlideUp } from '../../Shared/Transitions'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        dialogContent: {
-            paddingLeft: 0,
-            paddingRight: 0,
-        },
-        issueContainer: {
-            marginBottom: theme.spacing(2),
-        },
-        labelsContainer: {
-            display: 'flex',
-            flexDirection: 'column',
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    dialogContent: {
+        paddingLeft: 0,
+        paddingRight: 0,
+    },
+    issueContainer: {
+        marginBottom: theme.spacing(2),
+    },
+    labelsContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+}))
 
 const AccountUserChangelog = () => {
     const [pullrequests, setPullrequests] = useState<Pullrequest[]>([])

@@ -1,4 +1,4 @@
-import { Button, createStyles, Grid, makeStyles, Typography } from '@material-ui/core'
+import { Button, Grid, makeStyles, Typography } from '@material-ui/core'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import clsx from 'clsx'
 import React from 'react'
@@ -7,19 +7,17 @@ import { OrderByRecord } from '../../model/model'
 import recipeService from '../../services/recipeService'
 import CategorySelection from '../Category/CategorySelection'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        orderByAsc: {
-            transform: 'rotate(0deg)',
-            transition: theme.transitions.create('transform', {
-                easing: theme.transitions.easing.easeOut,
-            }),
-        },
-        orderByDesc: {
-            transform: 'rotate(180deg)',
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    orderByAsc: {
+        transform: 'rotate(0deg)',
+        transition: theme.transitions.create('transform', {
+            easing: theme.transitions.easing.easeOut,
+        }),
+    },
+    orderByDesc: {
+        transform: 'rotate(180deg)',
+    },
+}))
 
 interface Props {
     selectedCategories: Map<string, string>

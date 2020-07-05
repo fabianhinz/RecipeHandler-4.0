@@ -1,7 +1,6 @@
 import {
     Button,
     ButtonProps,
-    createStyles,
     Drawer,
     Grid,
     IconButton,
@@ -11,44 +10,42 @@ import {
 import CloseIcon from '@material-ui/icons/Close'
 import React, { ReactText, useEffect, useRef, useState } from 'react'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        paper: {
-            [theme.breakpoints.between('xs', 'md')]: {
-                width: 320,
-            },
-            [theme.breakpoints.up('lg')]: {
-                width: 480,
-            },
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            overflow: 'hidden',
-            userSelect: 'none',
+const useStyles = makeStyles(theme => ({
+    paper: {
+        [theme.breakpoints.between('xs', 'md')]: {
+            width: 320,
         },
-        header: {
-            padding: theme.spacing(1),
-            paddingTop: 'calc(env(safe-area-inset-top) + 8px)',
+        [theme.breakpoints.up('lg')]: {
+            width: 480,
         },
-        container: {
-            flexGrow: 1,
-            padding: theme.spacing(2),
-            paddingTop: 0,
-            maxHeight: '100%',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-        },
-        action: {
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            padding: theme.spacing(1),
-            paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
-        },
-        iconGridItem: {
-            lineHeight: 0,
-        },
-    })
-)
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        overflow: 'hidden',
+        userSelect: 'none',
+    },
+    header: {
+        padding: theme.spacing(1),
+        paddingTop: 'calc(env(safe-area-inset-top) + 8px)',
+    },
+    container: {
+        flexGrow: 1,
+        padding: theme.spacing(2),
+        paddingTop: 0,
+        maxHeight: '100%',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+    },
+    action: {
+        display: 'flex',
+        justifyContent: 'space-evenly',
+        padding: theme.spacing(1),
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
+    },
+    iconGridItem: {
+        lineHeight: 0,
+    },
+}))
 
 type RenderProp = (closeDrawer: () => void) => React.ReactNode
 

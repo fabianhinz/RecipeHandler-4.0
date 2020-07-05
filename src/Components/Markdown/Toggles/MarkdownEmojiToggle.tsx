@@ -1,4 +1,4 @@
-import { createStyles, Grid, IconButton, makeStyles } from '@material-ui/core'
+import { Grid, IconButton, makeStyles } from '@material-ui/core'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
 import { ToggleButton } from '@material-ui/lab'
@@ -31,18 +31,16 @@ const EMOJIS = [
     '🎂',
 ]
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        emojiLabel: {
-            width: theme.spacing(4),
-            height: theme.spacing(4),
-        },
-        iconButtonRoot: {
-            padding: theme.spacing(1),
-            color: 'unset',
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    emojiLabel: {
+        width: theme.spacing(4),
+        height: theme.spacing(4),
+    },
+    iconButtonRoot: {
+        padding: theme.spacing(1),
+        color: 'unset',
+    },
+}))
 
 const MarkdownEmojiToggle = ({ onToggleChange }: ToggleChangeHandler) => {
     const [emoticonAnchorEl, setEmoticonAnchorEl] = useState<HTMLButtonElement | null>(null)

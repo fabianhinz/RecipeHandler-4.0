@@ -1,6 +1,5 @@
 import {
     Avatar,
-    createStyles,
     Divider,
     List,
     ListItem,
@@ -18,7 +17,7 @@ import RecipeDetailsButton from '../RecipeDetailsButton'
 const useStyles = makeStyles(theme => {
     const background = theme.palette.type === 'light' ? brown[200] : brown[400]
 
-    return createStyles({
+    return {
         avatar: {
             background,
             color: theme.palette.getContrastText(background),
@@ -26,7 +25,7 @@ const useStyles = makeStyles(theme => {
         secondaryAction: {
             display: 'flex',
         },
-    })
+    }
 })
 
 export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => {

@@ -1,6 +1,5 @@
 import {
     Avatar,
-    createStyles,
     Fab,
     Grid,
     IconButton,
@@ -23,39 +22,37 @@ import { BORDER_RADIUS_HUGE } from '../../theme'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        comment: {
-            cursor: 'auto',
-            background: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            padding: theme.spacing(1),
-            borderRadius: BORDER_RADIUS_HUGE,
-            minWidth: 200,
-            position: 'relative',
-        },
-        avatar: {
-            height: 60,
-            width: 60,
-        },
-        reactionFab: {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            transform: 'translate(50%, -50%)',
-        },
-        popoverPaper: {
-            padding: theme.spacing(1),
-        },
-        emojiLabel: {
-            width: theme.spacing(4),
-            height: theme.spacing(4),
-        },
-        iconButtonRoot: {
-            padding: theme.spacing(1),
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    comment: {
+        cursor: 'auto',
+        background: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+        padding: theme.spacing(1),
+        borderRadius: BORDER_RADIUS_HUGE,
+        minWidth: 200,
+        position: 'relative',
+    },
+    avatar: {
+        height: 60,
+        width: 60,
+    },
+    reactionFab: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        transform: 'translate(50%, -50%)',
+    },
+    popoverPaper: {
+        padding: theme.spacing(1),
+    },
+    emojiLabel: {
+        width: theme.spacing(4),
+        height: theme.spacing(4),
+    },
+    iconButtonRoot: {
+        padding: theme.spacing(1),
+    },
+}))
 
 const EMOJIS = ['👍', '👎', '👏', '😛']
 

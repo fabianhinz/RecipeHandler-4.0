@@ -1,7 +1,6 @@
 import {
     ButtonBase,
     Chip,
-    createStyles,
     Drawer,
     Hidden,
     List,
@@ -26,87 +25,81 @@ import { AlgoliaDocSearchRef } from './Search/Search'
 
 interface StyleProps {
     active?: boolean
-    scrolled?: boolean
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        nav: {
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'fixed',
-            justifyContent: 'flex-start',
-            transition: theme.transitions.create('top', {
-                easing: theme.transitions.easing.easeOut,
-            }),
-            top: ({ scrolled }: StyleProps) =>
-                !scrolled
-                    ? 'calc(env(safe-area-inset-top) + 64px)'
-                    : 'calc(env(safe-area-inset-top) + 0px)',
-            bottom: 0,
-            maxHeight: '100%',
-            zIndex: theme.zIndex.appBar,
-            width: 'calc(env(safe-area-inset-left) + 95px)',
-            paddingLeft: 'env(safe-area-inset-left)',
-            overflowY: 'auto',
-            backgroundColor: theme.palette.background.paper,
-            left: 0,
-            borderRight: `1px solid ${
-                theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
-            }`,
-        },
-        label: {
-            fontWeight: 600,
-            fontFamily: 'Ubuntu',
-        },
-        routeAwareColor: {
-            color: ({ active }: StyleProps) =>
-                active
-                    ? theme.palette.primary.main
-                    : theme.palette.type === 'light'
-                    ? 'rgba(0, 0, 0, 0.54)'
-                    : 'inherit',
-        },
-        button: {
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            padding: 8,
-            borderRadius: 0,
-            height: 95,
-            '@media (pointer: fine)': {
-                '&:hover': {
-                    backgroundColor: ({ active }: StyleProps) =>
-                        active
-                            ? 'inherit'
-                            : theme.palette.type === 'dark'
-                            ? 'rgba(255, 255, 255, 0.1)'
-                            : 'rgba(0, 0, 0, 0.08)',
-                },
+const useStyles = makeStyles(theme => ({
+    nav: {
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'fixed',
+        justifyContent: 'flex-start',
+        transition: theme.transitions.create('top', {
+            easing: theme.transitions.easing.easeOut,
+        }),
+        top: 'calc(env(safe-area-inset-top) + 64px)',
+        bottom: 0,
+        maxHeight: '100%',
+        zIndex: theme.zIndex.appBar,
+        width: 'calc(env(safe-area-inset-left) + 95px)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        overflowY: 'auto',
+        backgroundColor: theme.palette.background.paper,
+        left: 0,
+        borderRight: `1px solid ${
+            theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
+        }`,
+    },
+    label: {
+        fontWeight: 600,
+        fontFamily: 'Ubuntu',
+    },
+    routeAwareColor: {
+        color: ({ active }: StyleProps) =>
+            active
+                ? theme.palette.primary.main
+                : theme.palette.type === 'light'
+                ? 'rgba(0, 0, 0, 0.54)'
+                : 'inherit',
+    },
+    button: {
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        padding: 8,
+        borderRadius: 0,
+        height: 95,
+        '@media (pointer: fine)': {
+            '&:hover': {
+                backgroundColor: ({ active }: StyleProps) =>
+                    active
+                        ? 'inherit'
+                        : theme.palette.type === 'dark'
+                        ? 'rgba(255, 255, 255, 0.1)'
+                        : 'rgba(0, 0, 0, 0.08)',
             },
         },
-        drawerPaper: {
-            paddingTop: 'env(safe-area-inset-top)',
-            paddingLeft: 'env(safe-area-inset-left)',
-            width: 320,
-            display: 'flex',
-            justifyContent: 'space-between',
+    },
+    drawerPaper: {
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        width: 320,
+        display: 'flex',
+        justifyContent: 'space-between',
+    },
+    listItem: {
+        borderRadius: 0,
+        paddingTop: theme.spacing(2),
+        paddingBottom: theme.spacing(2),
+    },
+    algoliaDocSearchRef: {
+        padding: theme.spacing(2),
+        paddingBottom: 'max(env(safe-area-inset-bottom), 16px)',
+        textAlign: 'center',
+        [theme.breakpoints.up('sm')]: {
+            display: 'none',
         },
-        listItem: {
-            borderRadius: 0,
-            paddingTop: theme.spacing(2),
-            paddingBottom: theme.spacing(2),
-        },
-        algoliaDocSearchRef: {
-            padding: theme.spacing(2),
-            paddingBottom: 'max(env(safe-area-inset-bottom), 16px)',
-            textAlign: 'center',
-            [theme.breakpoints.up('sm')]: {
-                display: 'none',
-            },
-        },
-    })
-)
+    },
+}))
 
 interface NavButtonProps {
     icon: JSX.Element
@@ -170,11 +163,10 @@ const NavListItem = ({
 interface NavProps {
     drawerOpen: boolean
     onDrawerClose: () => void
-    scrolled: boolean
 }
 
-const Nav = ({ drawerOpen, onDrawerClose, scrolled }: NavProps) => {
-    const classes = useStyles({ scrolled })
+const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
+    const classes = useStyles({})
 
     const { hits } = useSearchResultsContext()
     const { bookmarks } = useBookmarkContext()

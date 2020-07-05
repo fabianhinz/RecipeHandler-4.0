@@ -1,4 +1,4 @@
-import { createStyles, Grid, makeStyles } from '@material-ui/core'
+import { Grid, makeStyles } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
 import React, { useEffect, useState } from 'react'
 
@@ -11,36 +11,34 @@ interface Props {
     recipe: Recipe
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        container: {
-            overflowX: 'auto',
-            [theme.breakpoints.between('xs', 'sm')]: {
-                height: 250,
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                height: 300,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: 350,
-            },
+const useStyles = makeStyles(theme => ({
+    container: {
+        overflowX: 'auto',
+        [theme.breakpoints.between('xs', 'sm')]: {
+            height: 250,
         },
-        skeleton: {
-            [theme.breakpoints.between('xs', 'sm')]: {
-                width: 250 - theme.spacing(4),
-                height: 250 - theme.spacing(4),
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                width: 300 - theme.spacing(4),
-                height: 300 - theme.spacing(4),
-            },
-            [theme.breakpoints.up('xl')]: {
-                width: 350 - theme.spacing(4),
-                height: 350 - theme.spacing(4),
-            },
+        [theme.breakpoints.between('md', 'lg')]: {
+            height: 300,
         },
-    })
-)
+        [theme.breakpoints.up('xl')]: {
+            height: 350,
+        },
+    },
+    skeleton: {
+        [theme.breakpoints.between('xs', 'sm')]: {
+            width: 250 - theme.spacing(4),
+            height: 250 - theme.spacing(4),
+        },
+        [theme.breakpoints.between('md', 'lg')]: {
+            width: 300 - theme.spacing(4),
+            height: 300 - theme.spacing(4),
+        },
+        [theme.breakpoints.up('xl')]: {
+            width: 350 - theme.spacing(4),
+            height: 350 - theme.spacing(4),
+        },
+    },
+}))
 
 const Attachments = ({ recipe }: Props) => {
     const [savedAttachments, setSavedAttachments] = useState<AttachmentDoc[]>([])

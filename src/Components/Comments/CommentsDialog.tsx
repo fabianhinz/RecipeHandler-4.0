@@ -1,5 +1,4 @@
 import {
-    createStyles,
     Dialog,
     DialogActions,
     DialogContent,
@@ -27,23 +26,21 @@ import NotFound from '../Shared/NotFound'
 import { SlideUp } from '../Shared/Transitions'
 import Comment from './Comment'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        skeleton: {
-            borderRadius: BORDER_RADIUS_HUGE,
-        },
-        dialogTitle: {
-            cursor: 'move',
-        },
-        form: {
-            flexGrow: 1,
-        },
-        dialogContent: {
-            padding: theme.spacing(3),
-            paddingRight: theme.spacing(4),
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    skeleton: {
+        borderRadius: BORDER_RADIUS_HUGE,
+    },
+    dialogTitle: {
+        cursor: 'move',
+    },
+    form: {
+        flexGrow: 1,
+    },
+    dialogContent: {
+        padding: theme.spacing(3),
+        paddingRight: theme.spacing(4),
+    },
+}))
 
 const DraggablePaper = (props: PaperProps) => {
     return (

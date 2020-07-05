@@ -1,11 +1,4 @@
-import {
-    CardActionArea,
-    createStyles,
-    Grid,
-    makeStyles,
-    Paper,
-    Typography,
-} from '@material-ui/core'
+import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
 import { yellow } from '@material-ui/core/colors'
 import React, { memo, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -36,18 +29,16 @@ interface StyleProps {
     backgroundColor: string
 }
 
-const useMostCookedPaperStyles = makeStyles(theme =>
-    createStyles({
-        paper: {
-            padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-            backgroundColor: (props: StyleProps) => props.backgroundColor,
-        },
-        typography: {
-            color: (props: StyleProps) =>
-                theme.palette.getContrastText(props.backgroundColor || COLOR_PALETTE[0]),
-        },
-    })
-)
+const useMostCookedPaperStyles = makeStyles(theme => ({
+    paper: {
+        padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+        backgroundColor: (props: StyleProps) => props.backgroundColor,
+    },
+    typography: {
+        color: (props: StyleProps) =>
+            theme.palette.getContrastText(props.backgroundColor || COLOR_PALETTE[0]),
+    },
+}))
 
 interface MostCookedPaperProps {
     recipeName: string

@@ -1,16 +1,14 @@
-import { createStyles, makeStyles, Popover, PopoverProps } from '@material-ui/core'
+import { makeStyles, Popover, PopoverProps } from '@material-ui/core'
 import React from 'react'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        popoverPaper: {
-            padding: theme.spacing(1),
-            maxWidth: 300,
-            maxHeight: 300,
-            overflowY: 'auto',
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    popoverPaper: {
+        padding: theme.spacing(1),
+        maxWidth: 300,
+        maxHeight: 300,
+        overflowY: 'auto',
+    },
+}))
 
 const MarkdownPopover = ({
     children,

@@ -1,18 +1,16 @@
-import { createStyles, InputBase, makeStyles } from '@material-ui/core'
+import { InputBase, makeStyles } from '@material-ui/core'
 import React, { useState } from 'react'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        inputBaseRoot: {
-            width: '100%',
-            ...theme.typography.h5,
-        },
-        inputBaseInput: {
-            fontFamily: 'Ubuntu',
-            padding: 0,
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    inputBaseRoot: {
+        width: '100%',
+        ...theme.typography.h5,
+    },
+    inputBaseInput: {
+        fontFamily: 'Ubuntu',
+        padding: 0,
+    },
+}))
 
 interface Props {
     inputDisabled?: boolean

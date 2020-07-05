@@ -1,6 +1,5 @@
 import {
     Button,
-    createStyles,
     Dialog,
     DialogActions,
     DialogContent,
@@ -22,16 +21,14 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
 import { SlideUp } from '../Shared/Transitions'
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        form: {
-            display: 'flex',
-            flexDirection: 'column',
-            overflowY: 'auto',
-            height: '100%',
-        },
-    })
-)
+const useStyles = makeStyles(() => ({
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'auto',
+        height: '100%',
+    },
+}))
 
 interface Props {
     open: boolean

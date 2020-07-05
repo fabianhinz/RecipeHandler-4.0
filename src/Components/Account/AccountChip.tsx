@@ -1,4 +1,4 @@
-import { Avatar, Chip, createStyles, makeStyles } from '@material-ui/core'
+import { Avatar, Chip, makeStyles } from '@material-ui/core'
 import { ChipProps } from '@material-ui/core/Chip'
 import clsx from 'clsx'
 import React from 'react'
@@ -6,23 +6,21 @@ import React from 'react'
 import { User } from '../../model/model'
 import { useUsersContext } from '../Provider/UsersProvider'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        absolute: {
-            boxShadow: theme.shadows[4],
-            position: 'absolute',
-            left: ' 50%',
-            transform: 'translate(-50%, 0)',
-            zIndex: 1,
-        },
-        top: {
-            top: theme.spacing(1),
-        },
-        bottom: {
-            bottom: theme.spacing(1),
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    absolute: {
+        boxShadow: theme.shadows[4],
+        position: 'absolute',
+        left: ' 50%',
+        transform: 'translate(-50%, 0)',
+        zIndex: 1,
+    },
+    top: {
+        top: theme.spacing(1),
+    },
+    bottom: {
+        bottom: theme.spacing(1),
+    },
+}))
 
 interface Props extends Pick<ChipProps, 'variant'> {
     uid: string
