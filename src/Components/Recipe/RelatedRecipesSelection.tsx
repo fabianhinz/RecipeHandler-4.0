@@ -1,6 +1,5 @@
 import {
     Avatar,
-    createStyles,
     InputBase,
     List,
     ListItem,
@@ -18,27 +17,25 @@ import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import SelectionDrawer from '../Shared/SelectionDrawer'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        avatarRoot: {
-            height: 40,
-            width: 40,
-            border: `2px solid ${theme.palette.divider}`,
-        },
-        avatarSelected: {
-            backgroundColor: theme.palette.secondary.main,
-            color: theme.palette.getContrastText(theme.palette.secondary.main),
-        },
-        inputBaseRoot: {
-            width: '100%',
-            ...theme.typography.h6,
-        },
-        inputBaseInput: {
-            fontFamily: 'Ubuntu',
-            padding: theme.spacing(1),
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    avatarRoot: {
+        height: 40,
+        width: 40,
+        border: `2px solid ${theme.palette.divider}`,
+    },
+    avatarSelected: {
+        backgroundColor: theme.palette.secondary.main,
+        color: theme.palette.getContrastText(theme.palette.secondary.main),
+    },
+    inputBaseRoot: {
+        width: '100%',
+        ...theme.typography.h6,
+    },
+    inputBaseInput: {
+        fontFamily: 'Ubuntu',
+        padding: theme.spacing(1),
+    },
+}))
 
 const endAt = (debouncedSearchValue: string) => {
     // https://stackoverflow.com/a/57290806

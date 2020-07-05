@@ -1,7 +1,6 @@
 import {
     Avatar,
     Checkbox,
-    createStyles,
     Divider,
     Link,
     List,
@@ -28,20 +27,18 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PATHS } from '../Routes/Routes'
 import { GrowIn } from '../Shared/Transitions'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        checkboxRoot: {
-            padding: theme.spacing(0.5),
-        },
-        recipeContainer: {
-            overflowX: 'hidden',
-        },
-        markdown: {
-            fontSize: '1rem',
-            lineHeight: '1.5rem',
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    checkboxRoot: {
+        padding: theme.spacing(0.5),
+    },
+    recipeContainer: {
+        overflowX: 'hidden',
+    },
+    markdown: {
+        fontSize: '1rem',
+        lineHeight: '1.5rem',
+    },
+}))
 
 interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
     recipeName: string

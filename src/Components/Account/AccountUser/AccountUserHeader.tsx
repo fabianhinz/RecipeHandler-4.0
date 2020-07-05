@@ -1,11 +1,4 @@
-import {
-    Avatar,
-    CardActionArea,
-    createStyles,
-    Grid,
-    makeStyles,
-    Typography,
-} from '@material-ui/core'
+import { Avatar, CardActionArea, Grid, makeStyles, Typography } from '@material-ui/core'
 import { useSnackbar } from 'notistack'
 import React, { useEffect } from 'react'
 
@@ -13,24 +6,22 @@ import { useAttachmentDropzone } from '../../../hooks/useAttachmentDropzone'
 import { User } from '../../../model/model'
 import AccountUserChangelog from './AccountUserChangelog'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        userAvatar: {
-            [theme.breakpoints.between('xs', 'md')]: {
-                height: 100,
-                width: 100,
-            },
-            [theme.breakpoints.up('lg')]: {
-                height: 120,
-                width: 120,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: 140,
-                width: 140,
-            },
+const useStyles = makeStyles(theme => ({
+    userAvatar: {
+        [theme.breakpoints.between('xs', 'md')]: {
+            height: 100,
+            width: 100,
         },
-    })
-)
+        [theme.breakpoints.up('lg')]: {
+            height: 120,
+            width: 120,
+        },
+        [theme.breakpoints.up('xl')]: {
+            height: 140,
+            width: 140,
+        },
+    },
+}))
 
 interface Props {
     user: User

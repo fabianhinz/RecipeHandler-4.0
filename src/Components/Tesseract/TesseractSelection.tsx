@@ -1,4 +1,4 @@
-import { Avatar, ButtonBase, CircularProgress, createStyles, makeStyles } from '@material-ui/core'
+import { Avatar, ButtonBase, CircularProgress, makeStyles } from '@material-ui/core'
 import clsx from 'clsx'
 import { ImageSearch } from 'mdi-material-ui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -13,41 +13,39 @@ interface StyleProps {
     progress?: number
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        dropzoneAvatar: {
-            width: '100%',
-            height: 100,
-            position: 'relative',
-        },
-        dropzoneButton: {
-            width: '100%',
-        },
-        dropzoneIcon: {
-            fontSize: theme.typography.pxToRem(60),
+const useStyles = makeStyles(theme => ({
+    dropzoneAvatar: {
+        width: '100%',
+        height: 100,
+        position: 'relative',
+    },
+    dropzoneButton: {
+        width: '100%',
+    },
+    dropzoneIcon: {
+        fontSize: theme.typography.pxToRem(60),
 
-            zIndex: 1,
+        zIndex: 1,
+    },
+    progressRoot: {
+        position: 'absolute',
+        width: '0%',
+        height: '100%',
+        bottom: 0,
+        left: 0,
+        backgroundColor: theme.palette.primary.main,
+        transition: theme.transitions.create('width', {
+            duration: theme.transitions.duration.standard,
+            easing: theme.transitions.easing.easeOut,
+        }),
+    },
+    progressAnimated: {
+        width: ({ progress }: StyleProps) => {
+            if (!progress || progress === 0) return '0%'
+            else return `${progress * 100}%`
         },
-        progressRoot: {
-            position: 'absolute',
-            width: '0%',
-            height: '100%',
-            bottom: 0,
-            left: 0,
-            backgroundColor: theme.palette.primary.main,
-            transition: theme.transitions.create('width', {
-                duration: theme.transitions.duration.standard,
-                easing: theme.transitions.easing.easeOut,
-            }),
-        },
-        progressAnimated: {
-            width: ({ progress }: StyleProps) => {
-                if (!progress || progress === 0) return '0%'
-                else return `${progress * 100}%`
-            },
-        },
-    })
-)
+    },
+}))
 
 interface Props extends Pick<Recipe, 'description' | 'ingredients'> {
     onChange: (result: TesseractResult) => void

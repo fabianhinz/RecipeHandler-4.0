@@ -1,4 +1,4 @@
-import { createStyles, Grid, makeStyles } from '@material-ui/core'
+import { Grid, makeStyles } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import React, { useRef } from 'react'
 
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => {
         },
     }
 
-    return createStyles({
+    return {
         skeleton: {
             ...responsiveDimenstions,
         },
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => {
             boxShadow: theme.shadows[2],
             objectFit: 'cover',
         },
-    })
+    }
 })
 
 interface Props {

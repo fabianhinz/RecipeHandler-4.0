@@ -1,46 +1,44 @@
-import { Chip, createStyles, Link, makeStyles, Typography } from '@material-ui/core'
+import { Chip, Link, makeStyles, Typography } from '@material-ui/core'
 import clsx from 'clsx'
 import React, { memo } from 'react'
 
 import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        chip: {
-            boxShadow: theme.shadows[4],
-            backgroundColor: '#2C384A',
-            height: theme.spacing(10),
-            borderRadius: theme.spacing(5),
+const useStyles = makeStyles(theme => ({
+    chip: {
+        boxShadow: theme.shadows[4],
+        backgroundColor: '#2C384A',
+        height: theme.spacing(10),
+        borderRadius: theme.spacing(5),
+    },
+    chipLabel: {
+        paddingRight: 36,
+        paddingLeft: 0,
+        '& > *': {
+            color: theme.palette.getContrastText('#2C384A'),
         },
-        chipLabel: {
-            paddingRight: 36,
-            paddingLeft: 0,
-            '& > *': {
-                color: theme.palette.getContrastText('#2C384A'),
-            },
-        },
-        link: {
-            color: '#FFCA28',
-        },
-        '@keyframes icon-loading': {
-            '0%': {
-                transform: 'scale(1.1)',
-            },
-            '50%': {
-                transform: 'scale(1.3)',
-            },
-            '100%': {
-                transform: 'scale(1.1)',
-            },
-        },
-        icon: {
+    },
+    link: {
+        color: '#FFCA28',
+    },
+    '@keyframes icon-loading': {
+        '0%': {
             transform: 'scale(1.1)',
         },
-        iconLoading: {
-            animation: `$icon-loading 2s infinite linear`,
+        '50%': {
+            transform: 'scale(1.3)',
         },
-    })
-)
+        '100%': {
+            transform: 'scale(1.1)',
+        },
+    },
+    icon: {
+        transform: 'scale(1.1)',
+    },
+    iconLoading: {
+        animation: `$icon-loading 2s infinite linear`,
+    },
+}))
 
 interface Props {
     loading?: boolean

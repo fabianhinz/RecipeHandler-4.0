@@ -1,6 +1,5 @@
 import {
     Checkbox,
-    createStyles,
     Fab,
     Grid,
     IconButton,
@@ -27,25 +26,23 @@ import FabContainer from '../Shared/FabContainer'
 import NotFound from '../Shared/NotFound'
 import StyledCard from '../Shared/StyledCard'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        checked: {
-            textDecoration: 'line-through',
-        },
-        sonstigesRoot: {
-            display: 'flex',
-            flexGrow: 1,
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            minHeight: 150,
-        },
-        listSubHeader: {
-            fontSize: '1rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    checked: {
+        textDecoration: 'line-through',
+    },
+    sonstigesRoot: {
+        display: 'flex',
+        flexGrow: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        minHeight: 150,
+    },
+    listSubHeader: {
+        fontSize: '1rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+    },
+}))
 
 const AccountUserShoppingList = () => {
     const [textFieldValue, setTextFieldValue] = useState('')

@@ -1,4 +1,4 @@
-import { createStyles, Divider, List, makeStyles, TextField, useTheme } from '@material-ui/core'
+import { Divider, List, makeStyles, TextField, useTheme } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 
 import MarkdownEmojiToggle from './Toggles/MarkdownEmojiToggle'
@@ -17,22 +17,20 @@ export interface CurrentFormats {
     formats: Format[]
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        paper: {
-            display: 'flex',
-            overflowX: 'auto',
-        },
-        divider: {
-            alignSelf: 'stretch',
-            height: 'auto',
-            margin: theme.spacing(1, 0.5),
-        },
-        textField: {
-            marginTop: theme.spacing(2),
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    paper: {
+        display: 'flex',
+        overflowX: 'auto',
+    },
+    divider: {
+        alignSelf: 'stretch',
+        height: 'auto',
+        margin: theme.spacing(1, 0.5),
+    },
+    textField: {
+        marginTop: theme.spacing(2),
+    },
+}))
 
 interface Props {
     outerValue: string

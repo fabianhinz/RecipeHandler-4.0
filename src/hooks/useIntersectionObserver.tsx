@@ -1,4 +1,4 @@
-import { createStyles, makeStyles } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import React, { useLayoutEffect, useRef } from 'react'
 
 import ElementIdService from '../services/elementIdService'
@@ -8,14 +8,12 @@ interface useIntersectionObserverOptions {
     onLeave?: () => void
 }
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        trigger: {
-            minWidth: 1,
-            minHeight: 1,
-        },
-    })
-)
+const useStyles = makeStyles(() => ({
+    trigger: {
+        minWidth: 1,
+        minHeight: 1,
+    },
+}))
 
 const useIntersectionObserver = ({ onIsIntersecting, onLeave }: useIntersectionObserverOptions) => {
     const idRef = useRef(ElementIdService.getId())

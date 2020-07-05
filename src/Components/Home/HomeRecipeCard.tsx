@@ -3,7 +3,6 @@ import {
     Card,
     CardActionArea,
     CardHeader,
-    createStyles,
     Grid,
     IconButton,
     makeStyles,
@@ -28,53 +27,51 @@ import { useUsersContext } from '../Provider/UsersProvider'
 import RecipeBookmarkButton from '../Recipe/RecipeBookmarkButton'
 import { PATHS } from '../Routes/Routes'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        avatarContainer: {
-            position: 'relative',
-        },
-        userAvatar: {
-            height: 40,
-            width: 40,
-            border: `2px solid ${theme.palette.divider}`,
-            position: 'absolute',
-            top: 8,
-            right: 8,
-        },
-        avatar: {
-            width: '100%',
-            height: 200,
-            fontSize: theme.typography.pxToRem(60),
+const useStyles = makeStyles(theme => ({
+    avatarContainer: {
+        position: 'relative',
+    },
+    userAvatar: {
+        height: 40,
+        width: 40,
+        border: `2px solid ${theme.palette.divider}`,
+        position: 'absolute',
+        top: 8,
+        right: 8,
+    },
+    avatar: {
+        width: '100%',
+        height: 200,
+        fontSize: theme.typography.pxToRem(60),
+        borderTopLeftRadius: BORDER_RADIUS,
+        borderTopRightRadius: BORDER_RADIUS,
+        [theme.breakpoints.up('lg')]: {
             borderTopLeftRadius: BORDER_RADIUS,
-            borderTopRightRadius: BORDER_RADIUS,
-            [theme.breakpoints.up('lg')]: {
-                borderTopLeftRadius: BORDER_RADIUS,
-                borderTopRightRadius: 0,
-                borderBottomLeftRadius: BORDER_RADIUS,
-            },
+            borderTopRightRadius: 0,
+            borderBottomLeftRadius: BORDER_RADIUS,
         },
-        cardAction: {
-            display: 'flex',
-            flexDirection: 'column',
-        },
-        compactPaper: {
-            padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-        },
-        card: {
-            height: '100%',
-        },
-        cardContent: {
-            padding: theme.spacing(2),
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-        },
-        cardHeader: {
-            padding: 0,
-            paddingBottom: theme.spacing(2),
-        },
-    })
-)
+    },
+    cardAction: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    compactPaper: {
+        padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    },
+    card: {
+        height: '100%',
+    },
+    cardContent: {
+        padding: theme.spacing(2),
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+    },
+    cardHeader: {
+        padding: 0,
+        paddingBottom: theme.spacing(2),
+    },
+}))
 
 interface Props {
     recipe: Recipe

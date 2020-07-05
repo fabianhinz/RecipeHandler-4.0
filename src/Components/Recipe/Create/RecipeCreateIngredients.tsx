@@ -1,12 +1,4 @@
-import {
-    Button,
-    createStyles,
-    Grid,
-    IconButton,
-    makeStyles,
-    Popover,
-    Typography,
-} from '@material-ui/core'
+import { Button, Grid, IconButton, makeStyles, Popover, Typography } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/AddCircle'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
@@ -22,16 +14,14 @@ interface Props extends RecipeCreateDispatch {
     onIngredientsChange: (value: string) => void
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        headerButton: {
-            textTransform: 'none',
-        },
-        popoverPaper: {
-            padding: theme.spacing(1),
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    headerButton: {
+        textTransform: 'none',
+    },
+    popoverPaper: {
+        padding: theme.spacing(1),
+    },
+}))
 
 const RecipeCreateIngredients = ({ amount, ingredients, onIngredientsChange, dispatch }: Props) => {
     const [amountAnchorEl, setAmountAnchorEl] = useState<HTMLButtonElement | null>(null)

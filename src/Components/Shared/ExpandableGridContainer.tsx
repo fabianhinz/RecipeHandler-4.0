@@ -1,12 +1,4 @@
-import {
-    Button,
-    ButtonProps,
-    createStyles,
-    Grid,
-    IconButton,
-    makeStyles,
-    Typography,
-} from '@material-ui/core'
+import { Button, ButtonProps, Grid, IconButton, makeStyles, Typography } from '@material-ui/core'
 import clsx from 'clsx'
 import { ChevronDown } from 'mdi-material-ui'
 import React, { ReactNode, ReactText, useCallback, useMemo, useState } from 'react'
@@ -20,43 +12,41 @@ interface StyleProps extends Pick<Props, 'itemHeight' | 'rows'> {
     gridLayout: GridLayout
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        container: {
-            overflowY: 'hidden',
-            height: ({ itemHeight, rows }: StyleProps) => (rows ? rows * itemHeight : itemHeight),
-            transition: theme.transitions.create('height', {
-                easing: theme.transitions.easing.easeOut,
-            }),
+const useStyles = makeStyles(theme => ({
+    container: {
+        overflowY: 'hidden',
+        height: ({ itemHeight, rows }: StyleProps) => (rows ? rows * itemHeight : itemHeight),
+        transition: theme.transitions.create('height', {
+            easing: theme.transitions.easing.easeOut,
+        }),
+    },
+    containerExpanded: {
+        [theme.breakpoints.between('xs', 'sm')]: {
+            height: ({ gridItems, itemHeight }: StyleProps) => gridItems * itemHeight,
         },
-        containerExpanded: {
-            [theme.breakpoints.between('xs', 'sm')]: {
-                height: ({ gridItems, itemHeight }: StyleProps) => gridItems * itemHeight,
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                height: ({ gridItems, gridLayout, itemHeight }: StyleProps) =>
-                    gridLayout === 'list'
-                        ? gridItems * itemHeight
-                        : Math.ceil(gridItems / 2) * itemHeight,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: ({ gridItems, gridLayout, itemHeight }: StyleProps) =>
-                    gridLayout === 'list'
-                        ? gridItems * itemHeight
-                        : Math.ceil(gridItems / 3) * itemHeight,
-            },
+        [theme.breakpoints.between('md', 'lg')]: {
+            height: ({ gridItems, gridLayout, itemHeight }: StyleProps) =>
+                gridLayout === 'list'
+                    ? gridItems * itemHeight
+                    : Math.ceil(gridItems / 2) * itemHeight,
         },
-        hidden: {
-            transform: 'rotate(0deg)',
-            transition: theme.transitions.create('transform', {
-                easing: theme.transitions.easing.easeOut,
-            }),
+        [theme.breakpoints.up('xl')]: {
+            height: ({ gridItems, gridLayout, itemHeight }: StyleProps) =>
+                gridLayout === 'list'
+                    ? gridItems * itemHeight
+                    : Math.ceil(gridItems / 3) * itemHeight,
         },
-        expanded: {
-            transform: 'rotate(180deg)',
-        },
-    })
-)
+    },
+    hidden: {
+        transform: 'rotate(0deg)',
+        transition: theme.transitions.create('transform', {
+            easing: theme.transitions.easing.easeOut,
+        }),
+    },
+    expanded: {
+        transform: 'rotate(180deg)',
+    },
+}))
 
 interface Props {
     titles: { header?: ReactText; expanded: ReactText; notExpanded: ReactText }

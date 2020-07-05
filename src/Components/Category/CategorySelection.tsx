@@ -1,6 +1,5 @@
 import {
     Avatar,
-    createStyles,
     Grid,
     IconButton,
     List,
@@ -19,17 +18,15 @@ import { useCategoriesCollectionContext } from '../Provider/CategoriesCollection
 import SelectionDrawer from '../Shared/SelectionDrawer'
 import getIconByCategory from './CategoryIcons'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        avatarSelected: {
-            backgroundColor: theme.palette.secondary.main,
-            color: theme.palette.getContrastText(theme.palette.secondary.main),
-        },
-        subheader: {
-            backgroundColor: theme.palette.background.paper,
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    avatarSelected: {
+        backgroundColor: theme.palette.secondary.main,
+        color: theme.palette.getContrastText(theme.palette.secondary.main),
+    },
+    subheader: {
+        backgroundColor: theme.palette.background.paper,
+    },
+}))
 
 interface Props {
     header?: React.ReactNode

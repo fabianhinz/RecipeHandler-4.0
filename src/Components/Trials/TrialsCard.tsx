@@ -2,7 +2,6 @@ import {
     Card,
     CardActionArea,
     CardMedia,
-    createStyles,
     Fab,
     Grid,
     GridSize,
@@ -28,54 +27,52 @@ import { useGridContext } from '../Provider/GridProvider'
 import { useSelectedAttachementContext } from '../Provider/SelectedAttachementProvider'
 import TrialsDeleteAlert from './TrialsDeleteAlert'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        cardMedia: {
-            [theme.breakpoints.down('sm')]: {
-                height: 283,
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-                height: 333,
-            },
-            [theme.breakpoints.up('xl')]: {
-                height: 383,
-            },
+const useStyles = makeStyles(theme => ({
+    cardMedia: {
+        [theme.breakpoints.down('sm')]: {
+            height: 283,
         },
-        card: {
-            position: 'relative',
+        [theme.breakpoints.between('md', 'lg')]: {
+            height: 333,
         },
-        actions: {
-            position: 'absolute',
-            bottom: theme.spacing(1),
-            right: theme.spacing(1),
-            width: 'fit-content',
+        [theme.breakpoints.up('xl')]: {
+            height: 383,
         },
-        selectionRoot: {
-            borderRadius: BORDER_RADIUS,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: theme.palette.secondary.main,
-            opacity: 0,
-            transition: theme.transitions.create('opacity', {
-                duration: theme.transitions.duration.standard,
-            }),
-        },
-        selectionActive: {
-            zIndex: 2,
-            opacity: 1,
-        },
-        selectionCheckIcon: {
-            color: theme.palette.getContrastText(theme.palette.secondary.main),
-            fontSize: theme.typography.pxToRem(60),
-        },
-    })
-)
+    },
+    card: {
+        position: 'relative',
+    },
+    actions: {
+        position: 'absolute',
+        bottom: theme.spacing(1),
+        right: theme.spacing(1),
+        width: 'fit-content',
+    },
+    selectionRoot: {
+        borderRadius: BORDER_RADIUS,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.palette.secondary.main,
+        opacity: 0,
+        transition: theme.transitions.create('opacity', {
+            duration: theme.transitions.duration.standard,
+        }),
+    },
+    selectionActive: {
+        zIndex: 2,
+        opacity: 1,
+    },
+    selectionCheckIcon: {
+        color: theme.palette.getContrastText(theme.palette.secondary.main),
+        fontSize: theme.typography.pxToRem(60),
+    },
+}))
 
 interface Props {
     trial: Trial

@@ -1,19 +1,17 @@
-import { createStyles, Grid, makeStyles, Typography } from '@material-ui/core'
+import { Grid, makeStyles, Typography } from '@material-ui/core'
 import React from 'react'
 
 import { Recipe } from '../../../model/model'
 import { CategoryResult } from '../../Category/CategoryResult'
 import RecipeResultButtons from './RecipeResultButtons'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        recipeName: {
-            [theme.breakpoints.only('xs')]: {
-                textAlign: 'center',
-            },
+const useStyles = makeStyles(theme => ({
+    recipeName: {
+        [theme.breakpoints.only('xs')]: {
+            textAlign: 'center',
         },
-    })
-)
+    },
+}))
 
 interface Props {
     recipe: Recipe

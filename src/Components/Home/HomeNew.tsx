@@ -1,11 +1,4 @@
-import {
-    CardActionArea,
-    createStyles,
-    Grid,
-    makeStyles,
-    Paper,
-    Typography,
-} from '@material-ui/core'
+import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
 import green from '@material-ui/core/colors/green'
 import React, { memo, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -17,17 +10,15 @@ import { PATHS } from '../Routes/Routes'
 import ExpandableGridContainer from '../Shared/ExpandableGridContainer'
 import Skeletons from '../Shared/Skeletons'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        paper: {
-            padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-            backgroundColor: green.A100,
-        },
-        typography: {
-            color: theme.palette.getContrastText(green.A100),
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    paper: {
+        padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+        backgroundColor: green.A100,
+    },
+    typography: {
+        color: theme.palette.getContrastText(green.A100),
+    },
+}))
 
 const HomeNew = () => {
     const [recipeNames, setRecipeNames] = useState<string[]>([])

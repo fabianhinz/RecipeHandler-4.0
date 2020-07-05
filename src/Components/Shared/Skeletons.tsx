@@ -1,4 +1,4 @@
-import { Card, createStyles, Grid, GridSize, makeStyles } from '@material-ui/core'
+import { Card, Grid, GridSize, makeStyles } from '@material-ui/core'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => {
         width: '100%',
     }
 
-    return createStyles({
+    return {
         recipe: {
             [theme.breakpoints.only('xs')]: {
                 height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 360),
@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => {
             },
             width: '100%',
         },
-    })
+    }
 })
 
 interface Props {

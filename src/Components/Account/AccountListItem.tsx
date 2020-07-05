@@ -1,6 +1,5 @@
 import {
     Avatar,
-    createStyles,
     ListItem,
     ListItemAvatar,
     ListItemSecondaryAction,
@@ -25,25 +24,23 @@ interface Props {
     variant: 'user' | 'admin'
 }
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        itemAvatar: {
-            minWidth: 66,
-        },
-        avatar: {
-            width: 50,
-            height: 50,
-            margin: '8px 0px',
-        },
-        itemTextPrimary: {
-            display: 'flex',
-            alignItems: 'center',
-        },
-        itemTextPrimaryIcon: {
-            marginLeft: theme.spacing(1),
-        },
-    })
-)
+const useStyles = makeStyles(theme => ({
+    itemAvatar: {
+        minWidth: 66,
+    },
+    avatar: {
+        width: 50,
+        height: 50,
+        margin: '8px 0px',
+    },
+    itemTextPrimary: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    itemTextPrimaryIcon: {
+        marginLeft: theme.spacing(1),
+    },
+}))
 
 const AccountListItem = ({ uid, onChange, checked, variant }: Props) => {
     const [recipesCounter, setRecipesCounter] = useState<null | number>(null)

@@ -1,4 +1,4 @@
-import { createStyles, List, ListItem, ListItemText, makeStyles } from '@material-ui/core'
+import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import TextFormatIcon from '@material-ui/icons/TextFormat'
 import { ToggleButton } from '@material-ui/lab'
@@ -23,27 +23,25 @@ const HEADINGS: HeadingToggle[] = [
     { heading: 'h4', label: 'Überschrift 4' },
 ]
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        hRoot: {
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-        },
-        h1: {
-            fontSize: 32,
-        },
-        h2: {
-            fontSize: 24,
-        },
-        h3: {
-            fontSize: 18.72,
-        },
-        h4: {
-            fontSize: 16,
-        },
-    })
-)
+const useStyles = makeStyles(() => ({
+    hRoot: {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+    },
+    h1: {
+        fontSize: 32,
+    },
+    h2: {
+        fontSize: 24,
+    },
+    h3: {
+        fontSize: 18.72,
+    },
+    h4: {
+        fontSize: 16,
+    },
+}))
 
 const MarkdownHeadingToggle = ({
     formats,

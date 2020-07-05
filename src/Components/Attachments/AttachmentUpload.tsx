@@ -2,7 +2,6 @@ import {
     Avatar,
     Card,
     CircularProgress,
-    createStyles,
     List,
     ListItem,
     ListItemAvatar,
@@ -21,47 +20,45 @@ import { AttachmentDoc, DataUrl } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 
-const useStyles = makeStyles(theme =>
-    createStyles({
-        avatar: {
-            position: 'relative',
-            transition: theme.transitions.create('all', {
-                duration: theme.transitions.duration.standard,
-            }),
+const useStyles = makeStyles(theme => ({
+    avatar: {
+        position: 'relative',
+        transition: theme.transitions.create('all', {
+            duration: theme.transitions.duration.standard,
+        }),
+    },
+    progress: {
+        position: 'absolute',
+    },
+    done: {
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.getContrastText(theme.palette.primary.main),
+    },
+    error: {
+        backgroundColor: theme.palette.error.main,
+        color: theme.palette.getContrastText(theme.palette.primary.main),
+    },
+    card: {
+        position: 'fixed',
+        bottom: 'calc(env(safe-area-inset-bottom) + 24px)',
+        [theme.breakpoints.only('xs')]: {
+            right: 16,
         },
-        progress: {
-            position: 'absolute',
+        [theme.breakpoints.up('sm')]: {
+            right: 24,
         },
-        done: {
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.getContrastText(theme.palette.primary.main),
+        zIndex: theme.zIndex.modal,
+        boxShadow: theme.shadows[4],
+    },
+    attachmentName: {
+        [theme.breakpoints.only('xs')]: {
+            maxWidth: '50vw',
         },
-        error: {
-            backgroundColor: theme.palette.error.main,
-            color: theme.palette.getContrastText(theme.palette.primary.main),
+        [theme.breakpoints.up('sm')]: {
+            maxWidth: '25vw',
         },
-        card: {
-            position: 'fixed',
-            bottom: 'calc(env(safe-area-inset-bottom) + 24px)',
-            [theme.breakpoints.only('xs')]: {
-                right: 16,
-            },
-            [theme.breakpoints.up('sm')]: {
-                right: 24,
-            },
-            zIndex: theme.zIndex.modal,
-            boxShadow: theme.shadows[4],
-        },
-        attachmentName: {
-            [theme.breakpoints.only('xs')]: {
-                maxWidth: '50vw',
-            },
-            [theme.breakpoints.up('sm')]: {
-                maxWidth: '25vw',
-            },
-        },
-    })
-)
+    },
+}))
 
 interface AttachmentUploadListItemProps {
     recipeName: string
