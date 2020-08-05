@@ -6,8 +6,6 @@
 
 A Progressive Web App to collect, categorise and share recipes. The project serves as playground for upcoming, exciting web standards. So don't expect it to work in IE11 :scream:. This can easily be deployed to a new Firebase project. If you need help with that feel free to contact me. The extensive usage of firestore security rules combined with custom claims (JWT) enables user administration
 
-> A running version of this app can be found here: https://recipehandler.web.app/
-
 ![](./appPreview.png)
 ___
 
