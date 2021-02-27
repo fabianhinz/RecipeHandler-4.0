@@ -1,8 +1,8 @@
 import {
+    Box,
     Button,
     ButtonProps,
     Drawer,
-    Grid,
     IconButton,
     makeStyles,
     Typography,
@@ -41,9 +41,6 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'space-evenly',
         padding: theme.spacing(1),
         paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
-    },
-    iconGridItem: {
-        lineHeight: 0,
     },
 }))
 
@@ -101,21 +98,16 @@ const SelectionDrawer = ({
                 size="large"
                 fullWidth
                 {...muiButtonProps}>
-                <Grid container direction="column">
-                    <Grid item>
-                        <Grid container spacing={1} justify="flex-end" alignItems="center">
-                            <Grid item className={classes.iconGridItem}>
-                                {icon}
-                            </Grid>
-                            <Grid item>{label}</Grid>
-                        </Grid>
-                    </Grid>
-                    {legend && (
-                        <Grid item>
-                            <Typography variant="caption">{legend}</Typography>
-                        </Grid>
-                    )}
-                </Grid>
+                <div>
+                    <Box display="flex" alignItems="center">
+                        <Box mr={1} lineHeight={1}>
+                            {icon}
+                        </Box>
+                        {label}
+                    </Box>
+
+                    {legend && <Typography variant="caption">{legend}</Typography>}
+                </div>
             </Button>
 
             <Drawer
