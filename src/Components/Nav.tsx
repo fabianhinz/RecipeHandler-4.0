@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
         bottom: 0,
         maxHeight: '100%',
         zIndex: theme.zIndex.appBar,
-        width: 'calc(env(safe-area-inset-left) + 95px)',
+        width: 'calc(env(safe-area-inset-left) + 96px)',
         paddingLeft: 'env(safe-area-inset-left)',
         overflowY: 'auto',
         backgroundColor: theme.palette.background.paper,
@@ -48,6 +48,9 @@ const useStyles = makeStyles(theme => ({
         borderRight: `1px solid ${
             theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
         }`,
+        [theme.breakpoints.up('md')]: {
+            paddingBottom: theme.spacing(11),
+        },
     },
     label: {
         fontWeight: 600,
