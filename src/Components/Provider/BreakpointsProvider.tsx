@@ -8,6 +8,7 @@ type Breakpoints = {
     isLowRes: boolean
     isHighRes: boolean
     isMobile: boolean
+    isTablet: boolean
 }
 
 const Context = React.createContext<Breakpoints | null>(null)
@@ -21,6 +22,7 @@ const BreakpointsProvider: FC = ({ children }) => {
     const isLowRes = useMediaQuery('(max-width: 599px)')
     const isHighRes = useMediaQuery('(min-width: 2560px)')
     const isMobile = useMediaQuery(`(max-width: 425px)`)
+    const isTablet = useMediaQuery('(min-width: 768px)')
 
     return (
         <Context.Provider
@@ -31,6 +33,7 @@ const BreakpointsProvider: FC = ({ children }) => {
                 isLowRes,
                 isHighRes,
                 isMobile,
+                isTablet,
             }}>
             {children}
         </Context.Provider>

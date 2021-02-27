@@ -1,5 +1,15 @@
-import { Container, Hidden, InputAdornment, InputBase, makeStyles } from '@material-ui/core'
-import React, { useCallback, useEffect, useState } from 'react'
+import {
+    Backdrop,
+    Container,
+    Grow,
+    Hidden,
+    InputAdornment,
+    InputBase,
+    makeStyles,
+    Paper,
+} from '@material-ui/core'
+import { useSnackbar } from 'notistack'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import useDebounce from '../../hooks/useDebounce'
@@ -7,9 +17,11 @@ import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
 import { Hits } from '../../model/model'
 import algolia from '../../services/algolia'
 import { BORDER_RADIUS } from '../../theme'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useSearchResultsContext } from '../Provider/SearchResultsProvider'
 import { PATHS } from '../Routes/Routes'
+import SearchResults from './SearchResults'
 
 interface StyleProps {
     focused: boolean
@@ -32,6 +44,17 @@ const useStyles = makeStyles(theme => ({
         transition: theme.transitions.create('background-color', {
             easing: theme.transitions.easing.easeOut,
         }),
+    },
+    searchResultsPaper: {
+        boxShadow: theme.shadows[4],
+        backgroundColor: theme.palette.background.default,
+        position: 'absolute',
+        top: 'calc(100% + 32px)',
+        left: 0,
+        width: '100%',
+        maxHeight: '60vh',
+        overflowY: 'auto',
+        padding: theme.spacing(3),
     },
     searchInput: {
         ...theme.typography.h6,
@@ -66,7 +89,19 @@ const Search = () => {
     const debouncedValue = useDebounce(value, 500)
 
     const { user } = useFirebaseAuthContext()
-    const { setError, setHits } = useSearchResultsContext()
+    const { setError, setHits, error } = useSearchResultsContext()
+    const { isTablet } = useBreakpointsContext()
+    const { enqueueSnackbar } = useSnackbar()
+
+    const showResultsPaper = useMemo(() => focused && isTablet && debouncedValue.length > 0, [
+        debouncedValue.length,
+        focused,
+        isTablet,
+    ])
+
+    useEffect(() => {
+        if (error) enqueueSnackbar('Fehler beim Abrufen der Daten', { variant: 'error' })
+    }, [enqueueSnackbar, error])
 
     const searchAlgolia = useCallback(
         () =>
@@ -76,11 +111,12 @@ const Search = () => {
                 })
                 .then(({ hits }) => {
                     setHits(hits)
-                    history.push(PATHS.searchResults)
                 })
                 .catch(error => {
                     setError(error)
-                    history.push(PATHS.searchResults)
+                })
+                .then(() => {
+                    if (!isTablet) history.push(PATHS.searchResults)
                 }),
         // ? we don't want this to change on every user change
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,6 +156,18 @@ const Search = () => {
                             <InputAdornment position="end">{AlgoliaDocSearchRef}</InputAdornment>
                         </Hidden>
                     }
+                />
+
+                <Grow in={showResultsPaper} mountOnEnter>
+                    <Paper className={classes.searchResultsPaper}>
+                        <SearchResults />
+                    </Paper>
+                </Grow>
+                <Backdrop
+                    open={showResultsPaper}
+                    style={{
+                        backdropFilter: 'blur(4px)',
+                    }}
                 />
             </form>
         </Container>

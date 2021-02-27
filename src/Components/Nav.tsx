@@ -18,6 +18,7 @@ import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { useBookmarkContext } from './Provider/BookmarkProvider'
+import { useBreakpointsContext } from './Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import { useSearchResultsContext } from './Provider/SearchResultsProvider'
 import { PATHS } from './Routes/Routes'
@@ -174,17 +175,20 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
     const { hits } = useSearchResultsContext()
     const { bookmarks } = useBookmarkContext()
     const { shoppingList, user } = useFirebaseAuthContext()
+    const breakpointsContext = useBreakpointsContext()
 
     return (
         <>
             <Hidden xsDown>
                 <nav className={classes.nav}>
                     <NavButton icon={<BookIcon />} label="Rezepte" pathname={PATHS.home} />
-                    <NavButton
-                        icon={<BookSearch />}
-                        label="Ergebnisse"
-                        pathname={PATHS.searchResults}
-                    />
+                    {breakpointsContext.isTablet === false && (
+                        <NavButton
+                            icon={<BookSearch />}
+                            label="Ergebnisse"
+                            pathname={PATHS.searchResults}
+                        />
+                    )}
                     <NavButton icon={<Lightbulb />} label="Ideen" pathname={PATHS.trials} />
                     <NavButton
                         icon={<BookmarkMultiple />}
