@@ -1,13 +1,19 @@
 import {
+    Avatar,
     Backdrop,
     Container,
     Grow,
     Hidden,
     InputAdornment,
     InputBase,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
     makeStyles,
     Paper,
     Portal,
+    Typography,
 } from '@material-ui/core'
 import { useSnackbar } from 'notistack'
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
@@ -22,7 +28,6 @@ import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useSearchResultsContext } from '../Provider/SearchResultsProvider'
 import { PATHS } from '../Routes/Routes'
-import SearchResults from './SearchResults'
 
 interface StyleProps {
     focused: boolean
@@ -62,7 +67,6 @@ const useStyles = makeStyles(theme => ({
         width: '100%',
         maxHeight: '60vh',
         overflowY: 'auto',
-        padding: theme.spacing(3),
     },
     searchInput: {
         ...theme.typography.h6,
@@ -78,7 +82,7 @@ const useStyles = makeStyles(theme => ({
     },
     backdrop: {
         zIndex: theme.zIndex.appBar - 1,
-        backdropFilter: 'blur(4px)',
+        backdropFilter: 'blur(2px)',
     },
 }))
 
@@ -107,7 +111,7 @@ const Search = () => {
     const classes = useStyles({ focused, showResultsPaper })
 
     const { user } = useFirebaseAuthContext()
-    const { setError, setHits, error } = useSearchResultsContext()
+    const { setError, setHits, error, hits } = useSearchResultsContext()
     const { enqueueSnackbar } = useSnackbar()
 
     useLayoutEffect(() => {
@@ -132,8 +136,8 @@ const Search = () => {
                 .search<Hits>(debouncedValue, {
                     advancedSyntax: user?.algoliaAdvancedSyntax ? true : false,
                 })
-                .then(({ hits }) => {
-                    setHits(hits)
+                .then(results => {
+                    setHits(results.hits)
                 })
                 .catch(error => {
                     setError(error)
@@ -186,7 +190,81 @@ const Search = () => {
 
                     <Grow in={showResultsPaper} mountOnEnter>
                         <Paper className={classes.searchResultsPaper}>
-                            <SearchResults />
+                            <List disablePadding>
+                                {hits.map(hit => (
+                                    <ListItem
+                                        key={hit.name}
+                                        button
+                                        onClick={() => history.push(PATHS.details(hit.name))}>
+                                        <ListItemAvatar>
+                                            <Avatar>{hit.name.slice(0, 1)}</Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={hit.name}
+                                            secondaryTypographyProps={{
+                                                component: 'div',
+                                            }}
+                                            secondary={
+                                                <>
+                                                    {hit._highlightResult.ingredients.matchedWords
+                                                        .length > 0 && (
+                                                        <Typography
+                                                            component="div"
+                                                            gutterBottom
+                                                            noWrap
+                                                            variant="caption">
+                                                            <b>Zutaten</b>{' '}
+                                                            {[
+                                                                ...hit._highlightResult.ingredients.value.matchAll(
+                                                                    /(\w|\W){0,10}<em>\w*<\/em>(\w|\W){0,10}/g
+                                                                ),
+                                                            ].map((value, index, arr) => (
+                                                                <span key={index}>
+                                                                    {' '}
+                                                                    ...
+                                                                    {value[0].replace(
+                                                                        /<(.|\n)*?>/g,
+                                                                        ''
+                                                                    )}
+                                                                    {index === arr.length - 1 &&
+                                                                        '...'}
+                                                                </span>
+                                                            ))}
+                                                        </Typography>
+                                                    )}
+
+                                                    {hit._highlightResult.description.matchedWords
+                                                        .length > 0 && (
+                                                        <Typography
+                                                            component="div"
+                                                            gutterBottom
+                                                            noWrap
+                                                            variant="caption">
+                                                            <b>Beschreibung</b>{' '}
+                                                            {[
+                                                                ...hit._highlightResult.description.value.matchAll(
+                                                                    /(\w|\W){0,10}<em>\w*<\/em>(\w|\W){0,10}/g
+                                                                ),
+                                                            ].map((value, index, arr) => (
+                                                                <span key={index}>
+                                                                    {' '}
+                                                                    ...
+                                                                    {value[0].replace(
+                                                                        /<(.|\n)*?>/g,
+                                                                        ''
+                                                                    )}
+                                                                    {index === arr.length - 1 &&
+                                                                        '...'}
+                                                                </span>
+                                                            ))}
+                                                        </Typography>
+                                                    )}
+                                                </>
+                                            }
+                                        />
+                                    </ListItem>
+                                ))}
+                            </List>
                         </Paper>
                     </Grow>
                 </form>
