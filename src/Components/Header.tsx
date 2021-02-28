@@ -18,10 +18,6 @@ import { useGridContext } from './Provider/GridProvider'
 import { PATHS } from './Routes/Routes'
 import Search from './Search/Search'
 
-interface StyleProps {
-    scrolled: boolean
-}
-
 const useStyles = makeStyles(theme => ({
     userAvatar: {
         height: 40,
@@ -51,13 +47,12 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.only('xs')]: {
             padding: 0,
         },
-    },
-    header: {
         flex: 1,
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
+
     headerButtons: {
         display: 'flex',
         alignItems: 'center',
@@ -87,68 +82,66 @@ const Header = () => {
         <>
             <div className={classes.safeArea} />
 
-            <AppBar className={classes.appbar} color="default" position="fixed">
+            <AppBar id="bar" className={classes.appbar} color="default" position="fixed">
                 <Toolbar className={classes.toolbar}>
-                    <header className={classes.header}>
-                        <div className={classes.menuIcon}>
-                            <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
-                                <MenuIcon />
-                            </IconButton>
-                        </div>
-                        <Search />
-                        <div className={classes.headerButtons}>
-                            <Hidden mdUp>
-                                <Tooltip title={compactLayout ? 'Detailansicht' : 'Kompaktansicht'}>
-                                    <IconButton onClick={() => setCompactLayout(prev => !prev)}>
-                                        {compactLayout ? <EyeOutline /> : <EyeOffOutline />}
-                                    </IconButton>
-                                </Tooltip>
-                            </Hidden>
-                            <Hidden smDown>
-                                <Tooltip
-                                    title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
-                                    <IconButton
-                                        onClick={() =>
-                                            setGridLayout(prev =>
-                                                prev === 'grid' ? 'list' : 'grid'
-                                            )
-                                        }>
-                                        {gridLayout === 'grid' ? (
-                                            <ViewAgendaOutline />
-                                        ) : (
-                                            <ViewGridOutline />
-                                        )}
-                                    </IconButton>
-                                </Tooltip>
-                            </Hidden>
+                    <div className={classes.menuIcon}>
+                        <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
+                            <MenuIcon />
+                        </IconButton>
+                    </div>
 
-                            <Tooltip title="Impressum">
-                                <IconButton onClick={() => history.push(PATHS.impressum)}>
-                                    <InformationOutline />
+                    <Search />
+
+                    <div className={classes.headerButtons}>
+                        <Hidden mdUp>
+                            <Tooltip title={compactLayout ? 'Detailansicht' : 'Kompaktansicht'}>
+                                <IconButton onClick={() => setCompactLayout(prev => !prev)}>
+                                    {compactLayout ? <EyeOutline /> : <EyeOffOutline />}
                                 </IconButton>
                             </Tooltip>
-
-                            <Tooltip title={user?.username || 'Einloggen'}>
-                                <div
-                                    className={classes.accountContainer}
-                                    onClick={() => {
-                                        if (user) history.push(PATHS.account)
-                                        else setAuthenticationOpen(true)
-                                    }}>
-                                    {user ? (
-                                        <Avatar
-                                            className={classes.userAvatar}
-                                            src={user.profilePicture}
-                                        />
+                        </Hidden>
+                        <Hidden smDown>
+                            <Tooltip
+                                title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
+                                <IconButton
+                                    onClick={() =>
+                                        setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
+                                    }>
+                                    {gridLayout === 'grid' ? (
+                                        <ViewAgendaOutline />
                                     ) : (
-                                        <IconButton disabled={!loginEnabled}>
-                                            <AccountCircleOutline />
-                                        </IconButton>
+                                        <ViewGridOutline />
                                     )}
-                                </div>
+                                </IconButton>
                             </Tooltip>
-                        </div>
-                    </header>
+                        </Hidden>
+
+                        <Tooltip title="Impressum">
+                            <IconButton onClick={() => history.push(PATHS.impressum)}>
+                                <InformationOutline />
+                            </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title={user?.username || 'Einloggen'}>
+                            <div
+                                className={classes.accountContainer}
+                                onClick={() => {
+                                    if (user) history.push(PATHS.account)
+                                    else setAuthenticationOpen(true)
+                                }}>
+                                {user ? (
+                                    <Avatar
+                                        className={classes.userAvatar}
+                                        src={user.profilePicture}
+                                    />
+                                ) : (
+                                    <IconButton disabled={!loginEnabled}>
+                                        <AccountCircleOutline />
+                                    </IconButton>
+                                )}
+                            </div>
+                        </Tooltip>
+                    </div>
                 </Toolbar>
             </AppBar>
 

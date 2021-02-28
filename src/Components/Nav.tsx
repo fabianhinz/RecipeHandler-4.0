@@ -18,6 +18,7 @@ import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { useBookmarkContext } from './Provider/BookmarkProvider'
+import { useBreakpointsContext } from './Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
 import { useSearchResultsContext } from './Provider/SearchResultsProvider'
 import { PATHS } from './Routes/Routes'
@@ -40,7 +41,7 @@ const useStyles = makeStyles(theme => ({
         bottom: 0,
         maxHeight: '100%',
         zIndex: theme.zIndex.appBar,
-        width: 'calc(env(safe-area-inset-left) + 95px)',
+        width: 'calc(env(safe-area-inset-left) + 96px)',
         paddingLeft: 'env(safe-area-inset-left)',
         overflowY: 'auto',
         backgroundColor: theme.palette.background.paper,
@@ -48,6 +49,9 @@ const useStyles = makeStyles(theme => ({
         borderRight: `1px solid ${
             theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
         }`,
+        [theme.breakpoints.up('md')]: {
+            paddingBottom: theme.spacing(11),
+        },
     },
     label: {
         fontWeight: 600,
@@ -171,17 +175,20 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
     const { hits } = useSearchResultsContext()
     const { bookmarks } = useBookmarkContext()
     const { shoppingList, user } = useFirebaseAuthContext()
+    const breakpointsContext = useBreakpointsContext()
 
     return (
         <>
             <Hidden xsDown>
                 <nav className={classes.nav}>
                     <NavButton icon={<BookIcon />} label="Rezepte" pathname={PATHS.home} />
-                    <NavButton
-                        icon={<BookSearch />}
-                        label="Ergebnisse"
-                        pathname={PATHS.searchResults}
-                    />
+                    {breakpointsContext.isTablet === false && (
+                        <NavButton
+                            icon={<BookSearch />}
+                            label="Ergebnisse"
+                            pathname={PATHS.searchResults}
+                        />
+                    )}
                     <NavButton icon={<Lightbulb />} label="Ideen" pathname={PATHS.trials} />
                     <NavButton
                         icon={<BookmarkMultiple />}
