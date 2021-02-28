@@ -1,10 +1,9 @@
-import { Grid } from '@material-ui/core'
+import { List } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import React from 'react'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { useSearchResultsContext } from '../Provider/SearchResultsProvider'
-import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import SearchResult from './SearchResult'
 
@@ -14,18 +13,18 @@ const SearchResults = () => {
     useDocumentTitle('Ergebnisse')
 
     return (
-        <EntryGridContainer>
+        <>
             {hits.length === 20 && (
-                <Grid item xs={12}>
-                    <Alert color="info">Maximale Anzahl an Suchergebnissen erreicht</Alert>
-                </Grid>
+                <Alert color="info">Maximale Anzahl an Suchergebnissen erreicht</Alert>
             )}
 
-            {hits.map(hit => (
-                <SearchResult key={hit.name} name={hit.name} />
-            ))}
+            <List disablePadding>
+                {hits.map(hit => (
+                    <SearchResult hit={hit} key={hit.name} />
+                ))}
+            </List>
             <NotFound visible={hits.length === 0} />
-        </EntryGridContainer>
+        </>
     )
 }
 

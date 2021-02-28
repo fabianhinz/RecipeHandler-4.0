@@ -65,19 +65,22 @@ export interface CommentsCollections {
     collection: 'recipes' | 'trials'
 }
 
-type AlgoliaHighlightResult = {
-    fullyHighlighted?: boolean
+type AlgoliaSnippetResult = {
     matchLevel: string
-    matchedWords: string[]
     value: string
 }
 
-export type Hits = Pick<Recipe, 'name' | 'description' | 'ingredients'> & {
+type AlgoliaHighlightResult = AlgoliaSnippetResult & { matchedWords: string[] }
+
+export type Hit = Pick<Recipe, 'name' | 'description' | 'ingredients'> & {
     _highlightResult: {
         name: AlgoliaHighlightResult
         description: AlgoliaHighlightResult
         ingredients: AlgoliaHighlightResult
-        [key: string]: AlgoliaHighlightResult
+    }
+    _snippetResult: {
+        description: AlgoliaSnippetResult
+        ingredients: AlgoliaSnippetResult
     }
 }
 

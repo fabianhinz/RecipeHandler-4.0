@@ -1,19 +1,14 @@
 import {
-    Avatar,
     Backdrop,
     Container,
     Grow,
     Hidden,
     InputAdornment,
     InputBase,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
     makeStyles,
     Paper,
     Portal,
-    Typography,
+    useTheme,
 } from '@material-ui/core'
 import { useSnackbar } from 'notistack'
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
@@ -21,13 +16,14 @@ import { useHistory } from 'react-router-dom'
 
 import useDebounce from '../../hooks/useDebounce'
 import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
-import { Hits } from '../../model/model'
+import { Hit } from '../../model/model'
 import algolia from '../../services/algolia'
 import { BORDER_RADIUS } from '../../theme'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useSearchResultsContext } from '../Provider/SearchResultsProvider'
 import { PATHS } from '../Routes/Routes'
+import SearchResults from './SearchResults'
 
 interface StyleProps {
     focused: boolean
@@ -109,9 +105,10 @@ const Search = () => {
         isTablet,
     ])
     const classes = useStyles({ focused, showResultsPaper })
+    const theme = useTheme()
 
     const { user } = useFirebaseAuthContext()
-    const { setError, setHits, error, hits } = useSearchResultsContext()
+    const { setError, setHits, error } = useSearchResultsContext()
     const { enqueueSnackbar } = useSnackbar()
 
     useLayoutEffect(() => {
@@ -133,8 +130,11 @@ const Search = () => {
     const searchAlgolia = useCallback(
         () =>
             algolia
-                .search<Hits>(debouncedValue, {
+                .search<Hit>(debouncedValue, {
                     advancedSyntax: user?.algoliaAdvancedSyntax ? true : false,
+                    attributesToSnippet: ['description', 'ingredients'],
+                    highlightPreTag: `<span style="background-color: ${theme.palette.primary.main}; color: ${theme.palette.primary.contrastText}">`,
+                    highlightPostTag: '</span>',
                 })
                 .then(results => {
                     setHits(results.hits)
@@ -190,81 +190,7 @@ const Search = () => {
 
                     <Grow in={showResultsPaper} mountOnEnter>
                         <Paper className={classes.searchResultsPaper}>
-                            <List disablePadding>
-                                {hits.map(hit => (
-                                    <ListItem
-                                        key={hit.name}
-                                        button
-                                        onClick={() => history.push(PATHS.details(hit.name))}>
-                                        <ListItemAvatar>
-                                            <Avatar>{hit.name.slice(0, 1)}</Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={hit.name}
-                                            secondaryTypographyProps={{
-                                                component: 'div',
-                                            }}
-                                            secondary={
-                                                <>
-                                                    {hit._highlightResult.ingredients.matchedWords
-                                                        .length > 0 && (
-                                                        <Typography
-                                                            component="div"
-                                                            gutterBottom
-                                                            noWrap
-                                                            variant="caption">
-                                                            <b>Zutaten</b>{' '}
-                                                            {[
-                                                                ...hit._highlightResult.ingredients.value.matchAll(
-                                                                    /(\w|\W){0,10}<em>\w*<\/em>(\w|\W){0,10}/g
-                                                                ),
-                                                            ].map((value, index, arr) => (
-                                                                <span key={index}>
-                                                                    {' '}
-                                                                    ...
-                                                                    {value[0].replace(
-                                                                        /<(.|\n)*?>/g,
-                                                                        ''
-                                                                    )}
-                                                                    {index === arr.length - 1 &&
-                                                                        '...'}
-                                                                </span>
-                                                            ))}
-                                                        </Typography>
-                                                    )}
-
-                                                    {hit._highlightResult.description.matchedWords
-                                                        .length > 0 && (
-                                                        <Typography
-                                                            component="div"
-                                                            gutterBottom
-                                                            noWrap
-                                                            variant="caption">
-                                                            <b>Beschreibung</b>{' '}
-                                                            {[
-                                                                ...hit._highlightResult.description.value.matchAll(
-                                                                    /(\w|\W){0,10}<em>\w*<\/em>(\w|\W){0,10}/g
-                                                                ),
-                                                            ].map((value, index, arr) => (
-                                                                <span key={index}>
-                                                                    {' '}
-                                                                    ...
-                                                                    {value[0].replace(
-                                                                        /<(.|\n)*?>/g,
-                                                                        ''
-                                                                    )}
-                                                                    {index === arr.length - 1 &&
-                                                                        '...'}
-                                                                </span>
-                                                            ))}
-                                                        </Typography>
-                                                    )}
-                                                </>
-                                            }
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
+                            <SearchResults />
                         </Paper>
                     </Grow>
                 </form>
