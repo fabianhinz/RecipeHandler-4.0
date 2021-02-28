@@ -78,7 +78,6 @@ const useStyles = makeStyles(theme => ({
     },
     backdrop: {
         zIndex: theme.zIndex.appBar - 1,
-        backdropFilter: 'blur(2px)',
     },
 }))
 
