@@ -10,11 +10,20 @@ import {
     makeStyles,
     TextField,
     Tooltip,
+    useTheme,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import clsx from 'clsx'
 import { CartOff } from 'mdi-material-ui'
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
+import {
+    DragDropContext,
+    Draggable,
+    DraggingStyle,
+    Droppable,
+    DropResult,
+    NotDraggingStyle,
+} from 'react-beautiful-dnd'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { FirebaseService } from '../../services/firebase'
@@ -44,9 +53,13 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
+const getListStyle = (isDraggingOver: any) => ({
+    //background: isDraggingOver ? 'lightblue' : 'lightgrey',
+})
+
 const AccountUserShoppingList = () => {
     const [textFieldValue, setTextFieldValue] = useState('')
-
+    const theme = useTheme()
     const classes = useStyles()
 
     const { user, shoppingList, shoppingTracker } = useFirebaseAuthContext()
@@ -92,6 +105,25 @@ const AccountUserShoppingList = () => {
     const listItemChecked = (recipe: string, grocery: string) =>
         Boolean(shoppingTracker.get(recipe)?.tracker?.some(trackerEl => trackerEl === grocery))
 
+    const handleDragEnd = (result: DropResult) => {
+        console.log(result.source.index, result.destination?.index)
+    }
+
+    const getItemStyle = useCallback(
+        (isDragging: boolean, draggableStyle?: DraggingStyle | NotDraggingStyle) => ({
+            // styles we need to apply on draggables
+            ...draggableStyle,
+
+            ...(isDragging && {
+                background:
+                    theme.palette.type === 'dark'
+                        ? 'rgba(255, 255, 255, 0.1)'
+                        : 'rgba(0, 0, 0, 0.08)',
+            }),
+        }),
+        [theme.palette.type]
+    )
+
     return (
         <>
             <EntryGridContainer>
@@ -118,36 +150,63 @@ const AccountUserShoppingList = () => {
                                         className={clsx(
                                             recipeName === 'Sonstiges' && classes.sonstigesRoot
                                         )}>
-                                        <List>
-                                            {groceries?.list.map(grocery => (
-                                                <ListItem key={grocery}>
-                                                    <ListItemIcon>
-                                                        <Checkbox
-                                                            checked={listItemChecked(
-                                                                recipeName,
-                                                                grocery
-                                                            )}
-                                                            onChange={handleCheckboxChange(
-                                                                recipeName,
-                                                                grocery
-                                                            )}
-                                                            edge="start"
-                                                        />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        classes={{
-                                                            primary: clsx(
-                                                                listItemChecked(
-                                                                    recipeName,
-                                                                    grocery
-                                                                ) && classes.checked
-                                                            ),
-                                                        }}
-                                                        primary={grocery}
-                                                    />
-                                                </ListItem>
-                                            ))}
-                                        </List>
+                                        <DragDropContext onDragEnd={handleDragEnd}>
+                                            <Droppable droppableId="shoppingListDroppable">
+                                                {(provided, snapshot) => (
+                                                    <List
+                                                        innerRef={provided.innerRef}
+                                                        style={getListStyle(
+                                                            snapshot.isDraggingOver
+                                                        )}>
+                                                        {groceries?.list.map((grocery, index) => (
+                                                            <Draggable
+                                                                key={grocery}
+                                                                draggableId={grocery}
+                                                                index={index}>
+                                                                {(provided, snapshot) => (
+                                                                    <ListItem
+                                                                        innerRef={provided.innerRef}
+                                                                        {...provided.draggableProps}
+                                                                        {...provided.dragHandleProps}
+                                                                        style={getItemStyle(
+                                                                            snapshot.isDragging,
+                                                                            provided.draggableProps
+                                                                                .style
+                                                                        )}>
+                                                                        <ListItemIcon>
+                                                                            <Checkbox
+                                                                                checked={listItemChecked(
+                                                                                    recipeName,
+                                                                                    grocery
+                                                                                )}
+                                                                                onChange={handleCheckboxChange(
+                                                                                    recipeName,
+                                                                                    grocery
+                                                                                )}
+                                                                                edge="start"
+                                                                            />
+                                                                        </ListItemIcon>
+                                                                        <ListItemText
+                                                                            classes={{
+                                                                                primary: clsx(
+                                                                                    listItemChecked(
+                                                                                        recipeName,
+                                                                                        grocery
+                                                                                    ) &&
+                                                                                        classes.checked
+                                                                                ),
+                                                                            }}
+                                                                            primary={grocery}
+                                                                        />
+                                                                    </ListItem>
+                                                                )}
+                                                            </Draggable>
+                                                        ))}
+                                                        {provided.placeholder}
+                                                    </List>
+                                                )}
+                                            </Droppable>
+                                        </DragDropContext>
                                         {recipeName === 'Sonstiges' && (
                                             <form onSubmit={handleFormSubmit}>
                                                 <TextField
