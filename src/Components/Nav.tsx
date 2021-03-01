@@ -182,7 +182,7 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
             <Hidden xsDown>
                 <nav className={classes.nav}>
                     <NavButton icon={<BookIcon />} label="Rezepte" pathname={PATHS.home} />
-                    {breakpointsContext.isTablet === false && (
+                    {breakpointsContext.mdUp === false && (
                         <NavButton
                             icon={<BookSearch />}
                             label="Ergebnisse"
@@ -219,12 +219,14 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                 PaperProps={{ className: classes.drawerPaper }}>
                 <List disablePadding onClick={onDrawerClose}>
                     <NavListItem pathname={PATHS.home} icon={<BookIcon />} label="Rezepte" />
-                    <NavListItem
-                        pathname={PATHS.searchResults}
-                        icon={<BookSearch />}
-                        label="Ergebnisse"
-                        secondary={hits.length}
-                    />
+                    {breakpointsContext.mdUp === false && (
+                        <NavListItem
+                            pathname={PATHS.searchResults}
+                            icon={<BookSearch />}
+                            label="Ergebnisse"
+                            secondary={hits.length}
+                        />
+                    )}
                     <NavListItem pathname={PATHS.trials} icon={<Lightbulb />} label="Ideen" />
                     <NavListItem
                         pathname={PATHS.bookmarks}
