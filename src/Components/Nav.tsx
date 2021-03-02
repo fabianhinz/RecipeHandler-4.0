@@ -174,7 +174,7 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
 
     const { hits } = useSearchResultsContext()
     const { bookmarks } = useBookmarkContext()
-    const { shoppingList, user } = useFirebaseAuthContext()
+    const { activeItemsInShoppingList, user } = useFirebaseAuthContext()
     const breakpointsContext = useBreakpointsContext()
 
     return (
@@ -240,7 +240,7 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                                 pathname={PATHS.shoppingList}
                                 icon={<Cart />}
                                 label="Einkaufsliste"
-                                secondary={shoppingList.size}
+                                secondary={activeItemsInShoppingList}
                             />
                             <NavListItem
                                 icon={<History />}

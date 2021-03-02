@@ -125,7 +125,7 @@ export interface Issue {
 }
 export type RecipeName = string
 export type Grocery = string
-
+// TODO remove ShoppingList and ShoppingTracker types
 export type ShoppingList = Map<RecipeName, { list: Grocery[] } | undefined>
 export type ShoppingTracker = Map<RecipeName, { tracker: Grocery[] } | undefined>
 
@@ -175,3 +175,11 @@ export interface CookingHistory {
     createdDate: firebase.firestore.Timestamp
     recipeName: string
 }
+
+export interface ShoppingListItem {
+    recipeNameRef?: string
+    value: string
+    checked: boolean
+}
+
+export type ShoppingListWithId = (ShoppingListItem & { documentId: DocumentId })[]

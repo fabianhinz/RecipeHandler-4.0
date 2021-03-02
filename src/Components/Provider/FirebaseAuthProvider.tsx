@@ -1,21 +1,19 @@
 import { makeStyles } from '@material-ui/core'
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 
-import { ShoppingList, ShoppingTracker, User } from '../../model/model'
+import { User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import BuiltWithFirebase from '../Shared/BuiltWithFirebase'
 
 interface AuthContext {
     user: User | undefined
-    shoppingList: ShoppingList
-    shoppingTracker: ShoppingTracker
+    activeItemsInShoppingList: number
     loginEnabled: boolean
 }
 
 const Context = React.createContext<AuthContext>({
     user: undefined,
-    shoppingList: new Map(),
-    shoppingTracker: new Map(),
+    activeItemsInShoppingList: 0,
     loginEnabled: false,
 })
 
@@ -49,8 +47,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     const [authReady, setAuthReady] = useState(false)
     const [loginEnabled, setLoginEnabled] = useState(false)
     const [user, setUser] = useState<User | undefined>()
-    const [shoppingList, setShoppingList] = useState<ShoppingList>(new Map())
-    const [shoppingTracker, setShoppingTracker] = useState<ShoppingTracker>(new Map())
+    const [activeItemsInShoppingList, setActiveItemsInShoppingList] = useState(0)
 
     const classes = useStyles()
 
@@ -66,7 +63,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
         const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
 
-        const userDocUnsubscribe = userDocRef.onSnapshot(doc => {
+        const userDocUnsubsribe = userDocRef.onSnapshot(doc => {
             setUser({
                 ...(doc.data() as Omit<User, 'uid'>),
                 uid: user.uid,
@@ -76,28 +73,11 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
         const shoppingListUnsubscribe = userDocRef
             .collection('shoppingList')
-            .onSnapshot(querySnapshot => {
-                const newShoppingList: ShoppingList = new Map()
-                const newShoppingTracker: ShoppingTracker = new Map()
-
-                querySnapshot.docs.forEach(doc => {
-                    const { list, tracker } = doc.data() as {
-                        list: string[]
-                        tracker: string[]
-                    }
-                    newShoppingList.set(doc.id, {
-                        // ? creating the recipe "Sonstiges" will create an item with a lenght of zero
-                        list: list.filter(item => item.length > 0),
-                    })
-                    newShoppingTracker.set(doc.id, { tracker })
-                })
-
-                setShoppingList(newShoppingList)
-                setShoppingTracker(newShoppingTracker)
-            })
+            .where('checked', '==', false)
+            .onSnapshot(snapshot => setActiveItemsInShoppingList(snapshot.docs.length))
 
         return () => {
-            userDocUnsubscribe()
+            userDocUnsubsribe()
             shoppingListUnsubscribe()
         }
     }, [])
@@ -131,7 +111,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     }, [handleAuthStateChange])
 
     return (
-        <Context.Provider value={{ user, shoppingList, shoppingTracker, loginEnabled }}>
+        <Context.Provider value={{ user, loginEnabled, activeItemsInShoppingList }}>
             {authReady ? (
                 <div className={classes.main}>{children}</div>
             ) : (

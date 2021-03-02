@@ -5,7 +5,7 @@ import React, { useMemo } from 'react'
 
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import useProgress from '../../../hooks/useProgress'
-import { ShoppingList, User } from '../../../model/model'
+import { User } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
 import recipeService from '../../../services/recipeService'
 import { useBookmarkContext } from '../../Provider/BookmarkProvider'
@@ -37,7 +37,6 @@ const AccountUser = () => {
     // ? we won't load this component without an existing user - pinky promise -_-
     const { user } = useFirebaseAuthContext() as {
         user: User
-        shoppingList: ShoppingList
     }
     const { gridBreakpointProps } = useGridContext()
     const { bookmarks } = useBookmarkContext()
