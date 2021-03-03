@@ -180,6 +180,7 @@ export interface ShoppingListItem {
     recipeNameRef?: string
     value: string
     checked: boolean
+    createdDate: firebase.firestore.Timestamp
 }
 
 export type ShoppingListWithId = (ShoppingListItem & { documentId: DocumentId })[]

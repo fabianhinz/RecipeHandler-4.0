@@ -1,8 +1,9 @@
 import {
     Checkbox,
-    Chip,
+    Fade,
     Grid,
     IconButton,
+    InputAdornment,
     List,
     ListItem,
     ListItemIcon,
@@ -12,7 +13,7 @@ import {
     TextField,
     useTheme,
 } from '@material-ui/core'
-import { Clear } from '@material-ui/icons'
+import { Clear, DeleteSweep } from '@material-ui/icons'
 import clsx from 'clsx'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
@@ -28,6 +29,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { DocumentId, ShoppingListItem, ShoppingListWithId } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import RecipeChip from '../Recipe/RecipeChip'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 
@@ -45,12 +47,13 @@ const useStyles = makeStyles(() => ({
 
 const AccountUserShoppingList = () => {
     const [textFieldValue, setTextFieldValue] = useState('')
-    const theme = useTheme()
-    const classes = useStyles()
     const [shoppingList, setShoppingList] = useState<ShoppingListWithId>([])
     const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
-    const { activeItemsInShoppingList } = useFirebaseAuthContext()
 
+    const theme = useTheme()
+    const classes = useStyles()
+
+    const { activeItemsInShoppingList } = useFirebaseAuthContext()
     const { user } = useFirebaseAuthContext()
 
     useDocumentTitle(`Einkaufsliste (${activeItemsInShoppingList})`)
@@ -66,7 +69,7 @@ const AccountUserShoppingList = () => {
 
     useEffect(
         () =>
-            shoppingListCollection?.onSnapshot(snapshot => {
+            shoppingListCollection?.orderBy('createdDate', 'desc').onSnapshot(snapshot => {
                 const newShoppingList = snapshot.docs.map(doc => ({
                     documentId: doc.id,
                     ...(doc.data() as ShoppingListItem),
@@ -91,13 +94,23 @@ const AccountUserShoppingList = () => {
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        const newListItem: ShoppingListItem = { checked: false, value: textFieldValue }
+        const newListItem: ShoppingListItem = {
+            checked: false,
+            value: textFieldValue,
+            createdDate: FirebaseService.createTimestampFromDate(new Date()),
+        }
         shoppingListCollection?.add(newListItem)
         setTextFieldValue('')
     }
 
     const handleDelete = (documentId: DocumentId) => () => {
         shoppingListCollection?.doc(documentId).delete()
+    }
+
+    const handleDeleteAll = () => {
+        for (const item of shoppingList) {
+            handleDelete(item.documentId)()
+        }
     }
 
     const handleDragEnd = (result: DropResult) => {
@@ -128,21 +141,32 @@ const AccountUserShoppingList = () => {
                         onChange={e => setTextFieldValue(e.target.value)}
                         variant="outlined"
                         fullWidth
-                        placeholder="Liste ergänzen"
+                        label="Liste ergänzen"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={handleDeleteAll} size="small">
+                                        <DeleteSweep />
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                 </form>
             </Grid>
+
             {recipeRefs.size > 0 && (
                 <Grid item xs={12}>
-                    <Grid container spacing={1}>
+                    <Grid style={{ overflowX: 'auto' }} wrap="nowrap" container spacing={1}>
                         {[...recipeRefs.values()].map(recipeRef => (
                             <Grid item key={recipeRef}>
-                                <Chip label={recipeRef} />
+                                <RecipeChip recipeName={recipeRef} />
                             </Grid>
                         ))}
                     </Grid>
                 </Grid>
             )}
+
             <Grid item xs={12}>
                 <DragDropContext onDragEnd={handleDragEnd}>
                     <Droppable droppableId="shoppingListDroppable">
@@ -180,13 +204,15 @@ const AccountUserShoppingList = () => {
                                                     primary={item.value}
                                                     secondary={item.recipeNameRef}
                                                 />
-                                                <ListItemSecondaryAction>
-                                                    <IconButton
-                                                        onClick={handleDelete(item.documentId)}
-                                                        size="small">
-                                                        <Clear />
-                                                    </IconButton>
-                                                </ListItemSecondaryAction>
+                                                <Fade in={!snapshot.isDragging}>
+                                                    <ListItemSecondaryAction>
+                                                        <IconButton
+                                                            onClick={handleDelete(item.documentId)}
+                                                            size="small">
+                                                            <Clear />
+                                                        </IconButton>
+                                                    </ListItemSecondaryAction>
+                                                </Fade>
                                             </ListItem>
                                         )}
                                     </Draggable>

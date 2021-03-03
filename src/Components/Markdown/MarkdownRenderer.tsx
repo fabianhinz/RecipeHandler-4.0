@@ -92,6 +92,7 @@ const MarkdownRenderer = (props: Props) => {
                 value: grocery,
                 recipeNameRef: props.recipeName,
                 checked: false,
+                createdDate: FirebaseService.createTimestampFromDate(new Date()),
             }
             shoppingListCollection?.add(shoppingListItem)
         } else {

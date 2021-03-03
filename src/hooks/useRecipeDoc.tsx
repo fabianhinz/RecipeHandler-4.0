@@ -1,33 +1,32 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { Recipe, RouteWithRecipeName } from '../model/model'
+import { Recipe } from '../model/model'
 import { FirebaseService } from '../services/firebase'
 
 type RecipesCollectionState = { loading: boolean; recipe: Recipe | null }
 type RecipeLocation = Pick<RecipesCollectionState, 'recipe'>
-
-interface Options {
-    routeProps: RouteWithRecipeName
-}
 
 const initialState: RecipesCollectionState = {
     loading: true,
     recipe: null,
 }
 
-export const useRecipeDoc = ({ routeProps }: Options) => {
+type Props = {
+    recipeName: string
+}
+
+export const useRecipeDoc = (props: Props) => {
     const [state, setState] = useState<RecipesCollectionState>(initialState)
-    const { pathname } = useLocation()
+    const location = useLocation()
 
     useEffect(() => {
         setState(initialState)
-    }, [pathname])
+    }, [location.pathname])
 
     useEffect(() => {
         let mounted = true
 
-        const { location, match } = routeProps
         const recipe = location.state && (location.state as RecipeLocation).recipe
 
         if (recipe) {
@@ -35,7 +34,7 @@ export const useRecipeDoc = ({ routeProps }: Options) => {
         } else {
             FirebaseService.firestore
                 .collection('recipes')
-                .doc(match.params.name)
+                .doc(props.recipeName)
                 .get()
                 .then(documentSnapshot => {
                     if (!mounted) return
@@ -49,7 +48,7 @@ export const useRecipeDoc = ({ routeProps }: Options) => {
         return () => {
             mounted = false
         }
-    }, [routeProps])
+    }, [location.state, props.recipeName])
 
     return { recipeDoc: state.recipe, recipeDocLoading: state.loading }
 }
