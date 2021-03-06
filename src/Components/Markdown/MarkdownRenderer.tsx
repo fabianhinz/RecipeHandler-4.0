@@ -18,12 +18,10 @@ import {
 } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
-import React, { useEffect, useMemo, useState } from 'react'
+import React from 'react'
 import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown'
 import { useRouteMatch } from 'react-router-dom'
 
-import { ShoppingListItem, ShoppingListWithId } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PATHS } from '../Routes/Routes'
 import { GrowIn } from '../Shared/Transitions'
@@ -50,55 +48,42 @@ const MarkdownRenderer = (props: Props) => {
     const { user } = useFirebaseAuthContext()
     const match = useRouteMatch()
     const classes = useStyles()
-    const [shoppingList, setShoppingList] = useState<ShoppingListWithId>([])
-
-    const shoppingListCollection = useMemo(() => {
-        if (!user) return
-
-        return FirebaseService.firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('shoppingList')
-    }, [user])
-
-    useEffect(() => {
-        if (!props.withShoppingList) return
-
-        return shoppingListCollection
-            ?.where('recipeNameRef', '==', props.recipeName)
-            .onSnapshot(snapshot => {
-                setShoppingList(
-                    snapshot.docs.map(doc => ({
-                        documentId: doc.id,
-                        ...(doc.data() as ShoppingListItem),
-                    }))
-                )
-            })
-    }, [props.recipeName, props.withShoppingList, shoppingListCollection])
+    const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
 
     const renderPropsToGrocery = (children: any) => children[0]?.props?.value as string | undefined
 
     const getListItemByChildren = (children: any) =>
-        shoppingList.find(item => item.value === renderPropsToGrocery(children))
+        shoppingList.find(
+            item =>
+                item.value === renderPropsToGrocery(children) &&
+                item.recipeNameRef === props.recipeName
+        )
 
     const handleCheckboxChange = (children: any) => (
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
         let grocery = renderPropsToGrocery(children)
-        if (!grocery) return
+        if (!grocery || !props.withShoppingList) return
+
+        let list = [...shoppingList]
         if (checked) {
-            const shoppingListItem: ShoppingListItem = {
-                value: grocery,
-                recipeNameRef: props.recipeName,
-                checked: false,
-                createdDate: FirebaseService.createTimestampFromDate(new Date()),
-            }
-            shoppingListCollection?.add(shoppingListItem)
+            list = [
+                {
+                    value: grocery,
+                    recipeNameRef: props.recipeName,
+                    checked: false,
+                },
+                ...list,
+            ]
         } else {
-            const docId = getListItemByChildren(children)?.documentId
-            if (docId) shoppingListCollection?.doc(docId).delete()
+            list = list.filter(
+                item =>
+                    item.value !== renderPropsToGrocery(children) &&
+                    item.recipeNameRef !== props.recipeName
+            )
         }
+        shoppingListRef.current?.set({ list })
     }
 
     return (
@@ -126,7 +111,13 @@ const MarkdownRenderer = (props: Props) => {
                                             : 'Zur Einkaufsliste hinzufügen'
                                     }>
                                     <Checkbox
-                                        icon={<AddCircleIcon />}
+                                        icon={
+                                            props.withShoppingList ? (
+                                                <AddCircleIcon />
+                                            ) : (
+                                                <RemoveCircleIcon />
+                                            )
+                                        }
                                         checkedIcon={<RemoveCircleIcon />}
                                         checked={Boolean(
                                             getListItemByChildren(renderProps.children)

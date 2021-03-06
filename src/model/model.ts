@@ -124,10 +124,6 @@ export interface Issue {
     title: string
 }
 export type RecipeName = string
-export type Grocery = string
-// TODO remove ShoppingList and ShoppingTracker types
-export type ShoppingList = Map<RecipeName, { list: Grocery[] } | undefined>
-export type ShoppingTracker = Map<RecipeName, { tracker: Grocery[] } | undefined>
 
 export type OrderByKey = keyof Pick<Recipe, 'name' | 'createdDate'>
 export type OrderByRecord = Partial<Record<OrderByKey, 'asc' | 'desc'>>
@@ -180,7 +176,4 @@ export interface ShoppingListItem {
     recipeNameRef?: string
     value: string
     checked: boolean
-    createdDate: firebase.firestore.Timestamp
 }
-
-export type ShoppingListWithId = (ShoppingListItem & { documentId: DocumentId })[]

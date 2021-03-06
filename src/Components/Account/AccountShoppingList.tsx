@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core'
 import { Clear, DeleteSweep } from '@material-ui/icons'
 import clsx from 'clsx'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import {
     DragDropContext,
     Draggable,
@@ -26,8 +26,6 @@ import {
 } from 'react-beautiful-dnd'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { DocumentId, ShoppingListItem, ShoppingListWithId } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import RecipeChip from '../Recipe/RecipeChip'
 import EntryGridContainer from '../Shared/EntryGridContainer'
@@ -47,89 +45,81 @@ const useStyles = makeStyles(() => ({
 
 const AccountUserShoppingList = () => {
     const [textFieldValue, setTextFieldValue] = useState('')
-    const [shoppingList, setShoppingList] = useState<ShoppingListWithId>([])
     const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
 
     const theme = useTheme()
     const classes = useStyles()
 
-    const { activeItemsInShoppingList } = useFirebaseAuthContext()
-    const { user } = useFirebaseAuthContext()
+    const { shoppingList, shoppingListRef, reorderShoppingList } = useFirebaseAuthContext()
 
-    useDocumentTitle(`Einkaufsliste (${activeItemsInShoppingList})`)
+    useDocumentTitle(`Einkaufsliste (${shoppingList.filter(item => !item.checked).length})`)
 
-    const shoppingListCollection = useMemo(() => {
-        if (!user) return
+    useLayoutEffect(() => {
+        setRecipeRefs(
+            new Set(
+                shoppingList
+                    .map(item => item.recipeNameRef)
+                    .filter(Boolean)
+                    .sort() as string[]
+            )
+        )
+    }, [shoppingList])
 
-        return FirebaseService.firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('shoppingList')
-    }, [user])
-
-    useEffect(
-        () =>
-            shoppingListCollection?.orderBy('createdDate', 'desc').onSnapshot(snapshot => {
-                const newShoppingList = snapshot.docs.map(doc => ({
-                    documentId: doc.id,
-                    ...(doc.data() as ShoppingListItem),
-                }))
-                setShoppingList(newShoppingList)
-                setRecipeRefs(
-                    new Set(
-                        newShoppingList.map(item => item.recipeNameRef).filter(Boolean) as string[]
-                    )
-                )
-            }),
-        [shoppingListCollection]
-    )
-
-    const handleCheckboxChange = (documentId: DocumentId) => async (
+    const handleCheckboxChange = (index: number) => async (
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
-        shoppingListCollection?.doc(documentId).set({ checked }, { merge: true })
+        const list = [...shoppingList]
+        list[index].checked = checked
+        shoppingListRef.current?.set({ list })
     }
 
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        if (!textFieldValue.trim()) return
 
-        const newListItem: ShoppingListItem = {
-            checked: false,
-            value: textFieldValue,
-            createdDate: FirebaseService.createTimestampFromDate(new Date()),
-        }
-        shoppingListCollection?.add(newListItem)
+        const list = [
+            {
+                checked: false,
+                value: textFieldValue,
+            },
+            ...shoppingList,
+        ]
+        shoppingListRef.current?.set({ list })
+
         setTextFieldValue('')
     }
 
-    const handleDelete = (documentId: DocumentId) => () => {
-        shoppingListCollection?.doc(documentId).delete()
+    const handleDelete = (index: number) => () => {
+        shoppingListRef.current?.set({
+            list: shoppingList.filter((_, itemIndex) => itemIndex !== index),
+        })
     }
 
     const handleDeleteAll = () => {
-        for (const item of shoppingList) {
-            handleDelete(item.documentId)()
-        }
+        shoppingListRef.current?.set({ list: [] })
     }
 
     const handleDragEnd = (result: DropResult) => {
-        console.log(result.source.index, result.destination?.index)
+        if (result.destination === undefined) return
+        reorderShoppingList({
+            array: shoppingList,
+            from: result.source.index,
+            to: result.destination.index,
+        })
     }
 
     const getItemStyle = useCallback(
         (isDragging: boolean, draggableStyle?: DraggingStyle | NotDraggingStyle) => ({
-            // styles we need to apply on draggables
             ...draggableStyle,
-
-            ...(isDragging && {
-                background:
-                    theme.palette.type === 'dark'
-                        ? 'rgba(255, 255, 255, 0.1)'
-                        : 'rgba(0, 0, 0, 0.08)',
-            }),
+            ...(isDragging &&
+                ({
+                    background: theme.palette.background.default,
+                    borderRadius: theme.shape.borderRadius,
+                    boxShadow: theme.shadows[4],
+                } as React.CSSProperties)),
         }),
-        [theme.palette.type]
+        [theme.palette.background.default, theme.shadows, theme.shape.borderRadius]
     )
 
     return (
@@ -174,8 +164,8 @@ const AccountUserShoppingList = () => {
                             <List disablePadding innerRef={provided.innerRef}>
                                 {shoppingList.map((item, index) => (
                                     <Draggable
-                                        key={item.documentId}
-                                        draggableId={item.documentId}
+                                        key={`${index}-${item.value}`}
+                                        draggableId={`${index}-${item.value}`}
                                         index={index}>
                                         {(provided, snapshot) => (
                                             <ListItem
@@ -189,9 +179,7 @@ const AccountUserShoppingList = () => {
                                                 <ListItemIcon>
                                                     <Checkbox
                                                         checked={item.checked}
-                                                        onChange={handleCheckboxChange(
-                                                            item.documentId
-                                                        )}
+                                                        onChange={handleCheckboxChange(index)}
                                                         edge="start"
                                                     />
                                                 </ListItemIcon>
@@ -207,7 +195,7 @@ const AccountUserShoppingList = () => {
                                                 <Fade in={!snapshot.isDragging}>
                                                     <ListItemSecondaryAction>
                                                         <IconButton
-                                                            onClick={handleDelete(item.documentId)}
+                                                            onClick={handleDelete(index)}
                                                             size="small">
                                                             <Clear />
                                                         </IconButton>
