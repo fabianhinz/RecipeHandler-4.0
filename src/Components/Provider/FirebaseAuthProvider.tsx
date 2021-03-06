@@ -1,22 +1,27 @@
 import { makeStyles } from '@material-ui/core'
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
-import { ShoppingList, ShoppingTracker, User } from '../../model/model'
+import { ShoppingListItem, User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { ArrayFns, ReorderParams } from '../../util/fns'
 import BuiltWithFirebase from '../Shared/BuiltWithFirebase'
+
+type DocumentRef = firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
 
 interface AuthContext {
     user: User | undefined
-    shoppingList: ShoppingList
-    shoppingTracker: ShoppingTracker
+    shoppingList: ShoppingListItem[]
     loginEnabled: boolean
+    shoppingListRef: { current?: DocumentRef }
+    reorderShoppingList: (reorderParams: ReorderParams<ShoppingListItem>) => void
 }
 
 const Context = React.createContext<AuthContext>({
     user: undefined,
-    shoppingList: new Map(),
-    shoppingTracker: new Map(),
+    shoppingList: [],
     loginEnabled: false,
+    shoppingListRef: { current: undefined },
+    reorderShoppingList: (reorderParams: ReorderParams<ShoppingListItem>) => null,
 })
 
 export const useFirebaseAuthContext = () => useContext(Context)
@@ -49,8 +54,9 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     const [authReady, setAuthReady] = useState(false)
     const [loginEnabled, setLoginEnabled] = useState(false)
     const [user, setUser] = useState<User | undefined>()
-    const [shoppingList, setShoppingList] = useState<ShoppingList>(new Map())
-    const [shoppingTracker, setShoppingTracker] = useState<ShoppingTracker>(new Map())
+    const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([])
+
+    const shoppingListRef = useRef<DocumentRef>()
 
     const classes = useStyles()
 
@@ -66,7 +72,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
         const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
 
-        const userDocUnsubscribe = userDocRef.onSnapshot(doc => {
+        const userDocUnsubsribe = userDocRef.onSnapshot(doc => {
             setUser({
                 ...(doc.data() as Omit<User, 'uid'>),
                 uid: user.uid,
@@ -74,30 +80,14 @@ const FirebaseAuthProvider: FC = ({ children }) => {
             setLoginEnabled(true)
         })
 
-        const shoppingListUnsubscribe = userDocRef
-            .collection('shoppingList')
-            .onSnapshot(querySnapshot => {
-                const newShoppingList: ShoppingList = new Map()
-                const newShoppingTracker: ShoppingTracker = new Map()
+        shoppingListRef.current = userDocRef.collection('shoppingList').doc('static')
 
-                querySnapshot.docs.forEach(doc => {
-                    const { list, tracker } = doc.data() as {
-                        list: string[]
-                        tracker: string[]
-                    }
-                    newShoppingList.set(doc.id, {
-                        // ? creating the recipe "Sonstiges" will create an item with a lenght of zero
-                        list: list.filter(item => item.length > 0),
-                    })
-                    newShoppingTracker.set(doc.id, { tracker })
-                })
-
-                setShoppingList(newShoppingList)
-                setShoppingTracker(newShoppingTracker)
-            })
+        const shoppingListUnsubscribe = shoppingListRef.current.onSnapshot(snapshot => {
+            setShoppingList(snapshot.data()?.list ?? [])
+        })
 
         return () => {
-            userDocUnsubscribe()
+            userDocUnsubsribe()
             shoppingListUnsubscribe()
         }
     }, [])
@@ -130,8 +120,17 @@ const FirebaseAuthProvider: FC = ({ children }) => {
         return FirebaseService.auth.onAuthStateChanged(handleAuthStateChange)
     }, [handleAuthStateChange])
 
+    const reorderShoppingList = (reorderParams: ReorderParams<ShoppingListItem>) => {
+        const reorderedList = ArrayFns.reorder(reorderParams)
+        setShoppingList(reorderedList)
+        shoppingListRef.current?.set({
+            list: reorderedList,
+        })
+    }
+
     return (
-        <Context.Provider value={{ user, shoppingList, shoppingTracker, loginEnabled }}>
+        <Context.Provider
+            value={{ user, loginEnabled, shoppingList, shoppingListRef, reorderShoppingList }}>
             {authReady ? (
                 <div className={classes.main}>{children}</div>
             ) : (

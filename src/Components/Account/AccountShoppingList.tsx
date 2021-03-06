@@ -1,42 +1,41 @@
 import {
     Checkbox,
-    Fab,
+    Fade,
     Grid,
     IconButton,
+    InputAdornment,
     List,
     ListItem,
     ListItemIcon,
+    ListItemSecondaryAction,
     ListItemText,
     makeStyles,
     TextField,
-    Tooltip,
+    useTheme,
 } from '@material-ui/core'
-import AddIcon from '@material-ui/icons/Add'
+import { Clear, DeleteSweep } from '@material-ui/icons'
 import clsx from 'clsx'
-import { CartOff } from 'mdi-material-ui'
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
+import {
+    DragDropContext,
+    Draggable,
+    DraggingStyle,
+    Droppable,
+    DropResult,
+    NotDraggingStyle,
+} from 'react-beautiful-dnd'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useGridContext } from '../Provider/GridProvider'
-import RecipeDetailsButton from '../Recipe/RecipeDetailsButton'
+import RecipeChip from '../Recipe/RecipeChip'
 import EntryGridContainer from '../Shared/EntryGridContainer'
-import FabContainer from '../Shared/FabContainer'
 import NotFound from '../Shared/NotFound'
-import StyledCard from '../Shared/StyledCard'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
     checked: {
         textDecoration: 'line-through',
     },
-    sonstigesRoot: {
-        display: 'flex',
-        flexGrow: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        minHeight: 150,
-    },
+
     listSubHeader: {
         fontSize: '1rem',
         display: 'flex',
@@ -46,140 +45,175 @@ const useStyles = makeStyles(theme => ({
 
 const AccountUserShoppingList = () => {
     const [textFieldValue, setTextFieldValue] = useState('')
+    const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
 
+    const theme = useTheme()
     const classes = useStyles()
 
-    const { user, shoppingList, shoppingTracker } = useFirebaseAuthContext()
-    const { gridBreakpointProps } = useGridContext()
+    const { shoppingList, shoppingListRef, reorderShoppingList } = useFirebaseAuthContext()
 
-    useDocumentTitle(`Einkaufsliste (${shoppingList.size})`)
+    useDocumentTitle(`Einkaufsliste (${shoppingList.filter(item => !item.checked).length})`)
 
-    const shoppingListDocRef = useMemo(
-        () =>
-            FirebaseService.firestore.collection('users').doc(user?.uid).collection('shoppingList'),
-        [user]
-    )
+    useLayoutEffect(() => {
+        setRecipeRefs(
+            new Set(
+                shoppingList
+                    .map(item => item.recipeNameRef)
+                    .filter(Boolean)
+                    .sort() as string[]
+            )
+        )
+    }, [shoppingList])
 
-    const handleCheckboxChange = (recipe: string, grocery: string) => async (
+    const handleCheckboxChange = (index: number) => async (
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
-        let tracker = shoppingTracker.get(recipe)?.tracker
-
-        if (!tracker) tracker = [grocery]
-        else if (checked) tracker.push(grocery)
-        else tracker = tracker.filter(trackerEl => trackerEl !== grocery)
-
-        await shoppingListDocRef.doc(recipe).set({ tracker }, { merge: true })
+        const list = [...shoppingList]
+        list[index].checked = checked
+        shoppingListRef.current?.set({ list })
     }
-
-    const handleRemove = (recipe: string) => () => shoppingListDocRef.doc(recipe).delete()
 
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        if (!textFieldValue.trim()) return
+
+        const list = [
+            {
+                checked: false,
+                value: textFieldValue,
+            },
+            ...shoppingList,
+        ]
+        shoppingListRef.current?.set({ list })
+
         setTextFieldValue('')
-
-        let list = shoppingList.get('Sonstiges')?.list
-
-        if (!list) list = [textFieldValue]
-        else if (!list.some(el => el === textFieldValue)) list.push(textFieldValue)
-        else list = list.filter(listEl => listEl !== textFieldValue)
-
-        if (list.length === 0) await shoppingListDocRef.doc('Sonstiges').delete()
-        else await shoppingListDocRef.doc('Sonstiges').set({ list }, { merge: true })
     }
 
-    const listItemChecked = (recipe: string, grocery: string) =>
-        Boolean(shoppingTracker.get(recipe)?.tracker?.some(trackerEl => trackerEl === grocery))
+    const handleDelete = (index: number) => () => {
+        shoppingListRef.current?.set({
+            list: shoppingList.filter((_, itemIndex) => itemIndex !== index),
+        })
+    }
+
+    const handleDeleteAll = () => {
+        shoppingListRef.current?.set({ list: [] })
+    }
+
+    const handleDragEnd = (result: DropResult) => {
+        if (result.destination === undefined) return
+        reorderShoppingList({
+            array: shoppingList,
+            from: result.source.index,
+            to: result.destination.index,
+        })
+    }
+
+    const getItemStyle = useCallback(
+        (isDragging: boolean, draggableStyle?: DraggingStyle | NotDraggingStyle) => ({
+            ...draggableStyle,
+            ...(isDragging &&
+                ({
+                    background: theme.palette.background.default,
+                    borderRadius: theme.shape.borderRadius,
+                    boxShadow: theme.shadows[4],
+                } as React.CSSProperties)),
+        }),
+        [theme.palette.background.default, theme.shadows, theme.shape.borderRadius]
+    )
 
     return (
-        <>
-            <EntryGridContainer>
+        <EntryGridContainer>
+            <Grid item xs={12}>
+                <form onSubmit={handleFormSubmit}>
+                    <TextField
+                        value={textFieldValue}
+                        onChange={e => setTextFieldValue(e.target.value)}
+                        variant="outlined"
+                        fullWidth
+                        label="Liste ergänzen"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={handleDeleteAll} size="small">
+                                        <DeleteSweep />
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </form>
+            </Grid>
+
+            {recipeRefs.size > 0 && (
                 <Grid item xs={12}>
-                    <Grid container spacing={3}>
-                        {[...shoppingList.entries()].map(([recipeName, groceries]) => (
-                            <Grid item {...gridBreakpointProps} key={recipeName}>
-                                <StyledCard
-                                    header={recipeName}
-                                    action={
-                                        <>
-                                            {recipeName !== 'Sonstiges' && (
-                                                <RecipeDetailsButton name={recipeName} />
-                                            )}
-                                            <Tooltip
-                                                title={`${recipeName} von Einkaufsliste entfernen`}>
-                                                <IconButton onClick={handleRemove(recipeName)}>
-                                                    <CartOff />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </>
-                                    }>
-                                    <div
-                                        className={clsx(
-                                            recipeName === 'Sonstiges' && classes.sonstigesRoot
-                                        )}>
-                                        <List>
-                                            {groceries?.list.map(grocery => (
-                                                <ListItem key={grocery}>
-                                                    <ListItemIcon>
-                                                        <Checkbox
-                                                            checked={listItemChecked(
-                                                                recipeName,
-                                                                grocery
-                                                            )}
-                                                            onChange={handleCheckboxChange(
-                                                                recipeName,
-                                                                grocery
-                                                            )}
-                                                            edge="start"
-                                                        />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        classes={{
-                                                            primary: clsx(
-                                                                listItemChecked(
-                                                                    recipeName,
-                                                                    grocery
-                                                                ) && classes.checked
-                                                            ),
-                                                        }}
-                                                        primary={grocery}
-                                                    />
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                        {recipeName === 'Sonstiges' && (
-                                            <form onSubmit={handleFormSubmit}>
-                                                <TextField
-                                                    value={textFieldValue}
-                                                    onChange={e =>
-                                                        setTextFieldValue(e.target.value)
-                                                    }
-                                                    variant="outlined"
-                                                    fullWidth
-                                                    placeholder="Ergänzen"
-                                                />
-                                            </form>
-                                        )}
-                                    </div>
-                                </StyledCard>
+                    <Grid style={{ overflowX: 'auto' }} wrap="nowrap" container spacing={1}>
+                        {[...recipeRefs.values()].map(recipeRef => (
+                            <Grid item key={recipeRef}>
+                                <RecipeChip recipeName={recipeRef} />
                             </Grid>
                         ))}
                     </Grid>
-                    <NotFound visible={shoppingList.size === 0} />
                 </Grid>
-            </EntryGridContainer>
+            )}
 
-            <FabContainer in={!shoppingList.get('Sonstiges')}>
-                <Tooltip title="Liste ergänzen" placement="left">
-                    <Fab
-                        onClick={() => shoppingListDocRef.doc('Sonstiges').set({ list: [] })}
-                        color="secondary">
-                        <AddIcon />
-                    </Fab>
-                </Tooltip>
-            </FabContainer>
-        </>
+            <Grid item xs={12}>
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId="shoppingListDroppable">
+                        {provided => (
+                            <List disablePadding innerRef={provided.innerRef}>
+                                {shoppingList.map((item, index) => (
+                                    <Draggable
+                                        key={`${index}-${item.value}`}
+                                        draggableId={`${index}-${item.value}`}
+                                        index={index}>
+                                        {(provided, snapshot) => (
+                                            <ListItem
+                                                innerRef={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                style={getItemStyle(
+                                                    snapshot.isDragging,
+                                                    provided.draggableProps.style
+                                                )}>
+                                                <ListItemIcon>
+                                                    <Checkbox
+                                                        checked={item.checked}
+                                                        onChange={handleCheckboxChange(index)}
+                                                        edge="start"
+                                                    />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    classes={{
+                                                        primary: clsx(
+                                                            item.checked && classes.checked
+                                                        ),
+                                                    }}
+                                                    primary={item.value}
+                                                    secondary={item.recipeNameRef}
+                                                />
+                                                <Fade in={!snapshot.isDragging}>
+                                                    <ListItemSecondaryAction>
+                                                        <IconButton
+                                                            onClick={handleDelete(index)}
+                                                            size="small">
+                                                            <Clear />
+                                                        </IconButton>
+                                                    </ListItemSecondaryAction>
+                                                </Fade>
+                                            </ListItem>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </List>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+
+                <NotFound visible={shoppingList.length === 0} />
+            </Grid>
+        </EntryGridContainer>
     )
 }
 

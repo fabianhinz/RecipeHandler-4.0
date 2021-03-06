@@ -6,11 +6,11 @@ import {
     makeStyles,
     Typography,
 } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { Hit, Recipe } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
+import { useRecipeDoc } from '../../hooks/useRecipeDoc'
+import { Hit } from '../../model/model'
 import { PATHS } from '../Routes/Routes'
 
 const useStyles = makeStyles({
@@ -24,24 +24,9 @@ interface Props {
 }
 
 const SearchResult = (props: Props) => {
-    const [recipe, setRecipe] = useState<Recipe | null>(null)
     const history = useHistory()
     const classes = useStyles()
-
-    useEffect(() => {
-        let mounted = true
-        FirebaseService.firestore
-            .collection('recipes')
-            .doc(props.hit.name)
-            .get()
-            .then(docSnapshot => {
-                if (mounted) setRecipe(docSnapshot.data() as Recipe)
-            })
-
-        return () => {
-            mounted = false
-        }
-    }, [props.hit.name])
+    const { recipeDoc } = useRecipeDoc({ recipeName: props.hit.name })
 
     return (
         <ListItem
@@ -50,7 +35,7 @@ const SearchResult = (props: Props) => {
             className={classes.listItem}
             onClick={() => history.push(PATHS.details(props.hit.name))}>
             <ListItemAvatar>
-                <Avatar src={recipe?.previewAttachment}>{props.hit.name.slice(0, 1)}</Avatar>
+                <Avatar src={recipeDoc?.previewAttachment}>{props.hit.name.slice(0, 1)}</Avatar>
             </ListItemAvatar>
             <ListItemText
                 primary={props.hit.name}

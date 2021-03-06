@@ -6,7 +6,9 @@ import Progress from '../../Shared/Progress'
 import RecipeCreate from '../Create/RecipeCreate'
 
 const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {
-    const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps })
+    const { recipeDoc, recipeDocLoading } = useRecipeDoc({
+        recipeName: routeProps.match.params.name,
+    })
 
     return (
         <>

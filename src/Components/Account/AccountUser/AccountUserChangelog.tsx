@@ -1,12 +1,12 @@
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     Chip,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    ExpansionPanel,
-    ExpansionPanelDetails,
-    ExpansionPanelSummary,
     Grid,
     Hidden,
     IconButton,
@@ -101,8 +101,8 @@ const AccountUserChangelog = () => {
                 {loading && <Progress variant="absolute" />}
                 <DialogContent className={classes.dialogContent}>
                     {pullrequests.map(pr => (
-                        <ExpansionPanel key={pr.shortSha}>
-                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                        <Accordion key={pr.shortSha}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Grid
                                     container
                                     alignItems="center"
@@ -133,8 +133,8 @@ const AccountUserChangelog = () => {
                                         </Grid>
                                     </Hidden>
                                 </Grid>
-                            </ExpansionPanelSummary>
-                            <ExpansionPanelDetails>
+                            </AccordionSummary>
+                            <AccordionDetails>
                                 <Grid
                                     container
                                     alignItems="center"
@@ -199,8 +199,8 @@ const AccountUserChangelog = () => {
                                         </Grid>
                                     )}
                                 </Grid>
-                            </ExpansionPanelDetails>
-                        </ExpansionPanel>
+                            </AccordionDetails>
+                        </Accordion>
                     ))}
                 </DialogContent>
                 <DialogActions>

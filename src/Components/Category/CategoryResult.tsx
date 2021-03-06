@@ -8,7 +8,7 @@ interface CategoryResultProps extends Pick<ChipProps, 'color' | 'variant' | 'siz
     categories: Categories<string>
 }
 
-export const CategoryResult: FC<CategoryResultProps> = ({ categories, ...chipProps }) => (
+export const CategoryResult: FC<CategoryResultProps> = ({ categories, children, ...chipProps }) => (
     <Grid container spacing={1}>
         {Object.keys(categories).map(type => (
             <Grid item key={type}>

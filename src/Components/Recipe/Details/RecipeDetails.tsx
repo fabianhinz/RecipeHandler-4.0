@@ -16,7 +16,10 @@ import SpeedDialWrapper from '../../Shared/SpeedDialWrapper'
 import RecipeResult from '../Result/RecipeResult'
 
 const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
-    const { recipeDoc, recipeDocLoading } = useRecipeDoc({ routeProps })
+    const { recipeDoc, recipeDocLoading } = useRecipeDoc({
+        recipeName: routeProps.match.params.name,
+    })
+
     const { user } = useFirebaseAuthContext()
     const history = useHistory()
 

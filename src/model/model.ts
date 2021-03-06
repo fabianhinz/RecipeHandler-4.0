@@ -124,10 +124,6 @@ export interface Issue {
     title: string
 }
 export type RecipeName = string
-export type Grocery = string
-
-export type ShoppingList = Map<RecipeName, { list: Grocery[] } | undefined>
-export type ShoppingTracker = Map<RecipeName, { tracker: Grocery[] } | undefined>
 
 export type OrderByKey = keyof Pick<Recipe, 'name' | 'createdDate'>
 export type OrderByRecord = Partial<Record<OrderByKey, 'asc' | 'desc'>>
@@ -174,4 +170,10 @@ export interface TesseractLog {
 export interface CookingHistory {
     createdDate: firebase.firestore.Timestamp
     recipeName: string
+}
+
+export interface ShoppingListItem {
+    recipeNameRef?: string
+    value: string
+    checked: boolean
 }

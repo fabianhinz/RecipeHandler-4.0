@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
         borderTopRightRadius: 0,
         left: 0,
         width: '100%',
-        maxHeight: '60vh',
+        maxHeight: '50vh',
         overflowY: 'auto',
     },
     searchInput: {
@@ -97,11 +97,11 @@ const Search = () => {
 
     const history = useHistory()
     const debouncedValue = useDebounce(value, 500)
-    const { isTablet } = useBreakpointsContext()
-    const showResultsPaper = useMemo(() => focused && isTablet && debouncedValue.length > 0, [
+    const { mdUp } = useBreakpointsContext()
+    const showResultsPaper = useMemo(() => focused && mdUp && debouncedValue.length > 0, [
         debouncedValue.length,
         focused,
-        isTablet,
+        mdUp,
     ])
     const classes = useStyles({ focused, showResultsPaper })
     const theme = useTheme()
@@ -142,7 +142,7 @@ const Search = () => {
                     setError(error)
                 })
                 .then(() => {
-                    if (!isTablet) history.push(PATHS.searchResults)
+                    if (!mdUp) history.push(PATHS.searchResults)
                 }),
         // ? we don't want this to change on every user change
         // eslint-disable-next-line react-hooks/exhaustive-deps

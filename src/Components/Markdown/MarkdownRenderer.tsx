@@ -18,11 +18,10 @@ import {
 } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
-import React, { useMemo } from 'react'
+import React from 'react'
 import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown'
 import { useRouteMatch } from 'react-router-dom'
 
-import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PATHS } from '../Routes/Routes'
 import { GrowIn } from '../Shared/Transitions'
@@ -46,47 +45,45 @@ interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
 }
 
 const MarkdownRenderer = (props: Props) => {
-    const { user, shoppingList } = useFirebaseAuthContext()
+    const { user } = useFirebaseAuthContext()
     const match = useRouteMatch()
     const classes = useStyles()
-
-    const shoppingListDocRef = useMemo(() => {
-        if (!user || !props.recipeName || !props.withShoppingList) return
-        return FirebaseService.firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('shoppingList')
-            .doc(props.recipeName)
-    }, [props.recipeName, user, props.withShoppingList])
+    const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
 
     const renderPropsToGrocery = (children: any) => children[0]?.props?.value as string | undefined
 
-    const checkboxChecked = (children: any) => {
-        const groceries = shoppingList.get(props.recipeName)?.list
+    const getListItemByChildren = (children: any) =>
+        shoppingList.find(
+            item =>
+                item.value === renderPropsToGrocery(children) &&
+                item.recipeNameRef === props.recipeName
+        )
 
-        if (!groceries || groceries.length === 0) return false
-
-        const grocery = renderPropsToGrocery(children)
-        if (!grocery) return false
-
-        return groceries.some(groceryEl => groceryEl === grocery)
-    }
-
-    const handleCheckboxChange = (children: any) => async (
+    const handleCheckboxChange = (children: any) => (
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
         let grocery = renderPropsToGrocery(children)
-        if (!grocery || !props.recipeName || !shoppingListDocRef) return
+        if (!grocery || !props.withShoppingList) return
 
-        let list = shoppingList.get(props.recipeName)?.list
-
-        if (!list) list = [grocery]
-        else if (checked) list.push(grocery)
-        else list = list.filter(listEl => listEl !== grocery)
-
-        if (list.length === 0) await shoppingListDocRef.delete()
-        else await shoppingListDocRef.set({ list }, { merge: true })
+        let list = [...shoppingList]
+        if (checked) {
+            list = [
+                {
+                    value: grocery,
+                    recipeNameRef: props.recipeName,
+                    checked: false,
+                },
+                ...list,
+            ]
+        } else {
+            list = list.filter(
+                item =>
+                    item.value !== renderPropsToGrocery(children) &&
+                    item.recipeNameRef !== props.recipeName
+            )
+        }
+        shoppingListRef.current?.set({ list })
     }
 
     return (
@@ -109,14 +106,22 @@ const MarkdownRenderer = (props: Props) => {
                                 <Tooltip
                                     TransitionComponent={GrowIn}
                                     title={
-                                        checkboxChecked(renderProps.children)
+                                        getListItemByChildren(renderProps.children)
                                             ? 'Von der Einkaufsliste entfernen'
                                             : 'Zur Einkaufsliste hinzufügen'
                                     }>
                                     <Checkbox
-                                        icon={<AddCircleIcon />}
+                                        icon={
+                                            props.withShoppingList ? (
+                                                <AddCircleIcon />
+                                            ) : (
+                                                <RemoveCircleIcon />
+                                            )
+                                        }
                                         checkedIcon={<RemoveCircleIcon />}
-                                        checked={checkboxChecked(renderProps.children)}
+                                        checked={Boolean(
+                                            getListItemByChildren(renderProps.children)
+                                        )}
                                         onChange={handleCheckboxChange(renderProps.children)}
                                         classes={{ root: classes.checkboxRoot }}
                                         disabled={
