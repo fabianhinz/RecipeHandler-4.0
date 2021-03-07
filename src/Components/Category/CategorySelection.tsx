@@ -35,6 +35,7 @@ interface Props {
     onRemoveSelectedCategories: () => void
     onCategoryChange: (type: string, value: string) => void
     legend?: React.ReactText
+    children?: React.ReactNode
 }
 
 export default function CategorySelection({
@@ -44,6 +45,7 @@ export default function CategorySelection({
     header,
     label,
     legend,
+    children,
 }: Props) {
     const classes = useStyles()
 
@@ -89,6 +91,7 @@ export default function CategorySelection({
                         </List>
                     </Grid>
                 ))}
+                {children}
             </Grid>
         </SelectionDrawer>
     )
