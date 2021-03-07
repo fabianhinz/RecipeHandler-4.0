@@ -8,7 +8,7 @@ import NotFound from '../Shared/NotFound'
 import SearchResult from './SearchResult'
 
 const SearchResults = () => {
-    const { hits } = useSearchResultsContext()
+    const { hits, loading } = useSearchResultsContext()
 
     useDocumentTitle('Ergebnisse')
 
@@ -23,7 +23,8 @@ const SearchResults = () => {
                     <SearchResult hit={hit} key={hit.name} />
                 ))}
             </List>
-            <NotFound visible={hits.length === 0} />
+
+            {!loading && <NotFound visible={hits.length === 0} />}
         </>
     )
 }
