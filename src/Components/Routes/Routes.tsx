@@ -5,6 +5,7 @@ import { ReactComponent as AccountIcon } from '../../icons/account.svg'
 import { ReactComponent as BookmarksIcon } from '../../icons/bookmarks.svg'
 import { ReactComponent as DetailsIcon } from '../../icons/details.svg'
 import { ReactComponent as EditIcon } from '../../icons/edit.svg'
+import { ReactComponent as ExpensesIcon } from '../../icons/expenses.svg'
 import { ReactComponent as HomeIcon } from '../../icons/home.svg'
 import { ReactComponent as ImpressumIcon } from '../../icons/impressum.svg'
 import { ReactComponent as SearchIcon } from '../../icons/search.svg'
@@ -26,6 +27,7 @@ export const PATHS = {
     shoppingList: '/shopping',
     searchResults: '/searchResults',
     cookingHistory: '/cookingHistory',
+    expenses: '/expenses',
 }
 
 interface AppRoute {
@@ -92,6 +94,11 @@ const securedRoutes: AppRoute[] = [
         path: PATHS.cookingHistory,
         Component: lazy(() => import('../Account/AccountCookingHistory')),
         BackgroundIcon: HomeIcon,
+    },
+    {
+        path: PATHS.expenses,
+        Component: lazy(() => import('../Expenses/Expenses')),
+        BackgroundIcon: ExpensesIcon,
     },
 ]
 
