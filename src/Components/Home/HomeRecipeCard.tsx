@@ -4,16 +4,13 @@ import {
     CardActionArea,
     CardHeader,
     Grid,
-    IconButton,
     makeStyles,
     Paper,
-    Tooltip,
     Typography,
     Zoom,
 } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
-import { Eye } from 'mdi-material-ui'
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
 import useImgSrcLazy from '../../hooks/useImgSrcLazy'
@@ -24,7 +21,6 @@ import { CategoryResult } from '../Category/CategoryResult'
 import { useGridContext } from '../Provider/GridProvider'
 import { useRouterContext } from '../Provider/RouterProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
-import RecipeBookmarkButton from '../Recipe/RecipeBookmarkButton'
 import { PATHS } from '../Routes/Routes'
 
 const useStyles = makeStyles(theme => ({
@@ -50,10 +46,6 @@ const useStyles = makeStyles(theme => ({
             borderTopRightRadius: 0,
             borderBottomLeftRadius: BORDER_RADIUS,
         },
-    },
-    cardAction: {
-        display: 'flex',
-        flexDirection: 'column',
     },
     compactPaper: {
         padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
@@ -138,58 +130,50 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
     return (
         <Grid {...gridBreakpointProps} item>
             <Card className={classes.card}>
-                <Grid container>
-                    <Grid item xs={12} lg={3} xl={gridLayout === 'list' ? 2 : 5}>
-                        {imgLoading ? (
-                            <Skeleton className={classes.avatar} variant="rect" />
-                        ) : (
-                            <div className={classes.avatarContainer}>
-                                <Avatar variant="square" className={classes.avatar} src={imgSrc}>
-                                    {recipe.name.slice(0, 1).toUpperCase()}
-                                </Avatar>
-                                {editor && (
-                                    <Zoom in mountOnEnter>
-                                        <Avatar
-                                            className={classes.userAvatar}
-                                            src={editor.profilePicture}>
-                                            {editor.username.slice(0, 1).toUpperCase()}
-                                        </Avatar>
-                                    </Zoom>
-                                )}
-                            </div>
-                        )}
-                    </Grid>
-                    <Grid
-                        item
-                        xs={12}
-                        lg={9}
-                        xl={gridLayout === 'list' ? 10 : 7}
-                        className={classes.cardContent}>
-                        <CardHeader
-                            classes={{ action: classes.cardAction, root: classes.cardHeader }}
-                            title={recipe.name}
-                            subheader={
-                                lastCookedDate?.toDate().toLocaleDateString() ||
-                                recipe.createdDate.toDate().toLocaleDateString()
-                            }
-                            action={
-                                <>
-                                    <Tooltip placement="left" title="Details">
-                                        <IconButton onClick={handleRecipeClick}>
-                                            <Eye />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <RecipeBookmarkButton
-                                        tooltipProps={{ placement: 'left' }}
-                                        name={recipe.name}
-                                    />
-                                </>
-                            }
-                        />
+                <CardActionArea onClick={handleRecipeClick}>
+                    <Grid container>
+                        <Grid item xs={12} lg={3} xl={gridLayout === 'list' ? 2 : 5}>
+                            {imgLoading ? (
+                                <Skeleton className={classes.avatar} variant="rect" />
+                            ) : (
+                                <div className={classes.avatarContainer}>
+                                    <Avatar
+                                        variant="square"
+                                        className={classes.avatar}
+                                        src={imgSrc}>
+                                        {recipe.name.slice(0, 1).toUpperCase()}
+                                    </Avatar>
+                                    {editor && (
+                                        <Zoom in mountOnEnter>
+                                            <Avatar
+                                                className={classes.userAvatar}
+                                                src={editor.profilePicture}>
+                                                {editor.username.slice(0, 1).toUpperCase()}
+                                            </Avatar>
+                                        </Zoom>
+                                    )}
+                                </div>
+                            )}
+                        </Grid>
+                        <Grid
+                            item
+                            xs={12}
+                            lg={9}
+                            xl={gridLayout === 'list' ? 10 : 7}
+                            className={classes.cardContent}>
+                            <CardHeader
+                                className={classes.cardHeader}
+                                title={recipe.name}
+                                subheader={
+                                    lastCookedDate?.toDate().toLocaleDateString() ||
+                                    recipe.createdDate.toDate().toLocaleDateString()
+                                }
+                            />
 
-                        <CategoryResult categories={recipe.categories} variant="outlined" />
+                            <CategoryResult categories={recipe.categories} variant="outlined" />
+                        </Grid>
                     </Grid>
-                </Grid>
+                </CardActionArea>
             </Card>
         </Grid>
     )

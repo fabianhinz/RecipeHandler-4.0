@@ -1,6 +1,6 @@
 import { Grid, LinearProgress } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
@@ -9,6 +9,7 @@ import { DocumentId, OrderByKey, OrderByRecord, Recipe } from '../../model/model
 import { FirebaseService } from '../../services/firebase'
 import RecipeService from '../../services/recipeService'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useUsersContext } from '../Provider/UsersProvider'
 import { PATHS } from '../Routes/Routes'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
@@ -38,6 +39,9 @@ const Home = () => {
         removeSelectedCategories,
     } = useCategorySelect()
     const { user } = useFirebaseAuthContext()
+    const usersContext = useUsersContext()
+    const [selectedEditors, setSelectedEditors] = useState<string[]>([])
+
     const { IntersectionObserverTrigger } = useIntersectionObserver({
         onIsIntersecting: () => {
             if (pagedRecipes.size > 0) setLastRecipe([...pagedRecipes.values()].pop())
@@ -45,6 +49,13 @@ const Home = () => {
     })
 
     useDocumentTitle('Rezepte')
+
+    useLayoutEffect(() => {
+        if (selectedEditors.length > 0) return
+
+        if (user && user.selectedUsers.length > 0) setSelectedEditors(user.selectedUsers)
+        else setSelectedEditors(usersContext.userIds)
+    }, [selectedEditors.length, user, usersContext.userIds])
 
     useEffect(() => {
         setQuerying(true)
@@ -55,8 +66,7 @@ const Home = () => {
             .collection('recipes')
             .orderBy(orderByKey, orderBy[orderByKey])
 
-        if (user && user.selectedUsers.length > 0)
-            query = query.where('editorUid', 'in', user.selectedUsers)
+        if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
 
         if (lastRecipe) query = query.startAfter(lastRecipe[orderByKey])
 
@@ -84,7 +94,7 @@ const Home = () => {
             })
             setQuerying(false)
         })
-    }, [lastRecipe, orderBy, selectedCategories, setQuerying, user])
+    }, [lastRecipe, orderBy, selectedCategories, selectedEditors])
 
     const resetRecipeState = useCallback(() => {
         setPagedRecipes(new Map())
@@ -105,6 +115,11 @@ const Home = () => {
                     }}
                     onSelectedCategoriesChange={(type, value) => {
                         setSelectedCategories(type, value)
+                        resetRecipeState()
+                    }}
+                    selectedEditors={selectedEditors}
+                    onSelectedEditorsChange={uids => {
+                        setSelectedEditors(uids)
                         resetRecipeState()
                     }}
                     orderBy={orderBy}

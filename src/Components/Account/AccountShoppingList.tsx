@@ -1,54 +1,18 @@
-import {
-    Checkbox,
-    Fade,
-    Grid,
-    IconButton,
-    InputAdornment,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemSecondaryAction,
-    ListItemText,
-    makeStyles,
-    TextField,
-    useTheme,
-} from '@material-ui/core'
-import { Clear, DeleteSweep } from '@material-ui/icons'
-import clsx from 'clsx'
-import React, { useCallback, useLayoutEffect, useState } from 'react'
-import {
-    DragDropContext,
-    Draggable,
-    DraggingStyle,
-    Droppable,
-    DropResult,
-    NotDraggingStyle,
-} from 'react-beautiful-dnd'
+import { Grid, IconButton, InputAdornment, List, TextField } from '@material-ui/core'
+import { DeleteSweep } from '@material-ui/icons'
+import React, { useLayoutEffect, useState } from 'react'
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import RecipeChip from '../Recipe/RecipeChip'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
-
-const useStyles = makeStyles(() => ({
-    checked: {
-        textDecoration: 'line-through',
-    },
-
-    listSubHeader: {
-        fontSize: '1rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-    },
-}))
+import AccountShoppingListItem from './AccountShoppingListItem'
 
 const AccountUserShoppingList = () => {
     const [textFieldValue, setTextFieldValue] = useState('')
     const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
-
-    const theme = useTheme()
-    const classes = useStyles()
 
     const { shoppingList, shoppingListRef, reorderShoppingList } = useFirebaseAuthContext()
 
@@ -65,7 +29,7 @@ const AccountUserShoppingList = () => {
         )
     }, [shoppingList])
 
-    const handleCheckboxChange = (index: number) => async (
+    const handleCheckboxChange = (index: number) => (
         _event: React.ChangeEvent<HTMLInputElement>,
         checked: boolean
     ) => {
@@ -109,19 +73,6 @@ const AccountUserShoppingList = () => {
         })
     }
 
-    const getItemStyle = useCallback(
-        (isDragging: boolean, draggableStyle?: DraggingStyle | NotDraggingStyle) => ({
-            ...draggableStyle,
-            ...(isDragging &&
-                ({
-                    background: theme.palette.background.default,
-                    borderRadius: theme.shape.borderRadius,
-                    boxShadow: theme.shadows[4],
-                } as React.CSSProperties)),
-        }),
-        [theme.palette.background.default, theme.shadows, theme.shape.borderRadius]
-    )
-
     return (
         <EntryGridContainer>
             <Grid item xs={12}>
@@ -163,47 +114,13 @@ const AccountUserShoppingList = () => {
                         {provided => (
                             <List disablePadding innerRef={provided.innerRef}>
                                 {shoppingList.map((item, index) => (
-                                    <Draggable
+                                    <AccountShoppingListItem
                                         key={`${index}-${item.value}`}
-                                        draggableId={`${index}-${item.value}`}
-                                        index={index}>
-                                        {(provided, snapshot) => (
-                                            <ListItem
-                                                innerRef={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                style={getItemStyle(
-                                                    snapshot.isDragging,
-                                                    provided.draggableProps.style
-                                                )}>
-                                                <ListItemIcon>
-                                                    <Checkbox
-                                                        checked={item.checked}
-                                                        onChange={handleCheckboxChange(index)}
-                                                        edge="start"
-                                                    />
-                                                </ListItemIcon>
-                                                <ListItemText
-                                                    classes={{
-                                                        primary: clsx(
-                                                            item.checked && classes.checked
-                                                        ),
-                                                    }}
-                                                    primary={item.value}
-                                                    secondary={item.recipeNameRef}
-                                                />
-                                                <Fade in={!snapshot.isDragging}>
-                                                    <ListItemSecondaryAction>
-                                                        <IconButton
-                                                            onClick={handleDelete(index)}
-                                                            size="small">
-                                                            <Clear />
-                                                        </IconButton>
-                                                    </ListItemSecondaryAction>
-                                                </Fade>
-                                            </ListItem>
-                                        )}
-                                    </Draggable>
+                                        onCheckboxChange={handleCheckboxChange}
+                                        onDelete={handleDelete}
+                                        item={item}
+                                        index={index}
+                                    />
                                 ))}
                                 {provided.placeholder}
                             </List>

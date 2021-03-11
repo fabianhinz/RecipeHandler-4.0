@@ -8,6 +8,7 @@ import {
     makeStyles,
     Paper,
     Portal,
+    useMediaQuery,
     useTheme,
 } from '@material-ui/core'
 import { useSnackbar } from 'notistack'
@@ -107,12 +108,18 @@ const Search = () => {
     const theme = useTheme()
 
     const { user } = useFirebaseAuthContext()
-    const { setError, setHits, error } = useSearchResultsContext()
+    const { setError, setHits, error, setLoading } = useSearchResultsContext()
     const { enqueueSnackbar } = useSnackbar()
+    const isPointerFine = useMediaQuery('@media (pointer: fine)')
 
     useLayoutEffect(() => {
+        if (!isPointerFine) return
+
         const htmlEl = document.getElementsByTagName('html')[0]
         const headerEl = document.getElementsByTagName('header')[0]
+
+        if (htmlEl.getBoundingClientRect().height === window.innerHeight) return
+
         if (showResultsPaper) {
             htmlEl.setAttribute('style', 'overflow:hidden; padding-right:16px')
             headerEl.setAttribute('style', 'padding-right:16px;')
@@ -120,14 +127,15 @@ const Search = () => {
             htmlEl.removeAttribute('style')
             headerEl.removeAttribute('style')
         }
-    }, [showResultsPaper])
+    }, [isPointerFine, showResultsPaper])
 
     useEffect(() => {
         if (error) enqueueSnackbar('Fehler beim Abrufen der Daten', { variant: 'error' })
     }, [enqueueSnackbar, error])
 
     const searchAlgolia = useCallback(
-        () =>
+        () => {
+            setLoading(true)
             algolia
                 .search<Hit>(debouncedValue, {
                     advancedSyntax: user?.algoliaAdvancedSyntax ? true : false,
@@ -143,7 +151,9 @@ const Search = () => {
                 })
                 .then(() => {
                     if (!mdUp) history.push(PATHS.searchResults)
-                }),
+                    setLoading(false)
+                })
+        },
         // ? we don't want this to change on every user change
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [debouncedValue, history, setError, setHits, user?.algoliaAdvancedSyntax]
@@ -196,7 +206,7 @@ const Search = () => {
             </Container>
 
             <Portal>
-                <Backdrop id="whereami" className={classes.backdrop} open={showResultsPaper} />
+                <Backdrop className={classes.backdrop} open={showResultsPaper} />
             </Portal>
         </>
     )
