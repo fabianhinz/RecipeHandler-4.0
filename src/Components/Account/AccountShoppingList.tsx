@@ -1,5 +1,4 @@
-import { Grid, IconButton, InputAdornment, List, TextField } from '@material-ui/core'
-import { DeleteSweep } from '@material-ui/icons'
+import { Grid, List } from '@material-ui/core'
 import React, { useLayoutEffect, useState } from 'react'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
 
@@ -8,10 +7,10 @@ import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import RecipeChip from '../Recipe/RecipeChip'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
+import AccountShoppingListInput from './AccountShoppingListInput'
 import AccountShoppingListItem from './AccountShoppingListItem'
 
 const AccountUserShoppingList = () => {
-    const [textFieldValue, setTextFieldValue] = useState('')
     const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
 
     const { shoppingList, shoppingListRef, reorderShoppingList } = useFirebaseAuthContext()
@@ -38,30 +37,10 @@ const AccountUserShoppingList = () => {
         shoppingListRef.current?.set({ list })
     }
 
-    const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        if (!textFieldValue.trim()) return
-
-        const list = [
-            {
-                checked: false,
-                value: textFieldValue,
-            },
-            ...shoppingList,
-        ]
-        shoppingListRef.current?.set({ list })
-
-        setTextFieldValue('')
-    }
-
     const handleDelete = (index: number) => () => {
         shoppingListRef.current?.set({
             list: shoppingList.filter((_, itemIndex) => itemIndex !== index),
         })
-    }
-
-    const handleDeleteAll = () => {
-        shoppingListRef.current?.set({ list: [] })
     }
 
     const handleDragEnd = (result: DropResult) => {
@@ -76,24 +55,7 @@ const AccountUserShoppingList = () => {
     return (
         <EntryGridContainer>
             <Grid item xs={12}>
-                <form onSubmit={handleFormSubmit}>
-                    <TextField
-                        value={textFieldValue}
-                        onChange={e => setTextFieldValue(e.target.value)}
-                        variant="outlined"
-                        fullWidth
-                        label="Liste ergänzen"
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={handleDeleteAll} size="small">
-                                        <DeleteSweep />
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                </form>
+                <AccountShoppingListInput />
             </Grid>
 
             {recipeRefs.size > 0 && (

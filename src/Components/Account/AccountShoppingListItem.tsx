@@ -83,7 +83,4 @@ const AccountShoppingListItem = (props: Props) => {
     )
 }
 
-export default React.memo(
-    AccountShoppingListItem,
-    (prev, next) => JSON.stringify(prev) === JSON.stringify(next)
-)
+export default AccountShoppingListItem
