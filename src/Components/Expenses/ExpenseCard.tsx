@@ -1,11 +1,11 @@
-import { Avatar, Card, CardContent, Grid, makeStyles, Typography } from '@material-ui/core'
+import { Avatar, Card, CardContent, Grid, Typography } from '@material-ui/core'
 import Commute from '@material-ui/icons/Commute'
 import Fastfood from '@material-ui/icons/Fastfood'
 import Weekend from '@material-ui/icons/Weekend'
 import { CashMultiple } from 'mdi-material-ui'
 import React from 'react'
 
-import { Expense } from './Expenses'
+import { Expense } from '../../model/model'
 
 interface Props {
     expense: Expense
@@ -37,7 +37,7 @@ const ExpenseCard = (props: Props) => {
                                 <Grid item>{getIcon(props.expense.category)}</Grid>
                                 <Grid item>
                                     <Typography variant="subtitle2">
-                                        {props.expense.subCategory}, {props.expense.shop}
+                                        {props.expense.description}, {props.expense.shop}
                                     </Typography>
                                     <Typography variant="caption">
                                         {props.expense.date.toDate().toLocaleDateString()},{' '}

@@ -1,14 +1,17 @@
 import { Card, CardContent, Grid, Typography } from '@material-ui/core'
 import React, { useLayoutEffect, useState } from 'react'
 
-import { Expense } from './Expenses'
+import useExpenseStore, { ExpenseState } from '../State/ExpenseState'
 
 interface Props {
     userName: string
-    expenses: Expense[]
 }
 
+const selector = (state: ExpenseState) => state.expenses
+
 const UserCard = (props: Props) => {
+    const expenses = useExpenseStore(selector)
+
     const [userData, setUserData] = useState<{ name: string; amount: number; difference: number }>({
         name: '',
         amount: 0,
@@ -16,12 +19,12 @@ const UserCard = (props: Props) => {
     })
 
     useLayoutEffect(() => {
-        const payed = props.expenses
+        const payed = expenses
             .filter(expense => expense.creator === props.userName)
             .map(expense => expense.amount)
             .reduce((prev, curr) => prev + curr, 0)
 
-        const shouldPay = props.expenses
+        const shouldPay = expenses
             .filter(expense => expense.relatedUsers?.includes(props.userName))
             .map(
                 expense =>
@@ -35,7 +38,7 @@ const UserCard = (props: Props) => {
             amount: payed,
             difference: payed - shouldPay,
         })
-    }, [props.expenses, props.userName])
+    }, [expenses, props.userName])
 
     return (
         <Grid item>

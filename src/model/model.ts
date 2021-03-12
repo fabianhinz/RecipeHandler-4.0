@@ -177,3 +177,13 @@ export interface ShoppingListItem {
     value: string
     checked: boolean
 }
+
+export interface Expense {
+    creator: string
+    amount: number
+    shop: string
+    category: string
+    description?: string
+    date: firebase.firestore.Timestamp
+    relatedUsers: string[]
+}

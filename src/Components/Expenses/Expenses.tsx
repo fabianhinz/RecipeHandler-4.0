@@ -1,54 +1,32 @@
-import { Card, CardContent, Grid, Typography } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import React from 'react'
+import React, { useState } from 'react'
 
-import { FirebaseService } from '../../services/firebase'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
+import useExpenseStore, { ExpenseState } from '../State/ExpenseState'
 import ExpenseCard from './ExpenseCard'
+import NewExpenseDialog from './NewExpenseDialog'
 import UserCard from './UserCard'
 
-// MockData, will be removed when using Firestore
-const user = ['Fabi', 'Miri', 'Hans']
-const expenses: Expense[] = [
-    {
-        creator: 'Fabi',
-        amount: 256.54,
-        shop: 'DM',
-        category: 'Lebensmittel',
-        subCategory: 'Einkauf',
-        date: FirebaseService.createTimestampFromDate(new Date()),
-        relatedUsers: ['Fabi', 'Miri', 'Hans'],
-    },
-    {
-        creator: 'Miri',
-        amount: 150.54,
-        shop: 'Edeka',
-        category: 'Lebensmittel',
-        subCategory: 'Einkauf',
-        date: FirebaseService.createTimestampFromDate(new Date()),
-        relatedUsers: ['Fabi', 'Miri'],
-    },
-]
-
-export interface Expense {
-    creator: string
-    amount: number
-    shop: string
-    category: string
-    subCategory?: string
-    date: firebase.firestore.Timestamp
-    relatedUsers: string[]
-}
+const selector = (state: ExpenseState) => ({
+    user: state.user,
+    expenses: state.expenses,
+})
 
 const Expenses = () => {
+    const { user, expenses } = useExpenseStore(selector)
+    const [dialogOpen, setDialogOpen] = useState<boolean>(false)
+
+    const closeDialog = () => setDialogOpen(false)
+
     return (
         <EntryGridContainer>
             {user.length > 0 && (
                 <Grid item xs={12}>
                     <Grid container spacing={2}>
                         {user.map(u => (
-                            <UserCard key={u} userName={u} expenses={expenses} />
+                            <UserCard key={u} userName={u} />
                         ))}
                     </Grid>
                 </Grid>
@@ -63,10 +41,11 @@ const Expenses = () => {
                 </Grid>
             )}
             <SecouredRouteFab
-                onClick={() => console.info('Add expense')}
+                onClick={() => setDialogOpen(true)}
                 tooltipTitle="Ausgabe hinzufügen"
                 icon={<AddIcon />}
             />
+            <NewExpenseDialog open={dialogOpen} onClose={closeDialog} />
         </EntryGridContainer>
     )
 }
