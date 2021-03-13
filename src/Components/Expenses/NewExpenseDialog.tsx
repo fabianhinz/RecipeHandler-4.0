@@ -17,6 +17,7 @@ import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/picker
 import React, { useState } from 'react'
 
 import { FirebaseService } from '../../services/firebase'
+import { SlideUp } from '../Shared/Transitions'
 import useExpenseStore, { ExpenseState } from '../State/ExpenseState'
 
 interface Props {
@@ -81,112 +82,135 @@ const NewExpenseDialog = (props: Props) => {
     }
 
     return (
-        <Dialog open={props.open} onClose={handleDialogClose}>
+        <Dialog
+            open={props.open}
+            onClose={handleDialogClose}
+            TransitionComponent={SlideUp}
+            fullWidth
+            maxWidth="md">
             <DialogTitle>Neue Ausgabe hinzufügen</DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
-                    <Autocomplete
-                        id="creator-select"
-                        autoComplete
-                        autoSelect
-                        getOptionLabel={option => option}
-                        value={creator}
-                        onChange={(_, newValue: string | null) => {
-                            setCreator(newValue ?? '')
-                        }}
-                        fullWidth
-                        options={users}
-                        renderInput={params => (
-                            <TextField
-                                autoComplete="creator"
-                                margin="normal"
-                                {...params}
-                                label="Ersteller"
-                                variant="outlined"
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item xs={6}>
+                            <Autocomplete
+                                id="creator-select"
+                                autoComplete
+                                autoSelect
+                                getOptionLabel={option => option}
+                                value={creator}
+                                onChange={(_, newValue: string | null) => {
+                                    setCreator(newValue ?? '')
+                                }}
+                                fullWidth
+                                options={users}
+                                renderInput={params => (
+                                    <TextField
+                                        autoComplete="creator"
+                                        margin="normal"
+                                        {...params}
+                                        label="Ersteller"
+                                        variant="outlined"
+                                    />
+                                )}
                             />
-                        )}
-                    />
-                    <TextField
-                        autoFocus
-                        autoComplete="amount"
-                        type="number"
-                        inputProps={{ min: 0, step: 0.01 }}
-                        InputProps={{
-                            endAdornment: <InputAdornment position="end">€</InputAdornment>,
-                        }}
-                        value={amount}
-                        onChange={e => setAmount(Number(e.target.value))}
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        label="Betrag"
-                    />
-                    <TextField
-                        autoFocus
-                        autoComplete="store"
-                        value={shop}
-                        onChange={e => setShop(e.target.value)}
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        label="Geschäft"
-                    />
-                    <Autocomplete
-                        id="category-Select"
-                        autoComplete
-                        autoSelect
-                        fullWidth
-                        options={categories}
-                        value={category}
-                        onChange={(_, newValue: string | null) => {
-                            setCategory(newValue ?? '')
-                        }}
-                        renderInput={params => (
                             <TextField
-                                autoComplete="category"
-                                margin="normal"
-                                {...params}
-                                label="Kategorie"
+                                autoFocus
+                                autoComplete="amount"
+                                type="number"
+                                inputProps={{ min: 0, step: 0.5 }}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">€</InputAdornment>,
+                                }}
+                                value={amount}
+                                onChange={e => setAmount(Number(e.target.value))}
                                 variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                label="Betrag"
                             />
-                        )}
-                    />
-                    <TextField
-                        autoFocus
-                        autoComplete="description"
-                        value={description}
-                        onChange={e => setDescription(e.target.value)}
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        label="Beschreibung"
-                    />
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                            fullWidth
-                            disableToolbar
-                            variant="inline"
-                            format="dd.MM.yyyy"
-                            margin="normal"
-                            id="date-picker-inline"
-                            label="Einkaufsdatum"
-                            value={date}
-                            onChange={date => setDate(date)}
-                            KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                            }}
-                        />
-                    </MuiPickersUtilsProvider>
-                    <Grid container spacing={2}>
-                        {users.map(user => (
-                            <Grid item key={user}>
-                                <Chip
-                                    color={relatedUsers.includes(user) ? 'secondary' : 'default'}
-                                    label={user}
-                                    onClick={() => handleAffectedUserChipClicked(user)}
-                                />
+                            <TextField
+                                autoFocus
+                                autoComplete="store"
+                                value={shop}
+                                onChange={e => setShop(e.target.value)}
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                label="Geschäft"
+                            />
+                            <Autocomplete
+                                id="category-Select"
+                                autoComplete
+                                autoSelect
+                                fullWidth
+                                options={categories}
+                                value={category}
+                                onChange={(_, newValue: string | null) => {
+                                    setCategory(newValue ?? '')
+                                }}
+                                renderInput={params => (
+                                    <TextField
+                                        autoComplete="category"
+                                        margin="normal"
+                                        {...params}
+                                        label="Kategorie"
+                                        variant="outlined"
+                                    />
+                                )}
+                            />
+                            <TextField
+                                autoFocus
+                                autoComplete="description"
+                                value={description}
+                                onChange={e => setDescription(e.target.value)}
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                label="Beschreibung"
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Grid container spacing={2} justify="center">
+                                <Grid item>
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            fullWidth
+                                            disableToolbar
+                                            variant="static"
+                                            format="dd.MM.yyyy"
+                                            margin="normal"
+                                            id="date-picker-inline"
+                                            label="Einkaufsdatum"
+                                            value={date}
+                                            onChange={date => setDate(date)}
+                                            KeyboardButtonProps={{
+                                                'aria-label': 'change date',
+                                            }}
+                                        />
+                                    </MuiPickersUtilsProvider>
+                                </Grid>
+                                <Grid item>
+                                    <Grid container spacing={1}>
+                                        {users.map(user => (
+                                            <Grid item key={user}>
+                                                <Chip
+                                                    color={
+                                                        relatedUsers.includes(user)
+                                                            ? 'secondary'
+                                                            : 'default'
+                                                    }
+                                                    label={user}
+                                                    onClick={() =>
+                                                        handleAffectedUserChipClicked(user)
+                                                    }
+                                                />
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </Grid>
                             </Grid>
-                        ))}
+                        </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
