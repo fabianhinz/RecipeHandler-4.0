@@ -79,7 +79,7 @@ const MarkdownRenderer = (props: Props) => {
         } else {
             list = list.filter(
                 item =>
-                    item.value !== renderPropsToGrocery(children) &&
+                    item.value !== renderPropsToGrocery(children) ||
                     item.recipeNameRef !== props.recipeName
             )
         }

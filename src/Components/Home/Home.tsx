@@ -18,7 +18,7 @@ import Skeletons from '../Shared/Skeletons'
 import HomeMostCooked from './HomeMostCooked'
 import HomeNew from './HomeNew'
 import HomeRecentlyEdited from './HomeRecentlyEdited'
-import HomeRecipeCard from './HomeRecipeCard'
+import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from './HomeRecipeCard'
 import HomeRecipeSelection from './HomeRecipeSelection'
 
 type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, Recipe>>
@@ -46,6 +46,7 @@ const Home = () => {
         onIsIntersecting: () => {
             if (pagedRecipes.size > 0) setLastRecipe([...pagedRecipes.values()].pop())
         },
+        options: { rootMargin: RECIPE_CARD_HEIGHT + 'px' },
     })
 
     useDocumentTitle('Rezepte')

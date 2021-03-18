@@ -4,6 +4,7 @@ import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 
 import { FirebaseService } from '../../services/firebase'
+import { RECIPE_CARD_HEIGHT } from '../Home/HomeRecipeCard'
 import { useGridContext } from '../Provider/GridProvider'
 
 interface StyleProps {
@@ -27,13 +28,16 @@ const useStyles = makeStyles(theme => {
     return {
         recipe: {
             [theme.breakpoints.only('xs')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 360),
+                height: ({ compactLayout }: StyleProps) =>
+                    compactLayout ? 44.86 : RECIPE_CARD_HEIGHT,
             },
             [theme.breakpoints.between('sm', 'md')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 360),
+                height: ({ compactLayout }: StyleProps) =>
+                    compactLayout ? 48 : RECIPE_CARD_HEIGHT,
             },
             [theme.breakpoints.up('lg')]: {
-                height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 200),
+                height: ({ compactLayout }: StyleProps) =>
+                    compactLayout ? 48 : RECIPE_CARD_HEIGHT,
             },
             width: '100%',
         },
@@ -65,7 +69,11 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
     if (!visible) return <></>
 
     const variantAvareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
-        variant === 'trialsSelection' ? { xs: 12 } : gridBreakpointProps
+        variant === 'trialsSelection'
+            ? { xs: 12 }
+            : variant === 'recipe'
+            ? { xs: 6, md: 4, lg: 3, xl: 2 }
+            : gridBreakpointProps
 
     return (
         <>
