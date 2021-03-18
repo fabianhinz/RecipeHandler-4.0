@@ -22,6 +22,8 @@ import { useRouterContext } from '../Provider/RouterProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
 import { PATHS } from '../Routes/Routes'
 
+export const RECIPE_CARD_HEIGHT = 300
+
 const useStyles = makeStyles(theme => ({
     avatarContainer: {
         position: 'relative',
@@ -36,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     },
     avatar: {
         width: '100%',
-        height: 300,
+        height: RECIPE_CARD_HEIGHT,
         fontSize: theme.typography.pxToRem(60),
         borderTopLeftRadius: BORDER_RADIUS,
         borderTopRightRadius: BORDER_RADIUS,
@@ -132,7 +134,7 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
         )
 
     return (
-        <Grid item xs={6} md={3} xl={2}>
+        <Grid item xs={6} md={4} lg={3} xl={2}>
             <Card className={classes.card}>
                 <CardActionArea onClick={handleRecipeClick}>
                     {imgLoading ? (
@@ -156,7 +158,18 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
                                     {recipe.name}
                                 </Typography>
 
-                                <CategoryResult categories={recipe.categories} variant="outlined" />
+                                {lastCookedDate ? (
+                                    <Typography>
+                                        {FirebaseService.createDateFromTimestamp(
+                                            lastCookedDate
+                                        ).toLocaleDateString()}
+                                    </Typography>
+                                ) : (
+                                    <CategoryResult
+                                        categories={recipe.categories}
+                                        variant="outlined"
+                                    />
+                                )}
                             </div>
                         </div>
                     )}
