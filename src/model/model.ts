@@ -178,7 +178,8 @@ export interface ShoppingListItem {
     checked: boolean
 }
 
-export interface Expense {
+export type Expense = {
+    id?: number
     creator: string
     amount: number
     shop: string

@@ -14,10 +14,11 @@ import { Save } from '@material-ui/icons'
 import CloseIcon from '@material-ui/icons/Close'
 import { Autocomplete } from '@material-ui/lab'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
-import React, { useState } from 'react'
+import React from 'react'
 
 import { FirebaseService } from '../../services/firebase'
 import { SlideUp } from '../Shared/Transitions'
+import useCurrentExpenseState, { CurrentExpenseState } from '../State/CurrentExpenseState'
 import useExpenseStore, { ExpenseState } from '../State/ExpenseState'
 
 interface Props {
@@ -30,51 +31,83 @@ const selector = (state: ExpenseState) => ({
     categories: state.categories,
 })
 
-const dispatchSelector = (state: ExpenseState) => state.addExpense
+const currentExpenseSelector = (state: CurrentExpenseState) => ({
+    id: state.id,
+    amount: state.amount,
+    creator: state.creator,
+    shop: state.shop,
+    category: state.category,
+    description: state.description,
+    date: state.date,
+    relatedUsers: state.relatedUsers,
+})
+
+const dispatchCurrentExpenseSelector = (state: CurrentExpenseState) => ({
+    setCreator: state.setCreator,
+    setAmount: state.setAmount,
+    setShop: state.setShop,
+    setCategory: state.setCategory,
+    setDescription: state.setDescription,
+    setDate: state.setDate,
+    setRelatedUsers: state.setRelatedUsers,
+    clearState: state.clearState,
+})
+
+const dispatchSelector = (state: ExpenseState) => ({
+    addExpense: state.addExpense,
+    updateExpense: state.updateExpense,
+})
 
 const NewExpenseDialog = (props: Props) => {
     const { users, categories } = useExpenseStore(selector)
-    const addExpense = useExpenseStore(dispatchSelector)
-
-    const [creator, setCreator] = useState<string>('')
-    const [amount, setAmount] = useState<number>(0)
-    const [shop, setShop] = useState<string>('')
-    const [category, setCategory] = useState<string>('Lebensmittel')
-    const [description, setDescription] = useState<string>('Einkauf')
-    const [date, setDate] = useState<Date | null>(new Date())
-    const [relatedUsers, setRelatedUsers] = useState<string[]>([...users])
+    const { addExpense, updateExpense } = useExpenseStore(dispatchSelector)
+    const {
+        id,
+        amount,
+        category,
+        creator,
+        date,
+        description,
+        relatedUsers,
+        shop,
+    } = useCurrentExpenseState(currentExpenseSelector)
+    const {
+        setRelatedUsers,
+        setAmount,
+        setCategory,
+        setCreator,
+        setDate,
+        setDescription,
+        setShop,
+        clearState,
+    } = useCurrentExpenseState(dispatchCurrentExpenseSelector)
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         // TODO wo überall Defaultwerte?
-        addExpense({
-            amount,
-            category,
-            creator,
-            date: FirebaseService.createTimestampFromDate(date ?? new Date()),
-            shop,
-            description: description ?? 'Einkauf',
-            relatedUsers,
-        })
-        handleDialogClose()
-    }
-
-    const clearState = () => {
-        setCreator('')
-        setAmount(0.0)
-        setShop('')
-        setCategory('Lebensmittel')
-        setDescription('Einkauf')
-        setDate(new Date())
-        setRelatedUsers([...users])
-    }
-
-    const handleAffectedUserChipClicked = (user: string) => {
-        if (relatedUsers.includes(user)) {
-            if (relatedUsers.length === 1) return setRelatedUsers([...users])
-            return setRelatedUsers(relUsers => relUsers.filter(u => u !== user))
+        if (id === undefined)
+            addExpense({
+                amount,
+                category,
+                creator,
+                date: date ?? FirebaseService.createTimestampFromDate(new Date()),
+                shop,
+                description: description ?? 'Einkauf',
+                relatedUsers,
+            })
+        else {
+            updateExpense(id, {
+                amount,
+                category,
+                creator,
+                date: date ?? FirebaseService.createTimestampFromDate(new Date()),
+                shop,
+                description: description ?? 'Einkauf',
+                relatedUsers,
+            })
         }
-        setRelatedUsers(relUsers => [user, ...relUsers])
+
+        handleDialogClose()
     }
 
     const handleDialogClose = () => {
@@ -93,7 +126,7 @@ const NewExpenseDialog = (props: Props) => {
             <form onSubmit={handleSubmit}>
                 <DialogContent>
                     <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={6}>
+                        <Grid item md={6} xs={12}>
                             <Autocomplete
                                 id="creator-select"
                                 autoComplete
@@ -119,7 +152,7 @@ const NewExpenseDialog = (props: Props) => {
                                 autoFocus
                                 autoComplete="amount"
                                 type="number"
-                                inputProps={{ min: 0, step: 0.5 }}
+                                inputProps={{ min: 0, step: 0.01 }}
                                 InputProps={{
                                     endAdornment: <InputAdornment position="end">€</InputAdornment>,
                                 }}
@@ -171,7 +204,7 @@ const NewExpenseDialog = (props: Props) => {
                                 label="Beschreibung"
                             />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item md={6} xs={12}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -183,8 +216,14 @@ const NewExpenseDialog = (props: Props) => {
                                             margin="normal"
                                             id="date-picker-inline"
                                             label="Einkaufsdatum"
-                                            value={date}
-                                            onChange={date => setDate(date)}
+                                            value={FirebaseService.createDateFromTimestamp(date)}
+                                            onChange={date =>
+                                                setDate(
+                                                    FirebaseService.createTimestampFromDate(
+                                                        date ?? new Date()
+                                                    )
+                                                )
+                                            }
                                             KeyboardButtonProps={{
                                                 'aria-label': 'change date',
                                             }}
@@ -202,9 +241,7 @@ const NewExpenseDialog = (props: Props) => {
                                                             : 'default'
                                                     }
                                                     label={user}
-                                                    onClick={() =>
-                                                        handleAffectedUserChipClicked(user)
-                                                    }
+                                                    onClick={() => setRelatedUsers(user)}
                                                 />
                                             </Grid>
                                         ))}
@@ -219,7 +256,7 @@ const NewExpenseDialog = (props: Props) => {
                         abbrechen
                     </Button>
                     <Button color="secondary" startIcon={<Save />} type="submit">
-                        anlegen
+                        speichern
                     </Button>
                 </DialogActions>
             </form>

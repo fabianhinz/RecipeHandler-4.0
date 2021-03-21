@@ -1,14 +1,18 @@
-import { Avatar, Card, CardContent, Grid, Typography } from '@material-ui/core'
+import { Avatar, Card, CardContent, Grid, IconButton, Typography } from '@material-ui/core'
+import { Edit } from '@material-ui/icons'
 import Commute from '@material-ui/icons/Commute'
 import Fastfood from '@material-ui/icons/Fastfood'
 import Weekend from '@material-ui/icons/Weekend'
-import { CashMultiple } from 'mdi-material-ui'
+import { CashMultiple, Delete } from 'mdi-material-ui'
 import React from 'react'
 
 import { Expense } from '../../model/model'
+import useCurrentExpenseState, { CurrentExpenseState } from '../State/CurrentExpenseState'
+import useExpenseStore, { ExpenseState } from '../State/ExpenseState'
 
 interface Props {
     expense: Expense
+    id: number
 }
 
 const getIcon = (category: string) => {
@@ -26,7 +30,24 @@ const getIcon = (category: string) => {
     }
 }
 
+const dispatchSelector = (state: ExpenseState) => ({
+    openDialog: state.openNewExpenseDialog,
+    deleteExpense: state.deleteExpense,
+})
+
+const dispatchCurrentExpense = (state: CurrentExpenseState) => ({
+    setCurrentExpense: state.setCurrentExpense,
+})
+
 const ExpenseCard = (props: Props) => {
+    const { openDialog, deleteExpense } = useExpenseStore(dispatchSelector)
+    const { setCurrentExpense } = useCurrentExpenseState(dispatchCurrentExpense)
+
+    const handleUpdateClick = () => {
+        openDialog(true)
+        setCurrentExpense({ ...props.expense, id: props.id })
+    }
+
     return (
         <Grid item>
             <Card>
@@ -58,6 +79,17 @@ const ExpenseCard = (props: Props) => {
                                 </Grid>
                                 <Grid item>
                                     <Avatar>{props.expense.creator.slice(0, 1)}</Avatar>
+                                </Grid>
+
+                                <Grid item onClick={handleUpdateClick}>
+                                    <IconButton>
+                                        <Edit />
+                                    </IconButton>
+                                </Grid>
+                                <Grid item>
+                                    <IconButton onClick={() => deleteExpense(props.id)}>
+                                        <Delete />
+                                    </IconButton>
                                 </Grid>
                             </Grid>
                         </Grid>
