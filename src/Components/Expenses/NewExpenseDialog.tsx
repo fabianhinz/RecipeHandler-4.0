@@ -45,13 +45,14 @@ const NewExpenseDialog = (props: Props) => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        // TODO wo überall Defaultwerte?
         addExpense({
             amount,
             category,
             creator,
             date: FirebaseService.createTimestampFromDate(date ?? new Date()),
             shop,
-            description,
+            description: description ?? 'Einkauf',
             relatedUsers,
         })
         handleDialogClose()
