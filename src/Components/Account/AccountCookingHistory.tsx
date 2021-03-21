@@ -6,7 +6,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { CookingHistory, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
-import HomeRecipeCard from '../Home/HomeRecipeCard'
+import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from '../Home/HomeRecipeCard'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import EntryGridContainer from '../Shared/EntryGridContainer'
@@ -19,13 +19,13 @@ interface StyleProps {
 const useStyles = makeStyles(theme => ({
     skeleton: {
         [theme.breakpoints.only('xs')]: {
-            height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : 360),
+            height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : RECIPE_CARD_HEIGHT),
         },
         [theme.breakpoints.between('sm', 'md')]: {
-            height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 360),
+            height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : RECIPE_CARD_HEIGHT),
         },
         [theme.breakpoints.up('lg')]: {
-            height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : 200),
+            height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : RECIPE_CARD_HEIGHT),
         },
         width: '100%',
         borderRadius: BORDER_RADIUS,
@@ -36,7 +36,7 @@ const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
     const [recipe, setRecipe] = useState<Recipe | null>(null)
     const [notFound, setNotFound] = useState(false)
 
-    const { gridBreakpointProps, compactLayout } = useGridContext()
+    const { compactLayout } = useGridContext()
     const classes = useStyles({ compactLayout })
 
     useEffect(() => {
@@ -57,7 +57,7 @@ const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
             {recipe ? (
                 <HomeRecipeCard recipe={recipe} lastCookedDate={createdDate} />
             ) : (
-                <Grid item {...gridBreakpointProps}>
+                <Grid item xs={6} md={4} lg={3} xl={2}>
                     <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
                 </Grid>
             )}

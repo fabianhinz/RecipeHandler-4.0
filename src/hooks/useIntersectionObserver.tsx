@@ -6,6 +6,7 @@ import ElementIdService from '../services/elementIdService'
 interface useIntersectionObserverOptions {
     onIsIntersecting: () => void
     onLeave?: () => void
+    options?: IntersectionObserverInit
 }
 
 const useStyles = makeStyles(() => ({
@@ -15,7 +16,11 @@ const useStyles = makeStyles(() => ({
     },
 }))
 
-const useIntersectionObserver = ({ onIsIntersecting, onLeave }: useIntersectionObserverOptions) => {
+const useIntersectionObserver = ({
+    onIsIntersecting,
+    onLeave,
+    options,
+}: useIntersectionObserverOptions) => {
     const idRef = useRef(ElementIdService.getId())
     const classes = useStyles()
 
@@ -27,11 +32,11 @@ const useIntersectionObserver = ({ onIsIntersecting, onLeave }: useIntersectionO
             const [lastRecipeTrigger] = entries
             if (lastRecipeTrigger.isIntersecting) onIsIntersecting()
             else if (onLeave) onLeave()
-        })
+        }, options)
         observer.observe(trigger)
 
         return () => observer.unobserve(trigger)
-    }, [onIsIntersecting, onLeave])
+    }, [onIsIntersecting, onLeave, options])
 
     return {
         IntersectionObserverTrigger: () => <div className={classes.trigger} id={idRef.current} />,

@@ -2,7 +2,6 @@ import {
     Avatar,
     Card,
     CardActionArea,
-    CardHeader,
     Grid,
     makeStyles,
     Paper,
@@ -23,6 +22,8 @@ import { useRouterContext } from '../Provider/RouterProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
 import { PATHS } from '../Routes/Routes'
 
+export const RECIPE_CARD_HEIGHT = 300
+
 const useStyles = makeStyles(theme => ({
     avatarContainer: {
         position: 'relative',
@@ -37,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     },
     avatar: {
         width: '100%',
-        height: 200,
+        height: RECIPE_CARD_HEIGHT,
         fontSize: theme.typography.pxToRem(60),
         borderTopLeftRadius: BORDER_RADIUS,
         borderTopRightRadius: BORDER_RADIUS,
@@ -53,15 +54,20 @@ const useStyles = makeStyles(theme => ({
     card: {
         height: '100%',
     },
-    cardContent: {
-        padding: theme.spacing(2),
-        display: 'flex',
+    avatarOverlay: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 8,
+        height: '66%',
         flexDirection: 'column',
-        justifyContent: 'space-between',
-    },
-    cardHeader: {
-        padding: 0,
-        paddingBottom: theme.spacing(2),
+        display: 'flex',
+        justifyContent: 'flex-end',
+        background:
+            theme.palette.type === 'dark'
+                ? 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))'
+                : 'linear-gradient(to top, rgba(255,255,255,0.8), rgba(0,0,0,0))',
     },
 }))
 
@@ -75,12 +81,12 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
 
     const { attachmentRef } = useAttachment(attachmentDoc)
     const { imgSrc, imgLoading } = useImgSrcLazy({
-        src: recipe.previewAttachment || attachmentRef.smallDataUrl,
+        src: recipe.previewAttachment || attachmentRef.mediumDataUrl,
         skipOnUndefined: true,
     })
 
     const { history } = useRouterContext()
-    const { gridBreakpointProps, gridLayout, compactLayout } = useGridContext()
+    const { gridBreakpointProps, compactLayout } = useGridContext()
     const { getByUid } = useUsersContext()
 
     const classes = useStyles()
@@ -128,51 +134,45 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
         )
 
     return (
-        <Grid {...gridBreakpointProps} item>
+        <Grid item xs={6} md={4} lg={3} xl={2}>
             <Card className={classes.card}>
                 <CardActionArea onClick={handleRecipeClick}>
-                    <Grid container>
-                        <Grid item xs={12} lg={3} xl={gridLayout === 'list' ? 2 : 5}>
-                            {imgLoading ? (
-                                <Skeleton className={classes.avatar} variant="rect" />
-                            ) : (
-                                <div className={classes.avatarContainer}>
+                    {imgLoading ? (
+                        <Skeleton className={classes.avatar} variant="rect" />
+                    ) : (
+                        <div className={classes.avatarContainer}>
+                            <Avatar variant="square" className={classes.avatar} src={imgSrc}>
+                                {recipe.name.slice(0, 1).toUpperCase()}
+                            </Avatar>
+                            {editor && (
+                                <Zoom in mountOnEnter>
                                     <Avatar
-                                        variant="square"
-                                        className={classes.avatar}
-                                        src={imgSrc}>
-                                        {recipe.name.slice(0, 1).toUpperCase()}
+                                        className={classes.userAvatar}
+                                        src={editor.profilePicture}>
+                                        {editor.username.slice(0, 1).toUpperCase()}
                                     </Avatar>
-                                    {editor && (
-                                        <Zoom in mountOnEnter>
-                                            <Avatar
-                                                className={classes.userAvatar}
-                                                src={editor.profilePicture}>
-                                                {editor.username.slice(0, 1).toUpperCase()}
-                                            </Avatar>
-                                        </Zoom>
-                                    )}
-                                </div>
+                                </Zoom>
                             )}
-                        </Grid>
-                        <Grid
-                            item
-                            xs={12}
-                            lg={9}
-                            xl={gridLayout === 'list' ? 10 : 7}
-                            className={classes.cardContent}>
-                            <CardHeader
-                                className={classes.cardHeader}
-                                title={recipe.name}
-                                subheader={
-                                    lastCookedDate?.toDate().toLocaleDateString() ||
-                                    recipe.createdDate.toDate().toLocaleDateString()
-                                }
-                            />
+                            <div className={classes.avatarOverlay}>
+                                <Typography variant="h6" gutterBottom>
+                                    {recipe.name}
+                                </Typography>
 
-                            <CategoryResult categories={recipe.categories} variant="outlined" />
-                        </Grid>
-                    </Grid>
+                                {lastCookedDate ? (
+                                    <Typography>
+                                        {FirebaseService.createDateFromTimestamp(
+                                            lastCookedDate
+                                        ).toLocaleDateString()}
+                                    </Typography>
+                                ) : (
+                                    <CategoryResult
+                                        categories={recipe.categories}
+                                        variant="outlined"
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </CardActionArea>
             </Card>
         </Grid>

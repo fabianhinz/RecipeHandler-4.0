@@ -47,6 +47,6 @@ export const FirebaseService = {
     performance,
     functions,
     deleteField,
-    QUERY_LIMIT: 6,
-    QUERY_LIMIT_MOBILE: 3,
+    QUERY_LIMIT: 12,
+    QUERY_LIMIT_MOBILE: 6,
 }
