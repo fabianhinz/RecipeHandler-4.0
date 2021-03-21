@@ -24,7 +24,7 @@ const AccountAvatar = (props: Props) => {
     return (
         <ButtonBase onClick={props.onClick} className={classes.accountAvatarRoot}>
             <Avatar className={classes.avatar} src={props.user.profilePicture}>
-                {props.user.username}
+                {props.user.username.slice(0, 1)}
             </Avatar>
         </ButtonBase>
     )
