@@ -18,13 +18,11 @@ const Expenses = () => {
     const { user, expenses } = useExpenseStore(selector)
     const [dialogOpen, setDialogOpen] = useState<boolean>(false)
 
-    const closeDialog = () => setDialogOpen(false)
-
     return (
         <EntryGridContainer>
             {user.length > 0 && (
                 <Grid item xs={12}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={1}>
                         {user.map(u => (
                             <UserCard key={u} userName={u} />
                         ))}
@@ -34,8 +32,8 @@ const Expenses = () => {
             {expenses.length > 0 && (
                 <Grid item xs={12}>
                     <Grid container direction="column" spacing={1}>
-                        {expenses.map(e => (
-                            <ExpenseCard expense={e} />
+                        {expenses.map((e, i) => (
+                            <ExpenseCard key={i} expense={e} />
                         ))}
                     </Grid>
                 </Grid>
@@ -45,7 +43,7 @@ const Expenses = () => {
                 tooltipTitle="Ausgabe hinzufügen"
                 icon={<AddIcon />}
             />
-            <NewExpenseDialog open={dialogOpen} onClose={closeDialog} />
+            <NewExpenseDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
         </EntryGridContainer>
     )
 }
