@@ -29,21 +29,18 @@ export const useRecipeDoc = (props: Props) => {
 
         const recipe = location.state && (location.state as RecipeLocation).recipe
 
-        if (recipe) {
-            setState({ loading: false, recipe })
-        } else {
-            FirebaseService.firestore
-                .collection('recipes')
-                .doc(props.recipeName)
-                .get()
-                .then(documentSnapshot => {
-                    if (!mounted) return
-                    setState({
-                        loading: false,
-                        recipe: documentSnapshot.data() as Recipe,
-                    })
+        if (recipe) setState({ loading: false, recipe })
+
+        FirebaseService.firestore
+            .collection('recipes')
+            .doc(props.recipeName)
+            .onSnapshot(documentSnapshot => {
+                if (!mounted) return
+                setState({
+                    loading: false,
+                    recipe: documentSnapshot.data() as Recipe,
                 })
-        }
+            })
 
         return () => {
             mounted = false
