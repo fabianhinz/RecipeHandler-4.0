@@ -60,7 +60,7 @@ const HomeNew = () => {
                     <Grid item {...gridBreakpointProps} key={recipeName}>
                         <CardActionArea onClick={() => history.push(PATHS.details(recipeName))}>
                             <Paper className={classes.paper}>
-                                <Typography className={classes.typography} variant="h6">
+                                <Typography noWrap className={classes.typography} variant="h6">
                                     {recipeName}
                                 </Typography>
                             </Paper>

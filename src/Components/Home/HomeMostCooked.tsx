@@ -58,7 +58,7 @@ const MostCookedPaper = ({ recipeName, counter, paletteIndex }: MostCookedPaperP
         <Grid item {...gridBreakpointProps} key={recipeName}>
             <CardActionArea onClick={() => history.push(PATHS.details(recipeName))}>
                 <Paper className={classes.paper}>
-                    <Typography className={classes.typography} variant="h6">
+                    <Typography noWrap className={classes.typography} variant="h6">
                         {counter.value}x {recipeName}
                     </Typography>
                 </Paper>
