@@ -34,7 +34,7 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
         <>
             {recipeDocLoading ? <Progress variant="fixed" /> : <RecipeResult recipe={recipeDoc} />}
 
-            {recipeDoc && user && (user.uid === recipeDoc.editorUid || user.admin) && (
+            {recipeDoc && user && (
                 <>
                     <SpeedDialWrapper>
                         <SpeedDialAction
