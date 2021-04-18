@@ -13,6 +13,7 @@ import {
 import CheckIcon from '@material-ui/icons/Check'
 import clsx from 'clsx'
 import { CloudUpload, HeartBroken } from 'mdi-material-ui'
+import { useSnackbar } from 'notistack'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Prompt } from 'react-router-dom'
 
@@ -75,6 +76,7 @@ const AttachmentUploadListItem = ({
     const [error, setError] = useState(false)
 
     const { user } = useFirebaseAuthContext()
+    const { enqueueSnackbar } = useSnackbar()
 
     const classes = useStyles()
 
@@ -110,11 +112,17 @@ const AttachmentUploadListItem = ({
                         setError(true)
                     })
             })
+            .catch((e: any) => {
+                if (e.code_ === 'storage/unauthorized') {
+                    enqueueSnackbar('fehlende Berechtigungen', { variant: 'error' })
+                    onUploadComplete(attachment.name)
+                }
+            })
 
         return () => {
             mounted = false
         }
-    }, [attachment, onUploadComplete, recipeName, user])
+    }, [attachment, enqueueSnackbar, onUploadComplete, recipeName, user])
 
     if (!user) return <></>
 
