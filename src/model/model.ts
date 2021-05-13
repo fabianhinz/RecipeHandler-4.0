@@ -179,7 +179,7 @@ export interface ShoppingListItem {
 }
 
 export type Expense = {
-    id?: number
+    id?: string
     creator: string
     amount: number
     shop: string

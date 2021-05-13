@@ -1,7 +1,7 @@
 import { Card, CardContent, Grid, Typography } from '@material-ui/core'
 import React, { useLayoutEffect, useState } from 'react'
 
-import useExpenseStore, { ExpenseState } from '../State/ExpenseState'
+import useExpenseStore, { ExpenseState } from '../../store/ExpenseState'
 
 interface Props {
     userName: string

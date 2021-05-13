@@ -1,8 +1,8 @@
 import firebase from 'firebase'
 import create from 'zustand'
 
-import { Expense } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
+import { Expense } from '../model/model'
+import { FirebaseService } from '../services/firebase'
 import { userList } from './ExpenseState'
 
 const initialCurrentExpense: Expense = {

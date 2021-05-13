@@ -17,9 +17,10 @@ import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/picker
 import React from 'react'
 
 import { FirebaseService } from '../../services/firebase'
+import useCurrentExpenseState, { CurrentExpenseState } from '../../store/CurrentExpenseState'
+import useExpenseStore, { ExpenseState } from '../../store/ExpenseState'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { SlideUp } from '../Shared/Transitions'
-import useCurrentExpenseState, { CurrentExpenseState } from '../State/CurrentExpenseState'
-import useExpenseStore, { ExpenseState } from '../State/ExpenseState'
 
 interface Props {
     open: boolean
@@ -81,30 +82,39 @@ const NewExpenseDialog = (props: Props) => {
         setShop,
         clearState,
     } = useCurrentExpenseState(dispatchCurrentExpenseSelector)
+    const authContext = useFirebaseAuthContext()
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        if (!authContext.user) return
         // TODO wo überall Defaultwerte?
         if (id === undefined)
-            addExpense({
-                amount,
-                category,
-                creator,
-                date: date ?? FirebaseService.createTimestampFromDate(new Date()),
-                shop,
-                description: description ?? 'Einkauf',
-                relatedUsers,
-            })
+            addExpense(
+                {
+                    amount,
+                    category,
+                    creator,
+                    date: date ?? FirebaseService.createTimestampFromDate(new Date()),
+                    shop,
+                    description: description ?? 'Einkauf',
+                    relatedUsers,
+                },
+                authContext.user.uid
+            )
         else {
-            updateExpense(id, {
-                amount,
-                category,
-                creator,
-                date: date ?? FirebaseService.createTimestampFromDate(new Date()),
-                shop,
-                description: description ?? 'Einkauf',
-                relatedUsers,
-            })
+            updateExpense(
+                {
+                    id,
+                    amount,
+                    category,
+                    creator,
+                    date: date ?? FirebaseService.createTimestampFromDate(new Date()),
+                    shop,
+                    description: description ?? 'Einkauf',
+                    relatedUsers,
+                },
+                authContext.user.uid
+            )
         }
 
         handleDialogClose()
@@ -122,7 +132,7 @@ const NewExpenseDialog = (props: Props) => {
             TransitionComponent={SlideUp}
             fullWidth
             maxWidth="md">
-            <DialogTitle>Neue Ausgabe hinzufügen</DialogTitle>
+            <DialogTitle>{id ? 'Ausgabe bearbeiten' : 'Neue Ausgabe hinzufügen'}</DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
                     <Grid container spacing={2} alignItems="center">
@@ -137,7 +147,7 @@ const NewExpenseDialog = (props: Props) => {
                                     setCreator(newValue ?? '')
                                 }}
                                 fullWidth
-                                options={users}
+                                options={[...users, '']}
                                 renderInput={params => (
                                     <TextField
                                         autoComplete="creator"
@@ -178,7 +188,7 @@ const NewExpenseDialog = (props: Props) => {
                                 autoComplete
                                 autoSelect
                                 fullWidth
-                                options={categories}
+                                options={[...categories, '']}
                                 value={category}
                                 onChange={(_, newValue: string | null) => {
                                     setCategory(newValue ?? '')

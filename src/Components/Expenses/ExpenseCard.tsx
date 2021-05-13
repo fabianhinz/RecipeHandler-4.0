@@ -7,12 +7,12 @@ import { CashMultiple, Delete } from 'mdi-material-ui'
 import React from 'react'
 
 import { Expense } from '../../model/model'
-import useCurrentExpenseState, { CurrentExpenseState } from '../State/CurrentExpenseState'
-import useExpenseStore, { ExpenseState } from '../State/ExpenseState'
+import useCurrentExpenseState, { CurrentExpenseState } from '../../store/CurrentExpenseState'
+import useExpenseStore, { ExpenseState } from '../../store/ExpenseState'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 
 interface Props {
     expense: Expense
-    id: number
 }
 
 const getIcon = (category: string) => {
@@ -42,10 +42,11 @@ const dispatchCurrentExpense = (state: CurrentExpenseState) => ({
 const ExpenseCard = (props: Props) => {
     const { openDialog, deleteExpense } = useExpenseStore(dispatchSelector)
     const { setCurrentExpense } = useCurrentExpenseState(dispatchCurrentExpense)
+    const authContext = useFirebaseAuthContext()
 
     const handleUpdateClick = () => {
         openDialog(true)
-        setCurrentExpense({ ...props.expense, id: props.id })
+        setCurrentExpense(props.expense)
     }
 
     return (
@@ -87,7 +88,13 @@ const ExpenseCard = (props: Props) => {
                                     </IconButton>
                                 </Grid>
                                 <Grid item>
-                                    <IconButton onClick={() => deleteExpense(props.id)}>
+                                    <IconButton
+                                        onClick={() =>
+                                            deleteExpense(
+                                                props.expense.id ?? '',
+                                                authContext.user?.uid ?? ''
+                                            )
+                                        }>
                                         <Delete />
                                     </IconButton>
                                 </Grid>
