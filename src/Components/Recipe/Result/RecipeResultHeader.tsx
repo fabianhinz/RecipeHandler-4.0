@@ -3,6 +3,7 @@ import React from 'react'
 
 import { Recipe } from '../../../model/model'
 import { CategoryResult } from '../../Category/CategoryResult'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import RecipeResultButtons from './RecipeResultButtons'
 
 const useStyles = makeStyles(theme => ({
@@ -19,6 +20,8 @@ interface Props {
 
 const RecipeResultHeader = ({ recipe }: Props) => {
     const classes = useStyles()
+    const { user } = useFirebaseAuthContext()
+
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">
             <Grid item xs={12} sm={6} md={8} lg={9}>
@@ -30,7 +33,7 @@ const RecipeResultHeader = ({ recipe }: Props) => {
             <Grid item xs={12} sm="auto">
                 <RecipeResultButtons
                     name={recipe.name}
-                    numberOfComments={recipe.numberOfComments}
+                    numberOfComments={user ? recipe.numberOfComments : undefined}
                 />
             </Grid>
 

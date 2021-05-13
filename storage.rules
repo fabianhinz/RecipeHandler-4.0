@@ -18,7 +18,7 @@ service firebase.storage {
         }
 
         match /{allPaths=**} {
-            allow read: if request.auth.uid != null;
+            allow read: if isAdmin() || isEditor() ;
         }
   }
 }

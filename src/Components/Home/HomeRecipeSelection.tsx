@@ -6,6 +6,7 @@ import { OrderByRecord } from '../../model/model'
 import recipeService from '../../services/recipeService'
 import AccountAvatar from '../Account/AccountAvatar'
 import CategorySelection from '../Category/CategorySelection'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
 
 const useStyles = makeStyles(theme => ({
@@ -38,6 +39,7 @@ interface Props {
 const HomeRecipeSelection = (props: Props) => {
     const classes = useStyles()
     const usersContext = useUsersContext()
+    const { user } = useFirebaseAuthContext()
 
     const handleOrderByChange = (key: keyof OrderByRecord) => () => {
         let newOrderBy: OrderByRecord
@@ -113,24 +115,26 @@ const HomeRecipeSelection = (props: Props) => {
                         onRemoveSelectedCategories={props.onRemoveSelectedCategories}
                         label="Filter"
                         header={header}>
-                        <Grid item xs={12}>
-                            <ListSubheader className={classes.listSubheader}>
-                                Editoren
-                            </ListSubheader>
-                            <Grid container spacing={1} className={classes.editorContainer}>
-                                {usersContext.userIds.map(uid => (
-                                    <Grid item key={uid}>
-                                        <AccountAvatar
-                                            user={usersContext.getByUid(uid)!}
-                                            isUserSelected={props.selectedEditors.some(
-                                                editorUid => editorUid === uid
-                                            )}
-                                            onClick={() => handleAccountAvatarClick(uid)}
-                                        />
-                                    </Grid>
-                                ))}
+                        {user && (
+                            <Grid item xs={12}>
+                                <ListSubheader className={classes.listSubheader}>
+                                    Editoren
+                                </ListSubheader>
+                                <Grid container spacing={1} className={classes.editorContainer}>
+                                    {usersContext.userIds.map(uid => (
+                                        <Grid item key={uid}>
+                                            <AccountAvatar
+                                                user={usersContext.getByUid(uid)!}
+                                                isUserSelected={props.selectedEditors.some(
+                                                    editorUid => editorUid === uid
+                                                )}
+                                                onClick={() => handleAccountAvatarClick(uid)}
+                                            />
+                                        </Grid>
+                                    ))}
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        )}
                     </CategorySelection>
                 </Grid>
             </Grid>

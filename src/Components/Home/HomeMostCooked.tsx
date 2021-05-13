@@ -82,6 +82,7 @@ const HomeMostCooked = () => {
     )
 
     useEffect(() => {
+        if (!user) return
         if (user && !user.showMostCooked) return
 
         return FirebaseService.firestore
@@ -100,6 +101,7 @@ const HomeMostCooked = () => {
             })
     }, [isMobile, numberOfDocs, user])
 
+    if (!user) return <></>
     if (user && !user.showMostCooked) return <></>
 
     return (

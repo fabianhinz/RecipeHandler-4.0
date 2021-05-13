@@ -9,6 +9,7 @@ import { FirebaseService } from '../../../services/firebase'
 import AccountChip from '../../Account/AccountChip'
 import Attachments from '../../Attachments/Attachments'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
+import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../../Provider/GridProvider'
 import Satisfaction from '../../Satisfaction/Satisfaction'
 import CopyButton from '../../Shared/CopyButton'
@@ -25,6 +26,7 @@ interface RecipeResultProps {
 
 const RecipeResult = ({ recipe }: RecipeResultProps) => {
     const { gridBreakpointProps } = useGridContext()
+    const { user } = useFirebaseAuthContext()
 
     if (!recipe) return <NotFound visible />
 
@@ -34,7 +36,7 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                 <RecipeResultHeader recipe={recipe} />
             </Grid>
 
-            <Attachments recipe={recipe} />
+            {user && <Attachments recipe={recipe} />}
 
             <Grid item xs={12}>
                 <Grid container spacing={2}>
@@ -76,21 +78,25 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                         </Grid>
                     )}
 
-                    <Grid {...gridBreakpointProps} item>
-                        <Satisfaction recipeName={recipe.name} />
-                    </Grid>
+                    {user && (
+                        <Grid {...gridBreakpointProps} item>
+                            <Satisfaction recipeName={recipe.name} />
+                        </Grid>
+                    )}
                 </Grid>
             </Grid>
 
-            <Grid item xs={12} container justify="center">
-                <AccountChip
-                    variant="outlined"
-                    uid={recipe.editorUid}
-                    enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
-                        recipe.createdDate
-                    ).toLocaleDateString()}`}
-                />
-            </Grid>
+            {user && (
+                <Grid item xs={12} container justify="center">
+                    <AccountChip
+                        variant="outlined"
+                        uid={recipe.editorUid}
+                        enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
+                            recipe.createdDate
+                        ).toLocaleDateString()}`}
+                    />
+                </Grid>
+            )}
         </EntryGridContainer>
     )
 }

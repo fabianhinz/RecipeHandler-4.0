@@ -189,7 +189,6 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                             pathname={PATHS.searchResults}
                         />
                     )}
-                    <NavButton icon={<Lightbulb />} label="Ideen" pathname={PATHS.trials} />
                     <NavButton
                         icon={<BookmarkMultiple />}
                         label="Lesezeichen"
@@ -197,6 +196,7 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                     />
                     {user && (
                         <>
+                            <NavButton icon={<Lightbulb />} label="Ideen" pathname={PATHS.trials} />
                             <NavButton
                                 icon={<Cart />}
                                 label="Einkaufsliste"
@@ -232,7 +232,6 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                             secondary={hits.length}
                         />
                     )}
-                    <NavListItem pathname={PATHS.trials} icon={<Lightbulb />} label="Ideen" />
                     <NavListItem
                         pathname={PATHS.bookmarks}
                         icon={<BookmarkMultiple />}
@@ -241,6 +240,12 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                     />
                     {user && (
                         <>
+                            <NavListItem
+                                pathname={PATHS.trials}
+                                icon={<Lightbulb />}
+                                label="Ideen"
+                            />
+
                             <NavListItem
                                 pathname={PATHS.shoppingList}
                                 icon={<Cart />}

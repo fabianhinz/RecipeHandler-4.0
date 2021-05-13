@@ -31,6 +31,7 @@ const HomeNew = () => {
     const history = useHistory()
 
     useEffect(() => {
+        if (!user) return
         if (user && !user.showMostCooked) return
 
         return FirebaseService.firestore
@@ -44,6 +45,7 @@ const HomeNew = () => {
     }, [user])
 
     if (!loading && recipeNames.length === 0) return <></>
+    else if (!user) return <></>
     else if (user && !user.showNew) return <></>
 
     return (

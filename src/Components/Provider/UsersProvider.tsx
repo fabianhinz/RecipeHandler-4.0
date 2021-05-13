@@ -25,6 +25,10 @@ const UsersProvider: FC = ({ children }) => {
             .then(querySnapshot =>
                 setUsers(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as User])))
             )
+            .catch(e => {
+                if (e.code === 'permission-denied') return
+                throw new Error(e)
+            })
     }, [])
 
     return (

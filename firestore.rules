@@ -8,6 +8,26 @@ service cloud.firestore {
     function isEditor() {
       	return exists(/databases/$(database)/documents/editors/$(request.auth.uid));
     }
+
+    match /{document=**} {
+        allow read: if isAdmin() || isEditor();
+    }
+    
+    match /categories/{document=**} {
+        allow read;
+    }
+
+    match /recipes/{recipeName} {
+        allow read;
+    }
+    
+    match /recipes/{recipeName}/attachments/{attachmentName} {
+        allow read;
+    }
+
+    match /trials/{document=**} {
+        allow write: if isAdmin() || isEditor();
+    }
   
   	match /errors/{error} {
         allow write;
@@ -17,6 +37,10 @@ service cloud.firestore {
         allow write: if isAdmin();
     }
   
+    match /cookCounter/{recipe} {
+        allow write: if isAdmin() || isEditor();
+    }
+
   	match /users/{userId} {
         allow create: if request.auth.uid != null && request.auth.token.firebase.sign_in_provider == 'password';
         allow update: if request.auth.uid == userId;
@@ -36,15 +60,6 @@ service cloud.firestore {
         allow update: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
         allow delete: if isAdmin();
     }
-    
-    match /recipes/{recipeName}/comments/{commentId} {
-        allow write: if isAdmin() || isEditor();
-    }
-
-    match /recipes/{recipeName}/comments/{commentId}/reactions/{reactionId} {
-        allow create: if isAdmin() || isEditor();
-        allow update, delete: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
-    }
 
     match /recipes/{recipeName}/satisfaction/{userId} {
         allow write: if userId == request.auth.uid && isEditor()
@@ -55,16 +70,14 @@ service cloud.firestore {
         allow update, delete: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
     }
     
-    match /cookCounter/{recipe} {
+    match /recipes/{recipeName}/comments/{commentId} {
         allow write: if isAdmin() || isEditor();
     }
-    
-    match /trials/{document=**} {
-        allow write: if isAdmin() || isEditor();
+
+    match /recipes/{recipeName}/comments/{commentId}/reactions/{reactionId} {
+        allow create: if isAdmin() || isEditor();
+        allow update, delete: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
     }
-    
-    match /{document=**} {
-        allow read: if request.auth.uid != null;
-    }
+
   }
 }
