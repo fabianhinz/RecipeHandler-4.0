@@ -18,3 +18,11 @@ ___
 1. install [vs code](https://code.visualstudio.com/) and the following plugins: [(1)](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode), [(2)](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint), [(3)](https://marketplace.visualstudio.com/items?itemName=vscodeshift.material-ui-snippets)
 1. navigate into the root dir of the cloned repo and `npm install` via your prefered shell
 1. to start the webapp run `npm start`
+
+## Deploy a preview version
+
+Firebase offers the possibility to deploy preview versions on separate preview channels. An example for a channel ID is ```my_new_test_feature```. For more information read the [firebase docs](https://firebase.google.com/docs/hosting/test-preview-deploy#preview-channels).
+
+1. to build the project run `npm run build`
+1. to start the preview hosting run ```firebase hosting:channel:deploy YOUR_CHANNEL_ID```
+1. access your project on the generated preview URI
