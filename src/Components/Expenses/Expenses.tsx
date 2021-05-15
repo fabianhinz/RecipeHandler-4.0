@@ -41,6 +41,7 @@ const Expenses = () => {
             .collection(userCollection)
             .doc(authContext.user.uid)
             .collection(expensesCollection)
+            .orderBy('date', 'desc')
             .onSnapshot(snapshot => {
                 const newExpenses = snapshot.docs.map(
                     document => ({ ...document.data(), id: document.id } as Expense)
