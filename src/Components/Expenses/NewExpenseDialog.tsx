@@ -176,7 +176,7 @@ const NewExpenseDialog = (props: Props) => {
                             />
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            <Grid container spacing={2} justify="center">
+                            <Grid container spacing={2} alignItems="center" direction="column">
                                 <Grid item>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
