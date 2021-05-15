@@ -3,7 +3,7 @@ import create from 'zustand'
 
 import { Expense } from '../model/model'
 import { FirebaseService } from '../services/firebase'
-import { userList } from './ExpenseState'
+import useExpenseStore from './ExpenseState'
 
 const initialCurrentExpense: Expense = {
     id: undefined,
@@ -11,7 +11,7 @@ const initialCurrentExpense: Expense = {
     category: 'Lebensmittel',
     creator: '',
     date: FirebaseService.createTimestampFromDate(new Date()),
-    relatedUsers: [...userList],
+    relatedUsers: [],
     shop: '',
     description: 'Einkauf',
 }
@@ -37,14 +37,18 @@ const useCurrentExpenseState = create<CurrentExpenseState>(set => ({
     setRelatedUsers: user =>
         set(state => {
             if (state.relatedUsers.includes(user)) {
-                if (state.relatedUsers.length === 1) return { relatedUsers: [...userList] }
+                if (state.relatedUsers.length === 1) return { relatedUsers: state.relatedUsers }
                 return { relatedUsers: [...state.relatedUsers.filter(u => u !== user)] }
             }
             return { relatedUsers: [user, ...state.relatedUsers] }
         }),
     setShop: shop => set(() => ({ shop })),
     setDescription: description => set(() => ({ description })),
-    clearState: () => set(() => ({ ...initialCurrentExpense })),
+    clearState: () =>
+        set(() => ({
+            ...initialCurrentExpense,
+            relatedUsers: useExpenseStore.getState().autocompleteOptions.creator,
+        })),
     setCurrentExpense: ({ id, amount, category, creator, date, relatedUsers, shop, description }) =>
         set(() => ({
             id,

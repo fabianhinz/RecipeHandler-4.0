@@ -18,7 +18,6 @@ import NewExpenseDialog from './NewExpenseDialog'
 import UserCard from './UserCard'
 
 const selector = (state: ExpenseState) => ({
-    user: state.user,
     expenses: state.expenses,
     isDialogOpen: state.isNewExpenseDialogOpen,
 })
@@ -28,9 +27,11 @@ const dispatchSelector = (state: ExpenseState) => ({
 })
 
 const Expenses = () => {
-    const { user, expenses, isDialogOpen } = useExpenseStore(selector)
+    const { expenses, isDialogOpen } = useExpenseStore(selector)
     const { openDialog } = useExpenseStore(dispatchSelector)
     const setExpenses = useExpenseStore(store => store.setExpenses)
+    const setAutocompleteOptions = useExpenseStore(store => store.setAutocompleteOptions)
+    const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
     const authContext = useFirebaseAuthContext()
     const resetCurrentExpense = useCurrentExpenseState(store => store.clearState)
 
@@ -41,20 +42,25 @@ const Expenses = () => {
             .doc(authContext.user.uid)
             .collection(expensesCollection)
             .onSnapshot(snapshot => {
-                setExpenses(
-                    snapshot.docs.map(
-                        document => ({ ...document.data(), id: document.id } as Expense)
-                    )
+                const newExpenses = snapshot.docs.map(
+                    document => ({ ...document.data(), id: document.id } as Expense)
                 )
+                setExpenses(newExpenses)
+                setAutocompleteOptions({
+                    creator: Array.from(new Set(newExpenses.map(e => e.creator))),
+                    shop: Array.from(new Set(newExpenses.map(e => e.shop))),
+                    category: Array.from(new Set(newExpenses.map(e => e.category))),
+                    description: Array.from(new Set(newExpenses.map(e => e.description ?? ''))),
+                })
             })
-    }, [authContext.user, setExpenses])
+    }, [authContext.user, setExpenses, setAutocompleteOptions])
 
     return (
         <EntryGridContainer>
-            {user.length > 0 && (
+            {autocompleteOptions.creator.length > 0 && (
                 <Grid item xs={12}>
                     <Grid container spacing={1}>
-                        {user.map(u => (
+                        {autocompleteOptions.creator.map(u => (
                             <UserCard key={u} userName={u} />
                         ))}
                     </Grid>

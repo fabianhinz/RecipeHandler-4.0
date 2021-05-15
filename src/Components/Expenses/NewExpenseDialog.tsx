@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core'
 import { Save } from '@material-ui/icons'
 import CloseIcon from '@material-ui/icons/Close'
-import { Autocomplete } from '@material-ui/lab'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import React from 'react'
 
@@ -21,6 +20,7 @@ import useCurrentExpenseState, { CurrentExpenseState } from '../../store/Current
 import useExpenseStore, { ExpenseState } from '../../store/ExpenseState'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { SlideUp } from '../Shared/Transitions'
+import ExpenseAutocomplete from './ExpenseAutocomplete'
 
 interface Props {
     open: boolean
@@ -28,7 +28,7 @@ interface Props {
 }
 
 const selector = (state: ExpenseState) => ({
-    users: state.user,
+    autocompleteOptions: state.autocompleteOptions,
     categories: state.categories,
 })
 
@@ -60,7 +60,7 @@ const dispatchSelector = (state: ExpenseState) => ({
 })
 
 const NewExpenseDialog = (props: Props) => {
-    const { users, categories } = useExpenseStore(selector)
+    const { autocompleteOptions, categories } = useExpenseStore(selector)
     const { addExpense, updateExpense } = useExpenseStore(dispatchSelector)
     const {
         id,
@@ -124,7 +124,7 @@ const NewExpenseDialog = (props: Props) => {
         props.onClose()
         clearState()
     }
-
+    console.log(creator)
     return (
         <Dialog
             open={props.open}
@@ -133,36 +133,19 @@ const NewExpenseDialog = (props: Props) => {
             fullWidth
             maxWidth="md">
             <DialogTitle>{id ? 'Ausgabe bearbeiten' : 'Neue Ausgabe hinzufügen'}</DialogTitle>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
                 <DialogContent>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item md={6} xs={12}>
-                            <Autocomplete
-                                id="creator-select"
-                                autoComplete
-                                autoSelect
-                                getOptionLabel={option => option}
+                            <ExpenseAutocomplete
+                                label="Ersteller"
                                 value={creator}
-                                onChange={(_, newValue: string | null) => {
-                                    setCreator(newValue ?? '')
-                                }}
-                                fullWidth
-                                options={[...users, '']}
-                                renderInput={params => (
-                                    <TextField
-                                        autoComplete="creator"
-                                        margin="normal"
-                                        {...params}
-                                        label="Ersteller"
-                                        variant="outlined"
-                                    />
-                                )}
+                                onValueChange={setCreator}
+                                options={autocompleteOptions.creator}
                             />
                             <TextField
-                                autoFocus
-                                autoComplete="amount"
                                 type="number"
-                                inputProps={{ min: 0, step: 0.01 }}
+                                inputProps={{ min: 0 }}
                                 InputProps={{
                                     endAdornment: <InputAdornment position="end">€</InputAdornment>,
                                 }}
@@ -173,45 +156,23 @@ const NewExpenseDialog = (props: Props) => {
                                 fullWidth
                                 label="Betrag"
                             />
-                            <TextField
-                                autoFocus
-                                autoComplete="store"
-                                value={shop}
-                                onChange={e => setShop(e.target.value)}
-                                variant="outlined"
-                                margin="normal"
-                                fullWidth
+                            <ExpenseAutocomplete
                                 label="Geschäft"
+                                value={shop}
+                                options={autocompleteOptions.shop}
+                                onValueChange={setShop}
                             />
-                            <Autocomplete
-                                id="category-Select"
-                                autoComplete
-                                autoSelect
-                                fullWidth
-                                options={[...categories, '']}
+                            <ExpenseAutocomplete
+                                label="Kategorie"
                                 value={category}
-                                onChange={(_, newValue: string | null) => {
-                                    setCategory(newValue ?? '')
-                                }}
-                                renderInput={params => (
-                                    <TextField
-                                        autoComplete="category"
-                                        margin="normal"
-                                        {...params}
-                                        label="Kategorie"
-                                        variant="outlined"
-                                    />
-                                )}
+                                options={categories}
+                                onValueChange={setCategory}
                             />
-                            <TextField
-                                autoFocus
-                                autoComplete="description"
-                                value={description}
-                                onChange={e => setDescription(e.target.value)}
-                                variant="outlined"
-                                margin="normal"
-                                fullWidth
+                            <ExpenseAutocomplete
                                 label="Beschreibung"
+                                value={description}
+                                options={autocompleteOptions.description}
+                                onValueChange={setDescription}
                             />
                         </Grid>
                         <Grid item md={6} xs={12}>
@@ -242,7 +203,7 @@ const NewExpenseDialog = (props: Props) => {
                                 </Grid>
                                 <Grid item>
                                     <Grid container spacing={1}>
-                                        {users.map(user => (
+                                        {autocompleteOptions.creator.map(user => (
                                             <Grid item key={user}>
                                                 <Chip
                                                     color={

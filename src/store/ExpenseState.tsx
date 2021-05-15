@@ -3,32 +3,33 @@ import create from 'zustand'
 import { Expense } from '../model/model'
 import { FirebaseService } from '../services/firebase'
 
-type ExpenseStateValues = {
+export type ExpenseStateValues = {
     expenses: Expense[]
-    user: string[]
     categories: string[]
     isNewExpenseDialogOpen: boolean
+    autocompleteOptions: Record<
+        keyof Pick<Expense, 'creator' | 'shop' | 'category' | 'description'>,
+        string[]
+    >
 }
 
-export const userList = ['Fabi', 'Miri', 'Hans']
 export const categories = ['Lebensmittel', 'Mobilität', 'Inventar', 'Sonstiges']
 
 // MockData, will be removed when using Firestore
 const initialState: ExpenseStateValues = {
     expenses: [],
-    user: userList,
     categories: categories,
     isNewExpenseDialogOpen: false,
+    autocompleteOptions: { creator: [], shop: [], category: [], description: [] },
 }
 
 export type ExpenseState = ExpenseStateValues & {
     setExpenses: (expenses: Expense[]) => void
     addExpense: (expense: Expense, userId: string) => void
-    setUser: (user: string[]) => void
-    addUser: (user: string) => void
     openNewExpenseDialog: (isOpen: boolean) => void
     deleteExpense: (expenseId: string, userId: string) => void
     updateExpense: (expense: Expense, userId: string) => void
+    setAutocompleteOptions: (autocompleteOptions: ExpenseStateValues['autocompleteOptions']) => void
 }
 
 export const userCollection = 'users'
@@ -43,8 +44,6 @@ const useExpenseStore = create<ExpenseState>(set => ({
             .doc(userId)
             .collection(expensesCollection)
             .add(expense),
-    setUser: user => set(() => ({ user })),
-    addUser: user => set(state => ({ user: [user, ...state.user] })),
     deleteExpense: (expenseId, userId) =>
         FirebaseService.firestore
             .collection(userCollection)
@@ -60,6 +59,9 @@ const useExpenseStore = create<ExpenseState>(set => ({
             .collection(expensesCollection)
             .doc(id)
             .update(expense),
+    setAutocompleteOptions: autocompleteOptions => {
+        set(() => ({ autocompleteOptions }))
+    },
 }))
 
 export default useExpenseStore
