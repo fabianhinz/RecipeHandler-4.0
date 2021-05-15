@@ -2,6 +2,7 @@ import React, { FC, useContext, useEffect, useState } from 'react'
 
 import { DocumentId, User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import { useFirebaseAuthContext } from './FirebaseAuthProvider'
 
 const Context = React.createContext<{
     getByUid: (uid: string) => User | undefined
@@ -15,6 +16,7 @@ export const useUsersContext = () => useContext(Context)
 
 const UsersProvider: FC = ({ children }) => {
     const [users, setUsers] = useState<Map<DocumentId, User>>(new Map())
+    const authContext = useFirebaseAuthContext()
     // ! onShapshot would not scale ..., ToDo >> only username and profile picture should be in users/{id}
     // ! everything else as a subcollection
     useEffect(() => {
@@ -29,7 +31,8 @@ const UsersProvider: FC = ({ children }) => {
                 if (e.code === 'permission-denied') return
                 throw new Error(e)
             })
-    }, [])
+        // fetch users after login
+    }, [authContext.user])
 
     return (
         <Context.Provider
