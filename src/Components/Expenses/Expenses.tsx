@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core'
+import { Grid, Typography } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect } from 'react'
 
@@ -73,16 +73,19 @@ const Expenses = () => {
         <EntryGridContainer>
             {autocompleteOptions.creator.length > 0 && (
                 <Grid item xs={12}>
-                    <Grid container spacing={1}>
+                    <Grid container spacing={3}>
                         {autocompleteOptions.creator.map(u => (
                             <ExpenseUserCard key={u} userName={u} />
                         ))}
                     </Grid>
                 </Grid>
             )}
+            <Grid item>
+                <Typography variant="h4">Ausgaben</Typography>
+            </Grid>
             {expenses.length > 0 && (
                 <Grid item xs={12}>
-                    <Grid container spacing={1}>
+                    <Grid container spacing={3}>
                         {expenses.map((e, i) => (
                             <ExpenseCard key={i} expense={e} />
                         ))}
