@@ -1,15 +1,32 @@
-import { Avatar, Card, CardContent, Grid, IconButton, Typography } from '@material-ui/core'
-import { Edit } from '@material-ui/icons'
+import {
+    Avatar,
+    Button,
+    Card,
+    CardActionArea,
+    CardContent,
+    Chip,
+    Collapse,
+    Divider,
+    Grid,
+    IconButton,
+    makeStyles,
+    Theme,
+    Typography,
+} from '@material-ui/core'
+import { Edit, ExpandMore } from '@material-ui/icons'
 import Commute from '@material-ui/icons/Commute'
 import Fastfood from '@material-ui/icons/Fastfood'
 import Weekend from '@material-ui/icons/Weekend'
 import { CashMultiple, Delete } from 'mdi-material-ui'
-import React from 'react'
+import { useState } from 'react'
 
 import { Expense } from '../../model/model'
 import useCurrentExpenseStore, { CurrentExpenseStore } from '../../store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
+import { stopPropagationProps } from '../../util/constants'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useGridContext } from '../Provider/GridProvider'
 
 interface Props {
     expense: Expense
@@ -40,9 +57,11 @@ const dispatchCurrentExpense = (state: CurrentExpenseStore) => ({
 })
 
 const ExpenseCard = (props: Props) => {
+    const [showDetails, setShowDetails] = useState(false)
     const { openDialog, deleteExpense } = useExpenseStore(dispatchSelector)
     const { setCurrentExpense } = useCurrentExpenseStore(dispatchCurrentExpense)
     const authContext = useFirebaseAuthContext()
+    const gridContext = useGridContext()
 
     const handleUpdateClick = () => {
         openDialog(true)
@@ -50,58 +69,79 @@ const ExpenseCard = (props: Props) => {
     }
 
     return (
-        <Grid item>
+        <Grid item {...gridContext.gridBreakpointProps}>
             <Card>
-                <CardContent>
-                    <Grid container direction="row" justify="space-between" alignItems="center">
-                        <Grid item>
-                            <Grid container spacing={2}>
-                                <Grid item>{getIcon(props.expense.category)}</Grid>
-                                <Grid item>
-                                    <Typography variant="subtitle2">
-                                        {props.expense.description}, {props.expense.shop}
-                                    </Typography>
-                                    <Typography variant="caption">
-                                        {props.expense.date.toDate().toLocaleDateString()},{' '}
-                                        {props.expense.category}
-                                    </Typography>
-                                </Grid>
+                <CardActionArea disableRipple onClick={() => setShowDetails(prev => !prev)}>
+                    <CardContent>
+                        <Grid container spacing={2}>
+                            <Grid item>{getIcon(props.expense.category)}</Grid>
+                            <Grid item>
+                                <Typography variant="subtitle2">
+                                    {props.expense.description}, {props.expense.shop}
+                                </Typography>
+                                <Typography variant="caption">
+                                    {props.expense.date.toDate().toLocaleDateString()},{' '}
+                                    {props.expense.category}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Divider orientation="vertical" />
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="subtitle2">{props.expense.creator}</Typography>
+
+                                <Typography variant="caption">
+                                    {props.expense.amount.toLocaleString('de-DE', {
+                                        style: 'currency',
+                                        currency: 'EUR',
+                                    })}
+                                </Typography>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <Grid container spacing={2} alignItems="center">
-                                <Grid item>
-                                    <Typography>
-                                        {props.expense.amount.toLocaleString('de-DE', {
-                                            style: 'currency',
-                                            currency: 'EUR',
-                                        })}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Avatar>{props.expense.creator.slice(0, 1)}</Avatar>
+
+                        <Collapse mountOnEnter unmountOnExit in={showDetails}>
+                            <Grid
+                                {...stopPropagationProps}
+                                container
+                                spacing={1}
+                                justify="flex-end">
+                                <Grid item xs={12} />
+                                <Grid item xs={12}>
+                                    <Grid container spacing={1}>
+                                        {props.expense.relatedUsers.map(user => (
+                                            <Grid item key={user}>
+                                                <Chip size="small" label={user} />
+                                            </Grid>
+                                        ))}
+                                    </Grid>
                                 </Grid>
 
-                                <Grid item onClick={handleUpdateClick}>
-                                    <IconButton>
-                                        <Edit />
-                                    </IconButton>
-                                </Grid>
-                                <Grid item>
-                                    <IconButton
+                                <Grid item xs={6} md="auto">
+                                    <Button
+                                        fullWidth
+                                        startIcon={<Delete />}
                                         onClick={() =>
                                             deleteExpense(
                                                 props.expense.id ?? '',
                                                 authContext.user?.uid ?? ''
                                             )
                                         }>
-                                        <Delete />
-                                    </IconButton>
+                                        löschen
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={6} md="auto">
+                                    <Button
+                                        color="secondary"
+                                        fullWidth
+                                        startIcon={<Edit />}
+                                        onClick={handleUpdateClick}>
+                                        bearbeiten
+                                    </Button>
                                 </Grid>
                             </Grid>
-                        </Grid>
-                    </Grid>
-                </CardContent>
+                        </Collapse>
+                    </CardContent>
+                </CardActionArea>
             </Card>
         </Grid>
     )

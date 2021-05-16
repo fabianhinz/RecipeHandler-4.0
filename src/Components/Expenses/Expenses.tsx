@@ -82,7 +82,7 @@ const Expenses = () => {
             )}
             {expenses.length > 0 && (
                 <Grid item xs={12}>
-                    <Grid container direction="column" spacing={1}>
+                    <Grid container spacing={1}>
                         {expenses.map((e, i) => (
                             <ExpenseCard key={i} expense={e} />
                         ))}
