@@ -20,6 +20,7 @@ type ExpenseActions = {
     deleteExpense: (expense: Expense, userId: string) => void
     updateExpense: (expense: Expense, userId: string) => void
     setAutocompleteOptions: (autocompleteOptions: ExpenseState['autocompleteOptions']) => void
+    setCategories: (categories: string[]) => void
 }
 
 export type ExpenseStore = ExpenseState & ExpenseActions
@@ -30,9 +31,14 @@ export const ARCHIVED_EXPENSES_COLLECTION = 'archivedExpenses'
 
 const useExpenseStore = create<ExpenseStore>(set => ({
     expenses: [],
-    categories: ['Lebensmittel', 'Mobilität', 'Inventar', 'Sonstiges'],
+    categories: [],
     isNewExpenseDialogOpen: false,
     autocompleteOptions: { creator: [], shop: [], category: [], description: [] },
+    setCategories: categories => {
+        set(() => ({
+            categories,
+        }))
+    },
     setExpenses: expenses => set(() => ({ expenses })),
     addExpense: (expense, userId) =>
         FirebaseService.firestore

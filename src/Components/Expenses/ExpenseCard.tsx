@@ -10,10 +10,7 @@ import {
     Typography,
 } from '@material-ui/core'
 import { Edit } from '@material-ui/icons'
-import Commute from '@material-ui/icons/Commute'
-import Fastfood from '@material-ui/icons/Fastfood'
-import Weekend from '@material-ui/icons/Weekend'
-import { CashMultiple, Delete } from 'mdi-material-ui'
+import { Delete } from 'mdi-material-ui'
 import { useState } from 'react'
 
 import { Expense } from '../../model/model'
@@ -22,24 +19,10 @@ import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
 import { stopPropagationProps } from '../../util/constants'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
+import expenseUtils from './helper/expenseUtils'
 
 interface Props {
     expense: Expense
-}
-
-const getIcon = (category: string) => {
-    switch (category) {
-        case 'Lebensmittel':
-            return <Fastfood fontSize="large" />
-        case 'Mobilität':
-            return <Commute fontSize="large" />
-        case 'Inventar':
-            return <Weekend fontSize="large" />
-        case 'Sonstiges':
-            return <CashMultiple fontSize="large" />
-        default:
-            return <Fastfood fontSize="large" />
-    }
 }
 
 const dispatchSelector = (state: ExpenseStore) => ({
@@ -69,7 +52,9 @@ const ExpenseCard = (props: Props) => {
                 <CardActionArea disableRipple onClick={() => setShowDetails(prev => !prev)}>
                     <CardContent>
                         <Grid container spacing={2}>
-                            <Grid item>{getIcon(props.expense.category)}</Grid>
+                            <Grid item>
+                                {expenseUtils.getIconByExpenseCategory(props.expense.category)}
+                            </Grid>
                             <Grid item>
                                 <Typography variant="subtitle2">
                                     {props.expense.description}, {props.expense.shop}
