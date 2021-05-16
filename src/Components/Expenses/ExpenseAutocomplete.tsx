@@ -3,6 +3,7 @@ import { Autocomplete, createFilterOptions } from '@material-ui/lab'
 import React from 'react'
 
 interface Props {
+    disableFreeSolo?: boolean
     label: string
     value?: string
     options: string[]
@@ -13,7 +14,7 @@ const filter = createFilterOptions<string>()
 
 const ExpenseAutocomplete = (props: Props) => (
     <Autocomplete
-        freeSolo
+        freeSolo={props.disableFreeSolo ? undefined : true}
         selectOnFocus
         clearOnBlur
         handleHomeEndKeys
@@ -25,7 +26,11 @@ const ExpenseAutocomplete = (props: Props) => (
         filterOptions={(options, filterState) => {
             const filtered = filter(options, filterState)
 
-            if (filtered.length === 0 && filterState.inputValue.length > 0) {
+            if (
+                !props.disableFreeSolo &&
+                filtered.length === 0 &&
+                filterState.inputValue.length > 0
+            ) {
                 filtered.push(filterState.inputValue)
             }
 

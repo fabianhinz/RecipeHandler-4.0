@@ -82,6 +82,7 @@ const ExpenseDialog = (props: Props) => {
         setShop,
         clearState,
     } = useCurrentExpenseStore(dispatchCurrentExpenseSelector)
+    const setAutocompleteOptions = useExpenseStore(store => store.setAutocompleteOptions)
     const authContext = useFirebaseAuthContext()
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -140,7 +141,14 @@ const ExpenseDialog = (props: Props) => {
                             <ExpenseAutocomplete
                                 label="Ersteller"
                                 value={creator}
-                                onValueChange={setCreator}
+                                onValueChange={creator => {
+                                    setCreator(creator)
+                                    if (!autocompleteOptions.creator.includes(creator))
+                                        setAutocompleteOptions({
+                                            ...autocompleteOptions,
+                                            creator: [...autocompleteOptions.creator, creator],
+                                        })
+                                }}
                                 options={autocompleteOptions.creator}
                             />
                             <TextField
@@ -160,9 +168,18 @@ const ExpenseDialog = (props: Props) => {
                                 label="Geschäft"
                                 value={shop}
                                 options={autocompleteOptions.shop}
-                                onValueChange={setShop}
+                                onValueChange={shop => {
+                                    setShop(shop)
+                                    if (!autocompleteOptions.shop.includes(shop)) {
+                                        setAutocompleteOptions({
+                                            ...autocompleteOptions,
+                                            shop: [...autocompleteOptions.shop, shop],
+                                        })
+                                    }
+                                }}
                             />
                             <ExpenseAutocomplete
+                                disableFreeSolo
                                 label="Kategorie"
                                 value={category}
                                 options={categories}
@@ -172,7 +189,18 @@ const ExpenseDialog = (props: Props) => {
                                 label="Beschreibung"
                                 value={description}
                                 options={autocompleteOptions.description}
-                                onValueChange={setDescription}
+                                onValueChange={description => {
+                                    setDescription(description)
+                                    if (!autocompleteOptions.description.includes(description)) {
+                                        setAutocompleteOptions({
+                                            ...autocompleteOptions,
+                                            description: [
+                                                ...autocompleteOptions.description,
+                                                description,
+                                            ],
+                                        })
+                                    }
+                                }}
                             />
                         </Grid>
                         <Grid item md={6} xs={12}>
