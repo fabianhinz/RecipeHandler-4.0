@@ -1,5 +1,4 @@
 import {
-    Avatar,
     Button,
     Card,
     CardActionArea,
@@ -8,12 +7,9 @@ import {
     Collapse,
     Divider,
     Grid,
-    IconButton,
-    makeStyles,
-    Theme,
     Typography,
 } from '@material-ui/core'
-import { Edit, ExpandMore } from '@material-ui/icons'
+import { Edit } from '@material-ui/icons'
 import Commute from '@material-ui/icons/Commute'
 import Fastfood from '@material-ui/icons/Fastfood'
 import Weekend from '@material-ui/icons/Weekend'
@@ -24,7 +20,6 @@ import { Expense } from '../../model/model'
 import useCurrentExpenseStore, { CurrentExpenseStore } from '../../store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
 import { stopPropagationProps } from '../../util/constants'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 
@@ -122,7 +117,7 @@ const ExpenseCard = (props: Props) => {
                                         startIcon={<Delete />}
                                         onClick={() =>
                                             deleteExpense(
-                                                props.expense.id ?? '',
+                                                props.expense,
                                                 authContext.user?.uid ?? ''
                                             )
                                         }>

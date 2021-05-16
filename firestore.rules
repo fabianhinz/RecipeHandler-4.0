@@ -8,7 +8,7 @@ service cloud.firestore {
     function isEditor() {
       	return exists(/databases/$(database)/documents/editors/$(request.auth.uid));
     }
-
+    // narrow permissions. Editors should not be able to read user data from another editor
     match /{document=**} {
         allow read: if isAdmin() || isEditor();
     }
@@ -52,6 +52,14 @@ service cloud.firestore {
     }
 
     match /users/{userId}/cookingHistory/{docId} {
+        allow write: if request.auth.uid == userId
+    }
+
+    match /users/{userId}/expenses/{docId} {
+        allow write: if request.auth.uid == userId
+    }
+
+    match /users/{userId}/archivedExpenses/{docId} {
         allow write: if request.auth.uid == userId
     }
     
