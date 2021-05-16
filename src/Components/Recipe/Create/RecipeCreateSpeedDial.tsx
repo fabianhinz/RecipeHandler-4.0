@@ -1,3 +1,4 @@
+import { VisibilityOff } from '@material-ui/icons'
 import EyeIcon from '@material-ui/icons/RemoveRedEye'
 import SaveIcon from '@material-ui/icons/Save'
 import { SpeedDialAction } from '@material-ui/lab'
@@ -5,22 +6,23 @@ import React from 'react'
 
 import SpeedDialWrapper from '../../Shared/SpeedDialWrapper'
 interface Props {
-    onPreview: () => void
-    onSave: () => void
+    isPreview: boolean
+    onPreviewClick: () => void
+    onSaveClick: () => void
 }
 
-const RecipeCreateSpeedDial = ({ onPreview, onSave }: Props) => {
+const RecipeCreateSpeedDial = ({ onPreviewClick, onSaveClick, isPreview }: Props) => {
     return (
         <SpeedDialWrapper>
             <SpeedDialAction
-                icon={<EyeIcon />}
-                onClick={onPreview}
-                tooltipTitle="Rezeptvorschau"
+                icon={isPreview ? <VisibilityOff /> : <EyeIcon />}
+                onClick={onPreviewClick}
+                tooltipTitle={isPreview ? 'zum Rezept' : 'zur Vorschau'}
                 FabProps={{ size: 'medium' }}
             />
             <SpeedDialAction
                 icon={<SaveIcon />}
-                onClick={onSave}
+                onClick={onSaveClick}
                 tooltipTitle="Rezept speichern"
                 FabProps={{ size: 'medium' }}
             />
