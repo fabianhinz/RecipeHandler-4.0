@@ -8,6 +8,7 @@ import {
     DialogTitle,
     Grid,
     InputAdornment,
+    makeStyles,
     TextField,
 } from '@material-ui/core'
 import { Save } from '@material-ui/icons'
@@ -18,6 +19,7 @@ import React from 'react'
 import { FirebaseService } from '../../services/firebase'
 import useCurrentExpenseStore, { CurrentExpenseStore } from '../../store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { SlideUp } from '../Shared/Transitions'
 import ExpenseAutocomplete from './ExpenseAutocomplete'
@@ -59,6 +61,15 @@ const dispatchSelector = (state: ExpenseStore) => ({
     updateExpense: state.updateExpense,
 })
 
+const useStyles = makeStyles({
+    form: {
+        display: 'flex',
+        flex: 1,
+        flexDirection: 'column',
+        overflowY: 'auto',
+    },
+})
+
 const ExpenseDialog = (props: Props) => {
     const { autocompleteOptions, categories } = useExpenseStore(selector)
     const { addExpense, updateExpense } = useExpenseStore(dispatchSelector)
@@ -84,6 +95,8 @@ const ExpenseDialog = (props: Props) => {
     } = useCurrentExpenseStore(dispatchCurrentExpenseSelector)
     const setAutocompleteOptions = useExpenseStore(store => store.setAutocompleteOptions)
     const authContext = useFirebaseAuthContext()
+    const breakpointsContext = useBreakpointsContext()
+    const classes = useStyles()
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -125,16 +138,17 @@ const ExpenseDialog = (props: Props) => {
         props.onClose()
         clearState()
     }
-    console.log(creator)
+
     return (
         <Dialog
             open={props.open}
             onClose={handleDialogClose}
             TransitionComponent={SlideUp}
             fullWidth
+            fullScreen={breakpointsContext.isDialogFullscreen}
             maxWidth="md">
             <DialogTitle>{id ? 'Ausgabe bearbeiten' : 'Neue Ausgabe hinzufügen'}</DialogTitle>
-            <form onSubmit={handleSubmit} noValidate>
+            <form className={classes.form} onSubmit={handleSubmit} noValidate>
                 <DialogContent>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item md={6} xs={12}>
@@ -209,6 +223,7 @@ const ExpenseDialog = (props: Props) => {
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             fullWidth
+                                            disableFuture
                                             disableToolbar
                                             variant="static"
                                             format="dd.MM.yyyy"
