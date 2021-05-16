@@ -7,6 +7,8 @@ import {
     Collapse,
     Divider,
     Grid,
+    makeStyles,
+    Theme,
     Typography,
 } from '@material-ui/core'
 import { Edit } from '@material-ui/icons'
@@ -16,7 +18,6 @@ import { useState } from 'react'
 import { Expense } from '../../model/model'
 import useCurrentExpenseStore, { CurrentExpenseStore } from '../../store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
-import { stopPropagationProps } from '../../util/constants'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import expenseUtils from './helper/expenseUtils'
@@ -34,12 +35,21 @@ const dispatchCurrentExpense = (state: CurrentExpenseStore) => ({
     setCurrentExpense: state.setCurrentExpense,
 })
 
+const useStyles = makeStyles<Theme, { showDetails: boolean }>(theme => ({
+    actionArea: props => ({
+        borderBottomRightRadius: props.showDetails ? 0 : theme.shape.borderRadius,
+        borderBottomLeftRadius: props.showDetails ? 0 : theme.shape.borderRadius,
+    }),
+}))
+
 const ExpenseCard = (props: Props) => {
     const [showDetails, setShowDetails] = useState(false)
     const { openDialog, deleteExpense } = useExpenseStore(dispatchSelector)
     const { setCurrentExpense } = useCurrentExpenseStore(dispatchCurrentExpense)
     const authContext = useFirebaseAuthContext()
     const gridContext = useGridContext()
+
+    const classes = useStyles({ showDetails })
 
     const handleUpdateClick = () => {
         openDialog(true)
@@ -49,7 +59,10 @@ const ExpenseCard = (props: Props) => {
     return (
         <Grid item {...gridContext.gridBreakpointProps}>
             <Card>
-                <CardActionArea disableRipple onClick={() => setShowDetails(prev => !prev)}>
+                <CardActionArea
+                    className={classes.actionArea}
+                    disableRipple
+                    onClick={() => setShowDetails(prev => !prev)}>
                     <CardContent>
                         <Grid container spacing={2}>
                             <Grid item>
@@ -78,50 +91,45 @@ const ExpenseCard = (props: Props) => {
                                 </Typography>
                             </Grid>
                         </Grid>
-
-                        <Collapse mountOnEnter unmountOnExit in={showDetails}>
-                            <Grid
-                                {...stopPropagationProps}
-                                container
-                                spacing={1}
-                                justify="flex-end">
-                                <Grid item xs={12} />
-                                <Grid item xs={12}>
-                                    <Grid container spacing={1}>
-                                        {props.expense.relatedUsers.map(user => (
-                                            <Grid item key={user}>
-                                                <Chip size="small" label={user} />
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                </Grid>
-
-                                <Grid item xs={6} md="auto">
-                                    <Button
-                                        fullWidth
-                                        startIcon={<Delete />}
-                                        onClick={() =>
-                                            deleteExpense(
-                                                props.expense,
-                                                authContext.user?.uid ?? ''
-                                            )
-                                        }>
-                                        löschen
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={6} md="auto">
-                                    <Button
-                                        color="secondary"
-                                        fullWidth
-                                        startIcon={<Edit />}
-                                        onClick={handleUpdateClick}>
-                                        bearbeiten
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </Collapse>
                     </CardContent>
                 </CardActionArea>
+
+                <Collapse mountOnEnter unmountOnExit in={showDetails}>
+                    <CardContent>
+                        <Grid container spacing={1} justify="flex-end">
+                            <Grid item xs={12} />
+                            <Grid item xs={12}>
+                                <Grid container spacing={1}>
+                                    {props.expense.relatedUsers.map(user => (
+                                        <Grid item key={user}>
+                                            <Chip size="small" label={user} />
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </Grid>
+
+                            <Grid item xs={6} md="auto">
+                                <Button
+                                    fullWidth
+                                    startIcon={<Delete />}
+                                    onClick={() =>
+                                        deleteExpense(props.expense, authContext.user?.uid ?? '')
+                                    }>
+                                    löschen
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6} md="auto">
+                                <Button
+                                    color="secondary"
+                                    fullWidth
+                                    startIcon={<Edit />}
+                                    onClick={handleUpdateClick}>
+                                    bearbeiten
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Collapse>
             </Card>
         </Grid>
     )
