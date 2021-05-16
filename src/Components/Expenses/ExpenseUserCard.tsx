@@ -1,4 +1,4 @@
-import { Avatar, Card, CardContent, Grid, makeStyles, Typography } from '@material-ui/core'
+import { Avatar, Card, Grid, makeStyles, Typography } from '@material-ui/core'
 import React, { useLayoutEffect, useState } from 'react'
 
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
