@@ -16,8 +16,8 @@ import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/picker
 import React from 'react'
 
 import { FirebaseService } from '../../services/firebase'
-import useCurrentExpenseState, { CurrentExpenseState } from '../../store/CurrentExpenseState'
-import useExpenseStore, { ExpenseState } from '../../store/ExpenseState'
+import useCurrentExpenseStore, { CurrentExpenseStore } from '../../store/CurrentExpenseStore'
+import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { SlideUp } from '../Shared/Transitions'
 import ExpenseAutocomplete from './ExpenseAutocomplete'
@@ -27,12 +27,12 @@ interface Props {
     onClose: () => void
 }
 
-const selector = (state: ExpenseState) => ({
+const selector = (state: ExpenseStore) => ({
     autocompleteOptions: state.autocompleteOptions,
     categories: state.categories,
 })
 
-const currentExpenseSelector = (state: CurrentExpenseState) => ({
+const currentExpenseSelector = (state: CurrentExpenseStore) => ({
     id: state.id,
     amount: state.amount,
     creator: state.creator,
@@ -43,7 +43,7 @@ const currentExpenseSelector = (state: CurrentExpenseState) => ({
     relatedUsers: state.relatedUsers,
 })
 
-const dispatchCurrentExpenseSelector = (state: CurrentExpenseState) => ({
+const dispatchCurrentExpenseSelector = (state: CurrentExpenseStore) => ({
     setCreator: state.setCreator,
     setAmount: state.setAmount,
     setShop: state.setShop,
@@ -54,12 +54,12 @@ const dispatchCurrentExpenseSelector = (state: CurrentExpenseState) => ({
     clearState: state.clearState,
 })
 
-const dispatchSelector = (state: ExpenseState) => ({
+const dispatchSelector = (state: ExpenseStore) => ({
     addExpense: state.addExpense,
     updateExpense: state.updateExpense,
 })
 
-const NewExpenseDialog = (props: Props) => {
+const ExpenseDialog = (props: Props) => {
     const { autocompleteOptions, categories } = useExpenseStore(selector)
     const { addExpense, updateExpense } = useExpenseStore(dispatchSelector)
     const {
@@ -71,7 +71,7 @@ const NewExpenseDialog = (props: Props) => {
         description,
         relatedUsers,
         shop,
-    } = useCurrentExpenseState(currentExpenseSelector)
+    } = useCurrentExpenseStore(currentExpenseSelector)
     const {
         setRelatedUsers,
         setAmount,
@@ -81,7 +81,7 @@ const NewExpenseDialog = (props: Props) => {
         setDescription,
         setShop,
         clearState,
-    } = useCurrentExpenseState(dispatchCurrentExpenseSelector)
+    } = useCurrentExpenseStore(dispatchCurrentExpenseSelector)
     const authContext = useFirebaseAuthContext()
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -235,4 +235,4 @@ const NewExpenseDialog = (props: Props) => {
     )
 }
 
-export default NewExpenseDialog
+export default ExpenseDialog

@@ -3,20 +3,11 @@ import create from 'zustand'
 
 import { Expense } from '../model/model'
 import { FirebaseService } from '../services/firebase'
-import useExpenseStore from './ExpenseState'
+import useExpenseStore from './ExpenseStore'
 
-const initialCurrentExpense: Expense = {
-    id: undefined,
-    amount: 0,
-    category: 'Lebensmittel',
-    creator: '',
-    date: FirebaseService.createTimestampFromDate(new Date()),
-    relatedUsers: [],
-    shop: '',
-    description: 'Einkauf',
-}
+type ExpensState = Expense
 
-export type CurrentExpenseState = Expense & {
+type ExpensActions = {
     setAmount: (amount: number) => void
     setCategory: (category: string) => void
     setCreator: (creator: string) => void
@@ -28,7 +19,20 @@ export type CurrentExpenseState = Expense & {
     setCurrentExpense: (expense: Expense) => void
 }
 
-const useCurrentExpenseState = create<CurrentExpenseState>(set => ({
+export type CurrentExpenseStore = ExpensState & ExpensActions
+
+const initialCurrentExpense: ExpensState = {
+    id: undefined,
+    amount: 0,
+    category: 'Lebensmittel',
+    creator: '',
+    date: FirebaseService.createTimestampFromDate(new Date()),
+    relatedUsers: [],
+    shop: '',
+    description: 'Einkauf',
+}
+
+const useCurrentExpenseStore = create<CurrentExpenseStore>(set => ({
     ...initialCurrentExpense,
     setAmount: amount => set(() => ({ amount })),
     setCategory: category => set(() => ({ category })),
@@ -62,4 +66,4 @@ const useCurrentExpenseState = create<CurrentExpenseState>(set => ({
         })),
 }))
 
-export default useCurrentExpenseState
+export default useCurrentExpenseStore

@@ -7,8 +7,8 @@ import { CashMultiple, Delete } from 'mdi-material-ui'
 import React from 'react'
 
 import { Expense } from '../../model/model'
-import useCurrentExpenseState, { CurrentExpenseState } from '../../store/CurrentExpenseState'
-import useExpenseStore, { ExpenseState } from '../../store/ExpenseState'
+import useCurrentExpenseStore, { CurrentExpenseStore } from '../../store/CurrentExpenseStore'
+import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 
 interface Props {
@@ -30,18 +30,18 @@ const getIcon = (category: string) => {
     }
 }
 
-const dispatchSelector = (state: ExpenseState) => ({
+const dispatchSelector = (state: ExpenseStore) => ({
     openDialog: state.openNewExpenseDialog,
     deleteExpense: state.deleteExpense,
 })
 
-const dispatchCurrentExpense = (state: CurrentExpenseState) => ({
+const dispatchCurrentExpense = (state: CurrentExpenseStore) => ({
     setCurrentExpense: state.setCurrentExpense,
 })
 
 const ExpenseCard = (props: Props) => {
     const { openDialog, deleteExpense } = useExpenseStore(dispatchSelector)
-    const { setCurrentExpense } = useCurrentExpenseState(dispatchCurrentExpense)
+    const { setCurrentExpense } = useCurrentExpenseStore(dispatchCurrentExpense)
     const authContext = useFirebaseAuthContext()
 
     const handleUpdateClick = () => {

@@ -4,25 +4,25 @@ import React, { useEffect } from 'react'
 
 import { Expense } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
-import useCurrentExpenseState from '../../store/CurrentExpenseState'
+import useCurrentExpenseStore from '../../store/CurrentExpenseStore'
 import useExpenseStore, {
-    expensesCollection,
-    ExpenseState,
-    userCollection,
-} from '../../store/ExpenseState'
+    EXPENSE_COLLECTION,
+    ExpenseStore,
+    USER_COLLECTION,
+} from '../../store/ExpenseStore'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import ExpenseCard from './ExpenseCard'
-import NewExpenseDialog from './NewExpenseDialog'
-import UserCard from './UserCard'
+import ExpenseDialog from './ExpenseDialog'
+import ExpenseUserCard from './ExpenseUserCard'
 
-const selector = (state: ExpenseState) => ({
+const selector = (state: ExpenseStore) => ({
     expenses: state.expenses,
     isDialogOpen: state.isNewExpenseDialogOpen,
 })
 
-const dispatchSelector = (state: ExpenseState) => ({
+const dispatchSelector = (state: ExpenseStore) => ({
     openDialog: state.openNewExpenseDialog,
 })
 
@@ -33,14 +33,14 @@ const Expenses = () => {
     const setAutocompleteOptions = useExpenseStore(store => store.setAutocompleteOptions)
     const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
     const authContext = useFirebaseAuthContext()
-    const resetCurrentExpense = useCurrentExpenseState(store => store.clearState)
+    const resetCurrentExpense = useCurrentExpenseStore(store => store.clearState)
 
     useEffect(() => {
         if (!authContext.user) return
         return FirebaseService.firestore
-            .collection(userCollection)
+            .collection(USER_COLLECTION)
             .doc(authContext.user.uid)
-            .collection(expensesCollection)
+            .collection(EXPENSE_COLLECTION)
             .orderBy('date', 'desc')
             .onSnapshot(snapshot => {
                 const newExpenses = snapshot.docs.map(
@@ -62,7 +62,7 @@ const Expenses = () => {
                 <Grid item xs={12}>
                     <Grid container spacing={1}>
                         {autocompleteOptions.creator.map(u => (
-                            <UserCard key={u} userName={u} />
+                            <ExpenseUserCard key={u} userName={u} />
                         ))}
                     </Grid>
                 </Grid>
@@ -84,7 +84,7 @@ const Expenses = () => {
                 tooltipTitle="Ausgabe hinzufügen"
                 icon={<AddIcon />}
             />
-            <NewExpenseDialog open={isDialogOpen} onClose={() => openDialog(false)} />
+            <ExpenseDialog open={isDialogOpen} onClose={() => openDialog(false)} />
         </EntryGridContainer>
     )
 }

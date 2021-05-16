@@ -1,15 +1,15 @@
 import { Card, CardContent, Grid, Typography } from '@material-ui/core'
 import React, { useLayoutEffect, useState } from 'react'
 
-import useExpenseStore, { ExpenseState } from '../../store/ExpenseState'
+import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
 
 interface Props {
     userName: string
 }
 
-const selector = (state: ExpenseState) => state.expenses
+const selector = (state: ExpenseStore) => state.expenses
 
-const UserCard = (props: Props) => {
+const ExpenseUserCard = (props: Props) => {
     const expenses = useExpenseStore(selector)
 
     const [userData, setUserData] = useState<{ name: string; amount: number; difference: number }>({
@@ -64,4 +64,4 @@ const UserCard = (props: Props) => {
     )
 }
 
-export default UserCard
+export default ExpenseUserCard
