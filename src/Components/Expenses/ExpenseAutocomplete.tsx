@@ -21,7 +21,7 @@ const ExpenseAutocomplete = (props: Props) => (
         fullWidth
         value={props.value}
         onChange={(_, newValue: string | null) => {
-            props.onValueChange(newValue ?? '')
+            if (newValue) props.onValueChange(newValue)
         }}
         filterOptions={(options, filterState) => {
             const filtered = filter(options, filterState)

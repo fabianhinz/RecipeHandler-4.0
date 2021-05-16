@@ -50,13 +50,21 @@ const Expenses = () => {
                 setAutocompleteOptions({
                     creator: Array.from(
                         new Set([
-                            ...newExpenses.map(e => e.creator),
+                            ...newExpenses.filter(e => e.creator).map(e => e.creator),
                             ...newExpenses.map(e => e.relatedUsers).flat(),
                         ])
-                    ),
-                    shop: Array.from(new Set(newExpenses.map(e => e.shop))),
-                    category: Array.from(new Set(newExpenses.map(e => e.category))),
-                    description: Array.from(new Set(newExpenses.map(e => e.description ?? ''))),
+                    ).sort(),
+                    shop: Array.from(
+                        new Set(newExpenses.filter(e => e.shop).map(e => e.shop))
+                    ).sort(),
+                    category: Array.from(
+                        new Set(newExpenses.filter(e => e.category).map(e => e.category))
+                    ).sort(),
+                    description: Array.from(
+                        new Set(
+                            newExpenses.filter(e => e.description).map(e => e.description ?? '')
+                        )
+                    ).sort(),
                 })
             })
     }, [authContext.user, setExpenses, setAutocompleteOptions])

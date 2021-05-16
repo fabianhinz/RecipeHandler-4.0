@@ -269,7 +269,11 @@ const ExpenseDialog = (props: Props) => {
                     <Button startIcon={<CloseIcon />} onClick={props.onClose}>
                         abbrechen
                     </Button>
-                    <Button color="secondary" startIcon={<Save />} type="submit">
+                    <Button
+                        color="secondary"
+                        disabled={!category || !creator || !amount || !description || !shop}
+                        startIcon={<Save />}
+                        type="submit">
                         speichern
                     </Button>
                 </DialogActions>
