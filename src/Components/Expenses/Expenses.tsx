@@ -48,7 +48,12 @@ const Expenses = () => {
                 )
                 setExpenses(newExpenses)
                 setAutocompleteOptions({
-                    creator: Array.from(new Set(newExpenses.map(e => e.creator))),
+                    creator: Array.from(
+                        new Set([
+                            ...newExpenses.map(e => e.creator),
+                            ...newExpenses.map(e => e.relatedUsers).flat(),
+                        ])
+                    ),
                     shop: Array.from(new Set(newExpenses.map(e => e.shop))),
                     category: Array.from(new Set(newExpenses.map(e => e.category))),
                     description: Array.from(new Set(newExpenses.map(e => e.description ?? ''))),
