@@ -1,9 +1,7 @@
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
-import 'firebase/performance'
 import 'firebase/functions'
-import 'firebase/analytics'
 
 import firebase from 'firebase/app'
 
@@ -28,7 +26,6 @@ const firestore = firebase.firestore()
 const storage = firebase.storage()
 const storageRef = storage.ref()
 const auth = firebase.auth()
-const performance = firebase.performance()
 
 const createTimestampFromDate = (date: Date) => firebase.firestore.Timestamp.fromDate(date)
 const createDateFromTimestamp = (timestamp: firebase.firestore.Timestamp) =>
@@ -44,7 +41,6 @@ export const FirebaseService = {
     createTimestampFromDate,
     createDateFromTimestamp,
     incrementBy,
-    performance,
     functions,
     deleteField,
     QUERY_LIMIT: 12,

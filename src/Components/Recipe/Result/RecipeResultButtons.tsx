@@ -9,7 +9,7 @@ import RecipeShareButton from '../RecipeShareButton'
 
 interface Props {
     name: string
-    numberOfComments: number
+    numberOfComments?: number
 }
 
 const RecipeResultButtons = ({ name, numberOfComments }: Props) => (
@@ -21,12 +21,20 @@ const RecipeResultButtons = ({ name, numberOfComments }: Props) => (
         <Grid item>
             <RecipeShareButton name={name} />
         </Grid>
-        <Grid item>
-            <Comments collection="recipes" numberOfComments={numberOfComments} name={name} />
-        </Grid>
-        <Grid item>
-            <RecipeCookCounterButton name={name} />
-        </Grid>
+        {numberOfComments !== undefined && (
+            <>
+                <Grid item>
+                    <Comments
+                        collection="recipes"
+                        numberOfComments={numberOfComments}
+                        name={name}
+                    />
+                </Grid>
+                <Grid item>
+                    <RecipeCookCounterButton name={name} />
+                </Grid>
+            </>
+        )}
     </Grid>
 )
 

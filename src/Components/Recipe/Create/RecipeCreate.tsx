@@ -185,7 +185,11 @@ const RecipeCreate = (props: Props) => {
                 </EntryGridContainer>
             )}
 
-            <RecipeCreateSpeedDial onPreview={handlePreviewChange} onSave={handleSaveRecipe} />
+            <RecipeCreateSpeedDial
+                isPreview={state.preview}
+                onPreviewClick={handlePreviewChange}
+                onSaveClick={handleSaveRecipe}
+            />
         </>
     )
 }

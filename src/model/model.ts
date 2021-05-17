@@ -177,3 +177,16 @@ export interface ShoppingListItem {
     value: string
     checked: boolean
 }
+
+export type Expense = {
+    id?: string
+    creator: string
+    amount: number
+    shop: string
+    category: string
+    description?: string
+    date: firebase.firestore.Timestamp
+    relatedUsers: string[]
+}
+
+export type ArchivedExpense = Expense & { deletedAt: firebase.firestore.Timestamp }

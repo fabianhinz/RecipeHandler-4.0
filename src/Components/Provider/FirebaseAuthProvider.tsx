@@ -61,10 +61,8 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     const classes = useStyles()
 
     const handleAuthStateChange = useCallback((user: firebase.User | null) => {
-        if (!user) return FirebaseService.auth.signInAnonymously()
-
         setAuthReady(true)
-        if (user.isAnonymous) {
+        if (!user) {
             setUser(undefined)
             setLoginEnabled(true)
             return

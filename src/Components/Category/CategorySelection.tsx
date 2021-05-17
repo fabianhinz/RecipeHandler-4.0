@@ -49,7 +49,7 @@ export default function CategorySelection({
 }: Props) {
     const classes = useStyles()
 
-    const { categoriesLoading, categoriesCollection } = useCategoriesCollectionContext()
+    const { categoriesLoading, recipeCategories } = useCategoriesCollectionContext()
 
     return (
         <SelectionDrawer
@@ -67,11 +67,11 @@ export default function CategorySelection({
             }
             highlight={selectedCategories.size > 0}>
             <Grid container>
-                {Object.keys(categoriesCollection).map(type => (
+                {Object.keys(recipeCategories).map(type => (
                     <Grid key={type} item xs={12}>
                         <ListSubheader className={classes.subheader}>{type}</ListSubheader>
                         <List disablePadding>
-                            {categoriesCollection[type].map(category => (
+                            {recipeCategories[type].map(category => (
                                 <ListItem
                                     onClick={() => onCategoryChange(type, category)}
                                     button

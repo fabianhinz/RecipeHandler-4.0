@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core'
 import BookIcon from '@material-ui/icons/Book'
 import clsx from 'clsx'
-import { BookmarkMultiple, BookSearch, Cart, History, Lightbulb } from 'mdi-material-ui'
+import { BookmarkMultiple, BookSearch, Cart, ChefHat, Lightbulb, PiggyBank } from 'mdi-material-ui'
 import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
@@ -189,7 +189,6 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                             pathname={PATHS.searchResults}
                         />
                     )}
-                    <NavButton icon={<Lightbulb />} label="Ideen" pathname={PATHS.trials} />
                     <NavButton
                         icon={<BookmarkMultiple />}
                         label="Lesezeichen"
@@ -197,13 +196,19 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                     />
                     {user && (
                         <>
+                            <NavButton icon={<Lightbulb />} label="Ideen" pathname={PATHS.trials} />
                             <NavButton
                                 icon={<Cart />}
                                 label="Einkaufsliste"
                                 pathname={PATHS.shoppingList}
                             />
                             <NavButton
-                                icon={<History />}
+                                icon={<PiggyBank />}
+                                label="Ausgaben"
+                                pathname={PATHS.expenses}
+                            />
+                            <NavButton
+                                icon={<ChefHat />}
                                 label="Kochverlauf"
                                 pathname={PATHS.cookingHistory}
                             />
@@ -227,7 +232,6 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                             secondary={hits.length}
                         />
                     )}
-                    <NavListItem pathname={PATHS.trials} icon={<Lightbulb />} label="Ideen" />
                     <NavListItem
                         pathname={PATHS.bookmarks}
                         icon={<BookmarkMultiple />}
@@ -237,13 +241,24 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                     {user && (
                         <>
                             <NavListItem
+                                pathname={PATHS.trials}
+                                icon={<Lightbulb />}
+                                label="Ideen"
+                            />
+
+                            <NavListItem
                                 pathname={PATHS.shoppingList}
                                 icon={<Cart />}
                                 label="Einkaufsliste"
                                 secondary={shoppingList.filter(item => !item.checked).length}
                             />
                             <NavListItem
-                                icon={<History />}
+                                pathname={PATHS.expenses}
+                                icon={<PiggyBank />}
+                                label="Ausgaben"
+                            />
+                            <NavListItem
+                                icon={<ChefHat />}
                                 label="Kochverlauf"
                                 pathname={PATHS.cookingHistory}
                             />

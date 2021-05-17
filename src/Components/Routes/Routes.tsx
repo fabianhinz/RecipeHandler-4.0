@@ -5,6 +5,7 @@ import { ReactComponent as AccountIcon } from '../../icons/account.svg'
 import { ReactComponent as BookmarksIcon } from '../../icons/bookmarks.svg'
 import { ReactComponent as DetailsIcon } from '../../icons/details.svg'
 import { ReactComponent as EditIcon } from '../../icons/edit.svg'
+import { ReactComponent as ExpensesIcon } from '../../icons/expenses.svg'
 import { ReactComponent as HomeIcon } from '../../icons/home.svg'
 import { ReactComponent as ImpressumIcon } from '../../icons/impressum.svg'
 import { ReactComponent as SearchIcon } from '../../icons/search.svg'
@@ -26,6 +27,7 @@ export const PATHS = {
     shoppingList: '/shopping',
     searchResults: '/searchResults',
     cookingHistory: '/cookingHistory',
+    expenses: '/expenses',
 }
 
 interface AppRoute {
@@ -93,6 +95,11 @@ const securedRoutes: AppRoute[] = [
         Component: lazy(() => import('../Account/AccountCookingHistory')),
         BackgroundIcon: HomeIcon,
     },
+    {
+        path: PATHS.expenses,
+        Component: lazy(() => import('../Expenses/Expenses')),
+        BackgroundIcon: ExpensesIcon,
+    },
 ]
 
 const renderRoute = ({ path, Component, BackgroundIcon }: AppRoute) => (
@@ -110,13 +117,13 @@ const renderRoute = ({ path, Component, BackgroundIcon }: AppRoute) => (
 )
 
 export const Routes: FC = () => {
-    const { user } = useFirebaseAuthContext()
+    const { user, loginEnabled } = useFirebaseAuthContext()
 
     return (
         <Switch>
             {anonymousRoutes.map(renderRoute)}
             {user && securedRoutes.map(renderRoute)}
-            <Route render={() => <Redirect to="/" />} />
+            {loginEnabled && <Route render={() => <Redirect to="/" />} />}
         </Switch>
     )
 }
