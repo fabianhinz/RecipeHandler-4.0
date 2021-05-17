@@ -157,11 +157,16 @@ const ExpenseDialog = (props: Props) => {
                                 value={creator}
                                 onValueChange={creator => {
                                     setCreator(creator)
-                                    if (!autocompleteOptions.creator.includes(creator))
+                                    if (!autocompleteOptions.creator.includes(creator)) {
                                         setAutocompleteOptions({
                                             ...autocompleteOptions,
-                                            creator: [...autocompleteOptions.creator, creator],
+                                            creator: [
+                                                ...autocompleteOptions.creator,
+                                                creator,
+                                            ].sort(),
                                         })
+                                        setRelatedUsers(creator)
+                                    }
                                 }}
                                 options={autocompleteOptions.creator}
                             />
@@ -231,13 +236,12 @@ const ExpenseDialog = (props: Props) => {
                                             id="date-picker-inline"
                                             label="Einkaufsdatum"
                                             value={FirebaseService.createDateFromTimestamp(date)}
-                                            onChange={date =>
+                                            onChange={date => {
+                                                const newDate = date ?? new Date()
                                                 setDate(
-                                                    FirebaseService.createTimestampFromDate(
-                                                        date ?? new Date()
-                                                    )
+                                                    FirebaseService.createTimestampFromDate(newDate)
                                                 )
-                                            }
+                                            }}
                                             KeyboardButtonProps={{
                                                 'aria-label': 'change date',
                                             }}

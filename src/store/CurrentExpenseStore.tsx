@@ -21,7 +21,7 @@ type ExpensActions = {
 
 export type CurrentExpenseStore = ExpensState & ExpensActions
 
-const initialCurrentExpense: ExpensState = {
+const getFreshExpense = () => ({
     id: undefined,
     amount: 0,
     category: 'Lebensmittel',
@@ -30,10 +30,10 @@ const initialCurrentExpense: ExpensState = {
     relatedUsers: [],
     shop: '',
     description: 'Einkauf',
-}
+})
 
 const useCurrentExpenseStore = create<CurrentExpenseStore>(set => ({
-    ...initialCurrentExpense,
+    ...getFreshExpense(),
     setAmount: amount => set(() => ({ amount })),
     setCategory: category => set(() => ({ category })),
     setCreator: creator => set(() => ({ creator })),
@@ -44,13 +44,13 @@ const useCurrentExpenseStore = create<CurrentExpenseStore>(set => ({
                 if (state.relatedUsers.length === 1) return { relatedUsers: state.relatedUsers }
                 return { relatedUsers: [...state.relatedUsers.filter(u => u !== user)] }
             }
-            return { relatedUsers: [user, ...state.relatedUsers] }
+            return { relatedUsers: [user, ...state.relatedUsers].sort() }
         }),
     setShop: shop => set(() => ({ shop })),
     setDescription: description => set(() => ({ description })),
     clearState: () =>
         set(() => ({
-            ...initialCurrentExpense,
+            ...getFreshExpense(),
             relatedUsers: useExpenseStore.getState().autocompleteOptions.creator,
         })),
     setCurrentExpense: ({ id, amount, category, creator, date, relatedUsers, shop, description }) =>
