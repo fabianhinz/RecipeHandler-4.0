@@ -11,8 +11,7 @@ import {
     Theme,
     Typography,
 } from '@material-ui/core'
-import { Edit } from '@material-ui/icons'
-import { Delete } from 'mdi-material-ui'
+import { Archive, Edit } from '@material-ui/icons'
 import { useState } from 'react'
 
 import { Expense } from '../../model/model'
@@ -28,7 +27,7 @@ interface Props {
 
 const dispatchSelector = (state: ExpenseStore) => ({
     openDialog: state.openNewExpenseDialog,
-    deleteExpense: state.deleteExpense,
+    archiveExpense: state.archiveExpense,
 })
 
 const dispatchCurrentExpense = (state: CurrentExpenseStore) => ({
@@ -44,7 +43,7 @@ const useStyles = makeStyles<Theme, { showDetails: boolean }>(theme => ({
 
 const ExpenseCard = (props: Props) => {
     const [showDetails, setShowDetails] = useState(false)
-    const { openDialog, deleteExpense } = useExpenseStore(dispatchSelector)
+    const { openDialog, archiveExpense } = useExpenseStore(dispatchSelector)
     const { setCurrentExpense } = useCurrentExpenseStore(dispatchCurrentExpense)
     const authContext = useFirebaseAuthContext()
     const gridContext = useGridContext()
@@ -111,11 +110,11 @@ const ExpenseCard = (props: Props) => {
                             <Grid item xs={6} md="auto">
                                 <Button
                                     fullWidth
-                                    startIcon={<Delete />}
+                                    startIcon={<Archive />}
                                     onClick={() =>
-                                        deleteExpense(props.expense, authContext.user?.uid ?? '')
+                                        archiveExpense(props.expense, authContext.user?.uid ?? '')
                                     }>
-                                    löschen
+                                    archivieren
                                 </Button>
                             </Grid>
                             <Grid item xs={6} md="auto">

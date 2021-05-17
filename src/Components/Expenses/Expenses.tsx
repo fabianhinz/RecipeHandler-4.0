@@ -1,7 +1,8 @@
-import { Grid, Typography } from '@material-ui/core'
+import { Box, Grid, Typography } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
+import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { Expense } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import useCurrentExpenseStore from '../../store/CurrentExpenseStore'
@@ -13,6 +14,8 @@ import useExpenseStore, {
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
+import NotFound from '../Shared/NotFound'
+import ArchivedExpensesSelection from './ArchivedExpensesSelection'
 import ExpenseCard from './ExpenseCard'
 import ExpenseDialog from './ExpenseDialog'
 import ExpenseUserCard from './ExpenseUserCard'
@@ -27,6 +30,7 @@ const dispatchSelector = (state: ExpenseStore) => ({
 })
 
 const Expenses = () => {
+    const [loading, setLoading] = useState(false)
     const { expenses, isDialogOpen } = useExpenseStore(selector)
     const { openDialog } = useExpenseStore(dispatchSelector)
     const setExpenses = useExpenseStore(store => store.setExpenses)
@@ -35,8 +39,12 @@ const Expenses = () => {
     const authContext = useFirebaseAuthContext()
     const resetCurrentExpense = useCurrentExpenseStore(store => store.clearState)
 
+    useDocumentTitle('Ausgaben')
+
     useEffect(() => {
         if (!authContext.user) return
+
+        setLoading(true)
         return FirebaseService.firestore
             .collection(USER_COLLECTION)
             .doc(authContext.user.uid)
@@ -66,6 +74,7 @@ const Expenses = () => {
                         )
                     ).sort(),
                 })
+                setLoading(false)
             })
     }, [authContext.user, setExpenses, setAutocompleteOptions])
 
@@ -80,9 +89,16 @@ const Expenses = () => {
                     </Grid>
                 </Grid>
             )}
-            <Grid item>
-                <Typography variant="h4">Ausgaben</Typography>
+
+            <Grid item xs={12}>
+                <Box display="flex" alignItems="center" justifyContent="space-between">
+                    <Typography variant="h4">Ausgaben</Typography>
+                    <Box flexGrow={0}>
+                        <ArchivedExpensesSelection />
+                    </Box>
+                </Box>
             </Grid>
+
             {expenses.length > 0 && (
                 <Grid item xs={12}>
                     <Grid container spacing={3}>
@@ -92,6 +108,9 @@ const Expenses = () => {
                     </Grid>
                 </Grid>
             )}
+
+            <NotFound visible={!loading && expenses.length === 0} />
+
             <SecouredRouteFab
                 onClick={() => {
                     resetCurrentExpense()

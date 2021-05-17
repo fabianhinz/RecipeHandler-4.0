@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-import { Expense } from '../model/model'
+import { ArchivedExpense, Expense } from '../model/model'
 import { FirebaseService } from '../services/firebase'
 
 export type ExpenseState = {
@@ -17,7 +17,9 @@ type ExpenseActions = {
     setExpenses: (expenses: Expense[]) => void
     addExpense: (expense: Expense, userId: string) => void
     openNewExpenseDialog: (isOpen: boolean) => void
-    deleteExpense: (expense: Expense, userId: string) => void
+    archiveExpense: (expense: Expense, userId: string) => void
+    clearArchive: (archivedExpense: ArchivedExpense[], userId: string) => void
+    restoreExpense: (archivedExpense: ArchivedExpense, userId: string) => void
     updateExpense: (expense: Expense, userId: string) => void
     setAutocompleteOptions: (autocompleteOptions: ExpenseState['autocompleteOptions']) => void
     setCategories: (categories: string[]) => void
@@ -46,12 +48,29 @@ const useExpenseStore = create<ExpenseStore>(set => ({
             .doc(userId)
             .collection(EXPENSE_COLLECTION)
             .add(expense),
-    deleteExpense: async (expense, userId) => {
+    archiveExpense: async ({ id, ...expense }, userId) => {
         const userDoc = FirebaseService.firestore.collection(USER_COLLECTION).doc(userId)
         await userDoc
             .collection(ARCHIVED_EXPENSES_COLLECTION)
             .add({ ...expense, deletedAt: FirebaseService.createTimestampFromDate(new Date()) })
-        await userDoc.collection(EXPENSE_COLLECTION).doc(expense.id).delete()
+        await userDoc.collection(EXPENSE_COLLECTION).doc(id).delete()
+    },
+    restoreExpense: async ({ deletedAt, ...expense }, userId) => {
+        const userDoc = FirebaseService.firestore.collection(USER_COLLECTION).doc(userId)
+        await userDoc.collection(EXPENSE_COLLECTION).add(expense)
+        await userDoc.collection(ARCHIVED_EXPENSES_COLLECTION).doc(expense.id).delete()
+    },
+    clearArchive: async (expenses, userId) => {
+        await Promise.all(
+            expenses.map(e =>
+                FirebaseService.firestore
+                    .collection(USER_COLLECTION)
+                    .doc(userId)
+                    .collection(ARCHIVED_EXPENSES_COLLECTION)
+                    .doc(e.id)
+                    .delete()
+            )
+        )
     },
     openNewExpenseDialog: isNewExpenseDialogOpen => set(() => ({ isNewExpenseDialogOpen })),
     updateExpense: ({ id, ...expense }, userId) =>

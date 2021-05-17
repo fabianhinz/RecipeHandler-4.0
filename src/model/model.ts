@@ -188,3 +188,5 @@ export type Expense = {
     date: firebase.firestore.Timestamp
     relatedUsers: string[]
 }
+
+export type ArchivedExpense = Expense & { deletedAt: firebase.firestore.Timestamp }
