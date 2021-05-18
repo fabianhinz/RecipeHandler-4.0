@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@material-ui/core'
+import { Box, Grid, makeStyles, Typography } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import React, { useEffect, useState } from 'react'
 
@@ -29,7 +29,15 @@ const dispatchSelector = (state: ExpenseStore) => ({
     openDialog: state.openNewExpenseDialog,
 })
 
+const useStyles = makeStyles(theme => ({
+    container: {
+        overflowX: 'auto',
+    },
+}))
+
 const Expenses = () => {
+    const classes = useStyles()
+
     const [loading, setLoading] = useState(false)
     const { expenses, isDialogOpen } = useExpenseStore(selector)
     const { openDialog } = useExpenseStore(dispatchSelector)
@@ -82,7 +90,7 @@ const Expenses = () => {
         <EntryGridContainer>
             {autocompleteOptions.creator.length > 0 && (
                 <Grid item xs={12}>
-                    <Grid container spacing={3}>
+                    <Grid container wrap="nowrap" className={classes.container} spacing={3}>
                         {autocompleteOptions.creator.map(u => (
                             <ExpenseUserCard key={u} userName={u} />
                         ))}

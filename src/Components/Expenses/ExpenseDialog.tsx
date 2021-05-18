@@ -248,8 +248,8 @@ const ExpenseDialog = (props: Props) => {
                                         />
                                     </MuiPickersUtilsProvider>
                                 </Grid>
-                                <Grid item>
-                                    <Grid container spacing={1}>
+                                <Grid item xs={12}>
+                                    <Grid container wrap="nowrap" spacing={1}>
                                         {autocompleteOptions.creator.map(user => (
                                             <Grid item key={user}>
                                                 <Chip
