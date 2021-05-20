@@ -16,9 +16,10 @@ import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import ArchivedExpensesSelection from './ArchivedExpensesSelection'
-import ExpenseCard from './ExpenseCard'
 import ExpenseDialog from './ExpenseDialog'
+import ExpensesMonthHeader from './ExpensesMonthHeader'
 import ExpenseUserCard from './ExpenseUserCard'
+import expenseUtils from './helper/expenseUtils'
 
 const selector = (state: ExpenseStore) => ({
     expenses: state.expenses,
@@ -39,6 +40,7 @@ const Expenses = () => {
     const classes = useStyles()
 
     const [loading, setLoading] = useState(false)
+    const [expensesByMonth, setExpensesByMonth] = useState(new Map<string, Expense[]>())
     const { expenses, isDialogOpen } = useExpenseStore(selector)
     const { openDialog } = useExpenseStore(dispatchSelector)
     const setExpenses = useExpenseStore(store => store.setExpenses)
@@ -86,6 +88,22 @@ const Expenses = () => {
             })
     }, [authContext.user, setExpenses, setAutocompleteOptions])
 
+    useEffect(() => {
+        const months = Array.from(
+            new Set(expenses.map(e => expenseUtils.getMonthStringByDate(e.date.toDate())))
+        )
+        months.forEach(month =>
+            setExpensesByMonth(value =>
+                value.set(
+                    month,
+                    expenses.filter(
+                        e => expenseUtils.getMonthStringByDate(e.date.toDate()) === month
+                    )
+                )
+            )
+        )
+    }, [expenses])
+
     return (
         <EntryGridContainer>
             {autocompleteOptions.creator.length > 0 && (
@@ -107,15 +125,13 @@ const Expenses = () => {
                 </Box>
             </Grid>
 
-            {expenses.length > 0 && (
-                <Grid item xs={12}>
-                    <Grid container spacing={3}>
-                        {expenses.map((e, i) => (
-                            <ExpenseCard key={i} expense={e} />
-                        ))}
-                    </Grid>
-                </Grid>
-            )}
+            {expensesByMonth.size > 0 &&
+                Array.from(expensesByMonth.keys()).map(month => (
+                    <ExpensesMonthHeader
+                        expenses={expensesByMonth.get(month) ?? []}
+                        month={month}
+                    />
+                ))}
 
             <NotFound visible={!loading && expenses.length === 0} />
 

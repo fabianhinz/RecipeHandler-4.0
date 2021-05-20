@@ -18,5 +18,10 @@ const getIconByExpenseCategory = (category: string) => {
     }
 }
 
-const expenseUtils = { getIconByExpenseCategory }
+const getMonthStringByDate = (date: Date) => {
+    const month = date.getMonth() + 1
+    return `${month < 10 ? '0' + month : month}/${date.getFullYear()}`
+}
+
+const expenseUtils = { getIconByExpenseCategory, getMonthStringByDate }
 export default expenseUtils
