@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@material-ui/core'
+import { Box, Button, Collapse, Grid, Typography } from '@material-ui/core'
 import { useState } from 'react'
 
 import { Expense } from '../../model/model'
@@ -9,7 +9,7 @@ interface Props {
     expenses: Expense[]
 }
 
-const ExpensesMonthHeader = (props: Props) => {
+const ExpensesByMonth = (props: Props) => {
     const [expanded, setExpanded] = useState(false)
     return (
         <>
@@ -38,17 +38,17 @@ const ExpensesMonthHeader = (props: Props) => {
                     </Box>
                 </Box>
             </Grid>
-            {expanded && (
-                <Grid item xs={12}>
-                    <Grid container spacing={3}>
+            <Grid item xs={12} style={{ padding: 0 }}>
+                <Collapse in={expanded}>
+                    <Grid container spacing={3} style={{ margin: 0 }}>
                         {props.expenses.map((e, i) => (
                             <ExpenseCard key={i} expense={e} />
                         ))}
                     </Grid>
-                </Grid>
-            )}
+                </Collapse>
+            </Grid>
         </>
     )
 }
 
-export default ExpensesMonthHeader
+export default ExpensesByMonth

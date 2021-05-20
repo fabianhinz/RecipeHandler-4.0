@@ -17,7 +17,7 @@ import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
 import ArchivedExpensesSelection from './ArchivedExpensesSelection'
 import ExpenseDialog from './ExpenseDialog'
-import ExpensesMonthHeader from './ExpensesMonthHeader'
+import ExpensesByMonth from './ExpensesByMonth'
 import ExpenseUserCard from './ExpenseUserCard'
 import expenseUtils from './helper/expenseUtils'
 
@@ -64,7 +64,22 @@ const Expenses = () => {
                 const newExpenses = snapshot.docs.map(
                     document => ({ ...document.data(), id: document.id } as Expense)
                 )
+                const months = Array.from(
+                    new Set(
+                        newExpenses.map(e => expenseUtils.getMonthStringByDate(e.date.toDate()))
+                    )
+                )
                 setExpenses(newExpenses)
+                months.forEach(month =>
+                    setExpensesByMonth(value =>
+                        value.set(
+                            month,
+                            newExpenses.filter(
+                                e => expenseUtils.getMonthStringByDate(e.date.toDate()) === month
+                            )
+                        )
+                    )
+                )
                 setAutocompleteOptions({
                     creator: Array.from(
                         new Set([
@@ -88,22 +103,6 @@ const Expenses = () => {
             })
     }, [authContext.user, setExpenses, setAutocompleteOptions])
 
-    useEffect(() => {
-        const months = Array.from(
-            new Set(expenses.map(e => expenseUtils.getMonthStringByDate(e.date.toDate())))
-        )
-        months.forEach(month =>
-            setExpensesByMonth(value =>
-                value.set(
-                    month,
-                    expenses.filter(
-                        e => expenseUtils.getMonthStringByDate(e.date.toDate()) === month
-                    )
-                )
-            )
-        )
-    }, [expenses])
-
     return (
         <EntryGridContainer>
             {autocompleteOptions.creator.length > 0 && (
@@ -126,12 +125,8 @@ const Expenses = () => {
             </Grid>
 
             {expensesByMonth.size > 0 &&
-                Array.from(expensesByMonth.keys()).map(month => (
-                    <ExpensesMonthHeader
-                        key={month}
-                        expenses={expensesByMonth.get(month) ?? []}
-                        month={month}
-                    />
+                Array.from(expensesByMonth.entries()).map(([month, expenses]) => (
+                    <ExpensesByMonth key={month} expenses={expenses} month={month} />
                 ))}
 
             <NotFound visible={!loading && expenses.length === 0} />
