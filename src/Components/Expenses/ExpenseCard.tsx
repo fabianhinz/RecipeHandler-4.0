@@ -68,12 +68,17 @@ const ExpenseCard = (props: Props) => {
                                 {expenseUtils.getIconByExpenseCategory(props.expense.category)}
                             </Grid>
                             <Grid item>
+                                <Divider orientation="vertical" />
+                            </Grid>
+                            <Grid item>
                                 <Typography variant="subtitle2">
                                     {props.expense.description}, {props.expense.shop}
                                 </Typography>
                                 <Typography variant="caption">
-                                    {props.expense.date.toDate().toLocaleDateString()},{' '}
-                                    {props.expense.category}
+                                    {expenseUtils.getFormattedDateString(
+                                        props.expense.date.toDate()
+                                    )}
+                                    , {props.expense.category}
                                 </Typography>
                             </Grid>
                             <Grid item>

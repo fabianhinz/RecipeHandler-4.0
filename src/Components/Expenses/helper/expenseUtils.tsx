@@ -18,5 +18,19 @@ const getIconByExpenseCategory = (category: string) => {
     }
 }
 
-const expenseUtils = { getIconByExpenseCategory }
+const dayFormatter = new Intl.DateTimeFormat('de', {
+    day: 'numeric',
+    weekday: 'long',
+    month: 'short',
+})
+const getFormattedDateString = (date: Date) => {
+    return dayFormatter.format(date)
+}
+
+const monthFormatter = new Intl.DateTimeFormat('de', { month: 'long', year: 'numeric' })
+const getMonthStringByDate = (date: Date) => {
+    return monthFormatter.format(date)
+}
+
+const expenseUtils = { getIconByExpenseCategory, getMonthStringByDate, getFormattedDateString }
 export default expenseUtils
