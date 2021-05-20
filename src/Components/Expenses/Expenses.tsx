@@ -128,6 +128,7 @@ const Expenses = () => {
             {expensesByMonth.size > 0 &&
                 Array.from(expensesByMonth.keys()).map(month => (
                     <ExpensesMonthHeader
+                        key={month}
                         expenses={expensesByMonth.get(month) ?? []}
                         month={month}
                     />
