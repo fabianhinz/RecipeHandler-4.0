@@ -64,22 +64,23 @@ const Expenses = () => {
                 const newExpenses = snapshot.docs.map(
                     document => ({ ...document.data(), id: document.id } as Expense)
                 )
-                const months = Array.from(
+                const uniqeMonths = Array.from(
                     new Set(
                         newExpenses.map(e => expenseUtils.getMonthStringByDate(e.date.toDate()))
                     )
                 )
-                setExpenses(newExpenses)
-                months.forEach(month =>
-                    setExpensesByMonth(value =>
-                        value.set(
+
+                setExpensesByMonth(
+                    new Map(
+                        uniqeMonths.map(month => [
                             month,
                             newExpenses.filter(
                                 e => expenseUtils.getMonthStringByDate(e.date.toDate()) === month
-                            )
-                        )
+                            ),
+                        ])
                     )
                 )
+                setExpenses(newExpenses)
                 setAutocompleteOptions({
                     creator: Array.from(
                         new Set([
@@ -124,10 +125,12 @@ const Expenses = () => {
                 </Box>
             </Grid>
 
-            {expensesByMonth.size > 0 &&
-                Array.from(expensesByMonth.entries()).map(([month, expenses]) => (
-                    <ExpensesByMonth key={month} expenses={expenses} month={month} />
-                ))}
+            <Grid item xs={12}>
+                {expensesByMonth.size > 0 &&
+                    Array.from(expensesByMonth.entries()).map(([month, expenses]) => (
+                        <ExpensesByMonth key={month} expenses={expenses} month={month} />
+                    ))}
+            </Grid>
 
             <NotFound visible={!loading && expenses.length === 0} />
 

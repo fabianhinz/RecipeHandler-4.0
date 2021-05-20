@@ -18,10 +18,19 @@ const getIconByExpenseCategory = (category: string) => {
     }
 }
 
-const getMonthStringByDate = (date: Date) => {
-    const month = date.getMonth() + 1
-    return `${month < 10 ? '0' + month : month}/${date.getFullYear()}`
+const dayFormatter = new Intl.DateTimeFormat('de', {
+    day: 'numeric',
+    weekday: 'long',
+    month: 'short',
+})
+const getFormattedDateString = (date: Date) => {
+    return dayFormatter.format(date)
 }
 
-const expenseUtils = { getIconByExpenseCategory, getMonthStringByDate }
+const monthFormatter = new Intl.DateTimeFormat('de', { month: 'long', year: 'numeric' })
+const getMonthStringByDate = (date: Date) => {
+    return monthFormatter.format(date)
+}
+
+const expenseUtils = { getIconByExpenseCategory, getMonthStringByDate, getFormattedDateString }
 export default expenseUtils
