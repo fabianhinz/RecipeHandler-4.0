@@ -47,6 +47,10 @@ const ExpenseCard = (props: Props) => {
     const { setCurrentExpense } = useCurrentExpenseStore(dispatchCurrentExpense)
     const authContext = useFirebaseAuthContext()
     const gridContext = useGridContext()
+    const categoryPalette = expenseUtils.useExpenseCategoryPalette({
+        category: props.expense.category,
+        variant: 'card',
+    })
 
     const classes = useStyles({ showDetails })
 
@@ -64,9 +68,7 @@ const ExpenseCard = (props: Props) => {
                     onClick={() => setShowDetails(prev => !prev)}>
                     <CardContent>
                         <Grid container spacing={2}>
-                            <Grid item>
-                                {expenseUtils.getIconByExpenseCategory(props.expense.category)}
-                            </Grid>
+                            <Grid item>{categoryPalette.icon}</Grid>
                             <Grid item>
                                 <Divider orientation="vertical" />
                             </Grid>
@@ -88,10 +90,7 @@ const ExpenseCard = (props: Props) => {
                                 <Typography variant="subtitle2">{props.expense.creator}</Typography>
 
                                 <Typography variant="caption">
-                                    {props.expense.amount.toLocaleString('de-DE', {
-                                        style: 'currency',
-                                        currency: 'EUR',
-                                    })}
+                                    {expenseUtils.formatAmount(props.expense.amount)}
                                 </Typography>
                             </Grid>
                         </Grid>

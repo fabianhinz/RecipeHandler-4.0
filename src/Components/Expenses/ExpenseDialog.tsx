@@ -101,7 +101,7 @@ const ExpenseDialog = (props: Props) => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         if (!authContext.user) return
-        // TODO wo überall Defaultwerte?
+
         if (id === undefined)
             addExpense(
                 {

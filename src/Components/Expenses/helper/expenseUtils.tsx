@@ -1,20 +1,54 @@
+import { makeStyles, Theme } from '@material-ui/core'
+import { amber, blueGrey, indigo, pink } from '@material-ui/core/colors'
 import Commute from '@material-ui/icons/Commute'
 import Fastfood from '@material-ui/icons/Fastfood'
 import Weekend from '@material-ui/icons/Weekend'
 import { CashMultiple } from 'mdi-material-ui'
 
-const getIconByExpenseCategory = (category: string) => {
-    switch (category) {
+import { Expense } from '../../../model/model'
+
+type CategoryPaletteProps = { category: string; variant: 'chip' | 'card' }
+
+const CATEGORIES_PALETTE: { [key: string]: string | undefined } = {
+    Lebensmittel: amber.A100,
+    Mobilität: pink.A100,
+    Inventar: indigo.A100,
+    Sonstiges: blueGrey.A100,
+}
+
+const useStyles = makeStyles<Theme, CategoryPaletteProps>(() => ({
+    icon: props => ({
+        color: props.variant === 'card' ? CATEGORIES_PALETTE[props.category] : '#fff',
+    }),
+}))
+
+const useExpenseCategoryPalette = (props: CategoryPaletteProps) => {
+    const classes = useStyles(props)
+    const fontSize = props.variant === 'chip' ? 'small' : 'large'
+    const palette = { backgroundColor: CATEGORIES_PALETTE[props.category], color: '#000' }
+
+    switch (props.category) {
         case 'Lebensmittel':
-            return <Fastfood fontSize="large" />
+            return {
+                ...palette,
+                icon: <Fastfood className={classes.icon} fontSize={fontSize} />,
+            }
         case 'Mobilität':
-            return <Commute fontSize="large" />
+            return {
+                ...palette,
+                icon: <Commute className={classes.icon} fontSize={fontSize} />,
+            }
         case 'Inventar':
-            return <Weekend fontSize="large" />
+            return {
+                ...palette,
+                icon: <Weekend className={classes.icon} fontSize={fontSize} />,
+            }
         case 'Sonstiges':
-            return <CashMultiple fontSize="large" />
         default:
-            return <CashMultiple fontSize="large" />
+            return {
+                ...palette,
+                icon: <CashMultiple className={classes.icon} fontSize={fontSize} />,
+            }
     }
 }
 
@@ -32,5 +66,25 @@ const getMonthStringByDate = (date: Date) => {
     return monthFormatter.format(date)
 }
 
-const expenseUtils = { getIconByExpenseCategory, getMonthStringByDate, getFormattedDateString }
+const formatAmount = (amount: number) =>
+    amount.toLocaleString('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+    })
+
+const getAmountByCategory = (category: string, expense: Expense[], format?: boolean) => {
+    const amount = expense
+        .filter(e => e.category === category)
+        .reduce((acc, curr) => (acc += curr.amount), 0)
+
+    return format ? formatAmount(amount) : amount
+}
+
+const expenseUtils = {
+    getMonthStringByDate,
+    getFormattedDateString,
+    getAmountByCategory,
+    formatAmount,
+    useExpenseCategoryPalette,
+}
 export default expenseUtils
