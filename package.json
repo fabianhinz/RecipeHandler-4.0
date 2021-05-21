@@ -40,7 +40,7 @@
 		"react-dropzone": "^10.2.2",
 		"react-highlight-words": "^0.16.0",
 		"react-markdown": "^4.3.1",
-		"react-router-dom": "^5.1.2",
+		"react-router-dom": "^5.2.0",
 		"react-scripts": "4.0.3",
 		"react-swipeable-views": "^0.13.9",
 		"stacktrace-js": "^2.0.2",
