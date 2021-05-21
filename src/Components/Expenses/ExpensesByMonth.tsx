@@ -12,7 +12,9 @@ import { ChevronRight } from 'mdi-material-ui'
 import { useState } from 'react'
 
 import { Expense } from '../../model/model'
+import useExpenseStore from '../../store/ExpenseStore'
 import ExpenseCard from './ExpenseCard'
+import ExpenseCategoryChip from './ExpenseCategoryChip'
 
 interface StyleProps {
     expanded: boolean
@@ -26,6 +28,9 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         transition: theme.transitions.create('transform'),
         transform: props => `rotate(${props.expanded ? 90 : 0}deg)`,
     },
+    chipContainer: {
+        overflowX: 'auto',
+    },
 }))
 
 interface Props {
@@ -36,6 +41,8 @@ interface Props {
 const ExpensesByMonth = (props: Props) => {
     const [expanded, setExpanded] = useState<StyleProps['expanded']>(false)
     const classes = useStyles({ expanded })
+
+    const categories = useExpenseStore(store => store.categories)
 
     return (
         <>
@@ -60,9 +67,20 @@ const ExpensesByMonth = (props: Props) => {
                 </Typography>
             </Box>
             <Divider variant="middle" />
-            <Collapse in={expanded}>
+            <Collapse mountOnEnter unmountOnExit in={expanded}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} />
+                    <Grid item xs={12}>
+                        <Grid container wrap="nowrap" className={classes.chipContainer} spacing={1}>
+                            {categories.map(category => (
+                                <ExpenseCategoryChip
+                                    key={category}
+                                    category={category}
+                                    expenses={props.expenses}
+                                />
+                            ))}
+                        </Grid>
+                    </Grid>
                     {props.expenses.map((e, i) => (
                         <ExpenseCard key={i} expense={e} />
                     ))}
