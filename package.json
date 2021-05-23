@@ -9,7 +9,7 @@
 		"@material-ui/icons": "^4.11.2",
 		"@material-ui/lab": "^4.0.0-alpha.58",
 		"@material-ui/pickers": "^3.3.10",
-		"@types/algoliasearch": "^3.34.10",
+		"@types/algoliasearch": "^4.0.0",
 		"@types/jest": "25.2.1",
 		"@types/node": "15.6.0",
 		"@types/react": "17.0.2",
