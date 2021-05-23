@@ -125,7 +125,7 @@ export const handleChangelog = functions.region('europe-west1').https.onRequest(
     if (req.body.pull_request) {
         const { action, pull_request } = req.body
         const { merge_commit_sha, merged, title, body, closed_at, user } = pull_request
-        if (action === 'closed' && merged && user.login !== 'dependabot-preview[bot]') {
+        if (action === 'closed' && merged && user.login !== 'dependabot[bot]') {
             const shortSha = merge_commit_sha ? merge_commit_sha.slice(0, 7) : ''
             // TODO evtl nur Nummer mit Hash davor suchen und hash vor speichern wieder entfernen?
             const issueNumbers = body.match(/\d+/g)
