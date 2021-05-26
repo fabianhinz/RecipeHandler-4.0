@@ -1,10 +1,13 @@
 import create from 'zustand'
 
+import expenseUtils from '../Components/Expenses/helper/expenseUtils'
 import { ArchivedExpense, Expense } from '../model/model'
 import { FirebaseService } from '../services/firebase'
 
 export type ExpenseState = {
+    loading: boolean
     expenses: Expense[]
+    expensesByMonth: Map<string, Expense[]>
     categories: string[]
     isNewExpenseDialogOpen: boolean
     autocompleteOptions: Record<
@@ -23,6 +26,9 @@ type ExpenseActions = {
     updateExpense: (expense: Expense, userId: string) => void
     setAutocompleteOptions: (autocompleteOptions: ExpenseState['autocompleteOptions']) => void
     setCategories: (categories: string[]) => void
+    handleFirebaseSnapshot: (
+        snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
+    ) => void
 }
 
 export type ExpenseStore = ExpenseState & ExpenseActions
@@ -32,7 +38,9 @@ export const EXPENSE_COLLECTION = 'expenses'
 export const ARCHIVED_EXPENSES_COLLECTION = 'archivedExpenses'
 
 const useExpenseStore = create<ExpenseStore>(set => ({
+    loading: true,
     expenses: [],
+    expensesByMonth: new Map(),
     categories: [],
     isNewExpenseDialogOpen: false,
     autocompleteOptions: { creator: [], shop: [], category: [], description: [] },
@@ -82,6 +90,37 @@ const useExpenseStore = create<ExpenseStore>(set => ({
             .update(expense),
     setAutocompleteOptions: autocompleteOptions => {
         set(() => ({ autocompleteOptions }))
+    },
+    handleFirebaseSnapshot: snapshot => {
+        const expenses = snapshot.docs.map(
+            document => ({ ...document.data(), id: document.id } as Expense)
+        )
+        const uniqeMonths = Array.from(
+            new Set(expenses.map(e => expenseUtils.getMonthStringByDate(e.date.toDate())))
+        )
+        const expensesByMonth = new Map(
+            uniqeMonths.map(month => [
+                month,
+                expenses.filter(e => expenseUtils.getMonthStringByDate(e.date.toDate()) === month),
+            ])
+        )
+        const autocompleteOptions = {
+            creator: Array.from(
+                new Set([
+                    ...expenses.filter(e => e.creator).map(e => e.creator),
+                    ...expenses.map(e => e.relatedUsers).flat(),
+                ])
+            ).sort(),
+            shop: Array.from(new Set(expenses.filter(e => e.shop).map(e => e.shop))).sort(),
+            category: Array.from(
+                new Set(expenses.filter(e => e.category).map(e => e.category))
+            ).sort(),
+            description: Array.from(
+                new Set(expenses.filter(e => e.description).map(e => e.description ?? ''))
+            ).sort(),
+        }
+
+        set({ loading: false, expenses, expensesByMonth, autocompleteOptions })
     },
 }))
 

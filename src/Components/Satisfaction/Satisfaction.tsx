@@ -44,9 +44,10 @@ const Satisfaction = ({ recipeName }: Props) => {
         memoSatisfactionCollection.doc(user.uid).set({ value })
     }
 
-    const satisfactionValueOrNull = useCallback((uid: string) => satisfaction.get(uid) || null, [
-        satisfaction,
-    ])
+    const satisfactionValueOrNull = useCallback(
+        (uid: string) => satisfaction.get(uid) || null,
+        [satisfaction]
+    )
 
     const handleActiveChange = (_event: React.ChangeEvent<{}>, value: number) => {
         switch (value) {

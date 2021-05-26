@@ -3,6 +3,7 @@ import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 
 
 import { ShoppingListItem, User } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
+import useExpenseStore, { EXPENSE_COLLECTION } from '../../store/ExpenseStore'
 import { ArrayFns, ReorderParams } from '../../util/fns'
 import BuiltWithFirebase from '../Shared/BuiltWithFirebase'
 
@@ -84,7 +85,13 @@ const FirebaseAuthProvider: FC = ({ children }) => {
             setShoppingList(snapshot.data()?.list ?? [])
         })
 
+        const expensesUnsubscribe = userDocRef
+            .collection(EXPENSE_COLLECTION)
+            .orderBy('date', 'desc')
+            .onSnapshot(useExpenseStore.getState().handleFirebaseSnapshot)
+
         return () => {
+            expensesUnsubscribe()
             userDocUnsubsribe()
             shoppingListUnsubscribe()
         }

@@ -9,7 +9,7 @@ import { Expense } from '../../../model/model'
 
 type CategoryPaletteProps = { category: string; variant: 'chip' | 'card' }
 
-const CATEGORIES_PALETTE: { [key: string]: string | undefined } = {
+export const CATEGORIES_PALETTE: { [key: string]: string | undefined } = {
     Lebensmittel: amber.A100,
     Mobilität: pink.A100,
     Inventar: indigo.A100,

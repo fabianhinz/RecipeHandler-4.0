@@ -59,32 +59,30 @@ const MarkdownRenderer = (props: Props) => {
                 item.recipeNameRef === props.recipeName
         )
 
-    const handleCheckboxChange = (children: any) => (
-        _event: React.ChangeEvent<HTMLInputElement>,
-        checked: boolean
-    ) => {
-        let grocery = renderPropsToGrocery(children)
-        if (!grocery || !props.withShoppingList) return
+    const handleCheckboxChange =
+        (children: any) => (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+            let grocery = renderPropsToGrocery(children)
+            if (!grocery || !props.withShoppingList) return
 
-        let list = [...shoppingList]
-        if (checked) {
-            list = [
-                {
-                    value: grocery,
-                    recipeNameRef: props.recipeName,
-                    checked: false,
-                },
-                ...list,
-            ]
-        } else {
-            list = list.filter(
-                item =>
-                    item.value !== renderPropsToGrocery(children) ||
-                    item.recipeNameRef !== props.recipeName
-            )
+            let list = [...shoppingList]
+            if (checked) {
+                list = [
+                    {
+                        value: grocery,
+                        recipeNameRef: props.recipeName,
+                        checked: false,
+                    },
+                    ...list,
+                ]
+            } else {
+                list = list.filter(
+                    item =>
+                        item.value !== renderPropsToGrocery(children) ||
+                        item.recipeNameRef !== props.recipeName
+                )
+            }
+            shoppingListRef.current?.set({ list })
         }
-        shoppingListRef.current?.set({ list })
-    }
 
     return (
         <ReactMarkdown

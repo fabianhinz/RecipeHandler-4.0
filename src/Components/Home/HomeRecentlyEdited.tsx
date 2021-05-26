@@ -22,9 +22,8 @@ const HomeRecentlyEdited = () => {
     useEffect(() => {
         if (user && !user.showRecentlyEdited) return
 
-        let query:
-            | firebase.firestore.CollectionReference
-            | firebase.firestore.Query = FirebaseService.firestore.collection('recipes')
+        let query: firebase.firestore.CollectionReference | firebase.firestore.Query =
+            FirebaseService.firestore.collection('recipes')
 
         return query
             .orderBy('createdDate', 'desc')

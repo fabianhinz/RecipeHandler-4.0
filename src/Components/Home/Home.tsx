@@ -33,11 +33,8 @@ const Home = () => {
     const [orderBy, setOrderBy] = useState<OrderByRecord>(RecipeService.orderBy)
     const [querying, setQuerying] = useState(false)
 
-    const {
-        selectedCategories,
-        setSelectedCategories,
-        removeSelectedCategories,
-    } = useCategorySelect()
+    const { selectedCategories, setSelectedCategories, removeSelectedCategories } =
+        useCategorySelect()
     const { user } = useFirebaseAuthContext()
     const usersContext = useUsersContext()
     const [selectedEditors, setSelectedEditors] = useState<string[]>([])
@@ -61,11 +58,8 @@ const Home = () => {
     useEffect(() => {
         setQuerying(true)
         const orderByKey = Object.keys(orderBy)[0] as OrderByKey
-        let query:
-            | firebase.firestore.CollectionReference
-            | firebase.firestore.Query = FirebaseService.firestore
-            .collection('recipes')
-            .orderBy(orderByKey, orderBy[orderByKey])
+        let query: firebase.firestore.CollectionReference | firebase.firestore.Query =
+            FirebaseService.firestore.collection('recipes').orderBy(orderByKey, orderBy[orderByKey])
 
         if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
 

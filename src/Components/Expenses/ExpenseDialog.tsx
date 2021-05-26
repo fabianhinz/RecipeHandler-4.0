@@ -73,16 +73,8 @@ const useStyles = makeStyles({
 const ExpenseDialog = (props: Props) => {
     const { autocompleteOptions, categories } = useExpenseStore(selector)
     const { addExpense, updateExpense } = useExpenseStore(dispatchSelector)
-    const {
-        id,
-        amount,
-        category,
-        creator,
-        date,
-        description,
-        relatedUsers,
-        shop,
-    } = useCurrentExpenseStore(currentExpenseSelector)
+    const { id, amount, category, creator, date, description, relatedUsers, shop } =
+        useCurrentExpenseStore(currentExpenseSelector)
     const {
         setRelatedUsers,
         setAmount,

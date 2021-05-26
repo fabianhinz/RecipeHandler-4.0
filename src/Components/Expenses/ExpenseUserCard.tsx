@@ -1,7 +1,10 @@
-import { Avatar, Card, Grid, makeStyles, Typography } from '@material-ui/core'
-import React, { useLayoutEffect, useState } from 'react'
+import { Card, Grid, makeStyles, Theme, Typography } from '@material-ui/core'
+import { useLayoutEffect, useState } from 'react'
+import { Cell, Pie, PieChart } from 'recharts'
 
+import useDebounce from '../../hooks/useDebounce'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
+import { CATEGORIES_PALETTE } from './helper/expenseUtils'
 
 interface Props {
     userName: string
@@ -9,33 +12,49 @@ interface Props {
 
 const selector = (state: ExpenseStore) => state.expenses
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme, { userData: UserData }>(theme => ({
     card: {
         padding: theme.spacing(2),
-        width: 250,
+        minWidth: 150,
+        display: 'flex',
+        alignItems: 'center',
+        gap: theme.spacing(2),
     },
-    userAvatar: {
-        height: 50,
-        width: 50,
-        border: `4px solid ${theme.palette.divider}`,
+    differenceTypography: {
+        ...theme.typography.h6,
+        color: props =>
+            props.userData.difference < 0 ? theme.palette.error.main : theme.palette.success.main,
     },
-    userContainer: {
-        marginBottom: theme.spacing(1),
+    amountTypography: {
+        ...theme.typography.body2,
+        color: theme.palette.text.secondary,
     },
 }))
 
+const CHART_MARGIN = { top: 0, right: 0, bottom: 0, left: 0 }
+
+type UserData = {
+    name: string
+    amount: number
+    difference: number
+    amountByCategory: Map<string, { value: number }>
+}
+
 const ExpenseUserCard = (props: Props) => {
     const expenses = useExpenseStore(selector)
-    const [userData, setUserData] = useState<{ name: string; amount: number; difference: number }>({
+    const categories = useExpenseStore(store => store.categories)
+    const [userData, setUserData] = useState<UserData>({
         name: '',
         amount: 0,
+        amountByCategory: new Map(),
         difference: 0,
     })
-    const classes = useStyles()
+    const classes = useStyles({ userData })
 
     useLayoutEffect(() => {
-        const payed = expenses
-            .filter(expense => expense.creator === props.userName)
+        const userExpenses = expenses.filter(expense => expense.creator === props.userName)
+
+        const payed = userExpenses
             .map(expense => expense.amount)
             .reduce((prev, curr) => prev + curr, 0)
 
@@ -51,53 +70,52 @@ const ExpenseUserCard = (props: Props) => {
         setUserData({
             name: props.userName,
             amount: payed,
+            amountByCategory: new Map(
+                categories.map(category => [
+                    category,
+                    {
+                        value: userExpenses
+                            .filter(expense => expense.category === category)
+                            .reduce((acc, curr) => (acc += curr.amount), 0),
+                    },
+                ])
+            ),
             difference: payed - shouldPay,
         })
-    }, [expenses, props.userName])
+    }, [expenses, props.userName, categories])
+
+    const debouncedAmountByCategory = useDebounce(userData.amountByCategory, 50)
 
     return (
         <Grid item>
-            <Card variant="outlined" className={classes.card}>
-                <Grid className={classes.userContainer} container alignItems="center" spacing={1}>
-                    <Grid item>
-                        <Avatar className={classes.userAvatar}>{userData.name.slice(0, 1)}</Avatar>
-                    </Grid>
+            <Card className={classes.card}>
+                <PieChart margin={CHART_MARGIN} width={70} height={70}>
+                    <Pie
+                        innerRadius={10}
+                        dataKey="value"
+                        data={[...debouncedAmountByCategory.values()]}>
+                        {[...debouncedAmountByCategory.keys()].map(category => (
+                            <Cell key={category} fill={CATEGORIES_PALETTE[category]} />
+                        ))}
+                    </Pie>
+                </PieChart>
 
-                    <Grid item>
-                        <Typography align="center" variant="h6">
-                            {userData.name}
-                        </Typography>
-                    </Grid>
-                </Grid>
+                <div>
+                    <Typography variant="h6">{userData.name}</Typography>
+                    <Typography className={classes.amountTypography}>
+                        {userData.amount.toLocaleString('de-DE', {
+                            style: 'currency',
+                            currency: 'EUR',
+                        })}
+                    </Typography>
+                </div>
 
-                <Grid container justify="space-between">
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Kontostand</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography
-                            variant="body2"
-                            color={userData.difference < 0 ? 'error' : 'inherit'}>
-                            {userData.difference.toLocaleString('de-DE', {
-                                style: 'currency',
-                                currency: 'EUR',
-                            })}
-                        </Typography>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Ausgaben</Typography>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                        <Typography variant="body2">
-                            {userData.amount.toLocaleString('de-DE', {
-                                style: 'currency',
-                                currency: 'EUR',
-                            })}
-                        </Typography>
-                    </Grid>
-                </Grid>
+                <Typography className={classes.differenceTypography}>
+                    {userData.difference.toLocaleString('de-DE', {
+                        style: 'currency',
+                        currency: 'EUR',
+                    })}
+                </Typography>
             </Card>
         </Grid>
     )

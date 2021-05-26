@@ -45,9 +45,10 @@ const AccountUser = () => {
 
     useDocumentTitle(user.username)
 
-    const userDoc = useMemo(() => FirebaseService.firestore.collection('users').doc(user.uid), [
-        user.uid,
-    ])
+    const userDoc = useMemo(
+        () => FirebaseService.firestore.collection('users').doc(user.uid),
+        [user.uid]
+    )
 
     const handleLogout = () => {
         setProgress(true)

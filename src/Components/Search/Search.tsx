@@ -99,11 +99,10 @@ const Search = () => {
     const history = useHistory()
     const debouncedValue = useDebounce(value, 500)
     const { mdUp } = useBreakpointsContext()
-    const showResultsPaper = useMemo(() => focused && mdUp && debouncedValue.length > 0, [
-        debouncedValue.length,
-        focused,
-        mdUp,
-    ])
+    const showResultsPaper = useMemo(
+        () => focused && mdUp && debouncedValue.length > 0,
+        [debouncedValue.length, focused, mdUp]
+    )
     const classes = useStyles({ focused, showResultsPaper })
     const theme = useTheme()
 
