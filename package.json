@@ -16,7 +16,7 @@
 		"@types/react-beautiful-dnd": "^13.0.0",
 		"@types/react-dom": "17.0.1",
 		"@types/react-dropzone": "^5.1.0",
-		"@types/react-highlight-words": "^0.16.1",
+		"@types/react-highlight-words": "^0.16.2",
 		"@types/react-router-dom": "^5.1.4",
 		"@types/react-swipeable-views": "^0.13.0",
 		"algoliasearch": "^4.9.1",
