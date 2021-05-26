@@ -39,11 +39,8 @@ const RecipeCreate = (props: Props) => {
     const { state, dispatch } = useRecipeCreateReducer(fromPropsOrPreviousState(props))
 
     const recipeCreateService = useRecipeCreate(state, props.edit)
-    const {
-        selectedCategories,
-        setSelectedCategories,
-        removeSelectedCategories,
-    } = useCategorySelect(fromPropsOrPreviousState(props))
+    const { selectedCategories, setSelectedCategories, removeSelectedCategories } =
+        useCategorySelect(fromPropsOrPreviousState(props))
     const { user } = useFirebaseAuthContext()
     const { history } = useRouterContext()
     const { gridBreakpointProps: breakpointsFromContext, gridLayout } = useGridContext()

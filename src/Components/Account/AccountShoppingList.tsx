@@ -28,14 +28,12 @@ const AccountUserShoppingList = () => {
         )
     }, [shoppingList])
 
-    const handleCheckboxChange = (index: number) => (
-        _event: React.ChangeEvent<HTMLInputElement>,
-        checked: boolean
-    ) => {
-        const list = [...shoppingList]
-        list[index].checked = checked
-        shoppingListRef.current?.set({ list })
-    }
+    const handleCheckboxChange =
+        (index: number) => (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+            const list = [...shoppingList]
+            list[index].checked = checked
+            shoppingListRef.current?.set({ list })
+        }
 
     const handleDelete = (index: number) => () => {
         shoppingListRef.current?.set({

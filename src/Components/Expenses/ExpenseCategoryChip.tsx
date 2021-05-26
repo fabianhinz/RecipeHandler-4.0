@@ -1,9 +1,10 @@
 import { Chip, Grid, makeStyles, Theme } from '@material-ui/core'
+import { useMemo } from 'react'
 
 import { Expense } from '../../model/model'
 import expenseUtils from './helper/expenseUtils'
 
-const useChipStyles = makeStyles<Theme, { backgroundColor?: string; color: string }>({
+const useStyles = makeStyles<Theme, { backgroundColor?: string; color: string }>({
     root: props => props,
     icon: props => props,
 })
@@ -18,19 +19,15 @@ const ExpenseCategoryChip = (props: Props) => {
         category: props.category,
         variant: 'chip',
     })
-    const chipClasses = useChipStyles(palette)
+    const classes = useStyles(palette)
+    const amount = useMemo(
+        () => expenseUtils.getAmountByCategory(props.category, props.expenses, true),
+        [props.category, props.expenses]
+    )
 
     return (
         <Grid item key={props.category}>
-            <Chip
-                classes={chipClasses}
-                icon={icon}
-                label={`${props.category}: ${expenseUtils.getAmountByCategory(
-                    props.category,
-                    props.expenses,
-                    true
-                )}`}
-            />
+            <Chip classes={classes} icon={icon} label={`${props.category}: ${amount}`} />
         </Grid>
     )
 }
