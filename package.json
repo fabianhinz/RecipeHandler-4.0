@@ -12,7 +12,7 @@
 		"@types/algoliasearch": "^4.0.0",
 		"@types/jest": "26.0.23",
 		"@types/node": "15.6.0",
-		"@types/react": "17.0.2",
+		"@types/react": "17.0.8",
 		"@types/react-beautiful-dnd": "^13.0.0",
 		"@types/react-dom": "17.0.1",
 		"@types/react-dropzone": "^5.1.0",
