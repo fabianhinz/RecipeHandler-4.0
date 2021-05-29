@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { Recipe } from '../model/model'
+import { Nullable, Recipe } from '../model/model'
 import { FirebaseService } from '../services/firebase'
 
 type RecipesCollectionState = { loading: boolean; recipe: Recipe | null }
@@ -18,16 +18,12 @@ type Props = {
 
 export const useRecipeDoc = (props: Props) => {
     const [state, setState] = useState<RecipesCollectionState>(initialState)
-    const location = useLocation()
-
-    useEffect(() => {
-        setState(initialState)
-    }, [location.pathname])
+    const location = useLocation<Nullable<RecipeLocation>>()
 
     useEffect(() => {
         let mounted = true
 
-        const recipe = location.state && (location.state as RecipeLocation).recipe
+        const recipe = location.state?.recipe
 
         if (recipe) setState({ loading: false, recipe })
 
@@ -36,6 +32,8 @@ export const useRecipeDoc = (props: Props) => {
             .doc(props.recipeName)
             .onSnapshot(documentSnapshot => {
                 if (!mounted) return
+                if (!documentSnapshot.exists && recipe) return
+
                 setState({
                     loading: false,
                     recipe: documentSnapshot.data() as Recipe,

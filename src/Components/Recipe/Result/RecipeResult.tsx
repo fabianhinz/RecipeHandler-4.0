@@ -50,11 +50,9 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                             }
                             action={<CopyButton text={recipe.ingredients} />}
                             BackgroundIcon={AssignmentIcon}>
-                            <MarkdownRenderer
-                                withShoppingList
-                                recipeName={recipe.name}
-                                source={recipe.ingredients}
-                            />
+                            <MarkdownRenderer withShoppingList recipeName={recipe.name}>
+                                {recipe.ingredients}
+                            </MarkdownRenderer>
                         </StyledCard>
                     </Grid>
 
@@ -63,10 +61,9 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                             header="Beschreibung"
                             BackgroundIcon={BookIcon}
                             action={<CopyButton text={recipe.description} />}>
-                            <MarkdownRenderer
-                                recipeName={recipe.name}
-                                source={recipe.description}
-                            />
+                            <MarkdownRenderer recipeName={recipe.name}>
+                                {recipe.description}
+                            </MarkdownRenderer>
                         </StyledCard>
                     </Grid>
 

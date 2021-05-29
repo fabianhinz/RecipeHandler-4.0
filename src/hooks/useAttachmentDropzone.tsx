@@ -1,7 +1,7 @@
 import { Alert } from '@material-ui/lab'
 import compressImage from 'browser-image-compression'
 import React, { useCallback, useState } from 'react'
-import { DropzoneState, useDropzone } from 'react-dropzone'
+import { DropzoneState, FileRejection, useDropzone } from 'react-dropzone'
 
 import { useFirebaseAuthContext } from '../Components/Provider/FirebaseAuthProvider'
 import { AttachmentDoc, DataUrl } from '../model/model'
@@ -37,7 +37,7 @@ export const useAttachmentDropzone = ({
     const { user } = useFirebaseAuthContext()
 
     const onDrop = useCallback(
-        async (acceptedFiles: File[], rejectedFiles: File[]) => {
+        async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
             const closeAlert = () => setAttachmentAlert(undefined)
 
             if (!user)

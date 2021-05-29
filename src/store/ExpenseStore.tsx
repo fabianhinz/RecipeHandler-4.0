@@ -27,7 +27,7 @@ type ExpenseActions = {
     setAutocompleteOptions: (autocompleteOptions: ExpenseState['autocompleteOptions']) => void
     setCategories: (categories: string[]) => void
     handleFirebaseSnapshot: (
-        snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
+        snapshot: firebase.default.firestore.QuerySnapshot<firebase.default.firestore.DocumentData>
     ) => void
 }
 

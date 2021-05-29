@@ -37,8 +37,11 @@ const Trials = () => {
 
     useEffect(() => {
         setQuerying(true)
-        let query: firebase.firestore.CollectionReference | firebase.firestore.Query =
-            FirebaseService.firestore.collection('trials').orderBy('createdDate', 'desc')
+        let query:
+            | firebase.default.firestore.CollectionReference
+            | firebase.default.firestore.Query = FirebaseService.firestore
+            .collection('trials')
+            .orderBy('createdDate', 'desc')
 
         if (lastTrial) query = query.startAfter(lastTrial.createdDate)
 

@@ -33,7 +33,7 @@ const RecipeCookCounterButton = ({ name }: Props) => {
             .doc(name)
             .update({
                 value: FirebaseService.incrementBy(1),
-            } as MostCooked<firebase.firestore.FieldValue>)
+            } as MostCooked<firebase.default.firestore.FieldValue>)
             .catch(console.error)
 
         FirebaseService.firestore

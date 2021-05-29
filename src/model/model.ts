@@ -1,5 +1,4 @@
 import { PaletteType } from '@material-ui/core'
-import { firestore } from 'firebase'
 import { RouteComponentProps } from 'react-router'
 
 export interface Editor {
@@ -11,7 +10,7 @@ export interface DataUrl {
 }
 
 export interface CreatedDate {
-    createdDate: firebase.firestore.Timestamp
+    createdDate: firebase.default.firestore.Timestamp
 }
 
 export interface AttachmentDoc extends Editor, CreatedDate, Partial<FirestoreDocPath> {
@@ -47,7 +46,7 @@ export interface Category {
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>
 
 export interface Comment extends Editor {
-    createdDate: firebase.firestore.Timestamp
+    createdDate: firebase.default.firestore.Timestamp
     documentId: string
     comment: string
 }
@@ -58,7 +57,7 @@ export interface CommentReaction extends Editor, CreatedDate {
 
 export interface Trial extends Editor, CommentsDocument {
     fullPath: string
-    createdDate: firebase.firestore.Timestamp
+    createdDate: firebase.default.firestore.Timestamp
 }
 
 export interface CommentsCollections {
@@ -98,14 +97,14 @@ export type User = {
     admin?: boolean
     profilePicture?: string
     emailVerified: boolean
-    createdDate: firebase.firestore.Timestamp
+    createdDate: firebase.default.firestore.Timestamp
     algoliaAdvancedSyntax: boolean
     bookmarkSync: boolean
     bookmarks: string[]
 }
 
 export interface Pullrequest {
-    closedAt: firestore.Timestamp
+    closedAt: firebase.default.firestore.Timestamp
     creator: string
     issueNumbers: string[] | undefined
     shortSha: string
@@ -145,7 +144,7 @@ export interface FirestoreDocPath {
 
 export interface MostCooked<T> {
     value: T
-    createdDate: firebase.firestore.Timestamp
+    createdDate: firebase.default.firestore.Timestamp
 }
 
 export type TesseractResult = {
@@ -168,7 +167,7 @@ export interface TesseractLog {
 }
 
 export interface CookingHistory {
-    createdDate: firebase.firestore.Timestamp
+    createdDate: firebase.default.firestore.Timestamp
     recipeName: string
 }
 
@@ -185,8 +184,10 @@ export type Expense = {
     shop: string
     category: string
     description?: string
-    date: firebase.firestore.Timestamp
+    date: firebase.default.firestore.Timestamp
     relatedUsers: string[]
 }
 
-export type ArchivedExpense = Expense & { deletedAt: firebase.firestore.Timestamp }
+export type ArchivedExpense = Expense & { deletedAt: firebase.default.firestore.Timestamp }
+
+export type Nullable<UnderlyingType> = null | UnderlyingType
