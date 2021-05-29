@@ -3,6 +3,6 @@
     "plugins": ["simple-import-sort"],
     "rules": {
         "prettier/prettier": "warn",
-        "simple-import-sort/sort": "warn"
+        "simple-import-sort/imports": "warn"
     }
 }

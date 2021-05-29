@@ -37,7 +37,7 @@ import { UserSettingChangeHandler } from './AccountUser'
 
 interface Props {
     user: User
-    userDoc: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
+    userDoc: firebase.default.firestore.DocumentReference<firebase.default.firestore.DocumentData>
     onUserSettingChange: UserSettingChangeHandler
 }
 

@@ -60,10 +60,13 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
     useEffect(() => {
         if (!shouldLoad) return
 
-        let query: firebase.firestore.CollectionReference | firebase.firestore.Query =
-            FirebaseService.firestore.collection('recipes').limit(FirebaseService.QUERY_LIMIT * 2)
+        let query:
+            | firebase.default.firestore.CollectionReference
+            | firebase.default.firestore.Query = FirebaseService.firestore
+            .collection('recipes')
+            .limit(FirebaseService.QUERY_LIMIT * 2)
 
-        const handleSnapshot = (querySnapshot: firebase.firestore.QuerySnapshot) => {
+        const handleSnapshot = (querySnapshot: firebase.default.firestore.QuerySnapshot) => {
             setLoading(false)
             setRecipes(querySnapshot.docs.map(doc => doc.data() as Recipe))
         }

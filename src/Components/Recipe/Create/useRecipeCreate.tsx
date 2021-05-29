@@ -54,8 +54,9 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
 
         const createdDate = FirebaseService.createTimestampFromDate(new Date())
 
+        const recipeName = state.name.trim()
         const recipeDoc: Recipe = {
-            name: state.name,
+            name: recipeName,
             ingredients: state.ingredients,
             amount: state.amount,
             description: state.description,
@@ -70,13 +71,13 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
         try {
             await FirebaseService.firestore
                 .collection('recipes')
-                .doc(state.name)
+                .doc(recipeName)
                 .set(recipeDoc, { merge: true })
 
             if (!editedRecipe) {
                 await FirebaseService.firestore
                     .collection('cookCounter')
-                    .doc(state.name)
+                    .doc(recipeName)
                     .set({
                         value: 0,
                         createdDate,
@@ -93,7 +94,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
             }
 
             recipeService.recipeCreateState = null
-            enqueueSnackbar(`${state.name} gespeichert`, {
+            enqueueSnackbar(`${recipeName} gespeichert`, {
                 variant: 'success',
             })
 

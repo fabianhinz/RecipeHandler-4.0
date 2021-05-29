@@ -21,7 +21,7 @@ import HomeRecentlyEdited from './HomeRecentlyEdited'
 import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from './HomeRecipeCard'
 import HomeRecipeSelection from './HomeRecipeSelection'
 
-type ChangesRecord = Record<firebase.firestore.DocumentChangeType, Map<DocumentId, Recipe>>
+type ChangesRecord = Record<firebase.default.firestore.DocumentChangeType, Map<DocumentId, Recipe>>
 
 const Home = () => {
     const pagedRecipesSize = useRef(0)
@@ -58,8 +58,11 @@ const Home = () => {
     useEffect(() => {
         setQuerying(true)
         const orderByKey = Object.keys(orderBy)[0] as OrderByKey
-        let query: firebase.firestore.CollectionReference | firebase.firestore.Query =
-            FirebaseService.firestore.collection('recipes').orderBy(orderByKey, orderBy[orderByKey])
+        let query:
+            | firebase.default.firestore.CollectionReference
+            | firebase.default.firestore.Query = FirebaseService.firestore
+            .collection('recipes')
+            .orderBy(orderByKey, orderBy[orderByKey])
 
         if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
 

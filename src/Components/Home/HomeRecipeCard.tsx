@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
     recipe: Recipe
-    lastCookedDate?: firebase.firestore.Timestamp
+    lastCookedDate?: firebase.default.firestore.Timestamp
 }
 
 const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {

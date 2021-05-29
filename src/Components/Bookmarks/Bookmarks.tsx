@@ -60,12 +60,12 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
                     </Tabs>
 
                     <SwipeableViews disableLazyLoading disabled index={value}>
-                        <MarkdownRenderer
-                            withShoppingList
-                            recipeName={recipeName}
-                            source={recipe.ingredients}
-                        />
-                        <MarkdownRenderer recipeName={recipeName} source={recipe.description} />
+                        <MarkdownRenderer withShoppingList recipeName={recipeName}>
+                            {recipe.ingredients}
+                        </MarkdownRenderer>
+                        <MarkdownRenderer recipeName={recipeName}>
+                            {recipe.description}
+                        </MarkdownRenderer>
                     </SwipeableViews>
                 </StyledCard>
             ) : (

@@ -19,7 +19,7 @@ import {
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
 import React from 'react'
-import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown'
+import ReactMarkdown, { ReactMarkdownOptions } from 'react-markdown'
 import { useRouteMatch } from 'react-router-dom'
 
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-interface Props extends Omit<ReactMarkdownProps, 'renderers' | 'className'> {
+interface Props extends Omit<ReactMarkdownOptions, 'components' | 'className'> {
     recipeName: string
     withShoppingList?: boolean
 }
@@ -50,18 +50,21 @@ const MarkdownRenderer = (props: Props) => {
     const classes = useStyles()
     const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
 
-    const renderPropsToGrocery = (children: any) => children[0]?.props?.value as string | undefined
+    const markdownPropsToGrocery = (children: any[]) => {
+        return children[0]
+    }
 
-    const getListItemByChildren = (children: any) =>
-        shoppingList.find(
+    const getListItemByChildren = (children: any[]) => {
+        return shoppingList.find(
             item =>
-                item.value === renderPropsToGrocery(children) &&
+                item.value === markdownPropsToGrocery(children) &&
                 item.recipeNameRef === props.recipeName
         )
+    }
 
     const handleCheckboxChange =
         (children: any) => (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-            let grocery = renderPropsToGrocery(children)
+            let grocery = markdownPropsToGrocery(children)
             if (!grocery || !props.withShoppingList) return
 
             let list = [...shoppingList]
@@ -77,7 +80,7 @@ const MarkdownRenderer = (props: Props) => {
             } else {
                 list = list.filter(
                     item =>
-                        item.value !== renderPropsToGrocery(children) ||
+                        item.value !== markdownPropsToGrocery(children) ||
                         item.recipeNameRef !== props.recipeName
                 )
             }
@@ -86,41 +89,45 @@ const MarkdownRenderer = (props: Props) => {
 
     return (
         <ReactMarkdown
-            renderers={{
-                link: renderProps => (
-                    <Link target="_blank" href={renderProps.href}>
-                        {renderProps.children}
+            components={{
+                a: ({ node, ...markdownProps }) => (
+                    <Link target="_blank" href={markdownProps.href as string}>
+                        {markdownProps.children}
                     </Link>
                 ),
-                list: renderProps => <List>{renderProps.children}</List>,
-                listItem: renderProps => (
-                    <ListItem disableGutters>
-                        {renderProps.ordered || !props.withShoppingList ? (
-                            <ListItemAvatar>
-                                <Avatar>{renderProps.index + 1}</Avatar>
-                            </ListItemAvatar>
-                        ) : (
+                ol: ({ node, ...markdownProps }) => <List>{markdownProps.children}</List>,
+                ul: ({ node, ...markdownProps }) => <List>{markdownProps.children}</List>,
+                li: ({ node, ...markdownProps }) => {
+                    const listItemText = <ListItemText primary={markdownProps.children} />
+
+                    if (markdownProps.ordered || !props.withShoppingList)
+                        return (
+                            <ListItem disableGutters>
+                                <ListItemAvatar>
+                                    <Avatar>{markdownProps.index + 1}</Avatar>
+                                </ListItemAvatar>
+
+                                {listItemText}
+                            </ListItem>
+                        )
+
+                    return (
+                        <ListItem disableGutters>
                             <ListItemIcon>
                                 <Tooltip
                                     TransitionComponent={GrowIn}
                                     title={
-                                        getListItemByChildren(renderProps.children)
+                                        getListItemByChildren(markdownProps.children)
                                             ? 'Von der Einkaufsliste entfernen'
                                             : 'Zur Einkaufsliste hinzufügen'
                                     }>
                                     <Checkbox
-                                        icon={
-                                            props.withShoppingList ? (
-                                                <AddCircleIcon />
-                                            ) : (
-                                                <RemoveCircleIcon />
-                                            )
-                                        }
+                                        icon={<AddCircleIcon />}
                                         checkedIcon={<RemoveCircleIcon />}
                                         checked={Boolean(
-                                            getListItemByChildren(renderProps.children)
+                                            getListItemByChildren(markdownProps.children)
                                         )}
-                                        onChange={handleCheckboxChange(renderProps.children)}
+                                        onChange={handleCheckboxChange(markdownProps.children)}
                                         classes={{ root: classes.checkboxRoot }}
                                         disabled={
                                             (match.path !== PATHS.details() &&
@@ -130,16 +137,21 @@ const MarkdownRenderer = (props: Props) => {
                                     />
                                 </Tooltip>
                             </ListItemIcon>
-                        )}
-                        <ListItemText primary={renderProps.children} />
-                    </ListItem>
+
+                            {listItemText}
+                        </ListItem>
+                    )
+                },
+                hr: () => <Divider />,
+                table: ({ node, ...markdownProps }) => <Table>{markdownProps.children}</Table>,
+                thead: ({ node, ...markdownProps }) => (
+                    <TableHead>{markdownProps.children}</TableHead>
                 ),
-                thematicBreak: () => <Divider />,
-                table: renderProps => <Table>{renderProps.children}</Table>,
-                tableHead: renderProps => <TableHead>{renderProps.children}</TableHead>,
-                tableBody: renderProps => <TableBody>{renderProps.children}</TableBody>,
-                tableRow: renderProps => <TableRow>{renderProps.children}</TableRow>,
-                tableCell: renderProps => <TableCell>{renderProps.children}</TableCell>,
+                tbody: ({ node, ...markdownProps }) => (
+                    <TableBody>{markdownProps.children}</TableBody>
+                ),
+                tr: ({ node, ...markdownProps }) => <TableRow>{markdownProps.children}</TableRow>,
+                td: ({ node, ...markdownProps }) => <TableCell>{markdownProps.children}</TableCell>,
             }}
             className={classes.markdown}
             {...props}

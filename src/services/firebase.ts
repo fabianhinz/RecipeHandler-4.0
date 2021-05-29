@@ -17,15 +17,19 @@ const firebaseConfig = {
 }
 
 firebase.initializeApp(firebaseConfig)
-firebase.firestore().enablePersistence({ synchronizeTabs: true })
+if (!__USE_EMULATORS__) firebase.firestore().enablePersistence({ synchronizeTabs: true })
+
 const functions = firebase.app().functions('europe-west1')
-
-if (process.env.NODE_ENV !== 'production') functions.useFunctionsEmulator('http://localhost:5000')
-
 const firestore = firebase.firestore()
 const storage = firebase.storage()
 const storageRef = storage.ref()
 const auth = firebase.auth()
+
+if (__USE_EMULATORS__) {
+    functions.useEmulator('localhost', 5001)
+    firestore.useEmulator('localhost', 8080)
+    storage.useEmulator('localhost', 9199)
+}
 
 const createTimestampFromDate = (date: Date) => firebase.firestore.Timestamp.fromDate(date)
 const createDateFromTimestamp = (timestamp: firebase.firestore.Timestamp) =>

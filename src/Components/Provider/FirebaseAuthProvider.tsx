@@ -7,7 +7,8 @@ import useExpenseStore, { EXPENSE_COLLECTION } from '../../store/ExpenseStore'
 import { ArrayFns, ReorderParams } from '../../util/fns'
 import BuiltWithFirebase from '../Shared/BuiltWithFirebase'
 
-type DocumentRef = firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
+type DocumentRef =
+    firebase.default.firestore.DocumentReference<firebase.default.firestore.DocumentData>
 
 interface AuthContext {
     user: User | undefined
@@ -61,7 +62,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
     const classes = useStyles()
 
-    const handleAuthStateChange = useCallback((user: firebase.User | null) => {
+    const handleAuthStateChange = useCallback((user: firebase.default.User | null) => {
         setAuthReady(true)
         if (!user) {
             setUser(undefined)

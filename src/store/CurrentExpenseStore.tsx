@@ -1,4 +1,3 @@
-import firebase from 'firebase'
 import create from 'zustand'
 
 import { Expense } from '../model/model'
@@ -11,7 +10,7 @@ type ExpensActions = {
     setAmount: (amount: number) => void
     setCategory: (category: string) => void
     setCreator: (creator: string) => void
-    setDate: (date: firebase.firestore.Timestamp) => void
+    setDate: (date: firebase.default.firestore.Timestamp) => void
     setRelatedUsers: (user: string) => void
     setShop: (shop: string) => void
     setDescription: (description: string) => void
