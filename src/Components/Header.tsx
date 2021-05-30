@@ -82,7 +82,7 @@ const Header = () => {
         <>
             <div className={classes.safeArea} />
 
-            <AppBar className={classes.appbar} color="default" position="fixed">
+            <AppBar variant="elevation" className={classes.appbar} color="default" position="fixed">
                 <Toolbar className={classes.toolbar}>
                     <div className={classes.menuIcon}>
                         <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>

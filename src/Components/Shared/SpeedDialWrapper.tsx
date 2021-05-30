@@ -13,12 +13,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         alignItems: 'center',
         bottom: `env(safe-area-inset-bottom)`,
-        [theme.breakpoints.between('xs', 'sm')]: {
-            right: 0,
-        },
-        [theme.breakpoints.up('md')]: {
-            left: 0,
-        },
+        right: 0,
     },
 }))
 
