@@ -36,7 +36,7 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                 <RecipeResultHeader recipe={recipe} />
             </Grid>
 
-            {/* {user && <Attachments recipe={recipe} />} */}
+            {user && <Attachments recipe={recipe} />}
 
             <Grid item xs={12}>
                 <Grid container spacing={2}>
