@@ -6,6 +6,7 @@ import React, { memo } from 'react'
 
 import { Recipe } from '../../../model/model'
 import { FirebaseService } from '../../../services/firebase'
+import { useLayoutStore } from '../../../store/LayoutStore'
 import AccountChip from '../../Account/AccountChip'
 import Attachments from '../../Attachments/Attachments'
 import MarkdownRenderer from '../../Markdown/MarkdownRenderer'
@@ -27,6 +28,7 @@ interface RecipeResultProps {
 const RecipeResult = ({ recipe }: RecipeResultProps) => {
     const { gridBreakpointProps } = useGridContext()
     const { user } = useFirebaseAuthContext()
+    const gridListActive = useLayoutStore(store => store.gridListActive)
 
     if (!recipe) return <NotFound visible />
 
@@ -36,63 +38,69 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                 <RecipeResultHeader recipe={recipe} />
             </Grid>
 
-            {user && <Attachments recipe={recipe} />}
+            {gridListActive ? (
+                <>{user && <Attachments recipe={recipe} />}</>
+            ) : (
+                <>
+                    <Grid item xs={12}>
+                        <Grid container spacing={2}>
+                            <Grid {...gridBreakpointProps} item>
+                                <StyledCard
+                                    header={
+                                        <>
+                                            Zutaten für {recipe.amount}{' '}
+                                            {recipe.amount < 2 ? 'Person' : 'Personen'}
+                                        </>
+                                    }
+                                    action={<CopyButton text={recipe.ingredients} />}
+                                    BackgroundIcon={AssignmentIcon}>
+                                    <MarkdownRenderer withShoppingList recipeName={recipe.name}>
+                                        {recipe.ingredients}
+                                    </MarkdownRenderer>
+                                </StyledCard>
+                            </Grid>
 
-            <Grid item xs={12}>
-                <Grid container spacing={2}>
-                    <Grid {...gridBreakpointProps} item>
-                        <StyledCard
-                            header={
-                                <>
-                                    Zutaten für {recipe.amount}{' '}
-                                    {recipe.amount < 2 ? 'Person' : 'Personen'}
-                                </>
-                            }
-                            action={<CopyButton text={recipe.ingredients} />}
-                            BackgroundIcon={AssignmentIcon}>
-                            <MarkdownRenderer withShoppingList recipeName={recipe.name}>
-                                {recipe.ingredients}
-                            </MarkdownRenderer>
-                        </StyledCard>
-                    </Grid>
+                            <Grid {...gridBreakpointProps} item>
+                                <StyledCard
+                                    header="Beschreibung"
+                                    BackgroundIcon={BookIcon}
+                                    action={<CopyButton text={recipe.description} />}>
+                                    <MarkdownRenderer recipeName={recipe.name}>
+                                        {recipe.description}
+                                    </MarkdownRenderer>
+                                </StyledCard>
+                            </Grid>
 
-                    <Grid {...gridBreakpointProps} item>
-                        <StyledCard
-                            header="Beschreibung"
-                            BackgroundIcon={BookIcon}
-                            action={<CopyButton text={recipe.description} />}>
-                            <MarkdownRenderer recipeName={recipe.name}>
-                                {recipe.description}
-                            </MarkdownRenderer>
-                        </StyledCard>
-                    </Grid>
+                            {recipe.relatedRecipes.length > 0 && (
+                                <Grid {...gridBreakpointProps} item>
+                                    <StyledCard header="Passt gut zu" BackgroundIcon={SwapIcon}>
+                                        <RecipeResultRelated
+                                            relatedRecipes={recipe.relatedRecipes}
+                                        />
+                                    </StyledCard>
+                                </Grid>
+                            )}
 
-                    {recipe.relatedRecipes.length > 0 && (
-                        <Grid {...gridBreakpointProps} item>
-                            <StyledCard header="Passt gut zu" BackgroundIcon={SwapIcon}>
-                                <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
-                            </StyledCard>
+                            {user && (
+                                <Grid {...gridBreakpointProps} item>
+                                    <Satisfaction recipeName={recipe.name} />
+                                </Grid>
+                            )}
                         </Grid>
-                    )}
+                    </Grid>
 
                     {user && (
-                        <Grid {...gridBreakpointProps} item>
-                            <Satisfaction recipeName={recipe.name} />
+                        <Grid item xs={12} container justify="center">
+                            <AccountChip
+                                variant="outlined"
+                                uid={recipe.editorUid}
+                                enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
+                                    recipe.createdDate
+                                ).toLocaleDateString()}`}
+                            />
                         </Grid>
                     )}
-                </Grid>
-            </Grid>
-
-            {user && (
-                <Grid item xs={12} container justify="center">
-                    <AccountChip
-                        variant="outlined"
-                        uid={recipe.editorUid}
-                        enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
-                            recipe.createdDate
-                        ).toLocaleDateString()}`}
-                    />
-                </Grid>
+                </>
             )}
         </EntryGridContainer>
     )
