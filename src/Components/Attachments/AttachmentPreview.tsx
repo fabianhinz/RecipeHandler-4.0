@@ -1,41 +1,25 @@
-import { Grid, makeStyles } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 
 import { useAttachment } from '../../hooks/useAttachment'
 import useImgSrcLazy from '../../hooks/useImgSrcLazy'
 import { AttachmentDoc } from '../../model/model'
 import elementIdService from '../../services/elementIdService'
+import { BORDER_RADIUS } from '../../theme'
 
-const useStyles = makeStyles(theme => {
-    const responsiveDimenstions = {
-        [theme.breakpoints.between('xs', 'sm')]: {
-            width: 250 - theme.spacing(4),
-            height: 250 - theme.spacing(4),
-        },
-        [theme.breakpoints.between('md', 'lg')]: {
-            width: 300 - theme.spacing(4),
-            height: 300 - theme.spacing(4),
-        },
-        [theme.breakpoints.up('xl')]: {
-            width: 350 - theme.spacing(4),
-            height: 350 - theme.spacing(4),
-        },
-    }
-
-    return {
-        skeleton: {
-            ...responsiveDimenstions,
-        },
-        img: {
-            ...responsiveDimenstions,
-            cursor: 'pointer',
-            borderRadius: '50%',
-            boxShadow: theme.shadows[2],
-            objectFit: 'cover',
-        },
-    }
-})
+const useStyles = makeStyles(theme => ({
+    skeleton: {
+        borderRadius: BORDER_RADIUS,
+        height: 300,
+    },
+    img: {
+        cursor: 'pointer',
+        borderRadius: BORDER_RADIUS,
+        boxShadow: theme.shadows[1],
+        objectFit: 'cover',
+    },
+}))
 
 interface Props {
     attachment: AttachmentDoc
@@ -49,20 +33,18 @@ const AttachmentPreview = ({ attachment, onClick }: Props) => {
     const { imgLoading, imgSrc } = useImgSrcLazy({ src: attachmentRef.mediumDataUrl })
     const classes = useStyles()
 
+    if (imgLoading) return <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
+
     return (
-        <Grid item>
-            {imgLoading ? (
-                <Skeleton variant="circle" animation="wave" className={classes.skeleton} />
-            ) : (
-                <img
-                    onClick={() => onClick(originIdRef.current)}
-                    className={classes.img}
-                    alt=""
-                    id={originIdRef.current}
-                    src={imgSrc}
-                />
-            )}
-        </Grid>
+        <img
+            onClick={() => onClick(originIdRef.current)}
+            alt=""
+            id={originIdRef.current}
+            width="100%"
+            height="100%"
+            className={classes.img}
+            src={imgSrc}
+        />
     )
 }
 

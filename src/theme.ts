@@ -5,6 +5,11 @@ export const BORDER_RADIUS = 10
 export const BORDER_RADIUS_HUGE = 16
 
 const sharedTheme: Partial<ThemeOptions> = {
+    props: {
+        MuiPaper: {
+            variant: 'outlined',
+        },
+    },
     overrides: {
         MuiExpansionPanel: {
             rounded: {

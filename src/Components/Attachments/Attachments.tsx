@@ -1,6 +1,5 @@
 import { Grid, makeStyles } from '@material-ui/core'
-import Skeleton from '@material-ui/lab/Skeleton'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { AttachmentDoc, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -12,31 +11,11 @@ interface Props {
 }
 
 const useStyles = makeStyles(theme => ({
-    container: {
-        overflowX: 'auto',
-        [theme.breakpoints.between('xs', 'sm')]: {
-            height: 250,
-        },
-        [theme.breakpoints.between('md', 'lg')]: {
-            height: 300,
-        },
-        [theme.breakpoints.up('xl')]: {
-            height: 350,
-        },
-    },
-    skeleton: {
-        [theme.breakpoints.between('xs', 'sm')]: {
-            width: 250 - theme.spacing(4),
-            height: 250 - theme.spacing(4),
-        },
-        [theme.breakpoints.between('md', 'lg')]: {
-            width: 300 - theme.spacing(4),
-            height: 300 - theme.spacing(4),
-        },
-        [theme.breakpoints.up('xl')]: {
-            width: 350 - theme.spacing(4),
-            height: 350 - theme.spacing(4),
-        },
+    attachmentsRoot: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+        gridTemplateRows: '1fr',
+        gridGap: theme.spacing(2),
     },
 }))
 
@@ -70,21 +49,15 @@ const Attachments = ({ recipe }: Props) => {
 
     return (
         <Grid item xs={12}>
-            <Grid wrap="nowrap" className={classes.container} container spacing={2}>
-                {savedAttachments.length === 0 &&
-                    new Array(recipe.numberOfAttachments).fill(1).map((_, index) => (
-                        <Grid item key={index}>
-                            <Skeleton variant="circle" className={classes.skeleton} />
-                        </Grid>
-                    ))}
+            <div className={classes.attachmentsRoot}>
                 {savedAttachments.map((attachment, index) => (
                     <AttachmentPreview
-                        onClick={originId => handlePreviewClick(originId, index)}
+                        onClick={(originId: any) => handlePreviewClick(originId, index)}
                         attachment={attachment}
                         key={attachment.docPath}
                     />
                 ))}
-            </Grid>
+            </div>
         </Grid>
     )
 }

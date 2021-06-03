@@ -45,14 +45,10 @@ const useStyles = makeStyles(theme => ({
         position: 'fixed',
         top: 0,
         left: 0,
-        zIndex: -1,
-        opacity: 0,
         height: '100vh',
         width: '100vw',
         backgroundColor: theme.palette.background.paper,
-        transition: theme.transitions.create('opacity', {
-            duration: theme.transitions.duration.enteringScreen,
-        }),
+        zIndex: theme.zIndex.modal + 2,
         display: 'flex',
         justifyContent: 'space-evenly',
         alignItems: 'center',
@@ -63,10 +59,7 @@ const useStyles = makeStyles(theme => ({
             flexDirection: 'row',
         },
     },
-    backgroundVisible: {
-        zIndex: theme.zIndex.modal + 2,
-        opacity: 1,
-    },
+
     destination: {
         [theme.breakpoints.only('xs')]: {
             width: 320,
@@ -258,38 +251,8 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
 
         if (!origin || !destination) return
 
-        const originRect = origin.getBoundingClientRect()
-        const destinationRect = destination.getBoundingClientRect()
-
-        const keyframes: Keyframe[] = [
-            {
-                top: `${originRect.top}px`,
-                left: `${originRect.left}px`,
-                position: 'fixed',
-                transform: `
-                    translate(0px,0px)
-                    scale(1,1)
-                `,
-                boxShadow: 'unset',
-                width: originRect.width,
-                height: originRect.height,
-                zIndex: theme.zIndex.modal - 1,
-            },
-            {
-                transform: `
-                    translate(-50%,-50%)
-                    scale(${destinationRect.width / originRect.width},${
-                    destinationRect.height / originRect.height
-                })
-                `,
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                boxShadow: 'unset',
-                width: destinationRect.width,
-                zIndex: theme.zIndex.modal - 1,
-            },
-        ]
+        // this component is going to day anyway
+        const keyframes: Keyframe[] = []
 
         const options: KeyframeAnimationOptions = {
             duration: theme.transitions.duration.enteringScreen,
@@ -404,86 +367,90 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
     return (
         <>
             <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
-            <div className={clsx(classes.background, originId && classes.backgroundVisible)}>
-                <Fab
-                    size="medium"
-                    onClick={() => setActiveAttachment(prev => --prev)}
-                    disabled={activeAttachment === 0}>
-                    <ChevronLeft />
-                </Fab>
-                <div id="destination" className={classes.destination}>
-                    {attachments && (
-                        <SwipeableViews disabled index={activeAttachment}>
-                            {attachments.map((attachment, index) => (
-                                <SwipeableAttachment
-                                    onPossiblePreviewLoad={handlePossiblePreviewLoad}
-                                    index={index}
-                                    key={index}
-                                    attachment={attachment}
-                                />
-                            ))}
-                        </SwipeableViews>
-                    )}
-                </div>
-                <Fab
-                    size="medium"
-                    onClick={() => setActiveAttachment(prev => ++prev)}
-                    disabled={attachments && activeAttachment === attachments.length - 1}>
-                    <ChevronRight />
-                </Fab>
+            <Slide in={Boolean(originId)} direction="up">
+                <div className={classes.background}>
+                    <Fab
+                        size="medium"
+                        onClick={() => setActiveAttachment(prev => --prev)}
+                        disabled={activeAttachment === 0}>
+                        <ChevronLeft />
+                    </Fab>
+                    <div id="destination" className={classes.destination}>
+                        {attachments && (
+                            <SwipeableViews disabled index={activeAttachment}>
+                                {attachments.map((attachment, index) => (
+                                    <SwipeableAttachment
+                                        onPossiblePreviewLoad={handlePossiblePreviewLoad}
+                                        index={index}
+                                        key={index}
+                                        attachment={attachment}
+                                    />
+                                ))}
+                            </SwipeableViews>
+                        )}
+                    </div>
+                    <Fab
+                        size="medium"
+                        onClick={() => setActiveAttachment(prev => ++prev)}
+                        disabled={attachments && activeAttachment === attachments.length - 1}>
+                        <ChevronRight />
+                    </Fab>
 
-                <Grid className={classes.btnContainer} container justify="flex-end" spacing={1}>
-                    <Grid item>
-                        <Tooltip placement="bottom" title="Schließen">
-                            <div>
-                                <IconButton disabled={alert.open} onClick={() => handleAnimation()}>
-                                    <CloseIcon />
-                                </IconButton>
-                            </div>
-                        </Tooltip>
-                    </Grid>
-                    <Grid item>
-                        <Tooltip placement="bottom" title="Als Vorschaubild setzen">
-                            <IconButton disabled={alert.open} onClick={handlePreviewChange}>
-                                <FileImage />
-                            </IconButton>
-                        </Tooltip>
-                    </Grid>
-                    {!isSafari && (
+                    <Grid className={classes.btnContainer} container justify="flex-end" spacing={1}>
                         <Grid item>
-                            <Tooltip placement="bottom" title="Herunterladen">
+                            <Tooltip placement="bottom" title="Schließen">
                                 <div>
-                                    <IconButton disabled={alert.open} onClick={handleDownload}>
-                                        <Download />
+                                    <IconButton
+                                        disabled={alert.open}
+                                        onClick={() => handleAnimation()}>
+                                        <CloseIcon />
                                     </IconButton>
                                 </div>
                             </Tooltip>
                         </Grid>
-                    )}
-                    <Grid item>
-                        <Tooltip placement="bottom" title="Löschen">
-                            <div>
-                                <IconButton
-                                    disabled={alert.open}
-                                    onClick={requestDeleteConfirmation}>
-                                    <DeleteIcon />
+                        <Grid item>
+                            <Tooltip placement="bottom" title="Als Vorschaubild setzen">
+                                <IconButton disabled={alert.open} onClick={handlePreviewChange}>
+                                    <FileImage />
                                 </IconButton>
-                            </div>
-                        </Tooltip>
+                            </Tooltip>
+                        </Grid>
+                        {!isSafari && (
+                            <Grid item>
+                                <Tooltip placement="bottom" title="Herunterladen">
+                                    <div>
+                                        <IconButton disabled={alert.open} onClick={handleDownload}>
+                                            <Download />
+                                        </IconButton>
+                                    </div>
+                                </Tooltip>
+                            </Grid>
+                        )}
+                        <Grid item>
+                            <Tooltip placement="bottom" title="Löschen">
+                                <div>
+                                    <IconButton
+                                        disabled={alert.open}
+                                        onClick={requestDeleteConfirmation}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </div>
+                            </Tooltip>
+                        </Grid>
                     </Grid>
-                </Grid>
 
-                <Slide direction="down" in={alert.open}>
-                    <div className={classes.alertContainer}>
-                        <Alert
-                            severity={alert?.severity}
-                            action={alert.action}
-                            onClose={() => setAlert(prev => ({ ...prev, open: false }))}>
-                            {alert?.text}
-                        </Alert>
-                    </div>
-                </Slide>
-            </div>
+                    <Slide direction="down" in={alert.open}>
+                        <div className={classes.alertContainer}>
+                            <Alert
+                                severity={alert?.severity}
+                                action={alert.action}
+                                onClose={() => setAlert(prev => ({ ...prev, open: false }))}>
+                                {alert?.text}
+                            </Alert>
+                        </div>
+                    </Slide>
+                </div>
+            </Slide>
         </>
     )
 }

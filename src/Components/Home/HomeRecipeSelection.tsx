@@ -1,4 +1,14 @@
-import { Button, Grid, ListSubheader, makeStyles, Typography } from '@material-ui/core'
+import {
+    Button,
+    Grid,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    ListSubheader,
+    makeStyles,
+    Typography,
+} from '@material-ui/core'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import clsx from 'clsx'
 
@@ -120,19 +130,27 @@ const HomeRecipeSelection = (props: Props) => {
                                 <ListSubheader className={classes.listSubheader}>
                                     Editoren
                                 </ListSubheader>
-                                <Grid container spacing={1} className={classes.editorContainer}>
-                                    {usersContext.userIds.map(uid => (
-                                        <Grid item key={uid}>
-                                            <AccountAvatar
-                                                user={usersContext.getByUid(uid)!}
-                                                isUserSelected={props.selectedEditors.some(
-                                                    editorUid => editorUid === uid
-                                                )}
+                                <List disablePadding>
+                                    {usersContext.userIds.map(uid => {
+                                        const user = usersContext.getByUid(uid)!
+                                        return (
+                                            <ListItem
+                                                button
                                                 onClick={() => handleAccountAvatarClick(uid)}
-                                            />
-                                        </Grid>
-                                    ))}
-                                </Grid>
+                                                key={uid}>
+                                                <ListItemAvatar>
+                                                    <AccountAvatar
+                                                        user={user}
+                                                        isUserSelected={props.selectedEditors.some(
+                                                            editorUid => editorUid === uid
+                                                        )}
+                                                    />
+                                                </ListItemAvatar>
+                                                <ListItemText primary={user.username} />
+                                            </ListItem>
+                                        )
+                                    })}
+                                </List>
                             </Grid>
                         )}
                     </CategorySelection>

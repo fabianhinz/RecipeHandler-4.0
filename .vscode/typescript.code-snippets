@@ -1,0 +1,18 @@
+{
+    "store boilerplate": {
+        "prefix": "rhstore",
+        "body": [
+            "export type ${1:StoreName}State = {}",
+            "",
+            "export type ${1:StoreName}Actions = {}",
+            "",
+            "type ${1:StoreName} = ${1:StoreName}State & ${1:StoreName}Actions",
+            "",
+            "export const use${1:StoreName} = createStore<${1:StoreName}>(",
+            "    (set, get, api) => ({}),",
+            "    '${1:StoreName}'",
+            ")",
+        ],
+        "description": "store boilerplate"
+    }
+}

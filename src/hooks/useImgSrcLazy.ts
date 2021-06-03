@@ -10,6 +10,8 @@ const useImgSrcLazy = ({ src, skipOnUndefined }: Options) => {
     const [imgSrc, setImgSrc] = useState<string | undefined>()
 
     useEffect(() => {
+        setImgLoading(true)
+
         if (!src) {
             if (skipOnUndefined) setImgLoading(false)
             return

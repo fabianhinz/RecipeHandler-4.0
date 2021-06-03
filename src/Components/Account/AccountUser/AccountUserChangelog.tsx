@@ -101,7 +101,7 @@ const AccountUserChangelog = () => {
                 {loading && <Progress variant="absolute" />}
                 <DialogContent className={classes.dialogContent}>
                     {pullrequests.map(pr => (
-                        <Accordion key={pr.shortSha}>
+                        <Accordion variant="elevation" key={pr.shortSha}>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Grid
                                     container

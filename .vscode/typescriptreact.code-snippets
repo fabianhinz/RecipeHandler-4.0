@@ -1,0 +1,46 @@
+{
+    "component boilerplate": {
+        "prefix": "rhcomponent",
+        "body": [
+            "import React from \"react\"",
+            "",
+            "interface StyleProps { }",
+            "",
+            "const useStyles = makeStyles<Theme, StyleProps>(theme => ({",
+            "  ${2:entryClassName}Root: { }",
+            "}))",
+            "",
+            "interface Props { }",
+            "",
+            "const ${1:ComponentName} = (props: Props) => {",
+            "  const classes = useStyles({ })",
+            "",
+            "  return <>Hello ${1:ComponentName}</>",
+            "}",
+            "",
+            "export default ${1:ComponentName}"
+        ],
+        "description": "component boilerplate"
+    },
+    "context boilerplate": {
+        "prefix": "rhcontext",
+        "body": [
+            "import React from \"react\"",
+            "",
+            "interface ${1:ContextType} { }",
+            "const Context = React.createContext<Nullable<${1:ContextType}>>(null)",
+            "",
+            "export const use${1:ContextType} = () => React.useContext(Context) as ${1:ContextType}",
+            "",
+            "interface Props extends WithChildren { }",
+            "",
+            "const Provider = (props: Props) => {",
+            "  const [${2:contextObj}, ${3:setContextObj}] = useState<Nullable<${1:ContextType}>>(null)",
+            "  return <Context.Provider value={${2:contextObj}}>{props.children}</Context.Provider>",
+            "}",
+            "",
+            "export default Provider"
+        ],
+        "description": "context boilerplate"
+    }
+}
