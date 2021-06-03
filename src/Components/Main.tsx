@@ -13,6 +13,7 @@ const useStyles = makeStyles<Theme, { extraPadding?: boolean }>(theme => ({
         borderRadius: BORDER_RADIUS,
         [theme.breakpoints.only('xs')]: {
             padding: theme.spacing(2),
+            boxShadow: theme.shadows[0],
         },
         [theme.breakpoints.up('sm')]: {
             padding: theme.spacing(3),
@@ -21,11 +22,12 @@ const useStyles = makeStyles<Theme, { extraPadding?: boolean }>(theme => ({
     },
     container: {
         userSelect: 'none',
-        padding: '64px 0px',
+        padding: 0,
+        paddingTop: props => (props.extraPadding ? 256 : 192),
         [theme.breakpoints.up('sm')]: {
             paddingLeft: theme.spacing(3),
             paddingRight: theme.spacing(3),
-            paddingTop: props => (props.extraPadding ? 256 : 128) + theme.spacing(3),
+            paddingBottom: theme.spacing(8),
         },
         '@media (min-width: 1440px)': {
             maxWidth: 1440,

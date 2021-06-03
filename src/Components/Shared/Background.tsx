@@ -21,10 +21,12 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     iconContainer: {
         zIndex: -1,
         position: 'fixed',
-        top: 0,
+        display: 'flex',
+        justifyContent: 'flex-start',
+        top: 64,
         left: 95,
         width: '100vw',
-        height: '60vh',
+        height: '50vh',
         backgroundImage: props => {
             if (props.imgLoading || props.attachmentRefLoading) return 'unset'
             if (props.imgSrc) return `url(${props.imgSrc})`
@@ -35,7 +37,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         [theme.breakpoints.only('xs')]: {
-            display: 'none',
+            left: 0,
         },
     },
     skeleton: {
@@ -51,11 +53,13 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
                 : 'radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(255,255,255,0.7) 100%)',
     },
     icon: props => ({
-        marginTop: 64,
         padding: theme.spacing(2),
         filter: theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
         width: 400,
         display: props.imgSrc ? 'none' : 'static',
+        [theme.breakpoints.only('xs')]: {
+            flex: 1,
+        },
     }),
 }))
 
@@ -93,7 +97,7 @@ export const Background = ({ Icon }: Props) => {
             })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.pathname, user])
-    console.log({ imgLoading, attachmentRefLoading })
+
     return (
         <div className={classes.iconContainer}>
             {imgLoading || attachmentRefLoading ? (
