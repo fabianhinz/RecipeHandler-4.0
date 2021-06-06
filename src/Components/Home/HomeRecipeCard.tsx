@@ -78,7 +78,7 @@ const useStyles = makeStyles<
 
             return theme.palette.type === 'dark'
                 ? `linear-gradient(to top, ${props.swatches.darkVibrant}, rgba(0,0,0,0))`
-                : `linear-gradient(to top, ${props.swatches.darkMuted}, rgba(0,0,0,0))`
+                : `linear-gradient(to top, ${props.swatches.lightVibrant}, rgba(0,0,0,0))`
         },
     },
     typographyRecipeName: {
