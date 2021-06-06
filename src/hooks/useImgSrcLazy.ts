@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-
+import { useEffect, useRef, useState } from 'react'
 interface Options {
     src: string | undefined
     skipOnUndefined?: boolean
@@ -8,6 +7,7 @@ interface Options {
 const useImgSrcLazy = ({ src, skipOnUndefined }: Options) => {
     const [imgLoading, setImgLoading] = useState(true)
     const [imgSrc, setImgSrc] = useState<string | undefined>()
+    const imgRef = useRef(new Image())
 
     useEffect(() => {
         setImgLoading(true)
@@ -17,20 +17,19 @@ const useImgSrcLazy = ({ src, skipOnUndefined }: Options) => {
             return
         }
 
-        const img = new Image()
-
-        img.onload = () => {
+        imgRef.current.onload = () => {
             setImgLoading(false)
-            setImgSrc(img.src)
+            setImgSrc(imgRef.current.src)
         }
-        img.onerror = () => setImgLoading(false)
+        imgRef.current.onerror = () => setImgLoading(false)
 
-        img.src = src
+        imgRef.current.src = src
     }, [skipOnUndefined, src])
 
     return {
         imgSrc,
         imgLoading,
+        imgRef: imgLoading || !imgSrc ? null : imgRef.current,
     }
 }
 

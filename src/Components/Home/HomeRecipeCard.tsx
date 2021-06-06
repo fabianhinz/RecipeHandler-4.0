@@ -5,15 +5,15 @@ import {
     Grid,
     makeStyles,
     Paper,
+    Theme,
     Typography,
     Zoom,
 } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 
-import { useAttachment } from '../../hooks/useAttachment'
 import useImgSrcLazy from '../../hooks/useImgSrcLazy'
-import { AttachmentDoc, Recipe } from '../../model/model'
+import { Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
 import { CategoryResult } from '../Category/CategoryResult'
@@ -24,10 +24,10 @@ import { PATHS } from '../Routes/Routes'
 
 export const RECIPE_CARD_HEIGHT = 300
 
-const useStyles = makeStyles(theme => ({
-    avatarContainer: {
-        position: 'relative',
-    },
+const useStyles = makeStyles<
+    Theme,
+    { hover: boolean; swatches: Recipe['previewAttachmentSwatches'] }
+>(theme => ({
     userAvatar: {
         height: 40,
         width: 40,
@@ -40,8 +40,7 @@ const useStyles = makeStyles(theme => ({
         width: '100%',
         height: RECIPE_CARD_HEIGHT,
         fontSize: theme.typography.pxToRem(60),
-        borderTopLeftRadius: BORDER_RADIUS,
-        borderTopRightRadius: BORDER_RADIUS,
+        borderRadius: BORDER_RADIUS,
         [theme.breakpoints.up('lg')]: {
             borderTopLeftRadius: BORDER_RADIUS,
             borderTopRightRadius: 0,
@@ -53,6 +52,10 @@ const useStyles = makeStyles(theme => ({
     },
     card: {
         height: '100%',
+        cursor: 'pointer',
+        position: 'relative',
+        border: 'none',
+        boxShadow: theme.shadows[1],
     },
     avatarOverlay: {
         position: 'absolute',
@@ -60,14 +63,26 @@ const useStyles = makeStyles(theme => ({
         left: 0,
         right: 0,
         padding: 8,
-        height: '66%',
+        height: props => (props.hover ? '100%' : '66%'),
         flexDirection: 'column',
         display: 'flex',
         justifyContent: 'flex-end',
-        background:
-            theme.palette.type === 'dark'
-                ? 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))'
-                : 'linear-gradient(to top, rgba(255,255,255,0.8), rgba(0,0,0,0))',
+        transition: theme.transitions.create('height', {
+            easing: theme.transitions.easing.easeOut,
+        }),
+        background: props => {
+            if (!props.swatches)
+                return theme.palette.type === 'dark'
+                    ? 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))'
+                    : 'linear-gradient(to top, rgba(255,255,255,0.8), rgba(0,0,0,0))'
+
+            return theme.palette.type === 'dark'
+                ? `linear-gradient(to top, ${props.swatches.darkVibrant}, rgba(0,0,0,0))`
+                : `linear-gradient(to top, ${props.swatches.darkMuted}, rgba(0,0,0,0))`
+        },
+    },
+    typographyRecipeName: {
+        textDecoration: props => (props.hover ? 'underline' : 'none'),
     },
 }))
 
@@ -77,11 +92,10 @@ interface Props {
 }
 
 const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
-    const [attachmentDoc, setAttachmentDoc] = useState<AttachmentDoc | undefined>()
+    const [hover, setHover] = useState(false)
 
-    const { attachmentRef } = useAttachment(attachmentDoc)
     const { imgSrc, imgLoading } = useImgSrcLazy({
-        src: recipe.previewAttachment || attachmentRef.mediumDataUrl,
+        src: recipe.previewAttachment,
         skipOnUndefined: true,
     })
 
@@ -89,36 +103,18 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
     const { gridBreakpointProps, compactLayout } = useGridContext()
     const { getByUid } = useUsersContext()
 
-    const classes = useStyles()
+    const classes = useStyles({ hover, swatches: recipe.previewAttachmentSwatches })
 
     const editor = useMemo(() => getByUid(recipe.editorUid), [getByUid, recipe.editorUid])
-
-    useEffect(() => {
-        // ? default preview is overwritten, don't query for attachments
-        if (recipe.previewAttachment) return
-
-        let mounted = true
-        FirebaseService.firestore
-            .collection('recipes')
-            .doc(recipe.name)
-            .collection('attachments')
-            .orderBy('createdDate', 'desc')
-            .limit(1)
-            .get()
-            .then(querySnapshot => {
-                if (!mounted || querySnapshot.docs.length === 0) return
-                setAttachmentDoc(querySnapshot.docs[0].data() as AttachmentDoc)
-            })
-
-        return () => {
-            mounted = false
-        }
-    }, [recipe.name, recipe.previewAttachment])
 
     const handleRecipeClick = () =>
         history.push(PATHS.details(recipe.name), {
             recipe,
         })
+
+    const changeHover = (state: 'active' | 'inactive') => () => {
+        setHover(state === 'active')
+    }
 
     if (compactLayout)
         return (
@@ -133,47 +129,45 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
             </Grid>
         )
 
+    if (imgLoading)
+        return (
+            <Grid item xs={6} md={4} lg={3} xl={2}>
+                <Skeleton className={classes.avatar} variant="rect" />
+            </Grid>
+        )
+
     return (
         <Grid item xs={6} md={4} lg={3} xl={2}>
-            <Card className={classes.card}>
-                <CardActionArea onClick={handleRecipeClick}>
-                    {imgLoading ? (
-                        <Skeleton className={classes.avatar} variant="rect" />
-                    ) : (
-                        <div className={classes.avatarContainer}>
-                            <Avatar variant="square" className={classes.avatar} src={imgSrc}>
-                                {recipe.name.slice(0, 1).toUpperCase()}
-                            </Avatar>
-                            {editor && (
-                                <Zoom in mountOnEnter>
-                                    <Avatar
-                                        className={classes.userAvatar}
-                                        src={editor.profilePicture}>
-                                        {editor.username.slice(0, 1).toUpperCase()}
-                                    </Avatar>
-                                </Zoom>
-                            )}
-                            <div className={classes.avatarOverlay}>
-                                <Typography variant="h6" gutterBottom>
-                                    {recipe.name}
-                                </Typography>
+            <Card
+                onMouseEnter={changeHover('active')}
+                onMouseLeave={changeHover('inactive')}
+                onClick={handleRecipeClick}
+                className={classes.card}>
+                <Avatar variant="square" className={classes.avatar} src={imgSrc}>
+                    {recipe.name.slice(0, 1).toUpperCase()}
+                </Avatar>
+                {editor && (
+                    <Zoom in mountOnEnter>
+                        <Avatar className={classes.userAvatar} src={editor.profilePicture}>
+                            {editor.username.slice(0, 1).toUpperCase()}
+                        </Avatar>
+                    </Zoom>
+                )}
+                <div className={classes.avatarOverlay}>
+                    <Typography className={classes.typographyRecipeName} variant="h6" gutterBottom>
+                        {recipe.name}
+                    </Typography>
 
-                                {lastCookedDate ? (
-                                    <Typography>
-                                        {FirebaseService.createDateFromTimestamp(
-                                            lastCookedDate
-                                        ).toLocaleDateString()}
-                                    </Typography>
-                                ) : (
-                                    <CategoryResult
-                                        categories={recipe.categories}
-                                        variant="outlined"
-                                    />
-                                )}
-                            </div>
-                        </div>
+                    {lastCookedDate ? (
+                        <Typography>
+                            {FirebaseService.createDateFromTimestamp(
+                                lastCookedDate
+                            ).toLocaleDateString()}
+                        </Typography>
+                    ) : (
+                        <CategoryResult categories={recipe.categories} variant="outlined" />
                     )}
-                </CardActionArea>
+                </div>
             </Card>
         </Grid>
     )

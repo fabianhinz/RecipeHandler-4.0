@@ -31,6 +31,14 @@ export interface Recipe extends CommentsDocument, Editor, CreatedDate {
     description: string
     relatedRecipes: Array<string>
     previewAttachment?: string
+    previewAttachmentSwatches?: {
+        vibrant?: string
+        muted?: string
+        darkVibrant?: string
+        darkMuted?: string
+        lightVibrant?: string
+        lightMuted?: string
+    }
     numberOfAttachments: number
 }
 

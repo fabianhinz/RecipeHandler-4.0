@@ -21,6 +21,7 @@ interface Recipe {
     description: string
     ingredients: string
     name: string
+    previewAttachment?: string
 }
 
 export const addToAlgolia = functions
@@ -222,4 +223,31 @@ export const handleRecipesCounter = functions
         }
 
         return
+    })
+
+export const handleRecipeAttachmentVibrants = functions
+    .region('europe-west1')
+    .firestore.document('/recipes/{recipeName}')
+    .onWrite(async (snapshot, context) => {
+        if (!snapshot.after.exists) return
+
+        const { previewAttachment, name } = snapshot.after.data() as Recipe
+        if (!previewAttachment) return
+
+        const Vibrant = await import('node-vibrant')
+        const swatches = await Vibrant.from(previewAttachment).getSwatches()
+        const previewAttachmentSwatches = {
+            vibrant: swatches.Vibrant?.hex,
+            muted: swatches.Muted?.hex,
+            darkVibrant: swatches.DarkVibrant?.hex,
+            darkMuted: swatches.DarkMuted?.hex,
+            lightVibrant: swatches.LightVibrant?.hex,
+            lightMuted: swatches.LightMuted?.hex,
+        }
+
+        console.log(`swatches extracted from ${name}`, previewAttachmentSwatches)
+
+        return admin.firestore().collection('recipes').doc(context.params.recipeName).update({
+            previewAttachmentSwatches,
+        })
     })
