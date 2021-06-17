@@ -38,7 +38,11 @@ const RecipeResultHeader = ({ recipe }: Props) => {
             </Grid>
 
             <Grid item xs={12}>
-                <CategoryResult variant="outlined" categories={recipe.categories} />
+                <CategoryResult
+                    variant="outlined"
+                    swatches={recipe.previewAttachmentSwatches}
+                    categories={recipe.categories}
+                />
             </Grid>
         </Grid>
     )

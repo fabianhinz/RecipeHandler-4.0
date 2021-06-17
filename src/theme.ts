@@ -27,6 +27,9 @@ const sharedTheme: Partial<ThemeOptions> = {
             rounded: {
                 borderRadius: BORDER_RADIUS,
             },
+            outlined: {
+                borderWidth: 2,
+            },
         },
         MuiAvatar: {
             rounded: {
@@ -102,6 +105,9 @@ const sharedTheme: Partial<ThemeOptions> = {
                 letterSpacing: '0.025rem',
                 fontWeight: 500,
                 fontFamily: 'Ubuntu',
+            },
+            outlined: {
+                borderWidth: 2,
             },
         },
     },

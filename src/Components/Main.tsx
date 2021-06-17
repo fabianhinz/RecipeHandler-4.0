@@ -27,6 +27,7 @@ const useStyles = makeStyles<Theme, { extraPadding?: boolean }>(theme => ({
             paddingLeft: theme.spacing(3),
             paddingRight: theme.spacing(3),
             paddingBottom: theme.spacing(8),
+            paddingTop: props => (props.extraPadding ? 320 : 256),
         },
         '@media (min-width: 1440px)': {
             maxWidth: 1440,
