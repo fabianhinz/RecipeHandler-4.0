@@ -1,5 +1,6 @@
 import {
     Avatar,
+    Box,
     Card,
     CardActionArea,
     Grid,
@@ -62,7 +63,7 @@ const useStyles = makeStyles<
         bottom: 0,
         left: 0,
         right: 0,
-        padding: 8,
+        padding: `${theme.spacing(1)}px 0px`,
         height: props => (props.hover ? '100%' : '66%'),
         flexDirection: 'column',
         display: 'flex',
@@ -102,7 +103,6 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
     const { history } = useRouterContext()
     const { gridBreakpointProps, compactLayout } = useGridContext()
     const { getByUid } = useUsersContext()
-
     const classes = useStyles({ hover, swatches: recipe.previewAttachmentSwatches })
 
     const editor = useMemo(() => getByUid(recipe.editorUid), [getByUid, recipe.editorUid])
@@ -154,18 +154,29 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
                     </Zoom>
                 )}
                 <div className={classes.avatarOverlay}>
-                    <Typography className={classes.typographyRecipeName} variant="h6" gutterBottom>
-                        {recipe.name}
-                    </Typography>
+                    <Box mx={1}>
+                        <Typography
+                            className={classes.typographyRecipeName}
+                            variant="h6"
+                            gutterBottom>
+                            {recipe.name}
+                        </Typography>
+                    </Box>
 
                     {lastCookedDate ? (
-                        <Typography>
-                            {FirebaseService.createDateFromTimestamp(
-                                lastCookedDate
-                            ).toLocaleDateString()}
-                        </Typography>
+                        <Box mx={1}>
+                            <Typography>
+                                {FirebaseService.createDateFromTimestamp(
+                                    lastCookedDate
+                                ).toLocaleDateString()}
+                            </Typography>
+                        </Box>
                     ) : (
-                        <CategoryResult categories={recipe.categories} variant="outlined" />
+                        <CategoryResult
+                            extraPadding
+                            swatches={recipe.previewAttachmentSwatches}
+                            categories={recipe.categories}
+                        />
                     )}
                 </div>
             </Card>
