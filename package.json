@@ -33,7 +33,7 @@
 		"mdi-material-ui": "^6.22.1",
 		"notistack": "1.0.9",
 		"npm-run-all": "^4.1.5",
-		"prettier": "^2.3.0",
+		"prettier": "^2.3.2",
 		"react": "17.0.2",
 		"react-beautiful-dnd": "^13.1.0",
 		"react-dom": "17.0.2",
