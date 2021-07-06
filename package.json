@@ -19,7 +19,7 @@
 		"@types/react-highlight-words": "^0.16.2",
 		"@types/react-router-dom": "^5.1.7",
 		"@types/react-swipeable-views": "^0.13.0",
-		"algoliasearch": "^4.9.1",
+		"algoliasearch": "^4.10.3",
 		"browser-image-compression": "^1.0.14",
 		"clipboard-copy": "^4.0.1",
 		"clsx": "^1.1.1",
