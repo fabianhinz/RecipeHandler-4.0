@@ -28,7 +28,7 @@
 		"eslint-loader": "^4.0.2",
 		"eslint-plugin-prettier": "^3.4.0",
 		"eslint-plugin-simple-import-sort": "^7.0.0",
-		"firebase": "^8.6.3",
+		"firebase": "^8.9.0",
 		"immer": "^9.0.2",
 		"mdi-material-ui": "^6.22.1",
 		"notistack": "1.0.9",
