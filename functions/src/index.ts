@@ -84,6 +84,54 @@ export const handleNumberOfCommentsRecipes = functions
             .update({ numberOfComments: admin.firestore.FieldValue.increment(1) })
     )
 
+export const handleCommentNotification = functions
+    .region('europe-west1')
+    .firestore.document('recipes/{recipeName}/comments/{commentId}')
+    .onCreate(async (change, context) => {
+        const commentData = change.data()
+
+        // ? get a snapshot of all users that have a FCMRegistrationToken
+        const snapshot = await admin
+            .firestore()
+            .collection('users')
+            .orderBy('FCMRegistrationToken')
+            .get()
+
+        // ? get all registration tokens, except the one of the editor who created the comment
+        const tokens = snapshot.docs
+            .map(doc => {
+                if (doc.id === commentData.editorUid) return false
+                else return doc.data().FCMRegistrationToken
+            })
+            .filter(Boolean)
+
+        if (tokens.length === 0) {
+            console.log('FCMRegistrationToken array is empty')
+            return
+        }
+
+        const editorSnapshot = await admin.firestore().doc(`/users/${commentData.editorUid}`).get()
+
+        try {
+            // ? send the notification to all clients
+            const batchResponse = await admin.messaging().sendMulticast({
+                data: {
+                    type: 'comment',
+                    recipeName: context.params.recipeName,
+                    comment: commentData.comment,
+                    // ? the document will exist - the commentData returns the uid of the edtior
+                    creator: editorSnapshot.data()?.username,
+                },
+                tokens,
+            })
+            console.log('batchResponse: ', JSON.stringify(batchResponse))
+        } catch (e) {
+            console.error(JSON.stringify(e))
+        }
+
+        return
+    })
+
 export const handleNumberOfCommentsTrials = functions
     .region('europe-west1')
     .firestore.document('trials/{trialId}/comments/{commentId}')

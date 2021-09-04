@@ -26,3 +26,4 @@ ReactDOM.render(
 )
 
 serviceWorkerRegistration.register()
+Notification.requestPermission()

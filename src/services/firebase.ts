@@ -2,6 +2,7 @@ import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/functions'
+import 'firebase/messaging'
 
 import firebase from 'firebase/app'
 
@@ -21,6 +22,7 @@ if (!__USE_EMULATORS__) firebase.firestore().enablePersistence({ synchronizeTabs
 
 const functions = firebase.app().functions('europe-west1')
 const firestore = firebase.firestore()
+const messaging = firebase.messaging()
 const storage = firebase.storage()
 const storageRef = storage.ref()
 const auth = firebase.auth()
@@ -42,6 +44,7 @@ export const FirebaseService = {
     storage,
     storageRef,
     auth,
+    messaging,
     createTimestampFromDate,
     createDateFromTimestamp,
     incrementBy,

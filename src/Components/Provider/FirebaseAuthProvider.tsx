@@ -119,6 +119,17 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     }, [user])
 
     useEffect(() => {
+        if (!user) return
+
+        FirebaseService.messaging.getToken().then(FCMRegistrationToken => {
+            FirebaseService.firestore
+                .collection('users')
+                .doc(user.uid)
+                .update({ FCMRegistrationToken })
+        })
+    }, [user])
+
+    useEffect(() => {
         signInWithCustomToken()
     }, [signInWithCustomToken])
 
