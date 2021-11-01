@@ -1,5 +1,5 @@
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core'
-import { ThemeOptions } from '@material-ui/core/styles/createMuiTheme'
+import { createTheme, responsiveFontSizes } from '@material-ui/core'
+import { ThemeOptions } from '@material-ui/core/styles/createTheme'
 
 export const BORDER_RADIUS = 10
 export const BORDER_RADIUS_HUGE = 16
@@ -116,7 +116,7 @@ const sharedTheme: Partial<ThemeOptions> = {
 export const PRIMARY_COLOR = '#81c784'
 export const SECONDARY_COLOR = '#ffb74d'
 
-const blackTheme = createMuiTheme({
+const blackTheme = createTheme({
     palette: {
         type: 'dark',
         primary: { main: PRIMARY_COLOR },
@@ -131,7 +131,7 @@ const blackTheme = createMuiTheme({
 
 export const responsiveBlackTheme = responsiveFontSizes(blackTheme)
 
-const darkTheme = createMuiTheme({
+const darkTheme = createTheme({
     palette: {
         type: 'dark',
         primary: { main: PRIMARY_COLOR },
@@ -141,7 +141,7 @@ const darkTheme = createMuiTheme({
 })
 export const responsiveDarkTheme = responsiveFontSizes(darkTheme)
 
-const lightTheme = createMuiTheme({
+const lightTheme = createTheme({
     palette: {
         type: 'light',
         primary: { main: PRIMARY_COLOR },
