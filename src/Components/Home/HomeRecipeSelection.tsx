@@ -1,23 +1,10 @@
-import {
-    Button,
-    Grid,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    ListSubheader,
-    makeStyles,
-    Typography,
-} from '@material-ui/core'
+import { Button, FormControlLabel, Grid, makeStyles, Switch, Typography } from '@material-ui/core'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import clsx from 'clsx'
 
 import { OrderByRecord } from '../../model/model'
 import recipeService from '../../services/recipeService'
-import AccountAvatar from '../Account/AccountAvatar'
 import CategorySelection from '../Category/CategorySelection'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useUsersContext } from '../Provider/UsersProvider'
 
 const useStyles = makeStyles(theme => ({
     orderByAsc: {
@@ -44,12 +31,12 @@ interface Props {
     onOrderByChange: (orderBy: OrderByRecord) => void
     selectedEditors: string[]
     onSelectedEditorsChange: (uids: string[]) => void
+    showMyRecipesOnly: boolean
+    onShowMyRecipesOnlyChange: (checked: boolean) => void
 }
 
 const HomeRecipeSelection = (props: Props) => {
     const classes = useStyles()
-    const usersContext = useUsersContext()
-    const { user } = useFirebaseAuthContext()
 
     const handleOrderByChange = (key: keyof OrderByRecord) => () => {
         let newOrderBy: OrderByRecord
@@ -62,17 +49,21 @@ const HomeRecipeSelection = (props: Props) => {
         recipeService.orderBy = newOrderBy
     }
 
-    const handleAccountAvatarClick = (uid: string) => {
-        const isSelected = props.selectedEditors.some(editorUid => editorUid === uid)
-        props.onSelectedEditorsChange(
-            isSelected
-                ? props.selectedEditors.filter(editorUid => editorUid !== uid)
-                : [...props.selectedEditors, uid]
-        )
-    }
-
     const header = (
-        <Grid container spacing={1}>
+        <Grid container justify="center" spacing={1}>
+            <Grid>
+                <FormControlLabel
+                    labelPlacement="start"
+                    label={<Typography color="textSecondary">Nur eigene Rezepte</Typography>}
+                    control={
+                        <Switch
+                            checked={props.showMyRecipesOnly}
+                            onChange={(_, checked) => props.onShowMyRecipesOnlyChange(checked)}
+                        />
+                    }
+                />
+            </Grid>
+            <Grid item xs={12} />
             <Grid item xs={6}>
                 <Button
                     fullWidth
@@ -125,6 +116,8 @@ const HomeRecipeSelection = (props: Props) => {
                         onRemoveSelectedCategories={props.onRemoveSelectedCategories}
                         label="Filter"
                         header={header}>
+                        {/* 
+                        // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
                         {user && (
                             <Grid item xs={12}>
                                 <ListSubheader className={classes.listSubheader}>
@@ -152,7 +145,7 @@ const HomeRecipeSelection = (props: Props) => {
                                     })}
                                 </List>
                             </Grid>
-                        )}
+                        )} */}
                     </CategorySelection>
                 </Grid>
             </Grid>
