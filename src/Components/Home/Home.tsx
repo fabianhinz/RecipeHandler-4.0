@@ -1,6 +1,6 @@
 import { Grid, LinearProgress } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
@@ -9,7 +9,6 @@ import { DocumentId, OrderByKey, OrderByRecord, Recipe } from '../../model/model
 import { FirebaseService } from '../../services/firebase'
 import RecipeService from '../../services/recipeService'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useUsersContext } from '../Provider/UsersProvider'
 import { PATHS } from '../Routes/Routes'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
@@ -32,11 +31,11 @@ const Home = () => {
     const [lastRecipe, setLastRecipe] = useState<Recipe | undefined | null>(null)
     const [orderBy, setOrderBy] = useState<OrderByRecord>(RecipeService.orderBy)
     const [querying, setQuerying] = useState(false)
+    const [showMyRecipesOnly, setShowMyRecipesOnly] = useState(false)
 
     const { selectedCategories, setSelectedCategories, removeSelectedCategories } =
         useCategorySelect()
     const { user } = useFirebaseAuthContext()
-    const usersContext = useUsersContext()
     const [selectedEditors, setSelectedEditors] = useState<string[]>([])
 
     const { IntersectionObserverTrigger } = useIntersectionObserver({
@@ -48,13 +47,6 @@ const Home = () => {
 
     useDocumentTitle('Rezepte')
 
-    useLayoutEffect(() => {
-        if (selectedEditors.length > 0) return
-
-        if (user && user.selectedUsers.length > 0) setSelectedEditors(user.selectedUsers)
-        else setSelectedEditors(usersContext.userIds)
-    }, [selectedEditors.length, user, usersContext.userIds])
-
     useEffect(() => {
         setQuerying(true)
         const orderByKey = Object.keys(orderBy)[0] as OrderByKey
@@ -63,8 +55,9 @@ const Home = () => {
             | firebase.default.firestore.Query = FirebaseService.firestore
             .collection('recipes')
             .orderBy(orderByKey, orderBy[orderByKey])
-
-        if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
+        // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
+        // if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
+        if (showMyRecipesOnly && user) query = query.where('editorUid', '==', user.uid)
 
         if (lastRecipe) query = query.startAfter(lastRecipe[orderByKey])
 
@@ -92,7 +85,7 @@ const Home = () => {
             })
             setQuerying(false)
         })
-    }, [lastRecipe, orderBy, selectedCategories, selectedEditors])
+    }, [lastRecipe, orderBy, selectedCategories, selectedEditors, showMyRecipesOnly, user])
 
     const resetRecipeState = useCallback(() => {
         setPagedRecipes(new Map())
@@ -123,6 +116,11 @@ const Home = () => {
                     orderBy={orderBy}
                     onOrderByChange={newOrderBy => {
                         setOrderBy(newOrderBy)
+                        resetRecipeState()
+                    }}
+                    showMyRecipesOnly={showMyRecipesOnly}
+                    onShowMyRecipesOnlyChange={value => {
+                        setShowMyRecipesOnly(value)
                         resetRecipeState()
                     }}
                 />

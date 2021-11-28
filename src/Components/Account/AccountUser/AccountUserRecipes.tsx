@@ -12,7 +12,7 @@ import { UserSettingChangeHandler } from './AccountUser'
 interface Props {
     onUserSettingChange: UserSettingChangeHandler
 }
-
+// TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
 const AccountUserRecipes = ({ onUserSettingChange }: Props) => {
     const { userIds } = useUsersContext()
     const { user } = useFirebaseAuthContext() as { user: User }

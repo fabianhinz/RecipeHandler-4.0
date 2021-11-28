@@ -16,7 +16,6 @@ import { SecouredRouteFab } from '../../Routes/SecouredRouteFab'
 import EntryGridContainer from '../../Shared/EntryGridContainer'
 import AccountUserAdmin from './AccountUserAdmin'
 import AccountUserHeader from './AccountUserHeader'
-import AccountUserRecipes from './AccountUserRecipes'
 import AccountUserSettings from './AccountUserSettings'
 
 type SettingKeys = keyof Pick<
@@ -140,10 +139,6 @@ const AccountUser = () => {
                             userDoc={userDoc}
                             onUserSettingChange={handleUserSettingChange}
                         />
-
-                        <Grid item {...gridBreakpointProps}>
-                            <AccountUserRecipes onUserSettingChange={handleUserSettingChange} />
-                        </Grid>
 
                         {user.admin && (
                             <Grid item {...gridBreakpointProps}>
