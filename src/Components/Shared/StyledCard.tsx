@@ -1,12 +1,22 @@
-import { Card, CardContent, makeStyles, SvgIconProps, Typography } from '@material-ui/core'
-import React from 'react'
+import {
+    Card,
+    CardContent,
+    Fab,
+    makeStyles,
+    SvgIconProps,
+    Theme,
+    Typography,
+} from '@material-ui/core'
+import { UnfoldLessHorizontal, UnfoldMoreHorizontal } from 'mdi-material-ui'
+import React, { useState } from 'react'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme, { expanded: boolean }>(theme => ({
     root: {
-        height: '100%',
+        height: props => (props.expanded ? '100%' : 300),
+        transition: theme.transitions.create('height', {
+            duration: theme.transitions.duration.complex,
+        }),
         position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
     },
     header: {
         padding: theme.spacing(1.5),
@@ -27,12 +37,44 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
     },
     cardContent: {
-        flexGrow: 1,
-        display: 'flex',
-        flexDirection: 'column',
         zIndex: 1,
         position: 'relative',
         minHeight: 'calc(10rem + 16px)',
+    },
+    expandContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        paddingBottom: theme.spacing(2),
+    },
+    expandBackground: {
+        position: 'absolute',
+        zIndex: 2,
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: '50%',
+        visibility: props => (props.expanded ? 'hidden' : 'visible'),
+        background:
+            theme.palette.type === 'dark'
+                ? 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))'
+                : 'linear-gradient(to top, rgba(255,255,255,0.8), rgba(0,0,0,0))',
+    },
+    expandFab: props => {
+        if (props.expanded)
+            return {
+                boxShadow: theme.shadows[0],
+                position: 'initial',
+                zIndex: 1,
+            }
+
+        return {
+            boxShadow: theme.shadows[0],
+            position: 'absolute',
+            bottom: theme.spacing(2),
+            left: '50%',
+            transform: 'translate(-50%)',
+            zIndex: 2,
+        }
     },
 }))
 
@@ -41,23 +83,36 @@ interface Props {
     action?: React.ReactNode
     children: React.ReactNode
     BackgroundIcon?: (props: SvgIconProps) => JSX.Element
+    expandable?: true
 }
 
-const StyledCard = ({ header, children, BackgroundIcon, action }: Props) => {
-    const classes = useStyles()
+const StyledCard = (props: Props) => {
+    const [expanded, setExpanded] = useState(props.expandable ? false : true)
+    const classes = useStyles({ expanded })
 
     return (
         <Card className={classes.root}>
-            {header && (
+            {props.header && (
                 <div className={classes.header}>
                     <Typography noWrap variant="h5">
-                        {header}
+                        {props.header}
                     </Typography>
-                    {action && <div className={classes.action}>{action}</div>}
+                    {props.action && <div className={classes.action}>{props.action}</div>}
                 </div>
             )}
-            <CardContent className={classes.cardContent}>{children}</CardContent>
-            {BackgroundIcon && <BackgroundIcon className={classes.backgroundIcon} />}
+            <CardContent className={classes.cardContent}>{props.children}</CardContent>
+            {props.expandable && (
+                <div className={classes.expandContainer}>
+                    <div className={classes.expandBackground} />
+                    <Fab
+                        size="small"
+                        className={classes.expandFab}
+                        onClick={() => setExpanded(prev => !prev)}>
+                        {expanded ? <UnfoldLessHorizontal /> : <UnfoldMoreHorizontal />}
+                    </Fab>
+                </div>
+            )}
+            {props.BackgroundIcon && <props.BackgroundIcon className={classes.backgroundIcon} />}
         </Card>
     )
 }

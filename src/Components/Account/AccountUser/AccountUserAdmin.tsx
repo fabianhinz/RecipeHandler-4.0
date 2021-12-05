@@ -26,7 +26,7 @@ const AccountUserAdmin = () => {
     }
 
     return (
-        <StyledCard header="Editoren" BackgroundIcon={SecurityIcon}>
+        <StyledCard expandable header="Editoren" BackgroundIcon={SecurityIcon}>
             <List>
                 {userIds.map(uid => (
                     <AccountListItem

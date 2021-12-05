@@ -76,6 +76,7 @@ const Satisfaction = ({ recipeName }: Props) => {
 
     return (
         <StyledCard
+            expandable
             header="Bewertungen"
             BackgroundIcon={SatisfactionBackgroundIcon}
             action={

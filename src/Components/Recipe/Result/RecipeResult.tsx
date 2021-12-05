@@ -73,7 +73,10 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
 
                             {recipe.relatedRecipes.length > 0 && (
                                 <Grid {...gridBreakpointProps} item>
-                                    <StyledCard header="Passt gut zu" BackgroundIcon={SwapIcon}>
+                                    <StyledCard
+                                        expandable
+                                        header="Passt gut zu"
+                                        BackgroundIcon={SwapIcon}>
                                         <RecipeResultRelated
                                             relatedRecipes={recipe.relatedRecipes}
                                         />
