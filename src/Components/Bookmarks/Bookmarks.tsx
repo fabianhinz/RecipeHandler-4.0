@@ -44,6 +44,7 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
         <>
             {recipe ? (
                 <StyledCard
+                    expandable
                     header={recipeName}
                     action={
                         <>
