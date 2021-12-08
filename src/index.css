@@ -1,0 +1,32 @@
+@media (pointer: fine) {
+    ::-webkit-scrollbar {
+        background-color: #00000000;
+        width: 16px;
+        height: 16px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #757575;
+        background-clip: padding-box;
+        border: 4px solid rgba(0, 0, 0, 0);
+        border-radius: 8px;
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-button {
+        display: none;
+    }
+}
+body {
+    margin: 0;
+    -webkit-text-size-adjust: 100%;
+} 
+html {
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: unset;
+}

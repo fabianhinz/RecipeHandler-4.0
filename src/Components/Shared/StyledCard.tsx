@@ -13,9 +13,6 @@ import React, { useState } from 'react'
 const useStyles = makeStyles<Theme, { expanded: boolean }>(theme => ({
     root: {
         height: props => (props.expanded ? '100%' : 300),
-        transition: theme.transitions.create('height', {
-            duration: theme.transitions.duration.complex,
-        }),
         position: 'relative',
     },
     header: {
@@ -48,12 +45,13 @@ const useStyles = makeStyles<Theme, { expanded: boolean }>(theme => ({
     },
     expandBackground: {
         position: 'absolute',
-        zIndex: 2,
         bottom: 0,
         left: 0,
         width: '100%',
         height: '50%',
-        visibility: props => (props.expanded ? 'hidden' : 'visible'),
+        zIndex: props => (props.expanded ? -1 : 2),
+        opacity: props => (props.expanded ? 0 : 1),
+        transition: theme.transitions.create('opacity'),
         background:
             theme.palette.type === 'dark'
                 ? 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))'

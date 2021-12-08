@@ -1,7 +1,7 @@
 import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
 import { yellow } from '@material-ui/core/colors'
 import React, { memo, useEffect, useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { DocumentId, MostCooked } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
@@ -52,17 +52,18 @@ const MostCookedPaper = ({ recipeName, counter, paletteIndex }: MostCookedPaperP
     })
 
     const { gridBreakpointProps } = useGridContext()
-    const history = useHistory()
 
     return (
         <Grid item {...gridBreakpointProps} key={recipeName}>
-            <CardActionArea onClick={() => history.push(PATHS.details(recipeName))}>
-                <Paper className={classes.paper}>
-                    <Typography noWrap className={classes.typography} variant="h6">
-                        {counter.value}x {recipeName}
-                    </Typography>
-                </Paper>
-            </CardActionArea>
+            <Link to={PATHS.details(recipeName)}>
+                <CardActionArea>
+                    <Paper className={classes.paper}>
+                        <Typography noWrap className={classes.typography} variant="h6">
+                            {counter.value}x {recipeName}
+                        </Typography>
+                    </Paper>
+                </CardActionArea>
+            </Link>
         </Grid>
     )
 }
