@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { memo, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import useImgSrcLazy from '../../hooks/useImgSrcLazy'
 import { Recipe } from '../../model/model'
@@ -19,7 +20,6 @@ import { FirebaseService } from '../../services/firebase'
 import { BORDER_RADIUS } from '../../theme'
 import { CategoryResult } from '../Category/CategoryResult'
 import { useGridContext } from '../Provider/GridProvider'
-import { useRouterContext } from '../Provider/RouterProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
 import { PATHS } from '../Routes/Routes'
 
@@ -100,17 +100,11 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
         skipOnUndefined: true,
     })
 
-    const { history } = useRouterContext()
     const { gridBreakpointProps, compactLayout } = useGridContext()
     const { getByUid } = useUsersContext()
     const classes = useStyles({ hover, swatches: recipe.previewAttachmentSwatches })
 
     const editor = useMemo(() => getByUid(recipe.editorUid), [getByUid, recipe.editorUid])
-
-    const handleRecipeClick = () =>
-        history.push(PATHS.details(recipe.name), {
-            recipe,
-        })
 
     const changeHover = (state: 'active' | 'inactive') => () => {
         setHover(state === 'active')
@@ -119,13 +113,15 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
     if (compactLayout)
         return (
             <Grid {...gridBreakpointProps} item>
-                <CardActionArea onClick={handleRecipeClick}>
-                    <Paper className={classes.compactPaper}>
-                        <Typography noWrap variant="h6">
-                            {recipe.name}
-                        </Typography>
-                    </Paper>
-                </CardActionArea>
+                <Link to={{ pathname: PATHS.details(recipe.name), state: { recipe } }}>
+                    <CardActionArea>
+                        <Paper className={classes.compactPaper}>
+                            <Typography noWrap variant="h6">
+                                {recipe.name}
+                            </Typography>
+                        </Paper>
+                    </CardActionArea>
+                </Link>
             </Grid>
         )
 
@@ -138,48 +134,49 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
 
     return (
         <Grid item xs={6} md={4} lg={3} xl={2}>
-            <Card
-                onMouseEnter={changeHover('active')}
-                onMouseLeave={changeHover('inactive')}
-                onClick={handleRecipeClick}
-                className={classes.card}>
-                <Avatar variant="square" className={classes.avatar} src={imgSrc}>
-                    {recipe.name.slice(0, 1).toUpperCase()}
-                </Avatar>
-                {editor && (
-                    <Zoom in mountOnEnter>
-                        <Avatar className={classes.userAvatar} src={editor.profilePicture}>
-                            {editor.username.slice(0, 1).toUpperCase()}
-                        </Avatar>
-                    </Zoom>
-                )}
-                <div className={classes.avatarOverlay}>
-                    <Box mx={1}>
-                        <Typography
-                            className={classes.typographyRecipeName}
-                            variant="h6"
-                            gutterBottom>
-                            {recipe.name}
-                        </Typography>
-                    </Box>
-
-                    {lastCookedDate ? (
+            <Link to={{ pathname: PATHS.details(recipe.name), state: { recipe } }}>
+                <Card
+                    onMouseEnter={changeHover('active')}
+                    onMouseLeave={changeHover('inactive')}
+                    className={classes.card}>
+                    <Avatar variant="square" className={classes.avatar} src={imgSrc}>
+                        {recipe.name.slice(0, 1).toUpperCase()}
+                    </Avatar>
+                    {editor && (
+                        <Zoom in mountOnEnter>
+                            <Avatar className={classes.userAvatar} src={editor.profilePicture}>
+                                {editor.username.slice(0, 1).toUpperCase()}
+                            </Avatar>
+                        </Zoom>
+                    )}
+                    <div className={classes.avatarOverlay}>
                         <Box mx={1}>
-                            <Typography>
-                                {FirebaseService.createDateFromTimestamp(
-                                    lastCookedDate
-                                ).toLocaleDateString()}
+                            <Typography
+                                className={classes.typographyRecipeName}
+                                variant="h6"
+                                gutterBottom>
+                                {recipe.name}
                             </Typography>
                         </Box>
-                    ) : (
-                        <CategoryResult
-                            extraPadding
-                            swatches={recipe.previewAttachmentSwatches}
-                            categories={recipe.categories}
-                        />
-                    )}
-                </div>
-            </Card>
+
+                        {lastCookedDate ? (
+                            <Box mx={1}>
+                                <Typography>
+                                    {FirebaseService.createDateFromTimestamp(
+                                        lastCookedDate
+                                    ).toLocaleDateString()}
+                                </Typography>
+                            </Box>
+                        ) : (
+                            <CategoryResult
+                                extraPadding
+                                swatches={recipe.previewAttachmentSwatches}
+                                categories={recipe.categories}
+                            />
+                        )}
+                    </div>
+                </Card>
+            </Link>
         </Grid>
     )
 }

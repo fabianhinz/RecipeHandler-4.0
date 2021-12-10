@@ -1,6 +1,7 @@
 import 'typeface-roboto'
 import 'typeface-ubuntu'
 import 'web-animations-js'
+import './index.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom'

@@ -1,7 +1,7 @@
 import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
 import green from '@material-ui/core/colors/green'
 import React, { memo, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
@@ -27,8 +27,6 @@ const HomeNew = () => {
     const { user } = useFirebaseAuthContext()
     const { gridBreakpointProps } = useGridContext()
     const classes = useStyles()
-
-    const history = useHistory()
 
     useEffect(() => {
         if (!user) return
@@ -60,13 +58,15 @@ const HomeNew = () => {
                 rows={3}>
                 {recipeNames.map(recipeName => (
                     <Grid item {...gridBreakpointProps} key={recipeName}>
-                        <CardActionArea onClick={() => history.push(PATHS.details(recipeName))}>
-                            <Paper className={classes.paper}>
-                                <Typography noWrap className={classes.typography} variant="h6">
-                                    {recipeName}
-                                </Typography>
-                            </Paper>
-                        </CardActionArea>
+                        <Link to={PATHS.details(recipeName)}>
+                            <CardActionArea>
+                                <Paper className={classes.paper}>
+                                    <Typography noWrap className={classes.typography} variant="h6">
+                                        {recipeName}
+                                    </Typography>
+                                </Paper>
+                            </CardActionArea>
+                        </Link>
                     </Grid>
                 ))}
 
