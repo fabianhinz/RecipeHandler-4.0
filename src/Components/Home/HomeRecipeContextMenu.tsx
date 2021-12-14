@@ -1,5 +1,5 @@
 import { makeStyles, Popover, PopoverPosition } from '@material-ui/core'
-import { ReactNode, useLayoutEffect, useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import { Recipe } from '../../model/model'
 import { Comments } from '../Comments/Comments'
@@ -22,18 +22,9 @@ interface Props {
 }
 
 const HomeRecipeContextMenu = (props: Props) => {
-    const [childRef, setChildRef] = useState<null | HTMLDivElement>(null)
     const [anchorPosition, setAnchorPosition] = useState<PopoverPosition | undefined>()
     const { user } = useFirebaseAuthContext()
     const classes = useStyles()
-
-    useLayoutEffect(() => {
-        if (!childRef) return
-
-        childRef.oncontextmenu = e => {
-            setAnchorPosition({ top: e.clientY, left: e.clientX })
-        }
-    }, [childRef])
 
     return (
         <>
@@ -63,8 +54,8 @@ const HomeRecipeContextMenu = (props: Props) => {
                 <RecipeCookCounterButton name={props.name} />
             </Popover>
             <div
-                ref={el => {
-                    if (el) setChildRef(el)
+                onContextMenu={e => {
+                    setAnchorPosition({ top: e.clientY, left: e.clientX })
                 }}>
                 {props.children}
             </div>
