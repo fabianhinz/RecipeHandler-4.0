@@ -22,6 +22,7 @@ import { CategoryResult } from '../Category/CategoryResult'
 import { useGridContext } from '../Provider/GridProvider'
 import { useUsersContext } from '../Provider/UsersProvider'
 import { PATHS } from '../Routes/Routes'
+import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
 export const RECIPE_CARD_HEIGHT = 300
 
@@ -133,51 +134,59 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
         )
 
     return (
-        <Grid item xs={6} md={4} lg={3} xl={2}>
-            <Link to={{ pathname: PATHS.details(recipe.name), state: { recipe } }}>
-                <Card
-                    onMouseEnter={changeHover('active')}
-                    onMouseLeave={changeHover('inactive')}
-                    className={classes.card}>
-                    <Avatar variant="square" className={classes.avatar} src={imgSrc}>
-                        {recipe.name.slice(0, 1).toUpperCase()}
-                    </Avatar>
-                    {editor && (
-                        <Zoom in mountOnEnter>
-                            <Avatar className={classes.userAvatar} src={editor.profilePicture}>
-                                {editor.username.slice(0, 1).toUpperCase()}
+        <>
+            <Grid item xs={6} md={4} lg={3} xl={2}>
+                <HomeRecipeContextMenu
+                    name={recipe.name}
+                    numberOfComments={recipe.numberOfComments}>
+                    <Link to={{ pathname: PATHS.details(recipe.name), state: { recipe } }}>
+                        <Card
+                            onMouseEnter={changeHover('active')}
+                            onMouseLeave={changeHover('inactive')}
+                            className={classes.card}>
+                            <Avatar variant="square" className={classes.avatar} src={imgSrc}>
+                                {recipe.name.slice(0, 1).toUpperCase()}
                             </Avatar>
-                        </Zoom>
-                    )}
-                    <div className={classes.avatarOverlay}>
-                        <Box mx={1}>
-                            <Typography
-                                className={classes.typographyRecipeName}
-                                variant="h6"
-                                gutterBottom>
-                                {recipe.name}
-                            </Typography>
-                        </Box>
+                            {editor && (
+                                <Zoom in mountOnEnter>
+                                    <Avatar
+                                        className={classes.userAvatar}
+                                        src={editor.profilePicture}>
+                                        {editor.username.slice(0, 1).toUpperCase()}
+                                    </Avatar>
+                                </Zoom>
+                            )}
+                            <div className={classes.avatarOverlay}>
+                                <Box mx={1}>
+                                    <Typography
+                                        className={classes.typographyRecipeName}
+                                        variant="h6"
+                                        gutterBottom>
+                                        {recipe.name}
+                                    </Typography>
+                                </Box>
 
-                        {lastCookedDate ? (
-                            <Box mx={1}>
-                                <Typography>
-                                    {FirebaseService.createDateFromTimestamp(
-                                        lastCookedDate
-                                    ).toLocaleDateString()}
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <CategoryResult
-                                extraPadding
-                                swatches={recipe.previewAttachmentSwatches}
-                                categories={recipe.categories}
-                            />
-                        )}
-                    </div>
-                </Card>
-            </Link>
-        </Grid>
+                                {lastCookedDate ? (
+                                    <Box mx={1}>
+                                        <Typography>
+                                            {FirebaseService.createDateFromTimestamp(
+                                                lastCookedDate
+                                            ).toLocaleDateString()}
+                                        </Typography>
+                                    </Box>
+                                ) : (
+                                    <CategoryResult
+                                        extraPadding
+                                        swatches={recipe.previewAttachmentSwatches}
+                                        categories={recipe.categories}
+                                    />
+                                )}
+                            </div>
+                        </Card>
+                    </Link>
+                </HomeRecipeContextMenu>
+            </Grid>
+        </>
     )
 }
 

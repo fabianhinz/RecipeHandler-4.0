@@ -9,6 +9,7 @@ import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
 import ExpandableGridContainer from '../Shared/ExpandableGridContainer'
 import Skeletons from '../Shared/Skeletons'
+import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -58,15 +59,20 @@ const HomeNew = () => {
                 rows={3}>
                 {recipeNames.map(recipeName => (
                     <Grid item {...gridBreakpointProps} key={recipeName}>
-                        <Link to={PATHS.details(recipeName)}>
-                            <CardActionArea>
-                                <Paper className={classes.paper}>
-                                    <Typography noWrap className={classes.typography} variant="h6">
-                                        {recipeName}
-                                    </Typography>
-                                </Paper>
-                            </CardActionArea>
-                        </Link>
+                        <HomeRecipeContextMenu name={recipeName}>
+                            <Link to={PATHS.details(recipeName)}>
+                                <CardActionArea>
+                                    <Paper className={classes.paper}>
+                                        <Typography
+                                            noWrap
+                                            className={classes.typography}
+                                            variant="h6">
+                                            {recipeName}
+                                        </Typography>
+                                    </Paper>
+                                </CardActionArea>
+                            </Link>
+                        </HomeRecipeContextMenu>
                     </Grid>
                 ))}
 

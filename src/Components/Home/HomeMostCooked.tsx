@@ -11,6 +11,7 @@ import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
 import ExpandableGridContainer from '../Shared/ExpandableGridContainer'
 import Skeletons from '../Shared/Skeletons'
+import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
 const COLOR_PALETTE = [
     yellow[900],
@@ -55,15 +56,17 @@ const MostCookedPaper = ({ recipeName, counter, paletteIndex }: MostCookedPaperP
 
     return (
         <Grid item {...gridBreakpointProps} key={recipeName}>
-            <Link to={PATHS.details(recipeName)}>
-                <CardActionArea>
-                    <Paper className={classes.paper}>
-                        <Typography noWrap className={classes.typography} variant="h6">
-                            {counter.value}x {recipeName}
-                        </Typography>
-                    </Paper>
-                </CardActionArea>
-            </Link>
+            <HomeRecipeContextMenu name={recipeName}>
+                <Link to={PATHS.details(recipeName)}>
+                    <CardActionArea>
+                        <Paper className={classes.paper}>
+                            <Typography noWrap className={classes.typography} variant="h6">
+                                {counter.value}x {recipeName}
+                            </Typography>
+                        </Paper>
+                    </CardActionArea>
+                </Link>
+            </HomeRecipeContextMenu>
         </Grid>
     )
 }

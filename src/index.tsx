@@ -27,3 +27,5 @@ ReactDOM.render(
 )
 
 serviceWorkerRegistration.register()
+// ? components will provide their own contextmenus
+window.addEventListener('contextmenu', e => e.preventDefault())
