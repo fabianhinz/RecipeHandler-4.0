@@ -1,25 +1,37 @@
-import { IconButton, Tooltip } from '@material-ui/core'
+import { IconButton, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core'
 import ShareIcon from '@material-ui/icons/Share'
 import copy from 'clipboard-copy'
 import React, { useState } from 'react'
 
 import { Recipe } from '../../model/model'
 import { PATHS } from '../Routes/Routes'
+import { RecipeButtonSharedProps } from './RecipeBookmarkButton'
 
-type Props = Pick<Recipe, 'name'>
+type Props = Pick<Recipe, 'name'> & RecipeButtonSharedProps
 
-const RecipeShareButton = ({ name }: Props) => {
+const RecipeShareButton = (props: Props) => {
     const [copied, setCopied] = useState(false)
 
     const handleShareBtnClick = () => {
-        const url = encodeURI(`${document.location.origin}${PATHS.details(name)}`)
+        const url = encodeURI(`${document.location.origin}${PATHS.details(props.name)}`)
         if (navigator.share)
             navigator.share({
                 title: 'RecipeHandler',
-                text: name,
+                text: props.name,
                 url,
             })
         else copy(url).then(() => setCopied(true))
+    }
+
+    if (props.variant === 'ListItem') {
+        return (
+            <ListItem onClick={handleShareBtnClick} button>
+                <ListItemIcon>
+                    <ShareIcon />
+                </ListItemIcon>
+                <ListItemText primary={navigator.share ? 'Rezept teilen' : 'Link kopieren'} />
+            </ListItem>
+        )
     }
 
     return (

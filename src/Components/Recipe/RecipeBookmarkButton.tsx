@@ -1,26 +1,46 @@
-import { IconButton, Tooltip, TooltipProps } from '@material-ui/core/'
+import {
+    IconButton,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    Tooltip,
+    TooltipProps,
+} from '@material-ui/core/'
 import { Bookmark, BookmarkOff } from 'mdi-material-ui'
 import React from 'react'
 
 import { useBookmarkContext } from '../Provider/BookmarkProvider'
 
-interface Props {
+export interface RecipeButtonSharedProps {
+    variant?: 'IconButton' | 'ListItem'
+}
+
+interface Props extends RecipeButtonSharedProps {
     name: string
     tooltipProps?: Pick<TooltipProps, 'placement'>
 }
 
-const RecipeBookmarkButton = ({ name, tooltipProps }: Props) => {
+const RecipeBookmarkButton = (props: Props) => {
     const { bookmarks, handleBookmarkChange } = useBookmarkContext()
 
+    const icon = bookmarks.has(props.name) ? <BookmarkOff /> : <Bookmark />
+    const title = bookmarks.has(props.name)
+        ? 'Von den Lesezeichen entfernen'
+        : 'Zu Lesezeichen hinzufügen'
+    const onClick = () => handleBookmarkChange(props.name)
+
+    if (props.variant === 'ListItem') {
+        return (
+            <ListItem onClick={onClick} button>
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={title} />
+            </ListItem>
+        )
+    }
+
     return (
-        <Tooltip
-            {...tooltipProps}
-            title={
-                bookmarks.has(name) ? 'Von den Lesezeichen entfernen' : 'Zu Lesezeichen hinzufügen'
-            }>
-            <IconButton onClick={() => handleBookmarkChange(name)}>
-                {bookmarks.has(name) ? <BookmarkOff /> : <Bookmark />}
-            </IconButton>
+        <Tooltip {...props.tooltipProps} title={title}>
+            <IconButton onClick={onClick}>{icon}</IconButton>
         </Tooltip>
     )
 }
