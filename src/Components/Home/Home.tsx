@@ -138,13 +138,15 @@ const Home = () => {
                     <AppBar className={classes.homeRoot} position="static" color="default">
                         <Toolbar className={classes.toolbar}>
                             <Tabs
+                                scrollButtons="on"
+                                variant="scrollable"
                                 value={tabIndex}
                                 onChange={(_, newIndex) => setTabIndex(newIndex)}>
                                 <StyledTab label="Alle Rezepte" />
                                 <StyledTab label="Neue" />
                                 <StyledTab label="Häufig gekocht" />
                             </Tabs>
-                            <Fade in={tabIndex === 0}>
+                            <Fade mountOnEnter unmountOnExit in={tabIndex === 0}>
                                 <div>
                                     <HomeRecipeSelection
                                         selectedCategories={selectedCategories}
