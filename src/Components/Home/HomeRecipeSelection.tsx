@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { OrderByRecord } from '../../model/model'
 import recipeService from '../../services/recipeService'
 import CategorySelection from '../Category/CategorySelection'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 
 const useStyles = makeStyles(theme => ({
     orderByAsc: {
@@ -37,6 +38,7 @@ interface Props {
 
 const HomeRecipeSelection = (props: Props) => {
     const classes = useStyles()
+    const authContext = useFirebaseAuthContext()
 
     const handleOrderByChange = (key: keyof OrderByRecord) => () => {
         let newOrderBy: OrderByRecord
@@ -49,8 +51,8 @@ const HomeRecipeSelection = (props: Props) => {
         recipeService.orderBy = newOrderBy
     }
 
-    const header = (
-        <Grid container justify="center" spacing={1}>
+    const headerAuthenticated = authContext.user && (
+        <>
             <Grid>
                 <FormControlLabel
                     labelPlacement="start"
@@ -64,6 +66,12 @@ const HomeRecipeSelection = (props: Props) => {
                 />
             </Grid>
             <Grid item xs={12} />
+        </>
+    )
+
+    const header = (
+        <Grid container justify="center" spacing={1}>
+            {headerAuthenticated}
             <Grid item xs={6}>
                 <Button
                     fullWidth
