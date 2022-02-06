@@ -16,7 +16,6 @@ import NotFound from '../Shared/NotFound'
 import Skeletons from '../Shared/Skeletons'
 import HomeMostCooked from './HomeMostCooked'
 import HomeNew from './HomeNew'
-import HomeRecentlyEdited from './HomeRecentlyEdited'
 import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from './HomeRecipeCard'
 import HomeRecipeSelection from './HomeRecipeSelection'
 
@@ -57,6 +56,7 @@ const Home = () => {
             .orderBy(orderByKey, orderBy[orderByKey])
         // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
         // if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
+
         if (showMyRecipesOnly && user) query = query.where('editorUid', '==', user.uid)
 
         if (lastRecipe) query = query.startAfter(lastRecipe[orderByKey])
@@ -97,7 +97,6 @@ const Home = () => {
             <EntryGridContainer>
                 <HomeNew />
                 <HomeMostCooked />
-                <HomeRecentlyEdited />
                 <HomeRecipeSelection
                     selectedCategories={selectedCategories}
                     onRemoveSelectedCategories={() => {
