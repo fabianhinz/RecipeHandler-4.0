@@ -24,7 +24,7 @@ const RecipeResultHeader = ({ recipe }: Props) => {
 
     return (
         <Grid container spacing={2} justify="space-between" alignItems="center">
-            <Grid item xs={12} sm={6} md={8} lg={9}>
+            <Grid item xs={12} sm="auto">
                 <Typography className={classes.recipeName} variant="h5">
                     {recipe.name}
                 </Typography>
