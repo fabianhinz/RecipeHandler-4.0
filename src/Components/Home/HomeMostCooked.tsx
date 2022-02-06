@@ -9,7 +9,6 @@ import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
-import ExpandableGridContainer from '../Shared/ExpandableGridContainer'
 import Skeletons from '../Shared/Skeletons'
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
@@ -110,14 +109,7 @@ const HomeMostCooked = () => {
 
     return (
         <Grid item xs={12}>
-            <ExpandableGridContainer
-                titles={{
-                    header: 'Häufig gekocht',
-                    expanded: 'weniger anzeigen',
-                    notExpanded: 'mehr anzeigen',
-                }}
-                itemHeight={72}
-                rows={3}>
+            <Grid container spacing={3}>
                 {[...mostCooked.entries()].map(([recipeName, counter]) => (
                     <MostCookedPaper
                         key={recipeName}
@@ -132,7 +124,7 @@ const HomeMostCooked = () => {
                     visible={mostCooked.size === 0}
                     numberOfSkeletons={numberOfDocs}
                 />
-            </ExpandableGridContainer>
+            </Grid>
         </Grid>
     )
 }

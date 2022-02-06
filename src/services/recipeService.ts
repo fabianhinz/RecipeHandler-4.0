@@ -52,7 +52,7 @@ class RecipeService {
 
     constructor() {
         this._selectedCategories = new Map()
-        this._orderBy = { name: 'asc' }
+        this._orderBy = { createdDate: 'desc' }
         this._pagedRecipes = new Map()
         this._scrollPosition = new Map()
         this._recipeCreateState = null

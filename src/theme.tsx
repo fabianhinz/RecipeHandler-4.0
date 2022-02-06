@@ -4,10 +4,21 @@ import { ThemeOptions } from '@material-ui/core/styles/createTheme'
 export const BORDER_RADIUS = 10
 export const BORDER_RADIUS_HUGE = 16
 
+export const PRIMARY_COLOR = '#81c784'
+export const SECONDARY_COLOR = '#ffb74d'
+
 const sharedTheme: Partial<ThemeOptions> = {
     props: {
         MuiPaper: {
             variant: 'outlined',
+        },
+        MuiTab: {
+            disableRipple: true,
+        },
+        MuiTabs: {
+            TabIndicatorProps: {
+                children: <span />,
+            },
         },
     },
     overrides: {
@@ -110,11 +121,28 @@ const sharedTheme: Partial<ThemeOptions> = {
                 borderWidth: 2,
             },
         },
+        MuiTabs: {
+            indicator: {
+                display: 'flex',
+                justifyContent: 'center',
+                backgroundColor: 'transparent',
+                height: 4,
+                '& > span': {
+                    maxWidth: 40,
+                    width: '100%',
+                    borderRadius: BORDER_RADIUS,
+                    backgroundColor: SECONDARY_COLOR,
+                },
+            },
+        },
+        MuiTab: {
+            wrapper: {
+                fontFamily: 'Ubuntu',
+                textTransform: 'capitalize',
+            },
+        },
     },
 }
-
-export const PRIMARY_COLOR = '#81c784'
-export const SECONDARY_COLOR = '#ffb74d'
 
 const blackTheme = createTheme({
     palette: {

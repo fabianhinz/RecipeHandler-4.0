@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { OrderByRecord } from '../../model/model'
 import recipeService from '../../services/recipeService'
 import CategorySelection from '../Category/CategorySelection'
+import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 
 const useStyles = makeStyles(theme => ({
     orderByAsc: {
@@ -37,6 +38,7 @@ interface Props {
 
 const HomeRecipeSelection = (props: Props) => {
     const classes = useStyles()
+    const authContext = useFirebaseAuthContext()
 
     const handleOrderByChange = (key: keyof OrderByRecord) => () => {
         let newOrderBy: OrderByRecord
@@ -49,8 +51,8 @@ const HomeRecipeSelection = (props: Props) => {
         recipeService.orderBy = newOrderBy
     }
 
-    const header = (
-        <Grid container justify="center" spacing={1}>
+    const headerAuthenticated = authContext.user && (
+        <>
             <Grid>
                 <FormControlLabel
                     labelPlacement="start"
@@ -64,6 +66,12 @@ const HomeRecipeSelection = (props: Props) => {
                 />
             </Grid>
             <Grid item xs={12} />
+        </>
+    )
+
+    const header = (
+        <Grid container justify="center" spacing={1}>
+            {headerAuthenticated}
             <Grid item xs={6}>
                 <Button
                     fullWidth
@@ -102,54 +110,42 @@ const HomeRecipeSelection = (props: Props) => {
     )
 
     return (
-        <Grid item xs={12}>
-            <Grid container alignItems="center" justify="space-between">
-                <Grid item>
-                    <Typography gutterBottom display="inline" variant="h4">
-                        Rezeptauswahl
-                    </Typography>
+        <CategorySelection
+            onCategoryChange={props.onSelectedCategoriesChange}
+            selectedCategories={props.selectedCategories}
+            onRemoveSelectedCategories={props.onRemoveSelectedCategories}
+            label="Filter"
+            header={header}
+            buttonProps={{ variant: 'text' }}>
+            {/* // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a
+            maximum of 10 elements in the value array
+            {user && (
+                <Grid item xs={12}>
+                    <ListSubheader className={classes.listSubheader}>Editoren</ListSubheader>
+                    <List disablePadding>
+                        {usersContext.userIds.map(uid => {
+                            const user = usersContext.getByUid(uid)!
+                            return (
+                                <ListItem
+                                    button
+                                    onClick={() => handleAccountAvatarClick(uid)}
+                                    key={uid}>
+                                    <ListItemAvatar>
+                                        <AccountAvatar
+                                            user={user}
+                                            isUserSelected={props.selectedEditors.some(
+                                                editorUid => editorUid === uid
+                                            )}
+                                        />
+                                    </ListItemAvatar>
+                                    <ListItemText primary={user.username} />
+                                </ListItem>
+                            )
+                        })}
+                    </List>
                 </Grid>
-                <Grid item>
-                    <CategorySelection
-                        onCategoryChange={props.onSelectedCategoriesChange}
-                        selectedCategories={props.selectedCategories}
-                        onRemoveSelectedCategories={props.onRemoveSelectedCategories}
-                        label="Filter"
-                        header={header}>
-                        {/* 
-                        // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
-                        {user && (
-                            <Grid item xs={12}>
-                                <ListSubheader className={classes.listSubheader}>
-                                    Editoren
-                                </ListSubheader>
-                                <List disablePadding>
-                                    {usersContext.userIds.map(uid => {
-                                        const user = usersContext.getByUid(uid)!
-                                        return (
-                                            <ListItem
-                                                button
-                                                onClick={() => handleAccountAvatarClick(uid)}
-                                                key={uid}>
-                                                <ListItemAvatar>
-                                                    <AccountAvatar
-                                                        user={user}
-                                                        isUserSelected={props.selectedEditors.some(
-                                                            editorUid => editorUid === uid
-                                                        )}
-                                                    />
-                                                </ListItemAvatar>
-                                                <ListItemText primary={user.username} />
-                                            </ListItem>
-                                        )
-                                    })}
-                                </List>
-                            </Grid>
-                        )} */}
-                    </CategorySelection>
-                </Grid>
-            </Grid>
-        </Grid>
+            )} */}
+        </CategorySelection>
     )
 }
 

@@ -1,6 +1,6 @@
-import { Grid, LinearProgress } from '@material-ui/core'
+import { AppBar, Fade, Grid, makeStyles, Tab, Tabs, Toolbar, withStyles } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
@@ -8,17 +8,34 @@ import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { DocumentId, OrderByKey, OrderByRecord, Recipe } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import RecipeService from '../../services/recipeService'
+import { BORDER_RADIUS } from '../../theme'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PATHS } from '../Routes/Routes'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
-import NotFound from '../Shared/NotFound'
-import Skeletons from '../Shared/Skeletons'
 import HomeMostCooked from './HomeMostCooked'
 import HomeNew from './HomeNew'
-import HomeRecentlyEdited from './HomeRecentlyEdited'
-import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from './HomeRecipeCard'
+import { RECIPE_CARD_HEIGHT } from './HomeRecipeCard'
+import { HomeRecipes } from './HomeRecipes'
 import HomeRecipeSelection from './HomeRecipeSelection'
+
+const useStyles = makeStyles(theme => ({
+    homeRoot: {
+        borderRadius: BORDER_RADIUS,
+    },
+    tabWrapper: {
+        fontSize: theme.typography.h5.fontSize,
+    },
+    toolbar: {
+        justifyContent: 'space-between',
+    },
+}))
+
+const StyledTab = withStyles(theme => ({
+    wrapper: {
+        fontSize: theme.typography.h6.fontSize,
+    },
+}))(Tab)
 
 type ChangesRecord = Record<firebase.default.firestore.DocumentChangeType, Map<DocumentId, Recipe>>
 
@@ -32,6 +49,7 @@ const Home = () => {
     const [orderBy, setOrderBy] = useState<OrderByRecord>(RecipeService.orderBy)
     const [querying, setQuerying] = useState(false)
     const [showMyRecipesOnly, setShowMyRecipesOnly] = useState(false)
+    const [tabIndex, setTabIndex] = useState(0)
 
     const { selectedCategories, setSelectedCategories, removeSelectedCategories } =
         useCategorySelect()
@@ -45,6 +63,8 @@ const Home = () => {
         options: { rootMargin: RECIPE_CARD_HEIGHT + 'px' },
     })
 
+    const classes = useStyles()
+
     useDocumentTitle('Rezepte')
 
     useEffect(() => {
@@ -57,6 +77,7 @@ const Home = () => {
             .orderBy(orderByKey, orderBy[orderByKey])
         // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
         // if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
+
         if (showMyRecipesOnly && user) query = query.where('editorUid', '==', user.uid)
 
         if (lastRecipe) query = query.startAfter(lastRecipe[orderByKey])
@@ -92,60 +113,72 @@ const Home = () => {
         setLastRecipe(null)
     }, [])
 
+    const renderContent = () => {
+        switch (tabIndex) {
+            case 0:
+                return (
+                    <HomeRecipes
+                        pagedRecipes={pagedRecipes}
+                        IntersectionObserverTrigger={IntersectionObserverTrigger}
+                        pagedRecipesSize={pagedRecipesSize}
+                        querying={querying}
+                    />
+                )
+            case 1:
+                return <HomeNew />
+            case 2:
+                return <HomeMostCooked />
+        }
+    }
+
     return (
         <>
             <EntryGridContainer>
-                <HomeNew />
-                <HomeMostCooked />
-                <HomeRecentlyEdited />
-                <HomeRecipeSelection
-                    selectedCategories={selectedCategories}
-                    onRemoveSelectedCategories={() => {
-                        removeSelectedCategories()
-                        resetRecipeState()
-                    }}
-                    onSelectedCategoriesChange={(type, value) => {
-                        setSelectedCategories(type, value)
-                        resetRecipeState()
-                    }}
-                    selectedEditors={selectedEditors}
-                    onSelectedEditorsChange={uids => {
-                        setSelectedEditors(uids)
-                        resetRecipeState()
-                    }}
-                    orderBy={orderBy}
-                    onOrderByChange={newOrderBy => {
-                        setOrderBy(newOrderBy)
-                        resetRecipeState()
-                    }}
-                    showMyRecipesOnly={showMyRecipesOnly}
-                    onShowMyRecipesOnlyChange={value => {
-                        setShowMyRecipesOnly(value)
-                        resetRecipeState()
-                    }}
-                />
                 <Grid item xs={12}>
-                    <Grid container spacing={3}>
-                        {[...pagedRecipes.values()].map(recipe => (
-                            <HomeRecipeCard key={recipe.name} recipe={recipe} />
-                        ))}
-
-                        <Skeletons
-                            variant="recipe"
-                            visible={querying && pagedRecipes.size === 0}
-                            numberOfSkeletons={
-                                pagedRecipesSize.current > 0 ? pagedRecipesSize.current : undefined
-                            }
-                        />
-
-                        <NotFound visible={!querying && pagedRecipes.size === 0} />
-
-                        <Grid item xs={12} style={{ minHeight: 29 }}>
-                            {querying && <LinearProgress variant="query" color="secondary" />}
-                            <IntersectionObserverTrigger />
-                        </Grid>
-                    </Grid>
+                    <AppBar className={classes.homeRoot} position="static" color="default">
+                        <Toolbar className={classes.toolbar}>
+                            <Tabs
+                                value={tabIndex}
+                                onChange={(_, newIndex) => setTabIndex(newIndex)}>
+                                <StyledTab label="Alle Rezepte" />
+                                <StyledTab label="Neue" />
+                                <StyledTab label="Häufig gekocht" />
+                            </Tabs>
+                            <Fade in={tabIndex === 0}>
+                                <div>
+                                    <HomeRecipeSelection
+                                        selectedCategories={selectedCategories}
+                                        onRemoveSelectedCategories={() => {
+                                            removeSelectedCategories()
+                                            resetRecipeState()
+                                        }}
+                                        onSelectedCategoriesChange={(type, value) => {
+                                            setSelectedCategories(type, value)
+                                            resetRecipeState()
+                                        }}
+                                        selectedEditors={selectedEditors}
+                                        onSelectedEditorsChange={uids => {
+                                            setSelectedEditors(uids)
+                                            resetRecipeState()
+                                        }}
+                                        orderBy={orderBy}
+                                        onOrderByChange={newOrderBy => {
+                                            setOrderBy(newOrderBy)
+                                            resetRecipeState()
+                                        }}
+                                        showMyRecipesOnly={showMyRecipesOnly}
+                                        onShowMyRecipesOnlyChange={value => {
+                                            setShowMyRecipesOnly(value)
+                                            resetRecipeState()
+                                        }}
+                                    />
+                                </div>
+                            </Fade>
+                        </Toolbar>
+                    </AppBar>
                 </Grid>
+
+                {renderContent()}
             </EntryGridContainer>
 
             <SecouredRouteFab
