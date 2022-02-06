@@ -7,7 +7,6 @@ import { FirebaseService } from '../../services/firebase'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
-import ExpandableGridContainer from '../Shared/ExpandableGridContainer'
 import Skeletons from '../Shared/Skeletons'
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
@@ -49,14 +48,7 @@ const HomeNew = () => {
 
     return (
         <Grid item xs={12}>
-            <ExpandableGridContainer
-                titles={{
-                    header: 'Neu',
-                    expanded: 'weniger anzeigen',
-                    notExpanded: 'alle anzeigen',
-                }}
-                itemHeight={72}
-                rows={3}>
+            <Grid container spacing={3}>
                 {recipeNames.map(recipeName => (
                     <Grid item {...gridBreakpointProps} key={recipeName}>
                         <HomeRecipeContextMenu name={recipeName}>
@@ -81,7 +73,7 @@ const HomeNew = () => {
                     visible={recipeNames.length === 0}
                     numberOfSkeletons={12}
                 />
-            </ExpandableGridContainer>
+            </Grid>
         </Grid>
     )
 }

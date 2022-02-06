@@ -1,5 +1,6 @@
 import {
     Avatar,
+    ButtonProps,
     Grid,
     IconButton,
     List,
@@ -36,6 +37,7 @@ interface Props {
     onCategoryChange: (type: string, value: string) => void
     legend?: React.ReactText
     children?: React.ReactNode
+    buttonProps?: Omit<ButtonProps, 'children' | 'startIcon'>
 }
 
 export default function CategorySelection({
@@ -46,6 +48,7 @@ export default function CategorySelection({
     label,
     legend,
     children,
+    buttonProps,
 }: Props) {
     const classes = useStyles()
 
@@ -58,6 +61,7 @@ export default function CategorySelection({
                 icon: <Filter />,
                 label,
                 disabled: categoriesLoading,
+                ...buttonProps,
             }}
             legend={legend}
             action={

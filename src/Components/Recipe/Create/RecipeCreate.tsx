@@ -16,7 +16,6 @@ import { useRouterContext } from '../../Provider/RouterProvider'
 import { PATHS } from '../../Routes/Routes'
 import EntryGridContainer from '../../Shared/EntryGridContainer'
 import StyledCard from '../../Shared/StyledCard'
-import TesseractSelection from '../../Tesseract/TesseractSelection'
 import TrialsSelection from '../../Trials/TrialsSelection'
 import RelatedRecipesSelection from '../RelatedRecipesSelection'
 import RecipeResult from '../Result/RecipeResult'
@@ -113,6 +112,7 @@ const RecipeCreate = (props: Props) => {
 
                     <Grid item xs={12}>
                         <Grid container spacing={2}>
+                            {/* TODO may wanna replace with firebase ml impl 
                             <Grid item xs={12} sm={6} md="auto">
                                 <TesseractSelection
                                     description={state.description}
@@ -121,7 +121,7 @@ const RecipeCreate = (props: Props) => {
                                         dispatch({ type: 'tesseractResultChange', result })
                                     }
                                 />
-                            </Grid>
+                            </Grid> */}
                             <Grid item xs={12} sm={6} md="auto">
                                 <TrialsSelection
                                     selectedTrial={state.selectedTrial}

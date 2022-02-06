@@ -1,8 +1,6 @@
 import { GridSize } from '@material-ui/core'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
-import React, { FC, useContext, useEffect, useState } from 'react'
-
-import { useBreakpointsContext } from './BreakpointsProvider'
+import React, { FC, useContext, useState } from 'react'
 
 export type GridLayout = 'list' | 'grid'
 
@@ -19,14 +17,8 @@ const Context = React.createContext<GridContext | null>(null)
 export const useGridContext = () => useContext(Context) as GridContext
 
 const GridProvider: FC = ({ children }) => {
-    const [gridLayout, setGridLayout] = useState<GridLayout>('grid')
+    const [gridLayout, setGridLayout] = useState<GridLayout>('list')
     const [compactLayout, setCompactLayout] = useState(false)
-
-    const { isLowRes } = useBreakpointsContext()
-
-    useEffect(() => {
-        setGridLayout(isLowRes ? 'list' : 'grid')
-    }, [isLowRes])
 
     return (
         <Context.Provider

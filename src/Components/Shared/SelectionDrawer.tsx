@@ -1,4 +1,5 @@
 import {
+    Badge,
     Box,
     Button,
     ButtonProps,
@@ -91,17 +92,13 @@ const SelectionDrawer = ({
 
     return (
         <>
-            <Button
-                onClick={openDrawer}
-                variant="contained"
-                color={highlight ? 'secondary' : undefined}
-                size="large"
-                fullWidth
-                {...muiButtonProps}>
+            <Button onClick={openDrawer} variant="contained" size="large" {...muiButtonProps}>
                 <div>
                     <Box display="flex" alignItems="center">
                         <Box mr={1} lineHeight={1}>
-                            {icon}
+                            <Badge color="secondary" variant="dot" invisible={!highlight}>
+                                {icon}
+                            </Badge>
                         </Box>
                         {label}
                     </Box>
