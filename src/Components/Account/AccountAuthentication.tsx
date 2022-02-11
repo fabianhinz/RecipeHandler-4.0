@@ -110,6 +110,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
                             .doc(user.uid)
                             .set({
                                 username,
+                                // this is just sugar for the ui, firesture.rules performs authorization
                                 admin: false,
                                 muiTheme: 'dynamic',
                                 selectedUsers: userIds,
