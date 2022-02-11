@@ -4,7 +4,6 @@ import React, { memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
 import Skeletons from '../Shared/Skeletons'
@@ -24,14 +23,10 @@ const HomeNew = () => {
     const [recipeNames, setRecipeNames] = useState<string[]>([])
     const [loading, setLoading] = useState(true)
 
-    const { user } = useFirebaseAuthContext()
     const { gridBreakpointProps } = useGridContext()
     const classes = useStyles()
 
     useEffect(() => {
-        if (!user) return
-        if (user && !user.showMostCooked) return
-
         return FirebaseService.firestore
             .collection('cookCounter')
             .orderBy('createdDate', 'desc')
@@ -40,40 +35,27 @@ const HomeNew = () => {
                 setRecipeNames(snapshot.docs.map(doc => doc.id))
                 setLoading(false)
             })
-    }, [user])
-
-    if (!loading && recipeNames.length === 0) return <></>
-    else if (!user) return <></>
-    else if (user && !user.showNew) return <></>
+    }, [])
 
     return (
-        <Grid item xs={12}>
-            <Grid container spacing={3}>
-                {recipeNames.map(recipeName => (
-                    <Grid item {...gridBreakpointProps} key={recipeName}>
-                        <HomeRecipeContextMenu name={recipeName}>
-                            <Link to={PATHS.details(recipeName)}>
-                                <CardActionArea>
-                                    <Paper className={classes.paper}>
-                                        <Typography
-                                            noWrap
-                                            className={classes.typography}
-                                            variant="h6">
-                                            {recipeName}
-                                        </Typography>
-                                    </Paper>
-                                </CardActionArea>
-                            </Link>
-                        </HomeRecipeContextMenu>
-                    </Grid>
-                ))}
+        <Grid container spacing={3}>
+            {recipeNames.map(recipeName => (
+                <Grid item {...gridBreakpointProps} key={recipeName}>
+                    <HomeRecipeContextMenu name={recipeName}>
+                        <Link to={PATHS.details(recipeName)}>
+                            <CardActionArea>
+                                <Paper className={classes.paper}>
+                                    <Typography noWrap className={classes.typography} variant="h6">
+                                        {recipeName}
+                                    </Typography>
+                                </Paper>
+                            </CardActionArea>
+                        </Link>
+                    </HomeRecipeContextMenu>
+                </Grid>
+            ))}
 
-                <Skeletons
-                    variant="cookCounter"
-                    visible={recipeNames.length === 0}
-                    numberOfSkeletons={12}
-                />
-            </Grid>
+            <Skeletons variant="cookCounter" visible={loading} numberOfSkeletons={12} />
         </Grid>
     )
 }

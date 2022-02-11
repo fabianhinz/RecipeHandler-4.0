@@ -33,6 +33,7 @@ interface Props {
     header?: React.ReactNode
     label: React.ReactText
     selectedCategories: Map<string, string>
+    forceHighlight?: boolean
     onRemoveSelectedCategories: () => void
     onCategoryChange: (type: string, value: string) => void
     legend?: React.ReactText
@@ -49,6 +50,7 @@ export default function CategorySelection({
     legend,
     children,
     buttonProps,
+    forceHighlight,
 }: Props) {
     const classes = useStyles()
 
@@ -69,7 +71,7 @@ export default function CategorySelection({
                     <DeleteIcon />
                 </IconButton>
             }
-            highlight={selectedCategories.size > 0}>
+            highlight={selectedCategories.size > 0 || forceHighlight}>
             <Grid container>
                 {Object.keys(recipeCategories).map(type => (
                     <Grid key={type} item xs={12}>
