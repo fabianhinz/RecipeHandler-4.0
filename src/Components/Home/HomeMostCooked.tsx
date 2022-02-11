@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 import { DocumentId, MostCooked } from '../../model/model'
 import { FirebaseService } from '../../services/firebase'
 import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { useGridContext } from '../Provider/GridProvider'
 import { PATHS } from '../Routes/Routes'
 import Skeletons from '../Shared/Skeletons'
@@ -75,8 +74,8 @@ type MostCookedMap = Map<DocumentId, MostCooked<number>>
 const HomeMostCooked = () => {
     const [mostCooked, setMostCooked] = useState<MostCookedMap>(new Map())
     const [counterValues, setCounterValues] = useState<Set<number>>(new Set())
+    const [loading, setLoading] = useState(true)
 
-    const { user } = useFirebaseAuthContext()
     const { isMobile } = useBreakpointsContext()
 
     const numberOfDocs = useMemo(
@@ -85,9 +84,6 @@ const HomeMostCooked = () => {
     )
 
     useEffect(() => {
-        if (!user) return
-        if (user && !user.showMostCooked) return
-
         return FirebaseService.firestore
             .collection('cookCounter')
             .orderBy('value', 'desc')
@@ -101,30 +97,22 @@ const HomeMostCooked = () => {
                     new Set([...newMostCookedMap.values()].map(mostCooked => mostCooked.value))
                 )
                 setMostCooked(newMostCookedMap)
+                setLoading(false)
             })
-    }, [isMobile, numberOfDocs, user])
-
-    if (!user) return <></>
-    if (user && !user.showMostCooked) return <></>
+    }, [numberOfDocs])
 
     return (
-        <Grid item xs={12}>
-            <Grid container spacing={3}>
-                {[...mostCooked.entries()].map(([recipeName, counter]) => (
-                    <MostCookedPaper
-                        key={recipeName}
-                        paletteIndex={[...counterValues].indexOf(counter.value)}
-                        recipeName={recipeName}
-                        counter={counter}
-                    />
-                ))}
-
-                <Skeletons
-                    variant="cookCounter"
-                    visible={mostCooked.size === 0}
-                    numberOfSkeletons={numberOfDocs}
+        <Grid container spacing={3}>
+            {[...mostCooked.entries()].map(([recipeName, counter]) => (
+                <MostCookedPaper
+                    key={recipeName}
+                    paletteIndex={[...counterValues].indexOf(counter.value)}
+                    recipeName={recipeName}
+                    counter={counter}
                 />
-            </Grid>
+            ))}
+
+            <Skeletons variant="cookCounter" visible={loading} numberOfSkeletons={numberOfDocs} />
         </Grid>
     )
 }

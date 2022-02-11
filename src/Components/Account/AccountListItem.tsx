@@ -4,17 +4,13 @@ import {
     ListItemAvatar,
     ListItemSecondaryAction,
     ListItemText,
-    ListItemTextProps,
     makeStyles,
     Switch,
     TypographyProps,
 } from '@material-ui/core'
 import EmailIcon from '@material-ui/icons/EmailRounded'
-import { Skeleton } from '@material-ui/lab'
-import React, { useEffect, useState } from 'react'
 
 import { User } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
 import { useUsersContext } from '../Provider/UsersProvider'
 
 interface Props {
@@ -43,38 +39,10 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const AccountListItem = ({ uid, onChange, checked, variant }: Props) => {
-    const [recipesCounter, setRecipesCounter] = useState<null | number>(null)
-
     const { getByUid } = useUsersContext()
-    const { username, profilePicture, createdDate, emailVerified } = getByUid(uid) as User
+    const { username, profilePicture, emailVerified } = getByUid(uid) as User
 
     const classes = useStyles()
-
-    useEffect(
-        () =>
-            FirebaseService.firestore
-                .collection('recipesCounter')
-                .doc(uid)
-                .onSnapshot(docSnapshot => {
-                    const data = docSnapshot.data()
-                    if (data) setRecipesCounter(data.value)
-                    else setRecipesCounter(0)
-                }),
-
-        [variant, uid]
-    )
-
-    const textProps: Pick<ListItemTextProps, 'secondary'> =
-        variant === 'admin'
-            ? { secondary: FirebaseService.createDateFromTimestamp(createdDate).toLocaleString() }
-            : {
-                  secondary:
-                      recipesCounter === null ? (
-                          <Skeleton width="5rem" variant="text" />
-                      ) : (
-                          `${recipesCounter} ${recipesCounter === 1 ? 'Rezept' : 'Rezepte'}`
-                      ),
-              }
 
     return (
         <ListItem>
@@ -96,7 +64,6 @@ const AccountListItem = ({ uid, onChange, checked, variant }: Props) => {
                     </div>
                 }
                 primaryTypographyProps={{ component: 'div' } as TypographyProps}
-                {...textProps}
             />
             <ListItemSecondaryAction>
                 <Switch checked={checked} onChange={() => onChange(uid)} edge="start" />

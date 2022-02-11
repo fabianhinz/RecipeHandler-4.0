@@ -13,31 +13,25 @@ interface Props {
 
 export const HomeRecipes = (props: Props) => {
     return (
-        <>
-            <Grid item xs={12}>
-                <Grid container spacing={3}>
-                    {[...props.pagedRecipes.values()].map(recipe => (
-                        <HomeRecipeCard key={recipe.name} recipe={recipe} />
-                    ))}
+        <Grid container spacing={3}>
+            {[...props.pagedRecipes.values()].map(recipe => (
+                <HomeRecipeCard key={recipe.name} recipe={recipe} />
+            ))}
 
-                    <Skeletons
-                        variant="recipe"
-                        visible={props.querying && props.pagedRecipes.size === 0}
-                        numberOfSkeletons={
-                            props.pagedRecipesSize.current > 0
-                                ? props.pagedRecipesSize.current
-                                : undefined
-                        }
-                    />
+            <Skeletons
+                variant="recipe"
+                visible={props.querying && props.pagedRecipes.size === 0}
+                numberOfSkeletons={
+                    props.pagedRecipesSize.current > 0 ? props.pagedRecipesSize.current : undefined
+                }
+            />
 
-                    <NotFound visible={!props.querying && props.pagedRecipes.size === 0} />
+            <NotFound visible={!props.querying && props.pagedRecipes.size === 0} />
 
-                    <Grid item xs={12} style={{ minHeight: 29 }}>
-                        {props.querying && <LinearProgress variant="query" color="secondary" />}
-                        <props.IntersectionObserverTrigger />
-                    </Grid>
-                </Grid>
+            <Grid item xs={12} style={{ minHeight: 29 }}>
+                {props.querying && <LinearProgress variant="query" color="secondary" />}
+                <props.IntersectionObserverTrigger />
             </Grid>
-        </>
+        </Grid>
     )
 }

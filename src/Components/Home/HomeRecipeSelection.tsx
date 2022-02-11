@@ -1,11 +1,23 @@
-import { Button, FormControlLabel, Grid, makeStyles, Switch, Typography } from '@material-ui/core'
+import {
+    Button,
+    Grid,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    ListSubheader,
+    makeStyles,
+} from '@material-ui/core'
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import clsx from 'clsx'
 
+import { useRecipesCounterByUserUid } from '../../hooks/useRecipesCounterByUserUid'
 import { OrderByRecord } from '../../model/model'
 import recipeService from '../../services/recipeService'
+import AccountAvatar from '../Account/AccountAvatar'
 import CategorySelection from '../Category/CategorySelection'
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useUsersContext } from '../Provider/UsersProvider'
 
 const useStyles = makeStyles(theme => ({
     orderByAsc: {
@@ -22,6 +34,12 @@ const useStyles = makeStyles(theme => ({
         paddingRight: theme.mixins.gutters().paddingRight,
     },
     listSubheader: { backgroundColor: theme.palette.background.paper },
+    editorCounterList: {
+        display: 'flex',
+        gap: theme.spacing(1),
+        flexWrap: 'wrap',
+        ...theme.mixins.gutters(),
+    },
 }))
 
 interface Props {
@@ -30,13 +48,13 @@ interface Props {
     onSelectedCategoriesChange: (type: string, value: string) => void
     orderBy: OrderByRecord
     onOrderByChange: (orderBy: OrderByRecord) => void
-    selectedEditors: string[]
-    onSelectedEditorsChange: (uids: string[]) => void
-    showMyRecipesOnly: boolean
-    onShowMyRecipesOnlyChange: (checked: boolean) => void
+    selectedEditor: string
+    onSelectedEditorChange: (uid: string) => void
 }
 
 const HomeRecipeSelection = (props: Props) => {
+    const recipesCounterByUserUid = useRecipesCounterByUserUid()
+    const userContext = useUsersContext()
     const classes = useStyles()
     const authContext = useFirebaseAuthContext()
 
@@ -51,27 +69,8 @@ const HomeRecipeSelection = (props: Props) => {
         recipeService.orderBy = newOrderBy
     }
 
-    const headerAuthenticated = authContext.user && (
-        <>
-            <Grid>
-                <FormControlLabel
-                    labelPlacement="start"
-                    label={<Typography color="textSecondary">Nur eigene Rezepte</Typography>}
-                    control={
-                        <Switch
-                            checked={props.showMyRecipesOnly}
-                            onChange={(_, checked) => props.onShowMyRecipesOnlyChange(checked)}
-                        />
-                    }
-                />
-            </Grid>
-            <Grid item xs={12} />
-        </>
-    )
-
     const header = (
         <Grid container justify="center" spacing={1}>
-            {headerAuthenticated}
             <Grid item xs={6}>
                 <Button
                     fullWidth
@@ -113,10 +112,40 @@ const HomeRecipeSelection = (props: Props) => {
         <CategorySelection
             onCategoryChange={props.onSelectedCategoriesChange}
             selectedCategories={props.selectedCategories}
+            forceHighlight={props.selectedEditor.length > 0}
             onRemoveSelectedCategories={props.onRemoveSelectedCategories}
             label="Filter"
             header={header}
             buttonProps={{ variant: 'text' }}>
+            {authContext.user && (
+                <Grid item xs={12}>
+                    <ListSubheader className={classes.listSubheader}>Editoren</ListSubheader>
+                    <List>
+                        {recipesCounterByUserUid.map(([uid, counter]) => {
+                            const user = userContext.getByUid(uid)
+                            if (!user) return null
+                            return (
+                                <ListItem
+                                    button
+                                    onClick={() => {
+                                        props.onSelectedEditorChange(
+                                            uid === props.selectedEditor ? '' : uid
+                                        )
+                                    }}
+                                    key={uid}>
+                                    <ListItemAvatar>
+                                        <AccountAvatar
+                                            user={user}
+                                            isUserSelected={props.selectedEditor === uid}
+                                        />
+                                    </ListItemAvatar>
+                                    <ListItemText primary={user.username} secondary={counter} />
+                                </ListItem>
+                            )
+                        })}
+                    </List>
+                </Grid>
+            )}
             {/* // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a
             maximum of 10 elements in the value array
             {user && (

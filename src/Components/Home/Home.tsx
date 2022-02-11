@@ -1,6 +1,7 @@
 import { AppBar, Fade, Grid, makeStyles, Tab, Tabs, Toolbar, withStyles } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import SwipeableViews from 'react-swipeable-views'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
@@ -9,7 +10,6 @@ import { DocumentId, OrderByKey, OrderByRecord, Recipe } from '../../model/model
 import { FirebaseService } from '../../services/firebase'
 import RecipeService from '../../services/recipeService'
 import { BORDER_RADIUS } from '../../theme'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { PATHS } from '../Routes/Routes'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
@@ -41,20 +41,20 @@ type ChangesRecord = Record<firebase.default.firestore.DocumentChangeType, Map<D
 
 const Home = () => {
     const pagedRecipesSize = useRef(0)
+    const swipeableActionsRef = useRef({ updateHeight: () => {} })
 
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, Recipe>>(
         RecipeService.pagedRecipes
     )
+
     const [lastRecipe, setLastRecipe] = useState<Recipe | undefined | null>(null)
     const [orderBy, setOrderBy] = useState<OrderByRecord>(RecipeService.orderBy)
     const [querying, setQuerying] = useState(false)
-    const [showMyRecipesOnly, setShowMyRecipesOnly] = useState(false)
     const [tabIndex, setTabIndex] = useState(0)
 
     const { selectedCategories, setSelectedCategories, removeSelectedCategories } =
         useCategorySelect()
-    const { user } = useFirebaseAuthContext()
-    const [selectedEditors, setSelectedEditors] = useState<string[]>([])
+    const [selectedEditor, setSelectedEditor] = useState<string>('')
 
     const { IntersectionObserverTrigger } = useIntersectionObserver({
         onIsIntersecting: () => {
@@ -78,7 +78,7 @@ const Home = () => {
         // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
         // if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
 
-        if (showMyRecipesOnly && user) query = query.where('editorUid', '==', user.uid)
+        if (selectedEditor) query = query.where('editorUid', '==', selectedEditor)
 
         if (lastRecipe) query = query.startAfter(lastRecipe[orderByKey])
 
@@ -105,31 +105,14 @@ const Home = () => {
                 return newRecipes
             })
             setQuerying(false)
+            swipeableActionsRef.current.updateHeight()
         })
-    }, [lastRecipe, orderBy, selectedCategories, selectedEditors, showMyRecipesOnly, user])
+    }, [lastRecipe, orderBy, selectedCategories, selectedEditor])
 
     const resetRecipeState = useCallback(() => {
         setPagedRecipes(new Map())
         setLastRecipe(null)
     }, [])
-
-    const renderContent = () => {
-        switch (tabIndex) {
-            case 0:
-                return (
-                    <HomeRecipes
-                        pagedRecipes={pagedRecipes}
-                        IntersectionObserverTrigger={IntersectionObserverTrigger}
-                        pagedRecipesSize={pagedRecipesSize}
-                        querying={querying}
-                    />
-                )
-            case 1:
-                return <HomeNew />
-            case 2:
-                return <HomeMostCooked />
-        }
-    }
 
     return (
         <>
@@ -153,24 +136,20 @@ const Home = () => {
                                         onRemoveSelectedCategories={() => {
                                             removeSelectedCategories()
                                             resetRecipeState()
+                                            setSelectedEditor('')
                                         }}
                                         onSelectedCategoriesChange={(type, value) => {
                                             setSelectedCategories(type, value)
                                             resetRecipeState()
                                         }}
-                                        selectedEditors={selectedEditors}
-                                        onSelectedEditorsChange={uids => {
-                                            setSelectedEditors(uids)
+                                        selectedEditor={selectedEditor}
+                                        onSelectedEditorChange={uid => {
+                                            setSelectedEditor(uid)
                                             resetRecipeState()
                                         }}
                                         orderBy={orderBy}
                                         onOrderByChange={newOrderBy => {
                                             setOrderBy(newOrderBy)
-                                            resetRecipeState()
-                                        }}
-                                        showMyRecipesOnly={showMyRecipesOnly}
-                                        onShowMyRecipesOnlyChange={value => {
-                                            setShowMyRecipesOnly(value)
                                             resetRecipeState()
                                         }}
                                     />
@@ -180,7 +159,24 @@ const Home = () => {
                     </AppBar>
                 </Grid>
 
-                {renderContent()}
+                <Grid item xs={12}>
+                    <SwipeableViews
+                        onChangeIndex={index => setTabIndex(index)}
+                        action={((actions: any) => (swipeableActionsRef.current = actions)) as any}
+                        animateHeight
+                        containerStyle={{ minHeight: '80vh' }}
+                        slideStyle={{ overflow: 'hidden' }}
+                        index={tabIndex}>
+                        <HomeRecipes
+                            pagedRecipes={pagedRecipes}
+                            IntersectionObserverTrigger={IntersectionObserverTrigger}
+                            pagedRecipesSize={pagedRecipesSize}
+                            querying={querying}
+                        />
+                        <HomeNew />
+                        <HomeMostCooked />
+                    </SwipeableViews>
+                </Grid>
             </EntryGridContainer>
 
             <SecouredRouteFab
