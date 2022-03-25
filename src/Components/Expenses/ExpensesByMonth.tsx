@@ -9,9 +9,9 @@ import {
     Typography,
 } from '@material-ui/core'
 import { ChevronRight } from 'mdi-material-ui'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
-import { Expense } from '../../model/model'
+import { Expense, Nullable } from '../../model/model'
 import useExpenseStore from '../../store/ExpenseStore'
 import ExpenseCard from './ExpenseCard'
 import ExpenseCategoryChip from './ExpenseCategoryChip'
@@ -39,10 +39,18 @@ interface Props {
 }
 
 const ExpensesByMonth = (props: Props) => {
+    const [categoryFilter, setCategoryFilter] = useState<Nullable<string>>(null)
     const [expanded, setExpanded] = useState<StyleProps['expanded']>(false)
     const classes = useStyles({ expanded })
 
     const categories = useExpenseStore(store => store.categories)
+
+    const filterAwareExpenses = useMemo(() => {
+        if (!categoryFilter) {
+            return props.expenses
+        }
+        return props.expenses.filter(expense => expense.category === categoryFilter)
+    }, [categoryFilter, props.expenses])
 
     return (
         <>
@@ -74,6 +82,15 @@ const ExpensesByMonth = (props: Props) => {
                         <Grid container wrap="nowrap" className={classes.chipContainer} spacing={1}>
                             {categories.map(category => (
                                 <ExpenseCategoryChip
+                                    onClick={() => setCategoryFilter(category)}
+                                    onDelete={
+                                        categoryFilter === category
+                                            ? () => setCategoryFilter(null)
+                                            : undefined
+                                    }
+                                    disabled={Boolean(
+                                        categoryFilter && categoryFilter !== category
+                                    )}
                                     key={category}
                                     category={category}
                                     expenses={props.expenses}
@@ -81,7 +98,7 @@ const ExpensesByMonth = (props: Props) => {
                             ))}
                         </Grid>
                     </Grid>
-                    {props.expenses.map((e, i) => (
+                    {filterAwareExpenses.map((e, i) => (
                         <ExpenseCard key={i} expense={e} />
                     ))}
                     <Grid item xs={12} />
