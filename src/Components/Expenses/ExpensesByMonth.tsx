@@ -8,6 +8,7 @@ import {
     Theme,
     Typography,
 } from '@material-ui/core'
+import { Cancel } from '@material-ui/icons'
 import { ChevronRight } from 'mdi-material-ui'
 import { useMemo, useState } from 'react'
 
@@ -82,12 +83,12 @@ const ExpensesByMonth = (props: Props) => {
                         <Grid container wrap="nowrap" className={classes.chipContainer} spacing={1}>
                             {categories.map(category => (
                                 <ExpenseCategoryChip
-                                    onClick={() => setCategoryFilter(category)}
-                                    onDelete={
-                                        categoryFilter === category
-                                            ? () => setCategoryFilter(null)
-                                            : undefined
-                                    }
+                                    onClick={() => {
+                                        setCategoryFilter(prev =>
+                                            prev === category ? null : category
+                                        )
+                                    }}
+                                    icon={categoryFilter === category ? <Cancel /> : undefined}
                                     disabled={Boolean(
                                         categoryFilter && categoryFilter !== category
                                     )}

@@ -24,7 +24,7 @@ const useStyles = makeStyles<Theme, { backgroundColor?: string; color: string }>
     },
 }))
 
-interface Props extends Pick<ChipProps, 'onClick' | 'disabled' | 'onDelete'> {
+interface Props extends Pick<ChipProps, 'onClick' | 'disabled' | 'onDelete' | 'icon'> {
     category: string
     expenses: Expense[]
 }
@@ -46,8 +46,8 @@ const ExpenseCategoryChip = (props: Props) => {
                 onClick={props.onClick}
                 disabled={props.disabled}
                 onDelete={props.onDelete}
+                icon={props.icon ?? icon}
                 classes={classes}
-                icon={icon}
                 label={`${props.category}: ${amount}`}
             />
         </Grid>

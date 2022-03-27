@@ -1,5 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core'
-import { amber, blueGrey, indigo, pink } from '@material-ui/core/colors'
+import { amber, blue, blueGrey, deepPurple, green, pink } from '@material-ui/core/colors'
+import { AttachMoney, FlightTakeoff } from '@material-ui/icons'
 import Commute from '@material-ui/icons/Commute'
 import Fastfood from '@material-ui/icons/Fastfood'
 import Weekend from '@material-ui/icons/Weekend'
@@ -12,8 +13,9 @@ type CategoryPaletteProps = { category: string; variant: 'chip' | 'card' }
 export const CATEGORIES_PALETTE: { [key: string]: string | undefined } = {
     Lebensmittel: amber.A100,
     Mobilität: pink.A100,
-    Inventar: indigo.A100,
+    Inventar: deepPurple.A100,
     Sonstiges: blueGrey.A100,
+    Urlaub: blue.A100,
 }
 
 const useStyles = makeStyles<Theme, CategoryPaletteProps>(() => ({
@@ -44,10 +46,20 @@ const useExpenseCategoryPalette = (props: CategoryPaletteProps) => {
                 icon: <Weekend className={classes.icon} fontSize={fontSize} />,
             }
         case 'Sonstiges':
-        default:
             return {
                 ...palette,
                 icon: <CashMultiple className={classes.icon} fontSize={fontSize} />,
+            }
+        case 'Urlaub':
+            return {
+                ...palette,
+                icon: <FlightTakeoff className={classes.icon} fontSize={fontSize} />,
+            }
+        default:
+            return {
+                ...palette,
+                backgroundColor: green.A100,
+                icon: <AttachMoney className={classes.icon} fontSize={fontSize} />,
             }
     }
 }
