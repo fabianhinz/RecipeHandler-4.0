@@ -1,7 +1,6 @@
 import { AppBar, Fade, Grid, makeStyles, Tab, Tabs, Toolbar, withStyles } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import SwipeableViews from 'react-swipeable-views'
 
 import { useCategorySelect } from '../../hooks/useCategorySelect'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
@@ -41,7 +40,6 @@ type ChangesRecord = Record<firebase.default.firestore.DocumentChangeType, Map<D
 
 const Home = () => {
     const pagedRecipesSize = useRef(0)
-    const swipeableActionsRef = useRef({ updateHeight: () => {} })
 
     const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, Recipe>>(
         RecipeService.pagedRecipes
@@ -58,7 +56,9 @@ const Home = () => {
 
     const { IntersectionObserverTrigger } = useIntersectionObserver({
         onIsIntersecting: () => {
-            if (pagedRecipes.size > 0) setLastRecipe([...pagedRecipes.values()].pop())
+            if (pagedRecipes.size > 0 && !querying) {
+                setLastRecipe([...pagedRecipes.values()].pop())
+            }
         },
         options: { rootMargin: RECIPE_CARD_HEIGHT + 'px' },
     })
@@ -105,7 +105,6 @@ const Home = () => {
                 return newRecipes
             })
             setQuerying(false)
-            swipeableActionsRef.current.updateHeight()
         })
     }, [lastRecipe, orderBy, selectedCategories, selectedEditor])
 
@@ -160,22 +159,20 @@ const Home = () => {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <SwipeableViews
-                        onChangeIndex={index => setTabIndex(index)}
-                        action={((actions: any) => (swipeableActionsRef.current = actions)) as any}
-                        animateHeight
-                        containerStyle={{ minHeight: '80vh' }}
-                        slideStyle={{ overflow: 'hidden' }}
-                        index={tabIndex}>
+                    <Fade in={tabIndex === 0} mountOnEnter unmountOnExit>
                         <HomeRecipes
                             pagedRecipes={pagedRecipes}
                             IntersectionObserverTrigger={IntersectionObserverTrigger}
                             pagedRecipesSize={pagedRecipesSize}
                             querying={querying}
                         />
+                    </Fade>
+                    <Fade in={tabIndex === 1} mountOnEnter unmountOnExit>
                         <HomeNew />
+                    </Fade>
+                    <Fade in={tabIndex === 2} mountOnEnter unmountOnExit>
                         <HomeMostCooked />
-                    </SwipeableViews>
+                    </Fade>
                 </Grid>
             </EntryGridContainer>
 
