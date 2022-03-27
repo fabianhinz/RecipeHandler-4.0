@@ -26,7 +26,7 @@ const useStyles = makeStyles<Theme, { backgroundColor?: string; color: string }>
 
 interface Props extends Pick<ChipProps, 'onClick' | 'disabled' | 'onDelete' | 'icon'> {
     category: string
-    expenses: Expense[]
+    expenses: string | Expense[]
 }
 
 const ExpenseCategoryChip = (props: Props) => {
@@ -35,10 +35,13 @@ const ExpenseCategoryChip = (props: Props) => {
         variant: 'chip',
     })
     const classes = useStyles(palette)
-    const amount = useMemo(
-        () => expenseUtils.getAmountByCategory(props.category, props.expenses, true),
-        [props.category, props.expenses]
-    )
+    const amount = useMemo(() => {
+        if (typeof props.expenses === 'string') {
+            return props.expenses
+        }
+
+        return expenseUtils.getAmountByCategory(props.category, props.expenses, true)
+    }, [props.category, props.expenses])
 
     return (
         <Grid item key={props.category}>

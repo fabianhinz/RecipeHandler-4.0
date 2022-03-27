@@ -80,6 +80,8 @@ const getMonthStringByDate = (date: Date) => {
     return monthFormatter.format(date)
 }
 
+const numberFormatter = new Intl.NumberFormat('de')
+
 const formatAmount = (amount: number) =>
     amount.toLocaleString('de-DE', {
         style: 'currency',
@@ -117,5 +119,6 @@ const expenseUtils = {
     formatAmount,
     useExpenseCategoryPalette,
     getFilteredExpensesByMonth,
+    numberFormatter,
 }
 export default expenseUtils

@@ -29,8 +29,9 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         transition: theme.transitions.create('border-color'),
         borderWidth: theme.spacing(0.5),
         borderColor: props => {
+            const focusedColor = theme.palette.type === 'dark' ? '#ffffff1f' : '#0000001f'
             if (props.activeFilter) return theme.palette.secondary.main
-            return props.focused ? '#ffffff1f' : 'transparent'
+            return props.focused ? focusedColor : 'transparent'
         },
         cursor: 'pointer',
     },

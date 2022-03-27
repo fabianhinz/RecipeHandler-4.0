@@ -1,5 +1,8 @@
 import { Box, Grid, makeStyles, Typography } from '@material-ui/core'
+import { TableChart, Timeline } from '@material-ui/icons'
 import AddIcon from '@material-ui/icons/Add'
+import ToggleButton from '@material-ui/lab/ToggleButton'
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import { useMemo, useState } from 'react'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
@@ -12,9 +15,9 @@ import NotFound from '../Shared/NotFound'
 import ArchivedExpensesSelection from './ArchivedExpensesSelection'
 import ExpenseDialog from './ExpenseDialog'
 import ExpensesByMonth from './ExpensesByMonth'
+import { ExpensesChart } from './ExpensesChart'
 import ExpenseUserCard from './ExpenseUserCard'
 import expenseUtils from './helper/expenseUtils'
-
 const selector = (state: ExpenseStore) => ({
     expenses: state.expenses,
     isDialogOpen: state.isNewExpenseDialogOpen,
@@ -35,8 +38,11 @@ export interface ExpenseFiter {
     value: string
 }
 
+export type ViewVariant = 'table' | 'graph'
+
 const Expenses = () => {
     const [filter, setFilter] = useState<Nullable<ExpenseFiter>>(null)
+    const [view, setView] = useState<ViewVariant>('table')
 
     const classes = useStyles()
 
@@ -75,7 +81,28 @@ const Expenses = () => {
 
             <Grid item xs={12}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Typography variant="h4">Ausgaben</Typography>
+                    <Box display="flex" alignItems="center">
+                        <Typography variant="h4">Ausgaben</Typography>
+                        <Box ml={1}>
+                            <ToggleButtonGroup
+                                size="small"
+                                value={view}
+                                exclusive
+                                onChange={(_, newAlignment) => {
+                                    if (newAlignment) {
+                                        setView(newAlignment)
+                                    }
+                                }}
+                                aria-label="text alignment">
+                                <ToggleButton value="table">
+                                    <TableChart />
+                                </ToggleButton>
+                                <ToggleButton value="graph">
+                                    <Timeline />
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                        </Box>
+                    </Box>
                     <Box flexGrow={0}>
                         <ArchivedExpensesSelection />
                     </Box>
@@ -84,10 +111,13 @@ const Expenses = () => {
 
             <Grid item xs={12}>
                 {/* check for length to avoid jumpy chart animation */}
-                {expensesToRenderMemoized.length > 0 &&
+                {view === 'table' &&
+                    expensesToRenderMemoized.length > 0 &&
                     expensesToRenderMemoized.map(([month, expenses]) => (
                         <ExpensesByMonth key={month} expenses={expenses} month={month} />
                     ))}
+
+                {view === 'graph' && <ExpensesChart expensesByMonth={expensesToRenderMemoized} />}
             </Grid>
 
             <NotFound visible={!expenseStoreLoading && expenses.length === 0} />
