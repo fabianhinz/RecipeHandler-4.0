@@ -7,6 +7,8 @@ import Weekend from '@material-ui/icons/Weekend'
 import { CashMultiple } from 'mdi-material-ui'
 
 import { Expense } from '../../../model/model'
+import { ExpenseState } from '../../../store/ExpenseStore'
+import { ExpenseFiter } from '../Expenses'
 
 type CategoryPaletteProps = { category: string; variant: 'chip' | 'card' }
 
@@ -92,11 +94,28 @@ const getAmountByCategory = (category: string, expense: Expense[], format?: bool
     return format ? formatAmount(amount) : amount
 }
 
+const getFilteredExpensesByMonth = (
+    expensesByMonth: ExpenseState['expensesByMonth'],
+    filter: ExpenseFiter
+) => {
+    const filteredExpenses: ExpenseState['expensesByMonth'] = new Map()
+
+    for (const [month, expenses] of expensesByMonth.entries()) {
+        filteredExpenses.set(
+            month,
+            expenses.filter(expense => expense[filter.key] === filter.value)
+        )
+    }
+
+    return Array.from(filteredExpenses.entries())
+}
+
 const expenseUtils = {
     getMonthStringByDate,
     getFormattedDateString,
     getAmountByCategory,
     formatAmount,
     useExpenseCategoryPalette,
+    getFilteredExpensesByMonth,
 }
 export default expenseUtils

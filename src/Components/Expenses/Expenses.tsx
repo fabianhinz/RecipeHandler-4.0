@@ -1,7 +1,9 @@
 import { Box, Grid, makeStyles, Typography } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
+import { useMemo, useState } from 'react'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
+import { Expense, Nullable } from '../../model/model'
 import useCurrentExpenseStore from '../../store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
@@ -11,6 +13,7 @@ import ArchivedExpensesSelection from './ArchivedExpensesSelection'
 import ExpenseDialog from './ExpenseDialog'
 import ExpensesByMonth from './ExpensesByMonth'
 import ExpenseUserCard from './ExpenseUserCard'
+import expenseUtils from './helper/expenseUtils'
 
 const selector = (state: ExpenseStore) => ({
     expenses: state.expenses,
@@ -27,7 +30,14 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
+export interface ExpenseFiter {
+    key: keyof Pick<Expense, 'creator'>
+    value: string
+}
+
 const Expenses = () => {
+    const [filter, setFilter] = useState<Nullable<ExpenseFiter>>(null)
+
     const classes = useStyles()
 
     const { expenses, isDialogOpen } = useExpenseStore(selector)
@@ -39,13 +49,25 @@ const Expenses = () => {
 
     useDocumentTitle('Ausgaben')
 
+    const expensesToRenderMemoized = useMemo(() => {
+        if (!filter) {
+            return Array.from(expensesByMonth.entries())
+        }
+        return expenseUtils.getFilteredExpensesByMonth(expensesByMonth, filter)
+    }, [expensesByMonth, filter])
+
     return (
         <EntryGridContainer>
             {autocompleteOptions.creator.length > 0 && (
                 <Grid item xs={12}>
                     <Grid container wrap="nowrap" className={classes.container} spacing={3}>
                         {autocompleteOptions.creator.map(u => (
-                            <ExpenseUserCard key={u} userName={u} />
+                            <ExpenseUserCard
+                                filter={filter}
+                                onFilterChange={setFilter}
+                                key={u}
+                                userName={u}
+                            />
                         ))}
                     </Grid>
                 </Grid>
@@ -61,8 +83,9 @@ const Expenses = () => {
             </Grid>
 
             <Grid item xs={12}>
-                {expensesByMonth.size > 0 &&
-                    Array.from(expensesByMonth.entries()).map(([month, expenses]) => (
+                {/* check for length to avoid jumpy chart animation */}
+                {expensesToRenderMemoized.length > 0 &&
+                    expensesToRenderMemoized.map(([month, expenses]) => (
                         <ExpensesByMonth key={month} expenses={expenses} month={month} />
                     ))}
             </Grid>

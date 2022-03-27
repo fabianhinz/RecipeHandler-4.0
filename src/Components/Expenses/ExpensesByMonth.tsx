@@ -68,7 +68,7 @@ const ExpensesByMonth = (props: Props) => {
                     Summe:{' '}
                     {props.expenses
                         .map(e => e.amount)
-                        .reduce((prev, curr) => prev + curr)
+                        .reduce((prev, curr) => prev + curr, 0)
                         .toLocaleString('de-DE', {
                             style: 'currency',
                             currency: 'EUR',
