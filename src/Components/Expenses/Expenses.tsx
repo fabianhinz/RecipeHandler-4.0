@@ -40,6 +40,11 @@ export interface ExpenseFiter {
 
 export type ViewVariant = 'table' | 'graph'
 
+/**
+ * # ToDo:
+ * - [ ] Add a year filter for all expenses >> [2021, 2022, all]
+ * - [ ] filter between views should be propagated to each other
+ */
 const Expenses = () => {
     const [filter, setFilter] = useState<Nullable<ExpenseFiter>>(null)
     const [view, setView] = useState<ViewVariant>('table')
