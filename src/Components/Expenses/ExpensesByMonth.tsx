@@ -48,8 +48,16 @@ const ExpensesByMonth = (props: Props) => {
 
     const categories = useExpenseStore(store => store.categories)
 
+    const filterAwareCategories = useMemo(() => {
+        if ('category' in props.filter === false) {
+            return categories
+        }
+
+        return categories.filter(category => category === props.filter.category)
+    }, [categories, props.filter])
+
     const filterAwareExpenses = useMemo(() => {
-        if ('category' in props.filter) {
+        if ('category' in props.filter === false) {
             return props.expenses
         }
         return props.expenses.filter(expense => expense.category === props.filter.category)
@@ -83,7 +91,7 @@ const ExpensesByMonth = (props: Props) => {
                     <Grid item xs={12} />
                     <Grid item xs={12}>
                         <Grid container wrap="nowrap" className={classes.chipContainer} spacing={1}>
-                            {categories.map(category => (
+                            {filterAwareCategories.map(category => (
                                 <ExpenseCategoryChip
                                     onClick={() => {
                                         props.onFilterChange('category', category)

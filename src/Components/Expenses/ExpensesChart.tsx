@@ -1,4 +1,4 @@
-import { Divider, makeStyles, Theme, Typography, useMediaQuery, useTheme } from '@material-ui/core'
+import { makeStyles, Theme, Typography, useMediaQuery, useTheme } from '@material-ui/core'
 import { useMemo } from 'react'
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
 
@@ -86,34 +86,31 @@ export const ExpensesChart = (props: Props) => {
     }
 
     return (
-        <>
-            <Divider variant="middle" />
-            <ResponsiveContainer width="100%" aspect={xlUp ? 3 : 2}>
-                <AreaChart data={data}>
-                    <XAxis hide dataKey="month" />
+        <ResponsiveContainer height="100%" aspect={xlUp ? 3 : 2}>
+            <AreaChart data={data}>
+                <XAxis hide dataKey="month" />
 
-                    <Tooltip
-                        cursor={false}
-                        content={props => <CustomTooltip {...(props as CustomTooltipProps)} />}
+                <Tooltip
+                    cursor={false}
+                    content={props => <CustomTooltip {...(props as CustomTooltipProps)} />}
+                />
+                {categories.map(category => (
+                    <Area
+                        onClick={handleAreaClick}
+                        style={{ cursor: 'pointer' }}
+                        type="monotone"
+                        id={category}
+                        stackId="1"
+                        key={category}
+                        strokeWidth={2}
+                        dataKey={category}
+                        activeDot={{ r: 8 }}
+                        fillOpacity={props.filter.category === category ? 0.7 : 0.5}
+                        stroke={CATEGORIES_PALETTE[category]}
+                        fill={CATEGORIES_PALETTE[category]}
                     />
-                    {categories.map(category => (
-                        <Area
-                            onClick={handleAreaClick}
-                            style={{ cursor: 'pointer' }}
-                            type="monotone"
-                            id={category}
-                            stackId="1"
-                            key={category}
-                            strokeWidth={2}
-                            dataKey={category}
-                            activeDot={{ r: 8 }}
-                            stroke={CATEGORIES_PALETTE[category]}
-                            fill={CATEGORIES_PALETTE[category]}
-                        />
-                    ))}
-                </AreaChart>
-            </ResponsiveContainer>
-            <Divider variant="middle" />
-        </>
+                ))}
+            </AreaChart>
+        </ResponsiveContainer>
     )
 }
