@@ -1,4 +1,3 @@
-import Splitter from '@devbookhq/splitter'
 import { Box, Grid, makeStyles, Typography, useMediaQuery, useTheme } from '@material-ui/core'
 import { TableChart, Timeline, VerticalSplit } from '@material-ui/icons'
 import AddIcon from '@material-ui/icons/Add'
@@ -10,7 +9,6 @@ import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { Expense } from '../../model/model'
 import useCurrentExpenseStore from '../../store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
-import { BORDER_RADIUS } from '../../theme'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
 import EntryGridContainer from '../Shared/EntryGridContainer'
 import NotFound from '../Shared/NotFound'
@@ -18,6 +16,7 @@ import ArchivedExpensesSelection from './ArchivedExpensesSelection'
 import ExpenseDialog from './ExpenseDialog'
 import ExpensesByMonth from './ExpensesByMonth'
 import { ExpensesChart } from './ExpensesChart'
+import { ExpensesSplitView } from './ExpensesSplitView'
 import ExpenseUserCard from './ExpenseUserCard'
 import expenseUtils from './helper/expenseUtils'
 const selector = (state: ExpenseStore) => ({
@@ -33,14 +32,6 @@ const useStyles = makeStyles(theme => ({
     container: {
         overflowX: 'auto',
     },
-    splitDragger: {
-        backgroundColor: theme.palette.text.secondary,
-    },
-    splitGutter: {
-        background: theme.palette.divider,
-        borderRadius: BORDER_RADIUS,
-        margin: theme.spacing(1),
-    },
 }))
 
 export type ExpenseFilter = Partial<Pick<Expense, 'creator' | 'category'>>
@@ -54,6 +45,7 @@ export type ViewVariant = 'table' | 'graph' | 'split'
 /**
  * # ToDo:
  * - [ ] Add a year filter for all expenses >> [2021, 2022, all]
+ * - [x] y axis domain - confusing with filters otherwise
  * - [x] filter between views should be propagated to each other
  * - [x] split view on desktop? https://www.npmjs.com/package/@devbookhq/splitter
  * - [ ] extenseable filter with autocomplete options
@@ -63,7 +55,6 @@ const Expenses = () => {
     const theme = useTheme()
     const lgUp = useMediaQuery(theme.breakpoints.up('lg'))
     const [view, setView] = useState<ViewVariant>('table')
-    const [splitterSizes, setSplitterSizes] = useState([40, 60])
 
     useLayoutEffect(() => {
         setView(lgUp ? 'split' : 'table')
@@ -79,6 +70,14 @@ const Expenses = () => {
     const resetCurrentExpense = useCurrentExpenseStore(store => store.clearState)
 
     useDocumentTitle('Ausgaben')
+
+    const maxAmount = useMemo(() => {
+        const amounts: number[] = []
+        for (const [, expenses] of expensesByMonth) {
+            amounts.push(expenses.reduce((acc, curr) => (acc += curr.amount), 0))
+        }
+        return amounts.sort((a, b) => b - a)[0] ?? 0
+    }, [expensesByMonth])
 
     const expensesToRenderMemoized = useMemo(() => {
         if (!filter) {
@@ -121,12 +120,13 @@ const Expenses = () => {
     const memoizedGraph = useMemo(() => {
         return (
             <ExpensesChart
+                maxAmount={maxAmount}
                 filter={filter}
                 onFilterChange={handleFilterChange}
                 expensesByMonth={expensesToRenderMemoized}
             />
         )
-    }, [expensesToRenderMemoized, filter, handleFilterChange])
+    }, [expensesToRenderMemoized, filter, handleFilterChange, maxAmount])
 
     return (
         <EntryGridContainer>
@@ -181,19 +181,13 @@ const Expenses = () => {
 
             <Grid item xs={12}>
                 {view === 'table' && memoizedTable}
-
                 {view === 'graph' && memoizedGraph}
 
                 {view === 'split' && (
-                    <Splitter
-                        initialSizes={splitterSizes}
-                        minWidths={[400, 400]}
-                        onResizeFinished={(_, newSizes) => setSplitterSizes(newSizes)}
-                        draggerClassName={classes.splitDragger}
-                        gutterClassName={classes.splitGutter}>
+                    <ExpensesSplitView>
                         <div>{memoizedTable}</div>
-                        <div>{memoizedGraph}</div>
-                    </Splitter>
+                        {memoizedGraph}
+                    </ExpensesSplitView>
                 )}
             </Grid>
 

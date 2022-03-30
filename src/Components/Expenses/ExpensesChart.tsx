@@ -1,6 +1,6 @@
 import { makeStyles, Theme, Typography, useMediaQuery, useTheme } from '@material-ui/core'
 import { useMemo } from 'react'
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { Expense } from '../../model/model'
 import useExpenseStore from '../../store/ExpenseStore'
@@ -54,6 +54,7 @@ const CustomTooltip = (props: CustomTooltipProps) => {
 
 interface Props {
     expensesByMonth: [string, Expense[]][]
+    maxAmount: number
     filter: ExpenseFilter
     onFilterChange: ExpenseFilterChangeHandler
 }
@@ -88,6 +89,7 @@ export const ExpensesChart = (props: Props) => {
     return (
         <ResponsiveContainer height="100%" aspect={xlUp ? 3 : 2}>
             <AreaChart data={data}>
+                <YAxis hide domain={['auto', props.maxAmount]} />
                 <XAxis hide dataKey="month" />
 
                 <Tooltip
