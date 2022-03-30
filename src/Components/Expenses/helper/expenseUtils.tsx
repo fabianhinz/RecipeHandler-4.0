@@ -8,7 +8,7 @@ import { CashMultiple } from 'mdi-material-ui'
 
 import { Expense } from '../../../model/model'
 import { ExpenseState } from '../../../store/ExpenseStore'
-import { ExpenseFiter } from '../Expenses'
+import { ExpenseFilter } from '../Expenses'
 
 type CategoryPaletteProps = { category: string; variant: 'chip' | 'card' }
 
@@ -99,15 +99,20 @@ const getAmountByCategory = (category: string, expense: Expense[], format?: bool
 
 const getFilteredExpensesByMonth = (
     expensesByMonth: ExpenseState['expensesByMonth'],
-    filter: ExpenseFiter
+    filter: ExpenseFilter
 ) => {
     const filteredExpenses: ExpenseState['expensesByMonth'] = new Map()
 
     for (const [month, expenses] of expensesByMonth.entries()) {
-        filteredExpenses.set(
-            month,
-            expenses.filter(expense => expense[filter.key] === filter.value)
-        )
+        const expensesFiltered = expenses.filter(expense => {
+            return Object.entries(filter)
+                .map(([key, value]) => {
+                    return expense[key] === value
+                })
+                .every(Boolean)
+        })
+
+        filteredExpenses.set(month, expensesFiltered)
     }
 
     return Array.from(filteredExpenses.entries())

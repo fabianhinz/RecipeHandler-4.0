@@ -12,10 +12,11 @@ import { Cancel } from '@material-ui/icons'
 import { ChevronRight } from 'mdi-material-ui'
 import { useMemo, useState } from 'react'
 
-import { Expense, Nullable } from '../../model/model'
+import { Expense } from '../../model/model'
 import useExpenseStore from '../../store/ExpenseStore'
 import ExpenseCard from './ExpenseCard'
 import ExpenseCategoryChip from './ExpenseCategoryChip'
+import { ExpenseFilter, ExpenseFilterChangeHandler } from './Expenses'
 
 interface StyleProps {
     expanded: boolean
@@ -37,21 +38,22 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
 interface Props {
     month: string
     expenses: Expense[]
+    filter: ExpenseFilter
+    onFilterChange: ExpenseFilterChangeHandler
 }
 
 const ExpensesByMonth = (props: Props) => {
-    const [categoryFilter, setCategoryFilter] = useState<Nullable<string>>(null)
     const [expanded, setExpanded] = useState<StyleProps['expanded']>(false)
     const classes = useStyles({ expanded })
 
     const categories = useExpenseStore(store => store.categories)
 
     const filterAwareExpenses = useMemo(() => {
-        if (!categoryFilter) {
+        if ('category' in props.filter) {
             return props.expenses
         }
-        return props.expenses.filter(expense => expense.category === categoryFilter)
-    }, [categoryFilter, props.expenses])
+        return props.expenses.filter(expense => expense.category === props.filter.category)
+    }, [props.expenses, props.filter])
 
     return (
         <>
@@ -84,13 +86,13 @@ const ExpensesByMonth = (props: Props) => {
                             {categories.map(category => (
                                 <ExpenseCategoryChip
                                     onClick={() => {
-                                        setCategoryFilter(prev =>
-                                            prev === category ? null : category
-                                        )
+                                        props.onFilterChange('category', category)
                                     }}
-                                    icon={categoryFilter === category ? <Cancel /> : undefined}
+                                    icon={
+                                        props.filter.category === category ? <Cancel /> : undefined
+                                    }
                                     disabled={Boolean(
-                                        categoryFilter && categoryFilter !== category
+                                        props.filter.category && props.filter.category !== category
                                     )}
                                     key={category}
                                     category={category}

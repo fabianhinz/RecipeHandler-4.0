@@ -8,7 +8,7 @@ import useDebounce from '../../hooks/useDebounce'
 import { Nullable } from '../../model/model'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
 import { stopPropagationProps } from '../../util/constants'
-import { ExpenseFiter } from './Expenses'
+import { ExpenseFilter, ExpenseFilterChangeHandler } from './Expenses'
 import { CATEGORIES_PALETTE } from './helper/expenseUtils'
 
 const selector = (state: ExpenseStore) => state.expenses
@@ -83,8 +83,8 @@ type ActivePieCell = {
 }
 
 interface Props {
-    filter: Nullable<ExpenseFiter>
-    onFilterChange: (filter: Nullable<ExpenseFiter>) => void
+    filter: ExpenseFilter
+    onFilterChange: ExpenseFilterChangeHandler
     userName: string
 }
 
@@ -100,11 +100,11 @@ const ExpenseUserCard = (props: Props) => {
     })
 
     const filteredByCurrentUser = useMemo(() => {
-        return props.filter?.key === 'creator' && props.filter.value === props.userName
+        return 'creator' in props.filter && props.filter.creator === props.userName
     }, [props.filter, props.userName])
 
     const disabled = useMemo(() => {
-        if (props.filter === null) return false
+        if (!props.filter.creator) return false
 
         return filteredByCurrentUser === false
     }, [filteredByCurrentUser, props.filter])
@@ -159,11 +159,7 @@ const ExpenseUserCard = (props: Props) => {
             return
         }
 
-        if (props.filter?.value === props.userName) {
-            props.onFilterChange(null)
-        } else {
-            props.onFilterChange({ key: 'creator', value: props.userName })
-        }
+        props.onFilterChange('creator', props.userName)
     }
 
     const handlePieChartMouseEnter = (_: unknown, index: number) => {
@@ -200,11 +196,7 @@ const ExpenseUserCard = (props: Props) => {
                         })}
                     </Typography>
                 </Grow>
-                <Zoom
-                    in={filteredByCurrentUser}
-                    mountOnEnter={false}
-                    unmountOnExit
-                    onExited={console.log}>
+                <Zoom in={filteredByCurrentUser} mountOnEnter={false} unmountOnExit>
                     <div className={classes.cancelIconContainer}>
                         <Cancel className={classes.cancelIcon} />
                     </div>

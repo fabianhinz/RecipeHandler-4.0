@@ -1,14 +1,11 @@
-import { Divider, makeStyles, Theme, Typography } from '@material-ui/core'
-import { useMemo, useState } from 'react'
+import { Divider, makeStyles, Theme, Typography, useMediaQuery, useTheme } from '@material-ui/core'
+import { useMemo } from 'react'
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
 
-import { Expense, Nullable } from '../../model/model'
+import { Expense } from '../../model/model'
 import useExpenseStore from '../../store/ExpenseStore'
+import { ExpenseFilter, ExpenseFilterChangeHandler } from './Expenses'
 import expenseUtils, { CATEGORIES_PALETTE } from './helper/expenseUtils'
-
-interface Props {
-    expensesByMonth: [string, Expense[]][]
-}
 
 const useStyles = makeStyles<Theme>(theme => ({
     tooltipPaper: {
@@ -32,7 +29,7 @@ const useStyles = makeStyles<Theme>(theme => ({
 interface CustomTooltipProps {
     active: boolean
     label: string
-    payload: { dataKey: string; value: number }[]
+    payload: { dataKey: string; value: number; id: string }[]
 }
 
 const CustomTooltip = (props: CustomTooltipProps) => {
@@ -55,14 +52,21 @@ const CustomTooltip = (props: CustomTooltipProps) => {
     return null
 }
 
+interface Props {
+    expensesByMonth: [string, Expense[]][]
+    filter: ExpenseFilter
+    onFilterChange: ExpenseFilterChangeHandler
+}
+
 export const ExpensesChart = (props: Props) => {
-    const [activeArea, setActiveArea] = useState<Nullable<string>>(null)
     const categories = useExpenseStore(store => store.categories)
+    const theme = useTheme()
+    const xlUp = useMediaQuery(theme.breakpoints.up('xl'))
 
     const data = useMemo(() => {
         const data: { month: string; [key: string]: number | string }[] = []
         const filteredByActiveArea = categories.filter(category =>
-            activeArea ? category === activeArea : true
+            'category' in props.filter ? props.filter.category === category : true
         )
 
         for (const [month, expenses] of props.expensesByMonth) {
@@ -75,16 +79,16 @@ export const ExpensesChart = (props: Props) => {
         }
 
         return data.reverse()
-    }, [activeArea, categories, props.expensesByMonth])
+    }, [categories, props.expensesByMonth, props.filter])
 
     const handleAreaClick = (payload: any) => {
-        setActiveArea(payload.id === activeArea ? null : payload.id)
+        props.onFilterChange('category', payload.id)
     }
 
     return (
         <>
             <Divider variant="middle" />
-            <ResponsiveContainer width="100%" aspect={2}>
+            <ResponsiveContainer width="100%" aspect={xlUp ? 3 : 2}>
                 <AreaChart data={data}>
                     <XAxis hide dataKey="month" />
 

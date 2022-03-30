@@ -6,7 +6,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import { useMemo, useState } from 'react'
 
 import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { Expense, Nullable } from '../../model/model'
+import { Expense } from '../../model/model'
 import useCurrentExpenseStore from '../../store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
 import { SecouredRouteFab } from '../Routes/SecouredRouteFab'
@@ -33,20 +33,23 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-export interface ExpenseFiter {
-    key: keyof Pick<Expense, 'creator'>
-    value: string
-}
+export type ExpenseFilter = Partial<Record<keyof Pick<Expense, 'creator' | 'category'>, string>>
+export type ExpenseFilterChangeHandler = <Key extends keyof ExpenseFilter>(
+    key: Key,
+    value: ExpenseFilter[Key]
+) => void
 
 export type ViewVariant = 'table' | 'graph'
 
 /**
  * # ToDo:
  * - [ ] Add a year filter for all expenses >> [2021, 2022, all]
- * - [ ] filter between views should be propagated to each other
+ * - [x] filter between views should be propagated to each other
+ * - [ ] split view on desktop?
+ * - [ ] extenseable filter with autocomplete options
  */
 const Expenses = () => {
-    const [filter, setFilter] = useState<Nullable<ExpenseFiter>>(null)
+    const [filter, setFilter] = useState<ExpenseFilter>({})
     const [view, setView] = useState<ViewVariant>('table')
 
     const classes = useStyles()
@@ -67,6 +70,18 @@ const Expenses = () => {
         return expenseUtils.getFilteredExpensesByMonth(expensesByMonth, filter)
     }, [expensesByMonth, filter])
 
+    const handleFilterChange: ExpenseFilterChangeHandler = (key, value) => {
+        const nextFilter = { ...filter }
+
+        if (nextFilter[key] === value) {
+            delete nextFilter[key]
+        } else {
+            nextFilter[key] = value
+        }
+
+        setFilter(nextFilter)
+    }
+
     return (
         <EntryGridContainer>
             {autocompleteOptions.creator.length > 0 && (
@@ -75,7 +90,7 @@ const Expenses = () => {
                         {autocompleteOptions.creator.map(u => (
                             <ExpenseUserCard
                                 filter={filter}
-                                onFilterChange={setFilter}
+                                onFilterChange={handleFilterChange}
                                 key={u}
                                 userName={u}
                             />
@@ -119,10 +134,22 @@ const Expenses = () => {
                 {view === 'table' &&
                     expensesToRenderMemoized.length > 0 &&
                     expensesToRenderMemoized.map(([month, expenses]) => (
-                        <ExpensesByMonth key={month} expenses={expenses} month={month} />
+                        <ExpensesByMonth
+                            filter={filter}
+                            onFilterChange={handleFilterChange}
+                            key={month}
+                            expenses={expenses}
+                            month={month}
+                        />
                     ))}
 
-                {view === 'graph' && <ExpensesChart expensesByMonth={expensesToRenderMemoized} />}
+                {view === 'graph' && (
+                    <ExpensesChart
+                        filter={filter}
+                        onFilterChange={handleFilterChange}
+                        expensesByMonth={expensesToRenderMemoized}
+                    />
+                )}
             </Grid>
 
             <NotFound visible={!expenseStoreLoading && expenses.length === 0} />
