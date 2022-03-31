@@ -97,6 +97,19 @@ const getAmountByCategory = (category: string, expense: Expense[], format?: bool
     return format ? formatAmount(amount) : amount
 }
 
+const getExpensesByYear = (expensesByMonth: ExpenseState['expensesByMonth'], year: number) => {
+    const filteredExpenses: ExpenseState['expensesByMonth'] = new Map()
+
+    for (const [month, expenses] of expensesByMonth.entries()) {
+        // 😜
+        if (month.includes(year.toString())) {
+            filteredExpenses.set(month, expenses)
+        }
+    }
+
+    return Array.from(filteredExpenses.entries())
+}
+
 const getFilteredExpensesByMonth = (
     expensesByMonth: ExpenseState['expensesByMonth'],
     filter: ExpenseFilter
@@ -125,6 +138,7 @@ const expenseUtils = {
     formatAmount,
     useExpenseCategoryPalette,
     getFilteredExpensesByMonth,
+    getExpensesByYear,
     numberFormatter,
     expenseFormatter,
 }

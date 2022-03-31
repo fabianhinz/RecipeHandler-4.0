@@ -1,14 +1,6 @@
 import { makeStyles, Theme, Typography, useMediaQuery, useTheme } from '@material-ui/core'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import {
-    Area,
-    AreaChart,
-    CartesianGrid,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from 'recharts'
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import useIntersectionObserver from '../../hooks/useIntersectionObserver'
 import { Expense, Nullable } from '../../model/model'
@@ -31,7 +23,6 @@ const useTooltipStyles = makeStyles<Theme>(theme => ({
         textTransform: 'none',
         fontFamily: 'Ubuntu',
         fontSize: theme.typography.subtitle1.fontSize,
-        minWidth: 200,
     },
 }))
 
@@ -122,10 +113,6 @@ export const ExpensesChart = (props: Props) => {
         return data.reverse()
     }, [categories, currentCategoryHasAmount, props.expensesByMonth])
 
-    const handleAreaClick = (payload: any) => {
-        props.onFilterChange('category', payload.id)
-    }
-
     return (
         <>
             <IntersectionObserverTrigger />
@@ -141,7 +128,7 @@ export const ExpensesChart = (props: Props) => {
                 <ResponsiveContainer
                     width={placeholderRef.current?.clientWidth ?? '100%'}
                     aspect={xlUp ? 3 : 2}>
-                    <AreaChart data={data}>
+                    <BarChart data={data}>
                         <CartesianGrid strokeDasharray="9" vertical={false} opacity={0.2} />
                         <YAxis hide domain={['auto', props.maxAmount]} />
                         <XAxis hide dataKey="month" />
@@ -151,23 +138,19 @@ export const ExpensesChart = (props: Props) => {
                             content={props => <CustomTooltip {...(props as CustomTooltipProps)} />}
                         />
                         {categories.map(category => (
-                            <Area
-                                onClick={handleAreaClick}
+                            <Bar
+                                onClick={() => props.onFilterChange('category', category)}
                                 style={{
                                     cursor: 'pointer',
                                 }}
-                                type="monotone"
                                 id={category}
                                 stackId="1"
                                 key={category}
-                                strokeWidth={currentCategoryHasAmount(category) ? 2 : 0}
                                 dataKey={category}
-                                activeDot={{ r: 8 }}
-                                stroke={CATEGORIES_PALETTE[category]}
                                 fill={CATEGORIES_PALETTE[category]}
                             />
                         ))}
-                    </AreaChart>
+                    </BarChart>
                 </ResponsiveContainer>
             </div>
         </>

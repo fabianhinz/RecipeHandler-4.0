@@ -86,6 +86,7 @@ interface Props {
     filter: ExpenseFilter
     onFilterChange: ExpenseFilterChangeHandler
     userName: string
+    year: number | undefined
 }
 
 const ExpenseUserCard = (props: Props) => {
@@ -116,13 +117,20 @@ const ExpenseUserCard = (props: Props) => {
     })
 
     useLayoutEffect(() => {
-        const userExpenses = expenses.filter(expense => expense.creator === props.userName)
+        const expensesOfYear = expenses.filter(expense => {
+            if (props.year === undefined) {
+                return expense
+            }
+            return expense.date.toDate().getFullYear() === props.year
+        })
+
+        const userExpenses = expensesOfYear.filter(expense => expense.creator === props.userName)
 
         const payed = userExpenses
             .map(expense => expense.amount)
             .reduce((prev, curr) => prev + curr, 0)
 
-        const shouldPay = expenses
+        const shouldPay = expensesOfYear
             .filter(expense => expense.relatedUsers?.includes(props.userName))
             .map(
                 expense =>
@@ -146,7 +154,7 @@ const ExpenseUserCard = (props: Props) => {
             ),
             difference: payed - shouldPay,
         })
-    }, [expenses, props.userName, categories])
+    }, [expenses, props.userName, categories, props.year])
 
     const debouncedAmountByCategory = useDebounce(userData.amountByCategory, 50)
     const amountByCategoryEntries = useMemo(
