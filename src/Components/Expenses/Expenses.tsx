@@ -49,6 +49,7 @@ export type ViewVariant = 'table' | 'graph' | 'split'
  * - [x] filter between views should be propagated to each other
  * - [x] split view on desktop? https://www.npmjs.com/package/@devbookhq/splitter
  * - [ ] extenseable filter with autocomplete options
+ * - [x] fixed chart when scrolling
  */
 const Expenses = () => {
     const [filter, setFilter] = useState<ExpenseFilter>({})
