@@ -78,6 +78,8 @@ const StyledTab = withStyles(theme => ({
  * - [x] split view on desktop? https://www.npmjs.com/package/@devbookhq/splitter
  * - [x] fixed chart when scrolling
  * - [ ] filter for shops (use autocomplete options)
+ * - [ ] loading skeletons
+ * - [ ] hide ui when no expenses
  * ___
  * [ ] CLEANUP 🧐
  */
