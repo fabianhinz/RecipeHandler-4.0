@@ -77,7 +77,7 @@ const StyledTab = withStyles(theme => ({
  * - [x] filter between views should be propagated to each other
  * - [x] split view on desktop? https://www.npmjs.com/package/@devbookhq/splitter
  * - [x] fixed chart when scrolling
- * - [ ] filter for shops (use autocomplete options)
+ * - [ ] ExpenseChart umschaltbar auf https://recharts.org/en-US/examples/SimpleTreemap und dann shops als fokus, nicht Kategorien
  * - [x] loading skeletons --> nvm
  * - [x] hide ui when no expenses --> pizza monster
  * ___
