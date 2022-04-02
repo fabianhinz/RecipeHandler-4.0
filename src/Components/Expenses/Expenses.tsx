@@ -78,8 +78,8 @@ const StyledTab = withStyles(theme => ({
  * - [x] split view on desktop? https://www.npmjs.com/package/@devbookhq/splitter
  * - [x] fixed chart when scrolling
  * - [ ] filter for shops (use autocomplete options)
- * - [ ] loading skeletons
- * - [ ] hide ui when no expenses
+ * - [x] loading skeletons --> nvm
+ * - [x] hide ui when no expenses --> pizza monster
  * ___
  * [ ] CLEANUP 🧐
  */
@@ -121,7 +121,7 @@ const Expenses = () => {
     }, [expensesByMonth])
 
     const expensesToRenderMemoized = useMemo(() => {
-        if (!filter || tabIndex === years.length) {
+        if (!filter && tabIndex === years.length) {
             return Array.from(expensesByMonth.entries())
         }
 
@@ -129,7 +129,10 @@ const Expenses = () => {
         if (tabIndex !== undefined && years[tabIndex] !== undefined) {
             byYear = expenseUtils.getExpensesByYear(expensesByMonth, years[tabIndex])
         }
-        return expenseUtils.getFilteredExpensesByMonth(new Map(byYear) ?? expensesByMonth, filter)
+        return expenseUtils.getFilteredExpensesByMonth(
+            byYear ? new Map(byYear) : expensesByMonth,
+            filter
+        )
     }, [expensesByMonth, filter, tabIndex, years])
 
     const handleFilterChange: ExpenseFilterChangeHandler = useCallback(
@@ -166,13 +169,14 @@ const Expenses = () => {
     const memoizedGraph = useMemo(() => {
         return (
             <ExpensesChart
+                enableFixedOnScroll={view === 'split'}
                 maxAmount={maxAmount}
                 filter={filter}
                 onFilterChange={handleFilterChange}
                 expensesByMonth={expensesToRenderMemoized}
             />
         )
-    }, [expensesToRenderMemoized, filter, handleFilterChange, maxAmount])
+    }, [expensesToRenderMemoized, filter, handleFilterChange, maxAmount, view])
 
     return (
         <EntryGridContainer>
@@ -243,17 +247,19 @@ const Expenses = () => {
                 </Grid>
             )}
 
-            <Grid item xs={12}>
-                {view === 'table' && memoizedTable}
-                {view === 'graph' && memoizedGraph}
+            {expenses.length > 0 && (
+                <Grid item xs={12}>
+                    {view === 'table' && memoizedTable}
+                    {view === 'graph' && memoizedGraph}
 
-                {view === 'split' && (
-                    <ExpensesSplitView>
-                        <div>{memoizedTable}</div>
-                        {memoizedGraph}
-                    </ExpensesSplitView>
-                )}
-            </Grid>
+                    {view === 'split' && (
+                        <ExpensesSplitView>
+                            <div>{memoizedTable}</div>
+                            {memoizedGraph}
+                        </ExpensesSplitView>
+                    )}
+                </Grid>
+            )}
 
             <NotFound visible={!expenseStoreLoading && expenses.length === 0} />
 

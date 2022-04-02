@@ -64,6 +64,7 @@ interface Props {
     maxAmount: number
     filter: ExpenseFilter
     onFilterChange: ExpenseFilterChangeHandler
+    enableFixedOnScroll: boolean
 }
 
 export const ExpensesChart = (props: Props) => {
@@ -74,11 +75,7 @@ export const ExpensesChart = (props: Props) => {
     const placeholderRef = useRef<Nullable<HTMLDivElement>>(null)
     const { IntersectionObserverTrigger } = useIntersectionObserver({
         onIsIntersecting: () => setFixed(false),
-        onLeave: () => {
-            if (window.scrollY > 100) {
-                setFixed(true)
-            }
-        },
+        onLeave: () => props.enableFixedOnScroll && window.scrollY > 200 && setFixed(true),
         options: { rootMargin: `-88px 0px 0px 0px` },
     })
     const classes = useChartStyles({ fixed })
