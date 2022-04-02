@@ -2,6 +2,7 @@ import {
     AppBar,
     Box,
     Grid,
+    Hidden,
     makeStyles,
     Tab,
     Tabs,
@@ -87,6 +88,7 @@ const Expenses = () => {
     const [filter, setFilter] = useState<ExpenseFilter>({})
     const theme = useTheme()
     const lgUp = useMediaQuery(theme.breakpoints.up('lg'))
+    const xsDown = useMediaQuery(theme.breakpoints.down('xs'))
     const [view, setView] = useState<ViewVariant>('table')
     const [tabIndex, setTabIndex] = useState<number>(0)
 
@@ -199,7 +201,11 @@ const Expenses = () => {
 
             <Grid item xs={12}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Box display="flex" alignItems="center">
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        flexGrow={xsDown ? 1 : 0}
+                        justifyContent="space-between">
                         <Typography variant="h4">Ausgaben</Typography>
                         <Box ml={1}>
                             <ToggleButtonGroup
@@ -225,9 +231,11 @@ const Expenses = () => {
                         </Box>
                     </Box>
 
-                    <Box flexGrow={0}>
-                        <ArchivedExpensesSelection />
-                    </Box>
+                    <Hidden xsDown>
+                        <Box flexGrow={0}>
+                            <ArchivedExpensesSelection />
+                        </Box>
+                    </Hidden>
                 </Box>
             </Grid>
 
