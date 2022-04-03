@@ -89,12 +89,20 @@ const formatAmount = (amount: number) =>
         currency: 'EUR',
     })
 
-const getAmountByCategory = (category: string, expense: Expense[], format?: boolean) => {
-    const amount = expense
+const getAmountByCategory = (category: string, expenses: Expense[], format?: boolean) => {
+    const amount = expenses
         .filter(e => e.category === category)
         .reduce((acc, curr) => (acc += curr.amount), 0)
 
     return format ? formatAmount(amount) : amount
+}
+
+const getAmountByShop = (shop: string, expenses: Expense[]) => {
+    const amount = expenses
+        .filter(e => e.shop === shop)
+        .reduce((acc, curr) => (acc += curr.amount), 0)
+
+    return amount
 }
 
 const getExpensesByYear = (expensesByMonth: ExpenseState['expensesByMonth'], year: number) => {
@@ -135,6 +143,7 @@ const expenseUtils = {
     getMonthStringByDate,
     getFormattedDateString,
     getAmountByCategory,
+    getAmountByShop,
     formatAmount,
     useExpenseCategoryPalette,
     getFilteredExpensesByMonth,

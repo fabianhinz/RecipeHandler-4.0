@@ -1,4 +1,13 @@
-import { makeStyles, Theme, Typography, useMediaQuery, useTheme } from '@material-ui/core'
+import {
+    FormControlLabel,
+    makeStyles,
+    Radio,
+    RadioGroup,
+    Theme,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@material-ui/core'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
@@ -67,8 +76,11 @@ interface Props {
     enableFixedOnScroll: boolean
 }
 
+type GroupBy = 'month' | 'shop'
+
 export const ExpensesChart = (props: Props) => {
     const categories = useExpenseStore(store => store.categories)
+    const shops = useExpenseStore(store => store.autocompleteOptions.shop)
     const theme = useTheme()
     const xlUp = useMediaQuery(theme.breakpoints.up('xl'))
     const [fixed, setFixed] = useState(false)
@@ -78,6 +90,7 @@ export const ExpensesChart = (props: Props) => {
         onLeave: () => props.enableFixedOnScroll && window.scrollY > 200 && setFixed(true),
         options: { rootMargin: `-88px 0px 0px 0px` },
     })
+    const [groupBy, setGroupBy] = useState<GroupBy>('month')
     const classes = useChartStyles({ fixed })
 
     const currentCategoryHasAmount = useCallback(
@@ -91,7 +104,7 @@ export const ExpensesChart = (props: Props) => {
         [props.filter]
     )
 
-    const data = useMemo(() => {
+    const monthData = useMemo(() => {
         const data: { month: string; [key: string]: number | string }[] = []
 
         for (const [month, expenses] of props.expensesByMonth) {
@@ -110,6 +123,22 @@ export const ExpensesChart = (props: Props) => {
         return data.reverse()
     }, [categories, currentCategoryHasAmount, props.expensesByMonth])
 
+    const shopData = useMemo(() => {
+        const data: Map<string, number> = new Map()
+        const expenses = props.expensesByMonth.flatMap(([, expenses]) => expenses)
+
+        for (const shop of shops) {
+            const amount = expenseUtils.getAmountByShop(shop, expenses)
+            if (amount === 0) {
+                continue
+            }
+            data.set(shop, amount)
+        }
+        const sorted = Array.from(data.entries()).sort((a, b) => b[1] - a[1])
+
+        return sorted.map(([shop, amount]) => ({ shop, amount }))
+    }, [props.expensesByMonth, shops])
+
     return (
         <>
             <IntersectionObserverTrigger />
@@ -122,31 +151,55 @@ export const ExpensesChart = (props: Props) => {
                 }}
             />
             <div className={classes.chartWrapper}>
+                <RadioGroup
+                    value={groupBy}
+                    onChange={(_, value) => setGroupBy(value as GroupBy)}
+                    style={{
+                        flexDirection: 'row',
+                        width: placeholderRef.current?.clientWidth ?? '100%',
+                    }}
+                    name="gender1">
+                    <FormControlLabel value="month" control={<Radio />} label="Monat" />
+                    <FormControlLabel value="shop" control={<Radio />} label="Geschäft" />
+                </RadioGroup>
                 <ResponsiveContainer
                     width={placeholderRef.current?.clientWidth ?? '100%'}
                     aspect={xlUp ? 3 : 2}>
-                    <BarChart data={data}>
+                    <BarChart data={groupBy === 'month' ? monthData : shopData}>
                         <CartesianGrid strokeDasharray="9" vertical={false} opacity={0.2} />
-                        <YAxis hide domain={['auto', props.maxAmount]} />
-                        <XAxis hide dataKey="month" />
+                        <YAxis
+                            hide
+                            domain={groupBy === 'month' ? ['auto', props.maxAmount] : undefined}
+                        />
+                        <XAxis hide dataKey={groupBy} />
 
                         <Tooltip
                             cursor={false}
                             content={props => <CustomTooltip {...(props as CustomTooltipProps)} />}
                         />
-                        {categories.map(category => (
+                        {groupBy === 'shop' && (
                             <Bar
-                                onClick={() => props.onFilterChange('category', category)}
-                                style={{
-                                    cursor: 'pointer',
-                                }}
-                                id={category}
-                                stackId="1"
-                                key={category}
-                                dataKey={category}
-                                fill={CATEGORIES_PALETTE[category]}
+                                fillOpacity={0.5}
+                                strokeWidth={2}
+                                stroke={theme.palette.primary.main}
+                                fill={theme.palette.primary.main}
+                                dataKey="amount"
                             />
-                        ))}
+                        )}
+                        {groupBy === 'month' &&
+                            categories.map(category => (
+                                <Bar
+                                    onClick={() => props.onFilterChange('category', category)}
+                                    style={{
+                                        cursor: 'pointer',
+                                    }}
+                                    id={category}
+                                    stackId="1"
+                                    key={category}
+                                    dataKey={category}
+                                    fill={CATEGORIES_PALETTE[category]}
+                                />
+                            ))}
                     </BarChart>
                 </ResponsiveContainer>
             </div>
