@@ -1,4 +1,4 @@
-import { Grid, makeStyles } from '@material-ui/core'
+import { Grid, makeStyles, Typography } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
 
@@ -76,10 +76,15 @@ const AccountCookingHistory = () => {
     useEffect(() => {
         if (!user) return setLoading(false)
 
+        const now = new Date()
+        now.setDate(now.getDate() - 365 / 4)
+        const lastQuarter = new Date(now)
+
         return FirebaseService.firestore
             .collection('users')
             .doc(user.uid)
             .collection('cookingHistory')
+            .where('createdDate', '>=', lastQuarter)
             .orderBy('createdDate', 'desc')
             .onSnapshot(snapshot => {
                 setCookingHistory(snapshot.docs.map(doc => doc.data() as CookingHistory))
@@ -91,6 +96,9 @@ const AccountCookingHistory = () => {
 
     return (
         <EntryGridContainer>
+            <Grid item xs={12}>
+                <Typography variant="h4">Im letzten Quartal</Typography>
+            </Grid>
             <Grid item xs={12}>
                 <Grid container spacing={3}>
                     {cookingHistory.map(element => (
