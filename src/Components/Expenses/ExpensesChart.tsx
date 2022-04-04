@@ -39,6 +39,7 @@ interface CustomTooltipProps {
     active: boolean
     label: string
     payload: { dataKey: string; value: number; id: string }[]
+    hoveringCategory: Nullable<string>
 }
 
 const CustomTooltip = (props: CustomTooltipProps) => {
@@ -53,7 +54,7 @@ const CustomTooltip = (props: CustomTooltipProps) => {
     if (props.active && props.payload && props.payload.length) {
         return (
             <Typography className={classes.tooltipLabel}>
-                {props.label} <br /> {sumOfMonth}
+                {props.label} <br /> {sumOfMonth} <br /> {props.hoveringCategory}
             </Typography>
         )
     }
@@ -91,6 +92,7 @@ export const ExpensesChart = (props: Props) => {
         options: { rootMargin: `-88px 0px 0px 0px` },
     })
     const [groupBy, setGroupBy] = useState<GroupBy>('month')
+    const [hoveringCategory, setHoveringCategory] = useState<Nullable<string>>(null)
     const classes = useChartStyles({ fixed })
 
     const currentCategoryHasAmount = useCallback(
@@ -166,7 +168,7 @@ export const ExpensesChart = (props: Props) => {
                     width={placeholderRef.current?.clientWidth ?? '100%'}
                     aspect={xlUp ? 3 : 2}>
                     <BarChart data={groupBy === 'month' ? monthData : shopData}>
-                        <CartesianGrid strokeDasharray="9" vertical={false} opacity={0.2} />
+                        <CartesianGrid strokeDasharray="9" vertical={false} opacity={0.4} />
                         <YAxis
                             hide
                             domain={groupBy === 'month' ? ['auto', props.maxAmount] : undefined}
@@ -174,29 +176,48 @@ export const ExpensesChart = (props: Props) => {
                         <XAxis hide dataKey={groupBy} />
 
                         <Tooltip
-                            cursor={false}
-                            content={props => <CustomTooltip {...(props as CustomTooltipProps)} />}
+                            cursor={{ fill: theme.palette.divider, fillOpacity: 0.6 }}
+                            content={props => (
+                                <CustomTooltip
+                                    {...(props as CustomTooltipProps)}
+                                    hoveringCategory={hoveringCategory}
+                                />
+                            )}
                         />
                         {groupBy === 'shop' && (
                             <Bar
                                 fillOpacity={0.5}
                                 strokeWidth={2}
-                                stroke={theme.palette.primary.main}
-                                fill={theme.palette.primary.main}
+                                stroke={
+                                    props.filter.category
+                                        ? CATEGORIES_PALETTE[props.filter.category]
+                                        : theme.palette.primary.main
+                                }
+                                fill={
+                                    props.filter.category
+                                        ? CATEGORIES_PALETTE[props.filter.category]
+                                        : theme.palette.primary.main
+                                }
                                 dataKey="amount"
                             />
                         )}
                         {groupBy === 'month' &&
                             categories.map(category => (
                                 <Bar
+                                    onMouseEnter={() => setHoveringCategory(category)}
+                                    onMouseLeave={() => setHoveringCategory(null)}
                                     onClick={() => props.onFilterChange('category', category)}
                                     style={{
                                         cursor: 'pointer',
+                                        transition: theme.transitions.create('fill-opacity'),
                                     }}
                                     id={category}
                                     stackId="1"
                                     key={category}
                                     dataKey={category}
+                                    fillOpacity={hoveringCategory === category ? 1 : 0.5}
+                                    strokeWidth={2}
+                                    stroke={CATEGORIES_PALETTE[category]}
                                     fill={CATEGORIES_PALETTE[category]}
                                 />
                             ))}

@@ -82,6 +82,8 @@ const StyledTab = withStyles(theme => ({
  * - [x] Kochverlauf >> auf letze 6 Monate beschränken
  * - [x] loading skeletons --> nvm
  * - [x] hide ui when no expenses --> pizza monster
+ * - [ ] show shops with labellist to avoid tooltip mess
+ * - [ ] if filter is set, show the according color in the group by shop
  * ___
  * [ ] CLEANUP 🧐
  */
