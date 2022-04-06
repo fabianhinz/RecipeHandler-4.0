@@ -77,11 +77,12 @@ interface Props {
     enableFixedOnScroll: boolean
 }
 
-type GroupBy = 'month' | 'shop'
+type GroupBy = 'month' | keyof Pick<Expense, 'shop' | 'description'>
 
 export const ExpensesChart = (props: Props) => {
     const categories = useExpenseStore(store => store.categories)
     const shops = useExpenseStore(store => store.autocompleteOptions.shop)
+    const descriptions = useExpenseStore(store => store.autocompleteOptions.description)
     const theme = useTheme()
     const xlUp = useMediaQuery(theme.breakpoints.up('xl'))
     const [fixed, setFixed] = useState(false)
@@ -125,21 +126,41 @@ export const ExpensesChart = (props: Props) => {
         return data.reverse()
     }, [categories, currentCategoryHasAmount, props.expensesByMonth])
 
-    const shopData = useMemo(() => {
-        const data: Map<string, number> = new Map()
-        const expenses = props.expensesByMonth.flatMap(([, expenses]) => expenses)
-
-        for (const shop of shops) {
-            const amount = expenseUtils.getAmountByShop(shop, expenses)
-            if (amount === 0) {
-                continue
+    const getDataByKey = useCallback(
+        (expenseKey: keyof Expense) => {
+            const expenseToAutocompleteOptions: Record<
+                keyof Pick<Expense, 'shop' | 'description'>,
+                string[]
+            > & {
+                [key: string]: string[]
+            } = {
+                description: descriptions,
+                shop: shops,
             }
-            data.set(shop, amount)
-        }
-        const sorted = Array.from(data.entries()).sort((a, b) => b[1] - a[1])
 
-        return sorted.map(([shop, amount]) => ({ shop, amount }))
-    }, [props.expensesByMonth, shops])
+            const data: Map<string, number> = new Map()
+            const expenses = props.expensesByMonth.flatMap(([, expenses]) => expenses)
+
+            for (const autocompleteOption of expenseToAutocompleteOptions[expenseKey]) {
+                const amount = expenseUtils.getAmountByExpenseKey(
+                    expenseKey,
+                    autocompleteOption,
+                    expenses
+                )
+                if (amount === 0) {
+                    continue
+                }
+                data.set(autocompleteOption, amount)
+            }
+            const sorted = Array.from(data.entries()).sort((a, b) => b[1] - a[1])
+
+            return sorted.map(([autocompleteOption, amount]) => ({
+                [expenseKey]: autocompleteOption,
+                amount,
+            }))
+        },
+        [descriptions, props.expensesByMonth, shops]
+    )
 
     return (
         <>
@@ -163,11 +184,16 @@ export const ExpensesChart = (props: Props) => {
                     name="gender1">
                     <FormControlLabel value="month" control={<Radio />} label="Monat" />
                     <FormControlLabel value="shop" control={<Radio />} label="Geschäft" />
+                    <FormControlLabel
+                        value="description"
+                        control={<Radio />}
+                        label="Beschreibung"
+                    />
                 </RadioGroup>
                 <ResponsiveContainer
                     width={placeholderRef.current?.clientWidth ?? '100%'}
                     aspect={xlUp ? 3 : 2}>
-                    <BarChart data={groupBy === 'month' ? monthData : shopData}>
+                    <BarChart data={groupBy === 'month' ? monthData : getDataByKey(groupBy)}>
                         <CartesianGrid strokeDasharray="9" vertical={false} opacity={0.4} />
                         <YAxis
                             hide
@@ -184,24 +210,8 @@ export const ExpensesChart = (props: Props) => {
                                 />
                             )}
                         />
-                        {groupBy === 'shop' && (
-                            <Bar
-                                fillOpacity={0.5}
-                                strokeWidth={2}
-                                stroke={
-                                    props.filter.category
-                                        ? CATEGORIES_PALETTE[props.filter.category]
-                                        : theme.palette.primary.main
-                                }
-                                fill={
-                                    props.filter.category
-                                        ? CATEGORIES_PALETTE[props.filter.category]
-                                        : theme.palette.primary.main
-                                }
-                                dataKey="amount"
-                            />
-                        )}
-                        {groupBy === 'month' &&
+
+                        {groupBy === 'month' ? (
                             categories.map(category => (
                                 <Bar
                                     onMouseEnter={() => setHoveringCategory(category)}
@@ -220,7 +230,24 @@ export const ExpensesChart = (props: Props) => {
                                     stroke={CATEGORIES_PALETTE[category]}
                                     fill={CATEGORIES_PALETTE[category]}
                                 />
-                            ))}
+                            ))
+                        ) : (
+                            <Bar
+                                fillOpacity={0.5}
+                                strokeWidth={2}
+                                stroke={
+                                    props.filter.category
+                                        ? CATEGORIES_PALETTE[props.filter.category]
+                                        : theme.palette.primary.main
+                                }
+                                fill={
+                                    props.filter.category
+                                        ? CATEGORIES_PALETTE[props.filter.category]
+                                        : theme.palette.primary.main
+                                }
+                                dataKey="amount"
+                            />
+                        )}
                     </BarChart>
                 </ResponsiveContainer>
             </div>

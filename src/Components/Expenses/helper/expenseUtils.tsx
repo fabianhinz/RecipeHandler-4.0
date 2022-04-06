@@ -88,7 +88,7 @@ const formatAmount = (amount: number) =>
         style: 'currency',
         currency: 'EUR',
     })
-
+// we should only need one getAmount*** function
 const getAmountByCategory = (category: string, expenses: Expense[], format?: boolean) => {
     const amount = expenses
         .filter(e => e.category === category)
@@ -97,9 +97,13 @@ const getAmountByCategory = (category: string, expenses: Expense[], format?: boo
     return format ? formatAmount(amount) : amount
 }
 
-const getAmountByShop = (shop: string, expenses: Expense[]) => {
+function getAmountByExpenseKey<Key extends keyof Expense>(
+    key: Key,
+    value: Expense[Key],
+    expenses: Expense[]
+) {
     const amount = expenses
-        .filter(e => e.shop === shop)
+        .filter(e => e[key] === value)
         .reduce((acc, curr) => (acc += curr.amount), 0)
 
     return amount
@@ -143,7 +147,7 @@ const expenseUtils = {
     getMonthStringByDate,
     getFormattedDateString,
     getAmountByCategory,
-    getAmountByShop,
+    getAmountByExpenseKey,
     formatAmount,
     useExpenseCategoryPalette,
     getFilteredExpensesByMonth,

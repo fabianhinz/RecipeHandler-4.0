@@ -185,7 +185,7 @@ export interface ShoppingListItem {
     checked: boolean
 }
 
-export type Expense = {
+export interface Expense {
     id?: string
     creator: string
     amount: number
