@@ -162,6 +162,10 @@ export const ExpensesChart = (props: Props) => {
         [descriptions, props.expensesByMonth, shops]
     )
 
+    const memoizedData = useMemo(() => {
+        return groupBy === 'month' ? monthData : getDataByKey(groupBy)
+    }, [getDataByKey, groupBy, monthData])
+
     return (
         <>
             <IntersectionObserverTrigger />
@@ -193,7 +197,7 @@ export const ExpensesChart = (props: Props) => {
                 <ResponsiveContainer
                     width={placeholderRef.current?.clientWidth ?? '100%'}
                     aspect={xlUp ? 3 : 2}>
-                    <BarChart data={groupBy === 'month' ? monthData : getDataByKey(groupBy)}>
+                    <BarChart data={memoizedData}>
                         <CartesianGrid strokeDasharray="9" vertical={false} opacity={0.4} />
                         <YAxis
                             hide
