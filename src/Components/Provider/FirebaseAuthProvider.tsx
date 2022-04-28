@@ -77,6 +77,8 @@ const FirebaseAuthProvider: FC = ({ children }) => {
                 ...(doc.data() as Omit<User, 'uid'>),
                 uid: user.uid,
             })
+            FirebaseService.analytics?.setUserId(user.uid)
+            FirebaseService.analytics?.logEvent('login')
             setLoginEnabled(true)
         })
 

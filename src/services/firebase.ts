@@ -2,6 +2,7 @@ import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/functions'
+import 'firebase/analytics'
 
 import firebase from 'firebase/app'
 
@@ -13,7 +14,7 @@ const firebaseConfig = {
     storageBucket: 'recipehandler.appspot.com',
     messagingSenderId: '363099897269',
     appId: '1:363099897269:web:7086b238a86f56c9546dfc',
-    measurementId: 'G-XR1E22ZPY4',
+    measurementId: 'G-H654Z1725E',
 }
 
 firebase.initializeApp(firebaseConfig)
@@ -24,6 +25,12 @@ const firestore = firebase.firestore()
 const storage = firebase.storage()
 const storageRef = storage.ref()
 const auth = firebase.auth()
+let analytics: firebase.analytics.Analytics | undefined
+
+if (process.env.NODE_ENV !== 'development') {
+    analytics = firebase.analytics()
+    firebase.registerVersion('recipehandler', __VERSION__)
+}
 
 if (__USE_EMULATORS__) {
     functions.useEmulator('localhost', 5001)
@@ -42,6 +49,7 @@ export const FirebaseService = {
     storage,
     storageRef,
     auth,
+    analytics,
     createTimestampFromDate,
     createDateFromTimestamp,
     incrementBy,
