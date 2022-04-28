@@ -26,3 +26,7 @@ Firebase offers the possibility to deploy preview versions on separate preview c
 1. to build the project run `npm run build`
 1. to start the preview hosting run ```firebase hosting:channel:deploy YOUR_CHANNEL_ID```
 1. access your project on the generated preview URI
+
+### from the local machine
+
+export VERSION=$(git rev-parse --short HEAD) && npm run build && firebase deploy --only hosting --message $VERSION
