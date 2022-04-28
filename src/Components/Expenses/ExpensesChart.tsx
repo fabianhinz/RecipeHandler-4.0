@@ -180,7 +180,10 @@ export const ExpensesChart = (props: Props) => {
             <div className={classes.chartWrapper}>
                 <RadioGroup
                     value={groupBy}
-                    onChange={(_, value) => setGroupBy(value as GroupBy)}
+                    onChange={(_, value) => {
+                        setGroupBy(value as GroupBy)
+                        setHoveringCategory(null)
+                    }}
                     style={{
                         flexDirection: 'row',
                         width: placeholderRef.current?.clientWidth ?? '100%',

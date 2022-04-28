@@ -198,7 +198,7 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
                     vertical: 'center',
                     horizontal: 'right',
                 }}>
-                <Grid justify="space-evenly" container spacing={1}>
+                <Grid justifyContent="space-evenly" container spacing={1}>
                     {EMOJIS.map(emoji => (
                         <Grid item key={emoji}>
                             <IconButton

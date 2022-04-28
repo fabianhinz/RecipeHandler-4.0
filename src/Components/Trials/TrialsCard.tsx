@@ -170,7 +170,7 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
                         <Slide direction="up" in>
                             <Grid
                                 container
-                                justify="flex-end"
+                                justifyContent="flex-end"
                                 spacing={1}
                                 className={classes.actions}>
                                 <Grid item xs="auto">

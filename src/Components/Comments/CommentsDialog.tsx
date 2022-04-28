@@ -192,7 +192,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                             </Grid>
                         )}
                         <Grid item xs={12}>
-                            <Grid container justify="space-evenly">
+                            <Grid container justifyContent="space-evenly">
                                 <IconButton onClick={onClose}>
                                     <CloseIcon />
                                 </IconButton>

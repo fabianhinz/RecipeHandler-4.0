@@ -93,7 +93,7 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                     </Grid>
 
                     {user && (
-                        <Grid item xs={12} container justify="center">
+                        <Grid item xs={12} container justifyContent="center">
                             <AccountChip
                                 variant="outlined"
                                 uid={recipe.editorUid}

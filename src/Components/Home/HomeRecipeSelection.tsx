@@ -70,7 +70,7 @@ const HomeRecipeSelection = (props: Props) => {
     }
 
     const header = (
-        <Grid container justify="center" spacing={1}>
+        <Grid container justifyContent="center" spacing={1}>
             <Grid item xs={6}>
                 <Button
                     fullWidth

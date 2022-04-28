@@ -81,7 +81,11 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
                 .fill(1)
                 .map((_skeleton, index) => (
                     <Grid {...variantAvareBreakpoints} item key={index}>
-                        <Grid container spacing={2} justify="space-between" alignItems="center">
+                        <Grid
+                            container
+                            spacing={2}
+                            justifyContent="space-between"
+                            alignItems="center">
                             <Grid xs={12} item>
                                 <Card>
                                     <Skeleton

@@ -72,20 +72,10 @@ const StyledTab = withStyles(theme => ({
 }))(Tab)
 
 /**
- * # ToDo:
- * - [x] Add a year filter for all expenses >> [2021, 2022, all]
- * - [x] y axis domain - confusing with filters otherwise
- * - [x] filter between views should be propagated to each other
- * - [x] split view on desktop? https://www.npmjs.com/package/@devbookhq/splitter
- * - [x] fixed chart when scrolling
- * - [x] ExpenseChart groupby monat oder Geschäft
- * - [x] Kochverlauf >> auf letze 6 Monate beschränken
- * - [x] loading skeletons --> nvm
- * - [x] hide ui when no expenses --> pizza monster
- * - [ ] show shops with labellist to avoid tooltip mess
- * - [ ] if filter is set, show the according color in the group by shop
- * ___
- * [ ] CLEANUP 🧐
+ * TODO urgent
+ * - skeleton / loading animations
+ * - Error boundaries
+ * - CLEANUP 🧐
  */
 const Expenses = () => {
     const [filter, setFilter] = useState<ExpenseFilter>({})

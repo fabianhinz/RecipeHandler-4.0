@@ -64,7 +64,7 @@ const MarkdownLinkToggle = ({ onToggleChange }: ToggleChangeHandler) => {
                             InputProps={{ endAdornment: <Earth /> }}
                         />
                     </Grid>
-                    <Grid item container justify="space-evenly">
+                    <Grid item container justifyContent="space-evenly">
                         <Grid item>
                             <IconButton onClick={resetLinkState}>
                                 <ClearIcon />

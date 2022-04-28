@@ -28,7 +28,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         gap: theme.spacing(2),
         position: 'relative',
         transition: theme.transitions.create('opacity'),
-        opacity: props => (props.disabled ? 0.5 : 1),
+        opacity: props => (props.disabled ? 0.3 : 1),
         cursor: props => (props.disabled ? 'unset' : 'pointer'),
     },
     activePieCell: {
