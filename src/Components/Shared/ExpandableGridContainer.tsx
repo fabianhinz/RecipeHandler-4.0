@@ -91,7 +91,7 @@ const ExpandableGridContainer = ({
     return (
         <EntryGridContainer>
             <Grid item xs={12}>
-                <Grid container alignItems="center" justify="space-between">
+                <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item>
                         <Typography variant="h4">{titles.header}</Typography>
                     </Grid>

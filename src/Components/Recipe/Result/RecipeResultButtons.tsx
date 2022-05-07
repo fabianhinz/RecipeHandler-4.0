@@ -17,7 +17,7 @@ const RecipeResultButtons = ({ name, numberOfComments }: Props) => {
     const authContext = useFirebaseAuthContext()
 
     return (
-        <Grid justify="space-evenly" container spacing={1} {...stopPropagationProps}>
+        <Grid justifyContent="space-evenly" container spacing={1} {...stopPropagationProps}>
             {authContext.user && (
                 <Grid item>
                     <RecipeGridButton />

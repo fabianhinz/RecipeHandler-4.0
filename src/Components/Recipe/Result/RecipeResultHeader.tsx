@@ -23,7 +23,7 @@ const RecipeResultHeader = ({ recipe }: Props) => {
     const { user } = useFirebaseAuthContext()
 
     return (
-        <Grid container spacing={2} justify="space-between" alignItems="center">
+        <Grid container spacing={2} justifyContent="space-between" alignItems="center">
             <Grid item xs={12} sm="auto">
                 <Typography className={classes.recipeName} variant="h5">
                     {recipe.name}

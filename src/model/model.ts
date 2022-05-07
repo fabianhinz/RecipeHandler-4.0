@@ -185,7 +185,7 @@ export interface ShoppingListItem {
     checked: boolean
 }
 
-export type Expense = {
+export interface Expense {
     id?: string
     creator: string
     amount: number
@@ -194,6 +194,8 @@ export type Expense = {
     description?: string
     date: firebase.default.firestore.Timestamp
     relatedUsers: string[]
+    // TODO fix me
+    [key: string]: any
 }
 
 export type ArchivedExpense = Expense & { deletedAt: firebase.default.firestore.Timestamp }

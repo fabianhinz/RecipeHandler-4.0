@@ -4,9 +4,9 @@ import { Expense } from '../model/model'
 import { FirebaseService } from '../services/firebase'
 import useExpenseStore from './ExpenseStore'
 
-type ExpensState = Expense
+type ExpenseState = Expense
 
-type ExpensActions = {
+type ExpenseActions = {
     setAmount: (amount: number) => void
     setCategory: (category: string) => void
     setCreator: (creator: string) => void
@@ -18,7 +18,7 @@ type ExpensActions = {
     setCurrentExpense: (expense: Expense) => void
 }
 
-export type CurrentExpenseStore = ExpensState & ExpensActions
+export type CurrentExpenseStore = ExpenseState & ExpenseActions
 
 const getFreshExpense = () => ({
     id: undefined,

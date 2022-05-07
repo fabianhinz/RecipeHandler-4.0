@@ -158,7 +158,7 @@ const SwipeableAttachment = ({
             )}
             <Slide direction="up" in={attachmentRef.timeCreated.length > 0}>
                 <div className={classes.attachmentMetadata}>
-                    <Grid container justify="flex-end" spacing={1}>
+                    <Grid container justifyContent="flex-end" spacing={1}>
                         <Grid item>
                             <Chip
                                 size="small"
@@ -396,7 +396,11 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
                         <ChevronRight />
                     </Fab>
 
-                    <Grid className={classes.btnContainer} container justify="flex-end" spacing={1}>
+                    <Grid
+                        className={classes.btnContainer}
+                        container
+                        justifyContent="flex-end"
+                        spacing={1}>
                         <Grid item>
                             <Tooltip placement="bottom" title="Schließen">
                                 <div>

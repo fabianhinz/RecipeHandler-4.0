@@ -106,7 +106,7 @@ const AccountUserChangelog = () => {
                                 <Grid
                                     container
                                     alignItems="center"
-                                    justify="space-between"
+                                    justifyContent="space-between"
                                     spacing={1}>
                                     <Grid item xs={12} sm={9}>
                                         <Grid container alignItems="center" spacing={3}>
@@ -138,7 +138,7 @@ const AccountUserChangelog = () => {
                                 <Grid
                                     container
                                     alignItems="center"
-                                    justify="space-between"
+                                    justifyContent="space-between"
                                     spacing={1}>
                                     <Grid item>
                                         <ListSubheader disableGutters>{pr.creator}</ListSubheader>
@@ -155,7 +155,7 @@ const AccountUserChangelog = () => {
                                                     key={issue.number}
                                                     container
                                                     wrap="nowrap"
-                                                    justify="space-between"
+                                                    justifyContent="space-between"
                                                     className={classes.issueContainer}>
                                                     <Grid item xs={9}>
                                                         <Grid container spacing={1}>

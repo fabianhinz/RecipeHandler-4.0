@@ -1,4 +1,5 @@
-import { Card, Grid, Grow, makeStyles, Theme, Typography } from '@material-ui/core'
+import { Card, Grid, Grow, makeStyles, Theme, Typography, Zoom } from '@material-ui/core'
+import { Cancel } from '@material-ui/icons'
 import clsx from 'clsx'
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { Cell, Pie, PieChart } from 'recharts'
@@ -6,49 +7,66 @@ import { Cell, Pie, PieChart } from 'recharts'
 import useDebounce from '../../hooks/useDebounce'
 import { Nullable } from '../../model/model'
 import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
+import { stopPropagationProps } from '../../util/constants'
+import { ExpenseFilter, ExpenseFilterChangeHandler } from './Expenses'
 import { CATEGORIES_PALETTE } from './helper/expenseUtils'
-interface Props {
-    userName: string
-}
 
 const selector = (state: ExpenseStore) => state.expenses
 
-const useStyles = makeStyles<Theme, { userData: UserData; activePieCell: Nullable<ActivePieCell> }>(
-    theme => ({
-        card: {
-            padding: theme.spacing(2),
-            minWidth: 150,
-            display: 'flex',
-            alignItems: 'center',
-            gap: theme.spacing(2),
-            position: 'relative',
-        },
-        activePieCell: {
-            position: 'absolute',
-            width: 70,
-            left: theme.spacing(2),
-            color: props =>
-                props.activePieCell ? CATEGORIES_PALETTE[props.activePieCell.category] : 'inherhit',
-        },
-        activePieCellCategory: {
-            top: theme.spacing(0.5),
-        },
-        activePieCellValue: {
-            bottom: theme.spacing(0.5),
-        },
-        differenceTypography: {
-            ...theme.typography.h6,
-            color: props =>
-                props.userData.difference < 0
-                    ? theme.palette.error.main
-                    : theme.palette.success.main,
-        },
-        amountTypography: {
-            ...theme.typography.body2,
-            color: theme.palette.text.secondary,
-        },
-    })
-)
+interface StyleProps {
+    userData: UserData
+    activePieCell: Nullable<ActivePieCell>
+    disabled: boolean
+}
+
+const useStyles = makeStyles<Theme, StyleProps>(theme => ({
+    card: {
+        padding: theme.spacing(2),
+        minWidth: 150,
+        display: 'flex',
+        alignItems: 'center',
+        gap: theme.spacing(2),
+        position: 'relative',
+        transition: theme.transitions.create('opacity'),
+        opacity: props => (props.disabled ? 0.3 : 1),
+        cursor: props => (props.disabled ? 'unset' : 'pointer'),
+    },
+    activePieCell: {
+        position: 'absolute',
+        width: 70,
+        left: theme.spacing(2),
+        color: props =>
+            props.activePieCell ? CATEGORIES_PALETTE[props.activePieCell.category] : 'inherhit',
+    },
+    activePieCellCategory: {
+        top: theme.spacing(0.5),
+    },
+    activePieCellValue: {
+        bottom: theme.spacing(0.5),
+    },
+    differenceTypography: {
+        ...theme.typography.h6,
+        color: props =>
+            props.userData.difference < 0 ? theme.palette.error.main : theme.palette.success.main,
+    },
+    amountTypography: {
+        ...theme.typography.body2,
+        color: theme.palette.text.secondary,
+    },
+    cancelIconContainer: {
+        position: 'absolute',
+        zIndex: 1,
+        width: 70,
+        height: 70,
+        display: 'grid',
+        placeItems: 'center',
+    },
+    cancelIcon: {
+        fill: theme.palette.divider,
+        width: '100%',
+        height: '100%',
+    },
+}))
 
 const CHART_MARGIN = { top: 0, right: 0, bottom: 0, left: 0 }
 
@@ -64,6 +82,13 @@ type ActivePieCell = {
     value: number
 }
 
+interface Props {
+    filter: ExpenseFilter
+    onFilterChange: ExpenseFilterChangeHandler
+    userName: string
+    year: number | undefined
+}
+
 const ExpenseUserCard = (props: Props) => {
     const expenses = useExpenseStore(selector)
     const categories = useExpenseStore(store => store.categories)
@@ -74,16 +99,38 @@ const ExpenseUserCard = (props: Props) => {
         amountByCategory: new Map(),
         difference: 0,
     })
-    const classes = useStyles({ userData, activePieCell })
+
+    const filteredByCurrentUser = useMemo(() => {
+        return 'creator' in props.filter && props.filter.creator === props.userName
+    }, [props.filter, props.userName])
+
+    const disabled = useMemo(() => {
+        if (!props.filter.creator) return false
+
+        return filteredByCurrentUser === false
+    }, [filteredByCurrentUser, props.filter])
+
+    const classes = useStyles({
+        userData,
+        activePieCell,
+        disabled,
+    })
 
     useLayoutEffect(() => {
-        const userExpenses = expenses.filter(expense => expense.creator === props.userName)
+        const expensesOfYear = expenses.filter(expense => {
+            if (props.year === undefined) {
+                return expense
+            }
+            return expense.date.toDate().getFullYear() === props.year
+        })
+
+        const userExpenses = expensesOfYear.filter(expense => expense.creator === props.userName)
 
         const payed = userExpenses
             .map(expense => expense.amount)
             .reduce((prev, curr) => prev + curr, 0)
 
-        const shouldPay = expenses
+        const shouldPay = expensesOfYear
             .filter(expense => expense.relatedUsers?.includes(props.userName))
             .map(
                 expense =>
@@ -107,7 +154,7 @@ const ExpenseUserCard = (props: Props) => {
             ),
             difference: payed - shouldPay,
         })
-    }, [expenses, props.userName, categories])
+    }, [expenses, props.userName, categories, props.year])
 
     const debouncedAmountByCategory = useDebounce(userData.amountByCategory, 50)
     const amountByCategoryEntries = useMemo(
@@ -115,9 +162,29 @@ const ExpenseUserCard = (props: Props) => {
         [debouncedAmountByCategory]
     )
 
+    const handleFilterChange = () => {
+        if (disabled) {
+            return
+        }
+
+        props.onFilterChange('creator', props.userName)
+    }
+
+    const handlePieChartMouseEnter = (_: unknown, index: number) => {
+        if (disabled) {
+            return
+        }
+
+        const [category, payload] = amountByCategoryEntries[index]
+        setActivePieCell({
+            category,
+            value: payload.value,
+        })
+    }
+
     return (
         <Grid item>
-            <Card className={classes.card}>
+            <Card onClick={handleFilterChange} className={classes.card}>
                 <Grow key={activePieCell?.category} in={activePieCell !== null}>
                     <Typography
                         className={clsx(classes.activePieCell, classes.activePieCellCategory)}
@@ -137,24 +204,28 @@ const ExpenseUserCard = (props: Props) => {
                         })}
                     </Typography>
                 </Grow>
-                <PieChart margin={CHART_MARGIN} width={70} height={70}>
-                    <Pie
-                        onMouseEnter={(_, index) => {
-                            const [category, payload] = amountByCategoryEntries[index]
-                            setActivePieCell({
-                                category,
-                                value: payload.value,
-                            })
-                        }}
-                        onMouseLeave={() => setActivePieCell(null)}
-                        innerRadius={10}
-                        dataKey="value"
-                        data={[...debouncedAmountByCategory.values()]}>
-                        {[...debouncedAmountByCategory.keys()].map(category => (
-                            <Cell key={category} fill={CATEGORIES_PALETTE[category]} />
-                        ))}
-                    </Pie>
-                </PieChart>
+                <Zoom in={filteredByCurrentUser} mountOnEnter={false} unmountOnExit>
+                    <div className={classes.cancelIconContainer}>
+                        <Cancel className={classes.cancelIcon} />
+                    </div>
+                </Zoom>
+
+                <Zoom in={!filteredByCurrentUser}>
+                    <div {...stopPropagationProps}>
+                        <PieChart margin={CHART_MARGIN} width={70} height={70}>
+                            <Pie
+                                onMouseEnter={handlePieChartMouseEnter}
+                                onMouseLeave={() => setActivePieCell(null)}
+                                innerRadius={10}
+                                dataKey="value"
+                                data={[...debouncedAmountByCategory.values()]}>
+                                {[...debouncedAmountByCategory.keys()].map(category => (
+                                    <Cell key={category} fill={CATEGORIES_PALETTE[category]} />
+                                ))}
+                            </Pie>
+                        </PieChart>
+                    </div>
+                </Zoom>
 
                 <div>
                     <Typography variant="h6">{userData.name}</Typography>

@@ -8,6 +8,7 @@ export type ExpenseState = {
     loading: boolean
     expenses: Expense[]
     expensesByMonth: Map<string, Expense[]>
+    years: number[]
     categories: string[]
     isNewExpenseDialogOpen: boolean
     autocompleteOptions: Record<
@@ -43,6 +44,7 @@ const useExpenseStore = create<ExpenseStore>(set => ({
     expensesByMonth: new Map(),
     categories: [],
     isNewExpenseDialogOpen: false,
+    years: [],
     autocompleteOptions: { creator: [], shop: [], category: [], description: [] },
     setCategories: categories => {
         set(() => ({
@@ -98,6 +100,8 @@ const useExpenseStore = create<ExpenseStore>(set => ({
         const uniqeMonths = Array.from(
             new Set(expenses.map(e => expenseUtils.getMonthStringByDate(e.date.toDate())))
         )
+        const years = Array.from(new Set(uniqeMonths.map(m => Number(m.split(' ')[1])))).sort()
+
         const expensesByMonth = new Map(
             uniqeMonths.map(month => [
                 month,
@@ -120,7 +124,7 @@ const useExpenseStore = create<ExpenseStore>(set => ({
             ).sort(),
         }
 
-        set({ loading: false, expenses, expensesByMonth, autocompleteOptions })
+        set({ loading: false, expenses, expensesByMonth, autocompleteOptions, years })
     },
 }))
 
