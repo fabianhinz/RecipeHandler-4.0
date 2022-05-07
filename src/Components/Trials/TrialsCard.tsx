@@ -1,13 +1,13 @@
 import {
-    Card,
-    CardActionArea,
-    CardMedia,
-    Fab,
-    Grid,
-    GridSize,
-    makeStyles,
-    Slide,
-    Tooltip,
+  Card,
+  CardActionArea,
+  CardMedia,
+  Fab,
+  Grid,
+  GridSize,
+  makeStyles,
+  Slide,
+  Tooltip,
 } from '@material-ui/core'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import CheckIcon from '@material-ui/icons/Check'
@@ -28,183 +28,179 @@ import { useSelectedAttachementContext } from '../Provider/SelectedAttachementPr
 import TrialsDeleteAlert from './TrialsDeleteAlert'
 
 const useStyles = makeStyles(theme => ({
-    cardMedia: {
-        [theme.breakpoints.down('sm')]: {
-            height: 283,
-        },
-        [theme.breakpoints.between('md', 'lg')]: {
-            height: 333,
-        },
-        [theme.breakpoints.up('xl')]: {
-            height: 383,
-        },
+  cardMedia: {
+    [theme.breakpoints.down('sm')]: {
+      height: 283,
     },
-    card: {
-        position: 'relative',
+    [theme.breakpoints.between('md', 'lg')]: {
+      height: 333,
     },
-    actions: {
-        position: 'absolute',
-        bottom: theme.spacing(1),
-        right: theme.spacing(1),
-        width: 'fit-content',
+    [theme.breakpoints.up('xl')]: {
+      height: 383,
     },
-    selectionRoot: {
-        borderRadius: BORDER_RADIUS,
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: theme.palette.secondary.main,
-        opacity: 0,
-        transition: theme.transitions.create('opacity', {
-            duration: theme.transitions.duration.standard,
-        }),
-    },
-    selectionActive: {
-        zIndex: 2,
-        opacity: 1,
-    },
-    selectionCheckIcon: {
-        color: theme.palette.getContrastText(theme.palette.secondary.main),
-        fontSize: theme.typography.pxToRem(60),
-    },
+  },
+  card: {
+    position: 'relative',
+  },
+  actions: {
+    position: 'absolute',
+    bottom: theme.spacing(1),
+    right: theme.spacing(1),
+    width: 'fit-content',
+  },
+  selectionRoot: {
+    borderRadius: BORDER_RADIUS,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.palette.secondary.main,
+    opacity: 0,
+    transition: theme.transitions.create('opacity', {
+      duration: theme.transitions.duration.standard,
+    }),
+  },
+  selectionActive: {
+    zIndex: 2,
+    opacity: 1,
+  },
+  selectionCheckIcon: {
+    color: theme.palette.getContrastText(theme.palette.secondary.main),
+    fontSize: theme.typography.pxToRem(60),
+  },
 }))
 
 interface Props {
-    trial: Trial
-    onDelete?: (trialName: string) => void
-    // ? selectionProps are used to overwrite the default click behaviour and also result in some layout changes
-    selectionProps?: {
-        onClick: (trial: Trial) => void
-        selected?: boolean
-    }
+  trial: Trial
+  onDelete?: (trialName: string) => void
+  // ? selectionProps are used to overwrite the default click behaviour and also result in some layout changes
+  selectionProps?: {
+    onClick: (trial: Trial) => void
+    selected?: boolean
+  }
 }
 
 const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
-    const [deleteAlert, setDeleteAlert] = useState(false)
-    const [dataUrls, setDataUrls] = useState<AllDataUrls | undefined>()
-    const [deleteDisabled, setDeleteDisabled] = useState(false)
+  const [deleteAlert, setDeleteAlert] = useState(false)
+  const [dataUrls, setDataUrls] = useState<AllDataUrls | undefined>()
+  const [deleteDisabled, setDeleteDisabled] = useState(false)
 
-    const { user } = useFirebaseAuthContext()
-    const { gridBreakpointProps, gridLayout } = useGridContext()
-    const { enqueueSnackbar } = useSnackbar()
-    const { setSelectedAttachment } = useSelectedAttachementContext()
+  const { user } = useFirebaseAuthContext()
+  const { gridBreakpointProps, gridLayout } = useGridContext()
+  const { enqueueSnackbar } = useSnackbar()
+  const { setSelectedAttachment } = useSelectedAttachementContext()
 
-    const classes = useStyles({ fixedCardHeight: gridLayout === 'list' })
+  const classes = useStyles({ fixedCardHeight: gridLayout === 'list' })
 
-    useEffect(() => {
-        let mounted = true
-        getResizedImagesWithMetadata(trial.fullPath).then(
-            ({ fullDataUrl, mediumDataUrl, smallDataUrl }) => {
-                if (!mounted) return
-                setDataUrls({ fullDataUrl, mediumDataUrl, smallDataUrl })
-            }
-        )
-        return () => {
-            mounted = false
-        }
-    }, [trial.fullPath])
-
-    const handleDeleteBtnClick = async () => {
-        // ! this does not delete the comments collection --> should use https://firebase.google.com/docs/firestore/solutions/delete-collections
-        // ! --> which is fine, we can recover comments even if the trial is lost
-        try {
-            setDeleteDisabled(true)
-            await FirebaseService.firestore.collection('trials').doc(trial.name).delete()
-            await FirebaseService.storageRef.child(trial.fullPath).delete()
-            setDeleteAlert(false)
-        } catch (e) {
-            enqueueSnackbar(e.message, { variant: 'error' })
-        } finally {
-            setDeleteDisabled(false)
-            if (onDelete) onDelete(trial.name)
-        }
+  useEffect(() => {
+    let mounted = true
+    getResizedImagesWithMetadata(trial.fullPath).then(
+      ({ fullDataUrl, mediumDataUrl, smallDataUrl }) => {
+        if (!mounted) return
+        setDataUrls({ fullDataUrl, mediumDataUrl, smallDataUrl })
+      }
+    )
+    return () => {
+      mounted = false
     }
+  }, [trial.fullPath])
 
-    const selectionAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = useMemo(
-        () => (selectionProps ? { xs: 12 } : gridBreakpointProps),
-        [gridBreakpointProps, selectionProps]
-    )
+  const handleDeleteBtnClick = async () => {
+    // ! this does not delete the comments collection --> should use https://firebase.google.com/docs/firestore/solutions/delete-collections
+    // ! --> which is fine, we can recover comments even if the trial is lost
+    try {
+      setDeleteDisabled(true)
+      await FirebaseService.firestore.collection('trials').doc(trial.name).delete()
+      await FirebaseService.storageRef.child(trial.fullPath).delete()
+      setDeleteAlert(false)
+    } catch (e) {
+      enqueueSnackbar(e.message, { variant: 'error' })
+    } finally {
+      setDeleteDisabled(false)
+      if (onDelete) onDelete(trial.name)
+    }
+  }
 
-    const handleAttachmentClick = useCallback(() => {
-        if (selectionProps) {
-            selectionProps.onClick(trial)
-        } else if (dataUrls) {
-            setSelectedAttachment(dataUrls)
-        }
-    }, [dataUrls, selectionProps, setSelectedAttachment, trial])
+  const selectionAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = useMemo(
+    () => (selectionProps ? { xs: 12 } : gridBreakpointProps),
+    [gridBreakpointProps, selectionProps]
+  )
 
-    return (
-        <>
-            <Grid item {...selectionAwareBreakpoints}>
-                <Card className={classes.card}>
-                    <AccountChip
-                        uid={trial.editorUid}
-                        enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
-                            trial.createdDate
-                        ).toLocaleDateString()}`}
-                        position="absolute"
-                        placement="top"
-                    />
+  const handleAttachmentClick = useCallback(() => {
+    if (selectionProps) {
+      selectionProps.onClick(trial)
+    } else if (dataUrls) {
+      setSelectedAttachment(dataUrls)
+    }
+  }, [dataUrls, selectionProps, setSelectedAttachment, trial])
 
-                    <CardActionArea disabled={!dataUrls} onClick={handleAttachmentClick}>
-                        <div
-                            className={clsx(
-                                classes.selectionRoot,
-                                selectionProps?.selected && classes.selectionActive
-                            )}>
-                            <CheckIcon className={classes.selectionCheckIcon} />
-                        </div>
+  return (
+    <>
+      <Grid item {...selectionAwareBreakpoints}>
+        <Card className={classes.card}>
+          <AccountChip
+            uid={trial.editorUid}
+            enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
+              trial.createdDate
+            ).toLocaleDateString()}`}
+            position="absolute"
+            placement="top"
+          />
 
-                        <CardMedia image={dataUrls?.mediumDataUrl} className={classes.cardMedia}>
-                            {/* make mui happy */}
-                            <></>
-                        </CardMedia>
-                    </CardActionArea>
+          <CardActionArea disabled={!dataUrls} onClick={handleAttachmentClick}>
+            <div
+              className={clsx(
+                classes.selectionRoot,
+                selectionProps?.selected && classes.selectionActive
+              )}>
+              <CheckIcon className={classes.selectionCheckIcon} />
+            </div>
 
-                    {user && (
-                        <Slide direction="up" in>
-                            <Grid
-                                container
-                                justifyContent="flex-end"
-                                spacing={1}
-                                className={classes.actions}>
-                                <Grid item xs="auto">
-                                    <Comments
-                                        highContrast
-                                        collection="trials"
-                                        numberOfComments={trial.numberOfComments}
-                                        name={trial.name}
-                                    />
-                                </Grid>
+            <CardMedia image={dataUrls?.mediumDataUrl} className={classes.cardMedia}>
+              {/* make mui happy */}
+              <></>
+            </CardMedia>
+          </CardActionArea>
 
-                                {!selectionProps && (
-                                    <Grid item xs="auto">
-                                        <Tooltip title="Löschen">
-                                            <Fab size="small" onClick={() => setDeleteAlert(true)}>
-                                                <DeleteIcon />
-                                            </Fab>
-                                        </Tooltip>
-                                    </Grid>
-                                )}
-                            </Grid>
-                        </Slide>
-                    )}
-                </Card>
-            </Grid>
-            <TrialsDeleteAlert
-                open={deleteAlert}
-                disabled={deleteDisabled}
-                title={trial.name}
-                onAbort={() => setDeleteAlert(false)}
-                onConfirm={handleDeleteBtnClick}
-            />
-        </>
-    )
+          {user && (
+            <Slide direction="up" in>
+              <Grid container justifyContent="flex-end" spacing={1} className={classes.actions}>
+                <Grid item xs="auto">
+                  <Comments
+                    highContrast
+                    collection="trials"
+                    numberOfComments={trial.numberOfComments}
+                    name={trial.name}
+                  />
+                </Grid>
+
+                {!selectionProps && (
+                  <Grid item xs="auto">
+                    <Tooltip title="Löschen">
+                      <Fab size="small" onClick={() => setDeleteAlert(true)}>
+                        <DeleteIcon />
+                      </Fab>
+                    </Tooltip>
+                  </Grid>
+                )}
+              </Grid>
+            </Slide>
+          )}
+        </Card>
+      </Grid>
+      <TrialsDeleteAlert
+        open={deleteAlert}
+        disabled={deleteDisabled}
+        title={trial.name}
+        onAbort={() => setDeleteAlert(false)}
+        onConfirm={handleDeleteBtnClick}
+      />
+    </>
+  )
 }
 
 export default TrialsCard

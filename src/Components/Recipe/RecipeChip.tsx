@@ -6,23 +6,21 @@ import { useRecipeDoc } from '../../hooks/useRecipeDoc'
 import { PATHS } from '../Routes/Routes'
 
 type Props = {
-    recipeName: string
+  recipeName: string
 }
 
 const RecipeChip = (props: Props) => {
-    const history = useHistory()
+  const history = useHistory()
 
-    const { recipeDoc } = useRecipeDoc({ recipeName: props.recipeName })
+  const { recipeDoc } = useRecipeDoc({ recipeName: props.recipeName })
 
-    return (
-        <Chip
-            avatar={
-                <Avatar src={recipeDoc?.previewAttachment}>{props.recipeName.slice(0, 1)}</Avatar>
-            }
-            onClick={() => history.push(PATHS.details(props.recipeName))}
-            label={props.recipeName}
-        />
-    )
+  return (
+    <Chip
+      avatar={<Avatar src={recipeDoc?.previewAttachment}>{props.recipeName.slice(0, 1)}</Avatar>}
+      onClick={() => history.push(PATHS.details(props.recipeName))}
+      label={props.recipeName}
+    />
+  )
 }
 
 export default RecipeChip

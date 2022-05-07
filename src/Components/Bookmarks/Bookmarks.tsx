@@ -19,84 +19,79 @@ import NotFound from '../Shared/NotFound'
 import StyledCard from '../Shared/StyledCard'
 
 interface BookmarkProps {
-    recipeName: string
+  recipeName: string
 }
 
 const Bookmark = ({ recipeName }: BookmarkProps) => {
-    const [recipe, setRecipe] = useState<Recipe | null>(null)
-    const [value, setValue] = useState(0)
+  const [recipe, setRecipe] = useState<Recipe | null>(null)
+  const [value, setValue] = useState(0)
 
-    useEffect(() => {
-        let mounted = true
-        FirebaseService.firestore
-            .collection('recipes')
-            .doc(recipeName)
-            .onSnapshot(doc => {
-                if (mounted) setRecipe({ name: doc.id, ...doc.data() } as Recipe)
-            })
+  useEffect(() => {
+    let mounted = true
+    FirebaseService.firestore
+      .collection('recipes')
+      .doc(recipeName)
+      .onSnapshot(doc => {
+        if (mounted) setRecipe({ name: doc.id, ...doc.data() } as Recipe)
+      })
 
-        return () => {
-            mounted = false
-        }
-    }, [recipeName])
+    return () => {
+      mounted = false
+    }
+  }, [recipeName])
 
-    return (
-        <>
-            {recipe ? (
-                <StyledCard
-                    expandable
-                    header={recipeName}
-                    action={
-                        <>
-                            <RecipeDetailsButton recipe={recipe} />
-                            <RecipeBookmarkButton name={recipeName} />
-                        </>
-                    }>
-                    <Tabs
-                        variant="fullWidth"
-                        value={value}
-                        onChange={(_e, newValue) => setValue(newValue)}>
-                        <Tab icon={<AssignmentIcon />} label={`Zutaten für ${recipe?.amount}`} />
-                        <Tab icon={<BookIcon />} label="Beschreibung" />
-                    </Tabs>
+  return (
+    <>
+      {recipe ? (
+        <StyledCard
+          expandable
+          header={recipeName}
+          action={
+            <>
+              <RecipeDetailsButton recipe={recipe} />
+              <RecipeBookmarkButton name={recipeName} />
+            </>
+          }>
+          <Tabs variant="fullWidth" value={value} onChange={(_e, newValue) => setValue(newValue)}>
+            <Tab icon={<AssignmentIcon />} label={`Zutaten für ${recipe?.amount}`} />
+            <Tab icon={<BookIcon />} label="Beschreibung" />
+          </Tabs>
 
-                    <SwipeableViews disableLazyLoading disabled index={value}>
-                        <MarkdownRenderer withShoppingList recipeName={recipeName}>
-                            {recipe.ingredients}
-                        </MarkdownRenderer>
-                        <MarkdownRenderer recipeName={recipeName}>
-                            {recipe.description}
-                        </MarkdownRenderer>
-                    </SwipeableViews>
-                </StyledCard>
-            ) : (
-                <Skeleton animation="wave" width="100%" height={400} variant="rect" />
-            )}
-        </>
-    )
+          <SwipeableViews disableLazyLoading disabled index={value}>
+            <MarkdownRenderer withShoppingList recipeName={recipeName}>
+              {recipe.ingredients}
+            </MarkdownRenderer>
+            <MarkdownRenderer recipeName={recipeName}>{recipe.description}</MarkdownRenderer>
+          </SwipeableViews>
+        </StyledCard>
+      ) : (
+        <Skeleton animation="wave" width="100%" height={400} variant="rect" />
+      )}
+    </>
+  )
 }
 
 const Bookmarks = () => {
-    const { loginEnabled } = useFirebaseAuthContext()
-    const { bookmarks } = useBookmarkContext()
-    const { gridBreakpointProps } = useGridContext()
+  const { loginEnabled } = useFirebaseAuthContext()
+  const { bookmarks } = useBookmarkContext()
+  const { gridBreakpointProps } = useGridContext()
 
-    useDocumentTitle(`Lesezeichen (${bookmarks.size})`)
+  useDocumentTitle(`Lesezeichen (${bookmarks.size})`)
 
-    return (
-        <EntryGridContainer>
-            <Grid item xs={12}>
-                <Grid container spacing={3}>
-                    {[...bookmarks.values()].map(recipeName => (
-                        <Grid item {...gridBreakpointProps} key={recipeName}>
-                            <Bookmark recipeName={recipeName} />
-                        </Grid>
-                    ))}
-                </Grid>
-                <NotFound visible={bookmarks.size === 0 && loginEnabled} />
+  return (
+    <EntryGridContainer>
+      <Grid item xs={12}>
+        <Grid container spacing={3}>
+          {[...bookmarks.values()].map(recipeName => (
+            <Grid item {...gridBreakpointProps} key={recipeName}>
+              <Bookmark recipeName={recipeName} />
             </Grid>
-        </EntryGridContainer>
-    )
+          ))}
+        </Grid>
+        <NotFound visible={bookmarks.size === 0 && loginEnabled} />
+      </Grid>
+    </EntryGridContainer>
+  )
 }
 
 export default Bookmarks

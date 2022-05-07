@@ -14,16 +14,16 @@ import FirebaseAuthProvider from './Components/Provider/FirebaseAuthProvider'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 ReactDOM.render(
-    <ErrorBoundary>
-        <FirebaseAuthProvider>
-            <BrowserRouter>
-                <BreakpointsProvider>
-                    <App />
-                </BreakpointsProvider>
-            </BrowserRouter>
-        </FirebaseAuthProvider>
-    </ErrorBoundary>,
-    document.getElementById('root')
+  <ErrorBoundary>
+    <FirebaseAuthProvider>
+      <BrowserRouter>
+        <BreakpointsProvider>
+          <App />
+        </BreakpointsProvider>
+      </BrowserRouter>
+    </FirebaseAuthProvider>
+  </ErrorBoundary>,
+  document.getElementById('root')
 )
 
 serviceWorkerRegistration.register()

@@ -1,12 +1,12 @@
 {
-    "editor.tabSize": 4,
-    "editor.detectIndentation": false,
-    "eslint.options": {
-        "rules": {
-            "prettier/prettier": "warn"
-        }
-    },
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "eslint.options": {
+    "rules": {
+      "prettier/prettier": "warn"
     }
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

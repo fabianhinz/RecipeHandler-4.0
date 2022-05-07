@@ -7,55 +7,53 @@ import getIconByCategory from './CategoryIcons'
 type StyleProps = { swatches?: Recipe['previewAttachmentSwatches']; extraPadding?: boolean }
 
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
-    categoryResultRoot: {
-        display: 'flex',
-        gap: theme.spacing(1),
-        padding: props => (props.extraPadding ? `0px ${theme.spacing(1)}px` : undefined),
-        flexWrap: 'nowrap',
-        overflow: 'auto',
-        '&::-webkit-scrollbar': {
-            display: 'none',
-        },
+  categoryResultRoot: {
+    display: 'flex',
+    gap: theme.spacing(1),
+    padding: props => (props.extraPadding ? `0px ${theme.spacing(1)}px` : undefined),
+    flexWrap: 'nowrap',
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      display: 'none',
     },
-    root: props => ({
-        backgroundColor: props.swatches?.muted,
-        color: props.swatches?.muted
-            ? theme.palette.getContrastText(props.swatches.muted)
-            : undefined,
-    }),
-    icon: {
-        color: 'inherit',
-    },
+  },
+  root: props => ({
+    backgroundColor: props.swatches?.muted,
+    color: props.swatches?.muted ? theme.palette.getContrastText(props.swatches.muted) : undefined,
+  }),
+  icon: {
+    color: 'inherit',
+  },
 }))
 
 interface CategoryResultProps extends Pick<ChipProps, 'color' | 'variant' | 'size'>, StyleProps {
-    categories: Categories<string>
+  categories: Categories<string>
 }
 
 export const CategoryResult: FC<CategoryResultProps> = ({
-    categories,
-    children,
-    swatches,
-    extraPadding,
-    ...chipProps
+  categories,
+  children,
+  swatches,
+  extraPadding,
+  ...chipProps
 }) => {
-    const { categoryResultRoot, ...chipClasses } = useStyles({ swatches, extraPadding })
+  const { categoryResultRoot, ...chipClasses } = useStyles({ swatches, extraPadding })
 
-    return (
-        <div className={categoryResultRoot}>
-            {Object.keys(categories).map(type => (
-                <div key={type}>
-                    {categories[type].length > 0 && (
-                        <Chip
-                            classes={chipClasses}
-                            size="small"
-                            icon={getIconByCategory(categories[type])}
-                            label={categories[type]}
-                            {...chipProps}
-                        />
-                    )}
-                </div>
-            ))}
+  return (
+    <div className={categoryResultRoot}>
+      {Object.keys(categories).map(type => (
+        <div key={type}>
+          {categories[type].length > 0 && (
+            <Chip
+              classes={chipClasses}
+              size="small"
+              icon={getIconByCategory(categories[type])}
+              label={categories[type]}
+              {...chipProps}
+            />
+          )}
         </div>
-    )
+      ))}
+    </div>
+  )
 }
