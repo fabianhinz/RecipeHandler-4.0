@@ -181,6 +181,7 @@ export interface CookingHistory {
 
 export interface ShoppingListItem {
     recipeNameRef?: string
+    tag: string
     value: string
     checked: boolean
 }
