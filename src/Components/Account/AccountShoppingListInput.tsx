@@ -27,7 +27,7 @@ const AccountShoppingListInput = (props: {
 
         let tag: string = ''
         let value = textFieldValue
-        const regexRes = /[ ]*#\w{1,}[ ]*/.exec(textFieldValue)
+        const regexRes = /[ ]*#(\w|ä|Ä|ö|Ö|ü|Ü){1,}[ ]*/.exec(textFieldValue)
 
         if (regexRes) {
             const [rawTag] = regexRes
