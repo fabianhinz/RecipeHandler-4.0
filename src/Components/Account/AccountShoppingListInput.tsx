@@ -1,8 +1,23 @@
-import { IconButton, InputAdornment, TextField, Typography, useTheme } from '@material-ui/core'
+import {
+    IconButton,
+    InputAdornment,
+    makeStyles,
+    TextField,
+    Typography,
+    useTheme,
+} from '@material-ui/core'
 import { DeleteSweep } from '@material-ui/icons'
 import React, { useMemo, useState } from 'react'
 
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+
+const useStyles = makeStyles(theme => ({
+    textFieldHelperRoot: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: theme.spacing(0.5),
+    },
+}))
 
 const AccountShoppingListInput = (props: {
     tagFilter: string | undefined
@@ -10,6 +25,7 @@ const AccountShoppingListInput = (props: {
 }) => {
     const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
     const [textFieldValue, setTextFieldValue] = useState('')
+    const classes = useStyles()
     const theme = useTheme()
 
     const handleDeleteAll = () => {
@@ -53,6 +69,9 @@ const AccountShoppingListInput = (props: {
         <form onSubmit={handleFormSubmit}>
             <TextField
                 value={textFieldValue}
+                FormHelperTextProps={{
+                    classes: { root: classes.textFieldHelperRoot },
+                }}
                 helperText={
                     <>
                         {memoizedTags.map(tag => (
@@ -63,7 +82,6 @@ const AccountShoppingListInput = (props: {
                                     )
                                 }
                                 style={{
-                                    marginRight: 4,
                                     cursor: 'pointer',
                                     textDecoration: tag === props.tagFilter ? 'underline' : 'none',
                                     color:
