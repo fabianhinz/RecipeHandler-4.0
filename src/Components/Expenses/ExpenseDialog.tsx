@@ -92,9 +92,12 @@ const ExpenseDialog = (props: Props) => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        if (!authContext.user) return
 
-        if (id === undefined)
+        if (!authContext.user) {
+            return
+        }
+
+        if (id === undefined) {
             addExpense(
                 {
                     amount,
@@ -107,7 +110,7 @@ const ExpenseDialog = (props: Props) => {
                 },
                 authContext.user.uid
             )
-        else {
+        } else {
             updateExpense(
                 {
                     id,
@@ -168,8 +171,13 @@ const ExpenseDialog = (props: Props) => {
                                 InputProps={{
                                     endAdornment: <InputAdornment position="end">€</InputAdornment>,
                                 }}
-                                value={amount}
-                                onChange={e => setAmount(Number(e.target.value))}
+                                defaultValue={amount}
+                                onChange={e => {
+                                    const newAmount = Number(e.target.value)
+                                    if (!isNaN(newAmount)) {
+                                        setAmount(newAmount)
+                                    }
+                                }}
                                 variant="outlined"
                                 margin="normal"
                                 fullWidth
