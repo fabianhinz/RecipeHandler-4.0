@@ -11,7 +11,6 @@ import App from './Components/App'
 import ErrorBoundary from './Components/ErrorBoundary'
 import BreakpointsProvider from './Components/Provider/BreakpointsProvider'
 import FirebaseAuthProvider from './Components/Provider/FirebaseAuthProvider'
-import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 ReactDOM.render(
     <ErrorBoundary>
@@ -23,9 +22,8 @@ ReactDOM.render(
             </BrowserRouter>
         </FirebaseAuthProvider>
     </ErrorBoundary>,
-    document.getElementById('root')
+    document.getElementById('root')!
 )
 
-serviceWorkerRegistration.register()
 // ? components will provide their own contextmenus
 window.addEventListener('contextmenu', e => e.preventDefault())

@@ -18,7 +18,9 @@ const firebaseConfig = {
 }
 
 firebase.initializeApp(firebaseConfig)
-if (!__USE_EMULATORS__) firebase.firestore().enablePersistence({ synchronizeTabs: true })
+if (!import.meta.env.__USE_EMULATORS__) {
+    firebase.firestore().enablePersistence({ synchronizeTabs: true })
+}
 
 const functions = firebase.app().functions('europe-west1')
 const firestore = firebase.firestore()
@@ -29,10 +31,10 @@ let analytics: firebase.analytics.Analytics | undefined
 
 if (process.env.NODE_ENV !== 'development') {
     analytics = firebase.analytics()
-    firebase.registerVersion('recipehandler', __VERSION__)
+    // firebase.registerVersion('recipehandler', import.meta.env.__VERSION__)
 }
 
-if (__USE_EMULATORS__) {
+if (import.meta.env.__USE_EMULATORS__) {
     functions.useEmulator('localhost', 5001)
     firestore.useEmulator('localhost', 8080)
     storage.useEmulator('localhost', 9199)

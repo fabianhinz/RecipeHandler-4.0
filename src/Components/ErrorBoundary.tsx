@@ -42,7 +42,7 @@ class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
         FirebaseService.firestore
             .collection('errors')
             .add({
-                version: __VERSION__,
+                version: import.meta.env.__VERSION__,
                 minError: minError.toString(),
                 trace: trace.toString(),
                 agent: window.navigator.userAgent,

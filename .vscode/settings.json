@@ -1,12 +1,9 @@
 {
-    "editor.tabSize": 4,
-    "editor.detectIndentation": false,
-    "eslint.options": {
-        "rules": {
-            "prettier/prettier": "warn"
-        }
-    },
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    }
+  "editor.tabSize": 4,
+  "editor.detectIndentation": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.suggest.preview": true,
+  "typescript.inlayHints.parameterNames.enabled": "all"
 }
