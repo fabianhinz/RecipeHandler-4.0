@@ -191,7 +191,7 @@ export interface Expense {
   amount: number
   shop: string
   category: string
-  description?: string
+  description: string
   date: firebase.default.firestore.Timestamp
   relatedUsers: string[]
   // TODO fix me

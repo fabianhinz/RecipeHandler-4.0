@@ -14,7 +14,7 @@ import {
 import { Save } from '@material-ui/icons'
 import CloseIcon from '@material-ui/icons/Close'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
-import deLocale from "date-fns/locale/de";
+import deLocale from 'date-fns/locale/de'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
@@ -24,6 +24,7 @@ import useCurrentExpenseStore, { CurrentExpenseStore } from '@/store/CurrentExpe
 import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
 
 import ExpenseAutocomplete from './ExpenseAutocomplete'
+import { ExpenseAutocompleteWrapper } from './ExpenseAutocompleteWrapper'
 
 interface Props {
   open: boolean
@@ -72,7 +73,7 @@ const useStyles = makeStyles({
 })
 
 const ExpenseDialog = (props: Props) => {
-  const { autocompleteOptions, categories } = useExpenseStore(selector)
+  const { autocompleteOptions } = useExpenseStore(selector)
   const { addExpense, updateExpense } = useExpenseStore(dispatchSelector)
   const { id, amount, category, creator, date, description, relatedUsers, shop } =
     useCurrentExpenseStore(currentExpenseSelector)
@@ -181,37 +182,27 @@ const ExpenseDialog = (props: Props) => {
                 fullWidth
                 label="Betrag"
               />
-              <ExpenseAutocomplete
-                label="Geschäft"
-                value={shop}
-                options={autocompleteOptions.shop}
-                onValueChange={shop => {
-                  setShop(shop)
-                  if (!autocompleteOptions.shop.includes(shop)) {
+
+              <ExpenseAutocompleteWrapper
+                shop={shop}
+                category={category}
+                description={description}
+                onCategoryChange={setCategory}
+                onShopChange={newShop => {
+                  setShop(newShop)
+                  if (!autocompleteOptions.shop.includes(newShop)) {
                     setAutocompleteOptions({
                       ...autocompleteOptions,
-                      shop: [...autocompleteOptions.shop, shop],
+                      shop: [...autocompleteOptions.shop, newShop],
                     })
                   }
                 }}
-              />
-              <ExpenseAutocomplete
-                disableFreeSolo
-                label="Kategorie"
-                value={category}
-                options={categories}
-                onValueChange={setCategory}
-              />
-              <ExpenseAutocomplete
-                label="Beschreibung"
-                value={description}
-                options={autocompleteOptions.description}
-                onValueChange={description => {
-                  setDescription(description)
-                  if (!autocompleteOptions.description.includes(description)) {
+                onDescriptionChange={newDescription => {
+                  setDescription(newDescription)
+                  if (!autocompleteOptions.description.includes(newDescription)) {
                     setAutocompleteOptions({
                       ...autocompleteOptions,
-                      description: [...autocompleteOptions.description, description],
+                      description: [...autocompleteOptions.description, newDescription],
                     })
                   }
                 }}
@@ -220,9 +211,8 @@ const ExpenseDialog = (props: Props) => {
             <Grid item md={6} xs={12}>
               <Grid container spacing={2} alignItems="center" direction="column">
                 <Grid item>
-                  <MuiPickersUtilsProvider  locale={deLocale} utils={DateFnsUtils}>
+                  <MuiPickersUtilsProvider locale={deLocale} utils={DateFnsUtils}>
                     <KeyboardDatePicker
-                    
                       fullWidth
                       disableFuture
                       disableToolbar
