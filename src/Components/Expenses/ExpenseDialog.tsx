@@ -14,6 +14,7 @@ import {
 import { Save } from '@material-ui/icons'
 import CloseIcon from '@material-ui/icons/Close'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import deLocale from "date-fns/locale/de";
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
@@ -219,8 +220,9 @@ const ExpenseDialog = (props: Props) => {
             <Grid item md={6} xs={12}>
               <Grid container spacing={2} alignItems="center" direction="column">
                 <Grid item>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <MuiPickersUtilsProvider  locale={deLocale} utils={DateFnsUtils}>
                     <KeyboardDatePicker
+                    
                       fullWidth
                       disableFuture
                       disableToolbar
