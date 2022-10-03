@@ -7,10 +7,8 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
-    __USE_EMULATORS__: Boolean(process.env.useEmulators),
-    __VERSION__: JSON.stringify(
-      process.env.VERSION || (process.env.NODE_ENV === 'production' ? 'unkown' : 'dev')
-    ),
+    USE_EMULATORS: JSON.stringify('---fix-me---'),
+    VERSION: JSON.stringify('---fix-me---'),
   },
   build: {
     sourcemap: true,

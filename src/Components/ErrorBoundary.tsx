@@ -37,12 +37,14 @@ class ErrorBoundary extends Component<{}, ErrorBoundaryState> {
       errorLogged: false,
     })
 
-    if (process.env.NODE_ENV !== 'production') return this.setState({ errorLogged: true })
+    if (!import.meta.env.PROD) {
+      return this.setState({ errorLogged: true })
+    }
 
     FirebaseService.firestore
       .collection('errors')
       .add({
-        version: import.meta.env.__VERSION__,
+        version: import.meta.env.VERSION,
         minError: minError.toString(),
         trace: trace.toString(),
         agent: window.navigator.userAgent,

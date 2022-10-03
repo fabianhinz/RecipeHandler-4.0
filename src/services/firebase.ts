@@ -18,7 +18,7 @@ const firebaseConfig = {
 }
 
 firebase.initializeApp(firebaseConfig)
-if (!import.meta.env.__USE_EMULATORS__) {
+if (import.meta.env.PROD) {
   firebase.firestore().enablePersistence({ synchronizeTabs: true })
 }
 
@@ -29,12 +29,12 @@ const storageRef = storage.ref()
 const auth = firebase.auth()
 let analytics: firebase.analytics.Analytics | undefined
 
-if (process.env.NODE_ENV !== 'development') {
+if (import.meta.env.PROD) {
   analytics = firebase.analytics()
-  // firebase.registerVersion('recipehandler', import.meta.env.__VERSION__)
+  firebase.registerVersion('recipehandler', import.meta.env.VERSION)
 }
 
-if (import.meta.env.__USE_EMULATORS__) {
+if (import.meta.env.USE_EMULATORS) {
   functions.useEmulator('localhost', 5001)
   firestore.useEmulator('localhost', 8080)
   storage.useEmulator('localhost', 9199)

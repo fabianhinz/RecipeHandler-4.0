@@ -3,8 +3,8 @@
 /// <reference types="vite-plugin-pwa/client" />
 
 interface ImportMetaEnv {
-  readonly __USE_EMULATORS__: boolean
-  readonly __VERSION__: string
+  readonly USE_EMULATORS: boolean
+  readonly VERSION: string
 }
 
 interface ImportMeta {
