@@ -9,6 +9,7 @@ import Header from '@/Components/Header'
 import Main from '@/Components/Main'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import recipeService from '@/services/recipeService'
+import { SwUpdates } from '@/SwUpdates'
 import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '@/theme'
 
 import { AppProvider } from './AppProvider'
@@ -84,6 +85,7 @@ const App: FC = () => {
         <AppProvider>
           <Header />
           <Main />
+          <SwUpdates />
         </AppProvider>
       </SnackbarProvider>
     </ThemeProvider>
