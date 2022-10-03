@@ -2,43 +2,15 @@ import { useMediaQuery } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/styles'
 import { SnackbarProvider } from 'notistack'
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import recipeService from '../services/recipeService'
-import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '../theme'
-import Header from './Header'
-import Main from './Main'
-import AttachmentGalleryProvider from './Provider/AttachmentGalleryProvider'
-import BookmarkProvider from './Provider/BookmarkProvider'
-import CategoriesCollectionProvider from './Provider/CategoriesCollectionProvider'
-import DeviceOrientationProvider from './Provider/DeviceOrientationProvider'
-import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
-import GridProvider from './Provider/GridProvider'
-import RouterProvider from './Provider/RouterProvider'
-import SearchResultsProvider from './Provider/SearchResultsProvider'
-import SelectedAttachementProvider from './Provider/SelectedAttachementProvider'
-import UsersProvider from './Provider/UsersProvider'
-
-const AppProvider: FC = ({ children }) => (
-    <RouterProvider>
-        <DeviceOrientationProvider>
-            <UsersProvider>
-                <CategoriesCollectionProvider>
-                    <GridProvider>
-                        <SelectedAttachementProvider>
-                            <AttachmentGalleryProvider>
-                                <BookmarkProvider>
-                                    <SearchResultsProvider>{children}</SearchResultsProvider>
-                                </BookmarkProvider>
-                            </AttachmentGalleryProvider>
-                        </SelectedAttachementProvider>
-                    </GridProvider>
-                </CategoriesCollectionProvider>
-            </UsersProvider>
-        </DeviceOrientationProvider>
-    </RouterProvider>
-)
+import { AppProvider } from '@/AppProvider'
+import Header from '@/Header'
+import Main from '@/Main'
+import { useFirebaseAuthContext } from '@/Provider/FirebaseAuthProvider'
+import recipeService from '@/services/recipeService'
+import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '@/theme'
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)
