@@ -10,28 +10,28 @@ import AccountListItem from '../AccountListItem'
 import { UserSettingChangeHandler } from './AccountUser'
 
 interface Props {
-    onUserSettingChange: UserSettingChangeHandler
+  onUserSettingChange: UserSettingChangeHandler
 }
 // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
 const AccountUserRecipes = ({ onUserSettingChange }: Props) => {
-    const { userIds } = useUsersContext()
-    const { user } = useFirebaseAuthContext() as { user: User }
+  const { userIds } = useUsersContext()
+  const { user } = useFirebaseAuthContext() as { user: User }
 
-    return (
-        <StyledCard header="Rezepte von" BackgroundIcon={BookIcon}>
-            <List>
-                {userIds.map(id => (
-                    <AccountListItem
-                        key={id}
-                        uid={id}
-                        variant="user"
-                        checked={user.selectedUsers.some(selectedId => selectedId === id)}
-                        onChange={onUserSettingChange('selectedUsers')}
-                    />
-                ))}
-            </List>
-        </StyledCard>
-    )
+  return (
+    <StyledCard header="Rezepte von" BackgroundIcon={BookIcon}>
+      <List>
+        {userIds.map(id => (
+          <AccountListItem
+            key={id}
+            uid={id}
+            variant="user"
+            checked={user.selectedUsers.some(selectedId => selectedId === id)}
+            onChange={onUserSettingChange('selectedUsers')}
+          />
+        ))}
+      </List>
+    </StyledCard>
+  )
 }
 
 export default AccountUserRecipes

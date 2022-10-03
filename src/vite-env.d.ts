@@ -2,10 +2,10 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 interface ImportMetaEnv {
-    readonly __USE_EMULATORS__: boolean
-    readonly __VERSION__: string
+  readonly __USE_EMULATORS__: boolean
+  readonly __VERSION__: string
 }
 
 interface ImportMeta {
-    readonly env: ImportMetaEnv
+  readonly env: ImportMetaEnv
 }

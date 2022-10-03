@@ -12,103 +12,96 @@ import SatisfactionIconContainer from './SatisfactionIconContainer'
 import SatisfactionUser from './SatisfactionUser'
 
 interface Props {
-    recipeName: string
+  recipeName: string
 }
 
 const Satisfaction = ({ recipeName }: Props) => {
-    const [satisfaction, setSatisfaction] = useState<Map<string, number>>(new Map())
-    const [tooltipTitle, setTooltipTitle] = useState<ReactText>('')
+  const [satisfaction, setSatisfaction] = useState<Map<string, number>>(new Map())
+  const [tooltipTitle, setTooltipTitle] = useState<ReactText>('')
 
-    const { user } = useFirebaseAuthContext()
-    const { userIds } = useUsersContext()
+  const { user } = useFirebaseAuthContext()
+  const { userIds } = useUsersContext()
 
-    const memoSatisfactionCollection = useMemo(
-        () =>
-            FirebaseService.firestore
-                .collection('recipes')
-                .doc(recipeName)
-                .collection('satisfaction'),
-        [recipeName]
-    )
+  const memoSatisfactionCollection = useMemo(
+    () =>
+      FirebaseService.firestore.collection('recipes').doc(recipeName).collection('satisfaction'),
+    [recipeName]
+  )
 
-    useEffect(
-        () =>
-            memoSatisfactionCollection.onSnapshot(querySnapshot =>
-                setSatisfaction(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data().value])))
-            ),
-        [memoSatisfactionCollection]
-    )
+  useEffect(
+    () =>
+      memoSatisfactionCollection.onSnapshot(querySnapshot =>
+        setSatisfaction(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data().value])))
+      ),
+    [memoSatisfactionCollection]
+  )
 
-    const handleSatisfactionChange = (_event: React.ChangeEvent<{}>, value: number | null) => {
-        if (!user) return
+  const handleSatisfactionChange = (_event: React.ChangeEvent<{}>, value: number | null) => {
+    if (!user) return
 
-        memoSatisfactionCollection.doc(user.uid).set({ value })
+    memoSatisfactionCollection.doc(user.uid).set({ value })
+  }
+
+  const satisfactionValueOrNull = useCallback(
+    (uid: string) => satisfaction.get(uid) || null,
+    [satisfaction]
+  )
+
+  const handleActiveChange = (_event: React.ChangeEvent<{}>, value: number) => {
+    switch (value) {
+      case 1: {
+        setTooltipTitle('Das war wohl nix')
+        break
+      }
+      case 2: {
+        setTooltipTitle('Geht so')
+        break
+      }
+      case 3: {
+        setTooltipTitle('Nomnomnom')
+        break
+      }
+      case 4: {
+        setTooltipTitle('Wie - nichts mehr da?')
+        break
+      }
+      case 5: {
+        setTooltipTitle('Ich will meeeehr')
+        break
+      }
     }
+  }
 
-    const satisfactionValueOrNull = useCallback(
-        (uid: string) => satisfaction.get(uid) || null,
-        [satisfaction]
-    )
-
-    const handleActiveChange = (_event: React.ChangeEvent<{}>, value: number) => {
-        switch (value) {
-            case 1: {
-                setTooltipTitle('Das war wohl nix')
-                break
-            }
-            case 2: {
-                setTooltipTitle('Geht so')
-                break
-            }
-            case 3: {
-                setTooltipTitle('Nomnomnom')
-                break
-            }
-            case 4: {
-                setTooltipTitle('Wie - nichts mehr da?')
-                break
-            }
-            case 5: {
-                setTooltipTitle('Ich will meeeehr')
-                break
-            }
-        }
-    }
-
-    return (
-        <StyledCard
-            expandable
-            header="Bewertungen"
-            BackgroundIcon={SatisfactionBackgroundIcon}
-            action={
-                user && (
-                    <Tooltip title={tooltipTitle} placement="bottom-start">
-                        <Rating
-                            value={satisfactionValueOrNull(user.uid)}
-                            onChange={handleSatisfactionChange}
-                            onChangeActive={handleActiveChange}
-                            name="recipe-editor-satisfaction"
-                            size="large"
-                            IconContainerComponent={SatisfactionIconContainer}
-                        />
-                    </Tooltip>
-                )
-            }>
-            <Grid container spacing={2} alignItems="center">
-                {userIds
-                    .filter(uid => uid !== user?.uid)
-                    .map(uid => (
-                        <Grid item key={uid}>
-                            <SatisfactionUser
-                                disabled
-                                value={satisfactionValueOrNull(uid)}
-                                uid={uid}
-                            />
-                        </Grid>
-                    ))}
+  return (
+    <StyledCard
+      expandable
+      header="Bewertungen"
+      BackgroundIcon={SatisfactionBackgroundIcon}
+      action={
+        user && (
+          <Tooltip title={tooltipTitle} placement="bottom-start">
+            <Rating
+              value={satisfactionValueOrNull(user.uid)}
+              onChange={handleSatisfactionChange}
+              onChangeActive={handleActiveChange}
+              name="recipe-editor-satisfaction"
+              size="large"
+              IconContainerComponent={SatisfactionIconContainer}
+            />
+          </Tooltip>
+        )
+      }>
+      <Grid container spacing={2} alignItems="center">
+        {userIds
+          .filter(uid => uid !== user?.uid)
+          .map(uid => (
+            <Grid item key={uid}>
+              <SatisfactionUser disabled value={satisfactionValueOrNull(uid)} uid={uid} />
             </Grid>
-        </StyledCard>
-    )
+          ))}
+      </Grid>
+    </StyledCard>
+  )
 }
 
 export default Satisfaction

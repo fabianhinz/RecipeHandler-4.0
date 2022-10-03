@@ -12,16 +12,16 @@ import BreakpointsProvider from '@/Components/Provider/BreakpointsProvider'
 import FirebaseAuthProvider from '@/Components/Provider/FirebaseAuthProvider'
 
 ReactDOM.render(
-    <ErrorBoundary>
-        <FirebaseAuthProvider>
-            <BrowserRouter>
-                <BreakpointsProvider>
-                    <App />
-                </BreakpointsProvider>
-            </BrowserRouter>
-        </FirebaseAuthProvider>
-    </ErrorBoundary>,
-    document.getElementById('root')!
+  <ErrorBoundary>
+    <FirebaseAuthProvider>
+      <BrowserRouter>
+        <BreakpointsProvider>
+          <App />
+        </BreakpointsProvider>
+      </BrowserRouter>
+    </FirebaseAuthProvider>
+  </ErrorBoundary>,
+  document.getElementById('root')!
 )
 
 // ? components will provide their own contextmenus

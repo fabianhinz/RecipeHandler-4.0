@@ -11,21 +11,21 @@ import SelectedAttachementProvider from '@/Components/Provider/SelectedAttacheme
 import UsersProvider from '@/Components/Provider/UsersProvider'
 
 export const AppProvider: FC = ({ children }) => (
-    <RouterProvider>
-        <DeviceOrientationProvider>
-            <UsersProvider>
-                <CategoriesCollectionProvider>
-                    <GridProvider>
-                        <SelectedAttachementProvider>
-                            <AttachmentGalleryProvider>
-                                <BookmarkProvider>
-                                    <SearchResultsProvider>{children}</SearchResultsProvider>
-                                </BookmarkProvider>
-                            </AttachmentGalleryProvider>
-                        </SelectedAttachementProvider>
-                    </GridProvider>
-                </CategoriesCollectionProvider>
-            </UsersProvider>
-        </DeviceOrientationProvider>
-    </RouterProvider>
+  <RouterProvider>
+    <DeviceOrientationProvider>
+      <UsersProvider>
+        <CategoriesCollectionProvider>
+          <GridProvider>
+            <SelectedAttachementProvider>
+              <AttachmentGalleryProvider>
+                <BookmarkProvider>
+                  <SearchResultsProvider>{children}</SearchResultsProvider>
+                </BookmarkProvider>
+              </AttachmentGalleryProvider>
+            </SelectedAttachementProvider>
+          </GridProvider>
+        </CategoriesCollectionProvider>
+      </UsersProvider>
+    </DeviceOrientationProvider>
+  </RouterProvider>
 )

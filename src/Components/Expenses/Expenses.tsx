@@ -1,16 +1,16 @@
 import {
-    AppBar,
-    Box,
-    Grid,
-    Hidden,
-    makeStyles,
-    Tab,
-    Tabs,
-    Toolbar,
-    Typography,
-    useMediaQuery,
-    useTheme,
-    withStyles,
+  AppBar,
+  Box,
+  Grid,
+  Hidden,
+  makeStyles,
+  Tab,
+  Tabs,
+  Toolbar,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  withStyles,
 } from '@material-ui/core'
 import { TableChart, Timeline, VerticalSplit } from '@material-ui/icons'
 import AddIcon from '@material-ui/icons/Add'
@@ -35,41 +35,41 @@ import { ExpensesSplitView } from './ExpensesSplitView'
 import ExpenseUserCard from './ExpenseUserCard'
 import expenseUtils from './helper/expenseUtils'
 const selector = (state: ExpenseStore) => ({
-    expenses: state.expenses,
-    isDialogOpen: state.isNewExpenseDialogOpen,
+  expenses: state.expenses,
+  isDialogOpen: state.isNewExpenseDialogOpen,
 })
 
 const dispatchSelector = (state: ExpenseStore) => ({
-    openDialog: state.openNewExpenseDialog,
+  openDialog: state.openNewExpenseDialog,
 })
 
 const useStyles = makeStyles(theme => ({
-    container: {
-        overflowX: 'auto',
-    },
-    homeRoot: {
-        borderRadius: BORDER_RADIUS,
-    },
-    tabWrapper: {
-        fontSize: theme.typography.h5.fontSize,
-    },
-    toolbar: {
-        justifyContent: 'space-between',
-    },
+  container: {
+    overflowX: 'auto',
+  },
+  homeRoot: {
+    borderRadius: BORDER_RADIUS,
+  },
+  tabWrapper: {
+    fontSize: theme.typography.h5.fontSize,
+  },
+  toolbar: {
+    justifyContent: 'space-between',
+  },
 }))
 
 export type ExpenseFilter = Partial<Pick<Expense, 'creator' | 'category' | 'shop'>>
 export type ExpenseFilterChangeHandler = <Key extends keyof ExpenseFilter>(
-    key: Key,
-    value: ExpenseFilter[Key]
+  key: Key,
+  value: ExpenseFilter[Key]
 ) => void
 
 export type ViewVariant = 'table' | 'graph' | 'split'
 
 const StyledTab = withStyles(theme => ({
-    wrapper: {
-        fontSize: theme.typography.h6.fontSize,
-    },
+  wrapper: {
+    fontSize: theme.typography.h6.fontSize,
+  },
 }))(Tab)
 
 /**
@@ -79,203 +79,203 @@ const StyledTab = withStyles(theme => ({
  * - CLEANUP 🧐
  */
 const Expenses = () => {
-    const [filter, setFilter] = useState<ExpenseFilter>({})
-    const theme = useTheme()
-    const lgUp = useMediaQuery(theme.breakpoints.up('lg'))
-    const xsDown = useMediaQuery(theme.breakpoints.down('xs'))
-    const [view, setView] = useState<ViewVariant>('table')
-    const [tabIndex, setTabIndex] = useState<number>(0)
+  const [filter, setFilter] = useState<ExpenseFilter>({})
+  const theme = useTheme()
+  const lgUp = useMediaQuery(theme.breakpoints.up('lg'))
+  const xsDown = useMediaQuery(theme.breakpoints.down('xs'))
+  const [view, setView] = useState<ViewVariant>('table')
+  const [tabIndex, setTabIndex] = useState<number>(0)
 
-    useLayoutEffect(() => {
-        setView(lgUp ? 'split' : 'table')
-    }, [lgUp])
+  useLayoutEffect(() => {
+    setView(lgUp ? 'split' : 'table')
+  }, [lgUp])
 
-    const classes = useStyles()
+  const classes = useStyles()
 
-    const { expenses, isDialogOpen } = useExpenseStore(selector)
-    const { openDialog } = useExpenseStore(dispatchSelector)
-    const expensesByMonth = useExpenseStore(store => store.expensesByMonth)
-    const expenseStoreLoading = useExpenseStore(store => store.loading)
-    const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
-    const resetCurrentExpense = useCurrentExpenseStore(store => store.clearState)
-    const years = useExpenseStore(store => store.years)
+  const { expenses, isDialogOpen } = useExpenseStore(selector)
+  const { openDialog } = useExpenseStore(dispatchSelector)
+  const expensesByMonth = useExpenseStore(store => store.expensesByMonth)
+  const expenseStoreLoading = useExpenseStore(store => store.loading)
+  const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
+  const resetCurrentExpense = useCurrentExpenseStore(store => store.clearState)
+  const years = useExpenseStore(store => store.years)
 
-    useLayoutEffect(() => {
-        if (years.length > 0) {
-            setTabIndex(years.length - 1)
-        }
-    }, [years.length])
+  useLayoutEffect(() => {
+    if (years.length > 0) {
+      setTabIndex(years.length - 1)
+    }
+  }, [years.length])
 
-    useDocumentTitle('Ausgaben')
+  useDocumentTitle('Ausgaben')
 
-    const maxAmount = useMemo(() => {
-        const amounts: number[] = []
-        for (const [, expenses] of expensesByMonth) {
-            amounts.push(expenses.reduce((acc, curr) => (acc += curr.amount), 0))
-        }
-        return amounts.sort((a, b) => b - a)[0] ?? 0
-    }, [expensesByMonth])
+  const maxAmount = useMemo(() => {
+    const amounts: number[] = []
+    for (const [, expenses] of expensesByMonth) {
+      amounts.push(expenses.reduce((acc, curr) => (acc += curr.amount), 0))
+    }
+    return amounts.sort((a, b) => b - a)[0] ?? 0
+  }, [expensesByMonth])
 
-    const expensesToRenderMemoized = useMemo(() => {
-        if (!filter && tabIndex === years.length) {
-            return Array.from(expensesByMonth.entries())
-        }
+  const expensesToRenderMemoized = useMemo(() => {
+    if (!filter && tabIndex === years.length) {
+      return Array.from(expensesByMonth.entries())
+    }
 
-        let byYear: Nullable<ReturnType<typeof expenseUtils.getExpensesByYear>> = null
-        if (tabIndex !== undefined && years[tabIndex] !== undefined) {
-            byYear = expenseUtils.getExpensesByYear(expensesByMonth, years[tabIndex])
-        }
-        return expenseUtils.getFilteredExpensesByMonth(
-            byYear ? new Map(byYear) : expensesByMonth,
-            filter
-        )
-    }, [expensesByMonth, filter, tabIndex, years])
-
-    const handleFilterChange: ExpenseFilterChangeHandler = useCallback(
-        (key, value) => {
-            const nextFilter = { ...filter }
-
-            if (nextFilter[key] === value) {
-                delete nextFilter[key]
-            } else {
-                nextFilter[key] = value
-            }
-
-            setFilter(nextFilter)
-        },
-        [filter]
+    let byYear: Nullable<ReturnType<typeof expenseUtils.getExpensesByYear>> = null
+    if (tabIndex !== undefined && years[tabIndex] !== undefined) {
+      byYear = expenseUtils.getExpensesByYear(expensesByMonth, years[tabIndex])
+    }
+    return expenseUtils.getFilteredExpensesByMonth(
+      byYear ? new Map(byYear) : expensesByMonth,
+      filter
     )
+  }, [expensesByMonth, filter, tabIndex, years])
 
-    const memoizedTable = useMemo(() => {
-        // check for length to avoid jumpy chart animation
-        return (
-            expensesToRenderMemoized.length > 0 &&
-            expensesToRenderMemoized.map(([month, expenses]) => (
-                <ExpensesByMonth
-                    filter={filter}
-                    onFilterChange={handleFilterChange}
-                    key={month}
-                    expenses={expenses}
-                    month={month}
-                />
-            ))
-        )
-    }, [expensesToRenderMemoized, filter, handleFilterChange])
+  const handleFilterChange: ExpenseFilterChangeHandler = useCallback(
+    (key, value) => {
+      const nextFilter = { ...filter }
 
-    const memoizedGraph = useMemo(() => {
-        return (
-            <ExpensesChart
-                enableFixedOnScroll={view === 'split'}
-                maxAmount={maxAmount}
+      if (nextFilter[key] === value) {
+        delete nextFilter[key]
+      } else {
+        nextFilter[key] = value
+      }
+
+      setFilter(nextFilter)
+    },
+    [filter]
+  )
+
+  const memoizedTable = useMemo(() => {
+    // check for length to avoid jumpy chart animation
+    return (
+      expensesToRenderMemoized.length > 0 &&
+      expensesToRenderMemoized.map(([month, expenses]) => (
+        <ExpensesByMonth
+          filter={filter}
+          onFilterChange={handleFilterChange}
+          key={month}
+          expenses={expenses}
+          month={month}
+        />
+      ))
+    )
+  }, [expensesToRenderMemoized, filter, handleFilterChange])
+
+  const memoizedGraph = useMemo(() => {
+    return (
+      <ExpensesChart
+        enableFixedOnScroll={view === 'split'}
+        maxAmount={maxAmount}
+        filter={filter}
+        onFilterChange={handleFilterChange}
+        expensesByMonth={expensesToRenderMemoized}
+      />
+    )
+  }, [expensesToRenderMemoized, filter, handleFilterChange, maxAmount, view])
+
+  return (
+    <EntryGridContainer>
+      <Grid item xs={12}>
+        <AppBar className={classes.homeRoot} position="static" color="default">
+          <Toolbar className={classes.toolbar}>
+            <Tabs
+              scrollButtons="on"
+              variant="scrollable"
+              value={tabIndex}
+              onChange={(_, newIndex) => setTabIndex(newIndex)}>
+              {years.map(year => (
+                <StyledTab label={year} key={year} />
+              ))}
+              <StyledTab label="Gesamt" />
+            </Tabs>
+          </Toolbar>
+        </AppBar>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Box
+            display="flex"
+            alignItems="center"
+            flexGrow={xsDown ? 1 : 0}
+            justifyContent="space-between">
+            <Typography variant="h4">Ausgaben</Typography>
+            <Box ml={1}>
+              <ToggleButtonGroup
+                size="small"
+                value={view}
+                exclusive
+                onChange={(_, newAlignment) => {
+                  if (newAlignment) {
+                    setView(newAlignment)
+                  }
+                }}
+                aria-label="text alignment">
+                <ToggleButton value="table">
+                  <TableChart />
+                </ToggleButton>
+                <ToggleButton value="graph">
+                  <Timeline />
+                </ToggleButton>
+                <ToggleButton disabled={!lgUp} value="split">
+                  <VerticalSplit />
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+          </Box>
+
+          <Hidden xsDown>
+            <Box flexGrow={0}>
+              <ArchivedExpensesSelection />
+            </Box>
+          </Hidden>
+        </Box>
+      </Grid>
+
+      {autocompleteOptions.creator.length > 0 && tabIndex !== undefined && (
+        <Grid item xs={12}>
+          <Grid container wrap="nowrap" className={classes.container} spacing={3}>
+            {autocompleteOptions.creator.map(u => (
+              <ExpenseUserCard
+                year={years[tabIndex]}
                 filter={filter}
                 onFilterChange={handleFilterChange}
-                expensesByMonth={expensesToRenderMemoized}
-            />
-        )
-    }, [expensesToRenderMemoized, filter, handleFilterChange, maxAmount, view])
+                key={u}
+                userName={u}
+              />
+            ))}
+          </Grid>
+        </Grid>
+      )}
 
-    return (
-        <EntryGridContainer>
-            <Grid item xs={12}>
-                <AppBar className={classes.homeRoot} position="static" color="default">
-                    <Toolbar className={classes.toolbar}>
-                        <Tabs
-                            scrollButtons="on"
-                            variant="scrollable"
-                            value={tabIndex}
-                            onChange={(_, newIndex) => setTabIndex(newIndex)}>
-                            {years.map(year => (
-                                <StyledTab label={year} key={year} />
-                            ))}
-                            <StyledTab label="Gesamt" />
-                        </Tabs>
-                    </Toolbar>
-                </AppBar>
-            </Grid>
+      {expenses.length > 0 && (
+        <Grid item xs={12}>
+          {view === 'table' && memoizedTable}
+          {view === 'graph' && memoizedGraph}
 
-            <Grid item xs={12}>
-                <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Box
-                        display="flex"
-                        alignItems="center"
-                        flexGrow={xsDown ? 1 : 0}
-                        justifyContent="space-between">
-                        <Typography variant="h4">Ausgaben</Typography>
-                        <Box ml={1}>
-                            <ToggleButtonGroup
-                                size="small"
-                                value={view}
-                                exclusive
-                                onChange={(_, newAlignment) => {
-                                    if (newAlignment) {
-                                        setView(newAlignment)
-                                    }
-                                }}
-                                aria-label="text alignment">
-                                <ToggleButton value="table">
-                                    <TableChart />
-                                </ToggleButton>
-                                <ToggleButton value="graph">
-                                    <Timeline />
-                                </ToggleButton>
-                                <ToggleButton disabled={!lgUp} value="split">
-                                    <VerticalSplit />
-                                </ToggleButton>
-                            </ToggleButtonGroup>
-                        </Box>
-                    </Box>
+          {view === 'split' && (
+            <ExpensesSplitView>
+              <div>{memoizedTable}</div>
+              {memoizedGraph}
+            </ExpensesSplitView>
+          )}
+        </Grid>
+      )}
 
-                    <Hidden xsDown>
-                        <Box flexGrow={0}>
-                            <ArchivedExpensesSelection />
-                        </Box>
-                    </Hidden>
-                </Box>
-            </Grid>
+      <NotFound visible={!expenseStoreLoading && expenses.length === 0} />
 
-            {autocompleteOptions.creator.length > 0 && tabIndex !== undefined && (
-                <Grid item xs={12}>
-                    <Grid container wrap="nowrap" className={classes.container} spacing={3}>
-                        {autocompleteOptions.creator.map(u => (
-                            <ExpenseUserCard
-                                year={years[tabIndex]}
-                                filter={filter}
-                                onFilterChange={handleFilterChange}
-                                key={u}
-                                userName={u}
-                            />
-                        ))}
-                    </Grid>
-                </Grid>
-            )}
-
-            {expenses.length > 0 && (
-                <Grid item xs={12}>
-                    {view === 'table' && memoizedTable}
-                    {view === 'graph' && memoizedGraph}
-
-                    {view === 'split' && (
-                        <ExpensesSplitView>
-                            <div>{memoizedTable}</div>
-                            {memoizedGraph}
-                        </ExpensesSplitView>
-                    )}
-                </Grid>
-            )}
-
-            <NotFound visible={!expenseStoreLoading && expenses.length === 0} />
-
-            <SecouredRouteFab
-                onClick={() => {
-                    resetCurrentExpense()
-                    openDialog(true)
-                }}
-                tooltipTitle="Ausgabe hinzufügen"
-                icon={<AddIcon />}
-            />
-            <ExpenseDialog open={isDialogOpen} onClose={() => openDialog(false)} />
-        </EntryGridContainer>
-    )
+      <SecouredRouteFab
+        onClick={() => {
+          resetCurrentExpense()
+          openDialog(true)
+        }}
+        tooltipTitle="Ausgabe hinzufügen"
+        icon={<AddIcon />}
+      />
+      <ExpenseDialog open={isDialogOpen} onClose={() => openDialog(false)} />
+    </EntryGridContainer>
+  )
 }
 
 export default Expenses

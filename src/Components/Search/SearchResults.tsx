@@ -8,25 +8,25 @@ import useDocumentTitle from '@/hooks/useDocumentTitle'
 import SearchResult from './SearchResult'
 
 const SearchResults = () => {
-    const { hits, loading } = useSearchResultsContext()
+  const { hits, loading } = useSearchResultsContext()
 
-    useDocumentTitle('Ergebnisse')
+  useDocumentTitle('Ergebnisse')
 
-    return (
-        <>
-            {hits.length === 20 && (
-                <Alert color="info">Maximale Anzahl an Suchergebnissen erreicht</Alert>
-            )}
+  return (
+    <>
+      {hits.length === 20 && (
+        <Alert color="info">Maximale Anzahl an Suchergebnissen erreicht</Alert>
+      )}
 
-            <List disablePadding>
-                {hits.map(hit => (
-                    <SearchResult hit={hit} key={hit.name} />
-                ))}
-            </List>
+      <List disablePadding>
+        {hits.map(hit => (
+          <SearchResult hit={hit} key={hit.name} />
+        ))}
+      </List>
 
-            {!loading && <NotFound visible={hits.length === 0} />}
-        </>
-    )
+      {!loading && <NotFound visible={hits.length === 0} />}
+    </>
+  )
 }
 
 export default SearchResults

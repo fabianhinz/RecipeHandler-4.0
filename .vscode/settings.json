@@ -1,9 +1,9 @@
 {
-  "editor.tabSize": 4,
-  "editor.detectIndentation": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "editor.suggest.preview": true,
-  "typescript.inlayHints.parameterNames.enabled": "all"
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "editor.suggest.preview": true,
+    "typescript.inlayHints.parameterNames.enabled": "all"
 }

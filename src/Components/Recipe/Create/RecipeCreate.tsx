@@ -29,91 +29,92 @@ import RecipeCreateSpeedDial from './RecipeCreateSpeedDial'
 import { useRecipeCreate } from './useRecipeCreate'
 
 interface Props extends Pick<RouteComponentProps, 'history' | 'location'> {
-    recipe?: Recipe | null
-    edit?: boolean
+  recipe?: Recipe | null
+  edit?: boolean
 }
 
 const fromPropsOrPreviousState = ({ recipe }: Props) => recipe || recipeService.recipeCreateState
 
 const RecipeCreate = (props: Props) => {
-    const { state, dispatch } = useRecipeCreateReducer(fromPropsOrPreviousState(props))
+  const { state, dispatch } = useRecipeCreateReducer(fromPropsOrPreviousState(props))
 
-    const recipeCreateService = useRecipeCreate(state, props.edit)
-    const { selectedCategories, setSelectedCategories, removeSelectedCategories } =
-        useCategorySelect(fromPropsOrPreviousState(props))
-    const { user } = useFirebaseAuthContext()
-    const { history } = useRouterContext()
-    const { gridBreakpointProps: breakpointsFromContext, gridLayout } = useGridContext()
+  const recipeCreateService = useRecipeCreate(state, props.edit)
+  const { selectedCategories, setSelectedCategories, removeSelectedCategories } = useCategorySelect(
+    fromPropsOrPreviousState(props)
+  )
+  const { user } = useFirebaseAuthContext()
+  const { history } = useRouterContext()
+  const { gridBreakpointProps: breakpointsFromContext, gridLayout } = useGridContext()
 
-    const match = useRouteMatch()
+  const match = useRouteMatch()
 
-    useDocumentTitle(props.recipe ? props.recipe.name : 'Rezept erstellen')
+  useDocumentTitle(props.recipe ? props.recipe.name : 'Rezept erstellen')
 
-    useEffect(() => {
-        if (match.path === PATHS.recipeEdit()) return
-        recipeService.recipeCreateState = state
-    }, [match.path, state])
+  useEffect(() => {
+    if (match.path === PATHS.recipeEdit()) return
+    recipeService.recipeCreateState = state
+  }, [match.path, state])
 
-    useEffect(() => {
-        dispatch({ type: 'categoriesChange', selectedCategories })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedCategories])
+  useEffect(() => {
+    dispatch({ type: 'categoriesChange', selectedCategories })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategories])
 
-    useEffect(() => {
-        if (!user) history.push(PATHS.home)
-    }, [history, user])
+  useEffect(() => {
+    if (!user) history.push(PATHS.home)
+  }, [history, user])
 
-    const handleSaveRecipe = useCallback(async () => {
-        const valid = await recipeCreateService.validate(selectedCategories)
-        if (!valid) return
+  const handleSaveRecipe = useCallback(async () => {
+    const valid = await recipeCreateService.validate(selectedCategories)
+    if (!valid) return
 
-        await recipeCreateService.saveRecipeDocument()
-    }, [recipeCreateService, selectedCategories])
+    await recipeCreateService.saveRecipeDocument()
+  }, [recipeCreateService, selectedCategories])
 
-    const handleTextFieldChange = (key: CreateChangeKey) => (value: string) => {
-        dispatch({ type: 'textFieldChange', key, value })
-    }
+  const handleTextFieldChange = (key: CreateChangeKey) => (value: string) => {
+    dispatch({ type: 'textFieldChange', key, value })
+  }
 
-    const handlePreviewChange = async () => {
-        const valid = await recipeCreateService.validate(selectedCategories)
-        if (valid) dispatch({ type: 'previewChange' })
-    }
+  const handlePreviewChange = async () => {
+    const valid = await recipeCreateService.validate(selectedCategories)
+    if (valid) dispatch({ type: 'previewChange' })
+  }
 
-    const relatedAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
-        gridLayout === 'list' || state.relatedRecipes.length > 0
-            ? breakpointsFromContext
-            : { xs: 12, md: 6 }
+  const relatedAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
+    gridLayout === 'list' || state.relatedRecipes.length > 0
+      ? breakpointsFromContext
+      : { xs: 12, md: 6 }
 
-    return (
-        <>
-            {state.preview && user ? (
-                <RecipeResult
-                    recipe={{
-                        name: state.name,
-                        createdDate: FirebaseService.createTimestampFromDate(new Date()),
-                        numberOfComments: state.numberOfComments,
-                        numberOfAttachments: state.numberOfAttachments,
-                        categories: state.categories,
-                        ingredients: state.ingredients,
-                        amount: state.amount,
-                        description: state.description,
-                        relatedRecipes: state.relatedRecipes,
-                        editorUid: user.uid,
-                    }}
-                />
-            ) : (
-                <EntryGridContainer>
-                    <Grid item xs={12}>
-                        <RecipeCreateHeader
-                            inputDisabled={props.edit}
-                            name={state.name}
-                            onNameChange={handleTextFieldChange('name')}
-                        />
-                    </Grid>
+  return (
+    <>
+      {state.preview && user ? (
+        <RecipeResult
+          recipe={{
+            name: state.name,
+            createdDate: FirebaseService.createTimestampFromDate(new Date()),
+            numberOfComments: state.numberOfComments,
+            numberOfAttachments: state.numberOfAttachments,
+            categories: state.categories,
+            ingredients: state.ingredients,
+            amount: state.amount,
+            description: state.description,
+            relatedRecipes: state.relatedRecipes,
+            editorUid: user.uid,
+          }}
+        />
+      ) : (
+        <EntryGridContainer>
+          <Grid item xs={12}>
+            <RecipeCreateHeader
+              inputDisabled={props.edit}
+              name={state.name}
+              onNameChange={handleTextFieldChange('name')}
+            />
+          </Grid>
 
-                    <Grid item xs={12}>
-                        <Grid container spacing={2}>
-                            {/* TODO may wanna replace with firebase ml impl 
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              {/* TODO may wanna replace with firebase ml impl 
                             <Grid item xs={12} sm={6} md="auto">
                                 <TesseractSelection
                                     description={state.description}
@@ -123,73 +124,71 @@ const RecipeCreate = (props: Props) => {
                                     }
                                 />
                             </Grid> */}
-                            <Grid item xs={12} sm={6} md="auto">
-                                <TrialsSelection
-                                    selectedTrial={state.selectedTrial}
-                                    onSelectedTrialChange={selectedTrial =>
-                                        dispatch({ type: 'selectedTrialChange', selectedTrial })
-                                    }
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md="auto">
-                                <CategorySelection
-                                    label="Kategorien"
-                                    legend="Ein Rezept hat mindestens eine Kategorie"
-                                    selectedCategories={selectedCategories}
-                                    onRemoveSelectedCategories={removeSelectedCategories}
-                                    onCategoryChange={setSelectedCategories}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md="auto">
-                                <RelatedRecipesSelection
-                                    relatedRecipes={state.relatedRecipes}
-                                    onRelatedRecipesChange={relatedRecipes =>
-                                        dispatch({ type: 'relatedRecipesChange', relatedRecipes })
-                                    }
-                                />
-                            </Grid>
-                        </Grid>
-                    </Grid>
+              <Grid item xs={12} sm={6} md="auto">
+                <TrialsSelection
+                  selectedTrial={state.selectedTrial}
+                  onSelectedTrialChange={selectedTrial =>
+                    dispatch({ type: 'selectedTrialChange', selectedTrial })
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md="auto">
+                <CategorySelection
+                  label="Kategorien"
+                  legend="Ein Rezept hat mindestens eine Kategorie"
+                  selectedCategories={selectedCategories}
+                  onRemoveSelectedCategories={removeSelectedCategories}
+                  onCategoryChange={setSelectedCategories}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md="auto">
+                <RelatedRecipesSelection
+                  relatedRecipes={state.relatedRecipes}
+                  onRelatedRecipesChange={relatedRecipes =>
+                    dispatch({ type: 'relatedRecipesChange', relatedRecipes })
+                  }
+                />
+              </Grid>
+            </Grid>
+          </Grid>
 
-                    <Grid item xs={12}>
-                        <Grid container spacing={3}>
-                            <Grid item {...relatedAwareBreakpoints}>
-                                <RecipeCreateIngredients
-                                    amount={state.amount}
-                                    ingredients={state.ingredients}
-                                    dispatch={dispatch}
-                                    onIngredientsChange={handleTextFieldChange('ingredients')}
-                                />
-                            </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={3}>
+              <Grid item {...relatedAwareBreakpoints}>
+                <RecipeCreateIngredients
+                  amount={state.amount}
+                  ingredients={state.ingredients}
+                  dispatch={dispatch}
+                  onIngredientsChange={handleTextFieldChange('ingredients')}
+                />
+              </Grid>
 
-                            <Grid item {...relatedAwareBreakpoints}>
-                                <RecipeCreateDescription
-                                    description={state.description}
-                                    onDescriptionChange={handleTextFieldChange('description')}
-                                />
-                            </Grid>
+              <Grid item {...relatedAwareBreakpoints}>
+                <RecipeCreateDescription
+                  description={state.description}
+                  onDescriptionChange={handleTextFieldChange('description')}
+                />
+              </Grid>
 
-                            {state.relatedRecipes.length > 0 && (
-                                <Grid item {...relatedAwareBreakpoints}>
-                                    <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                                        <RecipeResultRelated
-                                            relatedRecipes={state.relatedRecipes}
-                                        />
-                                    </StyledCard>
-                                </Grid>
-                            )}
-                        </Grid>
-                    </Grid>
-                </EntryGridContainer>
-            )}
+              {state.relatedRecipes.length > 0 && (
+                <Grid item {...relatedAwareBreakpoints}>
+                  <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
+                    <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                  </StyledCard>
+                </Grid>
+              )}
+            </Grid>
+          </Grid>
+        </EntryGridContainer>
+      )}
 
-            <RecipeCreateSpeedDial
-                isPreview={state.preview}
-                onPreviewClick={handlePreviewChange}
-                onSaveClick={handleSaveRecipe}
-            />
-        </>
-    )
+      <RecipeCreateSpeedDial
+        isPreview={state.preview}
+        onPreviewClick={handlePreviewChange}
+        onSaveClick={handleSaveRecipe}
+      />
+    </>
+  )
 }
 
 export default RecipeCreate

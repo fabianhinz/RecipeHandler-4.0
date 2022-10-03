@@ -7,19 +7,19 @@ import { RouteWithRecipeName } from '@/model/model'
 import RecipeCreate from '../Create/RecipeCreate'
 
 const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {
-    const { recipeDoc, recipeDocLoading } = useRecipeDoc({
-        recipeName: routeProps.match.params.name,
-    })
+  const { recipeDoc, recipeDocLoading } = useRecipeDoc({
+    recipeName: routeProps.match.params.name,
+  })
 
-    return (
-        <>
-            {recipeDocLoading ? (
-                <Progress variant="fixed" />
-            ) : (
-                <RecipeCreate {...routeProps} recipe={recipeDoc} edit />
-            )}
-        </>
-    )
+  return (
+    <>
+      {recipeDocLoading ? (
+        <Progress variant="fixed" />
+      ) : (
+        <RecipeCreate {...routeProps} recipe={recipeDoc} edit />
+      )}
+    </>
+  )
 }
 
 export default RecipeEdit
