@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
+import { createContext, useContext } from 'react'
 import { RouteComponentProps, withRouter } from 'react-router'
 
-const Context = React.createContext<RouteComponentProps | null>(null)
+const Context = createContext<RouteComponentProps | null>(null)
 
 export const useRouterContext = () => useContext(Context) as RouteComponentProps
 

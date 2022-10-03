@@ -11,9 +11,10 @@ import {
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
-import useIntersectionObserver from '../../hooks/useIntersectionObserver'
-import { Expense, Nullable } from '../../model/model'
-import useExpenseStore from '../../store/ExpenseStore'
+import useIntersectionObserver from '@/hooks/useIntersectionObserver'
+import { Expense, Nullable } from '@/model/model'
+import useExpenseStore from '@/store/ExpenseStore'
+
 import { ExpenseFilter, ExpenseFilterChangeHandler } from './Expenses'
 import expenseUtils, { CATEGORIES_PALETTE } from './helper/expenseUtils'
 
@@ -79,6 +80,7 @@ interface Props {
 
 type GroupBy = 'month' | keyof Pick<Expense, 'shop' | 'description'>
 
+// eslint-disable-next-line react/no-multi-comp
 export const ExpensesChart = (props: Props) => {
     const categories = useExpenseStore(store => store.categories)
     const shops = useExpenseStore(store => store.autocompleteOptions.shop)

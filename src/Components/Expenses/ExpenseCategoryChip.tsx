@@ -1,7 +1,8 @@
 import { Chip, ChipProps, Grid, makeStyles, Theme } from '@material-ui/core'
 import { useMemo } from 'react'
 
-import { Expense } from '../../model/model'
+import { Expense } from '@/model/model'
+
 import expenseUtils from './helper/expenseUtils'
 
 const useStyles = makeStyles<Theme, { backgroundColor?: string; color: string }>(theme => ({

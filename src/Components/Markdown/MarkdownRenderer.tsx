@@ -18,13 +18,12 @@ import {
 } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
-import React from 'react'
 import ReactMarkdown, { ReactMarkdownOptions } from 'react-markdown'
 import { useRouteMatch } from 'react-router-dom'
 
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { PATHS } from '../Routes/Routes'
-import { GrowIn } from '../Shared/Transitions'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import { GrowIn } from '@/Components/Shared/Transitions'
 
 const useStyles = makeStyles(theme => ({
     checkboxRoot: {

@@ -1,11 +1,12 @@
 import { Grid } from '@material-ui/core'
 import { Lightbulb } from 'mdi-material-ui'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { Trial } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import SelectionDrawer from '../Shared/SelectionDrawer'
-import Skeletons from '../Shared/Skeletons'
+import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
+import Skeletons from '@/Components/Shared/Skeletons'
+import { Trial } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+
 import TrialsCard from './TrialsCard'
 
 interface Props {

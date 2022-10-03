@@ -1,13 +1,13 @@
-import React, { FC, useContext, useEffect } from 'react'
+import { createContext, FC, useContext, useEffect } from 'react'
 
-import { useBreakpointsContext } from './BreakpointsProvider'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 
 interface Orientation {
     portrait: boolean
     landscape: boolean
 }
 
-const Context = React.createContext<Orientation | null>(null)
+const Context = createContext<Orientation | null>(null)
 
 export const useDeviceOrientationContext = () => useContext(Context) as Orientation
 

@@ -2,7 +2,6 @@ import FormatBoldIcon from '@material-ui/icons/FormatBold'
 import FormatItalicIcon from '@material-ui/icons/FormatItalic'
 import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough'
 import { ToggleButton } from '@material-ui/lab'
-import React from 'react'
 
 import { CurrentFormats, ToggleChangeHandler } from '../MarkdownInput'
 import MarkdownToggleButtonGroup from './MarkdownToggleButtonGroup'

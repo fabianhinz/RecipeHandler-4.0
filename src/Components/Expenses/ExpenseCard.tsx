@@ -14,11 +14,12 @@ import {
 import { Archive, Edit } from '@material-ui/icons'
 import { useState } from 'react'
 
-import { Expense } from '../../model/model'
-import useCurrentExpenseStore, { CurrentExpenseStore } from '../../store/CurrentExpenseStore'
-import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useGridContext } from '../Provider/GridProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import { Expense } from '@/model/model'
+import useCurrentExpenseStore, { CurrentExpenseStore } from '@/store/CurrentExpenseStore'
+import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
+
 import expenseUtils from './helper/expenseUtils'
 
 interface Props {

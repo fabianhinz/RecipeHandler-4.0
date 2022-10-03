@@ -1,7 +1,8 @@
 import { Chip, ChipProps, makeStyles, Theme } from '@material-ui/core'
-import React, { FC } from 'react'
+import { FC } from 'react'
 
-import { Categories, Recipe } from '../../model/model'
+import { Categories, Recipe } from '@/model/model'
+
 import getIconByCategory from './CategoryIcons'
 
 type StyleProps = { swatches?: Recipe['previewAttachmentSwatches']; extraPadding?: boolean }

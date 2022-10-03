@@ -1,8 +1,8 @@
 import Splitter from '@devbookhq/splitter'
 import { makeStyles } from '@material-ui/core'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { BORDER_RADIUS } from '../../theme'
+import { BORDER_RADIUS } from '@/theme'
 
 const useStyles = makeStyles(theme => ({
     container: {

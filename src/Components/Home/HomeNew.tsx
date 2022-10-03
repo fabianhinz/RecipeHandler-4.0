@@ -1,12 +1,13 @@
 import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
 import green from '@material-ui/core/colors/green'
-import React, { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { FirebaseService } from '../../services/firebase'
-import { useGridContext } from '../Provider/GridProvider'
-import { PATHS } from '../Routes/Routes'
-import Skeletons from '../Shared/Skeletons'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import Skeletons from '@/Components/Shared/Skeletons'
+import { FirebaseService } from '@/services/firebase'
+
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
 const useStyles = makeStyles(theme => ({

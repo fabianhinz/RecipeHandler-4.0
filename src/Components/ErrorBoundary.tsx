@@ -7,18 +7,18 @@ import {
     Slide,
     Typography,
 } from '@material-ui/core'
-import React from 'react'
+import { Component } from 'react'
 import StackTrace from 'stacktrace-js'
 
-import { ReactComponent as ErrorIcon } from '../icons/error.svg'
-import { FirebaseService } from '../services/firebase'
+import { ReactComponent as ErrorIcon } from '@/icons/error.svg'
+import { FirebaseService } from '@/services/firebase'
 
 interface ErrorBoundaryState {
     error: string | null
     errorLogged: boolean
 }
 
-class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
+class ErrorBoundary extends Component<{}, ErrorBoundaryState> {
     constructor(props: any) {
         super(props)
         this.state = { error: null, errorLogged: false }

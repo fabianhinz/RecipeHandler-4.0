@@ -1,12 +1,13 @@
 import { Grid, List } from '@material-ui/core'
-import React, { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
 
-import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import RecipeChip from '../Recipe/RecipeChip'
-import EntryGridContainer from '../Shared/EntryGridContainer'
-import NotFound from '../Shared/NotFound'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import RecipeChip from '@/Components/Recipe/RecipeChip'
+import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
+import NotFound from '@/Components/Shared/NotFound'
+import useDocumentTitle from '@/hooks/useDocumentTitle'
+
 import AccountShoppingListInput from './AccountShoppingListInput'
 import AccountShoppingListItem from './AccountShoppingListItem'
 

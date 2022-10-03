@@ -1,12 +1,13 @@
 import { Grid, Tooltip } from '@material-ui/core'
 import SatisfactionBackgroundIcon from '@material-ui/icons/SupervisedUserCircle'
 import { Rating } from '@material-ui/lab'
-import React, { ReactText, useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactText, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useUsersContext } from '../Provider/UsersProvider'
-import StyledCard from '../Shared/StyledCard'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import StyledCard from '@/Components/Shared/StyledCard'
+import { FirebaseService } from '@/services/firebase'
+
 import SatisfactionIconContainer from './SatisfactionIconContainer'
 import SatisfactionUser from './SatisfactionUser'
 

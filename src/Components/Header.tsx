@@ -8,15 +8,15 @@ import {
     ViewAgendaOutline,
     ViewGridOutline,
 } from 'mdi-material-ui'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import AccountAuthentication from './Account/AccountAuthentication'
-import Nav from './Nav'
-import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
-import { useGridContext } from './Provider/GridProvider'
-import { PATHS } from './Routes/Routes'
-import Search from './Search/Search'
+import AccountAuthentication from '@/Components/Account/AccountAuthentication'
+import Nav from '@/Components/Nav'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import Search from '@/Components/Search/Search'
 
 const useStyles = makeStyles(theme => ({
     userAvatar: {

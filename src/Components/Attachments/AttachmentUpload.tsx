@@ -14,12 +14,12 @@ import CheckIcon from '@material-ui/icons/Check'
 import clsx from 'clsx'
 import { CloudUpload, HeartBroken } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Prompt } from 'react-router-dom'
 
-import { AttachmentDoc, DataUrl } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { AttachmentDoc, DataUrl } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(theme => ({
     avatar: {
@@ -171,6 +171,7 @@ interface UploadContainerProps {
     dropzoneAlert: JSX.Element | undefined
 }
 
+// eslint-disable-next-line react/no-multi-comp
 const AttachmentUpload = ({
     dropzoneAttachments,
     dropzoneAlert,

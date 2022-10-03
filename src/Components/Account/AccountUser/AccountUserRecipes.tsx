@@ -1,11 +1,11 @@
 import { List } from '@material-ui/core'
 import BookIcon from '@material-ui/icons/SupervisedUserCircle'
-import React from 'react'
 
-import { User } from '../../../model/model'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import { useUsersContext } from '../../Provider/UsersProvider'
-import StyledCard from '../../Shared/StyledCard'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import StyledCard from '@/Components/Shared/StyledCard'
+import { User } from '@/model/model'
+
 import AccountListItem from '../AccountListItem'
 import { UserSettingChangeHandler } from './AccountUser'
 

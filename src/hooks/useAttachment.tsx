@@ -1,8 +1,8 @@
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 
-import { AllDataUrls, AttachmentDoc, Metadata } from '../model/model'
-import { FirebaseService } from '../services/firebase'
+import { AllDataUrls, AttachmentDoc, Metadata } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 const initialDataUrlsAndMetadata: AllDataUrls & Metadata = {
     fullDataUrl: undefined,

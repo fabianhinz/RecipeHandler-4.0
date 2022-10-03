@@ -8,7 +8,7 @@ import {
     Typography,
 } from '@material-ui/core'
 import { UnfoldLessHorizontal, UnfoldMoreHorizontal } from 'mdi-material-ui'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const useStyles = makeStyles<Theme, { expanded: boolean }>(theme => ({
     root: {

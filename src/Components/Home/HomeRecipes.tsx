@@ -1,7 +1,8 @@
 import { Grid, LinearProgress } from '@material-ui/core'
 
-import NotFound from '../Shared/NotFound'
-import Skeletons from '../Shared/Skeletons'
+import NotFound from '@/Components/Shared/NotFound'
+import Skeletons from '@/Components/Shared/Skeletons'
+
 import HomeRecipeCard from './HomeRecipeCard'
 
 interface Props {

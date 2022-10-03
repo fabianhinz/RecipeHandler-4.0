@@ -1,5 +1,5 @@
 import { useMediaQuery, useTheme } from '@material-ui/core'
-import React, { FC, useContext } from 'react'
+import { createContext, FC, useContext } from 'react'
 
 type Breakpoints = {
     isMobilePinnable: boolean
@@ -11,7 +11,7 @@ type Breakpoints = {
     mdUp: boolean
 }
 
-const Context = React.createContext<Breakpoints | null>(null)
+const Context = createContext<Breakpoints | null>(null)
 
 export const useBreakpointsContext = () => useContext(Context) as Breakpoints
 

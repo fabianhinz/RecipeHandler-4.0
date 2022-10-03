@@ -12,14 +12,14 @@ import { Unarchive } from '@material-ui/icons'
 import { Archive, Delete } from 'mdi-material-ui'
 import { useEffect, useState } from 'react'
 
-import { ArchivedExpense } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
+import { ArchivedExpense } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 import useExpenseStore, {
     ARCHIVED_EXPENSES_COLLECTION,
     USER_COLLECTION,
-} from '../../store/ExpenseStore'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import SelectionDrawer from '../Shared/SelectionDrawer'
+} from '@/store/ExpenseStore'
 
 const ArchivedExpensesSelection = () => {
     const [shouldLoad, setShouldLoad] = useState(false)

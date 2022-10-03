@@ -1,14 +1,14 @@
 import { FC } from 'react'
 
-import AttachmentGalleryProvider from '@/Provider/AttachmentGalleryProvider'
-import BookmarkProvider from '@/Provider/BookmarkProvider'
-import CategoriesCollectionProvider from '@/Provider/CategoriesCollectionProvider'
-import DeviceOrientationProvider from '@/Provider/DeviceOrientationProvider'
-import GridProvider from '@/Provider/GridProvider'
-import RouterProvider from '@/Provider/RouterProvider'
-import SearchResultsProvider from '@/Provider/SearchResultsProvider'
-import SelectedAttachementProvider from '@/Provider/SelectedAttachementProvider'
-import UsersProvider from '@/Provider/UsersProvider'
+import AttachmentGalleryProvider from '@/Components/Provider/AttachmentGalleryProvider'
+import BookmarkProvider from '@/Components/Provider/BookmarkProvider'
+import CategoriesCollectionProvider from '@/Components/Provider/CategoriesCollectionProvider'
+import DeviceOrientationProvider from '@/Components/Provider/DeviceOrientationProvider'
+import GridProvider from '@/Components/Provider/GridProvider'
+import RouterProvider from '@/Components/Provider/RouterProvider'
+import SearchResultsProvider from '@/Components/Provider/SearchResultsProvider'
+import SelectedAttachementProvider from '@/Components/Provider/SelectedAttachementProvider'
+import UsersProvider from '@/Components/Provider/UsersProvider'
 
 export const AppProvider: FC = ({ children }) => (
     <RouterProvider>

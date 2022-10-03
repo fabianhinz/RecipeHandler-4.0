@@ -9,7 +9,7 @@ import {
     Typography,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
-import React, { ReactText, useEffect, useRef, useState } from 'react'
+import { ReactText, useEffect, useRef, useState } from 'react'
 
 const useStyles = makeStyles(theme => ({
     paper: {

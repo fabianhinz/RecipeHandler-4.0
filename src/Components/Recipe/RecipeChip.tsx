@@ -1,9 +1,8 @@
 import { Avatar, Chip } from '@material-ui/core'
-import React from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { useRecipeDoc } from '../../hooks/useRecipeDoc'
-import { PATHS } from '../Routes/Routes'
+import { PATHS } from '@/Components/Routes/Routes'
+import { useRecipeDoc } from '@/hooks/useRecipeDoc'
 
 type Props = {
     recipeName: string

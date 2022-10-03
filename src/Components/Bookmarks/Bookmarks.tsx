@@ -2,21 +2,21 @@ import { Grid, Tab, Tabs } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import BookIcon from '@material-ui/icons/Book'
 import { Skeleton } from '@material-ui/lab'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
-import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { Recipe } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import MarkdownRenderer from '../Markdown/MarkdownRenderer'
-import { useBookmarkContext } from '../Provider/BookmarkProvider'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useGridContext } from '../Provider/GridProvider'
-import RecipeBookmarkButton from '../Recipe/RecipeBookmarkButton'
-import RecipeDetailsButton from '../Recipe/RecipeDetailsButton'
-import EntryGridContainer from '../Shared/EntryGridContainer'
-import NotFound from '../Shared/NotFound'
-import StyledCard from '../Shared/StyledCard'
+import MarkdownRenderer from '@/Components/Markdown/MarkdownRenderer'
+import { useBookmarkContext } from '@/Components/Provider/BookmarkProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import RecipeBookmarkButton from '@/Components/Recipe/RecipeBookmarkButton'
+import RecipeDetailsButton from '@/Components/Recipe/RecipeDetailsButton'
+import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
+import NotFound from '@/Components/Shared/NotFound'
+import StyledCard from '@/Components/Shared/StyledCard'
+import useDocumentTitle from '@/hooks/useDocumentTitle'
+import { Recipe } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 interface BookmarkProps {
     recipeName: string
@@ -76,6 +76,7 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
     )
 }
 
+// eslint-disable-next-line react/no-multi-comp
 const Bookmarks = () => {
     const { loginEnabled } = useFirebaseAuthContext()
     const { bookmarks } = useBookmarkContext()

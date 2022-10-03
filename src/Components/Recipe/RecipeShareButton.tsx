@@ -1,10 +1,11 @@
 import { IconButton, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core'
 import ShareIcon from '@material-ui/icons/Share'
 import copy from 'clipboard-copy'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { Recipe } from '../../model/model'
-import { PATHS } from '../Routes/Routes'
+import { PATHS } from '@/Components/Routes/Routes'
+import { Recipe } from '@/model/model'
+
 import { RecipeButtonSharedProps } from './RecipeBookmarkButton'
 
 type Props = Pick<Recipe, 'name'> & RecipeButtonSharedProps

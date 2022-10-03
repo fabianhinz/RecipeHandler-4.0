@@ -3,7 +3,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import TextFormatIcon from '@material-ui/icons/TextFormat'
 import { ToggleButton } from '@material-ui/lab'
 import clsx from 'clsx'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { CurrentFormats, ToggleChangeHandler } from '../MarkdownInput'
 import MarkdownPopover from '../MarkdownPopover'

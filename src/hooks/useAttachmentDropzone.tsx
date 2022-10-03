@@ -1,11 +1,11 @@
 import { Alert } from '@material-ui/lab'
 import compressImage from 'browser-image-compression'
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { DropzoneState, FileRejection, useDropzone } from 'react-dropzone'
 
-import { useFirebaseAuthContext } from '../Components/Provider/FirebaseAuthProvider'
-import { AttachmentDoc, DataUrl } from '../model/model'
-import { FirebaseService } from '../services/firebase'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { AttachmentDoc, DataUrl } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 export const readDocumentAsync = (document: Blob) =>
     new Promise<string>((resolve, reject) => {

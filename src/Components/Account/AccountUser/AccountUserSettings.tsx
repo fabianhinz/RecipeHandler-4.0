@@ -25,9 +25,10 @@ import {
 } from 'mdi-material-ui'
 import { useState } from 'react'
 
-import { User } from '../../../model/model'
-import { useGridContext } from '../../Provider/GridProvider'
-import StyledCard from '../../Shared/StyledCard'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import StyledCard from '@/Components/Shared/StyledCard'
+import { User } from '@/model/model'
+
 import { UserSettingChangeHandler } from './AccountUser'
 
 interface Props {

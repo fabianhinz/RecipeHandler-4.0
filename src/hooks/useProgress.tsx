@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import Progress, { ProgressVariant } from '../Components/Shared/Progress'
+import Progress, { ProgressVariant } from '@/Components/Shared/Progress'
 
 const useProgress = (variant?: ProgressVariant) => {
     const [progress, setProgress] = useState(false)

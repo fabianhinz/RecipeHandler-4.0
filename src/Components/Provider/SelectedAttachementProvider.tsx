@@ -1,9 +1,9 @@
 import { Backdrop, makeStyles, Slide } from '@material-ui/core'
-import React, { FC, useContext, useEffect, useState } from 'react'
+import { createContext, FC, useContext, useEffect, useState } from 'react'
 
-import { AllDataUrls } from '../../model/model'
-import { BORDER_RADIUS } from '../../theme'
-import { useRouterContext } from './RouterProvider'
+import { useRouterContext } from '@/Components/Provider/RouterProvider'
+import { AllDataUrls } from '@/model/model'
+import { BORDER_RADIUS } from '@/theme'
 
 type SelectedAttachment = AllDataUrls | null
 
@@ -11,7 +11,7 @@ interface AttachmentSelect {
     setSelectedAttachment: React.Dispatch<React.SetStateAction<SelectedAttachment>>
 }
 
-const Context = React.createContext<AttachmentSelect | null>(null)
+const Context = createContext<AttachmentSelect | null>(null)
 
 export const useSelectedAttachementContext = () => useContext(Context) as AttachmentSelect
 

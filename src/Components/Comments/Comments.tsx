@@ -1,9 +1,10 @@
 import { Fab, IconButton, Tooltip } from '@material-ui/core'
 import CommentIcon from '@material-ui/icons/Comment'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 
-import { CommentsCollections, CommentsDocument } from '../../model/model'
-import { BadgeWrapper } from '../Shared/BadgeWrapper'
+import { BadgeWrapper } from '@/Components/Shared/BadgeWrapper'
+import { CommentsCollections, CommentsDocument } from '@/model/model'
+
 import { CommentsDialog } from './CommentsDialog'
 
 export const Comments: FC<CommentsDocument & CommentsCollections & { highContrast?: boolean }> = ({

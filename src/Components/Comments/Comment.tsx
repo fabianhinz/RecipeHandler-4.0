@@ -13,14 +13,14 @@ import {
 } from '@material-ui/core'
 import { AvatarGroup } from '@material-ui/lab'
 import { StickerEmoji } from 'mdi-material-ui'
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 
-import { Comment as CommentModel, CommentReaction, Recipe } from '../../model/model'
-import { CommentsCollections } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS_HUGE } from '../../theme'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useUsersContext } from '../Provider/UsersProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import { Comment as CommentModel, CommentReaction, Recipe } from '@/model/model'
+import { CommentsCollections } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+import { BORDER_RADIUS_HUGE } from '@/theme'
 
 const useStyles = makeStyles(theme => ({
     comment: {

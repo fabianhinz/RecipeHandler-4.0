@@ -1,8 +1,9 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 
-import { useRecipeDoc } from '../../../hooks/useRecipeDoc'
-import { RouteWithRecipeName } from '../../../model/model'
-import Progress from '../../Shared/Progress'
+import Progress from '@/Components/Shared/Progress'
+import { useRecipeDoc } from '@/hooks/useRecipeDoc'
+import { RouteWithRecipeName } from '@/model/model'
+
 import RecipeCreate from '../Create/RecipeCreate'
 
 const RecipeEdit: FC<RouteWithRecipeName> = routeProps => {

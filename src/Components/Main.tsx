@@ -1,8 +1,8 @@
 import { Container, makeStyles, Theme } from '@material-ui/core'
 import { useRouteMatch } from 'react-router-dom'
 
-import { BORDER_RADIUS } from '../theme'
-import { PATHS, Routes } from './Routes/Routes'
+import { PATHS, Routes } from '@/Components/Routes/Routes'
+import { BORDER_RADIUS } from '@/theme'
 
 const useStyles = makeStyles<Theme, { extraPadding?: boolean }>(theme => ({
     main: {

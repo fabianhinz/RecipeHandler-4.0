@@ -14,14 +14,14 @@ import {
 import { Save } from '@material-ui/icons'
 import CloseIcon from '@material-ui/icons/Close'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
-import React from 'react'
 
-import { FirebaseService } from '../../services/firebase'
-import useCurrentExpenseStore, { CurrentExpenseStore } from '../../store/CurrentExpenseStore'
-import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { SlideUp } from '../Shared/Transitions'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { SlideUp } from '@/Components/Shared/Transitions'
+import { FirebaseService } from '@/services/firebase'
+import useCurrentExpenseStore, { CurrentExpenseStore } from '@/store/CurrentExpenseStore'
+import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
+
 import ExpenseAutocomplete from './ExpenseAutocomplete'
 
 interface Props {

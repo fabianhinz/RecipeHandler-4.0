@@ -13,10 +13,10 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete'
 import clsx from 'clsx'
 import { Filter } from 'mdi-material-ui'
-import React from 'react'
 
-import { useCategoriesCollectionContext } from '../Provider/CategoriesCollectionProvider'
-import SelectionDrawer from '../Shared/SelectionDrawer'
+import { useCategoriesCollectionContext } from '@/Components/Provider/CategoriesCollectionProvider'
+import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
+
 import getIconByCategory from './CategoryIcons'
 
 const useStyles = makeStyles(theme => ({

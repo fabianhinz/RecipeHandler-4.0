@@ -9,10 +9,10 @@ import {
 } from '@material-ui/core'
 import { Clear } from '@material-ui/icons'
 import clsx from 'clsx'
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { Draggable, DraggingStyle, NotDraggingStyle } from 'react-beautiful-dnd'
 
-import { ShoppingListItem } from '../../model/model'
+import { ShoppingListItem } from '@/model/model'
 
 const useStyles = makeStyles(theme => ({
     checked: {

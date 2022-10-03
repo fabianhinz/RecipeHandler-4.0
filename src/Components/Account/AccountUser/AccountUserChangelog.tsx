@@ -18,13 +18,13 @@ import {
 import CloseIcon from '@material-ui/icons/Close'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import UpdateIconRounded from '@material-ui/icons/UpdateRounded'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { Issue, Pullrequest } from '../../../model/model'
-import { FirebaseService } from '../../../services/firebase'
-import { useBreakpointsContext } from '../../Provider/BreakpointsProvider'
-import Progress from '../../Shared/Progress'
-import { SlideUp } from '../../Shared/Transitions'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
+import Progress from '@/Components/Shared/Progress'
+import { SlideUp } from '@/Components/Shared/Transitions'
+import { Issue, Pullrequest } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(theme => ({
     dialogContent: {

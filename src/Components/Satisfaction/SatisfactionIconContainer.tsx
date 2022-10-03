@@ -4,7 +4,7 @@ import SatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAltOutlined'
 import VeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied'
 import VerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied'
 import { IconContainerProps } from '@material-ui/lab/Rating'
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 const customIcons: { [index: string]: { icon: React.ReactElement } } = {
     1: {

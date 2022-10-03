@@ -1,10 +1,10 @@
 import { List } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
-import React from 'react'
 
-import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { useSearchResultsContext } from '../Provider/SearchResultsProvider'
-import NotFound from '../Shared/NotFound'
+import { useSearchResultsContext } from '@/Components/Provider/SearchResultsProvider'
+import NotFound from '@/Components/Shared/NotFound'
+import useDocumentTitle from '@/hooks/useDocumentTitle'
+
 import SearchResult from './SearchResult'
 
 const SearchResults = () => {

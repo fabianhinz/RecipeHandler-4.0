@@ -1,3 +1,4 @@
+/* eslint-disable react/no-multi-comp */
 import {
     Chip,
     Fab,
@@ -15,17 +16,27 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import { Alert, AlertProps, Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
 import { CalendarMonth, ChevronLeft, ChevronRight, Download, FileImage, Sd } from 'mdi-material-ui'
-import React, { FC, ReactText, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import {
+    createContext,
+    FC,
+    ReactText,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import SwipeableViews from 'react-swipeable-views'
 
-import { useAttachment } from '../../hooks/useAttachment'
-import { AttachmentDoc, Recipe } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS } from '../../theme'
-import { isSafari } from '../../util/constants'
-import AccountChip from '../Account/AccountChip'
-import { PATHS } from '../Routes/Routes'
+import AccountChip from '@/Components/Account/AccountChip'
+import { PATHS } from '@/Components/Routes/Routes'
+import { useAttachment } from '@/hooks/useAttachment'
+import { AttachmentDoc, Recipe } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+import { BORDER_RADIUS } from '@/theme'
+import { isSafari } from '@/util/constants'
+
 import { useRouterContext } from './RouterProvider'
 
 interface AnimationHandler {
@@ -36,7 +47,7 @@ interface AnimationHandler {
     ) => void
 }
 
-const Context = React.createContext<AnimationHandler | null>(null)
+const Context = createContext<AnimationHandler | null>(null)
 
 export const useAttachmentGalleryContext = () => useContext(Context) as AnimationHandler
 

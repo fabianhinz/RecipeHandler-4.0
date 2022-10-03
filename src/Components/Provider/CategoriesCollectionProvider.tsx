@@ -1,8 +1,8 @@
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, FC, useCallback, useContext, useEffect, useState } from 'react'
 
-import { Categories } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import useExpenseStore from '../../store/ExpenseStore'
+import { Categories } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+import useExpenseStore from '@/store/ExpenseStore'
 
 type CategoriesCollection = {
     recipeCategories: Categories<Array<string>>
@@ -10,7 +10,7 @@ type CategoriesCollection = {
     categoriesLoading: boolean
 }
 
-const Context = React.createContext<CategoriesCollection | null>(null)
+const Context = createContext<CategoriesCollection | null>(null)
 
 export const useCategoriesCollectionContext = () => useContext(Context) as CategoriesCollection
 

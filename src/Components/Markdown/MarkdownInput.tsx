@@ -1,5 +1,5 @@
 import { Divider, makeStyles, TextField, useTheme } from '@material-ui/core'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import MarkdownEmojiToggle from './Toggles/MarkdownEmojiToggle'
 import MarkdownHeadingToggle, { Heading } from './Toggles/MarkdownHeadingToggle'

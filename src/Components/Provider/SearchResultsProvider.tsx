@@ -1,6 +1,6 @@
-import React, { FC, useContext, useState } from 'react'
+import { createContext, FC, useContext, useState } from 'react'
 
-import { Hit } from '../../model/model'
+import { Hit } from '@/model/model'
 
 interface SearchResultContext {
     hits: ReadonlyArray<Hit>
@@ -11,7 +11,7 @@ interface SearchResultContext {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Context = React.createContext<SearchResultContext | null>(null)
+const Context = createContext<SearchResultContext | null>(null)
 
 export const useSearchResultsContext = () => useContext(Context) as SearchResultContext
 

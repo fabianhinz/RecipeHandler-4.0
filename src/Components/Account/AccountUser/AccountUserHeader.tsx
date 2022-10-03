@@ -1,9 +1,10 @@
 import { Avatar, CardActionArea, Grid, makeStyles, Typography } from '@material-ui/core'
 import { useSnackbar } from 'notistack'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
-import { useAttachmentDropzone } from '../../../hooks/useAttachmentDropzone'
-import { User } from '../../../model/model'
+import { useAttachmentDropzone } from '@/hooks/useAttachmentDropzone'
+import { User } from '@/model/model'
+
 import AccountUserChangelog from './AccountUserChangelog'
 
 const useStyles = makeStyles(theme => ({

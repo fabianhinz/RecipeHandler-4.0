@@ -1,11 +1,10 @@
 import { Box, Grid, Link, ListSubheader, Typography } from '@material-ui/core'
-import React from 'react'
 
-import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { useGridContext } from '../Provider/GridProvider'
-import BuiltWithFirebase from '../Shared/BuiltWithFirebase'
-import EntryGridContainer from '../Shared/EntryGridContainer'
-import StyledCard from '../Shared/StyledCard'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import BuiltWithFirebase from '@/Components/Shared/BuiltWithFirebase'
+import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
+import StyledCard from '@/Components/Shared/StyledCard'
+import useDocumentTitle from '@/hooks/useDocumentTitle'
 
 const Impressum = () => {
     const { gridBreakpointProps } = useGridContext()

@@ -1,9 +1,10 @@
 import { Grid, makeStyles } from '@material-ui/core'
 import { useEffect, useState } from 'react'
 
-import { AttachmentDoc, Recipe } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { useAttachmentGalleryContext } from '../Provider/AttachmentGalleryProvider'
+import { useAttachmentGalleryContext } from '@/Components/Provider/AttachmentGalleryProvider'
+import { AttachmentDoc, Recipe } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+
 import AttachmentPreview from './AttachmentPreview'
 
 interface Props {

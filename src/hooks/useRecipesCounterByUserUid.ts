@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { FirebaseService } from '../services/firebase'
+import { FirebaseService } from '@/services/firebase'
 
 export const useRecipesCounterByUserUid = () => {
     const [counter, setCounter] = useState<[string, number][]>([])

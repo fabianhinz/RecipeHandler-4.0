@@ -2,10 +2,11 @@ import { Button, Grid, IconButton, makeStyles, Popover, Typography } from '@mate
 import AddIcon from '@material-ui/icons/AddCircle'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import MarkdownInput from '../../Markdown/MarkdownInput'
-import StyledCard from '../../Shared/StyledCard'
+import MarkdownInput from '@/Components/Markdown/MarkdownInput'
+import StyledCard from '@/Components/Shared/StyledCard'
+
 import { RecipeCreateDispatch } from './RecipeCreateReducer'
 
 interface Props extends RecipeCreateDispatch {

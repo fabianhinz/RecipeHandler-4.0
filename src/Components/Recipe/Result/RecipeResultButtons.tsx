@@ -1,8 +1,9 @@
 import { Grid } from '@material-ui/core'
 
-import { stopPropagationProps } from '../../../util/constants'
-import { Comments } from '../../Comments/Comments'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { Comments } from '@/Components/Comments/Comments'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { stopPropagationProps } from '@/util/constants'
+
 import RecipeBookmarkButton from '../RecipeBookmarkButton'
 import RecipeCookCounterButton from '../RecipeCookCounterButton'
 import RecipeGridButton from '../RecipeGridButton'

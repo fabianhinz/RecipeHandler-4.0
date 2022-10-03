@@ -1,9 +1,9 @@
 import { Grid, makeStyles, Typography } from '@material-ui/core'
-import React from 'react'
 
-import { Recipe } from '../../../model/model'
-import { CategoryResult } from '../../Category/CategoryResult'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
+import { CategoryResult } from '@/Components/Category/CategoryResult'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { Recipe } from '@/model/model'
+
 import RecipeResultButtons from './RecipeResultButtons'
 
 const useStyles = makeStyles(theme => ({

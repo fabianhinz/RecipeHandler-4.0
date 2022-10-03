@@ -10,8 +10,8 @@ import {
 } from '@material-ui/core'
 import EmailIcon from '@material-ui/icons/EmailRounded'
 
-import { User } from '../../model/model'
-import { useUsersContext } from '../Provider/UsersProvider'
+import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import { User } from '@/model/model'
 
 interface Props {
     uid: string

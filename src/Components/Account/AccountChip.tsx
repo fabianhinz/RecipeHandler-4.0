@@ -1,10 +1,9 @@
 import { Avatar, Chip, makeStyles } from '@material-ui/core'
 import { ChipProps } from '@material-ui/core/Chip'
 import clsx from 'clsx'
-import React from 'react'
 
-import { User } from '../../model/model'
-import { useUsersContext } from '../Provider/UsersProvider'
+import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import { User } from '@/model/model'
 
 const useStyles = makeStyles(theme => ({
     absolute: {

@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core'
-import React, { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 
-import ElementIdService from '../services/elementIdService'
+import ElementIdService from '@/services/elementIdService'
 
 interface useIntersectionObserverOptions {
     onIsIntersecting: () => void

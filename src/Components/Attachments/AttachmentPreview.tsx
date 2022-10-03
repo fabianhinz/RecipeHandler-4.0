@@ -2,11 +2,11 @@ import { makeStyles } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { useRef } from 'react'
 
-import { useAttachment } from '../../hooks/useAttachment'
-import useImgSrcLazy from '../../hooks/useImgSrcLazy'
-import { AttachmentDoc } from '../../model/model'
-import elementIdService from '../../services/elementIdService'
-import { BORDER_RADIUS } from '../../theme'
+import { useAttachment } from '@/hooks/useAttachment'
+import useImgSrcLazy from '@/hooks/useImgSrcLazy'
+import { AttachmentDoc } from '@/model/model'
+import elementIdService from '@/services/elementIdService'
+import { BORDER_RADIUS } from '@/theme'
 
 const useStyles = makeStyles(theme => ({
     skeleton: {

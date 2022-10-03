@@ -1,12 +1,13 @@
 import { Avatar, ButtonBase, CircularProgress, makeStyles } from '@material-ui/core'
 import clsx from 'clsx'
 import { ImageSearch } from 'mdi-material-ui'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createWorker, Paragraph } from 'tesseract.js'
 
-import { useAttachmentDropzone } from '../../hooks/useAttachmentDropzone'
-import { Recipe, TesseractLog, TesseractResult } from '../../model/model'
-import SelectionDrawer from '../Shared/SelectionDrawer'
+import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
+import { useAttachmentDropzone } from '@/hooks/useAttachmentDropzone'
+import { Recipe, TesseractLog, TesseractResult } from '@/model/model'
+
 import TesseractParagraph from './TesseractParagraph'
 
 interface StyleProps {

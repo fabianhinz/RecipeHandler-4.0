@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core'
 import SpeedDialIcon from '@material-ui/icons/ClassRounded'
 import { SpeedDial } from '@material-ui/lab'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const useStyles = makeStyles(theme => ({
     speedDial: {

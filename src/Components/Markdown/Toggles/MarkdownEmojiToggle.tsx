@@ -2,7 +2,7 @@ import { Grid, IconButton, makeStyles } from '@material-ui/core'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
 import { ToggleButton } from '@material-ui/lab'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { ToggleChangeHandler } from '../MarkdownInput'
 import MarkdownPopover from '../MarkdownPopover'

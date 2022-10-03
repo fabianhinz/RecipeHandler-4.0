@@ -1,7 +1,7 @@
 import { IconButton, Tooltip, TooltipProps } from '@material-ui/core/'
 import { GridOff, GridOn } from '@material-ui/icons'
 
-import { useLayoutStore } from '../../store/LayoutStore'
+import { useLayoutStore } from '@/store/LayoutStore'
 
 interface Props {
     tooltipProps?: Pick<TooltipProps, 'placement'>

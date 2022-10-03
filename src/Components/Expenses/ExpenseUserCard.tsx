@@ -4,10 +4,11 @@ import clsx from 'clsx'
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { Cell, Pie, PieChart } from 'recharts'
 
-import useDebounce from '../../hooks/useDebounce'
-import { Nullable } from '../../model/model'
-import useExpenseStore, { ExpenseStore } from '../../store/ExpenseStore'
-import { stopPropagationProps } from '../../util/constants'
+import useDebounce from '@/hooks/useDebounce'
+import { Nullable } from '@/model/model'
+import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
+import { stopPropagationProps } from '@/util/constants'
+
 import { ExpenseFilter, ExpenseFilterChangeHandler } from './Expenses'
 import { CATEGORIES_PALETTE } from './helper/expenseUtils'
 

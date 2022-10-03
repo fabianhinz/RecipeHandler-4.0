@@ -5,12 +5,13 @@ import { SnackbarProvider } from 'notistack'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { AppProvider } from '@/AppProvider'
-import Header from '@/Header'
-import Main from '@/Main'
-import { useFirebaseAuthContext } from '@/Provider/FirebaseAuthProvider'
+import Header from '@/Components/Header'
+import Main from '@/Components/Main'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import recipeService from '@/services/recipeService'
 import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '@/theme'
+
+import { AppProvider } from './AppProvider'
 
 const App: FC = () => {
     const [theme, setTheme] = useState(responsiveLightTheme)

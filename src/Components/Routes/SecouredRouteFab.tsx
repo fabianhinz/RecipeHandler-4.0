@@ -1,9 +1,8 @@
 import { Fab, Tooltip } from '@material-ui/core'
-import React from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import FabContainer from '../Shared/FabContainer'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import FabContainer from '@/Components/Shared/FabContainer'
 
 interface Props {
     icon: JSX.Element

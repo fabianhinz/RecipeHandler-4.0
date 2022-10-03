@@ -1,8 +1,7 @@
 import BookIcon from '@material-ui/icons/Book'
-import React from 'react'
 
-import MarkdownInput from '../../Markdown/MarkdownInput'
-import StyledCard from '../../Shared/StyledCard'
+import MarkdownInput from '@/Components/Markdown/MarkdownInput'
+import StyledCard from '@/Components/Shared/StyledCard'
 
 interface Props {
     description: string

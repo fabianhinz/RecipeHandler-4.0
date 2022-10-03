@@ -1,11 +1,10 @@
 import { Card, Grid, GridSize, makeStyles } from '@material-ui/core'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import { Skeleton } from '@material-ui/lab'
-import React from 'react'
 
-import { FirebaseService } from '../../services/firebase'
-import { RECIPE_CARD_HEIGHT } from '../Home/HomeRecipeCard'
-import { useGridContext } from '../Provider/GridProvider'
+import { RECIPE_CARD_HEIGHT } from '@/Components/Home/HomeRecipeCard'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import { FirebaseService } from '@/services/firebase'
 
 interface StyleProps {
     compactLayout: boolean

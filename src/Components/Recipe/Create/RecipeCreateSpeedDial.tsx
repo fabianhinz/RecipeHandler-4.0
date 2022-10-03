@@ -2,9 +2,8 @@ import { VisibilityOff } from '@material-ui/icons'
 import EyeIcon from '@material-ui/icons/RemoveRedEye'
 import SaveIcon from '@material-ui/icons/Save'
 import { SpeedDialAction } from '@material-ui/lab'
-import React from 'react'
 
-import SpeedDialWrapper from '../../Shared/SpeedDialWrapper'
+import SpeedDialWrapper from '@/Components/Shared/SpeedDialWrapper'
 interface Props {
     isPreview: boolean
     onPreviewClick: () => void

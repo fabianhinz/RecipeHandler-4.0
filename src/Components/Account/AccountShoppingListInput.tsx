@@ -1,8 +1,8 @@
 import { IconButton, InputAdornment, TextField } from '@material-ui/core'
 import { DeleteSweep } from '@material-ui/icons'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 
 const AccountShoppingListInput = () => {
     const { shoppingList, shoppingListRef } = useFirebaseAuthContext()

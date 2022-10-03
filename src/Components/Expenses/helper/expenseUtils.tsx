@@ -6,8 +6,9 @@ import Fastfood from '@material-ui/icons/Fastfood'
 import Weekend from '@material-ui/icons/Weekend'
 import { CashMultiple } from 'mdi-material-ui'
 
-import { Expense } from '../../../model/model'
-import { ExpenseState } from '../../../store/ExpenseStore'
+import { Expense } from '@/model/model'
+import { ExpenseState } from '@/store/ExpenseStore'
+
 import { ExpenseFilter } from '../Expenses'
 
 type CategoryPaletteProps = { category: string; variant: 'chip' | 'card' }

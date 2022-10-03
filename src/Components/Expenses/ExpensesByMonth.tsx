@@ -12,8 +12,9 @@ import { Cancel } from '@material-ui/icons'
 import { ChevronRight } from 'mdi-material-ui'
 import { useMemo, useState } from 'react'
 
-import { Expense } from '../../model/model'
-import useExpenseStore from '../../store/ExpenseStore'
+import { Expense } from '@/model/model'
+import useExpenseStore from '@/store/ExpenseStore'
+
 import ExpenseCard from './ExpenseCard'
 import ExpenseCategoryChip from './ExpenseCategoryChip'
 import { ExpenseFilter, ExpenseFilterChangeHandler } from './Expenses'

@@ -7,9 +7,8 @@ import {
     TooltipProps,
 } from '@material-ui/core/'
 import { Bookmark, BookmarkOff } from 'mdi-material-ui'
-import React from 'react'
 
-import { useBookmarkContext } from '../Provider/BookmarkProvider'
+import { useBookmarkContext } from '@/Components/Provider/BookmarkProvider'
 
 export interface RecipeButtonSharedProps {
     variant?: 'IconButton' | 'ListItem'

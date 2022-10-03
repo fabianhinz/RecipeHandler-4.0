@@ -1,6 +1,6 @@
 import { Reducer, useReducer } from 'react'
 
-import { Categories, Recipe, TesseractResult, Trial } from '../../../model/model'
+import { Categories, Recipe, TesseractResult, Trial } from '@/model/model'
 
 export interface RecipeCreateState {
     name: string

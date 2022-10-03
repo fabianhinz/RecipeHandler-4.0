@@ -12,18 +12,19 @@ import {
     useTheme,
 } from '@material-ui/core'
 import { useSnackbar } from 'notistack'
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import useDebounce from '../../hooks/useDebounce'
-import { ReactComponent as AlgoliaIcon } from '../../icons/algolia.svg'
-import { Hit } from '../../model/model'
-import algolia from '../../services/algolia'
-import { BORDER_RADIUS } from '../../theme'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useSearchResultsContext } from '../Provider/SearchResultsProvider'
-import { PATHS } from '../Routes/Routes'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useSearchResultsContext } from '@/Components/Provider/SearchResultsProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import useDebounce from '@/hooks/useDebounce'
+import { ReactComponent as AlgoliaIcon } from '@/icons/algolia.svg'
+import { Hit } from '@/model/model'
+import algolia from '@/services/algolia'
+import { BORDER_RADIUS } from '@/theme'
+
 import SearchResults from './SearchResults'
 
 interface StyleProps {

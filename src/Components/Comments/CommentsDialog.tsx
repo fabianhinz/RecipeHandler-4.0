@@ -14,16 +14,17 @@ import ScrollToLatestIcon from '@material-ui/icons/ExpandMore'
 import SaveIcon from '@material-ui/icons/Save'
 import Skeleton from '@material-ui/lab/Skeleton'
 import clsx from 'clsx'
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 
-import { Comment as CommentModel, CommentsCollections, CommentsDocument } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS_HUGE } from '../../theme'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import NotFound from '../Shared/NotFound'
-import { SlideUp } from '../Shared/Transitions'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import NotFound from '@/Components/Shared/NotFound'
+import { SlideUp } from '@/Components/Shared/Transitions'
+import { Comment as CommentModel, CommentsCollections, CommentsDocument } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+import { BORDER_RADIUS_HUGE } from '@/theme'
+
 import Comment from './Comment'
 
 const useStyles = makeStyles(theme => ({
@@ -68,6 +69,7 @@ const scrollToLatest = () => {
     })
 }
 
+// eslint-disable-next-line react/no-multi-comp
 export const CommentsDialog: FC<CommentsDialogProps> = ({
     open,
     onClose,

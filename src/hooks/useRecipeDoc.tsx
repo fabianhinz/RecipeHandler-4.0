@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { Nullable, Recipe } from '../model/model'
-import { FirebaseService } from '../services/firebase'
+import { Nullable, Recipe } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 type RecipesCollectionState = { loading: boolean; recipe: Recipe | null }
 type RecipeLocation = Pick<RecipesCollectionState, 'recipe'>

@@ -2,11 +2,10 @@ import { Chip, Divider, Grid, makeStyles, Typography } from '@material-ui/core'
 import { red } from '@material-ui/core/colors'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import BookIcon from '@material-ui/icons/Book'
-import React from 'react'
 import { Paragraph } from 'tesseract.js'
 
-import { TesseractResult } from '../../model/model'
-import { BORDER_RADIUS } from '../../theme'
+import { TesseractResult } from '@/model/model'
+import { BORDER_RADIUS } from '@/theme'
 
 type StyleProps = Pick<Props, 'confidence'>
 

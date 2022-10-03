@@ -11,15 +11,15 @@ import {
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import CloseIcon from '@material-ui/icons/Close'
 import { useSnackbar } from 'notistack'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import useProgress from '../../hooks/useProgress'
-import { User } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useUsersContext } from '../Provider/UsersProvider'
-import { SlideUp } from '../Shared/Transitions'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import { SlideUp } from '@/Components/Shared/Transitions'
+import useProgress from '@/hooks/useProgress'
+import { User } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(() => ({
     form: {

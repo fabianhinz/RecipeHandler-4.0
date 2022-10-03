@@ -12,10 +12,10 @@ import {
 import { AddCircleOutlined } from '@material-ui/icons'
 import { ReactNode, useState } from 'react'
 
-import { Recipe } from '../../model/model'
-import RecipeBookmarkButton from '../Recipe/RecipeBookmarkButton'
-import RecipeShareButton from '../Recipe/RecipeShareButton'
-import { PATHS } from '../Routes/Routes'
+import RecipeBookmarkButton from '@/Components/Recipe/RecipeBookmarkButton'
+import RecipeShareButton from '@/Components/Recipe/RecipeShareButton'
+import { PATHS } from '@/Components/Routes/Routes'
+import { Recipe } from '@/model/model'
 
 const useStyles = makeStyles(theme => ({
     homeRecipeContextMenuRoot: {

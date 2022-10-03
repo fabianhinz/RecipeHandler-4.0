@@ -21,7 +21,6 @@ import {
     WeatherSnowy,
     WeatherSunny,
 } from 'mdi-material-ui'
-import React from 'react'
 
 const getIconByCategory = (category: string) => {
     switch (category) {

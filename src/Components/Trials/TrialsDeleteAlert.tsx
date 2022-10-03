@@ -8,10 +8,10 @@ import {
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { SlideUp } from '../Shared/Transitions'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
+import { SlideUp } from '@/Components/Shared/Transitions'
 
 interface Props {
     title: ReactNode

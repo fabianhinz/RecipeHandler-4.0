@@ -1,7 +1,6 @@
 import { CircularProgress, LinearProgress, makeStyles } from '@material-ui/core'
-import React from 'react'
 
-import { BORDER_RADIUS } from '../../theme'
+import { BORDER_RADIUS } from '@/theme'
 
 const useStyles = makeStyles(theme => ({
     linearProgress: {

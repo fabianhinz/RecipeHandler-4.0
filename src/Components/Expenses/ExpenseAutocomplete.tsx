@@ -1,6 +1,5 @@
 import { TextField } from '@material-ui/core'
 import { Autocomplete, createFilterOptions } from '@material-ui/lab'
-import React from 'react'
 
 interface Props {
     disableFreeSolo?: boolean

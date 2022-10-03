@@ -1,16 +1,16 @@
 import { Grid, makeStyles, Typography } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { CookingHistory, Recipe } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS } from '../../theme'
-import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from '../Home/HomeRecipeCard'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useGridContext } from '../Provider/GridProvider'
-import EntryGridContainer from '../Shared/EntryGridContainer'
-import NotFound from '../Shared/NotFound'
+import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from '@/Components/Home/HomeRecipeCard'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
+import NotFound from '@/Components/Shared/NotFound'
+import useDocumentTitle from '@/hooks/useDocumentTitle'
+import { CookingHistory, Recipe } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+import { BORDER_RADIUS } from '@/theme'
 
 interface StyleProps {
     compactLayout: boolean
@@ -65,6 +65,7 @@ const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
     )
 }
 
+// eslint-disable-next-line react/no-multi-comp
 const AccountCookingHistory = () => {
     const [cookingHistory, setCookingHistory] = useState<CookingHistory[]>([])
     const [loading, setLoading] = useState(true)

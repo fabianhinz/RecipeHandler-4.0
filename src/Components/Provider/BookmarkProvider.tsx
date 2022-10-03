@@ -1,14 +1,14 @@
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, FC, useCallback, useContext, useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from './FirebaseAuthProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { FirebaseService } from '@/services/firebase'
 
 type BookmarkContext = {
     bookmarks: Set<string>
     handleBookmarkChange: (recipeName: string) => void
 }
 
-const Context = React.createContext<BookmarkContext | null>(null)
+const Context = createContext<BookmarkContext | null>(null)
 
 export const useBookmarkContext = () => useContext(Context) as BookmarkContext
 

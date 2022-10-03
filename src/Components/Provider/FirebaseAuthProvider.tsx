@@ -1,11 +1,11 @@
 import { makeStyles } from '@material-ui/core'
-import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
-import { ShoppingListItem, User } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import useExpenseStore, { EXPENSE_COLLECTION } from '../../store/ExpenseStore'
-import { ArrayFns, ReorderParams } from '../../util/fns'
-import BuiltWithFirebase from '../Shared/BuiltWithFirebase'
+import BuiltWithFirebase from '@/Components/Shared/BuiltWithFirebase'
+import { ShoppingListItem, User } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+import useExpenseStore, { EXPENSE_COLLECTION } from '@/store/ExpenseStore'
+import { ArrayFns, ReorderParams } from '@/util/fns'
 
 type DocumentRef =
     firebase.default.firestore.DocumentReference<firebase.default.firestore.DocumentData>
@@ -18,7 +18,7 @@ interface AuthContext {
     reorderShoppingList: (reorderParams: ReorderParams<ShoppingListItem>) => void
 }
 
-const Context = React.createContext<AuthContext>({
+const Context = createContext<AuthContext>({
     user: undefined,
     shoppingList: [],
     loginEnabled: false,

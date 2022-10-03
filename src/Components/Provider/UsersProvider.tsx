@@ -1,10 +1,10 @@
-import React, { FC, useContext, useEffect, useState } from 'react'
+import { createContext, FC, useContext, useEffect, useState } from 'react'
 
-import { DocumentId, User } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from './FirebaseAuthProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { DocumentId, User } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
-const Context = React.createContext<{
+const Context = createContext<{
     getByUid: (uid: string) => User | undefined
     userIds: DocumentId[]
 }>({

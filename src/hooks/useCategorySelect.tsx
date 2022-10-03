@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 
-import { RecipeCreateState } from '../Components/Recipe/Create/RecipeCreateReducer'
-import { PATHS } from '../Components/Routes/Routes'
-import { Recipe } from '../model/model'
-import recipeService from '../services/recipeService'
+import { RecipeCreateState } from '@/Components/Recipe/Create/RecipeCreateReducer'
+import { PATHS } from '@/Components/Routes/Routes'
+import { Recipe } from '@/model/model'
+import recipeService from '@/services/recipeService'
 // ToDo we don't need this hook anymore, merge with categoryselection
 export const useCategorySelect = (recipe?: Recipe | RecipeCreateState | null) => {
     const match = useRouteMatch()

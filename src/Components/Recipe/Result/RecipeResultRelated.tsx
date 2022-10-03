@@ -9,7 +9,7 @@ import {
     makeStyles,
 } from '@material-ui/core'
 import brown from '@material-ui/core/colors/brown'
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import RecipeBookmarkButton from '../RecipeBookmarkButton'
 import RecipeDetailsButton from '../RecipeDetailsButton'

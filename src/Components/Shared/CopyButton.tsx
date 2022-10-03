@@ -1,7 +1,7 @@
 import { IconButton, Tooltip } from '@material-ui/core'
 import copy from 'clipboard-copy'
 import { ContentCopy } from 'mdi-material-ui'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 interface Props {
     text: string

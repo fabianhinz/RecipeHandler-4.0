@@ -1,7 +1,6 @@
 import { Box, Grow } from '@material-ui/core'
-import React from 'react'
 
-import notFoundLogo from '../../icons/notFound.png'
+import notFoundLogo from '@/icons/notFound.png'
 
 interface Props {
     visible: boolean

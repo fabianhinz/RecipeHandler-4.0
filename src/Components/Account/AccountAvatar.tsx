@@ -1,6 +1,6 @@
 import { Avatar, ButtonBase, ButtonBaseProps, makeStyles, Theme } from '@material-ui/core'
 
-import { User } from '../../model/model'
+import { User } from '@/model/model'
 
 type StyleProps = { isUserSelected: boolean }
 

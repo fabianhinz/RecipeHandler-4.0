@@ -14,14 +14,15 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import useImgSrcLazy from '../../hooks/useImgSrcLazy'
-import { Recipe } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS } from '../../theme'
-import { CategoryResult } from '../Category/CategoryResult'
-import { useGridContext } from '../Provider/GridProvider'
-import { useUsersContext } from '../Provider/UsersProvider'
-import { PATHS } from '../Routes/Routes'
+import { CategoryResult } from '@/Components/Category/CategoryResult'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import useImgSrcLazy from '@/hooks/useImgSrcLazy'
+import { Recipe } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+import { BORDER_RADIUS } from '@/theme'
+
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
 export const RECIPE_CARD_HEIGHT = 300

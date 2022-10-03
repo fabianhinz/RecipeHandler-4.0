@@ -6,7 +6,7 @@ import LinkIcon from '@material-ui/icons/Link'
 import EyeIcon from '@material-ui/icons/RemoveRedEye'
 import { ToggleButton } from '@material-ui/lab'
 import { Earth } from 'mdi-material-ui'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { ToggleChangeHandler } from '../MarkdownInput'
 import MarkdownPopover from '../MarkdownPopover'

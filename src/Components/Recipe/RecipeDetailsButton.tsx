@@ -1,10 +1,9 @@
 import { IconButton, Tooltip } from '@material-ui/core'
 import { Eye } from 'mdi-material-ui'
-import React from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { Recipe } from '../../model/model'
-import { PATHS } from '../Routes/Routes'
+import { PATHS } from '@/Components/Routes/Routes'
+import { Recipe } from '@/model/model'
 
 interface Props {
     recipe?: Recipe | null

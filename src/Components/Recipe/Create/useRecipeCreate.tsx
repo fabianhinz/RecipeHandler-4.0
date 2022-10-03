@@ -1,11 +1,12 @@
 import { useSnackbar } from 'notistack'
 
-import { MostCooked, Recipe, User } from '../../../model/model'
-import { FirebaseService } from '../../../services/firebase'
-import recipeService from '../../../services/recipeService'
-import { useFirebaseAuthContext } from '../../Provider/FirebaseAuthProvider'
-import { useRouterContext } from '../../Provider/RouterProvider'
-import { PATHS } from '../../Routes/Routes'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useRouterContext } from '@/Components/Provider/RouterProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import { MostCooked, Recipe, User } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+import recipeService from '@/services/recipeService'
+
 import { RecipeCreateState } from './RecipeCreateReducer'
 
 export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean) => {

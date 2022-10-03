@@ -1,10 +1,11 @@
 import { List } from '@material-ui/core'
 import SecurityIcon from '@material-ui/icons/VerifiedUser'
-import React, { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 
-import { FirebaseService } from '../../../services/firebase'
-import { useUsersContext } from '../../Provider/UsersProvider'
-import StyledCard from '../../Shared/StyledCard'
+import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import StyledCard from '@/Components/Shared/StyledCard'
+import { FirebaseService } from '@/services/firebase'
+
 import AccountListItem from '../AccountListItem'
 
 const editorsCollection = FirebaseService.firestore.collection('editors')

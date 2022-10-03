@@ -1,3 +1,4 @@
+/* eslint-disable react/no-multi-comp */
 import {
     ButtonBase,
     Chip,
@@ -14,15 +15,14 @@ import {
 import BookIcon from '@material-ui/icons/Book'
 import clsx from 'clsx'
 import { BookmarkMultiple, BookSearch, Cart, ChefHat, Lightbulb, PiggyBank } from 'mdi-material-ui'
-import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { useBookmarkContext } from './Provider/BookmarkProvider'
-import { useBreakpointsContext } from './Provider/BreakpointsProvider'
-import { useFirebaseAuthContext } from './Provider/FirebaseAuthProvider'
-import { useSearchResultsContext } from './Provider/SearchResultsProvider'
-import { PATHS } from './Routes/Routes'
-import { AlgoliaDocSearchRef } from './Search/Search'
+import { useBookmarkContext } from '@/Components/Provider/BookmarkProvider'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useSearchResultsContext } from '@/Components/Provider/SearchResultsProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import { AlgoliaDocSearchRef } from '@/Components/Search/Search'
 
 interface StyleProps {
     active?: boolean

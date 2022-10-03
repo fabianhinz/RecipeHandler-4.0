@@ -1,11 +1,11 @@
 import { IconButton, Tooltip } from '@material-ui/core/'
 import FavoriteIcon from '@material-ui/icons/Favorite'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { CookingHistory, MostCooked, Recipe } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { BadgeWrapper } from '../Shared/BadgeWrapper'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { BadgeWrapper } from '@/Components/Shared/BadgeWrapper'
+import { CookingHistory, MostCooked, Recipe } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 type Props = Pick<Recipe, 'name'>
 

@@ -11,13 +11,13 @@ import {
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import clsx from 'clsx'
 
-import { useRecipesCounterByUserUid } from '../../hooks/useRecipesCounterByUserUid'
-import { OrderByRecord } from '../../model/model'
-import recipeService from '../../services/recipeService'
-import AccountAvatar from '../Account/AccountAvatar'
-import CategorySelection from '../Category/CategorySelection'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useUsersContext } from '../Provider/UsersProvider'
+import AccountAvatar from '@/Components/Account/AccountAvatar'
+import CategorySelection from '@/Components/Category/CategorySelection'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import { useRecipesCounterByUserUid } from '@/hooks/useRecipesCounterByUserUid'
+import { OrderByRecord } from '@/model/model'
+import recipeService from '@/services/recipeService'
 
 const useStyles = makeStyles(theme => ({
     orderByAsc: {

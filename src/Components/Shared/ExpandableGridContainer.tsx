@@ -1,10 +1,11 @@
 import { Button, ButtonProps, Grid, IconButton, makeStyles, Typography } from '@material-ui/core'
 import clsx from 'clsx'
 import { ChevronDown } from 'mdi-material-ui'
-import React, { ReactNode, ReactText, useCallback, useMemo, useState } from 'react'
+import { Children, ReactNode, ReactText, useCallback, useMemo, useState } from 'react'
 
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { GridLayout, useGridContext } from '../Provider/GridProvider'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
+import { GridLayout, useGridContext } from '@/Components/Provider/GridProvider'
+
 import EntryGridContainer from './EntryGridContainer'
 
 interface StyleProps extends Pick<Props, 'itemHeight' | 'rows'> {
@@ -65,7 +66,7 @@ const ExpandableGridContainer = ({
 }: Props) => {
     const [expanded, setExpanded] = useState(false)
 
-    const gridItems = useMemo(() => React.Children.toArray(children).length, [children])
+    const gridItems = useMemo(() => Children.toArray(children).length, [children])
     const { gridLayout } = useGridContext()
     const classes = useStyles({ gridLayout, gridItems, itemHeight, rows })
     const { isMobile } = useBreakpointsContext()

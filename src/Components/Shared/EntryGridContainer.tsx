@@ -1,5 +1,4 @@
 import { Grid, makeStyles } from '@material-ui/core'
-import React from 'react'
 
 interface Props {
     children: React.ReactNode

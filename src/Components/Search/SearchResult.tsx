@@ -6,12 +6,11 @@ import {
     makeStyles,
     Typography,
 } from '@material-ui/core'
-import React from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { useRecipeDoc } from '../../hooks/useRecipeDoc'
-import { Hit } from '../../model/model'
-import { PATHS } from '../Routes/Routes'
+import { PATHS } from '@/Components/Routes/Routes'
+import { useRecipeDoc } from '@/hooks/useRecipeDoc'
+import { Hit } from '@/model/model'
 
 const useStyles = makeStyles({
     listItem: {

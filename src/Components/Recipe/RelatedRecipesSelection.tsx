@@ -10,12 +10,12 @@ import {
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import useDebounce from '../../hooks/useDebounce'
-import { Recipe } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import SelectionDrawer from '../Shared/SelectionDrawer'
+import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
+import useDebounce from '@/hooks/useDebounce'
+import { Recipe } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(theme => ({
     avatarRoot: {

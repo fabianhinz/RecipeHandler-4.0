@@ -1,14 +1,15 @@
 import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
 import { yellow } from '@material-ui/core/colors'
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { DocumentId, MostCooked } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
-import { useGridContext } from '../Provider/GridProvider'
-import { PATHS } from '../Routes/Routes'
-import Skeletons from '../Shared/Skeletons'
+import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import Skeletons from '@/Components/Shared/Skeletons'
+import { DocumentId, MostCooked } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
 const COLOR_PALETTE = [
@@ -71,6 +72,7 @@ const MostCookedPaper = ({ recipeName, counter, paletteIndex }: MostCookedPaperP
 
 type MostCookedMap = Map<DocumentId, MostCooked<number>>
 
+// eslint-disable-next-line react/no-multi-comp
 const HomeMostCooked = () => {
     const [mostCooked, setMostCooked] = useState<MostCookedMap>(new Map())
     const [counterValues, setCounterValues] = useState<Set<number>>(new Set())

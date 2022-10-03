@@ -1,14 +1,14 @@
 import { makeStyles, Theme } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router'
 
-import { useAttachment } from '../../hooks/useAttachment'
-import useImgSrcLazy from '../../hooks/useImgSrcLazy'
-import { AttachmentDoc, User } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { PATHS } from '../Routes/Routes'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import { useAttachment } from '@/hooks/useAttachment'
+import useImgSrcLazy from '@/hooks/useImgSrcLazy'
+import { AttachmentDoc, User } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
 
 type StyleProps = {
     imgSrc?: string

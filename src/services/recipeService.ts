@@ -1,5 +1,5 @@
-import { RecipeCreateState } from '../Components/Recipe/Create/RecipeCreateReducer'
-import { DocumentId, OrderByRecord, Recipe, Trial } from '../model/model'
+import { RecipeCreateState } from '@/Components/Recipe/Create/RecipeCreateReducer'
+import { DocumentId, OrderByRecord, Recipe, Trial } from '@/model/model'
 
 class RecipeService {
     private _selectedCategories: Map<string, string>

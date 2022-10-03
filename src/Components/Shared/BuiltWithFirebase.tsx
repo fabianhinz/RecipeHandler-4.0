@@ -1,8 +1,8 @@
 import { Chip, Link, makeStyles, Typography } from '@material-ui/core'
 import clsx from 'clsx'
-import React, { memo } from 'react'
+import { memo } from 'react'
 
-import { ReactComponent as FirebaseIcon } from '../../icons/firebase.svg'
+import { ReactComponent as FirebaseIcon } from '@/icons/firebase.svg'
 
 const useStyles = makeStyles(theme => ({
     chip: {
