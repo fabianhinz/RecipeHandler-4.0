@@ -74,6 +74,7 @@ const MarkdownRenderer = (props: Props) => {
                         value: grocery,
                         recipeNameRef: props.recipeName,
                         checked: false,
+                        tag: '',
                     },
                     ...list,
                 ]

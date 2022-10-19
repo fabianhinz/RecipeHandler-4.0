@@ -12,6 +12,7 @@ import AccountShoppingListItem from './AccountShoppingListItem'
 
 const AccountUserShoppingList = () => {
     const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
+    const [tagFilter, setTagFilter] = useState<string | undefined>()
 
     const { shoppingList, shoppingListRef, reorderShoppingList } = useFirebaseAuthContext()
 
@@ -53,7 +54,7 @@ const AccountUserShoppingList = () => {
     return (
         <EntryGridContainer>
             <Grid item xs={12}>
-                <AccountShoppingListInput />
+                <AccountShoppingListInput tagFilter={tagFilter} onTagFilterChange={setTagFilter} />
             </Grid>
 
             {recipeRefs.size > 0 && (
@@ -75,6 +76,7 @@ const AccountUserShoppingList = () => {
                             <List disablePadding innerRef={provided.innerRef}>
                                 {shoppingList.map((item, index) => (
                                     <AccountShoppingListItem
+                                        tagFilter={tagFilter}
                                         key={`${index}-${item.value}`}
                                         onCheckboxChange={handleCheckboxChange}
                                         onDelete={handleDelete}

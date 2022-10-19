@@ -5,6 +5,7 @@ import {
     ListItemIcon,
     ListItemText,
     makeStyles,
+    Theme,
     useTheme,
 } from '@material-ui/core'
 import { Clear } from '@material-ui/icons'
@@ -14,18 +15,21 @@ import { Draggable, DraggingStyle, NotDraggingStyle } from 'react-beautiful-dnd'
 
 import { ShoppingListItem } from '../../model/model'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme, { muted: boolean }>(theme => ({
     checked: {
         textDecoration: 'line-through',
     },
     listItem: {
-        transition: theme.transitions.create('box-shadow'),
+        opacity: props => (props.muted ? 0.3 : 1),
+        height: props => (props.muted ? theme.spacing(5) : theme.spacing(9)),
+        transition: theme.transitions.create(['box-shadow', 'opacity', 'height']),
     },
 }))
 
 interface Props {
     item: ShoppingListItem
     index: number
+    tagFilter: string | undefined
     onCheckboxChange: (
         index: number
     ) => (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void
@@ -33,7 +37,9 @@ interface Props {
 }
 
 const AccountShoppingListItem = (props: Props) => {
-    const classes = useStyles()
+    const classes = useStyles({
+        muted: props.tagFilter !== undefined && props.tagFilter !== props.item.tag,
+    })
     const theme = useTheme()
 
     const getItemStyle = useCallback(
@@ -70,7 +76,9 @@ const AccountShoppingListItem = (props: Props) => {
                             primary: clsx(props.item.checked && classes.checked),
                         }}
                         primary={props.item.value}
-                        secondary={props.item.recipeNameRef}
+                        secondary={[props.item.recipeNameRef, props.item.tag]
+                            .filter(Boolean)
+                            .join(', ')}
                     />
                     <ListItemIcon>
                         <IconButton onClick={props.onDelete(props.index)}>
