@@ -79,10 +79,10 @@ const AccountUserChangelog = () => {
       <Chip
         onClick={() => setChangelogOpen(true)}
         icon={<UpdateIconRounded />}
-        label={import.meta.env.VERSION}
+        label={APP_VERSION}
         color={
-          pullrequests.some(pr => pr.shortSha === import.meta.env.VERSION) &&
-          pullrequests[0]?.shortSha !== import.meta.env.VERSION
+          pullrequests.some(pr => pr.shortSha === APP_VERSION) &&
+          pullrequests[0]?.shortSha !== APP_VERSION
             ? 'secondary'
             : 'default'
         }
@@ -107,7 +107,7 @@ const AccountUserChangelog = () => {
                       <Grid item xs={4} sm={3}>
                         <Chip
                           label={pr.shortSha}
-                          color={pr.shortSha === import.meta.env.VERSION ? 'primary' : 'default'}
+                          color={pr.shortSha === APP_VERSION ? 'primary' : 'default'}
                         />
                       </Grid>
                       <Grid item xs={8} sm={9}>

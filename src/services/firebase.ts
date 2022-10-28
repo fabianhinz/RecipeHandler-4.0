@@ -31,10 +31,9 @@ let analytics: firebase.analytics.Analytics | undefined
 
 if (import.meta.env.PROD) {
   analytics = firebase.analytics()
-  firebase.registerVersion('recipehandler', import.meta.env.VERSION)
 }
 
-if (import.meta.env.USE_EMULATORS) {
+if (USE_EMULATORS) {
   functions.useEmulator('localhost', 5001)
   firestore.useEmulator('localhost', 8080)
   storage.useEmulator('localhost', 9199)
