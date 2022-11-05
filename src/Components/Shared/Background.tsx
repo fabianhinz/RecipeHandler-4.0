@@ -1,6 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
@@ -28,8 +28,13 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     width: '100vw',
     height: '50vh',
     backgroundImage: props => {
-      if (props.imgLoading || props.attachmentRefLoading) return 'unset'
-      if (props.imgSrc) return `url(${props.imgSrc})`
+      if (props.imgLoading || props.attachmentRefLoading) {
+        return 'unset'
+      }
+      if (props.imgSrc) {
+        return `url(${CSS.escape(props.imgSrc)})`
+      }
+
       return `linear-gradient(90deg,${
         theme.palette.type === 'light' ? '#8EDB91' : '#74B377'
       } 30%,#81c784 70%)`
@@ -79,7 +84,7 @@ export const Background = ({ Icon }: Props) => {
   const { user } = useFirebaseAuthContext()
   const classes = useStyles({ imgSrc, imgLoading, attachmentRefLoading, user })
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setFirstAttachment(undefined)
     if (match === null || !user) return
 
