@@ -79,10 +79,10 @@ const AccountUserChangelog = () => {
       <Chip
         onClick={() => setChangelogOpen(true)}
         icon={<UpdateIconRounded />}
-        label={APP_VERSION}
+        label={RECIPE_HANDLER_APP_VERSION}
         color={
-          pullrequests.some(pr => pr.shortSha === APP_VERSION) &&
-          pullrequests[0]?.shortSha !== APP_VERSION
+          pullrequests.some(pr => pr.shortSha === RECIPE_HANDLER_APP_VERSION) &&
+          pullrequests[0]?.shortSha !== RECIPE_HANDLER_APP_VERSION
             ? 'secondary'
             : 'default'
         }
@@ -107,7 +107,7 @@ const AccountUserChangelog = () => {
                       <Grid item xs={4} sm={3}>
                         <Chip
                           label={pr.shortSha}
-                          color={pr.shortSha === APP_VERSION ? 'primary' : 'default'}
+                          color={pr.shortSha === RECIPE_HANDLER_APP_VERSION ? 'primary' : 'default'}
                         />
                       </Grid>
                       <Grid item xs={8} sm={9}>

@@ -6,9 +6,9 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  envPrefix: 'RECIPE_HANDLER_',
   define: {
-    USE_EMULATORS: Boolean(process.env.useEmulators),
-    APP_VERSION: JSON.stringify(
+    RECIPE_HANDLER_APP_VERSION: JSON.stringify(
       process.env.VERSION || (process.env.NODE_ENV === 'production' ? 'unkown' : 'dev')
     ),
   },

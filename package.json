@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "npm run dev",
+    "start:emulators": "npm run dev -- --mode emulators",
+    "firebase:emulators:start": "firebase emulators:start",
     "dev": "vite",
     "build": "tsc && vite build",
     "tsc": "tsc",

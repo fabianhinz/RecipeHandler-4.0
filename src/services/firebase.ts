@@ -33,7 +33,7 @@ if (import.meta.env.PROD) {
   analytics = firebase.analytics()
 }
 
-if (USE_EMULATORS) {
+if (import.meta.env.RECIPE_HANDLER_USE_EMULATORS) {
   functions.useEmulator('localhost', 5001)
   firestore.useEmulator('localhost', 8080)
   storage.useEmulator('localhost', 9199)

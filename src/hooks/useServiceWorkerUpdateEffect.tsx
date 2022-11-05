@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack'
 import { useLayoutEffect } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 
-export const SwUpdates = () => {
+export const useServiceWorkerUpdateEffect = () => {
   const {
     offlineReady: [offlineReady],
     needRefresh: [needRefresh],
@@ -31,6 +31,4 @@ export const SwUpdates = () => {
       })
     }
   }, [needRefresh, snackbar, updateServiceWorker])
-
-  return null
 }

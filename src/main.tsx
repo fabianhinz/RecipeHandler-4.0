@@ -4,22 +4,17 @@ import 'web-animations-js'
 import './index.css'
 
 import ReactDOM from 'react-dom'
-import { BrowserRouter } from 'react-router-dom'
 
-import App from '@/Components/App'
+import { App } from '@/Components/App'
 import ErrorBoundary from '@/Components/ErrorBoundary'
-import BreakpointsProvider from '@/Components/Provider/BreakpointsProvider'
-import FirebaseAuthProvider from '@/Components/Provider/FirebaseAuthProvider'
+
+import { AppProvider } from './Components/AppProvider'
 
 ReactDOM.render(
   <ErrorBoundary>
-    <FirebaseAuthProvider>
-      <BrowserRouter>
-        <BreakpointsProvider>
-          <App />
-        </BreakpointsProvider>
-      </BrowserRouter>
-    </FirebaseAuthProvider>
+    <AppProvider>
+      <App />
+    </AppProvider>
   </ErrorBoundary>,
   document.getElementById('root')!
 )
