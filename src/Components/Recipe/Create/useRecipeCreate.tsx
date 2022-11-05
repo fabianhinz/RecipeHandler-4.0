@@ -5,7 +5,7 @@ import { useRouterContext } from '@/Components/Provider/RouterProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import { MostCooked, Recipe, User } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
-import recipeService from '@/services/recipeService'
+import { getRecipeService } from '@/services/recipeService'
 
 import { RecipeCreateState } from './RecipeCreateReducer'
 
@@ -91,7 +91,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
         await FirebaseService.storageRef.child(state.selectedTrial.fullPath).delete()
       }
 
-      recipeService.recipeCreateState = null
+      getRecipeService().recipeCreateState = null
       enqueueSnackbar(`${recipeName} gespeichert`, {
         variant: 'success',
       })

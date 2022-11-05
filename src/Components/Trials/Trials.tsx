@@ -16,13 +16,13 @@ import useDocumentTitle from '@/hooks/useDocumentTitle'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
 import { ChangesRecord, Trial } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
-import recipeService from '@/services/recipeService'
+import { getRecipeService } from '@/services/recipeService'
 
 import TrialsCard from './TrialsCard'
 
 // ToDo should use AttachmentDropzone hook
 const Trials = () => {
-  const [pagedTrials, setPagedTrials] = useState<Map<string, Trial>>(recipeService.pagedTrials)
+  const [pagedTrials, setPagedTrials] = useState<Map<string, Trial>>(getRecipeService().pagedTrials)
   const [lastTrial, setLastTrial] = useState<Trial | undefined | null>(null)
   const [querying, setQuerying] = useState(false)
 
@@ -64,7 +64,7 @@ const Trials = () => {
         }
 
         const newTrials = new Map([...trials, ...changes.added])
-        recipeService.pagedTrials = newTrials
+        getRecipeService().pagedTrials = newTrials
 
         return newTrials
       })

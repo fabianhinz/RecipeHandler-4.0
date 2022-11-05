@@ -16,7 +16,7 @@ import { useCategorySelect } from '@/hooks/useCategorySelect'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import { Recipe } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
-import recipeService from '@/services/recipeService'
+import { getRecipeService } from '@/services/recipeService'
 
 import RelatedRecipesSelection from '../RelatedRecipesSelection'
 import RecipeResult from '../Result/RecipeResult'
@@ -33,7 +33,8 @@ interface Props extends Pick<RouteComponentProps, 'history' | 'location'> {
   edit?: boolean
 }
 
-const fromPropsOrPreviousState = ({ recipe }: Props) => recipe || recipeService.recipeCreateState
+const fromPropsOrPreviousState = ({ recipe }: Props) =>
+  recipe ?? getRecipeService().recipeCreateState
 
 const RecipeCreate = (props: Props) => {
   const { state, dispatch } = useRecipeCreateReducer(fromPropsOrPreviousState(props))
@@ -51,8 +52,11 @@ const RecipeCreate = (props: Props) => {
   useDocumentTitle(props.recipe ? props.recipe.name : 'Rezept erstellen')
 
   useEffect(() => {
-    if (match.path === PATHS.recipeEdit()) return
-    recipeService.recipeCreateState = state
+    if (match.path === PATHS.recipeEdit()) {
+      return
+    }
+
+    getRecipeService().recipeCreateState = state
   }, [match.path, state])
 
   useEffect(() => {

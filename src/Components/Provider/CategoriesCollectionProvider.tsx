@@ -13,7 +13,7 @@ type CategoriesCollection = {
 const Context = createContext<CategoriesCollection | null>(null)
 
 export const useCategoriesCollectionContext = () => useContext(Context) as CategoriesCollection
-
+// TODO, should keep order of category keys consistent
 const CategoriesCollectionProvider: FC = ({ children }) => {
   const [recipeCategories, setRecipeCategories] = useState<Categories<Array<string>>>({})
   const [expenseCategories, setExpenseCategories] = useState<Categories<Array<string>>>({})
@@ -24,9 +24,9 @@ const CategoriesCollectionProvider: FC = ({ children }) => {
     const categories = [categoriesRef.doc('recipes').get(), categoriesRef.doc('expenses').get()]
 
     const [recipes, expenses] = await Promise.all(categories)
-    setRecipeCategories((recipes.data() as Categories<Array<string>>) ?? [])
+    setRecipeCategories((recipes.data() as Categories<Array<string>>) ?? {})
 
-    const newExpenseCategories = (expenses.data() as Categories<Array<string>>) ?? []
+    const newExpenseCategories = (expenses.data() as Categories<Array<string>>) ?? {}
     setExpenseCategories(newExpenseCategories)
     // in a world without providers this would actually be handled by the store ...
     useExpenseStore.getState().setCategories(newExpenseCategories.autocomplete ?? [])

@@ -1,8 +1,10 @@
 import { Chip, ChipProps, makeStyles, Theme } from '@material-ui/core'
-import { FC } from 'react'
+import { Skeleton } from '@material-ui/lab'
+import { FC, useMemo } from 'react'
 
 import { Categories, Recipe } from '@/model/model'
 
+import { useCategoriesCollectionContext } from '../Provider/CategoriesCollectionProvider'
 import getIconByCategory from './CategoryIcons'
 
 type StyleProps = { swatches?: Recipe['previewAttachmentSwatches']; extraPadding?: boolean }
@@ -31,6 +33,8 @@ interface CategoryResultProps extends Pick<ChipProps, 'color' | 'variant' | 'siz
   categories: Categories<string>
 }
 
+const MOCKS = new Array(4).fill(1)
+
 export const CategoryResult: FC<CategoryResultProps> = ({
   categories,
   children,
@@ -39,10 +43,26 @@ export const CategoryResult: FC<CategoryResultProps> = ({
   ...chipProps
 }) => {
   const { categoryResultRoot, ...chipClasses } = useStyles({ swatches, extraPadding })
+  const { recipeCategories, categoriesLoading } = useCategoriesCollectionContext()
+
+  const sortedCategories = useMemo(() => {
+    const types = Object.keys(recipeCategories)
+    return Object.keys(categories).sort((a, b) => types.indexOf(a) - types.indexOf(b))
+  }, [categories, recipeCategories])
+
+  if (categoriesLoading) {
+    return (
+      <div className={categoryResultRoot}>
+        {MOCKS.map((_, index) => (
+          <Chip classes={chipClasses} size="small" key={index} label={<Skeleton width={90} />} />
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div className={categoryResultRoot}>
-      {Object.keys(categories).map(type => (
+      {sortedCategories.map(type => (
         <div key={type}>
           {categories[type].length > 0 && (
             <Chip

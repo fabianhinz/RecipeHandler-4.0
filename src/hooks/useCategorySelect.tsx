@@ -4,14 +4,18 @@ import { useRouteMatch } from 'react-router-dom'
 import { RecipeCreateState } from '@/Components/Recipe/Create/RecipeCreateReducer'
 import { PATHS } from '@/Components/Routes/Routes'
 import { Recipe } from '@/model/model'
-import recipeService from '@/services/recipeService'
+import { getRecipeService } from '@/services/recipeService'
+
 // ToDo we don't need this hook anymore, merge with categoryselection
 export const useCategorySelect = (recipe?: Recipe | RecipeCreateState | null) => {
   const match = useRouteMatch()
 
   const [state, setState] = useState<Map<string, string>>(() => {
-    if (match.path === PATHS.home) return recipeService.selectedCategories
-    else if (!recipe) return new Map()
+    if (match.path === PATHS.home) {
+      return getRecipeService().selectedCategories
+    } else if (!recipe) {
+      return new Map()
+    }
 
     return new Map(Object.keys(recipe.categories).map(type => [type, recipe.categories[type]]))
   })
@@ -27,14 +31,16 @@ export const useCategorySelect = (recipe?: Recipe | RecipeCreateState | null) =>
         newState = new Map(previous.set(type, value))
       }
 
-      if (match.path === PATHS.home) recipeService.selectedCategories = newState
+      if (match.path === PATHS.home) {
+        getRecipeService().selectedCategories = newState
+      }
       return newState
     })
   }
 
   const removeSelectedCategories = () => {
     setState(new Map())
-    recipeService.selectedCategories = new Map()
+    getRecipeService().selectedCategories = new Map()
   }
 
   return {

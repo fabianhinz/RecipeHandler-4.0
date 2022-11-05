@@ -13,7 +13,7 @@ import useDocumentTitle from '@/hooks/useDocumentTitle'
 import useProgress from '@/hooks/useProgress'
 import { User } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
-import recipeService from '@/services/recipeService'
+import { getRecipeService } from '@/services/recipeService'
 
 import AccountUserAdmin from '../AccountUser/AccountUserAdmin'
 import AccountUserHeader from '../AccountUser/AccountUserHeader'
@@ -76,8 +76,8 @@ const AccountUser = () => {
         if (typeof uid !== 'string') throw new Error('whoops we need a string for this')
 
         // ? throw away all "cached" recipes
-        recipeService.scrollPosition.set(PATHS.home, 0)
-        recipeService.pagedRecipes = new Map()
+        getRecipeService().scrollPosition.set(PATHS.home, 0)
+        getRecipeService().pagedRecipes = new Map()
 
         let selectedIds = [...user.selectedUsers]
         const idExists = selectedIds.some(id => id === uid)

@@ -10,7 +10,7 @@ import useDocumentTitle from '@/hooks/useDocumentTitle'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
 import { ChangesRecord, DocumentId, OrderByKey, OrderByRecord, Recipe } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
-import RecipeService from '@/services/recipeService'
+import { getRecipeService } from '@/services/recipeService'
 import { BORDER_RADIUS } from '@/theme'
 
 import HomeMostCooked from './HomeMostCooked'
@@ -41,17 +41,17 @@ const Home = () => {
   const pagedRecipesSize = useRef(0)
 
   const [pagedRecipes, setPagedRecipes] = useState<Map<DocumentId, Recipe>>(
-    RecipeService.pagedRecipes
+    getRecipeService().pagedRecipes
   )
 
   const [lastRecipe, setLastRecipe] = useState<Recipe | undefined | null>(null)
-  const [orderBy, setOrderBy] = useState<OrderByRecord>(RecipeService.orderBy)
+  const [orderBy, setOrderBy] = useState<OrderByRecord>(getRecipeService().orderBy)
   const [querying, setQuerying] = useState(false)
   const [tabIndex, setTabIndex] = useState(0)
 
   const { selectedCategories, setSelectedCategories, removeSelectedCategories } =
     useCategorySelect()
-  const [selectedEditor, setSelectedEditor] = useState<string>('')
+  const [selectedEditor, setSelectedEditor] = useState<string>(getRecipeService().selectedEditor)
 
   const { IntersectionObserverTrigger } = useIntersectionObserver({
     onIsIntersecting: () => {
@@ -81,7 +81,7 @@ const Home = () => {
     selectedCategories.forEach(
       (value, type) => (query = query.where(`categories.${type}`, '==', value))
     )
-    console.log('start after ', lastRecipe?.name)
+
     return query.limit(FirebaseService.QUERY_LIMIT).onSnapshot(querySnapshot => {
       const changes: ChangesRecord<Recipe> = {
         added: new Map(),
@@ -94,21 +94,19 @@ const Home = () => {
       }
       // TODO fix
       // 1. when creating a new recipe the app redirects to the home page and adds the recipe to the end of the map
-      // 2. after the first "startAfter" with a lastRecipe click on it and navigate back. This recipe will be deleted
+      // 2. **not in minfied bundle** after the first "startAfter" with a lastRecipe click on it and navigate back. This recipe will be deleted
       setPagedRecipes(recipes => {
         for (const [docId] of changes.removed) {
-          console.log('delete ', docId)
           recipes.delete(docId)
         }
 
         for (const [docId, modifiedRecipe] of changes.modified) {
-          console.log('modifiy ', docId)
           recipes.set(docId, modifiedRecipe)
         }
 
         const newRecipes = new Map([...recipes, ...changes.added])
         pagedRecipesSize.current = newRecipes.size
-        RecipeService.pagedRecipes = newRecipes
+        getRecipeService().pagedRecipes = newRecipes
 
         return newRecipes
       })
@@ -144,6 +142,7 @@ const Home = () => {
                       removeSelectedCategories()
                       resetRecipeState()
                       setSelectedEditor('')
+                      getRecipeService().selectedEditor = ''
                     }}
                     onSelectedCategoriesChange={(type, value) => {
                       setSelectedCategories(type, value)
@@ -152,6 +151,7 @@ const Home = () => {
                     selectedEditor={selectedEditor}
                     onSelectedEditorChange={uid => {
                       setSelectedEditor(uid)
+                      getRecipeService().selectedEditor = uid
                       resetRecipeState()
                     }}
                     orderBy={orderBy}

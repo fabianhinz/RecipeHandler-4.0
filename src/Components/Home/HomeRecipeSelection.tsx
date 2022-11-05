@@ -17,7 +17,7 @@ import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvid
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import { useRecipesCounterByUserUid } from '@/hooks/useRecipesCounterByUserUid'
 import { OrderByRecord } from '@/model/model'
-import recipeService from '@/services/recipeService'
+import { getRecipeService } from '@/services/recipeService'
 
 const useStyles = makeStyles(theme => ({
   orderByAsc: {
@@ -66,7 +66,7 @@ const HomeRecipeSelection = (props: Props) => {
     else newOrderBy = { [key]: 'asc' }
 
     props.onOrderByChange(newOrderBy)
-    recipeService.orderBy = newOrderBy
+    getRecipeService().orderBy = newOrderBy
   }
 
   const header = (
@@ -119,7 +119,7 @@ const HomeRecipeSelection = (props: Props) => {
       buttonProps={{ variant: 'text' }}>
       {authContext.user && (
         <Grid item xs={12}>
-          <ListSubheader className={classes.listSubheader}>Editoren</ListSubheader>
+          <ListSubheader className={classes.listSubheader}>Autoren</ListSubheader>
           <List>
             {recipesCounterByUserUid.map(([uid, counter]) => {
               const user = userContext.getByUid(uid)
@@ -145,7 +145,7 @@ const HomeRecipeSelection = (props: Props) => {
             maximum of 10 elements in the value array
             {user && (
                 <Grid item xs={12}>
-                    <ListSubheader className={classes.listSubheader}>Editoren</ListSubheader>
+                    <ListSubheader className={classes.listSubheader}>Autoren</ListSubheader>
                     <List disablePadding>
                         {usersContext.userIds.map(uid => {
                             const user = usersContext.getByUid(uid)!
