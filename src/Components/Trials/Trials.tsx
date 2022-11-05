@@ -14,7 +14,7 @@ import { getFileExtension } from '@/hooks/useAttachment'
 import { readDocumentAsync } from '@/hooks/useAttachmentDropzone'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
-import { Trial } from '@/model/model'
+import { ChangesRecord, Trial } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
 import recipeService from '@/services/recipeService'
 
@@ -44,18 +44,26 @@ const Trials = () => {
     if (lastTrial) query = query.startAfter(lastTrial.createdDate)
 
     return query.limit(FirebaseService.QUERY_LIMIT).onSnapshot(querySnapshot => {
-      const changes: Record<'added' | 'modified' | 'removed', Map<string, Trial>> = {
+      const changes: ChangesRecord<Trial> = {
         added: new Map(),
         modified: new Map(),
         removed: new Map(),
       }
-      querySnapshot
-        .docChanges()
-        .forEach(({ type, doc }) => changes[type].set(doc.id, doc.data() as Trial))
+
+      for (const change of querySnapshot.docChanges()) {
+        changes[change.type].set(change.doc.id, change.doc.data() as Trial)
+      }
 
       setPagedTrials(trials => {
-        changes.removed.forEach((_v, key) => trials.delete(key))
-        const newTrials = new Map([...trials, ...changes.added, ...changes.modified])
+        for (const [docId] of changes.removed) {
+          trials.delete(docId)
+        }
+
+        for (const [docId, modifiedTrial] of changes.modified) {
+          trials.set(docId, modifiedTrial)
+        }
+        // ? always add new trials to the top - helps when saving new trials. They're not lost ...
+        const newTrials = new Map([...changes.added, ...trials])
 
         recipeService.pagedTrials = newTrials
         return newTrials

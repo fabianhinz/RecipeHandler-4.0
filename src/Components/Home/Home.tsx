@@ -8,7 +8,7 @@ import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
 import { useCategorySelect } from '@/hooks/useCategorySelect'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
-import { DocumentId, OrderByKey, OrderByRecord, Recipe } from '@/model/model'
+import { ChangesRecord, DocumentId, OrderByKey, OrderByRecord, Recipe } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
 import RecipeService from '@/services/recipeService'
 import { BORDER_RADIUS } from '@/theme'
@@ -36,8 +36,6 @@ const StyledTab = withStyles(theme => ({
     fontSize: theme.typography.h6.fontSize,
   },
 }))(Tab)
-
-type ChangesRecord = Record<firebase.default.firestore.DocumentChangeType, Map<DocumentId, Recipe>>
 
 const Home = () => {
   const pagedRecipesSize = useRef(0)
@@ -85,18 +83,26 @@ const Home = () => {
     )
 
     return query.limit(FirebaseService.QUERY_LIMIT).onSnapshot(querySnapshot => {
-      const changes: ChangesRecord = {
+      const changes: ChangesRecord<Recipe> = {
         added: new Map(),
         modified: new Map(),
         removed: new Map(),
       }
-      querySnapshot
-        .docChanges()
-        .forEach(({ type, doc }) => changes[type].set(doc.id, doc.data() as Recipe))
+
+      for (const change of querySnapshot.docChanges()) {
+        changes[change.type].set(change.doc.id, change.doc.data() as Recipe)
+      }
 
       setPagedRecipes(recipes => {
-        changes.removed.forEach((_v, key) => recipes.delete(key))
-        const newRecipes = new Map([...recipes, ...changes.added, ...changes.modified])
+        for (const [docId] of changes.removed) {
+          recipes.delete(docId)
+        }
+
+        for (const [docId, modifiedRecipe] of changes.modified) {
+          recipes.set(docId, modifiedRecipe)
+        }
+        // ? always add new recipes to the top - helps when saving new recipes. They're not lost ...
+        const newRecipes = new Map([...changes.added, ...recipes])
         pagedRecipesSize.current = newRecipes.size
 
         RecipeService.pagedRecipes = newRecipes
