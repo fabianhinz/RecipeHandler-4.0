@@ -62,10 +62,10 @@ const Trials = () => {
         for (const [docId, modifiedTrial] of changes.modified) {
           trials.set(docId, modifiedTrial)
         }
-        // ? always add new trials to the top - helps when saving new trials. They're not lost ...
-        const newTrials = new Map([...changes.added, ...trials])
 
+        const newTrials = new Map([...trials, ...changes.added])
         recipeService.pagedTrials = newTrials
+
         return newTrials
       })
       setQuerying(false)

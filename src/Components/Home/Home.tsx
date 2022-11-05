@@ -81,7 +81,7 @@ const Home = () => {
     selectedCategories.forEach(
       (value, type) => (query = query.where(`categories.${type}`, '==', value))
     )
-
+    console.log('start after ', lastRecipe?.name)
     return query.limit(FirebaseService.QUERY_LIMIT).onSnapshot(querySnapshot => {
       const changes: ChangesRecord<Recipe> = {
         added: new Map(),
@@ -92,20 +92,24 @@ const Home = () => {
       for (const change of querySnapshot.docChanges()) {
         changes[change.type].set(change.doc.id, change.doc.data() as Recipe)
       }
-
+      // TODO fix
+      // 1. when creating a new recipe the app redirects to the home page and adds the recipe to the end of the map
+      // 2. after the first "startAfter" with a lastRecipe click on it and navigate back. This recipe will be deleted
       setPagedRecipes(recipes => {
         for (const [docId] of changes.removed) {
+          console.log('delete ', docId)
           recipes.delete(docId)
         }
 
         for (const [docId, modifiedRecipe] of changes.modified) {
+          console.log('modifiy ', docId)
           recipes.set(docId, modifiedRecipe)
         }
-        // ? always add new recipes to the top - helps when saving new recipes. They're not lost ...
-        const newRecipes = new Map([...changes.added, ...recipes])
-        pagedRecipesSize.current = newRecipes.size
 
+        const newRecipes = new Map([...recipes, ...changes.added])
+        pagedRecipesSize.current = newRecipes.size
         RecipeService.pagedRecipes = newRecipes
+
         return newRecipes
       })
       setQuerying(false)
