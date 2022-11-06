@@ -3,6 +3,7 @@ import { createContext, FC, useCallback, useContext, useEffect, useState } from 
 import { Categories } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
 import useExpenseStore from '@/store/ExpenseStore'
+import { sortFn, sortObjectKeys } from '@/util/fns'
 
 type CategoriesCollection = {
   recipeCategories: Categories<Array<string>>
@@ -13,7 +14,7 @@ type CategoriesCollection = {
 const Context = createContext<CategoriesCollection | null>(null)
 
 export const useCategoriesCollectionContext = () => useContext(Context) as CategoriesCollection
-// TODO, should keep order of category keys consistent
+
 const CategoriesCollectionProvider: FC = ({ children }) => {
   const [recipeCategories, setRecipeCategories] = useState<Categories<Array<string>>>({})
   const [expenseCategories, setExpenseCategories] = useState<Categories<Array<string>>>({})
@@ -24,12 +25,17 @@ const CategoriesCollectionProvider: FC = ({ children }) => {
     const categories = [categoriesRef.doc('recipes').get(), categoriesRef.doc('expenses').get()]
 
     const [recipes, expenses] = await Promise.all(categories)
-    setRecipeCategories((recipes.data() as Categories<Array<string>>) ?? {})
 
-    const newExpenseCategories = (expenses.data() as Categories<Array<string>>) ?? {}
-    setExpenseCategories(newExpenseCategories)
+    const recipesData = recipes.data() as Categories<Array<string>>
+    setRecipeCategories(sortObjectKeys('asc', recipesData) ?? {})
+
+    const expensesData = expenses.data() as Categories<Array<string>>
+    const newExpenseCategories = expensesData ?? {}
+    setExpenseCategories(sortObjectKeys('asc', newExpenseCategories))
     // in a world without providers this would actually be handled by the store ...
-    useExpenseStore.getState().setCategories(newExpenseCategories.autocomplete ?? [])
+    useExpenseStore
+      .getState()
+      .setCategories(newExpenseCategories.autocomplete?.sort(sortFn('asc')) ?? [])
 
     setCategoriesLoading(false)
   }, [])
