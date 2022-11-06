@@ -1,5 +1,4 @@
-import { useSnackbar } from 'notistack'
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 import { AllDataUrls, AttachmentDoc, Metadata } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
@@ -61,7 +60,7 @@ export const useAttachment = (doc?: AttachmentDoc) => {
   })
   const [attachmentRefLoading, setAttachmentRefLoading] = useState(true)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!doc) {
       setAttachmentRef({ ...initialDataUrlsAndMetadata })
       setAttachmentRefLoading(false)
