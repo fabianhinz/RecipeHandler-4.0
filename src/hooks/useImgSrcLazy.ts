@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 interface Options {
   src: string | undefined
   skipOnUndefined?: boolean
@@ -9,11 +9,14 @@ const useImgSrcLazy = ({ src, skipOnUndefined }: Options) => {
   const [imgSrc, setImgSrc] = useState<string | undefined>()
   const imgRef = useRef(new Image())
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setImgLoading(true)
-
     if (!src) {
-      if (skipOnUndefined) setImgLoading(false)
+      if (skipOnUndefined) {
+        setImgLoading(false)
+        setImgSrc(undefined)
+        imgRef.current = new Image()
+      }
       return
     }
 

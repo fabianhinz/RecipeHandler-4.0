@@ -61,11 +61,15 @@ export const useAttachment = (doc?: AttachmentDoc) => {
   })
   const [attachmentRefLoading, setAttachmentRefLoading] = useState(true)
 
-  const { enqueueSnackbar } = useSnackbar()
-
   useEffect(() => {
-    if (!doc) return setAttachmentRefLoading(false)
-    else setAttachmentRefLoading(true)
+    if (!doc) {
+      setAttachmentRef({ ...initialDataUrlsAndMetadata })
+      setAttachmentRefLoading(false)
+      return
+    } else {
+      setAttachmentRefLoading(true)
+    }
+
     let mounted = true
 
     getResizedImagesWithMetadata(doc.fullPath).then(urlsAndMetadata => {
@@ -77,7 +81,7 @@ export const useAttachment = (doc?: AttachmentDoc) => {
     return () => {
       mounted = false
     }
-  }, [doc, enqueueSnackbar])
+  }, [doc])
 
   return { attachmentRef, attachmentRefLoading }
 }

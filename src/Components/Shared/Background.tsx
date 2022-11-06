@@ -1,20 +1,16 @@
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles, Theme, useTheme } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
-import { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router'
 
-import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import { useAttachment } from '@/hooks/useAttachment'
 import useImgSrcLazy from '@/hooks/useImgSrcLazy'
-import { AttachmentDoc, User } from '@/model/model'
+import { AttachmentDoc } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
 
 type StyleProps = {
-  imgSrc?: string
-  user?: User
-  imgLoading?: boolean
-  attachmentRefLoading?: boolean
+  backgroundImage: string
 }
 
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
@@ -27,18 +23,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     left: 95,
     width: '100vw',
     height: '50vh',
-    backgroundImage: props => {
-      if (props.imgLoading || props.attachmentRefLoading) {
-        return 'unset'
-      }
-      if (props.imgSrc) {
-        return `url(${CSS.escape(props.imgSrc)})`
-      }
-
-      return `linear-gradient(90deg,${
-        theme.palette.type === 'light' ? '#8EDB91' : '#74B377'
-      } 30%,#81c784 70%)`
-    },
+    backgroundImage: props => props.backgroundImage,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     [theme.breakpoints.only('xs')]: {
@@ -61,7 +46,6 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     padding: theme.spacing(2),
     filter: theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
     width: 400,
-    display: props.imgSrc ? 'none' : 'static',
     [theme.breakpoints.only('xs')]: {
       flex: 1,
     },
@@ -81,12 +65,29 @@ export const Background = ({ Icon }: Props) => {
     src: attachmentRef?.fullDataUrl,
     skipOnUndefined: true,
   })
-  const { user } = useFirebaseAuthContext()
-  const classes = useStyles({ imgSrc, imgLoading, attachmentRefLoading, user })
+  const theme = useTheme()
+
+  const backgroundImage = useMemo(() => {
+    if (imgLoading || attachmentRefLoading) {
+      return 'unset'
+    }
+
+    if (imgSrc) {
+      return `url(${CSS.escape(imgSrc)})`
+    }
+
+    return `linear-gradient(90deg,${
+      theme.palette.type === 'light' ? '#8EDB91' : '#74B377'
+    } 30%,#81c784 70%)`
+  }, [attachmentRefLoading, imgLoading, imgSrc, theme.palette.type])
+
+  const classes = useStyles({ backgroundImage })
 
   useLayoutEffect(() => {
     setFirstAttachment(undefined)
-    if (match === null || !user) return
+    if (match === null) {
+      return
+    }
 
     FirebaseService.firestore
       .collection('recipes')
@@ -98,10 +99,14 @@ export const Background = ({ Icon }: Props) => {
       .then(snapshot => {
         const randomDoc = snapshot.docs[Math.floor(Math.random() * snapshot.docs.length)]
 
-        if (randomDoc) setFirstAttachment(randomDoc.data() as AttachmentDoc)
+        if (randomDoc.exists) {
+          setFirstAttachment(randomDoc.data() as AttachmentDoc)
+        } else {
+          setFirstAttachment(undefined)
+        }
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname, user])
+  }, [location.pathname])
 
   return (
     <div className={classes.iconContainer}>
