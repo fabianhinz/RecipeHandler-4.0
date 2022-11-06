@@ -6,10 +6,6 @@ import { RECIPE_CARD_HEIGHT } from '@/Components/Home/HomeRecipeCard'
 import { useGridContext } from '@/Components/Provider/GridProvider'
 import { FirebaseService } from '@/services/firebase'
 
-interface StyleProps {
-  compactLayout: boolean
-}
-
 const useStyles = makeStyles(theme => {
   const trial = {
     [theme.breakpoints.down('sm')]: {
@@ -26,15 +22,7 @@ const useStyles = makeStyles(theme => {
 
   return {
     recipe: {
-      [theme.breakpoints.only('xs')]: {
-        height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : RECIPE_CARD_HEIGHT),
-      },
-      [theme.breakpoints.between('sm', 'md')]: {
-        height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : RECIPE_CARD_HEIGHT),
-      },
-      [theme.breakpoints.up('lg')]: {
-        height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : RECIPE_CARD_HEIGHT),
-      },
+      height: RECIPE_CARD_HEIGHT,
       width: '100%',
     },
     trialsSelection: trial,
@@ -59,8 +47,8 @@ interface Props {
 }
 
 const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
-  const { gridBreakpointProps, compactLayout } = useGridContext()
-  const classes = useStyles({ compactLayout })
+  const { gridBreakpointProps } = useGridContext()
+  const classes = useStyles()
 
   if (!visible) return <></>
 

@@ -2,14 +2,12 @@ import { AppBar, Avatar, Hidden, IconButton, makeStyles, Toolbar, Tooltip } from
 import MenuIcon from '@material-ui/icons/Menu'
 import {
   AccountCircleOutline,
-  EyeOffOutline,
-  EyeOutline,
   InformationOutline,
   ViewAgendaOutline,
   ViewGridOutline,
 } from 'mdi-material-ui'
 import { useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 
 import AccountAuthentication from '@/Components/Account/AccountAuthentication'
 import Nav from '@/Components/Nav'
@@ -70,12 +68,14 @@ const useStyles = makeStyles(theme => ({
 const Header = () => {
   const [authenticationOpen, setAuthenticationOpen] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  // TODO urgent: on expenses route match use different search component
+  const showExpensesSearch = useRouteMatch(PATHS.expenses)
 
   const classes = useStyles()
 
   const history = useHistory()
 
-  const { setGridLayout, gridLayout, compactLayout, setCompactLayout } = useGridContext()
+  const { setGridLayout, gridLayout } = useGridContext()
   const { user, loginEnabled } = useFirebaseAuthContext()
 
   return (
@@ -93,13 +93,6 @@ const Header = () => {
           <Search />
 
           <div className={classes.headerButtons}>
-            <Hidden mdUp>
-              <Tooltip title={compactLayout ? 'Detailansicht' : 'Kompaktansicht'}>
-                <IconButton onClick={() => setCompactLayout(prev => !prev)}>
-                  {compactLayout ? <EyeOutline /> : <EyeOffOutline />}
-                </IconButton>
-              </Tooltip>
-            </Hidden>
             <Hidden smDown>
               <Tooltip title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
                 <IconButton
@@ -109,11 +102,13 @@ const Header = () => {
               </Tooltip>
             </Hidden>
 
-            <Tooltip title="Impressum">
-              <IconButton onClick={() => history.push(PATHS.impressum)}>
-                <InformationOutline />
-              </IconButton>
-            </Tooltip>
+            <Hidden smDown>
+              <Tooltip title="Impressum">
+                <IconButton onClick={() => history.push(PATHS.impressum)}>
+                  <InformationOutline />
+                </IconButton>
+              </Tooltip>
+            </Hidden>
 
             <Tooltip title={user?.username || 'Einloggen'}>
               <div

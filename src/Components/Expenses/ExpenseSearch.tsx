@@ -37,25 +37,24 @@ const fetchMatchingDocuments = async (
       continue
     }
 
-    query = query.where(key, '==', value).limit(25)
+    query = query.where(key, '==', value)
   }
 
-  const snapshot = await query.get()
-  return snapshot.docs.map(document => ({ ...document.data(), id: document.id } as Expense))
+  if (Object.values(searchValue).some(value => value.length > 0)) {
+    const snapshot = await query.orderBy('date', 'desc').limit(25).get()
+    return snapshot.docs.map(document => ({ ...document.data(), id: document.id } as Expense))
+  }
+
+  return []
 }
 
-/*
- * TODO
- * - using the "clear" btn in the ExpenseAutocompleteWrapper components does not invoke the change handler
- * - ui polishing (e.g. where to put the search)
- * - defered invocation of fetchMatchingDocuments
- */
 export const ExpenseSearch = () => {
   const [searchValue, setSearchValue] = useState<ExpenseSearchValue>({
     shop: '',
     category: '',
     description: '',
   })
+
   const [searchResults, setSearchResults] = useState<Expense[]>([])
   const authContext = useFirebaseAuthContext()
 
@@ -74,6 +73,7 @@ export const ExpenseSearch = () => {
     <div>
       <div className={classes.expenseSearchGrid}>
         <ExpenseAutocompleteWrapper
+          clearable
           shop={searchValue.shop}
           onShopChange={handleAutocompleteChange('shop')}
           category={searchValue.category}

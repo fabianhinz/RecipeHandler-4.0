@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 
 import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from '@/Components/Home/HomeRecipeCard'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
-import { useGridContext } from '@/Components/Provider/GridProvider'
 import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
 import NotFound from '@/Components/Shared/NotFound'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
@@ -12,32 +11,19 @@ import { CookingHistory, Recipe } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS } from '@/theme'
 
-interface StyleProps {
-  compactLayout: boolean
-}
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   skeleton: {
-    [theme.breakpoints.only('xs')]: {
-      height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : RECIPE_CARD_HEIGHT),
-    },
-    [theme.breakpoints.between('sm', 'md')]: {
-      height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : RECIPE_CARD_HEIGHT),
-    },
-    [theme.breakpoints.up('lg')]: {
-      height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : RECIPE_CARD_HEIGHT),
-    },
+    height: RECIPE_CARD_HEIGHT,
     width: '100%',
     borderRadius: BORDER_RADIUS,
   },
-}))
+})
 
 const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
   const [recipe, setRecipe] = useState<Recipe | null>(null)
   const [notFound, setNotFound] = useState(false)
 
-  const { compactLayout } = useGridContext()
-  const classes = useStyles({ compactLayout })
+  const classes = useStyles()
 
   useEffect(() => {
     FirebaseService.firestore

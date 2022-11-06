@@ -184,7 +184,7 @@ const Search = () => {
             onBlur={handleFocusChange('out')}
             className={classes.searchInput}
             fullWidth
-            placeholder="Suchen"
+            placeholder="Rezepte suchen"
             value={value}
             onChange={handleInputChange}
             endAdornment={

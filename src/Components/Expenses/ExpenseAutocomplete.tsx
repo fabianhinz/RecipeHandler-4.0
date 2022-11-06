@@ -5,6 +5,7 @@ interface Props {
   disableFreeSolo?: boolean
   label: string
   value?: string
+  clearable?: boolean
   options: string[]
   onValueChange: (value: string) => void
 }
@@ -20,7 +21,11 @@ const ExpenseAutocomplete = (props: Props) => (
     fullWidth
     value={props.value}
     onChange={(_, newValue: string | null) => {
-      if (newValue) props.onValueChange(newValue)
+      if (props.clearable) {
+        props.onValueChange(newValue ?? '')
+      } else if (newValue) {
+        props.onValueChange(newValue)
+      }
     }}
     filterOptions={(options, filterState) => {
       const filtered = filter(options, filterState)

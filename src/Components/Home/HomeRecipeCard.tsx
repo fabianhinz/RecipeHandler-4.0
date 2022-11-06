@@ -1,28 +1,16 @@
-import {
-  Avatar,
-  Box,
-  Card,
-  CardActionArea,
-  Grid,
-  makeStyles,
-  Paper,
-  Theme,
-  Typography,
-  Zoom,
-} from '@material-ui/core'
+import { Avatar, Box, Card, Grid, makeStyles, Theme, Typography, Zoom } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { CategoryResult } from '@/Components/Category/CategoryResult'
-import { useGridContext } from '@/Components/Provider/GridProvider'
-import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import useImgSrcLazy from '@/hooks/useImgSrcLazy'
 import { Recipe } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS } from '@/theme'
 
+import { useUsersContext } from '../Provider/UsersProvider'
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
 export const RECIPE_CARD_HEIGHT = 300
@@ -101,8 +89,6 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
     src: recipe.previewAttachment,
     skipOnUndefined: true,
   })
-
-  const { gridBreakpointProps, compactLayout } = useGridContext()
   const { getByUid } = useUsersContext()
   const classes = useStyles({ hover, swatches: recipe.previewAttachmentSwatches })
 
@@ -111,21 +97,6 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
   const changeHover = (state: 'active' | 'inactive') => () => {
     setHover(state === 'active')
   }
-
-  if (compactLayout)
-    return (
-      <Grid {...gridBreakpointProps} item>
-        <Link to={{ pathname: PATHS.details(recipe.name), state: { recipe } }}>
-          <CardActionArea>
-            <Paper className={classes.compactPaper}>
-              <Typography noWrap variant="h6">
-                {recipe.name}
-              </Typography>
-            </Paper>
-          </CardActionArea>
-        </Link>
-      </Grid>
-    )
 
   if (imgLoading)
     return (

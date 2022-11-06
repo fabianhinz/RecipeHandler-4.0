@@ -8,8 +8,6 @@ type GridContext = {
   setGridLayout: React.Dispatch<React.SetStateAction<GridLayout>>
   gridLayout: GridLayout
   gridBreakpointProps: Partial<Record<Breakpoint, boolean | GridSize>>
-  compactLayout: boolean
-  setCompactLayout: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Context = createContext<GridContext | null>(null)
@@ -18,7 +16,6 @@ export const useGridContext = () => useContext(Context) as GridContext
 
 const GridProvider: FC = ({ children }) => {
   const [gridLayout, setGridLayout] = useState<GridLayout>('list')
-  const [compactLayout, setCompactLayout] = useState(false)
 
   return (
     <Context.Provider
@@ -26,8 +23,6 @@ const GridProvider: FC = ({ children }) => {
         gridLayout,
         setGridLayout,
         gridBreakpointProps: gridLayout === 'list' ? { xs: 12 } : { xs: 12, md: 6, xl: 4 },
-        compactLayout,
-        setCompactLayout,
       }}>
       {children}
     </Context.Provider>
