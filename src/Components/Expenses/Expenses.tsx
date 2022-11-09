@@ -12,7 +12,7 @@ import {
   useTheme,
   withStyles,
 } from '@material-ui/core'
-import { Search, TableChart, Timeline, VerticalSplit } from '@material-ui/icons'
+import { TableChart, Timeline, VerticalSplit } from '@material-ui/icons'
 import AddIcon from '@material-ui/icons/Add'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
@@ -31,7 +31,6 @@ import ArchivedExpensesSelection from './ArchivedExpensesSelection'
 import ExpenseDialog from './ExpenseDialog'
 import ExpensesByMonth from './ExpensesByMonth'
 import { ExpensesChart } from './ExpensesChart'
-import { ExpenseSearch } from './ExpenseSearch'
 import { ExpensesSplitView } from './ExpensesSplitView'
 import ExpenseUserCard from './ExpenseUserCard'
 import expenseUtils from './helper/expenseUtils'
@@ -66,7 +65,7 @@ export type ExpenseFilterChangeHandler = <Key extends keyof ExpenseFilter>(
   value: ExpenseFilter[Key]
 ) => void
 
-export type ViewVariant = 'table' | 'graph' | 'split' | 'search'
+export type ViewVariant = 'table' | 'graph' | 'split'
 
 const StyledTab = withStyles(theme => ({
   wrapper: {
@@ -220,9 +219,6 @@ const Expenses = () => {
                 <ToggleButton value="graph">
                   <Timeline />
                 </ToggleButton>
-                <ToggleButton value="search">
-                  <Search />
-                </ToggleButton>
                 <ToggleButton disabled={!lgUp} value="split">
                   <VerticalSplit />
                 </ToggleButton>
@@ -258,7 +254,6 @@ const Expenses = () => {
         <Grid item xs={12}>
           {view === 'table' && memoizedTable}
           {view === 'graph' && memoizedGraph}
-          {view === 'search' && <ExpenseSearch />}
 
           {view === 'split' && (
             <ExpensesSplitView>

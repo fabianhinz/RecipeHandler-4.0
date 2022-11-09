@@ -1,14 +1,17 @@
-import { Chip, makeStyles, TextField } from '@material-ui/core'
+import { Chip, Container, ListSubheader, makeStyles, TextField } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
 import { useMemo, useState } from 'react'
 
 import { Expense } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
-import useExpenseStore, { EXPENSE_COLLECTION, USER_COLLECTION } from '@/store/ExpenseStore'
+import useExpenseStore, {
+  AutocompleteOptionGroups,
+  EXPENSE_COLLECTION,
+  ExpenseState,
+  USER_COLLECTION,
+} from '@/store/ExpenseStore'
 
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { ExpenseAutocompleteWrapper } from './ExpenseAutocompleteWrapper'
-import ExpenseCard from './ExpenseCard'
 
 const useStyles = makeStyles(theme => ({
   expenseSearchGrid: {
@@ -22,85 +25,126 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     gap: theme.spacing(2),
   },
+  container: {
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+  },
+  autoCompleteListBox: {
+    padding: 0,
+  },
+  listSubheader: {
+    backgroundColor: theme.palette.background.default,
+    boxShadow: theme.shadows[1],
+  },
 }))
 
-type ExpenseSearchValue = Pick<Expense, 'shop' | 'category' | 'description'>
-
 const fetchMatchingDocuments = async (
-  searchValue: ExpenseSearchValue,
+  searchValue: AutocompleteOption[],
   userId: string | undefined
-): Promise<Expense[]> => {
+): Promise<void> => {
+  if (searchValue.length === 0) {
+    useExpenseStore.getState().handleExpensesChange([])
+    return
+  }
+  // TODO creating a query is stupid. The client already has all necessary data in the store 🚀
   let query: firebase.default.firestore.CollectionReference | firebase.default.firestore.Query =
     FirebaseService.firestore.collection(USER_COLLECTION).doc(userId).collection(EXPENSE_COLLECTION)
 
-  for (const [key, value] of Object.entries(searchValue)) {
-    if (value.length === 0) {
-      continue
-    }
-
-    query = query.where(key, '==', value)
+  for (const { group, value } of searchValue) {
+    query = query.where(group, '==', value)
   }
 
-  if (Object.values(searchValue).some(value => value.length > 0)) {
-    const snapshot = await query.orderBy('date', 'desc').limit(25).get()
-    return snapshot.docs.map(document => ({ ...document.data(), id: document.id } as Expense))
-  }
+  const snapshot = await query.orderBy('date', 'desc').get()
+  const expenses = snapshot.docs.map(
+    document => ({ ...document.data(), id: document.id } as Expense)
+  )
+  useExpenseStore.getState().handleExpensesChange(expenses)
+}
 
-  return []
+const LOCALIZED_LABELS: Record<string, string> = {
+  shop: 'Geschäft',
+  category: 'Kategorie',
+  description: 'Beschreibung',
+}
+
+interface AutocompleteOption {
+  group: AutocompleteOptionGroups
+  value: string
 }
 
 export const ExpenseSearch = () => {
-  const [searchValue, setSearchValue] = useState<ExpenseSearchValue>({
-    shop: '',
-    category: '',
-    description: '',
+  const [searchValue, setSearchValue] = useState<AutocompleteOption[]>([])
+  const autocompleteOptions = useExpenseStore(store => {
+    const { category, description, shop } = store.autocompleteOptions
+    return { category, description, shop }
   })
-  const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
   const optionsFlattened = useMemo(() => {
     return Object.entries(autocompleteOptions)
-      .map(([category, options]) => options.map(value => ({ category, value })))
+      .map(([group, options]) =>
+        options.map(value => {
+          const searchOption: AutocompleteOption = {
+            group: group as AutocompleteOptionGroups,
+            value,
+          }
+          return searchOption
+        })
+      )
       .flat()
   }, [autocompleteOptions])
 
-  const [searchResults, setSearchResults] = useState<Expense[]>([])
   const authContext = useFirebaseAuthContext()
 
   const classes = useStyles()
 
-  function handleAutocompleteChange<Key extends keyof typeof searchValue>(key: Key) {
-    return async (value: Expense[Key]) => {
-      const newSearchValue = { ...searchValue, [key]: value }
-
-      setSearchValue(newSearchValue)
-      setSearchResults(await fetchMatchingDocuments(newSearchValue, authContext.user?.uid))
-    }
-  }
-
   return (
-    <>
+    <Container maxWidth="md" className={classes.container}>
       <Autocomplete
+        classes={{ listbox: classes.autoCompleteListBox }}
         multiple
-        renderTags={(tags, props) =>
-          tags.map(tag => (
+        renderTags={(tags, getTagProps) =>
+          tags.map((tag, index) => (
             <Chip
               size="small"
-              key={`${tag.category}:${tag.value}`}
-              label={`${tag.category}:${tag.value}`}
+              color="secondary"
+              key={`${tag.group}:${tag.value}`}
+              label={`${LOCALIZED_LABELS[tag.group]}: ${tag.value}`}
+              {...getTagProps({ index })}
             />
           ))
         }
+        renderGroup={params => (
+          <div key={params.key}>
+            <ListSubheader className={classes.listSubheader}>
+              {LOCALIZED_LABELS[params.group]}
+            </ListSubheader>
+            {params.children}
+          </div>
+        )}
+        getOptionSelected={(option, selected) =>
+          option.group === selected.group && option.value === selected.value
+        }
+        fullWidth
         options={optionsFlattened}
-        groupBy={option => option.category}
+        groupBy={option => option.group}
         getOptionLabel={option => option.value}
-        style={{ width: 300 }}
+        value={searchValue}
+        onChange={async (_, newValue) => {
+          const latestEntry = newValue.at(-1)
+          if (!latestEntry) {
+            await fetchMatchingDocuments([], authContext.user?.uid)
+            setSearchValue(newValue)
+            return
+          }
+
+          const newSearchValue = [
+            ...newValue.filter(v => v.group !== latestEntry.group),
+            latestEntry,
+          ]
+          setSearchValue(newSearchValue)
+          await fetchMatchingDocuments(newSearchValue, authContext.user?.uid)
+        }}
         renderInput={params => <TextField {...params} label="Ausgaben suchen" variant="filled" />}
       />
-
-      {/* <div className={classes.expenseSearchFlexContainer}>
-        {searchResults.map(expense => (
-          <ExpenseCard key={expense.id} expense={expense} />
-        ))}
-      </div> */}
-    </>
+    </Container>
   )
 }

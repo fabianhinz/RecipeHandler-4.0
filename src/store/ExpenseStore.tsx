@@ -4,17 +4,17 @@ import expenseUtils from '@/Components/Expenses/helper/expenseUtils'
 import { ArchivedExpense, Expense } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
 
+export type AutocompleteOptionGroups = 'creator' | 'shop' | 'category' | 'description'
+
 export type ExpenseState = {
   loading: boolean
   expenses: Expense[]
+  allExpenses: Expense[]
   expensesByMonth: Map<string, Expense[]>
   years: number[]
   categories: string[]
   isNewExpenseDialogOpen: boolean
-  autocompleteOptions: Record<
-    keyof Pick<Expense, 'creator' | 'shop' | 'category' | 'description'>,
-    string[]
-  >
+  autocompleteOptions: Record<keyof Pick<Expense, AutocompleteOptionGroups>, string[]>
 }
 
 type ExpenseActions = {
@@ -27,6 +27,7 @@ type ExpenseActions = {
   updateExpense: (expense: Expense, userId: string) => void
   setAutocompleteOptions: (autocompleteOptions: ExpenseState['autocompleteOptions']) => void
   setCategories: (categories: string[]) => void
+  handleExpensesChange: (expenses: Expense[]) => void
   handleFirebaseSnapshot: (
     snapshot: firebase.default.firestore.QuerySnapshot<firebase.default.firestore.DocumentData>
   ) => void
@@ -38,9 +39,10 @@ export const USER_COLLECTION = 'users'
 export const EXPENSE_COLLECTION = 'expenses'
 export const ARCHIVED_EXPENSES_COLLECTION = 'archivedExpenses'
 
-const useExpenseStore = create<ExpenseStore>(set => ({
+const useExpenseStore = create<ExpenseStore>((set, get) => ({
   loading: true,
   expenses: [],
+  allExpenses: [],
   expensesByMonth: new Map(),
   categories: [],
   isNewExpenseDialogOpen: false,
@@ -93,10 +95,9 @@ const useExpenseStore = create<ExpenseStore>(set => ({
   setAutocompleteOptions: autocompleteOptions => {
     set(() => ({ autocompleteOptions }))
   },
-  handleFirebaseSnapshot: snapshot => {
-    const expenses = snapshot.docs.map(
-      document => ({ ...document.data(), id: document.id } as Expense)
-    )
+  handleExpensesChange: incommingExpenses => {
+    const expenses = incommingExpenses.length === 0 ? get().allExpenses : incommingExpenses
+
     const uniqeMonths = Array.from(
       new Set(expenses.map(e => expenseUtils.getMonthStringByDate(e.date.toDate())))
     )
@@ -108,6 +109,14 @@ const useExpenseStore = create<ExpenseStore>(set => ({
         expenses.filter(e => expenseUtils.getMonthStringByDate(e.date.toDate()) === month),
       ])
     )
+
+    set({ expenses, expensesByMonth, years })
+  },
+  handleFirebaseSnapshot: snapshot => {
+    const expenses = snapshot.docs.map(
+      document => ({ ...document.data(), id: document.id } as Expense)
+    )
+
     const autocompleteOptions = {
       creator: Array.from(
         new Set([
@@ -122,7 +131,8 @@ const useExpenseStore = create<ExpenseStore>(set => ({
       ).sort(),
     }
 
-    set({ loading: false, expenses, expensesByMonth, autocompleteOptions, years })
+    set({ loading: false, autocompleteOptions, allExpenses: expenses })
+    get().handleExpensesChange(expenses)
   },
 }))
 
