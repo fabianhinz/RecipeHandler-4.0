@@ -16,6 +16,8 @@ import { useGridContext } from '@/Components/Provider/GridProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import Search from '@/Components/Search/Search'
 
+import { ExpenseSearch } from './Expenses/ExpenseSearch'
+
 const useStyles = makeStyles(theme => ({
   userAvatar: {
     height: 40,
@@ -90,7 +92,7 @@ const Header = () => {
             </IconButton>
           </div>
 
-          <Search />
+          {showExpensesSearch ? <ExpenseSearch /> : <Search />}
 
           <div className={classes.headerButtons}>
             <Hidden smDown>

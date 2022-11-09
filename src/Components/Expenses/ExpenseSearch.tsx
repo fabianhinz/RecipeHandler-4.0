@@ -1,9 +1,10 @@
-import { makeStyles } from '@material-ui/core'
-import { useState } from 'react'
+import { Chip, makeStyles, TextField } from '@material-ui/core'
+import { Autocomplete } from '@material-ui/lab'
+import { useMemo, useState } from 'react'
 
 import { Expense } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
-import { EXPENSE_COLLECTION, USER_COLLECTION } from '@/store/ExpenseStore'
+import useExpenseStore, { EXPENSE_COLLECTION, USER_COLLECTION } from '@/store/ExpenseStore'
 
 import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
 import { ExpenseAutocompleteWrapper } from './ExpenseAutocompleteWrapper'
@@ -54,6 +55,12 @@ export const ExpenseSearch = () => {
     category: '',
     description: '',
   })
+  const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
+  const optionsFlattened = useMemo(() => {
+    return Object.entries(autocompleteOptions)
+      .map(([category, options]) => options.map(value => ({ category, value })))
+      .flat()
+  }, [autocompleteOptions])
 
   const [searchResults, setSearchResults] = useState<Expense[]>([])
   const authContext = useFirebaseAuthContext()
@@ -70,24 +77,30 @@ export const ExpenseSearch = () => {
   }
 
   return (
-    <div>
-      <div className={classes.expenseSearchGrid}>
-        <ExpenseAutocompleteWrapper
-          clearable
-          shop={searchValue.shop}
-          onShopChange={handleAutocompleteChange('shop')}
-          category={searchValue.category}
-          onCategoryChange={handleAutocompleteChange('category')}
-          description={searchValue.description}
-          onDescriptionChange={handleAutocompleteChange('description')}
-        />
-      </div>
+    <>
+      <Autocomplete
+        multiple
+        renderTags={(tags, props) =>
+          tags.map(tag => (
+            <Chip
+              size="small"
+              key={`${tag.category}:${tag.value}`}
+              label={`${tag.category}:${tag.value}`}
+            />
+          ))
+        }
+        options={optionsFlattened}
+        groupBy={option => option.category}
+        getOptionLabel={option => option.value}
+        style={{ width: 300 }}
+        renderInput={params => <TextField {...params} label="Ausgaben suchen" variant="filled" />}
+      />
 
-      <div className={classes.expenseSearchFlexContainer}>
+      {/* <div className={classes.expenseSearchFlexContainer}>
         {searchResults.map(expense => (
           <ExpenseCard key={expense.id} expense={expense} />
         ))}
-      </div>
-    </div>
+      </div> */}
+    </>
   )
 }
