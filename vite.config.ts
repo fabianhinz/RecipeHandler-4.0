@@ -43,7 +43,7 @@ export default defineConfig({
         display: 'standalone',
         theme_color: '#FFFFFF',
         background_color: '#FAFAFA',
-        orientation: 'any',
+        orientation: 'natural',
       },
     }),
   ],

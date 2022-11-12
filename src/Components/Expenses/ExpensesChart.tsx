@@ -83,6 +83,7 @@ export const ExpensesChart = (props: Props) => {
   const shops = useExpenseStore(store => store.autocompleteOptions.shop)
   const descriptions = useExpenseStore(store => store.autocompleteOptions.description)
   const expenseFilter = useExpenseStore(store => store.expenseFilter)
+  const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
   const handleExpenseFilterChange = useExpenseStore(store => store.handleExpenseFilterChange)
   const theme = useTheme()
   const xlUp = useMediaQuery(theme.breakpoints.up('xl'))
@@ -100,12 +101,12 @@ export const ExpensesChart = (props: Props) => {
   const currentCategoryHasAmount = useCallback(
     (category: string) => {
       return (
-        Object.keys(expenseFilter).length === 0 ||
+        !hasActiveFilter ||
         expenseFilter.category === category ||
         'category' in expenseFilter === false
       )
     },
-    [expenseFilter]
+    [expenseFilter, hasActiveFilter]
   )
 
   const monthData = useMemo(() => {

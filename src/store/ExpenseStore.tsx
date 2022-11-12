@@ -11,6 +11,7 @@ export type ExpenseState = {
   loading: boolean
   expenses: Expense[]
   expenseFilter: ExpenseFilter
+  hasActiveFilter: boolean
   expensesByMonth: Map<string, Expense[]>
   years: number[]
   categories: string[]
@@ -53,6 +54,7 @@ const useExpenseStore = create<ExpenseStore>((set, get) => ({
   years: [],
   autocompleteOptions: { creator: [], shop: [], category: [], description: [] },
   expenseFilter: {},
+  hasActiveFilter: false,
   setCategories: categories => {
     set(() => ({
       categories,
@@ -140,7 +142,7 @@ const useExpenseStore = create<ExpenseStore>((set, get) => ({
       nextFilter[key] = value
     }
 
-    set({ expenseFilter: nextFilter })
+    set({ expenseFilter: nextFilter, hasActiveFilter: Object.keys(nextFilter).length > 0 })
   },
 }))
 

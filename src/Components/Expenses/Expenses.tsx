@@ -67,12 +67,6 @@ const StyledTab = withStyles(theme => ({
   },
 }))(Tab)
 
-// TODO vite
-/**
- * - skeleton / loading animations
- * - Error boundaries
- * - CLEANUP 🧐
- */
 const Expenses = () => {
   const theme = useTheme()
   const lgUp = useMediaQuery(theme.breakpoints.up('lg'))

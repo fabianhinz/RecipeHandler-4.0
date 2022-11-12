@@ -75,7 +75,7 @@ interface Props {
 const ExpenseUserCard = (props: Props) => {
   const expenses = useExpenseStore(selector)
   const categories = useExpenseStore(store => store.categories)
-  const expenseFilter = useExpenseStore(store => store.expenseFilter)
+  const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
   const [activePieCell, setActivePieCell] = useState<Nullable<ActivePieCell>>(null)
   const [userData, setUserData] = useState<UserData>({
     name: '',
@@ -84,14 +84,10 @@ const ExpenseUserCard = (props: Props) => {
     difference: 0,
   })
 
-  const disabled = useMemo(() => {
-    return Object.keys(expenseFilter).length > 0
-  }, [expenseFilter])
-
   const classes = useStyles({
     userData,
     activePieCell,
-    disabled,
+    disabled: hasActiveFilter,
   })
 
   useLayoutEffect(() => {
@@ -138,7 +134,7 @@ const ExpenseUserCard = (props: Props) => {
   )
 
   const handlePieChartMouseEnter = (_: unknown, index: number) => {
-    if (disabled) {
+    if (hasActiveFilter) {
       return
     }
 
