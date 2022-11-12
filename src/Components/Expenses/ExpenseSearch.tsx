@@ -36,7 +36,8 @@ const LOCALIZED_LABELS: Record<AutocompleteOptionGroups, string> = {
   category: 'Kategorie',
   description: 'Beschreibung',
 }
-
+// TODO vite should persist collapsed state by group
+// TODO vite keep styling consistent between search components
 const ExpenseGroup = (props: AutocompleteRenderGroupParams) => {
   const classes = useStyles()
   const [open, setOpen] = useState(true)

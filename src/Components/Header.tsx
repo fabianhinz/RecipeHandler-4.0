@@ -70,7 +70,6 @@ const useStyles = makeStyles(theme => ({
 const Header = () => {
   const [authenticationOpen, setAuthenticationOpen] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  // TODO urgent: on expenses route match use different search component
   const showExpensesSearch = useRouteMatch(PATHS.expenses)
 
   const classes = useStyles()

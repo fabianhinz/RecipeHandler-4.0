@@ -67,8 +67,8 @@ const StyledTab = withStyles(theme => ({
   },
 }))(Tab)
 
+// TODO vite
 /**
- * TODO urgent
  * - skeleton / loading animations
  * - Error boundaries
  * - CLEANUP 🧐
