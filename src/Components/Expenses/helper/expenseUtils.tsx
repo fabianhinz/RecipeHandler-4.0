@@ -7,9 +7,7 @@ import Weekend from '@material-ui/icons/Weekend'
 import { CashMultiple } from 'mdi-material-ui'
 
 import { Expense } from '@/model/model'
-import { ExpenseState } from '@/store/ExpenseStore'
-
-import { ExpenseFilter } from '../Expenses'
+import { ExpenseFilter, ExpenseState } from '@/store/ExpenseStore'
 
 type CategoryPaletteProps = { category: string; variant: 'chip' | 'card' }
 
@@ -84,7 +82,7 @@ const getMonthStringByDate = (date: Date) => {
 const numberFormatter = new Intl.NumberFormat('de')
 const expenseFormatter = new Intl.NumberFormat('de', { style: 'currency', currency: 'EUR' })
 
-const formatAmount = (amount: number) =>
+export const formatAmount = (amount: number | string) =>
   amount.toLocaleString('de-DE', {
     style: 'currency',
     currency: 'EUR',

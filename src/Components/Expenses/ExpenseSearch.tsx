@@ -1,17 +1,8 @@
-import { Chip, Container, ListSubheader, makeStyles, TextField } from '@material-ui/core'
-import { Autocomplete } from '@material-ui/lab'
+import { Chip, Collapse, Container, ListSubheader, makeStyles, TextField } from '@material-ui/core'
+import { Autocomplete, AutocompleteRenderGroupParams } from '@material-ui/lab'
 import { useMemo, useState } from 'react'
 
-import { Expense } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
-import useExpenseStore, {
-  AutocompleteOptionGroups,
-  EXPENSE_COLLECTION,
-  ExpenseState,
-  USER_COLLECTION,
-} from '@/store/ExpenseStore'
-
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
+import useExpenseStore, { AutocompleteOptionGroups, ExpenseFilter } from '@/store/ExpenseStore'
 
 const useStyles = makeStyles(theme => ({
   expenseSearchGrid: {
@@ -35,36 +26,29 @@ const useStyles = makeStyles(theme => ({
   listSubheader: {
     backgroundColor: theme.palette.background.default,
     boxShadow: theme.shadows[1],
+    cursor: 'pointer',
   },
 }))
 
-const fetchMatchingDocuments = async (
-  searchValue: AutocompleteOption[],
-  userId: string | undefined
-): Promise<void> => {
-  if (searchValue.length === 0) {
-    useExpenseStore.getState().handleExpensesChange([])
-    return
-  }
-  // TODO creating a query is stupid. The client already has all necessary data in the store 🚀
-  let query: firebase.default.firestore.CollectionReference | firebase.default.firestore.Query =
-    FirebaseService.firestore.collection(USER_COLLECTION).doc(userId).collection(EXPENSE_COLLECTION)
-
-  for (const { group, value } of searchValue) {
-    query = query.where(group, '==', value)
-  }
-
-  const snapshot = await query.orderBy('date', 'desc').get()
-  const expenses = snapshot.docs.map(
-    document => ({ ...document.data(), id: document.id } as Expense)
-  )
-  useExpenseStore.getState().handleExpensesChange(expenses)
-}
-
-const LOCALIZED_LABELS: Record<string, string> = {
+const LOCALIZED_LABELS: Record<AutocompleteOptionGroups, string> = {
+  creator: 'Ersteller',
   shop: 'Geschäft',
   category: 'Kategorie',
   description: 'Beschreibung',
+}
+
+const ExpenseGroup = (props: AutocompleteRenderGroupParams) => {
+  const classes = useStyles()
+  const [open, setOpen] = useState(true)
+
+  return (
+    <div>
+      <ListSubheader onClick={() => setOpen(!open)} className={classes.listSubheader}>
+        {LOCALIZED_LABELS[props.group as AutocompleteOptionGroups]}
+      </ListSubheader>
+      <Collapse in={open}>{props.children}</Collapse>
+    </div>
+  )
 }
 
 interface AutocompleteOption {
@@ -72,12 +56,10 @@ interface AutocompleteOption {
   value: string
 }
 
+// eslint-disable-next-line react/no-multi-comp
 export const ExpenseSearch = () => {
-  const [searchValue, setSearchValue] = useState<AutocompleteOption[]>([])
-  const autocompleteOptions = useExpenseStore(store => {
-    const { category, description, shop } = store.autocompleteOptions
-    return { category, description, shop }
-  })
+  const expenseFilter = useExpenseStore(store => store.expenseFilter)
+  const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
   const optionsFlattened = useMemo(() => {
     return Object.entries(autocompleteOptions)
       .map(([group, options]) =>
@@ -92,7 +74,15 @@ export const ExpenseSearch = () => {
       .flat()
   }, [autocompleteOptions])
 
-  const authContext = useFirebaseAuthContext()
+  const valueByExpenseFilter = useMemo(() => {
+    const options: AutocompleteOption[] = []
+
+    for (const [group, value] of Object.entries(expenseFilter)) {
+      options.push({ group: group as AutocompleteOptionGroups, value })
+    }
+
+    return options
+  }, [expenseFilter])
 
   const classes = useStyles()
 
@@ -112,14 +102,7 @@ export const ExpenseSearch = () => {
             />
           ))
         }
-        renderGroup={params => (
-          <div key={params.key}>
-            <ListSubheader className={classes.listSubheader}>
-              {LOCALIZED_LABELS[params.group]}
-            </ListSubheader>
-            {params.children}
-          </div>
-        )}
+        renderGroup={params => <ExpenseGroup {...params} />}
         getOptionSelected={(option, selected) =>
           option.group === selected.group && option.value === selected.value
         }
@@ -127,12 +110,11 @@ export const ExpenseSearch = () => {
         options={optionsFlattened}
         groupBy={option => option.group}
         getOptionLabel={option => option.value}
-        value={searchValue}
+        value={valueByExpenseFilter}
         onChange={async (_, newValue) => {
           const latestEntry = newValue.at(-1)
           if (!latestEntry) {
-            await fetchMatchingDocuments([], authContext.user?.uid)
-            setSearchValue(newValue)
+            useExpenseStore.setState({ expenseFilter: {} })
             return
           }
 
@@ -140,8 +122,11 @@ export const ExpenseSearch = () => {
             ...newValue.filter(v => v.group !== latestEntry.group),
             latestEntry,
           ]
-          setSearchValue(newSearchValue)
-          await fetchMatchingDocuments(newSearchValue, authContext.user?.uid)
+          const newFilter: ExpenseFilter = {}
+          for (const { group, value } of newSearchValue) {
+            newFilter[group] = value
+          }
+          useExpenseStore.setState({ expenseFilter: newFilter })
         }}
         renderInput={params => <TextField {...params} label="Ausgaben suchen" variant="filled" />}
       />

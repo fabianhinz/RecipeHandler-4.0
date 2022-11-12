@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { Expense } from '@/model/model'
 
-import expenseUtils from './helper/expenseUtils'
+import expenseUtils, { formatAmount } from './helper/expenseUtils'
 
 const useStyles = makeStyles<Theme, { backgroundColor?: string; color: string }>(theme => ({
   root: props => props,
@@ -25,7 +25,7 @@ const useStyles = makeStyles<Theme, { backgroundColor?: string; color: string }>
   },
 }))
 
-interface Props extends Pick<ChipProps, 'onClick' | 'disabled' | 'onDelete' | 'icon'> {
+interface Props extends Pick<ChipProps, 'onClick' | 'onDelete' | 'icon'> {
   category: string
   expenses: string | Expense[]
 }
@@ -41,18 +41,18 @@ const ExpenseCategoryChip = (props: Props) => {
       return props.expenses
     }
 
-    return expenseUtils.getAmountByCategory(props.category, props.expenses, true)
+    return expenseUtils.getAmountByCategory(props.category, props.expenses)
   }, [props.category, props.expenses])
 
   return (
     <Grid item key={props.category}>
       <Chip
         onClick={props.onClick}
-        disabled={props.disabled}
+        disabled={amount === 0}
         onDelete={props.onDelete}
         icon={props.icon ?? icon}
         classes={classes}
-        label={`${props.category}: ${amount}`}
+        label={`${props.category}: ${formatAmount(amount)}`}
       />
     </Grid>
   )

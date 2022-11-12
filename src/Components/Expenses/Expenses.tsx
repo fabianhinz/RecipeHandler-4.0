@@ -16,13 +16,13 @@ import { TableChart, Timeline, VerticalSplit } from '@material-ui/icons'
 import AddIcon from '@material-ui/icons/Add'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
+import { useLayoutEffect, useMemo, useState } from 'react'
 
 import { SecouredRouteFab } from '@/Components/Routes/SecouredRouteFab'
 import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
 import NotFound from '@/Components/Shared/NotFound'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
-import { Expense, Nullable } from '@/model/model'
+import { Nullable } from '@/model/model'
 import useCurrentExpenseStore from '@/store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
 import { BORDER_RADIUS } from '@/theme'
@@ -59,12 +59,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-export type ExpenseFilter = Partial<Pick<Expense, 'creator' | 'category' | 'shop'>>
-export type ExpenseFilterChangeHandler = <Key extends keyof ExpenseFilter>(
-  key: Key,
-  value: ExpenseFilter[Key]
-) => void
-
 export type ViewVariant = 'table' | 'graph' | 'split'
 
 const StyledTab = withStyles(theme => ({
@@ -80,7 +74,6 @@ const StyledTab = withStyles(theme => ({
  * - CLEANUP 🧐
  */
 const Expenses = () => {
-  const [filter, setFilter] = useState<ExpenseFilter>({})
   const theme = useTheme()
   const lgUp = useMediaQuery(theme.breakpoints.up('lg'))
   const xsDown = useMediaQuery(theme.breakpoints.down('xs'))
@@ -100,6 +93,7 @@ const Expenses = () => {
   const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
   const resetCurrentExpense = useCurrentExpenseStore(store => store.clearState)
   const years = useExpenseStore(store => store.years)
+  const expenseFilter = useExpenseStore(store => store.expenseFilter)
 
   useLayoutEffect(() => {
     if (years.length > 0) {
@@ -118,7 +112,7 @@ const Expenses = () => {
   }, [expensesByMonth])
 
   const expensesToRenderMemoized = useMemo(() => {
-    if (!filter && tabIndex === years.length) {
+    if (!expenseFilter && tabIndex === years.length) {
       return Array.from(expensesByMonth.entries())
     }
 
@@ -128,52 +122,29 @@ const Expenses = () => {
     }
     return expenseUtils.getFilteredExpensesByMonth(
       byYear ? new Map(byYear) : expensesByMonth,
-      filter
+      expenseFilter
     )
-  }, [expensesByMonth, filter, tabIndex, years])
-
-  const handleFilterChange: ExpenseFilterChangeHandler = useCallback(
-    (key, value) => {
-      const nextFilter = { ...filter }
-
-      if (nextFilter[key] === value) {
-        delete nextFilter[key]
-      } else {
-        nextFilter[key] = value
-      }
-
-      setFilter(nextFilter)
-    },
-    [filter]
-  )
+  }, [expensesByMonth, expenseFilter, tabIndex, years])
 
   const memoizedTable = useMemo(() => {
     // check for length to avoid jumpy chart animation
     return (
       expensesToRenderMemoized.length > 0 &&
       expensesToRenderMemoized.map(([month, expenses]) => (
-        <ExpensesByMonth
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          key={month}
-          expenses={expenses}
-          month={month}
-        />
+        <ExpensesByMonth key={month} expenses={expenses} month={month} />
       ))
     )
-  }, [expensesToRenderMemoized, filter, handleFilterChange])
+  }, [expensesToRenderMemoized])
 
   const memoizedGraph = useMemo(() => {
     return (
       <ExpensesChart
         enableFixedOnScroll={view === 'split'}
         maxAmount={maxAmount}
-        filter={filter}
-        onFilterChange={handleFilterChange}
         expensesByMonth={expensesToRenderMemoized}
       />
     )
-  }, [expensesToRenderMemoized, filter, handleFilterChange, maxAmount, view])
+  }, [expensesToRenderMemoized, maxAmount, view])
 
   return (
     <EntryGridContainer>
@@ -238,13 +209,7 @@ const Expenses = () => {
         <Grid item xs={12}>
           <Grid container wrap="nowrap" className={classes.container} spacing={3}>
             {autocompleteOptions.creator.map(u => (
-              <ExpenseUserCard
-                year={years[tabIndex]}
-                filter={filter}
-                onFilterChange={handleFilterChange}
-                key={u}
-                userName={u}
-              />
+              <ExpenseUserCard year={years[tabIndex]} key={u} userName={u} />
             ))}
           </Grid>
         </Grid>

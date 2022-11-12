@@ -15,7 +15,6 @@ import useIntersectionObserver from '@/hooks/useIntersectionObserver'
 import { Expense, Nullable } from '@/model/model'
 import useExpenseStore from '@/store/ExpenseStore'
 
-import { ExpenseFilter, ExpenseFilterChangeHandler } from './Expenses'
 import expenseUtils, { CATEGORIES_PALETTE } from './helper/expenseUtils'
 
 const useTooltipStyles = makeStyles<Theme>(theme => ({
@@ -73,8 +72,6 @@ const useChartStyles = makeStyles<Theme, { fixed: boolean }>(theme => ({
 interface Props {
   expensesByMonth: [string, Expense[]][]
   maxAmount: number
-  filter: ExpenseFilter
-  onFilterChange: ExpenseFilterChangeHandler
   enableFixedOnScroll: boolean
 }
 
@@ -85,6 +82,8 @@ export const ExpensesChart = (props: Props) => {
   const categories = useExpenseStore(store => store.categories)
   const shops = useExpenseStore(store => store.autocompleteOptions.shop)
   const descriptions = useExpenseStore(store => store.autocompleteOptions.description)
+  const expenseFilter = useExpenseStore(store => store.expenseFilter)
+  const handleExpenseFilterChange = useExpenseStore(store => store.handleExpenseFilterChange)
   const theme = useTheme()
   const xlUp = useMediaQuery(theme.breakpoints.up('xl'))
   const [fixed, setFixed] = useState(false)
@@ -101,12 +100,12 @@ export const ExpensesChart = (props: Props) => {
   const currentCategoryHasAmount = useCallback(
     (category: string) => {
       return (
-        Object.keys(props.filter).length === 0 ||
-        props.filter.category === category ||
-        'category' in props.filter === false
+        Object.keys(expenseFilter).length === 0 ||
+        expenseFilter.category === category ||
+        'category' in expenseFilter === false
       )
     },
-    [props.filter]
+    [expenseFilter]
   )
 
   const monthData = useMemo(() => {
@@ -214,7 +213,7 @@ export const ExpensesChart = (props: Props) => {
                 <Bar
                   onMouseEnter={() => setHoveringCategory(category)}
                   onMouseLeave={() => setHoveringCategory(null)}
-                  onClick={() => props.onFilterChange('category', category)}
+                  onClick={() => handleExpenseFilterChange('category', category)}
                   style={{
                     cursor: 'pointer',
                     transition: theme.transitions.create('fill-opacity'),
@@ -234,13 +233,13 @@ export const ExpensesChart = (props: Props) => {
                 fillOpacity={0.5}
                 strokeWidth={2}
                 stroke={
-                  props.filter.category
-                    ? CATEGORIES_PALETTE[props.filter.category]
+                  expenseFilter.category
+                    ? CATEGORIES_PALETTE[expenseFilter.category]
                     : theme.palette.primary.main
                 }
                 fill={
-                  props.filter.category
-                    ? CATEGORIES_PALETTE[props.filter.category]
+                  expenseFilter.category
+                    ? CATEGORIES_PALETTE[expenseFilter.category]
                     : theme.palette.primary.main
                 }
                 dataKey="amount"
