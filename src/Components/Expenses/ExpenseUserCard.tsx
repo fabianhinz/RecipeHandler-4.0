@@ -25,6 +25,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     display: 'flex',
     alignItems: 'center',
     gap: theme.spacing(2),
+    position: 'relative',
     transition: theme.transitions.create('opacity'),
     opacity: props => (props.disabled ? 0.3 : 1),
   },
