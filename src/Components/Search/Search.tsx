@@ -20,6 +20,7 @@ import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvid
 import { useSearchResultsContext } from '@/Components/Provider/SearchResultsProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import useDebounce from '@/hooks/useDebounce'
+import { useDisableScrollEffect } from '@/hooks/useDisableScrollEffect'
 import { ReactComponent as AlgoliaIcon } from '@/icons/algolia.svg'
 import { Hit } from '@/model/model'
 import algolia from '@/services/algolia'
@@ -109,24 +110,8 @@ const Search = () => {
   const { user } = useFirebaseAuthContext()
   const { setError, setHits, error, setLoading } = useSearchResultsContext()
   const { enqueueSnackbar } = useSnackbar()
-  const isPointerFine = useMediaQuery('@media (pointer: fine)')
 
-  useLayoutEffect(() => {
-    if (!isPointerFine) return
-
-    const htmlEl = document.getElementsByTagName('html')[0]
-    const headerEl = document.getElementsByTagName('header')[0]
-
-    if (htmlEl.getBoundingClientRect().height === window.innerHeight) return
-
-    if (showResultsPaper) {
-      htmlEl.setAttribute('style', 'overflow:hidden; padding-right:16px')
-      headerEl.setAttribute('style', 'padding-right:16px;')
-    } else {
-      htmlEl.removeAttribute('style')
-      headerEl.removeAttribute('style')
-    }
-  }, [isPointerFine, showResultsPaper])
+  useDisableScrollEffect(showResultsPaper)
 
   useEffect(() => {
     if (error) enqueueSnackbar('Fehler beim Abrufen der Daten', { variant: 'error' })

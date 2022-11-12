@@ -17,6 +17,7 @@ import { Autocomplete, AutocompleteRenderGroupParams } from '@material-ui/lab'
 import { ChevronRight } from 'mdi-material-ui'
 import { useMemo, useState } from 'react'
 
+import { useDisableScrollEffect } from '@/hooks/useDisableScrollEffect'
 import { ReactComponent as FirebaseIcon } from '@/icons/firebase.svg'
 import useExpenseStore, { AutocompleteOptionGroups, ExpenseFilter } from '@/store/ExpenseStore'
 import { BORDER_RADIUS } from '@/theme'
@@ -141,6 +142,9 @@ export const ExpenseSearch = () => {
   const expenseFilter = useExpenseStore(store => store.expenseFilter)
   const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
   const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
+
+  useDisableScrollEffect(open)
+
   const optionsFlattened = useMemo(() => {
     return Object.entries(autocompleteOptions)
       .map(([group, options]) =>
@@ -228,7 +232,6 @@ export const ExpenseSearch = () => {
         onClose={() => setOpen(false)}
         noOptionsText={<NotFound visible />}
         onChange={async (_, newValue) => {
-          console.log('🚀 ~ file: ExpenseSearch.tsx ~ line 231 ~ onChange={ ~ newValue', newValue)
           const latestEntry = newValue.at(-1)
           if (!latestEntry) {
             useExpenseStore.setState({ expenseFilter: {}, hasActiveFilter: false })
@@ -257,8 +260,8 @@ export const ExpenseSearch = () => {
         renderInput={params => (
           <div ref={params.InputProps.ref} className={classes.searchContainer}>
             <InputBase
+              inputProps={params.inputProps}
               {...params.InputProps}
-              {...params.inputProps}
               endAdornment={
                 <InputAdornment position="end">
                   <FirebaseIcon width={25} />

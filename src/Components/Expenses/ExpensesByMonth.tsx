@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import { ChevronRight } from 'mdi-material-ui'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { Expense } from '@/model/model'
 import useExpenseStore from '@/store/ExpenseStore'
@@ -43,6 +43,15 @@ const ExpensesByMonth = (props: Props) => {
   const [expanded, setExpanded] = useState<StyleProps['expanded']>(false)
   const classes = useStyles({ expanded })
   const categories = useExpenseStore(store => store.categories)
+  const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
+
+  const amountMemoized = useMemo(() => {
+    return props.expenses.map(e => e.amount).reduce((prev, curr) => prev + curr, 0)
+  }, [props.expenses])
+
+  if (hasActiveFilter && amountMemoized === 0) {
+    return null
+  }
 
   return (
     <>
@@ -57,13 +66,10 @@ const ExpensesByMonth = (props: Props) => {
 
         <Typography>
           Summe:{' '}
-          {props.expenses
-            .map(e => e.amount)
-            .reduce((prev, curr) => prev + curr, 0)
-            .toLocaleString('de-DE', {
-              style: 'currency',
-              currency: 'EUR',
-            })}
+          {amountMemoized.toLocaleString('de-DE', {
+            style: 'currency',
+            currency: 'EUR',
+          })}
         </Typography>
       </Box>
       <Divider variant="middle" />

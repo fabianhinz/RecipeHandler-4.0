@@ -91,8 +91,17 @@ const Expenses = () => {
 
   useLayoutEffect(() => {
     if (years.length > 0) {
+      // TODO this index should be part of the store
       setTabIndex(years.length - 1)
     }
+  }, [years.length])
+
+  useLayoutEffect(() => {
+    return useExpenseStore.subscribe(state => {
+      if (state.hasActiveFilter) {
+        setTabIndex(years.length)
+      }
+    })
   }, [years.length])
 
   useDocumentTitle('Ausgaben')
