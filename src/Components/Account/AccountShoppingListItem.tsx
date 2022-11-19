@@ -1,24 +1,31 @@
 import {
   Checkbox,
+  ClickAwayListener,
   IconButton,
   ListItem,
   ListItemIcon,
-  ListItemSecondaryAction,
   ListItemText,
   makeStyles,
+  TextField,
   Theme,
+  Typography,
   useTheme,
 } from '@material-ui/core'
 import { Clear } from '@material-ui/icons'
 import clsx from 'clsx'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Draggable, DraggingStyle, NotDraggingStyle } from 'react-beautiful-dnd'
 
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { ShoppingListItem } from '@/model/model'
 
 const useStyles = makeStyles<Theme, { muted: boolean }>(theme => ({
   checked: {
     textDecoration: 'line-through',
+  },
+  textFieldHelperRoot: {
+    color: theme.palette.text.secondary,
+    ...theme.typography.body2,
   },
   listItem: {
     opacity: props => (props.muted ? 0.3 : 1),
@@ -42,6 +49,10 @@ const AccountShoppingListItem = (props: Props) => {
     muted: props.tagFilter !== undefined && props.tagFilter !== props.item.tag,
   })
   const theme = useTheme()
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editValue, setEditValue] = useState('')
+
+  const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
 
   const getItemStyle = useCallback(
     (isDragging: boolean, draggableStyle?: DraggingStyle | NotDraggingStyle) => ({
@@ -55,6 +66,24 @@ const AccountShoppingListItem = (props: Props) => {
     }),
     [theme.palette.background.default, theme.shadows, theme.shape.borderRadius]
   )
+
+  const handleEnterEditMode = () => {
+    setIsEditMode(true)
+    setEditValue(props.item.value)
+  }
+
+  const handleExitEditMode = async () => {
+    if (shoppingList[props.index].value === editValue || editValue.length === 0) {
+      setIsEditMode(false)
+      return
+    }
+
+    shoppingList[props.index].value = editValue
+    await shoppingListRef.current?.set({ list: shoppingList })
+    setIsEditMode(false)
+  }
+
+  const secondaryText = [props.item.recipeNameRef, props.item.tag].filter(Boolean).join(', ')
 
   return (
     <Draggable draggableId={`${props.index}-${props.item.value}`} index={props.index}>
@@ -76,14 +105,39 @@ const AccountShoppingListItem = (props: Props) => {
             classes={{
               primary: clsx(props.item.checked && classes.checked),
             }}
-            primary={props.item.value}
-            secondary={[props.item.recipeNameRef, props.item.tag].filter(Boolean).join(', ')}
+            disableTypography
+            primary={
+              <>
+                {isEditMode ? (
+                  <ClickAwayListener onClickAway={handleExitEditMode}>
+                    <TextField
+                      autoFocus
+                      helperText={secondaryText}
+                      FormHelperTextProps={{ classes: { root: classes.textFieldHelperRoot } }}
+                      fullWidth
+                      value={editValue}
+                      onChange={e => setEditValue(e.target.value)}
+                    />
+                  </ClickAwayListener>
+                ) : (
+                  <>
+                    <Typography style={{ cursor: 'edit' }} onClick={handleEnterEditMode}>
+                      {props.item.value}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {secondaryText}
+                    </Typography>
+                  </>
+                )}
+              </>
+            }
           />
-          <ListItemSecondaryAction>
+          {/* do not use the ListItemSecondaryAction. This will mess up styles on dragging */}
+          <ListItemIcon>
             <IconButton onClick={props.onDelete(props.index)}>
               <Clear />
             </IconButton>
-          </ListItemSecondaryAction>
+          </ListItemIcon>
         </ListItem>
       )}
     </Draggable>
