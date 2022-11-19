@@ -99,12 +99,26 @@ const MarkdownRenderer = (props: Props) => {
         li: ({ node, ...markdownProps }) => {
           const listItemText = <ListItemText primary={markdownProps.children} />
 
-          if (markdownProps.ordered || !props.withShoppingList)
-            return (
-              <ListItem disableGutters>
-                <ListItemAvatar>
-                  <Avatar>{markdownProps.index + 1}</Avatar>
-                </ListItemAvatar>
+            let list = [...shoppingList]
+            if (checked) {
+                list = [
+                    {
+                        value: grocery,
+                        recipeNameRef: props.recipeName,
+                        checked: false,
+                        tag: '',
+                    },
+                    ...list,
+                ]
+            } else {
+                list = list.filter(
+                    item =>
+                        item.value !== markdownPropsToGrocery(children) ||
+                        item.recipeNameRef !== props.recipeName
+                )
+            }
+            shoppingListRef.current?.set({ list })
+        }
 
                 {listItemText}
               </ListItem>

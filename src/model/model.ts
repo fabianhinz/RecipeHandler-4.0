@@ -180,9 +180,10 @@ export interface CookingHistory {
 }
 
 export interface ShoppingListItem {
-  recipeNameRef?: string
-  value: string
-  checked: boolean
+    recipeNameRef?: string
+    tag: string
+    value: string
+    checked: boolean
 }
 
 export interface Expense {

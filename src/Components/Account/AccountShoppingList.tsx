@@ -12,7 +12,8 @@ import AccountShoppingListInput from './AccountShoppingListInput'
 import AccountShoppingListItem from './AccountShoppingListItem'
 
 const AccountUserShoppingList = () => {
-  const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
+    const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
+    const [tagFilter, setTagFilter] = useState<string | undefined>()
 
   const { shoppingList, shoppingListRef, reorderShoppingList } = useFirebaseAuthContext()
 
@@ -54,7 +55,7 @@ const AccountUserShoppingList = () => {
   return (
     <EntryGridContainer>
       <Grid item xs={12}>
-        <AccountShoppingListInput />
+        <AccountShoppingListInput tagFilter={tagFilter} onTagFilterChange={setTagFilter} />
       </Grid>
 
       {recipeRefs.size > 0 && (
@@ -89,10 +90,31 @@ const AccountUserShoppingList = () => {
           </Droppable>
         </DragDropContext>
 
-        <NotFound visible={shoppingList.length === 0} />
-      </Grid>
-    </EntryGridContainer>
-  )
+            <Grid item xs={12}>
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId="shoppingListDroppable">
+                        {provided => (
+                            <List disablePadding innerRef={provided.innerRef}>
+                                {shoppingList.map((item, index) => (
+                                    <AccountShoppingListItem
+                                        tagFilter={tagFilter}
+                                        key={`${index}-${item.value}`}
+                                        onCheckboxChange={handleCheckboxChange}
+                                        onDelete={handleDelete}
+                                        item={item}
+                                        index={index}
+                                    />
+                                ))}
+                                {provided.placeholder}
+                            </List>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+
+                <NotFound visible={shoppingList.length === 0} />
+            </Grid>
+        </EntryGridContainer>
+    )
 }
 
 export default AccountUserShoppingList
