@@ -79,6 +79,7 @@ const AccountShoppingListInput = (props: {
           <>
             {memoizedTags.map(tag => (
               <Typography
+                key={tag.value}
                 onClick={() =>
                   props.onTagFilterChange(props.tagFilter === tag.value ? undefined : tag.value)
                 }
