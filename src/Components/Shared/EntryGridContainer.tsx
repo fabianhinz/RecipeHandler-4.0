@@ -1,24 +1,23 @@
 import { Grid, makeStyles } from '@material-ui/core'
-import React from 'react'
 
 interface Props {
-    children: React.ReactNode
+  children: React.ReactNode
 }
 
 const useStyles = makeStyles(() => ({
-    container: {
-        overflowX: 'hidden',
-    },
+  container: {
+    overflowX: 'hidden',
+  },
 }))
 
 const EntryGridContainer = ({ children }: Props) => {
-    const classes = useStyles()
+  const classes = useStyles()
 
-    return (
-        <Grid container className={classes.container} spacing={4}>
-            {children}
-        </Grid>
-    )
+  return (
+    <Grid container className={classes.container} spacing={4}>
+      {children}
+    </Grid>
+  )
 }
 
 export default EntryGridContainer

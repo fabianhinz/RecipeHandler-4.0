@@ -1,117 +1,104 @@
 import { Grid, makeStyles, Typography } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import useDocumentTitle from '../../hooks/useDocumentTitle'
-import { CookingHistory, Recipe } from '../../model/model'
-import { FirebaseService } from '../../services/firebase'
-import { BORDER_RADIUS } from '../../theme'
-import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from '../Home/HomeRecipeCard'
-import { useFirebaseAuthContext } from '../Provider/FirebaseAuthProvider'
-import { useGridContext } from '../Provider/GridProvider'
-import EntryGridContainer from '../Shared/EntryGridContainer'
-import NotFound from '../Shared/NotFound'
+import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from '@/Components/Home/HomeRecipeCard'
+import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
+import NotFound from '@/Components/Shared/NotFound'
+import useDocumentTitle from '@/hooks/useDocumentTitle'
+import { CookingHistory, Recipe } from '@/model/model'
+import { FirebaseService } from '@/services/firebase'
+import { BORDER_RADIUS } from '@/theme'
 
-interface StyleProps {
-    compactLayout: boolean
-}
-
-const useStyles = makeStyles(theme => ({
-    skeleton: {
-        [theme.breakpoints.only('xs')]: {
-            height: ({ compactLayout }: StyleProps) => (compactLayout ? 44.86 : RECIPE_CARD_HEIGHT),
-        },
-        [theme.breakpoints.between('sm', 'md')]: {
-            height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : RECIPE_CARD_HEIGHT),
-        },
-        [theme.breakpoints.up('lg')]: {
-            height: ({ compactLayout }: StyleProps) => (compactLayout ? 48 : RECIPE_CARD_HEIGHT),
-        },
-        width: '100%',
-        borderRadius: BORDER_RADIUS,
-    },
-}))
+const useStyles = makeStyles({
+  skeleton: {
+    height: RECIPE_CARD_HEIGHT,
+    width: '100%',
+    borderRadius: BORDER_RADIUS,
+  },
+})
 
 const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
-    const [recipe, setRecipe] = useState<Recipe | null>(null)
-    const [notFound, setNotFound] = useState(false)
+  const [recipe, setRecipe] = useState<Recipe | null>(null)
+  const [notFound, setNotFound] = useState(false)
 
-    const { compactLayout } = useGridContext()
-    const classes = useStyles({ compactLayout })
+  const classes = useStyles()
 
-    useEffect(() => {
-        FirebaseService.firestore
-            .collection('recipes')
-            .doc(recipeName)
-            .get()
-            .then(doc => {
-                if (doc.exists) setRecipe(doc.data() as Recipe)
-                else setNotFound(true)
-            })
-    }, [recipeName])
+  useEffect(() => {
+    FirebaseService.firestore
+      .collection('recipes')
+      .doc(recipeName)
+      .get()
+      .then(doc => {
+        if (doc.exists) setRecipe(doc.data() as Recipe)
+        else setNotFound(true)
+      })
+  }, [recipeName])
 
-    if (notFound) return <></>
+  if (notFound) return <></>
 
-    return (
-        <>
-            {recipe ? (
-                <HomeRecipeCard recipe={recipe} lastCookedDate={createdDate} />
-            ) : (
-                <Grid item xs={6} md={4} lg={3} xl={2}>
-                    <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
-                </Grid>
-            )}
-        </>
-    )
+  return (
+    <>
+      {recipe ? (
+        <HomeRecipeCard recipe={recipe} lastCookedDate={createdDate} />
+      ) : (
+        <Grid item xs={6} md={4} lg={3} xl={2}>
+          <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
+        </Grid>
+      )}
+    </>
+  )
 }
 
+// eslint-disable-next-line react/no-multi-comp
 const AccountCookingHistory = () => {
-    const [cookingHistory, setCookingHistory] = useState<CookingHistory[]>([])
-    const [loading, setLoading] = useState(true)
+  const [cookingHistory, setCookingHistory] = useState<CookingHistory[]>([])
+  const [loading, setLoading] = useState(true)
 
-    const { user } = useFirebaseAuthContext()
+  const { user } = useFirebaseAuthContext()
 
-    useDocumentTitle(`Kochverlauf (${cookingHistory.length})`)
+  useDocumentTitle(`Kochverlauf (${cookingHistory.length})`)
 
-    useEffect(() => {
-        if (!user) return setLoading(false)
+  useEffect(() => {
+    if (!user) return setLoading(false)
 
-        const now = new Date()
-        now.setDate(now.getDate() - 365 / 4)
-        const lastQuarter = new Date(now)
+    const now = new Date()
+    now.setDate(now.getDate() - 365 / 4)
+    const lastQuarter = new Date(now)
 
-        return FirebaseService.firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('cookingHistory')
-            .where('createdDate', '>=', lastQuarter)
-            .orderBy('createdDate', 'desc')
-            .onSnapshot(snapshot => {
-                setCookingHistory(snapshot.docs.map(doc => doc.data() as CookingHistory))
-                setLoading(false)
-            })
-    }, [user])
+    return FirebaseService.firestore
+      .collection('users')
+      .doc(user.uid)
+      .collection('cookingHistory')
+      .where('createdDate', '>=', lastQuarter)
+      .orderBy('createdDate', 'desc')
+      .onSnapshot(snapshot => {
+        setCookingHistory(snapshot.docs.map(doc => doc.data() as CookingHistory))
+        setLoading(false)
+      })
+  }, [user])
 
-    if (!user) return <></>
+  if (!user) return <></>
 
-    return (
-        <EntryGridContainer>
-            <Grid item xs={12}>
-                <Typography variant="h4">Im letzten Quartal</Typography>
-            </Grid>
-            <Grid item xs={12}>
-                <Grid container spacing={3}>
-                    {cookingHistory.map(element => (
-                        <HistoryElement
-                            key={element.recipeName + element.createdDate.toMillis()}
-                            {...element}
-                        />
-                    ))}
-                </Grid>
-                <NotFound visible={!loading && cookingHistory.length === 0} />
-            </Grid>
-        </EntryGridContainer>
-    )
+  return (
+    <EntryGridContainer>
+      <Grid item xs={12}>
+        <Typography variant="h4">Im letzten Quartal</Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container spacing={3}>
+          {cookingHistory.map(element => (
+            <HistoryElement
+              key={element.recipeName + element.createdDate.toMillis()}
+              {...element}
+            />
+          ))}
+        </Grid>
+        <NotFound visible={!loading && cookingHistory.length === 0} />
+      </Grid>
+    </EntryGridContainer>
+  )
 }
 
 export default AccountCookingHistory

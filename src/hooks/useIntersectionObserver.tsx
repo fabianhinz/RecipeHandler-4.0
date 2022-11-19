@@ -1,46 +1,46 @@
 import { makeStyles } from '@material-ui/core'
-import React, { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 
-import ElementIdService from '../services/elementIdService'
+import ElementIdService from '@/services/elementIdService'
 
 interface useIntersectionObserverOptions {
-    onIsIntersecting: () => void
-    onLeave?: () => void
-    options?: IntersectionObserverInit
+  onIsIntersecting: () => void
+  onLeave?: () => void
+  options?: IntersectionObserverInit
 }
 
 const useStyles = makeStyles(() => ({
-    trigger: {
-        minWidth: 1,
-        minHeight: 1,
-    },
+  trigger: {
+    minWidth: 1,
+    minHeight: 1,
+  },
 }))
 
 const useIntersectionObserver = ({
-    onIsIntersecting,
-    onLeave,
-    options,
+  onIsIntersecting,
+  onLeave,
+  options,
 }: useIntersectionObserverOptions) => {
-    const idRef = useRef(ElementIdService.getId())
-    const classes = useStyles()
+  const idRef = useRef(ElementIdService.getId())
+  const classes = useStyles()
 
-    useLayoutEffect(() => {
-        const trigger = document.getElementById(idRef.current)
-        if (!trigger) return
+  useLayoutEffect(() => {
+    const trigger = document.getElementById(idRef.current)
+    if (!trigger) return
 
-        const observer = new IntersectionObserver(entries => {
-            const [lastRecipeTrigger] = entries
-            if (lastRecipeTrigger.isIntersecting) onIsIntersecting()
-            else if (onLeave) onLeave()
-        }, options)
-        observer.observe(trigger)
+    const observer = new IntersectionObserver(entries => {
+      const [lastRecipeTrigger] = entries
+      if (lastRecipeTrigger.isIntersecting) onIsIntersecting()
+      else if (onLeave) onLeave()
+    }, options)
+    observer.observe(trigger)
 
-        return () => observer.unobserve(trigger)
-    }, [onIsIntersecting, onLeave, options])
+    return () => observer.unobserve(trigger)
+  }, [onIsIntersecting, onLeave, options])
 
-    return {
-        IntersectionObserverTrigger: () => <div className={classes.trigger} id={idRef.current} />,
-    }
+  return {
+    IntersectionObserverTrigger: () => <div className={classes.trigger} id={idRef.current} />,
+  }
 }
 
 export default useIntersectionObserver

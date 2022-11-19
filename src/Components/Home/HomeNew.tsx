@@ -1,63 +1,64 @@
 import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
 import green from '@material-ui/core/colors/green'
-import React, { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { FirebaseService } from '../../services/firebase'
-import { useGridContext } from '../Provider/GridProvider'
-import { PATHS } from '../Routes/Routes'
-import Skeletons from '../Shared/Skeletons'
+import { useGridContext } from '@/Components/Provider/GridProvider'
+import { PATHS } from '@/Components/Routes/Routes'
+import Skeletons from '@/Components/Shared/Skeletons'
+import { FirebaseService } from '@/services/firebase'
+
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
 const useStyles = makeStyles(theme => ({
-    paper: {
-        padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-        backgroundColor: green.A100,
-    },
-    typography: {
-        color: theme.palette.getContrastText(green.A100),
-    },
+  paper: {
+    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    backgroundColor: green.A100,
+  },
+  typography: {
+    color: theme.palette.getContrastText(green.A100),
+  },
 }))
 
 const HomeNew = () => {
-    const [recipeNames, setRecipeNames] = useState<string[]>([])
-    const [loading, setLoading] = useState(true)
+  const [recipeNames, setRecipeNames] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
 
-    const { gridBreakpointProps } = useGridContext()
-    const classes = useStyles()
+  const { gridBreakpointProps } = useGridContext()
+  const classes = useStyles()
 
-    useEffect(() => {
-        return FirebaseService.firestore
-            .collection('cookCounter')
-            .orderBy('createdDate', 'desc')
-            .where('value', '==', 0)
-            .onSnapshot(snapshot => {
-                setRecipeNames(snapshot.docs.map(doc => doc.id))
-                setLoading(false)
-            })
-    }, [])
+  useEffect(() => {
+    return FirebaseService.firestore
+      .collection('cookCounter')
+      .orderBy('createdDate', 'desc')
+      .where('value', '==', 0)
+      .onSnapshot(snapshot => {
+        setRecipeNames(snapshot.docs.map(doc => doc.id))
+        setLoading(false)
+      })
+  }, [])
 
-    return (
-        <Grid container spacing={3}>
-            {recipeNames.map(recipeName => (
-                <Grid item {...gridBreakpointProps} key={recipeName}>
-                    <HomeRecipeContextMenu name={recipeName}>
-                        <Link to={PATHS.details(recipeName)}>
-                            <CardActionArea>
-                                <Paper className={classes.paper}>
-                                    <Typography noWrap className={classes.typography} variant="h6">
-                                        {recipeName}
-                                    </Typography>
-                                </Paper>
-                            </CardActionArea>
-                        </Link>
-                    </HomeRecipeContextMenu>
-                </Grid>
-            ))}
-
-            <Skeletons variant="cookCounter" visible={loading} numberOfSkeletons={12} />
+  return (
+    <Grid container spacing={3}>
+      {recipeNames.map(recipeName => (
+        <Grid item {...gridBreakpointProps} key={recipeName}>
+          <HomeRecipeContextMenu name={recipeName}>
+            <Link to={PATHS.details(recipeName)}>
+              <CardActionArea>
+                <Paper className={classes.paper}>
+                  <Typography noWrap className={classes.typography} variant="h6">
+                    {recipeName}
+                  </Typography>
+                </Paper>
+              </CardActionArea>
+            </Link>
+          </HomeRecipeContextMenu>
         </Grid>
-    )
+      ))}
+
+      <Skeletons variant="cookCounter" visible={loading} numberOfSkeletons={12} />
+    </Grid>
+  )
 }
 
 export default memo(HomeNew)
