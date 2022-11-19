@@ -180,10 +180,10 @@ export interface CookingHistory {
 }
 
 export interface ShoppingListItem {
-    recipeNameRef?: string
-    tag: string
-    value: string
-    checked: boolean
+  recipeNameRef?: string
+  tag: string
+  value: string
+  checked: boolean
 }
 
 export interface Expense {
@@ -202,8 +202,3 @@ export interface Expense {
 export type ArchivedExpense = Expense & { deletedAt: firebase.default.firestore.Timestamp }
 
 export type Nullable<UnderlyingType> = null | UnderlyingType
-
-export type ChangesRecord<DocType> = Record<
-  firebase.default.firestore.DocumentChangeType,
-  Map<DocumentId, DocType>
->

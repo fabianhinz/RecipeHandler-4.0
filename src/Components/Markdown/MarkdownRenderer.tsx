@@ -1,4 +1,3 @@
-/* eslint-disable react/no-multi-comp */
 import {
   Avatar,
   Checkbox,
@@ -19,6 +18,7 @@ import {
 } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
+import React from 'react'
 import ReactMarkdown, { ReactMarkdownOptions } from 'react-markdown'
 import { useRouteMatch } from 'react-router-dom'
 
@@ -73,6 +73,7 @@ const MarkdownRenderer = (props: Props) => {
             value: grocery,
             recipeNameRef: props.recipeName,
             checked: false,
+            tag: '',
           },
           ...list,
         ]
@@ -99,26 +100,12 @@ const MarkdownRenderer = (props: Props) => {
         li: ({ node, ...markdownProps }) => {
           const listItemText = <ListItemText primary={markdownProps.children} />
 
-            let list = [...shoppingList]
-            if (checked) {
-                list = [
-                    {
-                        value: grocery,
-                        recipeNameRef: props.recipeName,
-                        checked: false,
-                        tag: '',
-                    },
-                    ...list,
-                ]
-            } else {
-                list = list.filter(
-                    item =>
-                        item.value !== markdownPropsToGrocery(children) ||
-                        item.recipeNameRef !== props.recipeName
-                )
-            }
-            shoppingListRef.current?.set({ list })
-        }
+          if (markdownProps.ordered || !props.withShoppingList)
+            return (
+              <ListItem disableGutters>
+                <ListItemAvatar>
+                  <Avatar>{markdownProps.index + 1}</Avatar>
+                </ListItemAvatar>
 
                 {listItemText}
               </ListItem>

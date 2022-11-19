@@ -1,5 +1,5 @@
 import { Grid, List } from '@material-ui/core'
-import { useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
@@ -12,8 +12,8 @@ import AccountShoppingListInput from './AccountShoppingListInput'
 import AccountShoppingListItem from './AccountShoppingListItem'
 
 const AccountUserShoppingList = () => {
-    const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
-    const [tagFilter, setTagFilter] = useState<string | undefined>()
+  const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
+  const [tagFilter, setTagFilter] = useState<string | undefined>()
 
   const { shoppingList, shoppingListRef, reorderShoppingList } = useFirebaseAuthContext()
 
@@ -77,6 +77,7 @@ const AccountUserShoppingList = () => {
               <List disablePadding innerRef={provided.innerRef}>
                 {shoppingList.map((item, index) => (
                   <AccountShoppingListItem
+                    tagFilter={tagFilter}
                     key={`${index}-${item.value}`}
                     onCheckboxChange={handleCheckboxChange}
                     onDelete={handleDelete}
@@ -90,31 +91,10 @@ const AccountUserShoppingList = () => {
           </Droppable>
         </DragDropContext>
 
-            <Grid item xs={12}>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                    <Droppable droppableId="shoppingListDroppable">
-                        {provided => (
-                            <List disablePadding innerRef={provided.innerRef}>
-                                {shoppingList.map((item, index) => (
-                                    <AccountShoppingListItem
-                                        tagFilter={tagFilter}
-                                        key={`${index}-${item.value}`}
-                                        onCheckboxChange={handleCheckboxChange}
-                                        onDelete={handleDelete}
-                                        item={item}
-                                        index={index}
-                                    />
-                                ))}
-                                {provided.placeholder}
-                            </List>
-                        )}
-                    </Droppable>
-                </DragDropContext>
-
-                <NotFound visible={shoppingList.length === 0} />
-            </Grid>
-        </EntryGridContainer>
-    )
+        <NotFound visible={shoppingList.length === 0} />
+      </Grid>
+    </EntryGridContainer>
+  )
 }
 
 export default AccountUserShoppingList
