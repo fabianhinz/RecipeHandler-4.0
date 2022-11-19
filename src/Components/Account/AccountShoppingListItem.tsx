@@ -3,6 +3,7 @@ import {
   IconButton,
   ListItem,
   ListItemIcon,
+  ListItemSecondaryAction,
   ListItemText,
   makeStyles,
   Theme,
@@ -78,11 +79,11 @@ const AccountShoppingListItem = (props: Props) => {
             primary={props.item.value}
             secondary={[props.item.recipeNameRef, props.item.tag].filter(Boolean).join(', ')}
           />
-          <ListItemIcon>
+          <ListItemSecondaryAction>
             <IconButton onClick={props.onDelete(props.index)}>
               <Clear />
             </IconButton>
-          </ListItemIcon>
+          </ListItemSecondaryAction>
         </ListItem>
       )}
     </Draggable>

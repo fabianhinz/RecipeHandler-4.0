@@ -33,8 +33,11 @@ const AccountShoppingListInput = (props: {
   }
 
   const memoizedTags = useMemo(() => {
-    const uniqueTags = new Set(shoppingList.map(item => item.tag).filter(Boolean) as string[])
-    return Array.from(uniqueTags)
+    const getIsTagDone = (tag: string) =>
+      shoppingList.filter(item => item.tag === tag).every(item => item.checked)
+
+    const uniqueTags = new Set(shoppingList.map(item => item.tag).filter(Boolean))
+    return Array.from(uniqueTags).map(tag => ({ value: tag, isDone: getIsTagDone(tag) }))
   }, [shoppingList])
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -76,15 +79,20 @@ const AccountShoppingListInput = (props: {
           <>
             {memoizedTags.map(tag => (
               <Typography
-                onClick={() => props.onTagFilterChange(props.tagFilter === tag ? undefined : tag)}
+                onClick={() =>
+                  props.onTagFilterChange(props.tagFilter === tag.value ? undefined : tag.value)
+                }
                 style={{
                   cursor: 'pointer',
-                  textDecoration: tag === props.tagFilter ? 'underline' : 'none',
-                  color: tag === props.tagFilter ? theme.palette.secondary.main : 'inherit',
+                  textDecoration: tag.isDone
+                    ? 'line-through'
+                    : tag.value === props.tagFilter
+                    ? 'underline'
+                    : 'none',
+                  color: tag.value === props.tagFilter ? theme.palette.secondary.main : 'inherit',
                 }}
-                variant="caption"
-                key={tag}>
-                #{tag}
+                variant="caption">
+                #{tag.value}
               </Typography>
             ))}
           </>
