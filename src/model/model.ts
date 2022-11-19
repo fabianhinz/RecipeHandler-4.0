@@ -202,3 +202,8 @@ export interface Expense {
 export type ArchivedExpense = Expense & { deletedAt: firebase.default.firestore.Timestamp }
 
 export type Nullable<UnderlyingType> = null | UnderlyingType
+
+export type ChangesRecord<DocType> = Record<
+  firebase.default.firestore.DocumentChangeType,
+  Map<DocumentId, DocType>
+>
