@@ -1,6 +1,7 @@
 import { Grid, GridSize } from '@material-ui/core'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import LabelIcon from '@material-ui/icons/Label'
+import { Timestamp } from 'firebase/firestore'
 import { useCallback, useEffect } from 'react'
 import { RouteComponentProps, useRouteMatch } from 'react-router'
 
@@ -95,7 +96,7 @@ const RecipeCreate = (props: Props) => {
         <RecipeResult
           recipe={{
             name: state.name,
-            createdDate: FirebaseService.createTimestampFromDate(new Date()),
+            createdDate: Timestamp.fromDate(new Date()),
             numberOfComments: state.numberOfComments,
             numberOfAttachments: state.numberOfAttachments,
             categories: state.categories,

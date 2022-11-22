@@ -1,5 +1,6 @@
 import { Avatar, Box, Card, Grid, makeStyles, Theme, Typography, Zoom } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
+import { Timestamp } from 'firebase/firestore'
 import { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -7,7 +8,6 @@ import { CategoryResult } from '@/Components/Category/CategoryResult'
 import { PATHS } from '@/Components/Routes/Routes'
 import useImgSrcLazy from '@/hooks/useImgSrcLazy'
 import { Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS } from '@/theme'
 
 import { useUsersContext } from '../Provider/UsersProvider'
@@ -79,7 +79,7 @@ const useStyles = makeStyles<
 
 interface Props {
   recipe: Recipe
-  lastCookedDate?: firebase.default.firestore.Timestamp
+  lastCookedDate?: Timestamp
 }
 
 const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
@@ -133,9 +133,7 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
 
                 {lastCookedDate ? (
                   <Box mx={1}>
-                    <Typography>
-                      {FirebaseService.createDateFromTimestamp(lastCookedDate).toLocaleDateString()}
-                    </Typography>
+                    <Typography>{lastCookedDate.toDate().toLocaleDateString()}</Typography>
                   </Box>
                 ) : (
                   <CategoryResult

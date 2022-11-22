@@ -7,11 +7,12 @@ import {
   Slide,
   Typography,
 } from '@material-ui/core'
+import { Timestamp } from 'firebase/firestore'
 import { Component } from 'react'
 import StackTrace from 'stacktrace-js'
 
+import { addDocTo } from '@/firebase/firebaseQueries'
 import { ReactComponent as ErrorIcon } from '@/icons/error.svg'
-import { FirebaseService } from '@/services/firebase'
 
 interface ErrorBoundaryState {
   error: string | null
@@ -41,16 +42,14 @@ class ErrorBoundary extends Component<{}, ErrorBoundaryState> {
       return this.setState({ errorLogged: true })
     }
 
-    FirebaseService.firestore
-      .collection('errors')
-      .add({
-        version: RECIPE_HANDLER_APP_VERSION,
-        minError: minError.toString(),
-        trace: trace.toString(),
-        agent: window.navigator.userAgent,
-        timestamp: FirebaseService.createTimestampFromDate(new Date()),
-      })
-      .then(() => this.setState({ errorLogged: true }))
+    await addDocTo('errors', {
+      version: RECIPE_HANDLER_APP_VERSION,
+      minError: minError.toString(),
+      trace: trace.toString(),
+      agent: window.navigator.userAgent,
+      timestamp: Timestamp.fromDate(new Date()),
+    })
+    this.setState({ errorLogged: true })
   }
 
   public render() {

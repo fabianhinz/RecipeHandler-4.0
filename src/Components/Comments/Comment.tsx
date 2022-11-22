@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import { AvatarGroup } from '@material-ui/lab'
+import { Timestamp } from 'firebase/firestore'
 import { StickerEmoji } from 'mdi-material-ui'
 import { memo, useEffect, useMemo, useState } from 'react'
 
@@ -117,7 +118,7 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
     reactionsFirestoreRef?.doc(currentUser.uid).set({
       emoji,
       editorUid: currentUser.uid,
-      createdDate: FirebaseService.createTimestampFromDate(new Date()),
+      createdDate: Timestamp.fromDate(new Date()),
     } as CommentReaction)
   }
 
@@ -137,9 +138,7 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
               <div className={classes.comment}>
                 <Typography gutterBottom>
                   <b>{commentOwner?.username}: </b>
-                  {FirebaseService.createDateFromTimestamp(
-                    comment.createdDate
-                  ).toLocaleDateString()}
+                  {comment.createdDate.toDate().toLocaleDateString()}
                 </Typography>
 
                 <Typography>{getCommentTypography(comment.comment)}</Typography>

@@ -1,6 +1,7 @@
 import { Fab, Grid, LinearProgress, Tooltip } from '@material-ui/core'
 import CameraIcon from '@material-ui/icons/Camera'
 import compressImage from 'browser-image-compression'
+import { Timestamp } from 'firebase/firestore'
 import { useSnackbar } from 'notistack'
 import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
@@ -122,7 +123,7 @@ const Trials = () => {
               fullPath,
               numberOfComments: 0,
               editorUid: user.uid,
-              createdDate: FirebaseService.createTimestampFromDate(new Date()),
+              createdDate: Timestamp.fromDate(new Date()),
             } as Trial)
         } catch (e) {
           enqueueSnackbar(e.message, { variant: 'error' })

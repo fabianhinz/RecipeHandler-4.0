@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore'
 import { useSnackbar } from 'notistack'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
@@ -53,7 +54,7 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
       variant: 'info',
     })
 
-    const createdDate = FirebaseService.createTimestampFromDate(new Date())
+    const createdDate = Timestamp.fromDate(new Date())
 
     const recipeName = state.name.trim()
     const recipeDoc: Recipe = {

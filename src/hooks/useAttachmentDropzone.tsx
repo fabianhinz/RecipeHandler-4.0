@@ -1,5 +1,6 @@
 import { Alert } from '@material-ui/lab'
 import compressImage from 'browser-image-compression'
+import { Timestamp } from 'firebase/firestore'
 import { useCallback, useState } from 'react'
 import { DropzoneState, FileRejection, useDropzone } from 'react-dropzone'
 
@@ -80,7 +81,7 @@ export const useAttachmentDropzone = ({
           fullPath: '',
           size: compressedFile?.size || file.size,
           editorUid: user ? user.uid : 'unkown',
-          createdDate: FirebaseService.createTimestampFromDate(new Date()),
+          createdDate: Timestamp.fromDate(new Date()),
         })
       }
       setAttachments(newAttachments)

@@ -15,11 +15,11 @@ import { Save } from '@material-ui/icons'
 import CloseIcon from '@material-ui/icons/Close'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import deLocale from 'date-fns/locale/de'
+import { Timestamp } from 'firebase/firestore'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { SlideUp } from '@/Components/Shared/Transitions'
-import { FirebaseService } from '@/services/firebase'
 import useCurrentExpenseStore, { CurrentExpenseStore } from '@/store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
 
@@ -105,7 +105,7 @@ const ExpenseDialog = (props: Props) => {
           amount,
           category,
           creator,
-          date: date ?? FirebaseService.createTimestampFromDate(new Date()),
+          date: date ?? Timestamp.fromDate(new Date()),
           shop,
           description: description ?? 'Einkauf',
           relatedUsers,
@@ -119,7 +119,7 @@ const ExpenseDialog = (props: Props) => {
           amount,
           category,
           creator,
-          date: date ?? FirebaseService.createTimestampFromDate(new Date()),
+          date: date ?? Timestamp.fromDate(new Date()),
           shop,
           description: description ?? 'Einkauf',
           relatedUsers,
@@ -221,10 +221,10 @@ const ExpenseDialog = (props: Props) => {
                       margin="normal"
                       id="date-picker-inline"
                       label="Einkaufsdatum"
-                      value={FirebaseService.createDateFromTimestamp(date)}
+                      value={date.toDate()}
                       onChange={date => {
                         const newDate = date ?? new Date()
-                        setDate(FirebaseService.createTimestampFromDate(newDate))
+                        setDate(Timestamp.fromDate(newDate))
                       }}
                       KeyboardButtonProps={{
                         'aria-label': 'change date',

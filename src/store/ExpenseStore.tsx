@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore'
 import create from 'zustand'
 
 import expenseUtils from '@/Components/Expenses/helper/expenseUtils'
@@ -71,7 +72,7 @@ const useExpenseStore = create<ExpenseStore>((set, get) => ({
     const userDoc = FirebaseService.firestore.collection(USER_COLLECTION).doc(userId)
     await userDoc
       .collection(ARCHIVED_EXPENSES_COLLECTION)
-      .add({ ...expense, deletedAt: FirebaseService.createTimestampFromDate(new Date()) })
+      .add({ ...expense, deletedAt: Timestamp.fromDate(new Date()) })
     await userDoc.collection(EXPENSE_COLLECTION).doc(id).delete()
   },
   restoreExpense: async ({ deletedAt, ...expense }, userId) => {

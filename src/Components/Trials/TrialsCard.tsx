@@ -145,9 +145,7 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
         <Card className={classes.card}>
           <AccountChip
             uid={trial.editorUid}
-            enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
-              trial.createdDate
-            ).toLocaleDateString()}`}
+            enhanceLabel={`am ${trial.createdDate.toDate().toLocaleDateString()}`}
             position="absolute"
             placement="top"
           />

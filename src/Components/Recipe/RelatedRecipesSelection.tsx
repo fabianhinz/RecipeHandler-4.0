@@ -126,9 +126,7 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
             </ListItemAvatar>
             <ListItemText
               primary={recipe.name}
-              secondary={FirebaseService.createDateFromTimestamp(
-                recipe.createdDate
-              ).toLocaleDateString()}
+              secondary={recipe.createdDate.toDate().toLocaleDateString()}
             />
           </ListItem>
         ))}

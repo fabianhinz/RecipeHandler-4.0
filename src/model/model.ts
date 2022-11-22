@@ -1,4 +1,5 @@
 import { PaletteType } from '@material-ui/core'
+import { Timestamp } from 'firebase/firestore'
 import { RouteComponentProps } from 'react-router'
 
 export interface Editor {
@@ -10,7 +11,7 @@ export interface DataUrl {
 }
 
 export interface CreatedDate {
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
 }
 
 export interface AttachmentDoc extends Editor, CreatedDate, Partial<FirestoreDocPath> {
@@ -54,7 +55,7 @@ export interface Category {
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>
 
 export interface Comment extends Editor {
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
   documentId: string
   comment: string
 }
@@ -65,7 +66,7 @@ export interface CommentReaction extends Editor, CreatedDate {
 
 export interface Trial extends Editor, CommentsDocument {
   fullPath: string
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
 }
 
 export interface CommentsCollections {
@@ -193,7 +194,7 @@ export interface Expense {
   shop: string
   category: string
   description: string
-  date: firebase.default.firestore.Timestamp
+  date: Timestamp
   relatedUsers: string[]
   // TODO fix me
   [key: string]: any

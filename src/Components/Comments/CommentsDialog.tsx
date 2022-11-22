@@ -14,6 +14,7 @@ import ScrollToLatestIcon from '@material-ui/icons/ExpandMore'
 import SaveIcon from '@material-ui/icons/Save'
 import Skeleton from '@material-ui/lab/Skeleton'
 import clsx from 'clsx'
+import { Timestamp } from 'firebase/firestore'
 import { FC, useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 
@@ -119,7 +120,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
           comment: input,
           likes: 0,
           dislikes: 0,
-          createdDate: FirebaseService.createTimestampFromDate(new Date()),
+          createdDate: Timestamp.fromDate(new Date()),
         } as Omit<CommentModel, 'documentId'>)
 
       setInput('')

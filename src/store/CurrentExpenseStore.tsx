@@ -1,7 +1,7 @@
+import { Timestamp } from 'firebase/firestore'
 import create from 'zustand'
 
 import { Expense } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 import useExpenseStore from './ExpenseStore'
 
@@ -11,7 +11,7 @@ type ExpenseActions = {
   setAmount: (amount: number) => void
   setCategory: (category: string) => void
   setCreator: (creator: string) => void
-  setDate: (date: firebase.default.firestore.Timestamp) => void
+  setDate: (date: Timestamp) => void
   setRelatedUsers: (user: string) => void
   setShop: (shop: string) => void
   setDescription: (description: string) => void
@@ -26,7 +26,7 @@ const getFreshExpense = () => ({
   amount: 0,
   category: 'Lebensmittel',
   creator: '',
-  date: FirebaseService.createTimestampFromDate(new Date()),
+  date: Timestamp.fromDate(new Date()),
   relatedUsers: [],
   shop: '',
   description: 'Einkauf',

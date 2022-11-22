@@ -15,7 +15,6 @@ import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
 import NotFound from '@/Components/Shared/NotFound'
 import StyledCard from '@/Components/Shared/StyledCard'
 import { Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { useLayoutStore } from '@/store/LayoutStore'
 
 import RecipeResultHeader from './RecipeResultHeader'
@@ -90,9 +89,7 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
               <AccountChip
                 variant="outlined"
                 uid={recipe.editorUid}
-                enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
-                  recipe.createdDate
-                ).toLocaleDateString()}`}
+                enhanceLabel={`am ${recipe.createdDate.toDate().toLocaleDateString()}`}
               />
             </Grid>
           )}
