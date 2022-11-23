@@ -1,9 +1,10 @@
 import { Grid, makeStyles } from '@material-ui/core'
+import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import { useAttachmentGalleryContext } from '@/Components/Provider/AttachmentGalleryProvider'
+import { resolveAttachmentsOrderedByCreatedDateAsc } from '@/firebase/firebaseQueries'
 import { AttachmentDoc, Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 import AttachmentPreview from './AttachmentPreview'
 
@@ -27,21 +28,14 @@ const Attachments = ({ recipe }: Props) => {
 
   const classes = useStyles()
 
-  useEffect(
-    () =>
-      FirebaseService.firestore
-        .collection('recipes')
-        .doc(recipe.name)
-        .collection('attachments')
-        .orderBy('createdDate', 'asc')
-        .onSnapshot(querySnapshot => {
-          const newAttachments = querySnapshot.docs.map(
-            doc => ({ ...doc.data(), docPath: doc.ref.path } as AttachmentDoc)
-          )
-          setSavedAttachments(newAttachments)
-        }),
-    [recipe.name]
-  )
+  useEffect(() => {
+    return onSnapshot(resolveAttachmentsOrderedByCreatedDateAsc(recipe.name), querySnapshot => {
+      const newAttachments = querySnapshot.docs.map(
+        doc => ({ ...doc.data(), docPath: doc.ref.path } as AttachmentDoc)
+      )
+      setSavedAttachments(newAttachments)
+    })
+  }, [recipe.name])
 
   const handlePreviewClick = (originId: string, activeAttachment: number) =>
     handleAnimation(originId, savedAttachments!, activeAttachment)

@@ -12,14 +12,17 @@ import {
 } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
 import clsx from 'clsx'
+import { setDoc } from 'firebase/firestore'
+import { ref, uploadString } from 'firebase/storage'
 import { CloudUpload, HeartBroken } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import { useCallback, useEffect, useState } from 'react'
 import { Prompt } from 'react-router-dom'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { storage } from '@/firebase/firebaseConfig'
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import { AttachmentDoc, DataUrl } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(theme => ({
   avatar: {
@@ -83,25 +86,24 @@ const AttachmentUploadListItem = ({
   useEffect(() => {
     let mounted = true
 
-    const docRef = FirebaseService.firestore
-      .collection('recipes')
-      .doc(recipeName)
-      .collection('attachments')
-      .doc()
+    const docRef = resolveDoc(`recipes/${recipeName}/attachments`)
+    const storageRef = ref(
+      storage,
+      `recipes/${recipeName}/${user?.uid}/${docRef.id}/${attachment.name}`
+    )
 
-    FirebaseService.storageRef
-      .child(`recipes/${recipeName}/${user?.uid}/${docRef.id}/${attachment.name}`)
-      .putString(attachment.dataUrl, 'data_url', { cacheControl: 'public, max-age=31536000' })
+    uploadString(storageRef, attachment.dataUrl, 'data_url', {
+      cacheControl: 'public, max-age=31536000',
+    })
       .then(snapshot => {
         const { fullPath, size, name } = snapshot.metadata
-        docRef
-          .set({
-            fullPath,
-            size,
-            name,
-            editorUid: user?.uid,
-            createdDate: attachment.createdDate,
-          } as AttachmentDoc)
+        setDoc(docRef, {
+          fullPath,
+          size,
+          name,
+          editorUid: user?.uid,
+          createdDate: attachment.createdDate,
+        } as AttachmentDoc)
           .then(() => {
             setUploading(false)
             setTimeout(() => {

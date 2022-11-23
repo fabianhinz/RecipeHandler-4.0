@@ -1,14 +1,15 @@
 import { Grid, makeStyles, Typography } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
+import { getDoc, onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import HomeRecipeCard, { RECIPE_CARD_HEIGHT } from '@/Components/Home/HomeRecipeCard'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
 import NotFound from '@/Components/Shared/NotFound'
+import { resolveCookingHistoryOrderedByDateDesc, resolveDoc } from '@/firebase/firebaseQueries'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import { CookingHistory, Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS } from '@/theme'
 
 const useStyles = makeStyles({
@@ -26,14 +27,13 @@ const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
   const classes = useStyles()
 
   useEffect(() => {
-    FirebaseService.firestore
-      .collection('recipes')
-      .doc(recipeName)
-      .get()
-      .then(doc => {
-        if (doc.exists) setRecipe(doc.data() as Recipe)
-        else setNotFound(true)
-      })
+    getDoc(resolveDoc('recipes', recipeName)).then(doc => {
+      if (doc.exists()) {
+        setRecipe(doc.data() as Recipe)
+      } else {
+        setNotFound(true)
+      }
+    })
   }, [recipeName])
 
   if (notFound) return <></>
@@ -61,22 +61,15 @@ const AccountCookingHistory = () => {
   useDocumentTitle(`Kochverlauf (${cookingHistory.length})`)
 
   useEffect(() => {
-    if (!user) return setLoading(false)
+    if (!user) {
+      setLoading(false)
+      return
+    }
 
-    const now = new Date()
-    now.setDate(now.getDate() - 365 / 4)
-    const lastQuarter = new Date(now)
-
-    return FirebaseService.firestore
-      .collection('users')
-      .doc(user.uid)
-      .collection('cookingHistory')
-      .where('createdDate', '>=', lastQuarter)
-      .orderBy('createdDate', 'desc')
-      .onSnapshot(snapshot => {
-        setCookingHistory(snapshot.docs.map(doc => doc.data() as CookingHistory))
-        setLoading(false)
-      })
+    return onSnapshot(resolveCookingHistoryOrderedByDateDesc(user.uid), snapshot => {
+      setCookingHistory(snapshot.docs.map(doc => doc.data() as CookingHistory))
+      setLoading(false)
+    })
   }, [user])
 
   if (!user) return <></>

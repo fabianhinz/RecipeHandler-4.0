@@ -18,9 +18,9 @@ import { memo, useEffect, useMemo, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import { resolveCollection } from '@/firebase/firebaseQueries'
 import { Comment as CommentModel, CommentReaction, Recipe } from '@/model/model'
 import { CommentsCollections } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS_HUGE } from '@/theme'
 
 const useStyles = makeStyles(theme => ({
@@ -94,17 +94,9 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
   const { getByUid } = useUsersContext()
   const { user: currentUser } = useFirebaseAuthContext()
 
-  const reactionsFirestoreRef = useMemo(
-    () =>
-      FirebaseService.firestore
-        .collection(collection)
-        .doc(name)
-        .collection('comments')
-        .doc(comment.documentId)
-        .collection('reactions'),
-
-    [collection, comment.documentId, name]
-  )
+  const reactionsFirestoreRef = useMemo(() => {
+    return resolveCollection(`trials/${name}/comments/${comment.documentId}/reactions`)
+  }, [collection, comment.documentId, name])
 
   useEffect(() => {
     reactionsFirestoreRef?.onSnapshot(querySnapshot =>

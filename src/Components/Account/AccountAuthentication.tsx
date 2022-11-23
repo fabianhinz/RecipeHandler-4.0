@@ -24,7 +24,7 @@ import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvid
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import { SlideUp } from '@/Components/Shared/Transitions'
 import { auth } from '@/firebase/firebaseConfig'
-import { getUserDoc } from '@/firebase/firebaseQueries'
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import useProgress from '@/hooks/useProgress'
 import { User } from '@/model/model'
 
@@ -112,7 +112,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
             if (!user) return
             // save the username - this allows admins to enable/disable editors by username
 
-            setDoc(getUserDoc(user.uid), {
+            setDoc(resolveDoc('users', user.uid), {
               username,
               // this is just sugar for the ui, firesture.rules performs authorization
               admin: false,

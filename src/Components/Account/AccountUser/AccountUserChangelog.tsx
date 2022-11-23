@@ -18,13 +18,17 @@ import {
 import CloseIcon from '@material-ui/icons/Close'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import UpdateIconRounded from '@material-ui/icons/UpdateRounded'
+import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 import Progress from '@/Components/Shared/Progress'
 import { SlideUp } from '@/Components/Shared/Transitions'
+import {
+  resolveCollection,
+  resolvePullRequestsOrderedByClosedAtDesc,
+} from '@/firebase/firebaseQueries'
 import { Issue, Pullrequest } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -53,22 +57,21 @@ const AccountUserChangelog = () => {
 
   useEffect(() => {
     setLoading(true)
-    return FirebaseService.firestore
-      .collection('pullrequests')
-      .orderBy('closedAt', 'desc')
-      .limit(20)
-      .onSnapshot(querySnapshot => {
-        setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
-        setLoading(false)
-      })
+
+    return onSnapshot(resolvePullRequestsOrderedByClosedAtDesc(), querySnapshot => {
+      setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
+      setLoading(false)
+    })
   }, [])
 
   useEffect(() => {
-    if (!changelogOpen) return
+    if (!changelogOpen) {
+      return
+    }
 
-    return FirebaseService.firestore
-      .collection('issues')
-      .onSnapshot(querySnapshot => setIssues(querySnapshot.docs.map(doc => doc.data() as Issue)))
+    return onSnapshot(resolveCollection('issues'), querySnapshot => {
+      setIssues(querySnapshot.docs.map(doc => doc.data() as Issue))
+    })
   }, [changelogOpen])
 
   const getRelatedIssues = (pullrequest: Pullrequest) =>
