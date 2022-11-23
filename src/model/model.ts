@@ -1,6 +1,8 @@
 import { PaletteType } from '@material-ui/core'
-import { Timestamp } from 'firebase/firestore'
+import { DocumentChangeType, Timestamp } from 'firebase/firestore'
 import { RouteComponentProps } from 'react-router'
+
+import { RecipesRootCollection, TrialsRootCollection } from '@/firebase/firebaseModel'
 
 export interface Editor {
   editorUid: string
@@ -70,7 +72,7 @@ export interface Trial extends Editor, CommentsDocument {
 }
 
 export interface CommentsCollections {
-  collection: 'recipes' | 'trials'
+  collection: RecipesRootCollection | TrialsRootCollection
 }
 
 type AlgoliaSnippetResult = {
@@ -106,14 +108,14 @@ export type User = {
   admin?: boolean
   profilePicture?: string
   emailVerified: boolean
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
   algoliaAdvancedSyntax: boolean
   bookmarkSync: boolean
   bookmarks: string[]
 }
 
 export interface Pullrequest {
-  closedAt: firebase.default.firestore.Timestamp
+  closedAt: Timestamp
   creator: string
   issueNumbers: string[] | undefined
   shortSha: string
@@ -153,7 +155,7 @@ export interface FirestoreDocPath {
 
 export interface MostCooked<T> {
   value: T
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
 }
 
 export type TesseractResult = {
@@ -176,7 +178,7 @@ export interface TesseractLog {
 }
 
 export interface CookingHistory {
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
   recipeName: string
 }
 
@@ -200,11 +202,8 @@ export interface Expense {
   [key: string]: any
 }
 
-export type ArchivedExpense = Expense & { deletedAt: firebase.default.firestore.Timestamp }
+export type ArchivedExpense = Expense & { deletedAt: Timestamp }
 
 export type Nullable<UnderlyingType> = null | UnderlyingType
 
-export type ChangesRecord<DocType> = Record<
-  firebase.default.firestore.DocumentChangeType,
-  Map<DocumentId, DocType>
->
+export type ChangesRecord<DocType> = Record<DocumentChangeType, Map<DocumentId, DocType>>

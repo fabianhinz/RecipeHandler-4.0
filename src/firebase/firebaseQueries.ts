@@ -12,15 +12,13 @@ import {
 import { Recipe } from '@/model/model'
 
 import { firestore } from './firebaseConfig'
-import { FirestorePath, TrialsSubCollectionResolver } from './firebaseModel'
+import { FirestorePath } from './firebaseModel'
 
 export const queryLimits = { desktop: 12, mobile: 6 }
 
-export const resolveCollection = (path: TrialsSubCollectionResolver) => {
+export const resolveCollection = (path: FirestorePath) => {
   return collection(firestore, path)
 }
-
-resolveCollection('trials/15720284529061216902729/comments/DHk5EcNTZwJyoErnJj8R/reactions')
 
 export const resolveDoc = (path: FirestorePath, id?: string) => {
   const resolvedPath = id ? `${path}/${id}` : path

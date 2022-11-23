@@ -95,7 +95,8 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
   const { user: currentUser } = useFirebaseAuthContext()
 
   const reactionsFirestoreRef = useMemo(() => {
-    return resolveCollection(`trials/${name}/comments/${comment.documentId}/reactions`)
+    // TODO upgrade/firebase 🚀
+    return resolveCollection(`${collection}/${name}/comments/${comment.documentId}/reactions`)
   }, [collection, comment.documentId, name])
 
   useEffect(() => {

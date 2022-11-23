@@ -18,10 +18,9 @@ type RatingRootCollection = 'rating'
 
 type RecipesCounterRootCollection = 'recipesCounter'
 
-export type TrialsRootCollection = 'trials'
-export type TrialsSubCollection = 'comments' | `comments/${DocumentId}/reactions`
-export type TrialsSubCollectionResolver =
-  `${TrialsRootCollection}/${DocumentId}}/${TrialsSubCollection}`
+type TrialsRootCollection = 'trials'
+type TrialsSubCollection = 'comments' | `comments/${DocumentId}/reactions`
+type TrialsSubCollectionResolver = `${TrialsRootCollection}/${DocumentId}}/${TrialsSubCollection}`
 
 type UsersRootCollection = 'users'
 type UsersSubCollection = 'cookingHistory' | 'expenses' | 'shoppingList'
