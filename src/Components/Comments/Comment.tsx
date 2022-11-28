@@ -3,6 +3,7 @@ import {
   Fab,
   Grid,
   IconButton,
+  Link,
   List,
   ListItem,
   ListItemText,
@@ -12,13 +13,13 @@ import {
   Typography,
 } from '@material-ui/core'
 import { AvatarGroup } from '@material-ui/lab'
-import { Timestamp } from 'firebase/firestore'
+import { onSnapshot, setDoc, Timestamp } from 'firebase/firestore'
 import { StickerEmoji } from 'mdi-material-ui'
 import { memo, useEffect, useMemo, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
-import { resolveCollection } from '@/firebase/firebaseQueries'
+import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
 import { Comment as CommentModel, CommentReaction, Recipe } from '@/model/model'
 import { CommentsCollections } from '@/model/model'
 import { BORDER_RADIUS_HUGE } from '@/theme'
@@ -64,17 +65,22 @@ interface CommentProps extends Pick<Recipe, 'name'>, CommentsCollections {
 const includesUrl = (value: string) => value.includes('http://') || value.includes('https://')
 
 const getCommentTypography = (comment: string): React.ReactNode => {
-  if (!includesUrl(comment)) return comment
+  if (!includesUrl(comment)) {
+    return comment
+  }
+
   const complexComment: Array<any> = []
 
   comment.split(' ').forEach(value => {
-    if (includesUrl(value))
+    if (includesUrl(value)) {
       complexComment.push(
-        <a href={value} target="_blank" rel="noopener noreferrer">
+        <Link href={value} color="secondary" target="_blank" rel="noopener noreferrer">
           Link
-        </a>
+        </Link>
       )
-    else complexComment.push(<>{value}</>)
+    } else {
+      complexComment.push(<>{value}</>)
+    }
   })
 
   return (
@@ -95,20 +101,23 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
   const { user: currentUser } = useFirebaseAuthContext()
 
   const reactionsFirestoreRef = useMemo(() => {
-    // TODO upgrade/firebase 🚀
     return resolveCollection(`${collection}/${name}/comments/${comment.documentId}/reactions`)
   }, [collection, comment.documentId, name])
 
   useEffect(() => {
-    reactionsFirestoreRef?.onSnapshot(querySnapshot =>
+    // TODO upgrade/firebase make sure that we unsubscribe from all snapshot listeners
+    return onSnapshot(reactionsFirestoreRef, querySnapshot => {
       setReactions(querySnapshot.docs.map(doc => ({ ...doc.data() } as CommentReaction)))
-    )
+    })
   }, [reactionsFirestoreRef])
 
   const handleEmojiClick = (emoji: string) => {
     setEmoticonAnchorEl(null)
-    if (!currentUser) return
-    reactionsFirestoreRef?.doc(currentUser.uid).set({
+    if (!currentUser) {
+      return
+    }
+    const docRef = resolveDoc(reactionsFirestoreRef, currentUser.uid)
+    setDoc(docRef, {
       emoji,
       editorUid: currentUser.uid,
       createdDate: Timestamp.fromDate(new Date()),

@@ -14,7 +14,7 @@ import ScrollToLatestIcon from '@material-ui/icons/ExpandMore'
 import SaveIcon from '@material-ui/icons/Save'
 import Skeleton from '@material-ui/lab/Skeleton'
 import clsx from 'clsx'
-import { Timestamp } from 'firebase/firestore'
+import { onSnapshot, Timestamp } from 'firebase/firestore'
 import { FC, useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 
@@ -22,8 +22,8 @@ import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import NotFound from '@/Components/Shared/NotFound'
 import { SlideUp } from '@/Components/Shared/Transitions'
+import { addDocTo, resolveCommentsOrderedByCreatedDateAsc } from '@/firebase/firebaseQueries'
 import { Comment as CommentModel, CommentsCollections, CommentsDocument } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS_HUGE } from '@/theme'
 
 import Comment from './Comment'
@@ -89,44 +89,39 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
   const classes = useStyles()
 
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      return
+    }
+
     setLoading(true)
 
-    return FirebaseService.firestore
-      .collection(collection)
-      .doc(name)
-      .collection('comments')
-      .orderBy('createdDate', 'asc')
-      .onSnapshot(querySnapshot => {
-        setComments(
-          querySnapshot.docs.map(doc => ({ documentId: doc.id, ...doc.data() } as CommentModel))
-        )
-        setLoading(false)
-      })
+    return onSnapshot(resolveCommentsOrderedByCreatedDateAsc(collection, name), querySnapshot => {
+      setComments(
+        querySnapshot.docs.map(doc => ({ documentId: doc.id, ...doc.data() } as CommentModel))
+      )
+      setLoading(false)
+    })
   }, [collection, name, open])
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (input.length === 0) return
-    setInputDisabled(true)
+    if (input.length === 0) {
+      return
+    }
 
+    setInputDisabled(true)
     try {
-      await FirebaseService.firestore
-        .collection(collection)
-        .doc(name)
-        .collection('comments')
-        .add({
-          editorUid: user?.uid,
-          comment: input,
-          likes: 0,
-          dislikes: 0,
-          createdDate: Timestamp.fromDate(new Date()),
-        } as Omit<CommentModel, 'documentId'>)
+      await addDocTo(`${collection}/${name}/comments`, {
+        editorUid: user?.uid,
+        comment: input,
+        likes: 0,
+        dislikes: 0,
+        createdDate: Timestamp.fromDate(new Date()),
+      } as Omit<CommentModel, 'documentId'>)
 
       setInput('')
-      setInputDisabled(false)
       setTimeout(scrollToLatest, 500)
-    } catch {
+    } finally {
       setInputDisabled(false)
     }
   }

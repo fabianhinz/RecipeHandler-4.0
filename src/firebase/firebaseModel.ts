@@ -18,15 +18,15 @@ type RatingRootCollection = 'rating'
 
 type RecipesCounterRootCollection = 'recipesCounter'
 
-type TrialsRootCollection = 'trials'
+export type TrialsRootCollection = 'trials'
 type TrialsSubCollection = 'comments' | `comments/${DocumentId}/reactions`
-type TrialsSubCollectionResolver = `${TrialsRootCollection}/${DocumentId}}/${TrialsSubCollection}`
+type TrialsSubCollectionResolver = `${TrialsRootCollection}/${DocumentId}/${TrialsSubCollection}`
 
 type UsersRootCollection = 'users'
-type UsersSubCollection = 'cookingHistory' | 'expenses' | 'shoppingList'
+type UsersSubCollection = 'cookingHistory' | 'expenses' | 'archivedExpenses' | 'shoppingList'
 type UsersSubCollectionResolver = `${UsersRootCollection}/${DocumentId}/${UsersSubCollection}`
 
-type RecipesRootCollection = 'recipes'
+export type RecipesRootCollection = 'recipes'
 type RecipesSubCollection =
   | 'attachments'
   | `comments`
@@ -34,7 +34,7 @@ type RecipesSubCollection =
   | 'satisfaction'
 type RecipesSubCollectionResolver = `${RecipesRootCollection}/${DocumentId}/${RecipesSubCollection}`
 
-export type RootCollections =
+export type RootCollection =
   | AdminsRootCollection
   | PullRequestsRootCollection
   | IssuesRootCollection
@@ -48,9 +48,9 @@ export type RootCollections =
   | UsersRootCollection
   | RecipesRootCollection
 
-export type SubCollectionResolvers =
+export type SubCollectionResolver =
   | TrialsSubCollectionResolver
   | UsersSubCollectionResolver
   | RecipesSubCollectionResolver
 
-export type FirestorePath = RootCollections | SubCollectionResolvers
+export type SupportedCollectionPath = RootCollection | SubCollectionResolver

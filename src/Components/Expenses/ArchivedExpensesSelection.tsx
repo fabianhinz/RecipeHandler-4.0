@@ -9,17 +9,15 @@ import {
   Typography,
 } from '@material-ui/core'
 import { Unarchive } from '@material-ui/icons'
+import { onSnapshot } from 'firebase/firestore'
 import { Archive, Delete } from 'mdi-material-ui'
 import { useEffect, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
+import { resolveArchivedExpensesOrderedByDateDesc } from '@/firebase/firebaseQueries'
 import { ArchivedExpense } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
-import useExpenseStore, {
-  ARCHIVED_EXPENSES_COLLECTION,
-  USER_COLLECTION,
-} from '@/store/ExpenseStore'
+import useExpenseStore from '@/store/ExpenseStore'
 
 const ArchivedExpensesSelection = () => {
   const [shouldLoad, setShouldLoad] = useState(false)
@@ -29,16 +27,13 @@ const ArchivedExpensesSelection = () => {
   const clearArchive = useExpenseStore(store => store.clearArchive)
 
   useEffect(() => {
-    if (!shouldLoad || !authContext.user) return
+    if (!shouldLoad || !authContext.user) {
+      return
+    }
 
-    return FirebaseService.firestore
-      .collection(USER_COLLECTION)
-      .doc(authContext.user.uid)
-      .collection(ARCHIVED_EXPENSES_COLLECTION)
-      .orderBy('date', 'desc')
-      .onSnapshot(snapshot => {
-        setExpenses(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as ArchivedExpense)))
-      })
+    return onSnapshot(resolveArchivedExpensesOrderedByDateDesc(authContext.user.uid), snapshot => {
+      setExpenses(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as ArchivedExpense)))
+    })
   }, [authContext.user, shouldLoad])
 
   return (

@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  CollectionReference,
   doc,
   limit,
   orderBy,
@@ -12,21 +13,34 @@ import {
 import { Recipe } from '@/model/model'
 
 import { firestore } from './firebaseConfig'
-import { FirestorePath } from './firebaseModel'
+import {
+  RecipesRootCollection,
+  SupportedCollectionPath,
+  TrialsRootCollection,
+} from './firebaseModel'
 
 export const queryLimits = { desktop: 12, mobile: 6 }
+type PathOrRef = SupportedCollectionPath | CollectionReference
 
-export const resolveCollection = (path: FirestorePath) => {
-  return collection(firestore, path)
+export const resolveCollection = (pathOrRef: PathOrRef) => {
+  if (pathOrRef instanceof CollectionReference) {
+    return collection(firestore, pathOrRef.path)
+  }
+
+  return collection(firestore, pathOrRef)
 }
 
-export const resolveDoc = (path: FirestorePath, id?: string) => {
-  const resolvedPath = id ? `${path}/${id}` : path
-  return doc(firestore, resolvedPath)
+const getDocPath = (path: string, id?: string) => (id ? `${path}/${id}` : path)
+export const resolveDoc = (pathOrRef: PathOrRef, id?: string) => {
+  if (pathOrRef instanceof CollectionReference) {
+    return doc(firestore, getDocPath(pathOrRef.path, id))
+  }
+
+  return doc(firestore, getDocPath(pathOrRef, id))
 }
 
 export const addDocTo = <Data extends WithFieldValue<Record<string, unknown>>>(
-  path: FirestorePath,
+  path: PathOrRef,
   data: Data
 ) => {
   return addDoc(resolveCollection(path), data)
@@ -53,4 +67,18 @@ export const resolveAttachmentsOrderedByCreatedDateAsc = (recipeName: Recipe['na
     resolveCollection(`recipes/${recipeName}/attachments`),
     orderBy('createdDate', 'asc')
   )
+}
+
+export const resolveCommentsOrderedByCreatedDateAsc = (
+  collection: TrialsRootCollection | RecipesRootCollection,
+  recipeName: Recipe['name']
+) => {
+  return query(
+    resolveCollection(`${collection}/${recipeName}/comments`),
+    orderBy('createdDate', 'asc')
+  )
+}
+
+export const resolveArchivedExpensesOrderedByDateDesc = (userId: string) => {
+  return query(resolveCollection(`users/${userId}/archivedExpenses`), orderBy('date', 'desc'))
 }
