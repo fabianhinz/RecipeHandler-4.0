@@ -96,11 +96,20 @@ export const resolveArchivedExpensesOrderedByDateDesc = (userId: string) => {
 }
 
 export const resolveCookCounterOrderedByValueDesc = (
-  matchingDocuments: number
+  maxNumberOfDocs: number
 ) => {
   return query(
-    resolveCollection(`cookCounter`),
-    limit(matchingDocuments),
+    resolveCollection('cookCounter'),
+    limit(maxNumberOfDocs),
     orderBy('value', 'desc')
   )
 }
+
+export const resolveCookCounterOrderedByCreatedDateDescWhereValueIsZero =
+  () => {
+    return query(
+      resolveCollection('cookCounter'),
+      orderBy('createdDate', 'desc'),
+      where('value', '==', '0')
+    )
+  }

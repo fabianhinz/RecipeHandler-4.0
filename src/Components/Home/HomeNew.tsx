@@ -6,13 +6,14 @@ import {
   Typography,
 } from '@material-ui/core'
 import green from '@material-ui/core/colors/green'
+import { onSnapshot } from 'firebase/firestore'
 import { memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useGridContext } from '@/Components/Provider/GridProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import Skeletons from '@/Components/Shared/Skeletons'
-import { FirebaseService } from '@/services/firebase'
+import { resolveCookCounterOrderedByCreatedDateDescWhereValueIsZero } from '@/firebase/firebaseQueries'
 
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
@@ -34,14 +35,13 @@ const HomeNew = () => {
   const classes = useStyles()
 
   useEffect(() => {
-    return FirebaseService.firestore
-      .collection('cookCounter')
-      .orderBy('createdDate', 'desc')
-      .where('value', '==', 0)
-      .onSnapshot(snapshot => {
+    return onSnapshot(
+      resolveCookCounterOrderedByCreatedDateDescWhereValueIsZero(),
+      snapshot => {
         setRecipeNames(snapshot.docs.map(doc => doc.id))
         setLoading(false)
-      })
+      }
+    )
   }, [])
 
   return (
