@@ -130,13 +130,17 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
             } as Omit<User, 'uid'>)
 
             // send a verification email to the newly created user
-            sendEmailVerification(user, { url: 'https://recipehandler.web.app/' })
+            sendEmailVerification(user, {
+              url: 'https://recipehandler.web.app/',
+            })
           })
           .catch(error => handleAuthError(error))
           .finally(() => setProgress(false))
       } else {
-        if (password !== passwordRepeat) handleAuthError({ code: 'app/passwords-not-equal' })
-        if (username.length === 0) handleAuthError({ code: 'app/username-empty' })
+        if (password !== passwordRepeat)
+          handleAuthError({ code: 'app/passwords-not-equal' })
+        if (username.length === 0)
+          handleAuthError({ code: 'app/username-empty' })
         setProgress(false)
       }
     } else {

@@ -41,7 +41,8 @@ const useCurrentExpenseStore = create<CurrentExpenseStore>(set => ({
   setRelatedUsers: user =>
     set(state => {
       if (state.relatedUsers.includes(user)) {
-        if (state.relatedUsers.length === 1) return { relatedUsers: state.relatedUsers }
+        if (state.relatedUsers.length === 1)
+          return { relatedUsers: state.relatedUsers }
         return { relatedUsers: [...state.relatedUsers.filter(u => u !== user)] }
       }
       return { relatedUsers: [user, ...state.relatedUsers].sort() }
@@ -53,7 +54,16 @@ const useCurrentExpenseStore = create<CurrentExpenseStore>(set => ({
       ...getFreshExpense(),
       relatedUsers: useExpenseStore.getState().autocompleteOptions.creator,
     })),
-  setCurrentExpense: ({ id, amount, category, creator, date, relatedUsers, shop, description }) =>
+  setCurrentExpense: ({
+    id,
+    amount,
+    category,
+    creator,
+    date,
+    relatedUsers,
+    shop,
+    description,
+  }) =>
     set(() => ({
       id,
       amount,

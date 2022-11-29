@@ -19,7 +19,10 @@ import {
   TrialsRootCollection,
 } from './firebaseModel'
 
-export const queryLimits = { desktop: 12, mobile: 6 }
+export const queryLimits = {
+  desktop: 12,
+  mobile: 6,
+}
 type PathOrRef = SupportedCollectionPath | CollectionReference
 
 export const resolveCollection = (pathOrRef: PathOrRef) => {
@@ -59,10 +62,16 @@ export const resolveCookingHistoryOrderedByDateDesc = (userId: string) => {
 }
 
 export const resolvePullRequestsOrderedByClosedAtDesc = () => {
-  return query(resolveCollection('pullrequests'), orderBy('closedAt', 'desc'), limit(20))
+  return query(
+    resolveCollection('pullrequests'),
+    orderBy('closedAt', 'desc'),
+    limit(20)
+  )
 }
 
-export const resolveAttachmentsOrderedByCreatedDateAsc = (recipeName: Recipe['name']) => {
+export const resolveAttachmentsOrderedByCreatedDateAsc = (
+  recipeName: Recipe['name']
+) => {
   return query(
     resolveCollection(`recipes/${recipeName}/attachments`),
     orderBy('createdDate', 'asc')
@@ -80,5 +89,18 @@ export const resolveCommentsOrderedByCreatedDateAsc = (
 }
 
 export const resolveArchivedExpensesOrderedByDateDesc = (userId: string) => {
-  return query(resolveCollection(`users/${userId}/archivedExpenses`), orderBy('date', 'desc'))
+  return query(
+    resolveCollection(`users/${userId}/archivedExpenses`),
+    orderBy('date', 'desc')
+  )
+}
+
+export const resolveCookCounterOrderedByValueDesc = (
+  matchingDocuments: number
+) => {
+  return query(
+    resolveCollection(`cookCounter`),
+    limit(matchingDocuments),
+    orderBy('value', 'desc')
+  )
 }

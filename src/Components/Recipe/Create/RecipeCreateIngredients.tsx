@@ -1,4 +1,11 @@
-import { Button, Grid, IconButton, makeStyles, Popover, Typography } from '@material-ui/core'
+import {
+  Button,
+  Grid,
+  IconButton,
+  makeStyles,
+  Popover,
+  Typography,
+} from '@material-ui/core'
 import AddIcon from '@material-ui/icons/AddCircle'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import RemoveIcon from '@material-ui/icons/RemoveCircle'
@@ -24,8 +31,14 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const RecipeCreateIngredients = ({ amount, ingredients, onIngredientsChange, dispatch }: Props) => {
-  const [amountAnchorEl, setAmountAnchorEl] = useState<HTMLButtonElement | null>(null)
+const RecipeCreateIngredients = ({
+  amount,
+  ingredients,
+  onIngredientsChange,
+  dispatch,
+}: Props) => {
+  const [amountAnchorEl, setAmountAnchorEl] =
+    useState<HTMLButtonElement | null>(null)
 
   const classes = useStyles()
 
@@ -41,7 +54,10 @@ const RecipeCreateIngredients = ({ amount, ingredients, onIngredientsChange, dis
           </Button>
         }
         BackgroundIcon={AssignmentIcon}>
-        <MarkdownInput outerValue={ingredients} onChange={onIngredientsChange} />
+        <MarkdownInput
+          outerValue={ingredients}
+          onChange={onIngredientsChange}
+        />
       </StyledCard>
 
       <Popover
@@ -62,7 +78,9 @@ const RecipeCreateIngredients = ({ amount, ingredients, onIngredientsChange, dis
             <Typography variant="h5">Personen</Typography>
           </Grid>
           <Grid item>
-            <IconButton onClick={() => dispatch({ type: 'decreaseAmount' })} size="small">
+            <IconButton
+              onClick={() => dispatch({ type: 'decreaseAmount' })}
+              size="small">
               <RemoveIcon />
             </IconButton>
           </Grid>
@@ -70,7 +88,9 @@ const RecipeCreateIngredients = ({ amount, ingredients, onIngredientsChange, dis
             <Typography variant="h5">{amount}</Typography>
           </Grid>
           <Grid item>
-            <IconButton onClick={() => dispatch({ type: 'increaseAmount' })} size="small">
+            <IconButton
+              onClick={() => dispatch({ type: 'increaseAmount' })}
+              size="small">
               <AddIcon />
             </IconButton>
           </Grid>

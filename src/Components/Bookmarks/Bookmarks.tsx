@@ -45,8 +45,14 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
               <RecipeBookmarkButton name={recipeName} />
             </>
           }>
-          <Tabs variant="fullWidth" value={value} onChange={(_e, newValue) => setValue(newValue)}>
-            <Tab icon={<AssignmentIcon />} label={`Zutaten für ${recipe?.amount}`} />
+          <Tabs
+            variant="fullWidth"
+            value={value}
+            onChange={(_e, newValue) => setValue(newValue)}>
+            <Tab
+              icon={<AssignmentIcon />}
+              label={`Zutaten für ${recipe?.amount}`}
+            />
             <Tab icon={<BookIcon />} label="Beschreibung" />
           </Tabs>
 
@@ -54,7 +60,9 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
             <MarkdownRenderer withShoppingList recipeName={recipeName}>
               {recipe.ingredients}
             </MarkdownRenderer>
-            <MarkdownRenderer recipeName={recipeName}>{recipe.description}</MarkdownRenderer>
+            <MarkdownRenderer recipeName={recipeName}>
+              {recipe.description}
+            </MarkdownRenderer>
           </SwipeableViews>
         </StyledCard>
       ) : (

@@ -4,7 +4,8 @@ import blueGrey from '@material-ui/core/colors/blueGrey'
 import { FC } from 'react'
 
 const useStyles = makeStyles(theme => {
-  const background = theme.palette.type === 'light' ? blueGrey[900] : theme.palette.grey[600]
+  const background =
+    theme.palette.type === 'light' ? blueGrey[900] : theme.palette.grey[600]
 
   return {
     badge: {
@@ -14,11 +15,19 @@ const useStyles = makeStyles(theme => {
   }
 })
 
-export const BadgeWrapper: FC<BadgeProps> = ({ children, badgeContent, anchorOrigin }) => {
+export const BadgeWrapper: FC<BadgeProps> = ({
+  children,
+  badgeContent,
+  anchorOrigin,
+}) => {
   const classes = useStyles()
 
   return (
-    <Badge anchorOrigin={anchorOrigin} classes={classes} badgeContent={badgeContent} max={100}>
+    <Badge
+      anchorOrigin={anchorOrigin}
+      classes={classes}
+      badgeContent={badgeContent}
+      max={100}>
       {children}
     </Badge>
   )

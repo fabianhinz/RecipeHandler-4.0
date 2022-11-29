@@ -25,7 +25,9 @@ const UsersProvider: FC = ({ children }) => {
       .orderBy('username', 'asc')
       .get()
       .then(querySnapshot =>
-        setUsers(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as User])))
+        setUsers(
+          new Map(querySnapshot.docs.map(doc => [doc.id, doc.data() as User]))
+        )
       )
       .catch(e => {
         if (e.code === 'permission-denied') return

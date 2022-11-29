@@ -21,7 +21,9 @@ const RecipeCookCounterButton = ({ name }: Props) => {
       .collection('cookCounter')
       .doc(name)
       .onSnapshot(documentSnapshot =>
-        setNumberOfCooks(documentSnapshot.exists ? documentSnapshot.data()!.value : 0)
+        setNumberOfCooks(
+          documentSnapshot.exists ? documentSnapshot.data()!.value : 0
+        )
       )
   }, [name])
 

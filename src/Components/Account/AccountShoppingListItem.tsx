@@ -55,7 +55,10 @@ const AccountShoppingListItem = (props: Props) => {
   const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
 
   const getItemStyle = useCallback(
-    (isDragging: boolean, draggableStyle?: DraggingStyle | NotDraggingStyle) => ({
+    (
+      isDragging: boolean,
+      draggableStyle?: DraggingStyle | NotDraggingStyle
+    ) => ({
       ...draggableStyle,
       ...(isDragging &&
         ({
@@ -73,7 +76,10 @@ const AccountShoppingListItem = (props: Props) => {
   }
 
   const handleExitEditMode = async () => {
-    if (shoppingList[props.index].value === editValue || editValue.length === 0) {
+    if (
+      shoppingList[props.index].value === editValue ||
+      editValue.length === 0
+    ) {
       setIsEditMode(false)
       return
     }
@@ -83,17 +89,24 @@ const AccountShoppingListItem = (props: Props) => {
     setIsEditMode(false)
   }
 
-  const secondaryText = [props.item.recipeNameRef, props.item.tag].filter(Boolean).join(', ')
+  const secondaryText = [props.item.recipeNameRef, props.item.tag]
+    .filter(Boolean)
+    .join(', ')
 
   return (
-    <Draggable draggableId={`${props.index}-${props.item.value}`} index={props.index}>
+    <Draggable
+      draggableId={`${props.index}-${props.item.value}`}
+      index={props.index}>
       {(provided, snapshot) => (
         <ListItem
           innerRef={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className={classes.listItem}
-          style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+          style={getItemStyle(
+            snapshot.isDragging,
+            provided.draggableProps.style
+          )}>
           <ListItemIcon>
             <Checkbox
               checked={props.item.checked}
@@ -113,7 +126,9 @@ const AccountShoppingListItem = (props: Props) => {
                     <TextField
                       autoFocus
                       helperText={secondaryText}
-                      FormHelperTextProps={{ classes: { root: classes.textFieldHelperRoot } }}
+                      FormHelperTextProps={{
+                        classes: { root: classes.textFieldHelperRoot },
+                      }}
                       fullWidth
                       value={editValue}
                       onChange={e => setEditValue(e.target.value)}
@@ -121,7 +136,9 @@ const AccountShoppingListItem = (props: Props) => {
                   </ClickAwayListener>
                 ) : (
                   <>
-                    <Typography style={{ cursor: 'edit' }} onClick={handleEnterEditMode}>
+                    <Typography
+                      style={{ cursor: 'edit' }}
+                      onClick={handleEnterEditMode}>
                       {props.item.value}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">

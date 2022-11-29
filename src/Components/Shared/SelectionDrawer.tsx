@@ -92,7 +92,11 @@ const SelectionDrawer = ({
 
   return (
     <>
-      <Button onClick={openDrawer} variant="contained" size="large" {...muiButtonProps}>
+      <Button
+        onClick={openDrawer}
+        variant="contained"
+        size="large"
+        {...muiButtonProps}>
         <div>
           <Box display="flex" alignItems="center">
             <Box mr={1} lineHeight={1}>

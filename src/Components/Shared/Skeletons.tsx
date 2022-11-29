@@ -52,7 +52,9 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
 
   if (!visible) return <></>
 
-  const variantAvareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
+  const variantAvareBreakpoints: Partial<
+    Record<Breakpoint, boolean | GridSize>
+  > =
     variant === 'trialsSelection'
       ? { xs: 12 }
       : variant === 'recipe'
@@ -65,10 +67,18 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
         .fill(1)
         .map((_skeleton, index) => (
           <Grid {...variantAvareBreakpoints} item key={index}>
-            <Grid container spacing={2} justifyContent="space-between" alignItems="center">
+            <Grid
+              container
+              spacing={2}
+              justifyContent="space-between"
+              alignItems="center">
               <Grid xs={12} item>
                 <Card>
-                  <Skeleton animation="wave" className={classes[variant]} variant="rect" />
+                  <Skeleton
+                    animation="wave"
+                    className={classes[variant]}
+                    variant="rect"
+                  />
                 </Card>
               </Grid>
             </Grid>

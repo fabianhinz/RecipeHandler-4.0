@@ -43,7 +43,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const MarkdownEmojiToggle = ({ onToggleChange }: ToggleChangeHandler) => {
-  const [emoticonAnchorEl, setEmoticonAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [emoticonAnchorEl, setEmoticonAnchorEl] =
+    useState<HTMLButtonElement | null>(null)
 
   const classes = useStyles()
 
@@ -55,7 +56,9 @@ const MarkdownEmojiToggle = ({ onToggleChange }: ToggleChangeHandler) => {
   return (
     <>
       <MarkdownToggleButtonGroup size="small">
-        <ToggleButton onClick={e => setEmoticonAnchorEl(e.currentTarget)} value="emoticonFormat">
+        <ToggleButton
+          onClick={e => setEmoticonAnchorEl(e.currentTarget)}
+          value="emoticonFormat">
           <InsertEmoticonIcon />
           <ArrowDropDownIcon />
         </ToggleButton>

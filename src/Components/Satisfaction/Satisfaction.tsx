@@ -16,7 +16,9 @@ interface Props {
 }
 
 const Satisfaction = ({ recipeName }: Props) => {
-  const [satisfaction, setSatisfaction] = useState<Map<string, number>>(new Map())
+  const [satisfaction, setSatisfaction] = useState<Map<string, number>>(
+    new Map()
+  )
   const [tooltipTitle, setTooltipTitle] = useState<ReactText>('')
 
   const { user } = useFirebaseAuthContext()
@@ -24,19 +26,27 @@ const Satisfaction = ({ recipeName }: Props) => {
 
   const memoSatisfactionCollection = useMemo(
     () =>
-      FirebaseService.firestore.collection('recipes').doc(recipeName).collection('satisfaction'),
+      FirebaseService.firestore
+        .collection('recipes')
+        .doc(recipeName)
+        .collection('satisfaction'),
     [recipeName]
   )
 
   useEffect(
     () =>
       memoSatisfactionCollection.onSnapshot(querySnapshot =>
-        setSatisfaction(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data().value])))
+        setSatisfaction(
+          new Map(querySnapshot.docs.map(doc => [doc.id, doc.data().value]))
+        )
       ),
     [memoSatisfactionCollection]
   )
 
-  const handleSatisfactionChange = (_event: React.ChangeEvent<{}>, value: number | null) => {
+  const handleSatisfactionChange = (
+    _event: React.ChangeEvent<{}>,
+    value: number | null
+  ) => {
     if (!user) return
 
     memoSatisfactionCollection.doc(user.uid).set({ value })
@@ -96,7 +106,11 @@ const Satisfaction = ({ recipeName }: Props) => {
           .filter(uid => uid !== user?.uid)
           .map(uid => (
             <Grid item key={uid}>
-              <SatisfactionUser disabled value={satisfactionValueOrNull(uid)} uid={uid} />
+              <SatisfactionUser
+                disabled
+                value={satisfactionValueOrNull(uid)}
+                uid={uid}
+              />
             </Grid>
           ))}
       </Grid>

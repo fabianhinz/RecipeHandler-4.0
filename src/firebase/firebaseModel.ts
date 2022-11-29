@@ -20,11 +20,17 @@ type RecipesCounterRootCollection = 'recipesCounter'
 
 export type TrialsRootCollection = 'trials'
 type TrialsSubCollection = 'comments' | `comments/${DocumentId}/reactions`
-type TrialsSubCollectionResolver = `${TrialsRootCollection}/${DocumentId}/${TrialsSubCollection}`
+type TrialsSubCollectionResolver =
+  `${TrialsRootCollection}/${DocumentId}/${TrialsSubCollection}`
 
 type UsersRootCollection = 'users'
-type UsersSubCollection = 'cookingHistory' | 'expenses' | 'archivedExpenses' | 'shoppingList'
-type UsersSubCollectionResolver = `${UsersRootCollection}/${DocumentId}/${UsersSubCollection}`
+type UsersSubCollection =
+  | 'cookingHistory'
+  | 'expenses'
+  | 'archivedExpenses'
+  | 'shoppingList'
+type UsersSubCollectionResolver =
+  `${UsersRootCollection}/${DocumentId}/${UsersSubCollection}`
 
 export type RecipesRootCollection = 'recipes'
 type RecipesSubCollection =
@@ -32,7 +38,8 @@ type RecipesSubCollection =
   | `comments`
   | `comments/${DocumentId}/reactions`
   | 'satisfaction'
-type RecipesSubCollectionResolver = `${RecipesRootCollection}/${DocumentId}/${RecipesSubCollection}`
+type RecipesSubCollectionResolver =
+  `${RecipesRootCollection}/${DocumentId}/${RecipesSubCollection}`
 
 export type RootCollection =
   | AdminsRootCollection

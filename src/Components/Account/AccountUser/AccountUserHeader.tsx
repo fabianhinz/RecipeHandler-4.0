@@ -1,4 +1,10 @@
-import { Avatar, CardActionArea, Grid, makeStyles, Typography } from '@material-ui/core'
+import {
+  Avatar,
+  CardActionArea,
+  Grid,
+  makeStyles,
+  Typography,
+} from '@material-ui/core'
 import { useSnackbar } from 'notistack'
 import { useEffect } from 'react'
 
@@ -44,7 +50,9 @@ const AccountUserHeader = ({ userDoc, user }: Props) => {
       const { dataUrl, size } = dropzoneAttachments[0]
 
       if (size > 500000) {
-        enqueueSnackbar('Maximale Größe überschritten (500kb)', { variant: 'warning' })
+        enqueueSnackbar('Maximale Größe überschritten (500kb)', {
+          variant: 'warning',
+        })
       } else {
         userDoc.update({ profilePicture: dataUrl })
       }
@@ -56,7 +64,11 @@ const AccountUserHeader = ({ userDoc, user }: Props) => {
       <Grid container spacing={3} alignItems="center">
         <Grid item>
           <CardActionArea {...dropzoneProps.getRootProps()}>
-            <Avatar variant="rounded" className={classes.userAvatar} src={user.profilePicture} />
+            <Avatar
+              variant="rounded"
+              className={classes.userAvatar}
+              src={user.profilePicture}
+            />
           </CardActionArea>
         </Grid>
 

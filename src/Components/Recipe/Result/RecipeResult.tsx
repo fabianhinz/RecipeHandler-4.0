@@ -48,7 +48,8 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                 <StyledCard
                   header={
                     <>
-                      Zutaten für {recipe.amount} {recipe.amount < 2 ? 'Person' : 'Personen'}
+                      Zutaten für {recipe.amount}{' '}
+                      {recipe.amount < 2 ? 'Person' : 'Personen'}
                     </>
                   }
                   action={<CopyButton text={recipe.ingredients} />}
@@ -64,14 +65,21 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                   header="Beschreibung"
                   BackgroundIcon={BookIcon}
                   action={<CopyButton text={recipe.description} />}>
-                  <MarkdownRenderer recipeName={recipe.name}>{recipe.description}</MarkdownRenderer>
+                  <MarkdownRenderer recipeName={recipe.name}>
+                    {recipe.description}
+                  </MarkdownRenderer>
                 </StyledCard>
               </Grid>
 
               {recipe.relatedRecipes.length > 0 && (
                 <Grid {...gridBreakpointProps} item>
-                  <StyledCard expandable header="Passt gut zu" BackgroundIcon={SwapIcon}>
-                    <RecipeResultRelated relatedRecipes={recipe.relatedRecipes} />
+                  <StyledCard
+                    expandable
+                    header="Passt gut zu"
+                    BackgroundIcon={SwapIcon}>
+                    <RecipeResultRelated
+                      relatedRecipes={recipe.relatedRecipes}
+                    />
                   </StyledCard>
                 </Grid>
               )}
@@ -89,7 +97,9 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
               <AccountChip
                 variant="outlined"
                 uid={recipe.editorUid}
-                enhanceLabel={`am ${recipe.createdDate.toDate().toLocaleDateString()}`}
+                enhanceLabel={`am ${recipe.createdDate
+                  .toDate()
+                  .toLocaleDateString()}`}
               />
             </Grid>
           )}

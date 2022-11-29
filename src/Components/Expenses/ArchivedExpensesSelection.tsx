@@ -31,9 +31,16 @@ const ArchivedExpensesSelection = () => {
       return
     }
 
-    return onSnapshot(resolveArchivedExpensesOrderedByDateDesc(authContext.user.uid), snapshot => {
-      setExpenses(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as ArchivedExpense)))
-    })
+    return onSnapshot(
+      resolveArchivedExpensesOrderedByDateDesc(authContext.user.uid),
+      snapshot => {
+        setExpenses(
+          snapshot.docs.map(
+            doc => ({ ...doc.data(), id: doc.id } as ArchivedExpense)
+          )
+        )
+      }
+    )
   }, [authContext.user, shouldLoad])
 
   return (
@@ -42,7 +49,8 @@ const ArchivedExpensesSelection = () => {
       onClose={() => setShouldLoad(false)}
       buttonProps={{ icon: <Archive />, label: 'Archiv' }}
       action={
-        <IconButton onClick={() => clearArchive(expenses, authContext.user!.uid)}>
+        <IconButton
+          onClick={() => clearArchive(expenses, authContext.user!.uid)}>
           <Delete />
         </IconButton>
       }>
@@ -61,12 +69,14 @@ const ArchivedExpensesSelection = () => {
               }
               secondary={
                 <Typography variant="caption">
-                  {expense.date.toDate().toLocaleDateString()}, {expense.category}
+                  {expense.date.toDate().toLocaleDateString()},{' '}
+                  {expense.category}
                 </Typography>
               }
             />
             <ListItemSecondaryAction>
-              <IconButton onClick={() => restoreExpense(expense, authContext.user!.uid)}>
+              <IconButton
+                onClick={() => restoreExpense(expense, authContext.user!.uid)}>
                 <Unarchive />
               </IconButton>
             </ListItemSecondaryAction>

@@ -58,12 +58,14 @@ const MarkdownRenderer = (props: Props) => {
   const getListItemByChildren = (children: any[]) => {
     return shoppingList.find(
       item =>
-        item.value === markdownPropsToGrocery(children) && item.recipeNameRef === props.recipeName
+        item.value === markdownPropsToGrocery(children) &&
+        item.recipeNameRef === props.recipeName
     )
   }
 
   const handleCheckboxChange =
-    (children: any) => (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    (children: any) =>
+    (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
       let grocery = markdownPropsToGrocery(children)
       if (!grocery || !props.withShoppingList) return
 
@@ -96,8 +98,12 @@ const MarkdownRenderer = (props: Props) => {
             {markdownProps.children}
           </Link>
         ),
-        ol: ({ node, ...markdownProps }) => <List>{markdownProps.children}</List>,
-        ul: ({ node, ...markdownProps }) => <List>{markdownProps.children}</List>,
+        ol: ({ node, ...markdownProps }) => (
+          <List>{markdownProps.children}</List>
+        ),
+        ul: ({ node, ...markdownProps }) => (
+          <List>{markdownProps.children}</List>
+        ),
         li: ({ node, ...markdownProps }) => {
           const listItemText = <ListItemText primary={markdownProps.children} />
 
@@ -125,11 +131,15 @@ const MarkdownRenderer = (props: Props) => {
                   <Checkbox
                     icon={<AddCircleIcon />}
                     checkedIcon={<RemoveCircleIcon />}
-                    checked={Boolean(getListItemByChildren(markdownProps.children))}
+                    checked={Boolean(
+                      getListItemByChildren(markdownProps.children)
+                    )}
                     onChange={handleCheckboxChange(markdownProps.children)}
                     classes={{ root: classes.checkboxRoot }}
                     disabled={
-                      (match.path !== PATHS.details() && match.path !== PATHS.bookmarks) || !user
+                      (match.path !== PATHS.details() &&
+                        match.path !== PATHS.bookmarks) ||
+                      !user
                     }
                   />
                 </Tooltip>
@@ -140,11 +150,21 @@ const MarkdownRenderer = (props: Props) => {
           )
         },
         hr: () => <Divider />,
-        table: ({ node, ...markdownProps }) => <Table>{markdownProps.children}</Table>,
-        thead: ({ node, ...markdownProps }) => <TableHead>{markdownProps.children}</TableHead>,
-        tbody: ({ node, ...markdownProps }) => <TableBody>{markdownProps.children}</TableBody>,
-        tr: ({ node, ...markdownProps }) => <TableRow>{markdownProps.children}</TableRow>,
-        td: ({ node, ...markdownProps }) => <TableCell>{markdownProps.children}</TableCell>,
+        table: ({ node, ...markdownProps }) => (
+          <Table>{markdownProps.children}</Table>
+        ),
+        thead: ({ node, ...markdownProps }) => (
+          <TableHead>{markdownProps.children}</TableHead>
+        ),
+        tbody: ({ node, ...markdownProps }) => (
+          <TableBody>{markdownProps.children}</TableBody>
+        ),
+        tr: ({ node, ...markdownProps }) => (
+          <TableRow>{markdownProps.children}</TableRow>
+        ),
+        td: ({ node, ...markdownProps }) => (
+          <TableCell>{markdownProps.children}</TableCell>
+        ),
       }}
       className={classes.markdown}
       {...props}

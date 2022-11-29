@@ -47,7 +47,8 @@ const MarkdownHeadingToggle = ({
   formats,
   onToggleChange,
 }: ToggleChangeHandler & CurrentFormats) => {
-  const [headingAnchorEl, setHeadingAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [headingAnchorEl, setHeadingAnchorEl] =
+    useState<HTMLButtonElement | null>(null)
 
   const classes = useStyles()
 
@@ -59,7 +60,9 @@ const MarkdownHeadingToggle = ({
   return (
     <>
       <MarkdownToggleButtonGroup size="small" value={formats}>
-        <ToggleButton onClick={e => setHeadingAnchorEl(e.currentTarget)} value="textFormat">
+        <ToggleButton
+          onClick={e => setHeadingAnchorEl(e.currentTarget)}
+          value="textFormat">
           <TextFormatIcon />
           <ArrowDropDownIcon />
         </ToggleButton>
@@ -77,7 +80,11 @@ const MarkdownHeadingToggle = ({
               selected={formats.some(format => format === heading)}
               onClick={handleHeadingClick(heading)}>
               <ListItemText
-                primary={<div className={clsx(classes.hRoot, classes[heading])}>{label}</div>}
+                primary={
+                  <div className={clsx(classes.hRoot, classes[heading])}>
+                    {label}
+                  </div>
+                }
               />
             </ListItem>
           ))}

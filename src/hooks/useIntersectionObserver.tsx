@@ -39,7 +39,9 @@ const useIntersectionObserver = ({
   }, [onIsIntersecting, onLeave, options])
 
   return {
-    IntersectionObserverTrigger: () => <div className={classes.trigger} id={idRef.current} />,
+    IntersectionObserverTrigger: () => (
+      <div className={classes.trigger} id={idRef.current} />
+    ),
   }
 }
 

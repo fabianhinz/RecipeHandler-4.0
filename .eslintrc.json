@@ -1,25 +1,23 @@
 {
-    "extends": [
-        "react-app",
-        "eslint:recommended",
-        "plugin:prettier/recommended"
+  "extends": [
+    "react-app",
+    "eslint:recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["simple-import-sort"],
+  "rules": {
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "prettier/prettier": "warn",
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
+    "react/no-multi-comp": [
+      "warn",
+      {
+        "ignoreStateless": false
+      }
     ],
-    "plugins": [
-        "simple-import-sort"
-    ],
-    "rules": {
-        "no-undef": "off",
-        "no-unused-vars": "off",
-        "prettier/prettier": "warn",
-        "simple-import-sort/imports": "warn",
-        "simple-import-sort/exports": "warn",
-        "react/no-multi-comp": [
-            "warn",
-            {
-                "ignoreStateless": false
-            }
-        ],
-        "react/react-in-jsx-scope": "off",
-        "react/prop-types": "off"
-    }
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off"
+  }
 }

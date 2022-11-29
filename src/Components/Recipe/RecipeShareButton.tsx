@@ -1,4 +1,10 @@
-import { IconButton, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core'
+import {
+  IconButton,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Tooltip,
+} from '@material-ui/core'
 import ShareIcon from '@material-ui/icons/Share'
 import copy from 'clipboard-copy'
 import { useState } from 'react'
@@ -14,7 +20,9 @@ const RecipeShareButton = (props: Props) => {
   const [copied, setCopied] = useState(false)
 
   const handleShareBtnClick = () => {
-    const url = encodeURI(`${document.location.origin}${PATHS.details(props.name)}`)
+    const url = encodeURI(
+      `${document.location.origin}${PATHS.details(props.name)}`
+    )
     if (navigator.share)
       navigator.share({
         title: 'RecipeHandler',
@@ -30,7 +38,9 @@ const RecipeShareButton = (props: Props) => {
         <ListItemIcon>
           <ShareIcon />
         </ListItemIcon>
-        <ListItemText primary={navigator.share ? 'Rezept teilen' : 'Link kopieren'} />
+        <ListItemText
+          primary={navigator.share ? 'Rezept teilen' : 'Link kopieren'}
+        />
       </ListItem>
     )
   }

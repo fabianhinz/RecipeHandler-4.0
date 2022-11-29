@@ -38,7 +38,9 @@ export const AppProvider: FC = ({ children }) => (
                       <SelectedAttachementProvider>
                         <AttachmentGalleryProvider>
                           <BookmarkProvider>
-                            <SearchResultsProvider>{children}</SearchResultsProvider>
+                            <SearchResultsProvider>
+                              {children}
+                            </SearchResultsProvider>
                           </BookmarkProvider>
                         </AttachmentGalleryProvider>
                       </SelectedAttachementProvider>

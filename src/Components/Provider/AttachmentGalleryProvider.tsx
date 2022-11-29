@@ -15,7 +15,14 @@ import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { Alert, AlertProps, Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
-import { CalendarMonth, ChevronLeft, ChevronRight, Download, FileImage, Sd } from 'mdi-material-ui'
+import {
+  CalendarMonth,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  FileImage,
+  Sd,
+} from 'mdi-material-ui'
 import {
   createContext,
   FC,
@@ -49,7 +56,8 @@ interface AnimationHandler {
 
 const Context = createContext<AnimationHandler | null>(null)
 
-export const useAttachmentGalleryContext = () => useContext(Context) as AnimationHandler
+export const useAttachmentGalleryContext = () =>
+  useContext(Context) as AnimationHandler
 
 const useStyles = makeStyles(theme => ({
   background: {
@@ -146,7 +154,8 @@ const SwipeableAttachment = ({
   const classes = useStyles()
 
   useEffect(() => {
-    if (attachmentRef.smallDataUrl) onPossiblePreviewLoad(index, attachmentRef.smallDataUrl)
+    if (attachmentRef.smallDataUrl)
+      onPossiblePreviewLoad(index, attachmentRef.smallDataUrl)
   }, [attachmentRef.smallDataUrl, index, onPossiblePreviewLoad])
 
   return (
@@ -189,12 +198,17 @@ const SwipeableAttachment = ({
           </Grid>
         </div>
       </Slide>
-      <AccountChip position="absolute" placement="top" uid={attachment.editorUid} />
+      <AccountChip
+        position="absolute"
+        placement="top"
+        uid={attachment.editorUid}
+      />
     </div>
   )
 }
 
-interface AttachmentAlert extends Partial<Pick<AlertProps, 'severity' | 'action'>> {
+interface AttachmentAlert
+  extends Partial<Pick<AlertProps, 'severity' | 'action'>> {
   text?: ReactText
   open: boolean
 }
@@ -204,7 +218,9 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
   const [attachments, setAttachments] = useState<AttachmentDoc[] | undefined>()
   const [activeAttachment, setActiveAttachment] = useState(0)
   const [alert, setAlert] = useState<AttachmentAlert>({ open: false })
-  const [possiblePreviews, setPossiblePreviews] = useState<Map<number, string>>(new Map())
+  const [possiblePreviews, setPossiblePreviews] = useState<Map<number, string>>(
+    new Map()
+  )
 
   const routeMatch = useRouteMatch<{ name: string }>(PATHS.details())
 
@@ -220,7 +236,10 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
     const handleKeydown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowLeft' && activeAttachment !== 0) {
         setActiveAttachment(prev => --prev)
-      } else if (event.key === 'ArrowRight' && activeAttachment !== attachments.length - 1) {
+      } else if (
+        event.key === 'ArrowRight' &&
+        activeAttachment !== attachments.length - 1
+      ) {
         setActiveAttachment(prev => ++prev)
       } else if (event.key === 'Escape') {
         handleAnimation()
@@ -242,9 +261,12 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
     if (!originId) root.removeAttribute('style')
   }, [originId])
 
-  const handlePossiblePreviewLoad = useCallback((loadIndex: number, possiblePreview: string) => {
-    setPossiblePreviews(prev => new Map(prev.set(loadIndex, possiblePreview)))
-  }, [])
+  const handlePossiblePreviewLoad = useCallback(
+    (loadIndex: number, possiblePreview: string) => {
+      setPossiblePreviews(prev => new Map(prev.set(loadIndex, possiblePreview)))
+    },
+    []
+  )
 
   const initAnimation = (
     newOriginId?: string,
@@ -309,7 +331,10 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
             </IconButton>
           </Grid>
           <Grid item>
-            <IconButton color="inherit" size="small" onClick={() => handleDelete(attachment)}>
+            <IconButton
+              color="inherit"
+              size="small"
+              onClick={() => handleDelete(attachment)}>
               <CheckIcon />
             </IconButton>
           </Grid>
@@ -327,10 +352,16 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
       setAttachments(prev => {
         // ? we are deleting the last image >> reverse the animation
         if (prev?.length === 1) handleAnimation()
-        return prev?.filter(prevAttachment => prevAttachment.fullPath !== attachment.fullPath)
+        return prev?.filter(
+          prevAttachment => prevAttachment.fullPath !== attachment.fullPath
+        )
       })
       setActiveAttachment(prev => (prev !== 0 ? --prev : prev))
-      setAlert({ open: true, text: `${attachment.name} wurde gelöscht`, severity: 'success' })
+      setAlert({
+        open: true,
+        text: `${attachment.name} wurde gelöscht`,
+        severity: 'success',
+      })
     } catch (e) {
       console.error(e)
       setAlert({
@@ -360,7 +391,11 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
   const handlePreviewChange = async () => {
     if (!attachments || !routeMatch?.params.name) return
 
-    setAlert({ open: true, text: 'Vorschaubild wird gesetzt', severity: 'info' })
+    setAlert({
+      open: true,
+      text: 'Vorschaubild wird gesetzt',
+      severity: 'info',
+    })
     await FirebaseService.firestore
       .collection('recipes')
       .doc(routeMatch.params.name)
@@ -372,7 +407,9 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
 
   return (
     <>
-      <Context.Provider value={{ handleAnimation }}>{children}</Context.Provider>
+      <Context.Provider value={{ handleAnimation }}>
+        {children}
+      </Context.Provider>
       <Slide in={Boolean(originId)} direction="up">
         <div className={classes.background}>
           <Fab
@@ -398,15 +435,23 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
           <Fab
             size="medium"
             onClick={() => setActiveAttachment(prev => ++prev)}
-            disabled={attachments && activeAttachment === attachments.length - 1}>
+            disabled={
+              attachments && activeAttachment === attachments.length - 1
+            }>
             <ChevronRight />
           </Fab>
 
-          <Grid className={classes.btnContainer} container justifyContent="flex-end" spacing={1}>
+          <Grid
+            className={classes.btnContainer}
+            container
+            justifyContent="flex-end"
+            spacing={1}>
             <Grid item>
               <Tooltip placement="bottom" title="Schließen">
                 <div>
-                  <IconButton disabled={alert.open} onClick={() => handleAnimation()}>
+                  <IconButton
+                    disabled={alert.open}
+                    onClick={() => handleAnimation()}>
                     <CloseIcon />
                   </IconButton>
                 </div>
@@ -433,7 +478,9 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
             <Grid item>
               <Tooltip placement="bottom" title="Löschen">
                 <div>
-                  <IconButton disabled={alert.open} onClick={requestDeleteConfirmation}>
+                  <IconButton
+                    disabled={alert.open}
+                    onClick={requestDeleteConfirmation}>
                     <DeleteIcon />
                   </IconButton>
                 </div>

@@ -1,4 +1,10 @@
-import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
+import {
+  CardActionArea,
+  Grid,
+  makeStyles,
+  Paper,
+  Typography,
+} from '@material-ui/core'
 import green from '@material-ui/core/colors/green'
 import { memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -46,7 +52,10 @@ const HomeNew = () => {
             <Link to={PATHS.details(recipeName)}>
               <CardActionArea>
                 <Paper className={classes.paper}>
-                  <Typography noWrap className={classes.typography} variant="h6">
+                  <Typography
+                    noWrap
+                    className={classes.typography}
+                    variant="h6">
                     {recipeName}
                   </Typography>
                 </Paper>
@@ -56,7 +65,11 @@ const HomeNew = () => {
         </Grid>
       ))}
 
-      <Skeletons variant="cookCounter" visible={loading} numberOfSkeletons={12} />
+      <Skeletons
+        variant="cookCounter"
+        visible={loading}
+        numberOfSkeletons={12}
+      />
     </Grid>
   )
 }

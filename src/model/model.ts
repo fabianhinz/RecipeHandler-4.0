@@ -2,7 +2,10 @@ import { PaletteType } from '@material-ui/core'
 import { DocumentChangeType, Timestamp } from 'firebase/firestore'
 import { RouteComponentProps } from 'react-router'
 
-import { RecipesRootCollection, TrialsRootCollection } from '@/firebase/firebaseModel'
+import {
+  RecipesRootCollection,
+  TrialsRootCollection,
+} from '@/firebase/firebaseModel'
 
 export interface Editor {
   editorUid: string
@@ -16,7 +19,10 @@ export interface CreatedDate {
   createdDate: Timestamp
 }
 
-export interface AttachmentDoc extends Editor, CreatedDate, Partial<FirestoreDocPath> {
+export interface AttachmentDoc
+  extends Editor,
+    CreatedDate,
+    Partial<FirestoreDocPath> {
   name: string
   size: number
   fullPath: string
@@ -206,4 +212,7 @@ export type ArchivedExpense = Expense & { deletedAt: Timestamp }
 
 export type Nullable<UnderlyingType> = null | UnderlyingType
 
-export type ChangesRecord<DocType> = Record<DocumentChangeType, Map<DocumentId, DocType>>
+export type ChangesRecord<DocType> = Record<
+  DocumentChangeType,
+  Map<DocumentId, DocType>
+>

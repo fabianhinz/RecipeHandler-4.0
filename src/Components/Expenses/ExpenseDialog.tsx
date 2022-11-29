@@ -13,14 +13,19 @@ import {
 } from '@material-ui/core'
 import { Save } from '@material-ui/icons'
 import CloseIcon from '@material-ui/icons/Close'
-import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers'
 import deLocale from 'date-fns/locale/de'
 import { Timestamp } from 'firebase/firestore'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { SlideUp } from '@/Components/Shared/Transitions'
-import useCurrentExpenseStore, { CurrentExpenseStore } from '@/store/CurrentExpenseStore'
+import useCurrentExpenseStore, {
+  CurrentExpenseStore,
+} from '@/store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
 
 import ExpenseAutocomplete from './ExpenseAutocomplete'
@@ -75,8 +80,16 @@ const useStyles = makeStyles({
 const ExpenseDialog = (props: Props) => {
   const { autocompleteOptions } = useExpenseStore(selector)
   const { addExpense, updateExpense } = useExpenseStore(dispatchSelector)
-  const { id, amount, category, creator, date, description, relatedUsers, shop } =
-    useCurrentExpenseStore(currentExpenseSelector)
+  const {
+    id,
+    amount,
+    category,
+    creator,
+    date,
+    description,
+    relatedUsers,
+    shop,
+  } = useCurrentExpenseStore(currentExpenseSelector)
   const {
     setRelatedUsers,
     setAmount,
@@ -87,7 +100,9 @@ const ExpenseDialog = (props: Props) => {
     setShop,
     clearState,
   } = useCurrentExpenseStore(dispatchCurrentExpenseSelector)
-  const setAutocompleteOptions = useExpenseStore(store => store.setAutocompleteOptions)
+  const setAutocompleteOptions = useExpenseStore(
+    store => store.setAutocompleteOptions
+  )
   const authContext = useFirebaseAuthContext()
   const breakpointsContext = useBreakpointsContext()
   const classes = useStyles()
@@ -144,7 +159,9 @@ const ExpenseDialog = (props: Props) => {
       fullWidth
       fullScreen={breakpointsContext.isDialogFullscreen}
       maxWidth="md">
-      <DialogTitle>{id ? 'Ausgabe bearbeiten' : 'Neue Ausgabe hinzufügen'}</DialogTitle>
+      <DialogTitle>
+        {id ? 'Ausgabe bearbeiten' : 'Neue Ausgabe hinzufügen'}
+      </DialogTitle>
       <form className={classes.form} onSubmit={handleSubmit} noValidate>
         <DialogContent>
           <Grid container spacing={2} alignItems="center">
@@ -168,7 +185,9 @@ const ExpenseDialog = (props: Props) => {
                 type="number"
                 inputProps={{ min: 0 }}
                 InputProps={{
-                  endAdornment: <InputAdornment position="end">€</InputAdornment>,
+                  endAdornment: (
+                    <InputAdornment position="end">€</InputAdornment>
+                  ),
                 }}
                 defaultValue={amount}
                 onChange={e => {
@@ -199,19 +218,30 @@ const ExpenseDialog = (props: Props) => {
                 }}
                 onDescriptionChange={newDescription => {
                   setDescription(newDescription)
-                  if (!autocompleteOptions.description.includes(newDescription)) {
+                  if (
+                    !autocompleteOptions.description.includes(newDescription)
+                  ) {
                     setAutocompleteOptions({
                       ...autocompleteOptions,
-                      description: [...autocompleteOptions.description, newDescription],
+                      description: [
+                        ...autocompleteOptions.description,
+                        newDescription,
+                      ],
                     })
                   }
                 }}
               />
             </Grid>
             <Grid item md={6} xs={12}>
-              <Grid container spacing={2} alignItems="center" direction="column">
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                direction="column">
                 <Grid item>
-                  <MuiPickersUtilsProvider locale={deLocale} utils={DateFnsUtils}>
+                  <MuiPickersUtilsProvider
+                    locale={deLocale}
+                    utils={DateFnsUtils}>
                     <KeyboardDatePicker
                       fullWidth
                       disableFuture
@@ -237,7 +267,11 @@ const ExpenseDialog = (props: Props) => {
                     {autocompleteOptions.creator.map(user => (
                       <Grid item key={user}>
                         <Chip
-                          color={relatedUsers.includes(user) ? 'secondary' : 'default'}
+                          color={
+                            relatedUsers.includes(user)
+                              ? 'secondary'
+                              : 'default'
+                          }
                           label={user}
                           onClick={() => setRelatedUsers(user)}
                         />

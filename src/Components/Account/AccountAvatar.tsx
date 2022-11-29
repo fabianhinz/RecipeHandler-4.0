@@ -1,4 +1,10 @@
-import { Avatar, ButtonBase, ButtonBaseProps, makeStyles, Theme } from '@material-ui/core'
+import {
+  Avatar,
+  ButtonBase,
+  ButtonBaseProps,
+  makeStyles,
+  Theme,
+} from '@material-ui/core'
 
 import { User } from '@/model/model'
 
@@ -14,7 +20,10 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
   }),
 }))
 
-type Props = { isUserSelected: boolean; user: User } & Pick<ButtonBaseProps, 'onClick'>
+type Props = { isUserSelected: boolean; user: User } & Pick<
+  ButtonBaseProps,
+  'onClick'
+>
 
 const AccountAvatar = (props: Props) => {
   const classes = useStyles({

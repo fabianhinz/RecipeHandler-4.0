@@ -15,9 +15,12 @@ const AccountUserShoppingList = () => {
   const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
   const [tagFilter, setTagFilter] = useState<string | undefined>()
 
-  const { shoppingList, shoppingListRef, reorderShoppingList } = useFirebaseAuthContext()
+  const { shoppingList, shoppingListRef, reorderShoppingList } =
+    useFirebaseAuthContext()
 
-  useDocumentTitle(`Einkaufsliste (${shoppingList.filter(item => !item.checked).length})`)
+  useDocumentTitle(
+    `Einkaufsliste (${shoppingList.filter(item => !item.checked).length})`
+  )
 
   useLayoutEffect(() => {
     setRecipeRefs(
@@ -31,7 +34,8 @@ const AccountUserShoppingList = () => {
   }, [shoppingList])
 
   const handleCheckboxChange =
-    (index: number) => (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    (index: number) =>
+    (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
       const list = [...shoppingList]
       list[index].checked = checked
       shoppingListRef.current?.set({ list })
@@ -55,12 +59,19 @@ const AccountUserShoppingList = () => {
   return (
     <EntryGridContainer>
       <Grid item xs={12}>
-        <AccountShoppingListInput tagFilter={tagFilter} onTagFilterChange={setTagFilter} />
+        <AccountShoppingListInput
+          tagFilter={tagFilter}
+          onTagFilterChange={setTagFilter}
+        />
       </Grid>
 
       {recipeRefs.size > 0 && (
         <Grid item xs={12}>
-          <Grid style={{ overflowX: 'auto' }} wrap="nowrap" container spacing={1}>
+          <Grid
+            style={{ overflowX: 'auto' }}
+            wrap="nowrap"
+            container
+            spacing={1}>
             {[...recipeRefs.values()].map(recipeRef => (
               <Grid item key={recipeRef}>
                 <RecipeChip recipeName={recipeRef} />

@@ -10,7 +10,10 @@ import { getRecipeService } from '@/services/recipeService'
 
 import { RecipeCreateState } from './RecipeCreateReducer'
 
-export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean) => {
+export const useRecipeCreate = (
+  state: RecipeCreateState,
+  editedRecipe?: boolean
+) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
   const { history } = useRouterContext()
 
@@ -36,9 +39,12 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
         .get()
 
       if (documentSnapshot.exists && !editedRecipe) {
-        enqueueSnackbar(`Rezept mit dem Namen ${state.name} existiert bereits`, {
-          variant: 'warning',
-        })
+        enqueueSnackbar(
+          `Rezept mit dem Namen ${state.name} existiert bereits`,
+          {
+            variant: 'warning',
+          }
+        )
         valid = false
       }
     } catch (e) {
@@ -87,9 +93,14 @@ export const useRecipeCreate = (state: RecipeCreateState, editedRecipe?: boolean
       }
 
       if (state.selectedTrial) {
-        await FirebaseService.firestore.collection('trials').doc(state.selectedTrial.name).delete()
+        await FirebaseService.firestore
+          .collection('trials')
+          .doc(state.selectedTrial.name)
+          .delete()
 
-        await FirebaseService.storageRef.child(state.selectedTrial.fullPath).delete()
+        await FirebaseService.storageRef
+          .child(state.selectedTrial.fullPath)
+          .delete()
       }
 
       getRecipeService().recipeCreateState = null

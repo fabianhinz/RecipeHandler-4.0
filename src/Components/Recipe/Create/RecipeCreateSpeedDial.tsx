@@ -10,7 +10,11 @@ interface Props {
   onSaveClick: () => void
 }
 
-const RecipeCreateSpeedDial = ({ onPreviewClick, onSaveClick, isPreview }: Props) => {
+const RecipeCreateSpeedDial = ({
+  onPreviewClick,
+  onSaveClick,
+  isPreview,
+}: Props) => {
   return (
     <SpeedDialWrapper>
       <SpeedDialAction

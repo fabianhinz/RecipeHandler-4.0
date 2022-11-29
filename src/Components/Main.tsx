@@ -39,7 +39,10 @@ const useStyles = makeStyles<Theme, { extraPadding?: boolean }>(theme => ({
 }))
 
 const Main = () => {
-  const match = useRouteMatch<{ name: string }>([PATHS.recipeEdit(), PATHS.details()])
+  const match = useRouteMatch<{ name: string }>([
+    PATHS.recipeEdit(),
+    PATHS.details(),
+  ])
   const classes = useStyles({ extraPadding: match?.isExact })
 
   return (

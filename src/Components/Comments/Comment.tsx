@@ -62,7 +62,8 @@ interface CommentProps extends Pick<Recipe, 'name'>, CommentsCollections {
   comment: CommentModel
 }
 
-const includesUrl = (value: string) => value.includes('http://') || value.includes('https://')
+const includesUrl = (value: string) =>
+  value.includes('http://') || value.includes('https://')
 
 const getCommentTypography = (comment: string): React.ReactNode => {
   if (!includesUrl(comment)) {
@@ -74,7 +75,11 @@ const getCommentTypography = (comment: string): React.ReactNode => {
   comment.split(' ').forEach(value => {
     if (includesUrl(value)) {
       complexComment.push(
-        <Link href={value} color="secondary" target="_blank" rel="noopener noreferrer">
+        <Link
+          href={value}
+          color="secondary"
+          target="_blank"
+          rel="noopener noreferrer">
           Link
         </Link>
       )
@@ -93,7 +98,8 @@ const getCommentTypography = (comment: string): React.ReactNode => {
 }
 
 const Comment = ({ comment, name, collection }: CommentProps) => {
-  const [emoticonAnchorEl, setEmoticonAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [emoticonAnchorEl, setEmoticonAnchorEl] =
+    useState<HTMLButtonElement | null>(null)
   const [reactions, setReactions] = useState<CommentReaction[]>([])
 
   const classes = useStyles()
@@ -101,13 +107,17 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
   const { user: currentUser } = useFirebaseAuthContext()
 
   const reactionsFirestoreRef = useMemo(() => {
-    return resolveCollection(`${collection}/${name}/comments/${comment.documentId}/reactions`)
+    return resolveCollection(
+      `${collection}/${name}/comments/${comment.documentId}/reactions`
+    )
   }, [collection, comment.documentId, name])
 
   useEffect(() => {
     // TODO upgrade/firebase make sure that we unsubscribe from all snapshot listeners
     return onSnapshot(reactionsFirestoreRef, querySnapshot => {
-      setReactions(querySnapshot.docs.map(doc => ({ ...doc.data() } as CommentReaction)))
+      setReactions(
+        querySnapshot.docs.map(doc => ({ ...doc.data() } as CommentReaction))
+      )
     })
   }, [reactionsFirestoreRef])
 
@@ -133,7 +143,9 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
           <Grid container wrap="nowrap" spacing={1} alignItems="center">
             {commentOwner?.profilePicture && (
               <Grid item>
-                <Avatar className={classes.avatar} src={commentOwner.profilePicture}></Avatar>
+                <Avatar
+                  className={classes.avatar}
+                  src={commentOwner.profilePicture}></Avatar>
               </Grid>
             )}
             <Grid item>
@@ -161,9 +173,12 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
             title={
               <List disablePadding dense>
                 {reactions.map(reaction => (
-                  <ListItem key={`${reaction.createdDate}-${reaction.editorUid}`}>
+                  <ListItem
+                    key={`${reaction.createdDate}-${reaction.editorUid}`}>
                     <ListItemText
-                      primary={`${getByUid(reaction.editorUid)?.username} ${reaction.emoji}`}
+                      primary={`${getByUid(reaction.editorUid)?.username} ${
+                        reaction.emoji
+                      }`}
                     />
                   </ListItem>
                 ))}
@@ -217,5 +232,7 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
 export default memo(
   Comment,
   (prev, next) =>
-    prev.collection === next.collection && prev.comment === next.comment && prev.name === next.name
+    prev.collection === next.collection &&
+    prev.comment === next.comment &&
+    prev.name === next.name
 )

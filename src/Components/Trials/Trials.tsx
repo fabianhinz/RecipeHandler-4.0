@@ -23,7 +23,9 @@ import TrialsCard from './TrialsCard'
 
 // ToDo should use AttachmentDropzone hook
 const Trials = () => {
-  const [pagedTrials, setPagedTrials] = useState<Map<string, Trial>>(getRecipeService().pagedTrials)
+  const [pagedTrials, setPagedTrials] = useState<Map<string, Trial>>(
+    getRecipeService().pagedTrials
+  )
   const [lastTrial, setLastTrial] = useState<Trial | undefined | null>(null)
   const [querying, setQuerying] = useState(false)
 
@@ -39,47 +41,55 @@ const Trials = () => {
 
   useEffect(() => {
     setQuerying(true)
-    let query: firebase.default.firestore.CollectionReference | firebase.default.firestore.Query =
-      FirebaseService.firestore.collection('trials').orderBy('createdDate', 'desc')
+    let query:
+      | firebase.default.firestore.CollectionReference
+      | firebase.default.firestore.Query = FirebaseService.firestore
+      .collection('trials')
+      .orderBy('createdDate', 'desc')
 
     if (lastTrial) query = query.startAfter(lastTrial.createdDate)
 
-    return query.limit(FirebaseService.QUERY_LIMIT).onSnapshot(querySnapshot => {
-      const changes: ChangesRecord<Trial> = {
-        added: new Map(),
-        modified: new Map(),
-        removed: new Map(),
-      }
-
-      for (const change of querySnapshot.docChanges()) {
-        changes[change.type].set(change.doc.id, change.doc.data() as Trial)
-      }
-
-      setPagedTrials(trials => {
-        for (const [docId] of changes.removed) {
-          trials.delete(docId)
+    return query
+      .limit(FirebaseService.QUERY_LIMIT)
+      .onSnapshot(querySnapshot => {
+        const changes: ChangesRecord<Trial> = {
+          added: new Map(),
+          modified: new Map(),
+          removed: new Map(),
         }
 
-        for (const [docId, modifiedTrial] of changes.modified) {
-          trials.set(docId, modifiedTrial)
+        for (const change of querySnapshot.docChanges()) {
+          changes[change.type].set(change.doc.id, change.doc.data() as Trial)
         }
 
-        const newTrials = new Map([...trials, ...changes.added])
-        getRecipeService().pagedTrials = newTrials
+        setPagedTrials(trials => {
+          for (const [docId] of changes.removed) {
+            trials.delete(docId)
+          }
 
-        return newTrials
+          for (const [docId, modifiedTrial] of changes.modified) {
+            trials.set(docId, modifiedTrial)
+          }
+
+          const newTrials = new Map([...trials, ...changes.added])
+          getRecipeService().pagedTrials = newTrials
+
+          return newTrials
+        })
+        setQuerying(false)
       })
-      setQuerying(false)
-    })
   }, [lastTrial])
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       if (!user) return
 
-      const snackKey = enqueueSnackbar('Dateien werden verarbeitet und hochgeladen', {
-        variant: 'info',
-      })
+      const snackKey = enqueueSnackbar(
+        'Dateien werden verarbeitet und hochgeladen',
+        {
+          variant: 'info',
+        }
+      )
 
       for (const file of acceptedFiles) {
         const name = file.name.replace(`.${getFileExtension(file.name)}`, '')
@@ -89,9 +99,12 @@ const Trials = () => {
           .get()
 
         if (potentialDublicate.exists) {
-          enqueueSnackbar(`Ein Versuchskaninchen mit dem Namen ${file.name} existiert bereits`, {
-            variant: 'warning',
-          })
+          enqueueSnackbar(
+            `Ein Versuchskaninchen mit dem Namen ${file.name} existiert bereits`,
+            {
+              variant: 'warning',
+            }
+          )
           continue
         }
         const compressedFile: Blob = await compressImage(file, {
@@ -155,10 +168,17 @@ const Trials = () => {
         <Grid item xs={12}>
           <Grid container spacing={3}>
             {[...pagedTrials.values()].map(trial => (
-              <TrialsCard onDelete={handleTrialDelete} trial={trial} key={trial.name} />
+              <TrialsCard
+                onDelete={handleTrialDelete}
+                trial={trial}
+                key={trial.name}
+              />
             ))}
 
-            <Skeletons variant="trial" visible={querying && pagedTrials.size === 0} />
+            <Skeletons
+              variant="trial"
+              visible={querying && pagedTrials.size === 0}
+            />
 
             <NotFound visible={!querying && pagedTrials.size === 0} />
 

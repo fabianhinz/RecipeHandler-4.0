@@ -44,7 +44,8 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
   },
   icon: props => ({
     padding: theme.spacing(2),
-    filter: theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
+    filter:
+      theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
     width: 400,
     [theme.breakpoints.only('xs')]: {
       flex: 1,
@@ -57,8 +58,13 @@ interface Props {
 }
 
 export const Background = ({ Icon }: Props) => {
-  const [firstAttachment, setFirstAttachment] = useState<AttachmentDoc | undefined>()
-  const match = useRouteMatch<{ name: string }>([PATHS.recipeEdit(), PATHS.details()])
+  const [firstAttachment, setFirstAttachment] = useState<
+    AttachmentDoc | undefined
+  >()
+  const match = useRouteMatch<{ name: string }>([
+    PATHS.recipeEdit(),
+    PATHS.details(),
+  ])
   const location = useLocation()
   const { attachmentRef, attachmentRefLoading } = useAttachment(firstAttachment)
   const { imgSrc, imgLoading } = useImgSrcLazy({
@@ -97,7 +103,8 @@ export const Background = ({ Icon }: Props) => {
       .limit(5)
       .get()
       .then(snapshot => {
-        const randomDoc = snapshot.docs[Math.floor(Math.random() * snapshot.docs.length)]
+        const randomDoc =
+          snapshot.docs[Math.floor(Math.random() * snapshot.docs.length)]
 
         if (randomDoc.exists) {
           setFirstAttachment(randomDoc.data() as AttachmentDoc)

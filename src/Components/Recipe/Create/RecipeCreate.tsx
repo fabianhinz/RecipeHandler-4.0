@@ -38,15 +38,20 @@ const fromPropsOrPreviousState = ({ recipe }: Props) =>
   recipe ?? getRecipeService().recipeCreateState
 
 const RecipeCreate = (props: Props) => {
-  const { state, dispatch } = useRecipeCreateReducer(fromPropsOrPreviousState(props))
-
-  const recipeCreateService = useRecipeCreate(state, props.edit)
-  const { selectedCategories, setSelectedCategories, removeSelectedCategories } = useCategorySelect(
+  const { state, dispatch } = useRecipeCreateReducer(
     fromPropsOrPreviousState(props)
   )
+
+  const recipeCreateService = useRecipeCreate(state, props.edit)
+  const {
+    selectedCategories,
+    setSelectedCategories,
+    removeSelectedCategories,
+  } = useCategorySelect(fromPropsOrPreviousState(props))
   const { user } = useFirebaseAuthContext()
   const { history } = useRouterContext()
-  const { gridBreakpointProps: breakpointsFromContext, gridLayout } = useGridContext()
+  const { gridBreakpointProps: breakpointsFromContext, gridLayout } =
+    useGridContext()
 
   const match = useRouteMatch()
 
@@ -85,7 +90,9 @@ const RecipeCreate = (props: Props) => {
     if (valid) dispatch({ type: 'previewChange' })
   }
 
-  const relatedAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
+  const relatedAwareBreakpoints: Partial<
+    Record<Breakpoint, boolean | GridSize>
+  > =
     gridLayout === 'list' || state.relatedRecipes.length > 0
       ? breakpointsFromContext
       : { xs: 12, md: 6 }
@@ -178,7 +185,9 @@ const RecipeCreate = (props: Props) => {
               {state.relatedRecipes.length > 0 && (
                 <Grid item {...relatedAwareBreakpoints}>
                   <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                    <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                    <RecipeResultRelated
+                      relatedRecipes={state.relatedRecipes}
+                    />
                   </StyledCard>
                 </Grid>
               )}

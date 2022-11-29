@@ -55,77 +55,81 @@ const AccountUser = () => {
   const handleLogout = () => {
     setProgress(true)
 
-    signOut(auth).catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
+    signOut(auth).catch(error =>
+      enqueueSnackbar(error.message, { variant: 'error' })
+    )
   }
 
-  const handleUserSettingChange: UserSettingChangeHandler = (key: SettingKeys) => (uid?: any) => {
-    switch (key) {
-      case 'muiTheme': {
-        updateDoc(userDoc, {
-          [key]:
-            user.muiTheme === 'dynamic'
-              ? 'dark'
-              : user.muiTheme === 'dark'
-              ? 'light'
-              : user.muiTheme === 'light'
-              ? 'black'
-              : 'dynamic',
-        })
-        break
-      }
-      case 'selectedUsers': {
-        if (typeof uid !== 'string') throw new Error('whoops we need a string for this')
-
-        // ? throw away all "cached" recipes
-        getRecipeService().scrollPosition.set(PATHS.home, 0)
-        getRecipeService().pagedRecipes = new Map()
-
-        let selectedIds = [...user.selectedUsers]
-        const idExists = selectedIds.some(id => id === uid)
-
-        if (idExists && selectedIds.length > 1) {
-          selectedIds = selectedIds.filter(id => id !== uid)
-        } else if (!idExists && selectedIds.length < 10) {
-          selectedIds.push(uid)
+  const handleUserSettingChange: UserSettingChangeHandler =
+    (key: SettingKeys) => (uid?: any) => {
+      switch (key) {
+        case 'muiTheme': {
+          updateDoc(userDoc, {
+            [key]:
+              user.muiTheme === 'dynamic'
+                ? 'dark'
+                : user.muiTheme === 'dark'
+                ? 'light'
+                : user.muiTheme === 'light'
+                ? 'black'
+                : 'dynamic',
+          })
+          break
         }
+        case 'selectedUsers': {
+          if (typeof uid !== 'string')
+            throw new Error('whoops we need a string for this')
 
-        updateDoc(userDoc, { [key]: selectedIds })
-        break
-      }
-      case 'showNew': {
-        updateDoc(userDoc, { [key]: !user.showNew })
-        break
-      }
-      case 'showRecentlyEdited': {
-        updateDoc(userDoc, { [key]: !user.showRecentlyEdited })
-        break
-      }
-      case 'showMostCooked': {
-        updateDoc(userDoc, { [key]: !user.showMostCooked })
-        break
-      }
-      case 'notifications': {
-        updateDoc(userDoc, { [key]: !user.notifications })
-        break
-      }
-      case 'algoliaAdvancedSyntax': {
-        updateDoc(userDoc, { [key]: !user.algoliaAdvancedSyntax })
-        break
-      }
-      case 'bookmarkSync': {
-        const newSyncSetting = !user.bookmarkSync
-        const updates: Partial<Pick<User, 'bookmarks' | 'bookmarkSync'>> = {
-          bookmarkSync: newSyncSetting,
+          // ? throw away all "cached" recipes
+          getRecipeService().scrollPosition.set(PATHS.home, 0)
+          getRecipeService().pagedRecipes = new Map()
+
+          let selectedIds = [...user.selectedUsers]
+          const idExists = selectedIds.some(id => id === uid)
+
+          if (idExists && selectedIds.length > 1) {
+            selectedIds = selectedIds.filter(id => id !== uid)
+          } else if (!idExists && selectedIds.length < 10) {
+            selectedIds.push(uid)
+          }
+
+          updateDoc(userDoc, { [key]: selectedIds })
+          break
         }
-        // ? user has already selected bookmarks and decides to sync them
-        if (newSyncSetting && bookmarks.size > 0) {
-          updates.bookmarks = [...bookmarks.values()]
+        case 'showNew': {
+          updateDoc(userDoc, { [key]: !user.showNew })
+          break
         }
-        updateDoc(userDoc, updates)
-        break
+        case 'showRecentlyEdited': {
+          updateDoc(userDoc, { [key]: !user.showRecentlyEdited })
+          break
+        }
+        case 'showMostCooked': {
+          updateDoc(userDoc, { [key]: !user.showMostCooked })
+          break
+        }
+        case 'notifications': {
+          updateDoc(userDoc, { [key]: !user.notifications })
+          break
+        }
+        case 'algoliaAdvancedSyntax': {
+          updateDoc(userDoc, { [key]: !user.algoliaAdvancedSyntax })
+          break
+        }
+        case 'bookmarkSync': {
+          const newSyncSetting = !user.bookmarkSync
+          const updates: Partial<Pick<User, 'bookmarks' | 'bookmarkSync'>> = {
+            bookmarkSync: newSyncSetting,
+          }
+          // ? user has already selected bookmarks and decides to sync them
+          if (newSyncSetting && bookmarks.size > 0) {
+            updates.bookmarks = [...bookmarks.values()]
+          }
+          updateDoc(userDoc, updates)
+          break
+        }
       }
     }
-  }
 
   return (
     <>
@@ -151,7 +155,11 @@ const AccountUser = () => {
         </Grid>
       </EntryGridContainer>
 
-      <SecouredRouteFab onClick={handleLogout} icon={<LogoutVariant />} tooltipTitle="Ausloggen" />
+      <SecouredRouteFab
+        onClick={handleLogout}
+        icon={<LogoutVariant />}
+        tooltipTitle="Ausloggen"
+      />
       <ProgressComponent />
     </>
   )

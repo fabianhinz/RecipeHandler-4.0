@@ -11,7 +11,9 @@ export default function CopyButton({ text }: Props) {
   const [copied, setCopied] = useState(false)
 
   return (
-    <Tooltip onMouseOut={() => setCopied(false)} title={copied ? 'kopiert' : 'kopieren'}>
+    <Tooltip
+      onMouseOut={() => setCopied(false)}
+      title={copied ? 'kopiert' : 'kopieren'}>
       <IconButton onClick={() => copy(text).then(() => setCopied(true))}>
         <ContentCopy />
       </IconButton>

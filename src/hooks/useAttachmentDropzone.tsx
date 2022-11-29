@@ -32,8 +32,12 @@ export const useAttachmentDropzone = ({
   attachmentMaxWidth,
   attachmentMaxSize,
 }: Options) => {
-  const [attachments, setAttachments] = useState<Array<AttachmentDoc & DataUrl>>([])
-  const [attachmentAlert, setAttachmentAlert] = useState<JSX.Element | undefined>()
+  const [attachments, setAttachments] = useState<
+    Array<AttachmentDoc & DataUrl>
+  >([])
+  const [attachmentAlert, setAttachmentAlert] = useState<
+    JSX.Element | undefined
+  >()
 
   const { user } = useFirebaseAuthContext()
 
@@ -62,7 +66,9 @@ export const useAttachmentDropzone = ({
           </Alert>
         )
 
-      setAttachmentAlert(<Alert severity="info">Dateien werden komprimiert</Alert>)
+      setAttachmentAlert(
+        <Alert severity="info">Dateien werden komprimiert</Alert>
+      )
 
       const newAttachments: Array<AttachmentDoc & DataUrl> = []
       for (const file of acceptedFiles) {

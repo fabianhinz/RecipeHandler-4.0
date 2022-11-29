@@ -1,5 +1,12 @@
-import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
+import {
+  CardActionArea,
+  Grid,
+  makeStyles,
+  Paper,
+  Typography,
+} from '@material-ui/core'
 import { yellow } from '@material-ui/core/colors'
+import { onSnapshot } from 'firebase/firestore'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -7,8 +14,11 @@ import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider
 import { useGridContext } from '@/Components/Provider/GridProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import Skeletons from '@/Components/Shared/Skeletons'
+import {
+  queryLimits,
+  resolveCookCounterOrderedByValueDesc,
+} from '@/firebase/firebaseQueries'
 import { DocumentId, MostCooked } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
@@ -46,7 +56,11 @@ interface MostCookedPaperProps {
   paletteIndex: number
 }
 
-const MostCookedPaper = ({ recipeName, counter, paletteIndex }: MostCookedPaperProps) => {
+const MostCookedPaper = ({
+  recipeName,
+  counter,
+  paletteIndex,
+}: MostCookedPaperProps) => {
   const classes = useMostCookedPaperStyles({
     backgroundColor: COLOR_PALETTE[paletteIndex],
   })
@@ -80,28 +94,28 @@ const HomeMostCooked = () => {
 
   const { isMobile } = useBreakpointsContext()
 
-  const numberOfDocs = useMemo(
-    () => (isMobile ? 4 * FirebaseService.QUERY_LIMIT_MOBILE : 4 * FirebaseService.QUERY_LIMIT),
-    [isMobile]
-  )
+  const maxNumberOfDocs = useMemo(() => {
+    return (isMobile ? queryLimits.mobile : queryLimits.desktop) * 4
+  }, [isMobile])
 
   useEffect(() => {
-    return FirebaseService.firestore
-      .collection('cookCounter')
-      .orderBy('value', 'desc')
-      .limit(numberOfDocs)
-      .onSnapshot(querySnapshot => {
+    return onSnapshot(
+      resolveCookCounterOrderedByValueDesc(maxNumberOfDocs),
+      querySnapshot => {
         const newMostCookedMap = new Map(
           querySnapshot.docs.map(doc => [doc.id, doc.data()])
         ) as MostCookedMap
 
         setCounterValues(
-          new Set([...newMostCookedMap.values()].map(mostCooked => mostCooked.value))
+          new Set(
+            [...newMostCookedMap.values()].map(mostCooked => mostCooked.value)
+          )
         )
         setMostCooked(newMostCookedMap)
         setLoading(false)
-      })
-  }, [numberOfDocs])
+      }
+    )
+  }, [isMobile, maxNumberOfDocs])
 
   return (
     <Grid container spacing={3}>
@@ -114,7 +128,11 @@ const HomeMostCooked = () => {
         />
       ))}
 
-      <Skeletons variant="cookCounter" visible={loading} numberOfSkeletons={numberOfDocs} />
+      <Skeletons
+        variant="cookCounter"
+        visible={loading}
+        numberOfSkeletons={maxNumberOfDocs}
+      />
     </Grid>
   )
 }

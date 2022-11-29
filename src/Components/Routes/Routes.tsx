@@ -1,4 +1,11 @@
-import { FC, FunctionComponent, lazy, LazyExoticComponent, Suspense, SVGProps } from 'react'
+import {
+  FC,
+  FunctionComponent,
+  lazy,
+  LazyExoticComponent,
+  Suspense,
+  SVGProps,
+} from 'react'
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'

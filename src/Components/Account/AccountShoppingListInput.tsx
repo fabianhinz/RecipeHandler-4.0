@@ -36,8 +36,13 @@ const AccountShoppingListInput = (props: {
     const getIsTagDone = (tag: string) =>
       shoppingList.filter(item => item.tag === tag).every(item => item.checked)
 
-    const uniqueTags = new Set(shoppingList.map(item => item.tag).filter(Boolean))
-    return Array.from(uniqueTags).map(tag => ({ value: tag, isDone: getIsTagDone(tag) }))
+    const uniqueTags = new Set(
+      shoppingList.map(item => item.tag).filter(Boolean)
+    )
+    return Array.from(uniqueTags).map(tag => ({
+      value: tag,
+      isDone: getIsTagDone(tag),
+    }))
   }, [shoppingList])
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -81,7 +86,9 @@ const AccountShoppingListInput = (props: {
               <Typography
                 key={tag.value}
                 onClick={() =>
-                  props.onTagFilterChange(props.tagFilter === tag.value ? undefined : tag.value)
+                  props.onTagFilterChange(
+                    props.tagFilter === tag.value ? undefined : tag.value
+                  )
                 }
                 style={{
                   cursor: 'pointer',
@@ -90,7 +97,10 @@ const AccountShoppingListInput = (props: {
                     : tag.value === props.tagFilter
                     ? 'underline'
                     : 'none',
-                  color: tag.value === props.tagFilter ? theme.palette.secondary.main : 'inherit',
+                  color:
+                    tag.value === props.tagFilter
+                      ? theme.palette.secondary.main
+                      : 'inherit',
                 }}
                 variant="caption">
                 #{tag.value}

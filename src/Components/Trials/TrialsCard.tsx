@@ -115,7 +115,10 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
     // ! --> which is fine, we can recover comments even if the trial is lost
     try {
       setDeleteDisabled(true)
-      await FirebaseService.firestore.collection('trials').doc(trial.name).delete()
+      await FirebaseService.firestore
+        .collection('trials')
+        .doc(trial.name)
+        .delete()
       await FirebaseService.storageRef.child(trial.fullPath).delete()
       setDeleteAlert(false)
     } catch (e) {
@@ -126,7 +129,9 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
     }
   }
 
-  const selectionAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = useMemo(
+  const selectionAwareBreakpoints: Partial<
+    Record<Breakpoint, boolean | GridSize>
+  > = useMemo(
     () => (selectionProps ? { xs: 12 } : gridBreakpointProps),
     [gridBreakpointProps, selectionProps]
   )
@@ -145,7 +150,9 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
         <Card className={classes.card}>
           <AccountChip
             uid={trial.editorUid}
-            enhanceLabel={`am ${trial.createdDate.toDate().toLocaleDateString()}`}
+            enhanceLabel={`am ${trial.createdDate
+              .toDate()
+              .toLocaleDateString()}`}
             position="absolute"
             placement="top"
           />
@@ -159,7 +166,9 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
               <CheckIcon className={classes.selectionCheckIcon} />
             </div>
 
-            <CardMedia image={dataUrls?.mediumDataUrl} className={classes.cardMedia}>
+            <CardMedia
+              image={dataUrls?.mediumDataUrl}
+              className={classes.cardMedia}>
               {/* make mui happy */}
               <></>
             </CardMedia>
@@ -167,7 +176,11 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
 
           {user && (
             <Slide direction="up" in>
-              <Grid container justifyContent="flex-end" spacing={1} className={classes.actions}>
+              <Grid
+                container
+                justifyContent="flex-end"
+                spacing={1}
+                className={classes.actions}>
                 <Grid item xs="auto">
                   <Comments
                     highContrast

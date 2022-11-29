@@ -7,7 +7,9 @@ import { Recipe } from '@/model/model'
 import { getRecipeService } from '@/services/recipeService'
 
 // ToDo we don't need this hook anymore, merge with categoryselection
-export const useCategorySelect = (recipe?: Recipe | RecipeCreateState | null) => {
+export const useCategorySelect = (
+  recipe?: Recipe | RecipeCreateState | null
+) => {
   const match = useRouteMatch()
 
   const [state, setState] = useState<Map<string, string>>(() => {
@@ -17,7 +19,12 @@ export const useCategorySelect = (recipe?: Recipe | RecipeCreateState | null) =>
       return new Map()
     }
 
-    return new Map(Object.keys(recipe.categories).map(type => [type, recipe.categories[type]]))
+    return new Map(
+      Object.keys(recipe.categories).map(type => [
+        type,
+        recipe.categories[type],
+      ])
+    )
   })
 
   const handleChange = (type: string, value: string) => {

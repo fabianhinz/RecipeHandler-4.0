@@ -28,7 +28,9 @@ const useStyles = makeStyles(theme => {
   }
 })
 
-export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ relatedRecipes }) => {
+export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({
+  relatedRecipes,
+}) => {
   const classes = useStyles()
 
   return (
@@ -37,7 +39,9 @@ export const RecipeResultRelated: FC<{ relatedRecipes: Array<string> }> = ({ rel
         <div key={recipeName}>
           <ListItem>
             <ListItemAvatar>
-              <Avatar className={classes.avatar}>{recipeName.slice(0, 1).toUpperCase()}</Avatar>
+              <Avatar className={classes.avatar}>
+                {recipeName.slice(0, 1).toUpperCase()}
+              </Avatar>
             </ListItemAvatar>
             <ListItemText primary={recipeName} />
             <ListItemSecondaryAction className={classes.secondaryAction}>

@@ -63,7 +63,10 @@ const BuiltWithFirebase = ({ loading }: Props) => {
           </Typography>
           <Typography>
             Built with{' '}
-            <Link className={classes.link} target="_blank" href="https://firebase.google.com/">
+            <Link
+              className={classes.link}
+              target="_blank"
+              href="https://firebase.google.com/">
               Firebase
             </Link>
           </Typography>

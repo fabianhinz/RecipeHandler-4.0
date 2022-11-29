@@ -9,7 +9,15 @@ import {
   useTheme,
 } from '@material-ui/core'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
 import { Expense, Nullable } from '@/model/model'
@@ -81,21 +89,27 @@ type GroupBy = 'month' | keyof Pick<Expense, 'shop' | 'description'>
 export const ExpensesChart = (props: Props) => {
   const categories = useExpenseStore(store => store.categories)
   const shops = useExpenseStore(store => store.autocompleteOptions.shop)
-  const descriptions = useExpenseStore(store => store.autocompleteOptions.description)
+  const descriptions = useExpenseStore(
+    store => store.autocompleteOptions.description
+  )
   const expenseFilter = useExpenseStore(store => store.expenseFilter)
   const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
-  const handleExpenseFilterChange = useExpenseStore(store => store.handleExpenseFilterChange)
+  const handleExpenseFilterChange = useExpenseStore(
+    store => store.handleExpenseFilterChange
+  )
   const theme = useTheme()
   const xlUp = useMediaQuery(theme.breakpoints.up('xl'))
   const [fixed, setFixed] = useState(false)
   const placeholderRef = useRef<Nullable<HTMLDivElement>>(null)
   const { IntersectionObserverTrigger } = useIntersectionObserver({
     onIsIntersecting: () => setFixed(false),
-    onLeave: () => props.enableFixedOnScroll && window.scrollY > 200 && setFixed(true),
+    onLeave: () =>
+      props.enableFixedOnScroll && window.scrollY > 200 && setFixed(true),
     options: { rootMargin: `-88px 0px 0px 0px` },
   })
   const [groupBy, setGroupBy] = useState<GroupBy>('month')
-  const [hoveringCategory, setHoveringCategory] = useState<Nullable<string>>(null)
+  const [hoveringCategory, setHoveringCategory] =
+    useState<Nullable<string>>(null)
   const classes = useChartStyles({ fixed })
 
   const currentCategoryHasAmount = useCallback(
@@ -143,8 +157,14 @@ export const ExpensesChart = (props: Props) => {
       const data: Map<string, number> = new Map()
       const expenses = props.expensesByMonth.flatMap(([, expenses]) => expenses)
 
-      for (const autocompleteOption of expenseToAutocompleteOptions[expenseKey]) {
-        const amount = expenseUtils.getAmountByExpenseKey(expenseKey, autocompleteOption, expenses)
+      for (const autocompleteOption of expenseToAutocompleteOptions[
+        expenseKey
+      ]) {
+        const amount = expenseUtils.getAmountByExpenseKey(
+          expenseKey,
+          autocompleteOption,
+          expenses
+        )
         if (amount === 0) {
           continue
         }
@@ -189,14 +209,23 @@ export const ExpensesChart = (props: Props) => {
           name="gender1">
           <FormControlLabel value="month" control={<Radio />} label="Monat" />
           <FormControlLabel value="shop" control={<Radio />} label="Geschäft" />
-          <FormControlLabel value="description" control={<Radio />} label="Beschreibung" />
+          <FormControlLabel
+            value="description"
+            control={<Radio />}
+            label="Beschreibung"
+          />
         </RadioGroup>
         <ResponsiveContainer
           width={placeholderRef.current?.clientWidth ?? '100%'}
           aspect={xlUp ? 3 : 2}>
           <BarChart data={memoizedData}>
             <CartesianGrid strokeDasharray="9" vertical={false} opacity={0.4} />
-            <YAxis hide domain={groupBy === 'month' ? ['auto', props.maxAmount] : undefined} />
+            <YAxis
+              hide
+              domain={
+                groupBy === 'month' ? ['auto', props.maxAmount] : undefined
+              }
+            />
             <XAxis hide dataKey={groupBy} />
 
             <Tooltip
@@ -214,7 +243,9 @@ export const ExpensesChart = (props: Props) => {
                 <Bar
                   onMouseEnter={() => setHoveringCategory(category)}
                   onMouseLeave={() => setHoveringCategory(null)}
-                  onClick={() => handleExpenseFilterChange('category', category)}
+                  onClick={() =>
+                    handleExpenseFilterChange('category', category)
+                  }
                   style={{
                     cursor: 'pointer',
                     transition: theme.transitions.create('fill-opacity'),

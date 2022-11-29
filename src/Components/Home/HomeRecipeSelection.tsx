@@ -119,7 +119,9 @@ const HomeRecipeSelection = (props: Props) => {
       buttonProps={{ variant: 'text' }}>
       {authContext.user && (
         <Grid item xs={12}>
-          <ListSubheader className={classes.listSubheader}>Autoren</ListSubheader>
+          <ListSubheader className={classes.listSubheader}>
+            Autoren
+          </ListSubheader>
           <List>
             {recipesCounterByUserUid.map(([uid, counter]) => {
               const user = userContext.getByUid(uid)
@@ -128,11 +130,16 @@ const HomeRecipeSelection = (props: Props) => {
                 <ListItem
                   button
                   onClick={() => {
-                    props.onSelectedEditorChange(uid === props.selectedEditor ? '' : uid)
+                    props.onSelectedEditorChange(
+                      uid === props.selectedEditor ? '' : uid
+                    )
                   }}
                   key={uid}>
                   <ListItemAvatar>
-                    <AccountAvatar user={user} isUserSelected={props.selectedEditor === uid} />
+                    <AccountAvatar
+                      user={user}
+                      isUserSelected={props.selectedEditor === uid}
+                    />
                   </ListItemAvatar>
                   <ListItemText primary={user.username} secondary={counter} />
                 </ListItem>

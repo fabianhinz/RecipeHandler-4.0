@@ -54,7 +54,8 @@ export default function CategorySelection({
 }: Props) {
   const classes = useStyles()
 
-  const { categoriesLoading, recipeCategories } = useCategoriesCollectionContext()
+  const { categoriesLoading, recipeCategories } =
+    useCategoriesCollectionContext()
 
   return (
     <SelectionDrawer
@@ -78,11 +79,15 @@ export default function CategorySelection({
             <ListSubheader className={classes.subheader}>{type}</ListSubheader>
             <List disablePadding>
               {recipeCategories[type].map(category => (
-                <ListItem onClick={() => onCategoryChange(type, category)} button key={category}>
+                <ListItem
+                  onClick={() => onCategoryChange(type, category)}
+                  button
+                  key={category}>
                   <ListItemAvatar>
                     <Avatar
                       className={clsx(
-                        category === selectedCategories.get(type) && classes.avatarSelected
+                        category === selectedCategories.get(type) &&
+                          classes.avatarSelected
                       )}>
                       {getIconByCategory(category)}
                     </Avatar>

@@ -24,16 +24,23 @@ const RecipeDetails: FC<RouteWithRecipeName> = routeProps => {
   const { user } = useFirebaseAuthContext()
   const history = useHistory()
 
-  const { dropzoneAttachments, dropzoneProps, dropzoneAlert } = useAttachmentDropzone({
-    attachmentMaxWidth: 3840,
-    attachmentLimit: 5,
-  })
+  const { dropzoneAttachments, dropzoneProps, dropzoneAlert } =
+    useAttachmentDropzone({
+      attachmentMaxWidth: 3840,
+      attachmentLimit: 5,
+    })
 
-  useDocumentTitle(recipeDoc ? recipeDoc.name : recipeDocLoading ? 'Wird geladen...' : '404')
+  useDocumentTitle(
+    recipeDoc ? recipeDoc.name : recipeDocLoading ? 'Wird geladen...' : '404'
+  )
 
   return (
     <>
-      {recipeDocLoading ? <Progress variant="fixed" /> : <RecipeResult recipe={recipeDoc} />}
+      {recipeDocLoading ? (
+        <Progress variant="fixed" />
+      ) : (
+        <RecipeResult recipe={recipeDoc} />
+      )}
 
       {recipeDoc && user && (
         <>

@@ -17,7 +17,9 @@ import { useState } from 'react'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useGridContext } from '@/Components/Provider/GridProvider'
 import { Expense } from '@/model/model'
-import useCurrentExpenseStore, { CurrentExpenseStore } from '@/store/CurrentExpenseStore'
+import useCurrentExpenseStore, {
+  CurrentExpenseStore,
+} from '@/store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
 
 import expenseUtils from './helper/expenseUtils'
@@ -78,15 +80,19 @@ const ExpenseCard = (props: Props) => {
                   {props.expense.description}, {props.expense.shop}
                 </Typography>
                 <Typography variant="caption">
-                  {expenseUtils.getFormattedDateString(props.expense.date.toDate())},{' '}
-                  {props.expense.category}
+                  {expenseUtils.getFormattedDateString(
+                    props.expense.date.toDate()
+                  )}
+                  , {props.expense.category}
                 </Typography>
               </Grid>
               <Grid item>
                 <Divider orientation="vertical" />
               </Grid>
               <Grid item>
-                <Typography variant="subtitle2">{props.expense.creator}</Typography>
+                <Typography variant="subtitle2">
+                  {props.expense.creator}
+                </Typography>
 
                 <Typography variant="caption">
                   {expenseUtils.formatAmount(props.expense.amount)}
@@ -114,7 +120,9 @@ const ExpenseCard = (props: Props) => {
                 <Button
                   fullWidth
                   startIcon={<Archive />}
-                  onClick={() => archiveExpense(props.expense, authContext.user?.uid ?? '')}>
+                  onClick={() =>
+                    archiveExpense(props.expense, authContext.user?.uid ?? '')
+                  }>
                   archivieren
                 </Button>
               </Grid>

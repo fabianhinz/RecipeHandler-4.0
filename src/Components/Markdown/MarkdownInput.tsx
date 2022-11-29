@@ -10,7 +10,9 @@ import MarkdownTextToggles from './Toggles/MarkdownTextToggles'
 type Toggles = 'text' | 'list' | 'heading' | 'emoji' | 'link'
 
 export interface ToggleChangeHandler {
-  onToggleChange: (toggle: Toggles) => (_event: any, formatOrEmoji: Format) => void
+  onToggleChange: (
+    toggle: Toggles
+  ) => (_event: any, formatOrEmoji: Format) => void
 }
 
 export interface CurrentFormats {
@@ -62,7 +64,9 @@ const MarkdownInput = ({ outerValue, onChange }: Props) => {
   const [formattingDisabled, setFormattingDisabled] = useState(false)
 
   const [formats, setFormats] = useState<Format[]>([])
-  const [markdownSelection, setMarkdownSelection] = useState<string | undefined>(undefined)
+  const [markdownSelection, setMarkdownSelection] = useState<
+    string | undefined
+  >(undefined)
 
   const inputRef = useRef<any>(null)
 
@@ -78,11 +82,13 @@ const MarkdownInput = ({ outerValue, onChange }: Props) => {
       if (inFocus) setMarkdownSelection(document.getSelection()?.toString())
     }
     document.addEventListener('selectionchange', handleSelectionChange)
-    return () => document.removeEventListener('selectionchange', handleSelectionChange)
+    return () =>
+      document.removeEventListener('selectionchange', handleSelectionChange)
   }, [inFocus, markdownSelection])
 
   useEffect(() => {
-    if (!markdownSelection || markdownSelection.length === 0) return setFormats([])
+    if (!markdownSelection || markdownSelection.length === 0)
+      return setFormats([])
 
     const newFormat: Format[] = []
     for (const { groups } of markdownSelection.matchAll(FORMAT_REGEXP)) {
@@ -96,81 +102,98 @@ const MarkdownInput = ({ outerValue, onChange }: Props) => {
     setFormats(newFormat)
   }, [markdownSelection])
 
-  const handleTogglesChange = (type: Toggles) => (_event: any, formatOrEmoji: Format) => {
-    if (formattingDisabled) return
-    setFormattingDisabled(true)
+  const handleTogglesChange =
+    (type: Toggles) => (_event: any, formatOrEmoji: Format) => {
+      if (formattingDisabled) return
+      setFormattingDisabled(true)
 
-    let selectionStart = inputRef.current?.selectionStart
-    let selectionEnd = inputRef.current?.selectionEnd
+      let selectionStart = inputRef.current?.selectionStart
+      let selectionEnd = inputRef.current?.selectionEnd
 
-    let selection = value.substring(selectionStart, selectionEnd)
-    const beforeSelection = value.substring(0, selectionStart)
-    const afterSelection = value.substring(selectionEnd, value.length)
+      let selection = value.substring(selectionStart, selectionEnd)
+      const beforeSelection = value.substring(0, selectionStart)
+      const afterSelection = value.substring(selectionEnd, value.length)
 
-    const markdownStyle = MARKDOWN[formatOrEmoji]
+      const markdownStyle = MARKDOWN[formatOrEmoji]
 
-    switch (type) {
-      case 'text': {
-        const alreadyStyled = selection.slice(0, markdownStyle.length) === markdownStyle
+      switch (type) {
+        case 'text': {
+          const alreadyStyled =
+            selection.slice(0, markdownStyle.length) === markdownStyle
 
-        if (alreadyStyled) {
-          selectionEnd -= markdownStyle.length * 2
-          setValue(
-            beforeSelection +
-              selection.slice(markdownStyle.length, selection.length - markdownStyle.length) +
-              afterSelection
-          )
-        } else {
-          selectionEnd += markdownStyle.length * 2
-          setValue(beforeSelection + markdownStyle + selection + markdownStyle + afterSelection)
+          if (alreadyStyled) {
+            selectionEnd -= markdownStyle.length * 2
+            setValue(
+              beforeSelection +
+                selection.slice(
+                  markdownStyle.length,
+                  selection.length - markdownStyle.length
+                ) +
+                afterSelection
+            )
+          } else {
+            selectionEnd += markdownStyle.length * 2
+            setValue(
+              beforeSelection +
+                markdownStyle +
+                selection +
+                markdownStyle +
+                afterSelection
+            )
+          }
+          break
         }
-        break
-      }
-      case 'list':
-      case 'heading': {
-        const alreadyStyled = selection.slice(0, markdownStyle.length) === markdownStyle
-        const selectionParts = selection.split('\n')
+        case 'list':
+        case 'heading': {
+          const alreadyStyled =
+            selection.slice(0, markdownStyle.length) === markdownStyle
+          const selectionParts = selection.split('\n')
 
-        if (alreadyStyled) {
-          selectionEnd -= selectionParts.length * markdownStyle.length
-          setValue(
-            beforeSelection +
-              selectionParts
-                .map(selection => (selection = selection.replace(markdownStyle, '')))
-                .join('\n') +
-              afterSelection
-          )
-        } else {
-          selectionEnd += selectionParts.length * markdownStyle.length
-          setValue(
-            beforeSelection +
-              selectionParts.map(selection => (selection = markdownStyle + selection)).join('\n') +
-              afterSelection
-          )
+          if (alreadyStyled) {
+            selectionEnd -= selectionParts.length * markdownStyle.length
+            setValue(
+              beforeSelection +
+                selectionParts
+                  .map(
+                    selection =>
+                      (selection = selection.replace(markdownStyle, ''))
+                  )
+                  .join('\n') +
+                afterSelection
+            )
+          } else {
+            selectionEnd += selectionParts.length * markdownStyle.length
+            setValue(
+              beforeSelection +
+                selectionParts
+                  .map(selection => (selection = markdownStyle + selection))
+                  .join('\n') +
+                afterSelection
+            )
+          }
+          break
         }
-        break
-      }
-      case 'emoji': {
-        if (selectionStart === selectionEnd) {
-          ++selectionStart
-          ++selectionEnd
+        case 'emoji': {
+          if (selectionStart === selectionEnd) {
+            ++selectionStart
+            ++selectionEnd
+          }
+          setValue(beforeSelection + selection + formatOrEmoji + afterSelection)
+          break
         }
-        setValue(beforeSelection + selection + formatOrEmoji + afterSelection)
-        break
+        case 'link': {
+          selectionEnd += formatOrEmoji.length
+          setValue(beforeSelection + selection + formatOrEmoji + afterSelection)
+          break
+        }
       }
-      case 'link': {
-        selectionEnd += formatOrEmoji.length
-        setValue(beforeSelection + selection + formatOrEmoji + afterSelection)
-        break
-      }
+      // ? give the ui some time to breath -_-
+      setTimeout(() => {
+        inputRef.current?.focus()
+        inputRef.current?.setSelectionRange(selectionStart, selectionEnd)
+        setFormattingDisabled(false)
+      }, theme.transitions.duration.enteringScreen)
     }
-    // ? give the ui some time to breath -_-
-    setTimeout(() => {
-      inputRef.current?.focus()
-      inputRef.current?.setSelectionRange(selectionStart, selectionEnd)
-      setFormattingDisabled(false)
-    }, theme.transitions.duration.enteringScreen)
-  }
 
   return (
     <div
@@ -180,13 +203,22 @@ const MarkdownInput = ({ outerValue, onChange }: Props) => {
       }}
       onFocus={() => setInFocus(true)}>
       <div className={classes.paper}>
-        <MarkdownTextToggles formats={formats} onToggleChange={handleTogglesChange} />
+        <MarkdownTextToggles
+          formats={formats}
+          onToggleChange={handleTogglesChange}
+        />
 
         <Divider className={classes.divider} orientation="vertical" />
-        <MarkdownListToggles formats={formats} onToggleChange={handleTogglesChange} />
+        <MarkdownListToggles
+          formats={formats}
+          onToggleChange={handleTogglesChange}
+        />
 
         <Divider className={classes.divider} orientation="vertical" />
-        <MarkdownHeadingToggle formats={formats} onToggleChange={handleTogglesChange} />
+        <MarkdownHeadingToggle
+          formats={formats}
+          onToggleChange={handleTogglesChange}
+        />
 
         <Divider className={classes.divider} orientation="vertical" />
         <MarkdownEmojiToggle onToggleChange={handleTogglesChange} />

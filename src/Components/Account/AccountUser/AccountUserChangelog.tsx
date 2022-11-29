@@ -58,10 +58,15 @@ const AccountUserChangelog = () => {
   useEffect(() => {
     setLoading(true)
 
-    return onSnapshot(resolvePullRequestsOrderedByClosedAtDesc(), querySnapshot => {
-      setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
-      setLoading(false)
-    })
+    return onSnapshot(
+      resolvePullRequestsOrderedByClosedAtDesc(),
+      querySnapshot => {
+        setPullrequests(
+          querySnapshot.docs.map(doc => doc.data() as Pullrequest)
+        )
+        setLoading(false)
+      }
+    )
   }, [])
 
   useEffect(() => {
@@ -75,7 +80,9 @@ const AccountUserChangelog = () => {
   }, [changelogOpen])
 
   const getRelatedIssues = (pullrequest: Pullrequest) =>
-    issues.filter(issue => pullrequest.issueNumbers?.includes(issue.number.toString()))
+    issues.filter(issue =>
+      pullrequest.issueNumbers?.includes(issue.number.toString())
+    )
 
   return (
     <>
@@ -104,13 +111,21 @@ const AccountUserChangelog = () => {
           {pullrequests.map(pr => (
             <Accordion variant="elevation" key={pr.shortSha}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Grid container alignItems="center" justifyContent="space-between" spacing={1}>
+                <Grid
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={1}>
                   <Grid item xs={12} sm={9}>
                     <Grid container alignItems="center" spacing={3}>
                       <Grid item xs={4} sm={3}>
                         <Chip
                           label={pr.shortSha}
-                          color={pr.shortSha === RECIPE_HANDLER_APP_VERSION ? 'primary' : 'default'}
+                          color={
+                            pr.shortSha === RECIPE_HANDLER_APP_VERSION
+                              ? 'primary'
+                              : 'default'
+                          }
                         />
                       </Grid>
                       <Grid item xs={8} sm={9}>
@@ -120,13 +135,19 @@ const AccountUserChangelog = () => {
                   </Grid>
                   <Hidden xsDown>
                     <Grid item>
-                      <Typography>{pr.closedAt.toDate().toLocaleDateString()}</Typography>
+                      <Typography>
+                        {pr.closedAt.toDate().toLocaleDateString()}
+                      </Typography>
                     </Grid>
                   </Hidden>
                 </Grid>
               </AccordionSummary>
               <AccordionDetails>
-                <Grid container alignItems="center" justifyContent="space-between" spacing={1}>
+                <Grid
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={1}>
                   <Grid item>
                     <ListSubheader disableGutters>{pr.creator}</ListSubheader>
                   </Grid>
@@ -161,7 +182,9 @@ const AccountUserChangelog = () => {
                                 label={label.name}
                                 size="small"
                                 style={{
-                                  color: theme.palette.getContrastText('#' + label.color),
+                                  color: theme.palette.getContrastText(
+                                    '#' + label.color
+                                  ),
                                   backgroundColor: '#' + label.color,
                                   margin: theme.spacing(0.5),
                                 }}
@@ -173,7 +196,9 @@ const AccountUserChangelog = () => {
                     </Grid>
                   ) : (
                     <Grid item xs={12}>
-                      <Typography>Keine zugehörigen Issues vorhanden</Typography>
+                      <Typography>
+                        Keine zugehörigen Issues vorhanden
+                      </Typography>
                     </Grid>
                   )}
                 </Grid>

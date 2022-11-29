@@ -12,8 +12,11 @@ const RecipeGridButton = ({ tooltipProps }: Props) => {
   const setPartialLayout = useLayoutStore(store => store.setPartialLayout)
 
   return (
-    <Tooltip {...tooltipProps} title={gridListActive ? 'Bilder schließen' : 'Bilder anzeigen'}>
-      <IconButton onClick={() => setPartialLayout({ gridListActive: !gridListActive })}>
+    <Tooltip
+      {...tooltipProps}
+      title={gridListActive ? 'Bilder schließen' : 'Bilder anzeigen'}>
+      <IconButton
+        onClick={() => setPartialLayout({ gridListActive: !gridListActive })}>
         {gridListActive ? <GridOff /> : <GridOn />}
       </IconButton>
     </Tooltip>

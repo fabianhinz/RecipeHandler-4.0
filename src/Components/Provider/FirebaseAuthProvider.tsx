@@ -1,5 +1,13 @@
 import { makeStyles } from '@material-ui/core'
-import { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import {
+  createContext,
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import BuiltWithFirebase from '@/Components/Shared/BuiltWithFirebase'
 import { ShoppingListItem, User } from '@/model/model'
@@ -62,47 +70,57 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
   const classes = useStyles()
 
-  const handleAuthStateChange = useCallback((user: firebase.default.User | null) => {
-    setAuthReady(true)
-    if (!user) {
-      setUser(undefined)
-      setLoginEnabled(true)
-      return
-    }
+  const handleAuthStateChange = useCallback(
+    (user: firebase.default.User | null) => {
+      setAuthReady(true)
+      if (!user) {
+        setUser(undefined)
+        setLoginEnabled(true)
+        return
+      }
 
-    const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
+      const userDocRef = FirebaseService.firestore
+        .collection('users')
+        .doc(user.uid)
 
-    const userDocUnsubsribe = userDocRef.onSnapshot(doc => {
-      setUser({
-        ...(doc.data() as Omit<User, 'uid'>),
-        uid: user.uid,
+      const userDocUnsubsribe = userDocRef.onSnapshot(doc => {
+        setUser({
+          ...(doc.data() as Omit<User, 'uid'>),
+          uid: user.uid,
+        })
+        FirebaseService.analytics?.setUserId(user.uid)
+        FirebaseService.analytics?.logEvent('login')
+        setLoginEnabled(true)
       })
-      FirebaseService.analytics?.setUserId(user.uid)
-      FirebaseService.analytics?.logEvent('login')
-      setLoginEnabled(true)
-    })
 
-    shoppingListRef.current = userDocRef.collection('shoppingList').doc('static')
+      shoppingListRef.current = userDocRef
+        .collection('shoppingList')
+        .doc('static')
 
-    const shoppingListUnsubscribe = shoppingListRef.current.onSnapshot(snapshot => {
-      setShoppingList(snapshot.data()?.list ?? [])
-    })
+      const shoppingListUnsubscribe = shoppingListRef.current.onSnapshot(
+        snapshot => {
+          setShoppingList(snapshot.data()?.list ?? [])
+        }
+      )
 
-    const expensesUnsubscribe = userDocRef
-      .collection(EXPENSE_COLLECTION)
-      .orderBy('date', 'desc')
-      .onSnapshot(useExpenseStore.getState().handleFirebaseSnapshot)
+      const expensesUnsubscribe = userDocRef
+        .collection(EXPENSE_COLLECTION)
+        .orderBy('date', 'desc')
+        .onSnapshot(useExpenseStore.getState().handleFirebaseSnapshot)
 
-    return () => {
-      expensesUnsubscribe()
-      userDocUnsubsribe()
-      shoppingListUnsubscribe()
-    }
-  }, [])
+      return () => {
+        expensesUnsubscribe()
+        userDocUnsubsribe()
+        shoppingListUnsubscribe()
+      }
+    },
+    []
+  )
 
   const signInWithCustomToken = useCallback(async () => {
     if (!user) return
-    const getCustomToken = FirebaseService.functions.httpsCallable('getCustomToken')
+    const getCustomToken =
+      FirebaseService.functions.httpsCallable('getCustomToken')
     try {
       const response = await getCustomToken(user.uid)
       FirebaseService.auth.signInWithCustomToken(response.data)
@@ -128,7 +146,9 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     return FirebaseService.auth.onAuthStateChanged(handleAuthStateChange)
   }, [handleAuthStateChange])
 
-  const reorderShoppingList = (reorderParams: ReorderParams<ShoppingListItem>) => {
+  const reorderShoppingList = (
+    reorderParams: ReorderParams<ShoppingListItem>
+  ) => {
     const reorderedList = ArrayFns.reorder(reorderParams)
     setShoppingList(reorderedList)
     shoppingListRef.current?.set({
@@ -138,7 +158,13 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
   return (
     <Context.Provider
-      value={{ user, loginEnabled, shoppingList, shoppingListRef, reorderShoppingList }}>
+      value={{
+        user,
+        loginEnabled,
+        shoppingList,
+        shoppingListRef,
+        reorderShoppingList,
+      }}>
       {authReady ? (
         <div className={classes.main}>{children}</div>
       ) : (

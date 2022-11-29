@@ -16,7 +16,9 @@ const MarkdownLinkToggle = ({ onToggleChange }: ToggleChangeHandler) => {
   const [text, setText] = useState('')
   const [url, setUrl] = useState('')
 
-  const [linkAnchorEl, setLinkAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [linkAnchorEl, setLinkAnchorEl] = useState<HTMLButtonElement | null>(
+    null
+  )
 
   const resetLinkState = () => {
     setLinkAnchorEl(null)
@@ -32,7 +34,9 @@ const MarkdownLinkToggle = ({ onToggleChange }: ToggleChangeHandler) => {
   return (
     <>
       <MarkdownToggleButtonGroup size="small">
-        <ToggleButton onClick={e => setLinkAnchorEl(e.currentTarget)} value="linkFormat">
+        <ToggleButton
+          onClick={e => setLinkAnchorEl(e.currentTarget)}
+          value="linkFormat">
           <LinkIcon />
           <ArrowDropDownIcon />
         </ToggleButton>

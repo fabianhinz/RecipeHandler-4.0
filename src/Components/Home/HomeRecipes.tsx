@@ -23,7 +23,9 @@ export const HomeRecipes = (props: Props) => {
         variant="recipe"
         visible={props.querying && props.pagedRecipes.size === 0}
         numberOfSkeletons={
-          props.pagedRecipesSize.current > 0 ? props.pagedRecipesSize.current : undefined
+          props.pagedRecipesSize.current > 0
+            ? props.pagedRecipesSize.current
+            : undefined
         }
       />
 

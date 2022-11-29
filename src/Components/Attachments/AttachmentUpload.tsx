@@ -133,8 +133,20 @@ const AttachmentUploadListItem = ({
       <ListItem>
         <ListItemAvatar>
           <Avatar
-            className={clsx(classes.avatar, !uploading && classes.done, error && classes.error)}>
-            {uploading ? error ? <HeartBroken /> : <CloudUpload /> : <CheckIcon />}
+            className={clsx(
+              classes.avatar,
+              !uploading && classes.done,
+              error && classes.error
+            )}>
+            {uploading ? (
+              error ? (
+                <HeartBroken />
+              ) : (
+                <CloudUpload />
+              )
+            ) : (
+              <CheckIcon />
+            )}
             {uploading && !error && (
               <CircularProgress
                 disableShrink
@@ -175,7 +187,9 @@ const AttachmentUpload = ({
   dropzoneAlert,
   recipeName,
 }: UploadContainerProps) => {
-  const [uploads, setUploads] = useState<Map<string, AttachmentDoc & DataUrl>>(new Map())
+  const [uploads, setUploads] = useState<Map<string, AttachmentDoc & DataUrl>>(
+    new Map()
+  )
   const classes = useStyles()
 
   useEffect(() => {
@@ -183,7 +197,8 @@ const AttachmentUpload = ({
 
     setUploads(previous => {
       for (const attachment of dropzoneAttachments) {
-        if (!previous.get(attachment.name)) previous.set(attachment.name, attachment)
+        if (!previous.get(attachment.name))
+          previous.set(attachment.name, attachment)
       }
       return new Map(previous)
     })
@@ -197,7 +212,9 @@ const AttachmentUpload = ({
   }, [])
 
   return (
-    <Slide in={Boolean(dropzoneAlert || dropzoneAttachments.length > 0)} direction="left">
+    <Slide
+      in={Boolean(dropzoneAlert || dropzoneAttachments.length > 0)}
+      direction="left">
       <Card className={classes.card} elevation={8}>
         {uploads.size > 0 && (
           <List>

@@ -5,7 +5,10 @@ import { Expense } from '@/model/model'
 
 import expenseUtils, { formatAmount } from './helper/expenseUtils'
 
-const useStyles = makeStyles<Theme, { backgroundColor?: string; color: string }>(theme => ({
+const useStyles = makeStyles<
+  Theme,
+  { backgroundColor?: string; color: string }
+>(theme => ({
   root: props => props,
   icon: props => props,
   clickable: {
@@ -18,9 +21,11 @@ const useStyles = makeStyles<Theme, { backgroundColor?: string; color: string }>
     },
   },
   deleteIcon: {
-    color: props => theme.palette.getContrastText(props.backgroundColor ?? '#fff'),
+    color: props =>
+      theme.palette.getContrastText(props.backgroundColor ?? '#fff'),
     '&:hover': {
-      color: props => theme.palette.getContrastText(props.backgroundColor ?? '#fff'),
+      color: props =>
+        theme.palette.getContrastText(props.backgroundColor ?? '#fff'),
     },
   },
 }))

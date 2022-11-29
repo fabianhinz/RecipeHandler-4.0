@@ -1,4 +1,11 @@
-import { Card, Grid, Grow, makeStyles, Theme, Typography } from '@material-ui/core'
+import {
+  Card,
+  Grid,
+  Grow,
+  makeStyles,
+  Theme,
+  Typography,
+} from '@material-ui/core'
 import clsx from 'clsx'
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { Cell, Pie, PieChart } from 'recharts'
@@ -34,7 +41,9 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     width: 70,
     left: theme.spacing(2),
     color: props =>
-      props.activePieCell ? CATEGORIES_PALETTE[props.activePieCell.category] : 'inherhit',
+      props.activePieCell
+        ? CATEGORIES_PALETTE[props.activePieCell.category]
+        : 'inherhit',
   },
   activePieCellCategory: {
     top: theme.spacing(0.5),
@@ -45,7 +54,9 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
   differenceTypography: {
     ...theme.typography.h6,
     color: props =>
-      props.userData.difference < 0 ? theme.palette.error.main : theme.palette.success.main,
+      props.userData.difference < 0
+        ? theme.palette.error.main
+        : theme.palette.success.main,
   },
   amountTypography: {
     ...theme.typography.body2,
@@ -76,7 +87,8 @@ const ExpenseUserCard = (props: Props) => {
   const expenses = useExpenseStore(selector)
   const categories = useExpenseStore(store => store.categories)
   const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
-  const [activePieCell, setActivePieCell] = useState<Nullable<ActivePieCell>>(null)
+  const [activePieCell, setActivePieCell] =
+    useState<Nullable<ActivePieCell>>(null)
   const [userData, setUserData] = useState<UserData>({
     name: '',
     amount: 0,
@@ -98,15 +110,20 @@ const ExpenseUserCard = (props: Props) => {
       return expense.date.toDate().getFullYear() === props.year
     })
 
-    const userExpenses = expensesOfYear.filter(expense => expense.creator === props.userName)
+    const userExpenses = expensesOfYear.filter(
+      expense => expense.creator === props.userName
+    )
 
-    const payed = userExpenses.map(expense => expense.amount).reduce((prev, curr) => prev + curr, 0)
+    const payed = userExpenses
+      .map(expense => expense.amount)
+      .reduce((prev, curr) => prev + curr, 0)
 
     const shouldPay = expensesOfYear
       .filter(expense => expense.relatedUsers?.includes(props.userName))
       .map(
         expense =>
-          expense.amount / (expense.relatedUsers.length > 0 ? expense.relatedUsers.length : 1)
+          expense.amount /
+          (expense.relatedUsers.length > 0 ? expense.relatedUsers.length : 1)
       )
       .reduce((prev, curr) => prev + curr, 0)
 
@@ -150,7 +167,10 @@ const ExpenseUserCard = (props: Props) => {
       <Card className={classes.card}>
         <Grow key={activePieCell?.category} in={activePieCell !== null}>
           <Typography
-            className={clsx(classes.activePieCell, classes.activePieCellCategory)}
+            className={clsx(
+              classes.activePieCell,
+              classes.activePieCellCategory
+            )}
             align="center"
             variant="caption">
             {activePieCell?.category}

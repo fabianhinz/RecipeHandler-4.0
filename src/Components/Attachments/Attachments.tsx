@@ -29,12 +29,15 @@ const Attachments = ({ recipe }: Props) => {
   const classes = useStyles()
 
   useEffect(() => {
-    return onSnapshot(resolveAttachmentsOrderedByCreatedDateAsc(recipe.name), querySnapshot => {
-      const newAttachments = querySnapshot.docs.map(
-        doc => ({ ...doc.data(), docPath: doc.ref.path } as AttachmentDoc)
-      )
-      setSavedAttachments(newAttachments)
-    })
+    return onSnapshot(
+      resolveAttachmentsOrderedByCreatedDateAsc(recipe.name),
+      querySnapshot => {
+        const newAttachments = querySnapshot.docs.map(
+          doc => ({ ...doc.data(), docPath: doc.ref.path } as AttachmentDoc)
+        )
+        setSavedAttachments(newAttachments)
+      }
+    )
   }, [recipe.name])
 
   const handlePreviewClick = (originId: string, activeAttachment: number) =>

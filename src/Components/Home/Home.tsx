@@ -1,4 +1,13 @@
-import { AppBar, Fade, Grid, makeStyles, Tab, Tabs, Toolbar, withStyles } from '@material-ui/core'
+import {
+  AppBar,
+  Fade,
+  Grid,
+  makeStyles,
+  Tab,
+  Tabs,
+  Toolbar,
+  withStyles,
+} from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -8,7 +17,13 @@ import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
 import { useCategorySelect } from '@/hooks/useCategorySelect'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
-import { ChangesRecord, DocumentId, OrderByKey, OrderByRecord, Recipe } from '@/model/model'
+import {
+  ChangesRecord,
+  DocumentId,
+  OrderByKey,
+  OrderByRecord,
+  Recipe,
+} from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
 import { getRecipeService } from '@/services/recipeService'
 import { BORDER_RADIUS } from '@/theme'
@@ -45,13 +60,20 @@ const Home = () => {
   )
 
   const [lastRecipe, setLastRecipe] = useState<Recipe | undefined | null>(null)
-  const [orderBy, setOrderBy] = useState<OrderByRecord>(getRecipeService().orderBy)
+  const [orderBy, setOrderBy] = useState<OrderByRecord>(
+    getRecipeService().orderBy
+  )
   const [querying, setQuerying] = useState(false)
   const [tabIndex, setTabIndex] = useState(0)
 
-  const { selectedCategories, setSelectedCategories, removeSelectedCategories } =
-    useCategorySelect()
-  const [selectedEditor, setSelectedEditor] = useState<string>(getRecipeService().selectedEditor)
+  const {
+    selectedCategories,
+    setSelectedCategories,
+    removeSelectedCategories,
+  } = useCategorySelect()
+  const [selectedEditor, setSelectedEditor] = useState<string>(
+    getRecipeService().selectedEditor
+  )
 
   const { IntersectionObserverTrigger } = useIntersectionObserver({
     onIsIntersecting: () => {
@@ -69,8 +91,11 @@ const Home = () => {
   useEffect(() => {
     setQuerying(true)
     const orderByKey = Object.keys(orderBy)[0] as OrderByKey
-    let query: firebase.default.firestore.CollectionReference | firebase.default.firestore.Query =
-      FirebaseService.firestore.collection('recipes').orderBy(orderByKey, orderBy[orderByKey])
+    let query:
+      | firebase.default.firestore.CollectionReference
+      | firebase.default.firestore.Query = FirebaseService.firestore
+      .collection('recipes')
+      .orderBy(orderByKey, orderBy[orderByKey])
     // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
     // if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
 
@@ -82,36 +107,38 @@ const Home = () => {
       (value, type) => (query = query.where(`categories.${type}`, '==', value))
     )
 
-    return query.limit(FirebaseService.QUERY_LIMIT).onSnapshot(querySnapshot => {
-      const changes: ChangesRecord<Recipe> = {
-        added: new Map(),
-        modified: new Map(),
-        removed: new Map(),
-      }
-
-      for (const change of querySnapshot.docChanges()) {
-        changes[change.type].set(change.doc.id, change.doc.data() as Recipe)
-      }
-      // TODO fix
-      // 1. when creating a new recipe the app redirects to the home page and adds the recipe to the end of the map
-      // 2. **not in minfied bundle** after the first "startAfter" with a lastRecipe click on it and navigate back. This recipe will be deleted
-      setPagedRecipes(recipes => {
-        for (const [docId] of changes.removed) {
-          recipes.delete(docId)
+    return query
+      .limit(FirebaseService.QUERY_LIMIT)
+      .onSnapshot(querySnapshot => {
+        const changes: ChangesRecord<Recipe> = {
+          added: new Map(),
+          modified: new Map(),
+          removed: new Map(),
         }
 
-        for (const [docId, modifiedRecipe] of changes.modified) {
-          recipes.set(docId, modifiedRecipe)
+        for (const change of querySnapshot.docChanges()) {
+          changes[change.type].set(change.doc.id, change.doc.data() as Recipe)
         }
+        // TODO fix
+        // 1. when creating a new recipe the app redirects to the home page and adds the recipe to the end of the map
+        // 2. **not in minfied bundle** after the first "startAfter" with a lastRecipe click on it and navigate back. This recipe will be deleted
+        setPagedRecipes(recipes => {
+          for (const [docId] of changes.removed) {
+            recipes.delete(docId)
+          }
 
-        const newRecipes = new Map([...recipes, ...changes.added])
-        pagedRecipesSize.current = newRecipes.size
-        getRecipeService().pagedRecipes = newRecipes
+          for (const [docId, modifiedRecipe] of changes.modified) {
+            recipes.set(docId, modifiedRecipe)
+          }
 
-        return newRecipes
+          const newRecipes = new Map([...recipes, ...changes.added])
+          pagedRecipesSize.current = newRecipes.size
+          getRecipeService().pagedRecipes = newRecipes
+
+          return newRecipes
+        })
+        setQuerying(false)
       })
-      setQuerying(false)
-    })
   }, [lastRecipe, orderBy, selectedCategories, selectedEditor])
 
   const resetRecipeState = useCallback(() => {
@@ -123,7 +150,10 @@ const Home = () => {
     <>
       <EntryGridContainer>
         <Grid item xs={12}>
-          <AppBar className={classes.homeRoot} position="static" color="default">
+          <AppBar
+            className={classes.homeRoot}
+            position="static"
+            color="default">
             <Toolbar className={classes.toolbar}>
               <Tabs
                 scrollButtons="on"

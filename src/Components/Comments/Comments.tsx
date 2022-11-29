@@ -7,15 +7,15 @@ import { CommentsCollections, CommentsDocument } from '@/model/model'
 
 import { CommentsDialog } from './CommentsDialog'
 
-export const Comments: FC<CommentsDocument & CommentsCollections & { highContrast?: boolean }> = ({
-  name,
-  numberOfComments,
-  collection,
-  highContrast,
-}) => {
+export const Comments: FC<
+  CommentsDocument & CommentsCollections & { highContrast?: boolean }
+> = ({ name, numberOfComments, collection, highContrast }) => {
   const [drawer, setDrawer] = useState(false)
 
-  const handleDrawerChange = useCallback(() => setDrawer(previous => !previous), [])
+  const handleDrawerChange = useCallback(
+    () => setDrawer(previous => !previous),
+    []
+  )
 
   const badgeComment = useMemo(
     () => (

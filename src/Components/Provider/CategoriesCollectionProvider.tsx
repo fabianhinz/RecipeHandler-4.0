@@ -1,4 +1,11 @@
-import { createContext, FC, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 import { Categories } from '@/model/model'
 import { FirebaseService } from '@/services/firebase'
@@ -13,16 +20,24 @@ type CategoriesCollection = {
 
 const Context = createContext<CategoriesCollection | null>(null)
 
-export const useCategoriesCollectionContext = () => useContext(Context) as CategoriesCollection
+export const useCategoriesCollectionContext = () =>
+  useContext(Context) as CategoriesCollection
 
 const CategoriesCollectionProvider: FC = ({ children }) => {
-  const [recipeCategories, setRecipeCategories] = useState<Categories<Array<string>>>({})
-  const [expenseCategories, setExpenseCategories] = useState<Categories<Array<string>>>({})
+  const [recipeCategories, setRecipeCategories] = useState<
+    Categories<Array<string>>
+  >({})
+  const [expenseCategories, setExpenseCategories] = useState<
+    Categories<Array<string>>
+  >({})
   const [categoriesLoading, setCategoriesLoading] = useState(true)
 
   const fetchCategories = useCallback(async () => {
     const categoriesRef = FirebaseService.firestore.collection('categories')
-    const categories = [categoriesRef.doc('recipes').get(), categoriesRef.doc('expenses').get()]
+    const categories = [
+      categoriesRef.doc('recipes').get(),
+      categoriesRef.doc('expenses').get(),
+    ]
 
     const [recipes, expenses] = await Promise.all(categories)
 
@@ -35,7 +50,9 @@ const CategoriesCollectionProvider: FC = ({ children }) => {
     // in a world without providers this would actually be handled by the store ...
     useExpenseStore
       .getState()
-      .setCategories(newExpenseCategories.autocomplete?.sort(sortFn('asc')) ?? [])
+      .setCategories(
+        newExpenseCategories.autocomplete?.sort(sortFn('asc')) ?? []
+      )
 
     setCategoriesLoading(false)
   }, [])
@@ -45,7 +62,8 @@ const CategoriesCollectionProvider: FC = ({ children }) => {
   }, [fetchCategories])
 
   return (
-    <Context.Provider value={{ recipeCategories, expenseCategories, categoriesLoading }}>
+    <Context.Provider
+      value={{ recipeCategories, expenseCategories, categoriesLoading }}>
       {children}
     </Context.Provider>
   )

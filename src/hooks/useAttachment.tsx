@@ -11,7 +11,8 @@ const initialDataUrlsAndMetadata: AllDataUrls & Metadata = {
   size: '',
 }
 
-export const getFileExtension = (fullpath: string) => fullpath.split('.').slice(-1)[0]
+export const getFileExtension = (fullpath: string) =>
+  fullpath.split('.').slice(-1)[0]
 
 const getAttachmentRefs = (fullPath: string) => {
   // ? the fullPath Field in firestore always looks something like [whatever].jpg|png
@@ -26,23 +27,34 @@ const getAttachmentRefs = (fullPath: string) => {
 }
 
 export const getResizedImagesWithMetadata = async (fullPath: string) => {
-  const { smallPath, smallPathFallback, mediumPath } = getAttachmentRefs(fullPath)
-  const urlsAndMetadata: AllDataUrls & Metadata = { ...initialDataUrlsAndMetadata }
+  const { smallPath, smallPathFallback, mediumPath } =
+    getAttachmentRefs(fullPath)
+  const urlsAndMetadata: AllDataUrls & Metadata = {
+    ...initialDataUrlsAndMetadata,
+  }
 
   try {
     const { storage } = FirebaseService
 
     const metadata = await storage.ref(fullPath).getMetadata()
-    urlsAndMetadata.timeCreated = new Date(metadata.timeCreated).toLocaleDateString()
+    urlsAndMetadata.timeCreated = new Date(
+      metadata.timeCreated
+    ).toLocaleDateString()
     urlsAndMetadata.size = `${(metadata.size / 1000).toFixed(0)} KB`
 
     urlsAndMetadata.fullDataUrl = await storage.ref(fullPath).getDownloadURL()
-    urlsAndMetadata.mediumDataUrl = await storage.ref(mediumPath).getDownloadURL()
+    urlsAndMetadata.mediumDataUrl = await storage
+      .ref(mediumPath)
+      .getDownloadURL()
 
     try {
-      urlsAndMetadata.smallDataUrl = await storage.ref(smallPath).getDownloadURL()
+      urlsAndMetadata.smallDataUrl = await storage
+        .ref(smallPath)
+        .getDownloadURL()
     } catch (e) {
-      urlsAndMetadata.smallDataUrl = await storage.ref(smallPathFallback).getDownloadURL()
+      urlsAndMetadata.smallDataUrl = await storage
+        .ref(smallPathFallback)
+        .getDownloadURL()
     }
   } catch (e) {
     // ? happens after creating an attachment. just load the full version
