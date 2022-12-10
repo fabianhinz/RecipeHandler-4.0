@@ -15,7 +15,6 @@ import { useEffect, useState } from 'react'
 import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
 import useDebounce from '@/hooks/useDebounce'
 import { Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(theme => ({
   avatarRoot: {
@@ -65,7 +64,7 @@ const RelatedRecipesSelection = ({
   useEffect(() => {
     if (!shouldLoad) return
 
-    let query:
+    const query:
       | firebase.default.firestore.CollectionReference
       | firebase.default.firestore.Query = FirebaseService.firestore
       .collection('recipes')

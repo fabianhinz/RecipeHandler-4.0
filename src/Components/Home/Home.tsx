@@ -9,22 +9,17 @@ import {
   withStyles,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
+import { onSnapshot } from 'firebase/firestore'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { PATHS } from '@/Components/Routes/Routes'
 import { SecouredRouteFab } from '@/Components/Routes/SecouredRouteFab'
 import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
+import { resolveRecipesByConstraintValues } from '@/firebase/firebaseQueries'
 import { useCategorySelect } from '@/hooks/useCategorySelect'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
-import {
-  ChangesRecord,
-  DocumentId,
-  OrderByKey,
-  OrderByRecord,
-  Recipe,
-} from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
+import { ChangesRecord, DocumentId, OrderByRecord, Recipe } from '@/model/model'
 import { getRecipeService } from '@/services/recipeService'
 import { BORDER_RADIUS } from '@/theme'
 
@@ -59,7 +54,7 @@ const Home = () => {
     getRecipeService().pagedRecipes
   )
 
-  const [lastRecipe, setLastRecipe] = useState<Recipe | undefined | null>(null)
+  const [lastRecipe, setLastRecipe] = useState<Recipe | undefined>()
   const [orderBy, setOrderBy] = useState<OrderByRecord>(
     getRecipeService().orderBy
   )
@@ -90,26 +85,15 @@ const Home = () => {
 
   useEffect(() => {
     setQuerying(true)
-    const orderByKey = Object.keys(orderBy)[0] as OrderByKey
-    let query:
-      | firebase.default.firestore.CollectionReference
-      | firebase.default.firestore.Query = FirebaseService.firestore
-      .collection('recipes')
-      .orderBy(orderByKey, orderBy[orderByKey])
-    // TODO FirebaseError: [code=invalid-argument]: Invalid Query. 'in' filters support a maximum of 10 elements in the value array
-    // if (selectedEditors.length > 0) query = query.where('editorUid', 'in', selectedEditors)
 
-    if (selectedEditor) query = query.where('editorUid', '==', selectedEditor)
-
-    if (lastRecipe) query = query.startAfter(lastRecipe[orderByKey])
-
-    selectedCategories.forEach(
-      (value, type) => (query = query.where(`categories.${type}`, '==', value))
-    )
-
-    return query
-      .limit(FirebaseService.QUERY_LIMIT)
-      .onSnapshot(querySnapshot => {
+    onSnapshot(
+      resolveRecipesByConstraintValues({
+        orderByRecord: orderBy,
+        lastRecipe,
+        selectedEditor,
+        selectedCategories,
+      }),
+      querySnapshot => {
         const changes: ChangesRecord<Recipe> = {
           added: new Map(),
           modified: new Map(),
@@ -138,12 +122,13 @@ const Home = () => {
           return newRecipes
         })
         setQuerying(false)
-      })
+      }
+    )
   }, [lastRecipe, orderBy, selectedCategories, selectedEditor])
 
   const resetRecipeState = useCallback(() => {
     setPagedRecipes(new Map())
-    setLastRecipe(null)
+    setLastRecipe(undefined)
   }, [])
 
   return (

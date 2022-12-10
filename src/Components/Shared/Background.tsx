@@ -1,13 +1,14 @@
 import { makeStyles, Theme, useTheme } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
+import { getDocs } from 'firebase/firestore'
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router'
 
 import { PATHS } from '@/Components/Routes/Routes'
+import { resolveNRecipeAttachmentsOrderedByCreatedDateAsc } from '@/firebase/firebaseQueries'
 import { useAttachment } from '@/hooks/useAttachment'
 import useImgSrcLazy from '@/hooks/useImgSrcLazy'
 import { AttachmentDoc } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 type StyleProps = {
   backgroundImage: string
@@ -95,23 +96,18 @@ export const Background = ({ Icon }: Props) => {
       return
     }
 
-    FirebaseService.firestore
-      .collection('recipes')
-      .doc(match.params.name)
-      .collection('attachments')
-      .orderBy('createdDate', 'desc')
-      .limit(5)
-      .get()
-      .then(snapshot => {
-        const randomDoc =
-          snapshot.docs[Math.floor(Math.random() * snapshot.docs.length)]
+    void getDocs(
+      resolveNRecipeAttachmentsOrderedByCreatedDateAsc(match.params.name)
+    ).then(snapshot => {
+      const randomDoc =
+        snapshot.docs[Math.floor(Math.random() * snapshot.docs.length)]
 
-        if (randomDoc.exists) {
-          setFirstAttachment(randomDoc.data() as AttachmentDoc)
-        } else {
-          setFirstAttachment(undefined)
-        }
-      })
+      if (randomDoc.exists()) {
+        setFirstAttachment(randomDoc.data() as AttachmentDoc)
+      } else {
+        setFirstAttachment(undefined)
+      }
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname])
 

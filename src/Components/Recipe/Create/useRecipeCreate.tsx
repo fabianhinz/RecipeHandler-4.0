@@ -1,11 +1,13 @@
-import { Timestamp } from 'firebase/firestore'
+import { deleteDoc, getDoc, setDoc, Timestamp } from 'firebase/firestore'
+import { deleteObject, ref } from 'firebase/storage'
 import { useSnackbar } from 'notistack'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useRouterContext } from '@/Components/Provider/RouterProvider'
 import { PATHS } from '@/Components/Routes/Routes'
+import { storage } from '@/firebase/firebaseConfig'
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import { MostCooked, Recipe, User } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { getRecipeService } from '@/services/recipeService'
 
 import { RecipeCreateState } from './RecipeCreateReducer'
@@ -33,12 +35,9 @@ export const useRecipeCreate = (
     }
 
     try {
-      const documentSnapshot = await FirebaseService.firestore
-        .collection('recipes')
-        .doc(state.name)
-        .get()
+      const documentSnapshot = await getDoc(resolveDoc('recipes', state.name))
 
-      if (documentSnapshot.exists && !editedRecipe) {
+      if (documentSnapshot.exists() && !editedRecipe) {
         enqueueSnackbar(
           `Rezept mit dem Namen ${state.name} existiert bereits`,
           {
@@ -73,34 +72,24 @@ export const useRecipeCreate = (
       categories: state.categories,
       relatedRecipes: state.relatedRecipes,
       createdDate,
-      editorUid: state.editorUid || user!.uid,
+      editorUid: state.editorUid || user.uid,
     }
 
     try {
-      await FirebaseService.firestore
-        .collection('recipes')
-        .doc(recipeName)
-        .set(recipeDoc, { merge: true })
+      await setDoc(resolveDoc('recipes', recipeName), recipeDoc, {
+        merge: true,
+      })
 
       if (!editedRecipe) {
-        await FirebaseService.firestore
-          .collection('cookCounter')
-          .doc(recipeName)
-          .set({
-            value: 0,
-            createdDate,
-          } as MostCooked<number>)
+        const cookCounterDoc: MostCooked<number> = { value: 0, createdDate }
+        await setDoc(resolveDoc('cookCounter', recipeName), cookCounterDoc)
       }
 
       if (state.selectedTrial) {
-        await FirebaseService.firestore
-          .collection('trials')
-          .doc(state.selectedTrial.name)
-          .delete()
-
-        await FirebaseService.storageRef
-          .child(state.selectedTrial.fullPath)
-          .delete()
+        await Promise.all([
+          deleteDoc(resolveDoc('trials', state.selectedTrial.name)),
+          deleteObject(ref(storage, state.selectedTrial.fullPath)),
+        ])
       }
 
       getRecipeService().recipeCreateState = null

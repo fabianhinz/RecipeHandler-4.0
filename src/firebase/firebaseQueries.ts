@@ -6,11 +6,13 @@ import {
   limit,
   orderBy,
   query,
+  QueryConstraint,
+  startAfter,
   where,
   WithFieldValue,
 } from 'firebase/firestore'
 
-import { Recipe, User } from '@/model/model'
+import { OrderByKey, OrderByRecord, Recipe, Trial, User } from '@/model/model'
 
 import { firestore } from './firebaseConfig'
 import {
@@ -121,4 +123,67 @@ export const resolveExpensesOrderedByDateDesc = (userId: User['uid']) => {
     resolveCollection(`users/${userId}/expenses`),
     orderBy('date', 'desc')
   )
+}
+
+export const resolveUsersOrderedByNameAsc = () => {
+  return query(resolveCollection('users'), orderBy('username', 'asc'))
+}
+
+export const resolveNRecipeAttachmentsOrderedByCreatedDateAsc = (
+  recipeName: Recipe['name'],
+  maxNumberOfDocs = 5
+) => {
+  return query(
+    resolveCollection(`recipes/${recipeName}/attachments`),
+    orderBy('createdDate', 'desc'),
+    limit(maxNumberOfDocs)
+  )
+}
+
+export const resolveTrialsOrderedByCreatedDateDesc = (
+  startAfterTrial?: Trial
+) => {
+  const constraints: QueryConstraint[] = [
+    orderBy('createdDate', 'desc'),
+    limit(queryLimits.desktop),
+  ]
+
+  if (startAfterTrial) {
+    constraints.push(startAfter(startAfterTrial.createdDate))
+  }
+
+  return query(resolveCollection('trials'), ...constraints)
+}
+
+interface RecipesConstraintValues {
+  orderByRecord: OrderByRecord
+  selectedCategories: Map<string, string>
+  lastRecipe?: Recipe
+  selectedEditor?: User['uid']
+}
+export const resolveRecipesByConstraintValues = ({
+  orderByRecord,
+  lastRecipe,
+  selectedCategories,
+  selectedEditor,
+}: RecipesConstraintValues) => {
+  const orderByKey = Object.keys(orderByRecord)[0] as OrderByKey
+  const constraints: QueryConstraint[] = [
+    limit(queryLimits.desktop),
+    orderBy(orderByKey, orderByRecord[orderByKey]),
+  ]
+
+  if (selectedEditor) {
+    constraints.push(where('editorUid', '==', selectedEditor))
+  }
+
+  if (lastRecipe) {
+    constraints.push(startAfter(lastRecipe[orderByKey]))
+  }
+
+  for (const [type, value] of selectedCategories) {
+    constraints.push(where(`categories.${type}`, '==', value))
+  }
+
+  return query(resolveCollection('recipes'), ...constraints)
 }

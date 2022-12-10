@@ -1,12 +1,13 @@
 import { Grid, Tooltip } from '@material-ui/core'
 import SatisfactionBackgroundIcon from '@material-ui/icons/SupervisedUserCircle'
 import { Rating } from '@material-ui/lab'
-import { ReactText, useCallback, useEffect, useMemo, useState } from 'react'
+import { onSnapshot, setDoc } from 'firebase/firestore'
+import { ReactText, useCallback, useEffect, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import StyledCard from '@/Components/Shared/StyledCard'
-import { FirebaseService } from '@/services/firebase'
+import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
 
 import SatisfactionIconContainer from './SatisfactionIconContainer'
 import SatisfactionUser from './SatisfactionUser'
@@ -24,32 +25,27 @@ const Satisfaction = ({ recipeName }: Props) => {
   const { user } = useFirebaseAuthContext()
   const { userIds } = useUsersContext()
 
-  const memoSatisfactionCollection = useMemo(
-    () =>
-      FirebaseService.firestore
-        .collection('recipes')
-        .doc(recipeName)
-        .collection('satisfaction'),
-    [recipeName]
-  )
-
-  useEffect(
-    () =>
-      memoSatisfactionCollection.onSnapshot(querySnapshot =>
+  useEffect(() => {
+    onSnapshot(
+      resolveCollection(`recipes/${recipeName}/satisfaction`),
+      querySnapshot =>
         setSatisfaction(
           new Map(querySnapshot.docs.map(doc => [doc.id, doc.data().value]))
         )
-      ),
-    [memoSatisfactionCollection]
-  )
+    )
+  }, [recipeName])
 
-  const handleSatisfactionChange = (
-    _event: React.ChangeEvent<{}>,
+  const handleSatisfactionChange = async (
+    _event: React.ChangeEvent<unknown>,
     value: number | null
   ) => {
-    if (!user) return
+    if (!user) {
+      return
+    }
 
-    memoSatisfactionCollection.doc(user.uid).set({ value })
+    await setDoc(resolveDoc(`recipes/${recipeName}/satisfaction`, user.uid), {
+      value,
+    })
   }
 
   const satisfactionValueOrNull = useCallback(
@@ -57,7 +53,10 @@ const Satisfaction = ({ recipeName }: Props) => {
     [satisfaction]
   )
 
-  const handleActiveChange = (_event: React.ChangeEvent<{}>, value: number) => {
+  const handleActiveChange = (
+    _event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
     switch (value) {
       case 1: {
         setTooltipTitle('Das war wohl nix')

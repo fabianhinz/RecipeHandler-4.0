@@ -16,7 +16,6 @@ import TrialsSelection from '@/Components/Trials/TrialsSelection'
 import { useCategorySelect } from '@/hooks/useCategorySelect'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import { Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { getRecipeService } from '@/services/recipeService'
 
 import RelatedRecipesSelection from '../RelatedRecipesSelection'

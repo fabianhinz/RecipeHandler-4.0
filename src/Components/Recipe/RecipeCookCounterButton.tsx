@@ -1,12 +1,19 @@
 import { IconButton, Tooltip } from '@material-ui/core/'
 import FavoriteIcon from '@material-ui/icons/Favorite'
-import { FieldValue, increment, Timestamp } from 'firebase/firestore'
+import {
+  addDoc,
+  FieldValue,
+  increment,
+  onSnapshot,
+  Timestamp,
+  updateDoc,
+} from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { BadgeWrapper } from '@/Components/Shared/BadgeWrapper'
+import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
 import { CookingHistory, MostCooked, Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 type Props = Pick<Recipe, 'name'>
 
@@ -17,38 +24,32 @@ const RecipeCookCounterButton = ({ name }: Props) => {
   const { user } = useFirebaseAuthContext()
 
   useEffect(() => {
-    return FirebaseService.firestore
-      .collection('cookCounter')
-      .doc(name)
-      .onSnapshot(documentSnapshot =>
-        setNumberOfCooks(
-          documentSnapshot.exists ? documentSnapshot.data()!.value : 0
-        )
+    return onSnapshot(resolveDoc('cookCounter', name), documentSnapshot => {
+      setNumberOfCooks(
+        documentSnapshot.exists() ? documentSnapshot.data().value : 0
       )
+    })
   }, [name])
 
-  const handleClick = () => {
-    if (!user) return
+  const handleClick = async () => {
+    if (!user) {
+      return
+    }
+
     setDisabled(true)
+    const cookCounterUpdate: Partial<MostCooked<FieldValue>> = {
+      value: increment(1),
+    }
+    const cookingHistoryDoc: Partial<CookingHistory> = {
+      createdDate: Timestamp.fromDate(new Date()),
+      recipeName: name,
+    }
 
-    FirebaseService.firestore
-      .collection('cookCounter')
-      .doc(name)
-      .update({
-        value: increment(1),
-      } as MostCooked<FieldValue>)
-      .catch(console.error)
-
-    FirebaseService.firestore
-      .collection('users')
-      .doc(user.uid)
-      .collection('cookingHistory')
-      .doc()
-      .set({
-        createdDate: Timestamp.fromDate(new Date()),
-        recipeName: name,
-      } as CookingHistory)
-      .catch(console.error)
+    void updateDoc(resolveDoc('cookCounter', name), cookCounterUpdate)
+    void addDoc(
+      resolveCollection(`users/${user.uid}/cookingHistory`),
+      cookingHistoryDoc
+    )
   }
 
   return (
