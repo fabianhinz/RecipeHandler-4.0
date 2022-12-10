@@ -15,6 +15,8 @@ import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { Alert, AlertProps, Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
+import { deleteDoc, updateDoc } from 'firebase/firestore'
+import { deleteObject, getDownloadURL, ref } from 'firebase/storage'
 import {
   CalendarMonth,
   ChevronLeft,
@@ -38,9 +40,10 @@ import SwipeableViews from 'react-swipeable-views'
 
 import AccountChip from '@/Components/Account/AccountChip'
 import { PATHS } from '@/Components/Routes/Routes'
+import { storage } from '@/firebase/firebaseConfig'
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import { useAttachment } from '@/hooks/useAttachment'
 import { AttachmentDoc, Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS } from '@/theme'
 import { isSafari } from '@/util/constants'
 
@@ -346,8 +349,8 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
   const handleDelete = async (attachment: AttachmentDoc) => {
     setAlert({ open: true, text: `löschen wird vorbereitet`, severity: 'info' })
     try {
-      await FirebaseService.firestore.doc(attachment.docPath as string).delete()
-      await FirebaseService.storageRef.child(attachment.fullPath).delete()
+      await deleteDoc(resolveDoc(attachment.docPath))
+      await deleteObject(ref(storage, attachment.fullPath))
 
       setAttachments(prev => {
         // ? we are deleting the last image >> reverse the animation
@@ -378,11 +381,12 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
     if (!attachments) return
     // ToDo: does not work on iOS 13, just don't render the button for now
     const link = document.createElement('a')
-    link.href = await FirebaseService.storageRef
-      .child(attachments[activeAttachment].fullPath)
-      .getDownloadURL()
 
+    link.href = await getDownloadURL(
+      ref(storage, attachments[activeAttachment].fullPath)
+    )
     link.target = '_blank'
+
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -396,12 +400,13 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
       text: 'Vorschaubild wird gesetzt',
       severity: 'info',
     })
-    await FirebaseService.firestore
-      .collection('recipes')
-      .doc(routeMatch.params.name)
-      .update({
-        previewAttachment: possiblePreviews.get(activeAttachment),
-      } as Recipe)
+
+    const reference = resolveDoc(`recipes`, routeMatch.params.name)
+    const data: Partial<Recipe> = {
+      previewAttachment: possiblePreviews.get(activeAttachment),
+    }
+
+    await updateDoc(reference, data)
     setTimeout(() => setAlert(prev => ({ ...prev, open: false })), 500)
   }
 

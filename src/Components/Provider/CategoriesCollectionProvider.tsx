@@ -1,3 +1,4 @@
+import { getDoc } from 'firebase/firestore'
 import {
   createContext,
   FC,
@@ -7,8 +8,8 @@ import {
   useState,
 } from 'react'
 
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import { Categories } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import useExpenseStore from '@/store/ExpenseStore'
 import { sortFn, sortObjectKeys } from '@/util/fns'
 
@@ -33,10 +34,9 @@ const CategoriesCollectionProvider: FC = ({ children }) => {
   const [categoriesLoading, setCategoriesLoading] = useState(true)
 
   const fetchCategories = useCallback(async () => {
-    const categoriesRef = FirebaseService.firestore.collection('categories')
     const categories = [
-      categoriesRef.doc('recipes').get(),
-      categoriesRef.doc('expenses').get(),
+      getDoc(resolveDoc('categories', 'recipes')),
+      getDoc(resolveDoc('categories', 'expenses')),
     ]
 
     const [recipes, expenses] = await Promise.all(categories)
@@ -58,7 +58,7 @@ const CategoriesCollectionProvider: FC = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    fetchCategories()
+    void fetchCategories()
   }, [fetchCategories])
 
   return (

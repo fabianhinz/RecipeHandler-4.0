@@ -1,4 +1,18 @@
 import { makeStyles } from '@material-ui/core'
+import { logEvent, setUserId } from 'firebase/analytics'
+import {
+  onAuthStateChanged,
+  signInWithCustomToken,
+  User as FirebaseUser,
+} from 'firebase/auth'
+import {
+  DocumentData,
+  DocumentReference,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
 import {
   createContext,
   FC,
@@ -10,20 +24,23 @@ import {
 } from 'react'
 
 import BuiltWithFirebase from '@/Components/Shared/BuiltWithFirebase'
+import { analytics, auth, functions } from '@/firebase/firebaseConfig'
+import {
+  resolveDoc,
+  resolveExpensesOrderedByDateDesc,
+} from '@/firebase/firebaseQueries'
 import { ShoppingListItem, User } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
-import useExpenseStore, { EXPENSE_COLLECTION } from '@/store/ExpenseStore'
+import useExpenseStore from '@/store/ExpenseStore'
 import { ArrayFns, ReorderParams } from '@/util/fns'
-
-type DocumentRef =
-  firebase.default.firestore.DocumentReference<firebase.default.firestore.DocumentData>
 
 interface AuthContext {
   user: User | undefined
   shoppingList: ShoppingListItem[]
   loginEnabled: boolean
-  shoppingListRef: { current?: DocumentRef }
-  reorderShoppingList: (reorderParams: ReorderParams<ShoppingListItem>) => void
+  shoppingListRef: { current?: DocumentReference<DocumentData> }
+  reorderShoppingList: (
+    reorderParams: ReorderParams<ShoppingListItem>
+  ) => Promise<void>
 }
 
 const Context = createContext<AuthContext>({
@@ -31,7 +48,8 @@ const Context = createContext<AuthContext>({
   shoppingList: [],
   loginEnabled: false,
   shoppingListRef: { current: undefined },
-  reorderShoppingList: (reorderParams: ReorderParams<ShoppingListItem>) => null,
+  reorderShoppingList: async (reorderParams: ReorderParams<ShoppingListItem>) =>
+    undefined,
 })
 
 export const useFirebaseAuthContext = () => useContext(Context)
@@ -66,94 +84,100 @@ const FirebaseAuthProvider: FC = ({ children }) => {
   const [user, setUser] = useState<User | undefined>()
   const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([])
 
-  const shoppingListRef = useRef<DocumentRef>()
+  const shoppingListRef = useRef<AuthContext['shoppingListRef']['current']>()
 
   const classes = useStyles()
 
-  const handleAuthStateChange = useCallback(
-    (user: firebase.default.User | null) => {
-      setAuthReady(true)
-      if (!user) {
-        setUser(undefined)
-        setLoginEnabled(true)
-        return
-      }
+  const handleAuthStateChange = useCallback((user: FirebaseUser | null) => {
+    setAuthReady(true)
 
-      const userDocRef = FirebaseService.firestore
-        .collection('users')
-        .doc(user.uid)
+    if (!user) {
+      setUser(undefined)
+      setLoginEnabled(true)
+      return
+    }
 
-      const userDocUnsubsribe = userDocRef.onSnapshot(doc => {
-        setUser({
-          ...(doc.data() as Omit<User, 'uid'>),
-          uid: user.uid,
-        })
-        FirebaseService.analytics?.setUserId(user.uid)
-        FirebaseService.analytics?.logEvent('login')
-        setLoginEnabled(true)
+    const userDocUnsubsribe = onSnapshot(resolveDoc('users', user.uid), doc => {
+      setUser({
+        ...(doc.data() as Omit<User, 'uid'>),
+        uid: user.uid,
       })
 
-      shoppingListRef.current = userDocRef
-        .collection('shoppingList')
-        .doc('static')
-
-      const shoppingListUnsubscribe = shoppingListRef.current.onSnapshot(
-        snapshot => {
-          setShoppingList(snapshot.data()?.list ?? [])
-        }
-      )
-
-      const expensesUnsubscribe = userDocRef
-        .collection(EXPENSE_COLLECTION)
-        .orderBy('date', 'desc')
-        .onSnapshot(useExpenseStore.getState().handleFirebaseSnapshot)
-
-      return () => {
-        expensesUnsubscribe()
-        userDocUnsubsribe()
-        shoppingListUnsubscribe()
+      if (analytics) {
+        setUserId(analytics, user.uid)
+        logEvent(analytics, 'login')
       }
-    },
-    []
-  )
+      setLoginEnabled(true)
+    })
 
-  const signInWithCustomToken = useCallback(async () => {
+    shoppingListRef.current = resolveDoc(
+      `users/${user.uid}/shoppingList`,
+      'static'
+    )
+
+    const shoppingListUnsubscribe = onSnapshot(
+      shoppingListRef.current,
+      snapshot => {
+        setShoppingList(snapshot.data()?.list ?? [])
+      }
+    )
+
+    const expensesUnsubscribe = onSnapshot(
+      resolveExpensesOrderedByDateDesc(user.uid),
+      useExpenseStore.getState().handleFirebaseSnapshot
+    )
+
+    return () => {
+      expensesUnsubscribe()
+      userDocUnsubsribe()
+      shoppingListUnsubscribe()
+    }
+  }, [])
+
+  const handleSignInWithCustomToken = useCallback(async () => {
     if (!user) return
-    const getCustomToken =
-      FirebaseService.functions.httpsCallable('getCustomToken')
+    const getCustomToken = httpsCallable<User['uid'], string>(
+      functions,
+      'getCustomToken'
+    )
     try {
-      const response = await getCustomToken(user.uid)
-      FirebaseService.auth.signInWithCustomToken(response.data)
+      const customTokenResponse = await getCustomToken(user.uid)
+      await signInWithCustomToken(auth, customTokenResponse.data)
     } catch (e) {
       // only editors may recive a custom token, catch and move on for other users
     }
   }, [user])
 
   useEffect(() => {
-    if (!user || user.emailVerified) return
+    if (!user || user.emailVerified) {
+      return
+    }
 
-    FirebaseService.firestore
-      .collection('users')
-      .doc(user.uid)
-      .update({ emailVerified: user.emailVerified })
+    const update: Partial<User> = { emailVerified: user.emailVerified }
+    void updateDoc(resolveDoc('users', user.uid), update)
   }, [user])
 
   useEffect(() => {
-    signInWithCustomToken()
-  }, [signInWithCustomToken])
+    void handleSignInWithCustomToken()
+  }, [handleSignInWithCustomToken])
 
   useEffect(() => {
-    return FirebaseService.auth.onAuthStateChanged(handleAuthStateChange)
+    return onAuthStateChanged(auth, handleAuthStateChange)
   }, [handleAuthStateChange])
 
-  const reorderShoppingList = (
+  const reorderShoppingList = async (
     reorderParams: ReorderParams<ShoppingListItem>
   ) => {
     const reorderedList = ArrayFns.reorder(reorderParams)
     setShoppingList(reorderedList)
-    shoppingListRef.current?.set({
-      list: reorderedList,
-    })
+
+    if (!shoppingListRef.current) {
+      throw new Error(
+        'cannot update shopping list without a document reference'
+      )
+    }
+
+    await setDoc(shoppingListRef.current, { list: reorderedList })
   }
 
   return (

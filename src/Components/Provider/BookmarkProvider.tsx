@@ -1,18 +1,13 @@
-import {
-  createContext,
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { updateDoc } from 'firebase/firestore'
+import { createContext, FC, useContext, useEffect, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
-import { FirebaseService } from '@/services/firebase'
+import { resolveDoc } from '@/firebase/firebaseQueries'
+import { User } from '@/model/model'
 
 type BookmarkContext = {
   bookmarks: Set<string>
-  handleBookmarkChange: (recipeName: string) => void
+  handleBookmarkChange: (recipeName: string) => Promise<void>
 }
 
 const Context = createContext<BookmarkContext | null>(null)
@@ -22,8 +17,11 @@ export const useBookmarkContext = () => useContext(Context) as BookmarkContext
 const BookmarkProvider: FC = ({ children }) => {
   const { user } = useFirebaseAuthContext()
   const [bookmarks, setBookmarks] = useState<Set<string>>(() => {
-    if (!user) return new Set()
-    else return new Set(user.bookmarks)
+    if (!user) {
+      return new Set()
+    } else {
+      return new Set(user.bookmarks)
+    }
   })
 
   useEffect(() => {
@@ -31,24 +29,24 @@ const BookmarkProvider: FC = ({ children }) => {
     setBookmarks(new Set(user.bookmarks))
   }, [user])
 
-  const handleBookmarkChange = useCallback(
-    (recipeName: string) =>
-      setBookmarks(prev => {
-        if (prev.has(recipeName)) prev.delete(recipeName)
-        else prev.add(recipeName)
+  const handleBookmarkChange = async (recipeName: string) => {
+    const newBookmarks = new Set(bookmarks)
 
-        const newBookmarksSet = new Set(prev)
+    if (newBookmarks.has(recipeName)) {
+      newBookmarks.delete(recipeName)
+    } else {
+      newBookmarks.add(recipeName)
+    }
 
-        if (user && user.bookmarkSync)
-          FirebaseService.firestore
-            .collection('users')
-            .doc(user.uid)
-            .update({ bookmarks: [...newBookmarksSet.values()] })
+    if (user && user.bookmarkSync) {
+      const update: Partial<User> = {
+        bookmarks: [...newBookmarks],
+      }
+      await updateDoc(resolveDoc('users', user.uid), update)
+    }
 
-        return newBookmarksSet
-      }),
-    [user]
-  )
+    setBookmarks(newBookmarks)
+  }
 
   return (
     <Context.Provider

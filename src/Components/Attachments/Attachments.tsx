@@ -41,7 +41,7 @@ const Attachments = ({ recipe }: Props) => {
   }, [recipe.name])
 
   const handlePreviewClick = (originId: string, activeAttachment: number) =>
-    handleAnimation(originId, savedAttachments!, activeAttachment)
+    handleAnimation(originId, savedAttachments, activeAttachment)
 
   if (recipe.numberOfAttachments === 0) return <></>
 

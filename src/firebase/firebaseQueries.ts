@@ -10,7 +10,7 @@ import {
   WithFieldValue,
 } from 'firebase/firestore'
 
-import { Recipe } from '@/model/model'
+import { Recipe, User } from '@/model/model'
 
 import { firestore } from './firebaseConfig'
 import {
@@ -88,7 +88,9 @@ export const resolveCommentsOrderedByCreatedDateAsc = (
   )
 }
 
-export const resolveArchivedExpensesOrderedByDateDesc = (userId: string) => {
+export const resolveArchivedExpensesOrderedByDateDesc = (
+  userId: User['uid']
+) => {
   return query(
     resolveCollection(`users/${userId}/archivedExpenses`),
     orderBy('date', 'desc')
@@ -113,3 +115,10 @@ export const resolveCookCounterOrderedByCreatedDateDescWhereValueIsZero =
       where('value', '==', '0')
     )
   }
+
+export const resolveExpensesOrderedByDateDesc = (userId: User['uid']) => {
+  return query(
+    resolveCollection(`users/${userId}/expenses`),
+    orderBy('date', 'desc')
+  )
+}

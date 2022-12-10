@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router'
 
 import {
   RecipesRootCollection,
+  SupportedCollectionPath,
   TrialsRootCollection,
 } from '@/firebase/firebaseModel'
 
@@ -19,10 +20,7 @@ export interface CreatedDate {
   createdDate: Timestamp
 }
 
-export interface AttachmentDoc
-  extends Editor,
-    CreatedDate,
-    Partial<FirestoreDocPath> {
+export interface AttachmentDoc extends Editor, CreatedDate, FirestoreDocPath {
   name: string
   size: number
   fullPath: string
@@ -156,7 +154,7 @@ export interface Metadata {
 }
 
 export interface FirestoreDocPath {
-  docPath: string
+  docPath: SupportedCollectionPath
 }
 
 export interface MostCooked<T> {

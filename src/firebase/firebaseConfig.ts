@@ -30,7 +30,7 @@ export let analytics: Analytics | undefined
 
 if (import.meta.env.PROD) {
   analytics = getAnalytics(app)
-  enableMultiTabIndexedDbPersistence(firestore)
+  void enableMultiTabIndexedDbPersistence(firestore)
 }
 
 if (import.meta.env.RECIPE_HANDLER_USE_EMULATORS) {

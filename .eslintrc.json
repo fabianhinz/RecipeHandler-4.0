@@ -2,15 +2,21 @@
   "extends": [
     "react-app",
     "eslint:recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
-  "plugins": ["simple-import-sort"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["tsconfig.json"]
+  },
+  "plugins": ["simple-import-sort", "@typescript-eslint"],
   "rules": {
     "no-undef": "off",
     "no-unused-vars": "off",
     "prettier/prettier": "warn",
     "simple-import-sort/imports": "warn",
     "simple-import-sort/exports": "warn",
+    "@typescript-eslint/no-floating-promises": "warn",
     "react/no-multi-comp": [
       "warn",
       {
