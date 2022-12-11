@@ -10,9 +10,11 @@ import {
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
+import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
+import { queryLimits, resolveRelatedRecipes } from '@/firebase/firebaseQueries'
 import useDebounce from '@/hooks/useDebounce'
 import { Recipe } from '@/model/model'
 
@@ -36,13 +38,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const endAt = (debouncedSearchValue: string) => {
-  // https://stackoverflow.com/a/57290806
-  return debouncedSearchValue.replace(/.$/, c =>
-    String.fromCharCode(c.charCodeAt(0) + 1)
-  )
-}
-
 interface Props {
   relatedRecipes: string[]
   onRelatedRecipesChange: (relatedRecipes: string[]) => void
@@ -62,30 +57,17 @@ const RelatedRecipesSelection = ({
   const classes = useStyles()
 
   useEffect(() => {
-    if (!shouldLoad) return
-
-    const query:
-      | firebase.default.firestore.CollectionReference
-      | firebase.default.firestore.Query = FirebaseService.firestore
-      .collection('recipes')
-      .limit(FirebaseService.QUERY_LIMIT * 2)
-
-    const handleSnapshot = (
-      querySnapshot: firebase.default.firestore.QuerySnapshot
-    ) => {
-      setLoading(false)
-      setRecipes(querySnapshot.docs.map(doc => doc.data() as Recipe))
+    if (!shouldLoad) {
+      return
     }
 
-    if (debouncedSearchValue.length > 0) {
-      return query
-        .orderBy('name', 'asc')
-        .where('name', '>=', debouncedSearchValue)
-        .where('name', '<', endAt(debouncedSearchValue))
-        .onSnapshot(handleSnapshot)
-    } else {
-      return query.orderBy('createdDate', 'desc').onSnapshot(handleSnapshot)
-    }
+    return onSnapshot(
+      resolveRelatedRecipes(debouncedSearchValue),
+      querySnapshot => {
+        setLoading(false)
+        setRecipes(querySnapshot.docs.map(doc => doc.data() as Recipe))
+      }
+    )
   }, [debouncedSearchValue, shouldLoad])
 
   const handleSelectedChange = (recipeName: string) => {
@@ -148,19 +130,17 @@ const RelatedRecipesSelection = ({
         ))}
 
         {loading &&
-          new Array(FirebaseService.QUERY_LIMIT * 2)
-            .fill(1)
-            .map((_dummy, index) => (
-              <ListItem key={index}>
-                <ListItemAvatar>
-                  <Skeleton variant="circle" height={40} width={40} />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={<Skeleton variant="text" width="80%" />}
-                  secondary={<Skeleton variant="text" width="30%" />}
-                />
-              </ListItem>
-            ))}
+          new Array(queryLimits.desktop * 2).fill(1).map((_dummy, index) => (
+            <ListItem key={index}>
+              <ListItemAvatar>
+                <Skeleton variant="circle" height={40} width={40} />
+              </ListItemAvatar>
+              <ListItemText
+                primary={<Skeleton variant="text" width="80%" />}
+                secondary={<Skeleton variant="text" width="30%" />}
+              />
+            </ListItem>
+          ))}
       </List>
     </SelectionDrawer>
   )

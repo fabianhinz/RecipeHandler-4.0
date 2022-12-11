@@ -3,7 +3,6 @@ import create from 'zustand'
 
 import expenseUtils from '@/Components/Expenses/helper/expenseUtils'
 import { ArchivedExpense, Expense } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 export type AutocompleteOptionGroups =
   | 'creator'

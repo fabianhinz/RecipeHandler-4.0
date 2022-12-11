@@ -6,7 +6,6 @@ import { DropzoneState, FileRejection, useDropzone } from 'react-dropzone'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { AttachmentDoc, DataUrl } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 export const readDocumentAsync = (document: Blob) =>
   new Promise<string>((resolve, reject) => {
@@ -33,7 +32,7 @@ export const useAttachmentDropzone = ({
   attachmentMaxSize,
 }: Options) => {
   const [attachments, setAttachments] = useState<
-    Array<AttachmentDoc & DataUrl>
+    Array<Partial<AttachmentDoc> & DataUrl>
   >([])
   const [attachmentAlert, setAttachmentAlert] = useState<
     JSX.Element | undefined
@@ -70,7 +69,7 @@ export const useAttachmentDropzone = ({
         <Alert severity="info">Dateien werden komprimiert</Alert>
       )
 
-      const newAttachments: Array<AttachmentDoc & DataUrl> = []
+      const newAttachments: Array<Partial<AttachmentDoc> & DataUrl> = []
       for (const file of acceptedFiles) {
         let compressedFile: Blob | null = null
         if (attachmentMaxSize || attachmentMaxWidth) {

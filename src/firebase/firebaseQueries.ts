@@ -187,3 +187,24 @@ export const resolveRecipesByConstraintValues = ({
 
   return query(resolveCollection('recipes'), ...constraints)
 }
+
+const endAt = (search: string) => {
+  // https://stackoverflow.com/a/57290806
+  return search.replace(/.$/, c => String.fromCharCode(c.charCodeAt(0) + 1))
+}
+
+export const resolveRelatedRecipes = (search?: string) => {
+  const constraints: QueryConstraint[] = [limit(queryLimits.desktop * 2)]
+
+  if (search) {
+    constraints.push(
+      orderBy('name', 'asc'),
+      where('name', '>=', search),
+      where('name', '<', endAt(search))
+    )
+  } else {
+    constraints.push(orderBy('createdDate', 'desc'))
+  }
+
+  return query(resolveCollection('recipes'), ...constraints)
+}
