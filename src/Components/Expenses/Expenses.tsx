@@ -37,11 +37,7 @@ import expenseUtils from './helper/expenseUtils'
 
 const selector = (state: ExpenseStore) => ({
   expenses: state.expenses,
-  isDialogOpen: state.isNewExpenseDialogOpen,
-})
-
-const dispatchSelector = (state: ExpenseStore) => ({
-  openDialog: state.openNewExpenseDialog,
+  isDialogOpen: state.isDialogOpen,
 })
 
 const useStyles = makeStyles(theme => ({
@@ -81,7 +77,7 @@ const Expenses = () => {
   const classes = useStyles()
 
   const { expenses, isDialogOpen } = useExpenseStore(selector)
-  const { openDialog } = useExpenseStore(dispatchSelector)
+  const setIsDialogOpen = useExpenseStore(store => store.setIsDialogOpen)
   const expensesByMonth = useExpenseStore(store => store.expensesByMonth)
   const expenseStoreLoading = useExpenseStore(store => store.loading)
   const autocompleteOptions = useExpenseStore(
@@ -244,12 +240,15 @@ const Expenses = () => {
       <SecouredRouteFab
         onClick={() => {
           resetCurrentExpense()
-          openDialog(true)
+          setIsDialogOpen(true)
         }}
         tooltipTitle="Ausgabe hinzufügen"
         icon={<AddIcon />}
       />
-      <ExpenseDialog open={isDialogOpen} onClose={() => openDialog(false)} />
+      <ExpenseDialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </EntryGridContainer>
   )
 }

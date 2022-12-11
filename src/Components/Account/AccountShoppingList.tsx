@@ -42,6 +42,16 @@ const AccountUserShoppingList = () => {
     }
 
   const handleDelete = (index: number) => () => {
+    // TODO upgrade/firebase fix remaining errors
+    /**
+     * src/Components/Account/AccountShoppingList.tsx:41
+     * src/Components/Account/AccountShoppingListInput.tsx:32
+     * src/Components/Account/AccountShoppingListItem.tsx:88
+     * src/Components/Account/AccountUser/AccountUserHeader.tsx:35
+     * src/Components/Account/AccountUser/AccountUserSettings.tsx:36
+     * src/Components/Markdown/MarkdownRenderer.tsx:90
+     * src/Components/Recipe/Details/RecipeDetails.tsx:68
+     */
     shoppingListRef.current?.set({
       list: shoppingList.filter((_, itemIndex) => itemIndex !== index),
     })

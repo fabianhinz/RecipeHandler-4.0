@@ -70,14 +70,14 @@ const getCommentTypography = (comment: string): React.ReactNode => {
     return comment
   }
 
-  const complexComment: Array<any> = []
+  const complexComment: Array<unknown> = []
 
   comment.split(' ').forEach(value => {
     if (includesUrl(value)) {
       complexComment.push(
         <Link
           href={value}
-          color="secondary"
+          color="primary"
           target="_blank"
           rel="noopener noreferrer">
           Link
@@ -121,13 +121,13 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
     })
   }, [reactionsFirestoreRef])
 
-  const handleEmojiClick = (emoji: string) => {
+  const handleEmojiClick = async (emoji: string) => {
     setEmoticonAnchorEl(null)
     if (!currentUser) {
       return
     }
     const docRef = resolveDoc(reactionsFirestoreRef, currentUser.uid)
-    setDoc(docRef, {
+    await setDoc(docRef, {
       emoji,
       editorUid: currentUser.uid,
       createdDate: Timestamp.fromDate(new Date()),

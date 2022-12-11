@@ -12,30 +12,29 @@ import {
   Typography,
 } from '@material-ui/core'
 import { Archive, Edit } from '@material-ui/icons'
+import { addDoc, deleteDoc, Timestamp } from 'firebase/firestore'
 import { useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useGridContext } from '@/Components/Provider/GridProvider'
-import { Expense } from '@/model/model'
-import useCurrentExpenseStore, {
-  CurrentExpenseStore,
-} from '@/store/CurrentExpenseStore'
-import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
+import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
+import { Expense, User } from '@/model/model'
+import useCurrentExpenseStore from '@/store/CurrentExpenseStore'
+import useExpenseStore from '@/store/ExpenseStore'
 
 import expenseUtils from './helper/expenseUtils'
+
+const archiveExpense = async (expense: Expense, userId: User['uid']) => {
+  await addDoc(resolveCollection(`users/${userId}/archivedExpenses`), {
+    ...expense,
+    deletedAt: Timestamp.fromDate(new Date()),
+  })
+  await deleteDoc(resolveDoc(`users/${userId}/expenses`, expense.id))
+}
 
 interface Props {
   expense: Expense
 }
-
-const dispatchSelector = (state: ExpenseStore) => ({
-  openDialog: state.openNewExpenseDialog,
-  archiveExpense: state.archiveExpense,
-})
-
-const dispatchCurrentExpense = (state: CurrentExpenseStore) => ({
-  setCurrentExpense: state.setCurrentExpense,
-})
 
 const useStyles = makeStyles<Theme, { showDetails: boolean }>(theme => ({
   actionArea: props => ({
@@ -46,8 +45,10 @@ const useStyles = makeStyles<Theme, { showDetails: boolean }>(theme => ({
 
 const ExpenseCard = (props: Props) => {
   const [showDetails, setShowDetails] = useState(false)
-  const { openDialog, archiveExpense } = useExpenseStore(dispatchSelector)
-  const { setCurrentExpense } = useCurrentExpenseStore(dispatchCurrentExpense)
+  const setIsDialogOpen = useExpenseStore(store => store.setIsDialogOpen)
+  const setCurrentExpense = useCurrentExpenseStore(
+    store => store.setCurrentExpense
+  )
   const authContext = useFirebaseAuthContext()
   const gridContext = useGridContext()
   const categoryPalette = expenseUtils.useExpenseCategoryPalette({
@@ -58,7 +59,7 @@ const ExpenseCard = (props: Props) => {
   const classes = useStyles({ showDetails })
 
   const handleUpdateClick = () => {
-    openDialog(true)
+    setIsDialogOpen(true)
     setCurrentExpense(props.expense)
   }
 
@@ -121,7 +122,7 @@ const ExpenseCard = (props: Props) => {
                   fullWidth
                   startIcon={<Archive />}
                   onClick={() =>
-                    archiveExpense(props.expense, authContext.user?.uid ?? '')
+                    archiveExpense(props.expense, authContext.user!.uid)
                   }>
                   archivieren
                 </Button>

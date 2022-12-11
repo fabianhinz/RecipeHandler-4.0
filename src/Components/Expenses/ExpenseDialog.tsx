@@ -18,11 +18,13 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers'
 import deLocale from 'date-fns/locale/de'
-import { Timestamp } from 'firebase/firestore'
+import { addDoc, Timestamp, updateDoc } from 'firebase/firestore'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { SlideUp } from '@/Components/Shared/Transitions'
+import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
+import { Expense } from '@/model/model'
 import useCurrentExpenseStore, {
   CurrentExpenseStore,
 } from '@/store/CurrentExpenseStore'
@@ -63,11 +65,6 @@ const dispatchCurrentExpenseSelector = (state: CurrentExpenseStore) => ({
   clearState: state.clearState,
 })
 
-const dispatchSelector = (state: ExpenseStore) => ({
-  addExpense: state.addExpense,
-  updateExpense: state.updateExpense,
-})
-
 const useStyles = makeStyles({
   form: {
     display: 'flex',
@@ -79,7 +76,6 @@ const useStyles = makeStyles({
 
 const ExpenseDialog = (props: Props) => {
   const { autocompleteOptions } = useExpenseStore(selector)
-  const { addExpense, updateExpense } = useExpenseStore(dispatchSelector)
   const {
     id,
     amount,
@@ -107,7 +103,7 @@ const ExpenseDialog = (props: Props) => {
   const breakpointsContext = useBreakpointsContext()
   const classes = useStyles()
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if (!authContext.user) {
@@ -115,31 +111,35 @@ const ExpenseDialog = (props: Props) => {
     }
 
     if (id === undefined) {
-      addExpense(
-        {
-          amount,
-          category,
-          creator,
-          date: date ?? Timestamp.fromDate(new Date()),
-          shop,
-          description: description ?? 'Einkauf',
-          relatedUsers,
-        },
-        authContext.user.uid
+      const data: Expense = {
+        amount,
+        category,
+        creator,
+        date: date ?? Timestamp.fromDate(new Date()),
+        shop,
+        description: description ?? 'Einkauf',
+        relatedUsers,
+      }
+
+      await addDoc(
+        resolveCollection(`users/${authContext.user.uid}/expenses`),
+        data
       )
     } else {
-      updateExpense(
-        {
-          id,
-          amount,
-          category,
-          creator,
-          date: date ?? Timestamp.fromDate(new Date()),
-          shop,
-          description: description ?? 'Einkauf',
-          relatedUsers,
-        },
-        authContext.user.uid
+      const data: Expense = {
+        id,
+        amount,
+        category,
+        creator,
+        date: date ?? Timestamp.fromDate(new Date()),
+        shop,
+        description: description ?? 'Einkauf',
+        relatedUsers,
+      }
+
+      await updateDoc(
+        resolveDoc(`users/${authContext.user.uid}/expenses`, id),
+        data
       )
     }
 

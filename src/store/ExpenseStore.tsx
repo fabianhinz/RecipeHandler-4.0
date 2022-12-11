@@ -1,8 +1,8 @@
-import { Timestamp } from 'firebase/firestore'
+import { DocumentData, QuerySnapshot } from 'firebase/firestore'
 import create from 'zustand'
 
 import expenseUtils from '@/Components/Expenses/helper/expenseUtils'
-import { ArchivedExpense, Expense } from '@/model/model'
+import { Expense } from '@/model/model'
 
 export type AutocompleteOptionGroups =
   | 'creator'
@@ -19,7 +19,7 @@ export type ExpenseState = {
   expensesByMonth: Map<string, Expense[]>
   years: number[]
   categories: string[]
-  isNewExpenseDialogOpen: boolean
+  isDialogOpen: boolean
   autocompleteOptions: Record<
     keyof Pick<Expense, AutocompleteOptionGroups>,
     string[]
@@ -28,19 +28,12 @@ export type ExpenseState = {
 
 type ExpenseActions = {
   setExpenses: (expenses: Expense[]) => void
-  addExpense: (expense: Expense, userId: string) => void
-  openNewExpenseDialog: (isOpen: boolean) => void
-  archiveExpense: (expense: Expense, userId: string) => void
-  clearArchive: (archivedExpense: ArchivedExpense[], userId: string) => void
-  restoreExpense: (archivedExpense: ArchivedExpense, userId: string) => void
-  updateExpense: (expense: Expense, userId: string) => void
+  setIsDialogOpen: (value: boolean) => void
   setAutocompleteOptions: (
     autocompleteOptions: ExpenseState['autocompleteOptions']
   ) => void
   setCategories: (categories: string[]) => void
-  handleFirebaseSnapshot: (
-    snapshot: firebase.default.firestore.QuerySnapshot<firebase.default.firestore.DocumentData>
-  ) => void
+  handleFirebaseSnapshot: (snapshot: QuerySnapshot<DocumentData>) => void
   handleExpenseFilterChange: <Key extends keyof ExpenseFilter>(
     key: Key,
     value: ExpenseFilter[Key]
@@ -59,7 +52,7 @@ const useExpenseStore = create<ExpenseStore>((set, get) => ({
   allExpenses: [],
   expensesByMonth: new Map(),
   categories: [],
-  isNewExpenseDialogOpen: false,
+  isDialogOpen: false,
   years: [],
   autocompleteOptions: { creator: [], shop: [], category: [], description: [] },
   expenseFilter: {},
@@ -70,52 +63,9 @@ const useExpenseStore = create<ExpenseStore>((set, get) => ({
     }))
   },
   setExpenses: expenses => set(() => ({ expenses })),
-  addExpense: (expense, userId) =>
-    FirebaseService.firestore
-      .collection(USER_COLLECTION)
-      .doc(userId)
-      .collection(EXPENSE_COLLECTION)
-      .add(expense),
-  archiveExpense: async ({ id, ...expense }, userId) => {
-    const userDoc = FirebaseService.firestore
-      .collection(USER_COLLECTION)
-      .doc(userId)
-    await userDoc
-      .collection(ARCHIVED_EXPENSES_COLLECTION)
-      .add({ ...expense, deletedAt: Timestamp.fromDate(new Date()) })
-    await userDoc.collection(EXPENSE_COLLECTION).doc(id).delete()
+  setIsDialogOpen: value => {
+    set(() => ({ isDialogOpen: value }))
   },
-  restoreExpense: async ({ deletedAt, ...expense }, userId) => {
-    const userDoc = FirebaseService.firestore
-      .collection(USER_COLLECTION)
-      .doc(userId)
-    await userDoc.collection(EXPENSE_COLLECTION).add(expense)
-    await userDoc
-      .collection(ARCHIVED_EXPENSES_COLLECTION)
-      .doc(expense.id)
-      .delete()
-  },
-  clearArchive: async (expenses, userId) => {
-    await Promise.all(
-      expenses.map(e =>
-        FirebaseService.firestore
-          .collection(USER_COLLECTION)
-          .doc(userId)
-          .collection(ARCHIVED_EXPENSES_COLLECTION)
-          .doc(e.id)
-          .delete()
-      )
-    )
-  },
-  openNewExpenseDialog: isNewExpenseDialogOpen =>
-    set(() => ({ isNewExpenseDialogOpen })),
-  updateExpense: ({ id, ...expense }, userId) =>
-    FirebaseService.firestore
-      .collection(USER_COLLECTION)
-      .doc(userId)
-      .collection(EXPENSE_COLLECTION)
-      .doc(id)
-      .update(expense),
   setAutocompleteOptions: autocompleteOptions => {
     set(() => ({ autocompleteOptions }))
   },

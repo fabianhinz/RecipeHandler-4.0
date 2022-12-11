@@ -9,22 +9,41 @@ import {
   Typography,
 } from '@material-ui/core'
 import { Unarchive } from '@material-ui/icons'
-import { onSnapshot } from 'firebase/firestore'
+import { addDoc, deleteDoc, onSnapshot } from 'firebase/firestore'
 import { Archive, Delete } from 'mdi-material-ui'
 import { useEffect, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
-import { resolveArchivedExpensesOrderedByDateDesc } from '@/firebase/firebaseQueries'
-import { ArchivedExpense } from '@/model/model'
-import useExpenseStore from '@/store/ExpenseStore'
+import {
+  resolveArchivedExpensesOrderedByDateDesc,
+  resolveCollection,
+  resolveDoc,
+} from '@/firebase/firebaseQueries'
+import { ArchivedExpense, Expense, User } from '@/model/model'
+
+const clearArchive = async (expenses: Expense[], userId: User['uid']) => {
+  return Promise.all(
+    expenses.map(expense => {
+      return deleteDoc(
+        resolveDoc(`users/${userId}/archivedExpenses`, expense.id)
+      )
+    })
+  )
+}
+
+const restoreExpense = async (
+  { deletedAt, ...expense }: ArchivedExpense,
+  userId: User['uid']
+) => {
+  await addDoc(resolveCollection(`users/${userId}/expenses`), expense)
+  await deleteDoc(resolveDoc(`users/${userId}/archivedExpenses`, expense.id))
+}
 
 const ArchivedExpensesSelection = () => {
   const [shouldLoad, setShouldLoad] = useState(false)
   const [expenses, setExpenses] = useState<ArchivedExpense[]>([])
   const authContext = useFirebaseAuthContext()
-  const restoreExpense = useExpenseStore(store => store.restoreExpense)
-  const clearArchive = useExpenseStore(store => store.clearArchive)
 
   useEffect(() => {
     if (!shouldLoad || !authContext.user) {
