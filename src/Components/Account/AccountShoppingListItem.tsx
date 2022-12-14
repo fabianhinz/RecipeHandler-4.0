@@ -13,11 +13,14 @@ import {
 } from '@material-ui/core'
 import { Clear } from '@material-ui/icons'
 import clsx from 'clsx'
+import { setDoc } from 'firebase/firestore'
 import React, { useCallback, useState } from 'react'
 import { Draggable, DraggingStyle, NotDraggingStyle } from 'react-beautiful-dnd'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { ShoppingListItem } from '@/model/model'
+
+import { useSafeShoppingListRef } from '../../hooks/useSafeShoppingListRef'
 
 const useStyles = makeStyles<Theme, { muted: boolean }>(theme => ({
   checked: {
@@ -52,7 +55,8 @@ const AccountShoppingListItem = (props: Props) => {
   const [isEditMode, setIsEditMode] = useState(false)
   const [editValue, setEditValue] = useState('')
 
-  const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
+  const { shoppingList } = useFirebaseAuthContext()
+  const shoppingListRef = useSafeShoppingListRef()
 
   const getItemStyle = useCallback(
     (
@@ -85,7 +89,7 @@ const AccountShoppingListItem = (props: Props) => {
     }
 
     shoppingList[props.index].value = editValue
-    await shoppingListRef.current?.set({ list: shoppingList })
+    await setDoc(shoppingListRef, { list: shoppingList })
     setIsEditMode(false)
   }
 

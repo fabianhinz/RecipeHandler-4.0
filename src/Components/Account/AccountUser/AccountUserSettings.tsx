@@ -16,6 +16,7 @@ import DarkThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import SearchIcon from '@material-ui/icons/SearchRounded'
+import { DocumentData, DocumentReference } from 'firebase/firestore'
 import {
   CloudOffOutline,
   CloudSync,
@@ -33,7 +34,7 @@ import { UserSettingChangeHandler } from './AccountUser'
 
 interface Props {
   user: User
-  userDoc: firebase.default.firestore.DocumentReference<firebase.default.firestore.DocumentData>
+  userDoc: DocumentReference<DocumentData>
   onUserSettingChange: UserSettingChangeHandler
 }
 

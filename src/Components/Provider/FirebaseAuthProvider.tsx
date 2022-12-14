@@ -37,7 +37,7 @@ interface AuthContext {
   user: User | undefined
   shoppingList: ShoppingListItem[]
   loginEnabled: boolean
-  shoppingListRef: { current?: DocumentReference<DocumentData> }
+  unsafeShoppingListRef: { current?: DocumentReference<DocumentData> }
   reorderShoppingList: (
     reorderParams: ReorderParams<ShoppingListItem>
   ) => Promise<void>
@@ -47,7 +47,7 @@ const Context = createContext<AuthContext>({
   user: undefined,
   shoppingList: [],
   loginEnabled: false,
-  shoppingListRef: { current: undefined },
+  unsafeShoppingListRef: { current: undefined },
   reorderShoppingList: async (reorderParams: ReorderParams<ShoppingListItem>) =>
     undefined,
 })
@@ -84,7 +84,8 @@ const FirebaseAuthProvider: FC = ({ children }) => {
   const [user, setUser] = useState<User | undefined>()
   const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([])
 
-  const shoppingListRef = useRef<AuthContext['shoppingListRef']['current']>()
+  const unsafeShoppingListRef =
+    useRef<AuthContext['unsafeShoppingListRef']['current']>()
 
   const classes = useStyles()
 
@@ -110,13 +111,13 @@ const FirebaseAuthProvider: FC = ({ children }) => {
       setLoginEnabled(true)
     })
 
-    shoppingListRef.current = resolveDoc(
+    unsafeShoppingListRef.current = resolveDoc(
       `users/${user.uid}/shoppingList`,
       'static'
     )
 
     const shoppingListUnsubscribe = onSnapshot(
-      shoppingListRef.current,
+      unsafeShoppingListRef.current,
       snapshot => {
         setShoppingList(snapshot.data()?.list ?? [])
       }
@@ -171,13 +172,13 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     const reorderedList = ArrayFns.reorder(reorderParams)
     setShoppingList(reorderedList)
 
-    if (!shoppingListRef.current) {
+    if (!unsafeShoppingListRef.current) {
       throw new Error(
         'cannot update shopping list without a document reference'
       )
     }
 
-    await setDoc(shoppingListRef.current, { list: reorderedList })
+    await setDoc(unsafeShoppingListRef.current, { list: reorderedList })
   }
 
   return (
@@ -186,7 +187,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
         user,
         loginEnabled,
         shoppingList,
-        shoppingListRef,
+        unsafeShoppingListRef,
         reorderShoppingList,
       }}>
       {authReady ? (

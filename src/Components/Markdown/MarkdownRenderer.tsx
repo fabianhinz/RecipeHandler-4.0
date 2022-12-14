@@ -19,6 +19,7 @@ import {
 } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
+import { setDoc } from 'firebase/firestore'
 import React from 'react'
 import ReactMarkdown, { ReactMarkdownOptions } from 'react-markdown'
 import { useRouteMatch } from 'react-router-dom'
@@ -26,6 +27,8 @@ import { useRouteMatch } from 'react-router-dom'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import { GrowIn } from '@/Components/Shared/Transitions'
+
+import { useSafeShoppingListRef } from '../../hooks/useSafeShoppingListRef'
 
 const useStyles = makeStyles(theme => ({
   checkboxRoot: {
@@ -49,7 +52,8 @@ const MarkdownRenderer = (props: Props) => {
   const { user } = useFirebaseAuthContext()
   const match = useRouteMatch()
   const classes = useStyles()
-  const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
+  const { shoppingList } = useFirebaseAuthContext()
+  const shoppingListRef = useSafeShoppingListRef()
 
   const markdownPropsToGrocery = (children: any[]) => {
     return children[0]
@@ -63,10 +67,12 @@ const MarkdownRenderer = (props: Props) => {
     )
   }
 
-  const handleCheckboxChange =
-    (children: any) =>
-    (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-      let grocery = markdownPropsToGrocery(children)
+  const handleCheckboxChange = (children: any) => {
+    return async (
+      _event: React.ChangeEvent<HTMLInputElement>,
+      checked: boolean
+    ) => {
+      const grocery = markdownPropsToGrocery(children)
       if (!grocery || !props.withShoppingList) return
 
       let list = [...shoppingList]
@@ -87,8 +93,10 @@ const MarkdownRenderer = (props: Props) => {
             item.recipeNameRef !== props.recipeName
         )
       }
-      shoppingListRef.current?.set({ list })
+
+      await setDoc(shoppingListRef, { list })
     }
+  }
 
   return (
     <ReactMarkdown

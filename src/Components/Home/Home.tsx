@@ -86,7 +86,7 @@ const Home = () => {
   useEffect(() => {
     setQuerying(true)
 
-    onSnapshot(
+    return onSnapshot(
       resolveRecipesByConstraintValues({
         orderByRecord: orderBy,
         lastRecipe,

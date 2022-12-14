@@ -5,6 +5,7 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core'
+import { DocumentData, DocumentReference, updateDoc } from 'firebase/firestore'
 import { useSnackbar } from 'notistack'
 import { useEffect } from 'react'
 
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
   user: User
-  userDoc: firebase.default.firestore.DocumentReference<firebase.default.firestore.DocumentData>
+  userDoc: DocumentReference<DocumentData>
 }
 
 const AccountUserHeader = ({ userDoc, user }: Props) => {
@@ -54,7 +55,7 @@ const AccountUserHeader = ({ userDoc, user }: Props) => {
           variant: 'warning',
         })
       } else {
-        userDoc.update({ profilePicture: dataUrl })
+        void updateDoc(userDoc, { profilePicture: dataUrl })
       }
     }
   }, [dropzoneAttachments, enqueueSnackbar, userDoc])

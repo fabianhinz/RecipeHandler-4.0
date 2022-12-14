@@ -26,7 +26,7 @@ const Satisfaction = ({ recipeName }: Props) => {
   const { userIds } = useUsersContext()
 
   useEffect(() => {
-    onSnapshot(
+    return onSnapshot(
       resolveCollection(`recipes/${recipeName}/satisfaction`),
       querySnapshot =>
         setSatisfaction(

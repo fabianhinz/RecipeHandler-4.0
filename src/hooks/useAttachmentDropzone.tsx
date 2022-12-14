@@ -32,7 +32,7 @@ export const useAttachmentDropzone = ({
   attachmentMaxSize,
 }: Options) => {
   const [attachments, setAttachments] = useState<
-    Array<Partial<AttachmentDoc> & DataUrl>
+    Array<AttachmentDoc & DataUrl>
   >([])
   const [attachmentAlert, setAttachmentAlert] = useState<
     JSX.Element | undefined
@@ -69,7 +69,7 @@ export const useAttachmentDropzone = ({
         <Alert severity="info">Dateien werden komprimiert</Alert>
       )
 
-      const newAttachments: Array<Partial<AttachmentDoc> & DataUrl> = []
+      const newAttachments: Array<AttachmentDoc & DataUrl> = []
       for (const file of acceptedFiles) {
         let compressedFile: Blob | null = null
         if (attachmentMaxSize || attachmentMaxWidth) {

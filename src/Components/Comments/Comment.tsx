@@ -113,7 +113,6 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
   }, [collection, comment.documentId, name])
 
   useEffect(() => {
-    // TODO upgrade/firebase make sure that we unsubscribe from all snapshot listeners
     return onSnapshot(reactionsFirestoreRef, querySnapshot => {
       setReactions(
         querySnapshot.docs.map(doc => ({ ...doc.data() } as CommentReaction))

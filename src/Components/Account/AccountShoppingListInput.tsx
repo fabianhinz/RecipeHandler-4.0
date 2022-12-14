@@ -7,9 +7,12 @@ import {
   useTheme,
 } from '@material-ui/core'
 import { DeleteSweep } from '@material-ui/icons'
+import { setDoc } from 'firebase/firestore'
 import React, { useMemo, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+
+import { useSafeShoppingListRef } from '../../hooks/useSafeShoppingListRef'
 
 const useStyles = makeStyles(theme => ({
   textFieldHelperRoot: {
@@ -23,13 +26,16 @@ const AccountShoppingListInput = (props: {
   tagFilter: string | undefined
   onTagFilterChange: (newFilter: string | undefined) => void
 }) => {
-  const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
+  const { shoppingList } = useFirebaseAuthContext()
+  const shoppingListRef = useSafeShoppingListRef()
   const [textFieldValue, setTextFieldValue] = useState('')
   const classes = useStyles()
   const theme = useTheme()
 
-  const handleDeleteAll = () => {
-    shoppingListRef.current?.set({ list: [] })
+  const handleDeleteAll = async () => {
+    await setDoc(shoppingListRef, {
+      list: [],
+    })
   }
 
   const memoizedTags = useMemo(() => {
@@ -49,7 +55,7 @@ const AccountShoppingListInput = (props: {
     event.preventDefault()
     if (!textFieldValue.trim()) return
 
-    let tag: string = ''
+    let tag = ''
     let value = textFieldValue
     const regexRes = /[ ]*#(\w|ä|Ä|ö|Ö|ü|Ü){1,}[ ]*/.exec(textFieldValue)
 
@@ -69,8 +75,9 @@ const AccountShoppingListInput = (props: {
       },
       ...shoppingList,
     ]
-    shoppingListRef.current?.set({ list })
+
     setTextFieldValue('')
+    await setDoc(shoppingListRef, { list })
   }
 
   return (

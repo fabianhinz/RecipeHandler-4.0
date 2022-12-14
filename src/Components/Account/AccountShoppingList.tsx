@@ -1,4 +1,5 @@
 import { Grid, List } from '@material-ui/core'
+import { setDoc } from 'firebase/firestore'
 import React, { useLayoutEffect, useState } from 'react'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
 
@@ -8,6 +9,7 @@ import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
 import NotFound from '@/Components/Shared/NotFound'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 
+import { useSafeShoppingListRef } from '../../hooks/useSafeShoppingListRef'
 import AccountShoppingListInput from './AccountShoppingListInput'
 import AccountShoppingListItem from './AccountShoppingListItem'
 
@@ -15,8 +17,8 @@ const AccountUserShoppingList = () => {
   const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
   const [tagFilter, setTagFilter] = useState<string | undefined>()
 
-  const { shoppingList, shoppingListRef, reorderShoppingList } =
-    useFirebaseAuthContext()
+  const { shoppingList, reorderShoppingList } = useFirebaseAuthContext()
+  const shoppingListRef = useSafeShoppingListRef()
 
   useDocumentTitle(
     `Einkaufsliste (${shoppingList.filter(item => !item.checked).length})`
@@ -33,33 +35,35 @@ const AccountUserShoppingList = () => {
     )
   }, [shoppingList])
 
-  const handleCheckboxChange =
-    (index: number) =>
-    (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const handleCheckboxChange = (index: number) => {
+    return async (
+      _event: React.ChangeEvent<HTMLInputElement>,
+      checked: boolean
+    ) => {
       const list = [...shoppingList]
       list[index].checked = checked
-      shoppingListRef.current?.set({ list })
-    }
 
-  const handleDelete = (index: number) => () => {
-    // TODO upgrade/firebase fix remaining errors
-    /**
-     * src/Components/Account/AccountShoppingList.tsx:41
-     * src/Components/Account/AccountShoppingListInput.tsx:32
-     * src/Components/Account/AccountShoppingListItem.tsx:88
-     * src/Components/Account/AccountUser/AccountUserHeader.tsx:35
-     * src/Components/Account/AccountUser/AccountUserSettings.tsx:36
-     * src/Components/Markdown/MarkdownRenderer.tsx:90
-     * src/Components/Recipe/Details/RecipeDetails.tsx:68
-     */
-    shoppingListRef.current?.set({
-      list: shoppingList.filter((_, itemIndex) => itemIndex !== index),
-    })
+      await setDoc(shoppingListRef, { list })
+    }
   }
 
-  const handleDragEnd = (result: DropResult) => {
-    if (result.destination === undefined) return
-    reorderShoppingList({
+  const handleDelete = (index: number) => {
+    return async () => {
+      if (!shoppingListRef) {
+        throw new Error('cannot set shoppinglist without a document reference')
+      }
+
+      await setDoc(shoppingListRef, {
+        list: shoppingList.filter((_, itemIndex) => itemIndex !== index),
+      })
+    }
+  }
+
+  const handleDragEnd = async (result: DropResult) => {
+    if (result.destination === undefined) {
+      return
+    }
+    await reorderShoppingList({
       array: shoppingList,
       from: result.source.index,
       to: result.destination.index,

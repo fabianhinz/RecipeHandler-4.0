@@ -30,22 +30,26 @@ export const useRecipeDoc = (props: Props) => {
       setState({ loading: false, recipe })
     }
 
-    onSnapshot(resolveDoc('recipes', props.recipeName), documentSnapshot => {
-      if (!mounted) {
-        return
-      }
-      if (!documentSnapshot.exists() && recipe) {
-        return
-      }
+    const unsubsrcribe = onSnapshot(
+      resolveDoc('recipes', props.recipeName),
+      documentSnapshot => {
+        if (!mounted) {
+          return
+        }
+        if (!documentSnapshot.exists() && recipe) {
+          return
+        }
 
-      setState({
-        loading: false,
-        recipe: documentSnapshot.data() as Recipe,
-      })
-    })
+        setState({
+          loading: false,
+          recipe: documentSnapshot.data() as Recipe,
+        })
+      }
+    )
 
     return () => {
       mounted = false
+      unsubsrcribe()
     }
   }, [location.state, props.recipeName])
 
