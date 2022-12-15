@@ -1,0 +1,43 @@
+{
+  "categories": {
+    "recipes": {
+      "Art": [
+        "Beilage",
+        "Hauptgericht",
+        "Salat",
+        "Suppe",
+        "Dessert",
+        "Kuchen",
+        "Brot",
+        "Plätzchen",
+        "Getränke",
+        "Frühstück"
+      ],
+      "Ernährung": [
+        "Vegetarisch",
+        "Fleisch",
+        "Fisch",
+        "Alkohol",
+        "Alkoholfrei",
+        "Vegan"
+      ],
+      "Saison": ["Frühling", "Sommer", "Herbst", "Winter"],
+      "Zeit": [
+        "~ 0,5 Stunden",
+        "~ 1 Stunde",
+        "~ 1,5 Stunden",
+        "~ 2 Stunden",
+        "> 2 Stunden"
+      ]
+    },
+    "expenses": {
+      "autocomplete": [
+        "Lebensmittel",
+        "Mobilität",
+        "Inventar",
+        "Sonstiges",
+        "Urlaub"
+      ]
+    }
+  }
+}

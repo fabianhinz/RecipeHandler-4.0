@@ -19,6 +19,14 @@ ___
 1. navigate into the root dir of the cloned repo and `npm install` via your prefered shell
 1. to start the webapp run `npm start`
 
+## firebase emulators
+
+>> TODO document this
+>> also need auth emulator
+
+- scripts
+- data population
+
 ## Deploy a preview version
 
 Firebase offers the possibility to deploy preview versions on separate preview channels. An example for a channel ID is ```my_new_test_feature```. For more information read the [firebase docs](https://firebase.google.com/docs/hosting/test-preview-deploy#preview-channels).
