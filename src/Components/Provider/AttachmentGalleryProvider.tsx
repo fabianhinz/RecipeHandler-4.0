@@ -348,6 +348,16 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
 
   const handleDelete = async (attachment: AttachmentDoc) => {
     setAlert({ open: true, text: `löschen wird vorbereitet`, severity: 'info' })
+
+    if (!attachment.docPath) {
+      setAlert({
+        open: true,
+        text: 'löschen fehlgeschlagen.',
+        severity: 'error',
+      })
+      return
+    }
+
     try {
       await deleteDoc(resolveDoc(attachment.docPath))
       await deleteObject(ref(storage, attachment.fullPath))

@@ -20,7 +20,10 @@ export interface CreatedDate {
   createdDate: Timestamp
 }
 
-export interface AttachmentDoc extends Editor, CreatedDate, FirestoreDocPath {
+export interface AttachmentDoc
+  extends Editor,
+    CreatedDate,
+    Partial<FirestoreDocPath> {
   name: string
   size: number
   fullPath: string
