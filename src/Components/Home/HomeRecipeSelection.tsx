@@ -30,15 +30,24 @@ const useStyles = makeStyles(theme => ({
     transform: 'rotate(180deg)',
   },
   editorContainer: {
-    paddingLeft: theme.mixins.gutters().paddingLeft,
-    paddingRight: theme.mixins.gutters().paddingRight,
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: theme.spacing(3),
+      paddingRight: theme.spacing(3),
+    },
   },
   listSubheader: { backgroundColor: theme.palette.background.paper },
   editorCounterList: {
     display: 'flex',
     gap: theme.spacing(1),
     flexWrap: 'wrap',
-    ...theme.mixins.gutters(),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: theme.spacing(3),
+      paddingRight: theme.spacing(3),
+    },
   },
 }))
 

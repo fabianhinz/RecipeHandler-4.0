@@ -1,6 +1,6 @@
 import { Analytics, getAnalytics } from 'firebase/analytics'
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { connectAuthEmulator, getAuth } from 'firebase/auth'
 import {
   connectFirestoreEmulator,
   enableMultiTabIndexedDbPersistence,
@@ -28,12 +28,15 @@ export const functions = getFunctions(app)
 export const storage = getStorage(app)
 export let analytics: Analytics | undefined
 
+functions.region = 'europe-west1'
+
 if (import.meta.env.PROD) {
   analytics = getAnalytics(app)
   void enableMultiTabIndexedDbPersistence(firestore)
 }
 
 if (import.meta.env.RECIPE_HANDLER_USE_EMULATORS) {
+  connectAuthEmulator(auth, 'http://localhost:9099')
   connectFirestoreEmulator(firestore, 'localhost', 8080)
   connectFunctionsEmulator(functions, 'localhost', 5001)
   connectStorageEmulator(storage, 'localhost', 9199)

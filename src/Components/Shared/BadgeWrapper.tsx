@@ -24,6 +24,7 @@ export const BadgeWrapper: FC<BadgeProps> = ({
 
   return (
     <Badge
+      overlap="rectangular"
       anchorOrigin={anchorOrigin}
       classes={classes}
       badgeContent={badgeContent}

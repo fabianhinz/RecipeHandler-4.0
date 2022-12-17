@@ -21,11 +21,11 @@ ___
 
 ## firebase emulators
 
->> TODO document this
->> also need auth emulator
-
-- scripts
-- data population
+- run `firebase:emulators:start`. This will start the emulators und sync data from `./emulators-data`
+- if stopping and restarting does not work because of blocked ports consider killing it `lsof -i tcp:<PORT>`, `kill -9 <PID>`
+- for every role in this app (user, editor, admin) there's a user. PW and identifier (email) are the same
+- working on functions: for every change needs a `tsc`
+- working on the app: algolia is disabled
 
 ## Deploy a preview version
 

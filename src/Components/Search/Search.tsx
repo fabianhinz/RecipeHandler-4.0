@@ -129,7 +129,12 @@ const Search = () => {
   const searchAlgolia = useCallback(
     () => {
       setLoading(true)
-      algolia
+      if (import.meta.env.RECIPE_HANDLER_USE_EMULATORS) {
+        console.log(`search is disabled ${debouncedValue}`)
+        return
+      }
+
+      void algolia
         .search<Hit>(debouncedValue, {
           advancedSyntax: user?.algoliaAdvancedSyntax ? true : false,
           attributesToSnippet: ['description', 'ingredients'],

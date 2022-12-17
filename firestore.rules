@@ -6,7 +6,7 @@ service cloud.firestore {
     }
     
     function isEditor() {
-      	return exists(/databases/$(database)/documents/editors/$(request.auth.uid));
+      	return request.auth != null && exists(/databases/$(database)/documents/editors/$(request.auth.uid));
     }
 
     match /editors/{userId=**} {

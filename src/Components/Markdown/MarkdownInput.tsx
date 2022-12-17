@@ -110,7 +110,7 @@ const MarkdownInput = ({ outerValue, onChange }: Props) => {
       let selectionStart = inputRef.current?.selectionStart
       let selectionEnd = inputRef.current?.selectionEnd
 
-      let selection = value.substring(selectionStart, selectionEnd)
+      const selection = value.substring(selectionStart, selectionEnd)
       const beforeSelection = value.substring(0, selectionStart)
       const afterSelection = value.substring(selectionEnd, value.length)
 
@@ -230,7 +230,7 @@ const MarkdownInput = ({ outerValue, onChange }: Props) => {
       <TextField
         inputRef={inputRef}
         value={value}
-        rows={15}
+        minRows={15}
         className={classes.textField}
         onChange={e => setValue(e.target.value)}
         fullWidth

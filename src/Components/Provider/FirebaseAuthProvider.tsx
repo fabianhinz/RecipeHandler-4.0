@@ -10,6 +10,7 @@ import {
   DocumentReference,
   onSnapshot,
   setDoc,
+  Timestamp,
   updateDoc,
 } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
@@ -98,18 +99,43 @@ const FirebaseAuthProvider: FC = ({ children }) => {
       return
     }
 
-    const userDocUnsubsribe = onSnapshot(resolveDoc('users', user.uid), doc => {
-      setUser({
-        ...(doc.data() as Omit<User, 'uid'>),
-        uid: user.uid,
-      })
+    if (analytics) {
+      setUserId(analytics, user.uid)
+      logEvent(analytics, 'login')
+    }
 
-      if (analytics) {
-        setUserId(analytics, user.uid)
-        logEvent(analytics, 'login')
+    const userDocUnsubsribe = onSnapshot(
+      resolveDoc('users', user.uid),
+      doc => {
+        setUser({
+          ...(doc.data() as Omit<User, 'uid'>),
+          uid: user.uid,
+        })
+
+        setLoginEnabled(true)
+      },
+      () => {
+        // not an editor, this user was just created and has no permissions yet
+        setUser({
+          uid: user.uid,
+          username: user.email ?? 'unknown username',
+          admin: false,
+          muiTheme: 'dynamic',
+          selectedUsers: [],
+          showRecentlyEdited: true,
+          showMostCooked: true,
+          showNew: true,
+          notifications: false,
+          createdDate: Timestamp.fromDate(
+            new Date(user.metadata.creationTime ?? Date.now())
+          ),
+          algoliaAdvancedSyntax: false,
+          bookmarkSync: true,
+          emailVerified: false,
+          bookmarks: [],
+        })
       }
-      setLoginEnabled(true)
-    })
+    )
 
     unsafeShoppingListRef.current = resolveDoc(
       `users/${user.uid}/shoppingList`,
@@ -136,7 +162,9 @@ const FirebaseAuthProvider: FC = ({ children }) => {
   }, [])
 
   const handleSignInWithCustomToken = useCallback(async () => {
-    if (!user) return
+    if (!user) {
+      return
+    }
     const getCustomToken = httpsCallable<User['uid'], string>(
       functions,
       'getCustomToken'
