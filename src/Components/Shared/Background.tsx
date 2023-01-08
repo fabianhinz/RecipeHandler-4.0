@@ -99,6 +99,11 @@ export const Background = ({ Icon }: Props) => {
     void getDocs(
       resolveNRecipeAttachmentsOrderedByCreatedDateAsc(match.params.name)
     ).then(snapshot => {
+      if (snapshot.docs.length === 0) {
+        setFirstAttachment(undefined)
+        return
+      }
+
       const randomDoc =
         snapshot.docs[Math.floor(Math.random() * snapshot.docs.length)]
 
