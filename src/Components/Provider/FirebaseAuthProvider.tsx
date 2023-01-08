@@ -13,7 +13,6 @@ import {
   Timestamp,
   updateDoc,
 } from 'firebase/firestore'
-import { httpsCallable } from 'firebase/functions'
 import {
   createContext,
   FC,
@@ -25,7 +24,7 @@ import {
 } from 'react'
 
 import BuiltWithFirebase from '@/Components/Shared/BuiltWithFirebase'
-import { analytics, auth, functions } from '@/firebase/firebaseConfig'
+import { analytics, auth, getCustomToken } from '@/firebase/firebaseConfig'
 import {
   resolveDoc,
   resolveExpensesOrderedByDateDesc,
@@ -90,92 +89,86 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
   const classes = useStyles()
 
-  const handleAuthStateChange = useCallback((user: FirebaseUser | null) => {
-    setAuthReady(true)
+  const handleAuthStateChange = useCallback(
+    async (user: FirebaseUser | null) => {
+      setAuthReady(true)
 
-    if (!user) {
-      setUser(undefined)
-      setLoginEnabled(true)
-      return
-    }
-
-    if (analytics) {
-      setUserId(analytics, user.uid)
-      logEvent(analytics, 'login')
-    }
-
-    const userDocUnsubsribe = onSnapshot(
-      resolveDoc('users', user.uid),
-      doc => {
-        setUser({
-          ...(doc.data() as Omit<User, 'uid'>),
-          uid: user.uid,
-        })
-
+      if (!user) {
+        setUser(undefined)
         setLoginEnabled(true)
-      },
-      () => {
-        // not an editor, this user was just created and has no permissions yet
-        setUser({
-          uid: user.uid,
-          username: user.email ?? 'unknown username',
-          admin: false,
-          muiTheme: 'dynamic',
-          selectedUsers: [],
-          showRecentlyEdited: true,
-          showMostCooked: true,
-          showNew: true,
-          notifications: false,
-          createdDate: Timestamp.fromDate(
-            new Date(user.metadata.creationTime ?? Date.now())
-          ),
-          algoliaAdvancedSyntax: false,
-          bookmarkSync: true,
-          emailVerified: false,
-          bookmarks: [],
-        })
+        return
       }
-    )
 
-    unsafeShoppingListRef.current = resolveDoc(
-      `users/${user.uid}/shoppingList`,
-      'static'
-    )
-
-    const shoppingListUnsubscribe = onSnapshot(
-      unsafeShoppingListRef.current,
-      snapshot => {
-        setShoppingList(snapshot.data()?.list ?? [])
+      if (analytics) {
+        setUserId(analytics, user.uid)
+        logEvent(analytics, 'login')
       }
-    )
 
-    const expensesUnsubscribe = onSnapshot(
-      resolveExpensesOrderedByDateDesc(user.uid),
-      useExpenseStore.getState().handleFirebaseSnapshot
-    )
+      try {
+        const customTokenResponse = await getCustomToken(user.uid)
+        await signInWithCustomToken(auth, customTokenResponse.data)
+      } catch {
+        // only editors may recive a custom token, catch and move on for other users
+      }
 
-    return () => {
-      expensesUnsubscribe()
-      userDocUnsubsribe()
-      shoppingListUnsubscribe()
-    }
-  }, [])
+      const userDocUnsubsribe = onSnapshot(
+        resolveDoc('users', user.uid),
+        doc => {
+          setUser({
+            ...(doc.data() as Omit<User, 'uid'>),
+            uid: user.uid,
+          })
 
-  const handleSignInWithCustomToken = useCallback(async () => {
-    if (!user) {
-      return
-    }
-    const getCustomToken = httpsCallable<User['uid'], string>(
-      functions,
-      'getCustomToken'
-    )
-    try {
-      const customTokenResponse = await getCustomToken(user.uid)
-      await signInWithCustomToken(auth, customTokenResponse.data)
-    } catch (e) {
-      // only editors may recive a custom token, catch and move on for other users
-    }
-  }, [user])
+          setLoginEnabled(true)
+        },
+        () => {
+          // not an editor, this user was just created and has no permissions yet
+          setUser({
+            uid: user.uid,
+            username: user.email ?? 'unknown username',
+            admin: false,
+            muiTheme: 'dynamic',
+            selectedUsers: [],
+            showRecentlyEdited: true,
+            showMostCooked: true,
+            showNew: true,
+            notifications: false,
+            createdDate: Timestamp.fromDate(
+              new Date(user.metadata.creationTime ?? Date.now())
+            ),
+            algoliaAdvancedSyntax: false,
+            bookmarkSync: true,
+            emailVerified: false,
+            bookmarks: [],
+          })
+        }
+      )
+
+      unsafeShoppingListRef.current = resolveDoc(
+        `users/${user.uid}/shoppingList`,
+        'static'
+      )
+
+      const shoppingListUnsubscribe = onSnapshot(
+        unsafeShoppingListRef.current,
+        snapshot => {
+          setShoppingList(snapshot.data()?.list ?? [])
+        }
+      )
+
+      const expensesUnsubscribe = onSnapshot(
+        resolveExpensesOrderedByDateDesc(user.uid),
+        useExpenseStore.getState().handleFirebaseSnapshot
+      )
+
+      return () => {
+        expensesUnsubscribe()
+        userDocUnsubsribe()
+        shoppingListUnsubscribe()
+      }
+    },
+    []
+  )
 
   useEffect(() => {
     if (!user || user.emailVerified) {
@@ -185,10 +178,6 @@ const FirebaseAuthProvider: FC = ({ children }) => {
     const update: Partial<User> = { emailVerified: user.emailVerified }
     void updateDoc(resolveDoc('users', user.uid), update)
   }, [user])
-
-  useEffect(() => {
-    void handleSignInWithCustomToken()
-  }, [handleSignInWithCustomToken])
 
   useEffect(() => {
     return onAuthStateChanged(auth, handleAuthStateChange)

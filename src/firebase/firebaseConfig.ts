@@ -6,8 +6,14 @@ import {
   enableMultiTabIndexedDbPersistence,
   getFirestore,
 } from 'firebase/firestore'
-import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
+import {
+  connectFunctionsEmulator,
+  getFunctions,
+  httpsCallable,
+} from 'firebase/functions'
 import { connectStorageEmulator, getStorage } from 'firebase/storage'
+
+import { User } from '@/model/model'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDfKo9psV6Err683fvtIkdkXX8A-Gep1zs',
@@ -41,3 +47,8 @@ if (import.meta.env.RECIPE_HANDLER_USE_EMULATORS) {
   connectFunctionsEmulator(functions, 'localhost', 5001)
   connectStorageEmulator(storage, 'localhost', 9199)
 }
+
+export const getCustomToken = httpsCallable<User['uid'], string>(
+  functions,
+  'getCustomToken'
+)
