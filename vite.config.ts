@@ -9,7 +9,8 @@ export default defineConfig({
   envPrefix: 'RECIPE_HANDLER_',
   define: {
     RECIPE_HANDLER_APP_VERSION: JSON.stringify(
-      process.env.VERSION || (process.env.NODE_ENV === 'production' ? 'unkown' : 'dev')
+      process.env.VERSION ||
+        (process.env.NODE_ENV === 'production' ? 'unkown' : 'dev')
     ),
   },
   build: {
@@ -20,6 +21,7 @@ export default defineConfig({
     svgrPlugin(),
     tsconfigPaths(),
     VitePWA({
+      filename: 'service-worker.js',
       registerType: 'prompt',
       devOptions: {
         enabled: true,
