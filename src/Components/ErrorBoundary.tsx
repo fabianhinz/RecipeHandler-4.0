@@ -1,26 +1,82 @@
+/* eslint-disable react/no-multi-comp */
 import {
   Box,
-  Card,
-  CardContent,
+  Button,
+  CardActions,
   Container,
   LinearProgress,
-  Slide,
+  makeStyles,
   Typography,
 } from '@material-ui/core'
+import { Alert, AlertTitle } from '@material-ui/lab'
 import { Timestamp } from 'firebase/firestore'
 import { Component } from 'react'
+import { useHistory } from 'react-router-dom'
 import StackTrace from 'stacktrace-js'
 
 import { addDocTo } from '@/firebase/firebaseQueries'
-import { ReactComponent as ErrorIcon } from '@/icons/error.svg'
 
-interface ErrorBoundaryState {
+const useStyles = makeStyles(theme => ({
+  root: {
+    overflow: 'hidden',
+  },
+  message: {
+    flex: 1,
+    minWidth: 0,
+  },
+}))
+
+const ErrorComponent = (props: BoundaryProps & BoundaryState) => {
+  const classes = useStyles()
+  const history = useHistory()
+
+  return (
+    <Container maxWidth={props.root ? 'sm' : false}>
+      <Box marginTop={4}>
+        <Alert severity="error" classes={classes}>
+          <AlertTitle>Fehler</AlertTitle>
+
+          {props.errorLogged ? (
+            <Typography noWrap gutterBottom color="textSecondary">
+              {props.error}
+            </Typography>
+          ) : (
+            <LinearProgress />
+          )}
+
+          <CardActions style={{ justifyContent: 'flex-end' }}>
+            {props.root !== true && (
+              <Button
+                disabled={!props.errorLogged}
+                color="inherit"
+                onClick={() => history.goBack()}>
+                zurück
+              </Button>
+            )}
+            <Button
+              disabled={!props.errorLogged}
+              color="inherit"
+              onClick={() => window.location.reload()}>
+              neu laden
+            </Button>
+          </CardActions>
+        </Alert>
+      </Box>
+    </Container>
+  )
+}
+
+interface BoundaryProps {
+  root?: boolean
+}
+
+interface BoundaryState {
   error: string | null
   errorLogged: boolean
 }
 
-class ErrorBoundary extends Component<{}, ErrorBoundaryState> {
-  constructor(props: any) {
+class ErrorBoundary extends Component<BoundaryProps, BoundaryState> {
+  constructor(props: BoundaryProps) {
     super(props)
     this.state = { error: null, errorLogged: false }
   }
@@ -54,32 +110,7 @@ class ErrorBoundary extends Component<{}, ErrorBoundaryState> {
 
   public render() {
     if (this.state.error) {
-      return (
-        <Container maxWidth="sm">
-          <Box marginTop={4}>
-            <Slide in direction="down" timeout={500}>
-              <Card raised>
-                <CardContent>
-                  <Box margin={1} display="flex" justifyContent="center">
-                    <ErrorIcon height={100} />
-                  </Box>
-
-                  <Typography gutterBottom color="textSecondary">
-                    {this.state.error}
-                  </Typography>
-                  {this.state.errorLogged ? (
-                    <Typography color="primary">
-                      Protokollierung des Fehlers abgeschlossen
-                    </Typography>
-                  ) : (
-                    <LinearProgress title="Fehler wird protokolliert" />
-                  )}
-                </CardContent>
-              </Card>
-            </Slide>
-          </Box>
-        </Container>
-      )
+      return <ErrorComponent {...this.state} {...this.props} />
     }
     return this.props.children
   }

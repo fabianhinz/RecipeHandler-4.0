@@ -21,6 +21,8 @@ import { ReactComponent as SearchIcon } from '@/icons/search.svg'
 import { ReactComponent as ShoppingCardIcon } from '@/icons/shopping.svg'
 import { ReactComponent as TrialsIcon } from '@/icons/trial.svg'
 
+import ErrorBoundary from '../ErrorBoundary'
+
 export const PATHS = {
   home: '/',
   details: (name = ':name') => `/recipe/details/${name}`,
@@ -115,7 +117,9 @@ const renderRoute = ({ path, Component, BackgroundIcon }: AppRoute) => (
     exact
     render={routeProps => (
       <Suspense fallback={<Progress variant="fixed" />}>
-        <Component {...routeProps} />
+        <ErrorBoundary>
+          <Component {...routeProps} />
+        </ErrorBoundary>
         <Background Icon={BackgroundIcon} />
       </Suspense>
     )}
