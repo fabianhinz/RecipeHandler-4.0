@@ -19,6 +19,12 @@ ___
 1. navigate into the root dir of the cloned repo and `npm install` via your prefered shell
 1. to start the webapp run `npm start`
 
+## Testplan
+
+> wip 
+
+- https://docs.google.com/spreadsheets/d/1heY9iIOZixZRMYhq6JMEn8OaiBvwpGnqNuQkd0LpFt8/edit?usp=sharing
+
 ## firebase emulators
 
 - run `firebase:emulators:start`. This will start the emulators und sync data from `./emulators-data`
