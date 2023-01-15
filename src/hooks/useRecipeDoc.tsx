@@ -1,4 +1,4 @@
-import { onSnapshot } from 'firebase/firestore'
+import { onSnapshot, Timestamp } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
@@ -27,10 +27,20 @@ export const useRecipeDoc = (props: Props) => {
     const recipe = location.state?.recipe
 
     if (recipe) {
-      setState({ loading: false, recipe })
+      setState({
+        loading: false,
+        recipe: {
+          ...recipe,
+          // ? the location state only contains a pojo, so we need to explicitly convert the Timestamp
+          createdDate: new Timestamp(
+            recipe.createdDate.seconds,
+            recipe.createdDate.nanoseconds
+          ),
+        },
+      })
     }
 
-    const unsubsrcribe = onSnapshot(
+    const unsubscribe = onSnapshot(
       resolveDoc('recipes', props.recipeName),
       documentSnapshot => {
         if (!mounted) {
@@ -49,7 +59,7 @@ export const useRecipeDoc = (props: Props) => {
 
     return () => {
       mounted = false
-      unsubsrcribe()
+      unsubscribe()
     }
   }, [location.state, props.recipeName])
 
