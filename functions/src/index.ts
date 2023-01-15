@@ -1,21 +1,41 @@
-import algoliasearch from 'algoliasearch'
+import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch'
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 import * as path from 'path'
 
-const ALGOLIA_ID = functions.config().algolia.app
-const ALGOLIA_ADMIN_KEY = functions.config().algolia.adminkey
+interface AppConfig {
+  algolia: {
+    app: string
+    adminkey: string
+  }
+}
+
 const RECIPE_PATH = 'recipes/{recipeId}'
-
 const ALGOLIA_INDEX_NAME = 'recipes'
-const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
-const index = client.initIndex(ALGOLIA_INDEX_NAME)
 
-const serviceAccount = require('../recipehandler-service-account.json')
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://recipehandler.firebaseio.com',
-})
+let client: SearchClient
+let index: SearchIndex
+
+if (!process.env.FUNCTIONS_EMULATOR) {
+  const serviceAccount = require('../recipehandler-service-account.json')
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://recipehandler.firebaseio.com',
+  })
+  const config: Partial<AppConfig> = functions.config()
+
+  if (!config.algolia?.app) {
+    throw new Error('algolia.app not set')
+  }
+  if (!config.algolia?.adminkey) {
+    throw new Error('algolia.adminkey not set')
+  }
+
+  client = algoliasearch(config.algolia.app, config.algolia.adminkey)
+  index = client.initIndex(ALGOLIA_INDEX_NAME)
+} else {
+  admin.initializeApp()
+}
 
 interface Recipe {
   description: string
@@ -29,7 +49,7 @@ export const addToAlgolia = functions
   .firestore.document(RECIPE_PATH)
   .onCreate(snapshot => {
     if (process.env.FUNCTIONS_EMULATOR) {
-      functions.logger.info('emulator mode - no write ops to algolia')
+      functions.logger.info('onCreate: emulator mode - no write ops to algolia')
       return
     }
 
@@ -44,7 +64,7 @@ export const updateAlgolia = functions
   .firestore.document(RECIPE_PATH)
   .onUpdate(change => {
     if (process.env.FUNCTIONS_EMULATOR) {
-      functions.logger.info('emulator mode - no write ops to algolia')
+      functions.logger.info('onUpdate: emulator mode - no write ops to algolia')
       return
     }
 
@@ -59,7 +79,7 @@ export const deleteFromAlgolia = functions
   .firestore.document(RECIPE_PATH)
   .onDelete(snapshot => {
     if (process.env.FUNCTIONS_EMULATOR) {
-      functions.logger.info('emulator mode - no write ops to algolia')
+      functions.logger.info('onDelete: emulator mode - no write ops to algolia')
       return
     }
 
