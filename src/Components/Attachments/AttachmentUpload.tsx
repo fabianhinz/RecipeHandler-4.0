@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
 import clsx from 'clsx'
+import { FirebaseError } from 'firebase/app'
 import { setDoc } from 'firebase/firestore'
 import { ref, uploadString } from 'firebase/storage'
 import { CloudUpload, HeartBroken } from 'mdi-material-ui'
@@ -86,7 +87,11 @@ const AttachmentUploadListItem = ({
   useEffect(() => {
     let mounted = true
 
-    const docRef = resolveDoc(`recipes/${recipeName}/attachments`)
+    const docRef = resolveDoc(
+      `recipes/${recipeName}/attachments`,
+      undefined,
+      true
+    )
     const storageRef = ref(
       storage,
       `recipes/${recipeName}/${user?.uid}/${docRef.id}/${attachment.name}`
@@ -114,8 +119,8 @@ const AttachmentUploadListItem = ({
             setError(true)
           })
       })
-      .catch((e: any) => {
-        if (e.code_ === 'storage/unauthorized') {
+      .catch((e: FirebaseError) => {
+        if (e.code === 'storage/unauthorized') {
           enqueueSnackbar('fehlende Berechtigungen', { variant: 'error' })
           onUploadComplete(attachment.name)
         }

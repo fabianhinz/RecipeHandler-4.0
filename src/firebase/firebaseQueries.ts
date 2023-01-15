@@ -36,7 +36,20 @@ export const resolveCollection = (pathOrRef: PathOrRef) => {
 }
 
 const getDocPath = (path: string, id?: string) => (id ? `${path}/${id}` : path)
-export const resolveDoc = (pathOrRef: PathOrRef, id?: string) => {
+export const resolveDoc = (
+  pathOrRef: PathOrRef,
+  id?: string,
+  delegateId?: boolean
+) => {
+  if (!id && delegateId) {
+    return doc(
+      collection(
+        firestore,
+        pathOrRef instanceof CollectionReference ? pathOrRef.path : pathOrRef
+      )
+    )
+  }
+
   if (pathOrRef instanceof CollectionReference) {
     return doc(firestore, getDocPath(pathOrRef.path, id))
   }
