@@ -1,0 +1,20 @@
+{
+  "name": "trials/pizza-monster.png",
+  "bucket": "recipehandler.appspot.com",
+  "metageneration": 1,
+  "generation": 1675322711694,
+  "contentType": "image/png",
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "cacheControl": "public, max-age=31536000",
+  "downloadTokens": [
+    "1a3bab5a-7159-40e0-a127-fdd17412d1c9"
+  ],
+  "etag": "AGGd0ggkso68E80Q/69u7PQKiZM",
+  "customMetadata": {},
+  "timeCreated": "2023-02-02T07:25:11.694Z",
+  "updated": "2023-02-02T07:25:11.694Z",
+  "size": 8955,
+  "md5Hash": "pYXzM7nqj0Ha7aEcGGtPYA==",
+  "crc32c": "1596289923"
+}
