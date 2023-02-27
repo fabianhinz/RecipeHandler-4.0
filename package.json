@@ -45,7 +45,7 @@
     "typeface-roboto": "1.1.13",
     "typeface-ubuntu": "1.1.13",
     "web-animations-js": "^2.3.2",
-    "zustand": "^3.7.2"
+    "zustand": "^4.3.4"
   },
   "devDependencies": {
     "@types/algoliasearch": "^4.0.0",
