@@ -22,7 +22,7 @@
     "@material-ui/lab": "4.0.0-alpha.61",
     "@material-ui/pickers": "^3.3.10",
     "algoliasearch": "^4.9.1",
-    "browser-image-compression": "^1.0.17",
+    "browser-image-compression": "^2.0.1",
     "clipboard-copy": "^4.0.1",
     "clsx": "^1.1.1",
     "date-fns": "^2.22.1",
