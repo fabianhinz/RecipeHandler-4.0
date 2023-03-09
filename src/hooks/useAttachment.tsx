@@ -41,40 +41,43 @@ export const getResizedImagesWithMetadata = async (fullPath: string) => {
     getDownloadURL(ref(storage, attachmentRefs.smallPathFallback)),
   ])
 
-  try {
-    const [
-      metadata,
-      fullDataUrl,
-      mediumDataUrl,
-      smallDataUrl,
-      smallDataUrlFallback,
-    ] = settledRequests
+  const [
+    metadata,
+    fullDataUrl,
+    mediumDataUrl,
+    smallDataUrl,
+    smallDataUrlFallback,
+  ] = settledRequests
 
-    if (
-      metadata.status !== 'fulfilled' ||
-      fullDataUrl.status !== 'fulfilled' ||
-      mediumDataUrl.status !== 'fulfilled'
-    ) {
-      throw new Error('metadata and download url not ready yet')
+  if (
+    metadata.status !== 'fulfilled' ||
+    fullDataUrl.status !== 'fulfilled' ||
+    mediumDataUrl.status !== 'fulfilled'
+  ) {
+    if (fullDataUrl.status === 'rejected') {
+      throw new Error(
+        `could not load dataurl for image with fullPath: '${fullPath}'`
+      )
     }
 
-    data.timeCreated = new Date(metadata.value.timeCreated).toLocaleDateString()
-    data.size = `${(metadata.value.size / 1000).toFixed(0)} KB`
-
-    data.fullDataUrl = fullDataUrl.value
-    data.mediumDataUrl = mediumDataUrl.value
-    data.smallDataUrl =
-      smallDataUrl.status === 'fulfilled'
-        ? smallDataUrl.value
-        : smallDataUrlFallback.status === 'fulfilled'
-        ? smallDataUrlFallback.value
-        : ''
-  } catch (e) {
-    console.error(e)
-
     // ? happens after creating an attachment. just load the full version
-    data.mediumDataUrl = data.fullDataUrl
-    data.smallDataUrl = data.fullDataUrl
+    data.smallDataUrl = fullDataUrl.value
+    data.mediumDataUrl = fullDataUrl.value
+    data.fullDataUrl = fullDataUrl.value
+
+    return data
+  }
+
+  data.timeCreated = new Date(metadata.value.timeCreated).toLocaleDateString()
+  data.size = `${(metadata.value.size / 1000).toFixed(0)} KB`
+
+  data.fullDataUrl = fullDataUrl.value
+  data.mediumDataUrl = mediumDataUrl.value
+
+  if (smallDataUrl.status === 'fulfilled') {
+    data.smallDataUrl = smallDataUrl.value
+  } else if (smallDataUrlFallback.status === 'fulfilled') {
+    data.smallDataUrl = smallDataUrlFallback.value
   }
 
   return data
