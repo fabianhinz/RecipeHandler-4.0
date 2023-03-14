@@ -55,9 +55,7 @@ export const getResizedImagesWithMetadata = async (fullPath: string) => {
     mediumDataUrl.status !== 'fulfilled'
   ) {
     if (fullDataUrl.status === 'rejected') {
-      throw new Error(
-        `could not load dataurl for image with fullPath: '${fullPath}'`
-      )
+      return data
     }
 
     // ? happens after creating an attachment. just load the full version
