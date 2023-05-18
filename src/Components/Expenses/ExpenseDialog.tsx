@@ -190,6 +190,9 @@ const ExpenseDialog = (props: Props) => {
                   ),
                 }}
                 defaultValue={amount}
+                onFocus={e => {
+                  e.target.select()
+                }}
                 onChange={e => {
                   const newAmount = Number(e.target.value)
                   if (!isNaN(newAmount)) {
