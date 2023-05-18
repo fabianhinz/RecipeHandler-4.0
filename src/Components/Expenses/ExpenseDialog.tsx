@@ -9,14 +9,14 @@ import {
   Grid,
   InputAdornment,
   makeStyles,
+  Paper,
   TextField,
+  Typography,
+  Zoom,
 } from '@material-ui/core'
-import { Save } from '@material-ui/icons'
+import { Euro, Save } from '@material-ui/icons'
 import CloseIcon from '@material-ui/icons/Close'
-import {
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider,
-} from '@material-ui/pickers'
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import deLocale from 'date-fns/locale/de'
 import { addDoc, Timestamp, updateDoc } from 'firebase/firestore'
 
@@ -65,14 +65,34 @@ const dispatchCurrentExpenseSelector = (state: CurrentExpenseStore) => ({
   clearState: state.clearState,
 })
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   form: {
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
     overflowY: 'auto',
   },
-})
+  widgets: {
+    marginTop: theme.spacing(2),
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+    gap: theme.spacing(2),
+  },
+  widgetContainer: {
+    backgroundColor: theme.palette.primary[theme.palette.type],
+    borderRadius: 10,
+    padding: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1),
+  },
+  widgetTypography: {
+    color: theme.palette.primary.contrastText,
+  },
+  datePicker: {
+    borderRadius: theme.shape.borderRadius * 2,
+  },
+}))
 
 const ExpenseDialog = (props: Props) => {
   const { autocompleteOptions } = useExpenseStore(selector)
@@ -164,127 +184,126 @@ const ExpenseDialog = (props: Props) => {
       </DialogTitle>
       <form className={classes.form} onSubmit={handleSubmit} noValidate>
         <DialogContent>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item md={6} xs={12}>
-              <ExpenseAutocomplete
-                label="Ersteller"
-                value={creator}
-                onValueChange={creator => {
-                  setCreator(creator)
-                  if (!autocompleteOptions.creator.includes(creator)) {
-                    setAutocompleteOptions({
-                      ...autocompleteOptions,
-                      creator: [...autocompleteOptions.creator, creator].sort(),
-                    })
-                    setRelatedUsers(creator)
-                  }
-                }}
-                options={autocompleteOptions.creator}
-              />
-              <TextField
-                type="number"
-                inputProps={{ min: 0 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">€</InputAdornment>
-                  ),
-                }}
-                defaultValue={amount}
-                onFocus={e => {
-                  e.target.select()
-                }}
-                onChange={e => {
-                  const newAmount = Number(e.target.value)
-                  if (!isNaN(newAmount)) {
-                    setAmount(newAmount)
-                  }
-                }}
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                label="Betrag"
-              />
+          <ExpenseAutocomplete
+            label="Ersteller"
+            value={creator}
+            onValueChange={creator => {
+              setCreator(creator)
+              if (!autocompleteOptions.creator.includes(creator)) {
+                setAutocompleteOptions({
+                  ...autocompleteOptions,
+                  creator: [...autocompleteOptions.creator, creator].sort(),
+                })
+                setRelatedUsers(creator)
+              }
+            }}
+            options={autocompleteOptions.creator}
+          />
+          <TextField
+            type="number"
+            inputProps={{ min: 0 }}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">€</InputAdornment>,
+            }}
+            defaultValue={amount}
+            onFocus={e => {
+              e.target.select()
+            }}
+            onChange={e => {
+              const newAmount = Number(e.target.value)
+              if (!isNaN(newAmount)) {
+                setAmount(newAmount)
+              }
+            }}
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="Betrag"
+          />
 
-              <ExpenseAutocompleteWrapper
-                shop={shop}
-                category={category}
-                description={description}
-                onCategoryChange={setCategory}
-                onShopChange={newShop => {
-                  setShop(newShop)
-                  if (!autocompleteOptions.shop.includes(newShop)) {
-                    setAutocompleteOptions({
-                      ...autocompleteOptions,
-                      shop: [...autocompleteOptions.shop, newShop],
-                    })
-                  }
-                }}
-                onDescriptionChange={newDescription => {
-                  setDescription(newDescription)
-                  if (
-                    !autocompleteOptions.description.includes(newDescription)
-                  ) {
-                    setAutocompleteOptions({
-                      ...autocompleteOptions,
-                      description: [
-                        ...autocompleteOptions.description,
-                        newDescription,
-                      ],
-                    })
-                  }
-                }}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <Grid
-                container
-                spacing={2}
-                alignItems="center"
-                direction="column">
-                <Grid item>
-                  <MuiPickersUtilsProvider
-                    locale={deLocale}
-                    utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                      fullWidth
-                      disableFuture
-                      disableToolbar
-                      variant="static"
-                      format="dd.MM.yyyy"
-                      margin="normal"
-                      id="date-picker-inline"
-                      label="Einkaufsdatum"
-                      value={date.toDate()}
-                      onChange={date => {
-                        const newDate = date ?? new Date()
-                        setDate(Timestamp.fromDate(newDate))
-                      }}
-                      KeyboardButtonProps={{
-                        'aria-label': 'change date',
-                      }}
+          <ExpenseAutocompleteWrapper
+            shop={shop}
+            category={category}
+            description={description}
+            onCategoryChange={setCategory}
+            onShopChange={newShop => {
+              setShop(newShop)
+              if (!autocompleteOptions.shop.includes(newShop)) {
+                setAutocompleteOptions({
+                  ...autocompleteOptions,
+                  shop: [...autocompleteOptions.shop, newShop],
+                })
+              }
+            }}
+            onDescriptionChange={newDescription => {
+              setDescription(newDescription)
+              if (!autocompleteOptions.description.includes(newDescription)) {
+                setAutocompleteOptions({
+                  ...autocompleteOptions,
+                  description: [
+                    ...autocompleteOptions.description,
+                    newDescription,
+                  ],
+                })
+              }
+            }}
+          />
+
+          <div className={classes.widgets}>
+            <Paper className={classes.widgetContainer}>
+              <Typography variant="button" className={classes.widgetTypography}>
+                Kaufdatum
+              </Typography>
+
+              <MuiPickersUtilsProvider locale={deLocale} utils={DateFnsUtils}>
+                <DatePicker
+                  fullWidth
+                  disableFuture
+                  format="dd.MM.yyyy"
+                  margin="normal"
+                  value={date.toDate()}
+                  TextFieldComponent={props => (
+                    <TextField
+                      {...props}
+                      inputProps={{ className: classes.widgetTypography }}
+                      variant="outlined"
+                      margin="none"
                     />
-                  </MuiPickersUtilsProvider>
-                </Grid>
-                <Grid item xs={12}>
-                  <Grid container wrap="nowrap" spacing={1}>
-                    {autocompleteOptions.creator.map(user => (
-                      <Grid item key={user}>
-                        <Chip
-                          color={
-                            relatedUsers.includes(user)
-                              ? 'secondary'
-                              : 'default'
-                          }
-                          label={user}
-                          onClick={() => setRelatedUsers(user)}
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                </Grid>
+                  )}
+                  onChange={date => {
+                    const newDate = date ?? new Date()
+                    setDate(Timestamp.fromDate(newDate))
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+            </Paper>
+
+            <Paper className={classes.widgetContainer}>
+              <Typography variant="button" className={classes.widgetTypography}>
+                aufteilen mit
+              </Typography>
+
+              <Grid container spacing={1} alignItems="center">
+                {autocompleteOptions.creator.map(user => {
+                  const splitActive = relatedUsers.includes(user)
+                  return (
+                    <Grid item key={user}>
+                      <Chip
+                        icon={
+                          <Zoom mountOnEnter unmountOnExit in={splitActive}>
+                            <Euro />
+                          </Zoom>
+                        }
+                        color={splitActive ? 'primary' : 'default'}
+                        label={user}
+                        onClick={() => setRelatedUsers(user)}
+                      />
+                    </Grid>
+                  )
+                })}
               </Grid>
-            </Grid>
-          </Grid>
+            </Paper>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button startIcon={<CloseIcon />} onClick={props.onClose}>
