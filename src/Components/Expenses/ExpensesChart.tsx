@@ -127,7 +127,7 @@ export const ExpensesChart = (props: Props) => {
     const data: { month: string; [key: string]: number | string }[] = []
 
     for (const [month, expenses] of props.expensesByMonth) {
-      let categoriesAmount: { [key: string]: number | string } = {}
+      const categoriesAmount: { [key: string]: number | string } = {}
       for (const category of categories) {
         const amount = expenseUtils.getAmountByCategory(category, expenses)
         if (currentCategoryHasAmount(category)) {

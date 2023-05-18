@@ -47,7 +47,7 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
     case 'previewChange':
       return { ...state, preview: !state.preview }
     case 'categoriesChange': {
-      let categories: Categories<string> = {}
+      const categories: Categories<string> = {}
       action.selectedCategories.forEach((value, type) => {
         categories[type] = value
       })
