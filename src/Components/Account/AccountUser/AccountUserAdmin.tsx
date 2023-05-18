@@ -1,14 +1,13 @@
 import { List } from '@material-ui/core'
 import SecurityIcon from '@material-ui/icons/VerifiedUser'
+import { deleteDoc, onSnapshot, setDoc } from 'firebase/firestore'
 import { memo, useEffect, useState } from 'react'
 
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import StyledCard from '@/Components/Shared/StyledCard'
-import { FirebaseService } from '@/services/firebase'
+import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
 
 import AccountListItem from '../AccountListItem'
-
-const editorsCollection = FirebaseService.firestore.collection('editors')
 
 const AccountUserAdmin = () => {
   const [editors, setEditors] = useState<Set<string>>(new Set())
@@ -16,14 +15,18 @@ const AccountUserAdmin = () => {
   const { userIds } = useUsersContext()
 
   useEffect(() => {
-    return editorsCollection.onSnapshot(snapshot =>
+    return onSnapshot(resolveCollection('editors'), snapshot => {
       setEditors(new Set(snapshot.docs.map(doc => doc.id)))
-    )
+    })
   }, [])
 
   const handleEditorChange = (uid: string) => {
-    if (editors.has(uid)) editorsCollection.doc(uid).delete()
-    else editorsCollection.doc(uid).set({ wildcard: true })
+    const docReference = resolveDoc('editors', uid)
+    if (editors.has(uid)) {
+      deleteDoc(docReference)
+    } else {
+      setDoc(docReference, { wildcard: true })
+    }
   }
 
   return (

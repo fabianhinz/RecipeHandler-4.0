@@ -11,7 +11,12 @@ interface Props {
   pathname?: string
 }
 
-export const SecouredRouteFab = ({ icon, tooltipTitle, onClick, pathname }: Props) => {
+export const SecouredRouteFab = ({
+  icon,
+  tooltipTitle,
+  onClick,
+  pathname,
+}: Props) => {
   const history = useHistory()
   const { user } = useFirebaseAuthContext()
 

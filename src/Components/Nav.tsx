@@ -14,7 +14,14 @@ import {
 } from '@material-ui/core'
 import BookIcon from '@material-ui/icons/Book'
 import clsx from 'clsx'
-import { BookmarkMultiple, BookSearch, Cart, ChefHat, Lightbulb, PiggyBank } from 'mdi-material-ui'
+import {
+  BookmarkMultiple,
+  BookSearch,
+  Cart,
+  ChefHat,
+  Lightbulb,
+  PiggyBank,
+} from 'mdi-material-ui'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { useBookmarkContext } from '@/Components/Provider/BookmarkProvider'
@@ -47,7 +54,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     left: 0,
     borderRight: `1px solid ${
-      theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
+      theme.palette.type === 'light'
+        ? 'rgba(0, 0, 0, 0.12)'
+        : 'rgba(255, 255, 255, 0.12)'
     }`,
     [theme.breakpoints.up('md')]: {
       paddingBottom: theme.spacing(11),
@@ -122,7 +131,9 @@ const NavButton = ({ pathname, label, icon }: NavButtonProps) => {
   }
 
   return (
-    <ButtonBase onClick={handleClick} className={clsx(classes.button, classes.routeAwareColor)}>
+    <ButtonBase
+      onClick={handleClick}
+      className={clsx(classes.button, classes.routeAwareColor)}>
       {icon}
       <Typography variant="caption" className={classes.label}>
         {label}
@@ -181,17 +192,45 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
     <>
       <Hidden xsDown>
         <nav className={classes.nav}>
-          <NavButton icon={<BookIcon />} label="Rezepte" pathname={PATHS.home} />
+          <NavButton
+            icon={<BookIcon />}
+            label="Rezepte"
+            pathname={PATHS.home}
+          />
           {breakpointsContext.mdUp === false && (
-            <NavButton icon={<BookSearch />} label="Ergebnisse" pathname={PATHS.searchResults} />
+            <NavButton
+              icon={<BookSearch />}
+              label="Ergebnisse"
+              pathname={PATHS.searchResults}
+            />
           )}
-          <NavButton icon={<BookmarkMultiple />} label="Lesezeichen" pathname={PATHS.bookmarks} />
+          <NavButton
+            icon={<BookmarkMultiple />}
+            label="Lesezeichen"
+            pathname={PATHS.bookmarks}
+          />
           {user && (
             <>
-              <NavButton icon={<Lightbulb />} label="Ideen" pathname={PATHS.trials} />
-              <NavButton icon={<Cart />} label="Einkaufsliste" pathname={PATHS.shoppingList} />
-              <NavButton icon={<PiggyBank />} label="Ausgaben" pathname={PATHS.expenses} />
-              <NavButton icon={<ChefHat />} label="Kochverlauf" pathname={PATHS.cookingHistory} />
+              <NavButton
+                icon={<Lightbulb />}
+                label="Ideen"
+                pathname={PATHS.trials}
+              />
+              <NavButton
+                icon={<Cart />}
+                label="Einkaufsliste"
+                pathname={PATHS.shoppingList}
+              />
+              <NavButton
+                icon={<PiggyBank />}
+                label="Ausgaben"
+                pathname={PATHS.expenses}
+              />
+              <NavButton
+                icon={<ChefHat />}
+                label="Kochverlauf"
+                pathname={PATHS.cookingHistory}
+              />
             </>
           )}
         </nav>
@@ -203,7 +242,11 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
         onClose={onDrawerClose}
         PaperProps={{ className: classes.drawerPaper }}>
         <List disablePadding onClick={onDrawerClose}>
-          <NavListItem pathname={PATHS.home} icon={<BookIcon />} label="Rezepte" />
+          <NavListItem
+            pathname={PATHS.home}
+            icon={<BookIcon />}
+            label="Rezepte"
+          />
           {breakpointsContext.mdUp === false && (
             <NavListItem
               pathname={PATHS.searchResults}
@@ -220,7 +263,11 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
           />
           {user && (
             <>
-              <NavListItem pathname={PATHS.trials} icon={<Lightbulb />} label="Ideen" />
+              <NavListItem
+                pathname={PATHS.trials}
+                icon={<Lightbulb />}
+                label="Ideen"
+              />
 
               <NavListItem
                 pathname={PATHS.shoppingList}
@@ -228,8 +275,16 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
                 label="Einkaufsliste"
                 secondary={shoppingList.filter(item => !item.checked).length}
               />
-              <NavListItem pathname={PATHS.expenses} icon={<PiggyBank />} label="Ausgaben" />
-              <NavListItem icon={<ChefHat />} label="Kochverlauf" pathname={PATHS.cookingHistory} />
+              <NavListItem
+                pathname={PATHS.expenses}
+                icon={<PiggyBank />}
+                label="Ausgaben"
+              />
+              <NavListItem
+                icon={<ChefHat />}
+                label="Kochverlauf"
+                pathname={PATHS.cookingHistory}
+              />
             </>
           )}
         </List>

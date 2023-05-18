@@ -13,7 +13,9 @@ export const useServiceWorkerUpdateEffect = () => {
 
   useLayoutEffect(() => {
     if (offlineReady) {
-      snackbar.enqueueSnackbar('Die Anwendung wurde installiert', { variant: 'success' })
+      snackbar.enqueueSnackbar('Die Anwendung wurde installiert', {
+        variant: 'success',
+      })
     }
   }, [offlineReady, snackbar])
 

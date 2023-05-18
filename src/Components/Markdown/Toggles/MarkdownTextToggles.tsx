@@ -6,7 +6,10 @@ import { ToggleButton } from '@material-ui/lab'
 import { CurrentFormats, ToggleChangeHandler } from '../MarkdownInput'
 import MarkdownToggleButtonGroup from './MarkdownToggleButtonGroup'
 
-const MarkdownTextToggles = ({ formats, onToggleChange }: ToggleChangeHandler & CurrentFormats) => {
+const MarkdownTextToggles = ({
+  formats,
+  onToggleChange,
+}: ToggleChangeHandler & CurrentFormats) => {
   return (
     <MarkdownToggleButtonGroup
       size="small"

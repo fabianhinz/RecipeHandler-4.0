@@ -1,7 +1,14 @@
-import { ThemeProvider as MuiThemeProvider, useMediaQuery } from '@material-ui/core'
+import {
+  ThemeProvider as MuiThemeProvider,
+  useMediaQuery,
+} from '@material-ui/core'
 import { ReactNode, useLayoutEffect, useState } from 'react'
 
-import { responsiveBlackTheme, responsiveDarkTheme, responsiveLightTheme } from '@/theme'
+import {
+  responsiveBlackTheme,
+  responsiveDarkTheme,
+  responsiveLightTheme,
+} from '@/theme'
 
 import { useFirebaseAuthContext } from './FirebaseAuthProvider'
 

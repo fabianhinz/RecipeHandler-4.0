@@ -12,7 +12,13 @@ import {
   useTheme,
 } from '@material-ui/core'
 import { useSnackbar } from 'notistack'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
@@ -50,8 +56,10 @@ const useStyles = makeStyles(theme => ({
     transition: theme.transitions.create('all', {
       easing: theme.transitions.easing.easeOut,
     }),
-    borderBottomLeftRadius: (props: StyleProps) => (props.showResultsPaper ? 0 : BORDER_RADIUS),
-    borderBottomRightRadius: (props: StyleProps) => (props.showResultsPaper ? 0 : BORDER_RADIUS),
+    borderBottomLeftRadius: (props: StyleProps) =>
+      props.showResultsPaper ? 0 : BORDER_RADIUS,
+    borderBottomRightRadius: (props: StyleProps) =>
+      props.showResultsPaper ? 0 : BORDER_RADIUS,
   },
   searchResultsPaper: {
     boxShadow: theme.palette.type === 'light' ? theme.shadows[1] : 'unset',
@@ -114,13 +122,19 @@ const Search = () => {
   useDisableScrollEffect(showResultsPaper)
 
   useEffect(() => {
-    if (error) enqueueSnackbar('Fehler beim Abrufen der Daten', { variant: 'error' })
+    if (error)
+      enqueueSnackbar('Fehler beim Abrufen der Daten', { variant: 'error' })
   }, [enqueueSnackbar, error])
 
   const searchAlgolia = useCallback(
     () => {
       setLoading(true)
-      algolia
+      if (import.meta.env.RECIPE_HANDLER_USE_EMULATORS) {
+        console.log(`search is disabled ${debouncedValue}`)
+        return
+      }
+
+      void algolia
         .search<Hit>(debouncedValue, {
           advancedSyntax: user?.algoliaAdvancedSyntax ? true : false,
           attributesToSnippet: ['description', 'ingredients'],
@@ -174,7 +188,9 @@ const Search = () => {
             onChange={handleInputChange}
             endAdornment={
               <Hidden xsDown>
-                <InputAdornment position="end">{AlgoliaDocSearchRef}</InputAdornment>
+                <InputAdornment position="end">
+                  {AlgoliaDocSearchRef}
+                </InputAdornment>
               </Hidden>
             }
           />

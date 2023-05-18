@@ -12,8 +12,11 @@ export const App = () => {
   useServiceWorkerUpdateEffect()
 
   useEffect(() => {
-    const scrollPosition = getRecipeService().scrollPosition.get(location.pathname)
-    if (scrollPosition) window.scrollTo({ top: scrollPosition, behavior: 'auto' })
+    const scrollPosition = getRecipeService().scrollPosition.get(
+      location.pathname
+    )
+    if (scrollPosition)
+      window.scrollTo({ top: scrollPosition, behavior: 'auto' })
     else window.scrollTo({ top: 0, behavior: 'auto' })
   }, [location.pathname])
 

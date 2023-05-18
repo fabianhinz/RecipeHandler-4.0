@@ -10,12 +10,13 @@ import {
 import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
+import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
+import { queryLimits, resolveRelatedRecipes } from '@/firebase/firebaseQueries'
 import useDebounce from '@/hooks/useDebounce'
 import { Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(theme => ({
   avatarRoot: {
@@ -37,17 +38,15 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const endAt = (debouncedSearchValue: string) => {
-  // https://stackoverflow.com/a/57290806
-  return debouncedSearchValue.replace(/.$/, c => String.fromCharCode(c.charCodeAt(0) + 1))
-}
-
 interface Props {
   relatedRecipes: string[]
   onRelatedRecipesChange: (relatedRecipes: string[]) => void
 }
 
-const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Props) => {
+const RelatedRecipesSelection = ({
+  relatedRecipes,
+  onRelatedRecipesChange,
+}: Props) => {
   const [loading, setLoading] = useState(true)
   const [shouldLoad, setShouldLoad] = useState(false)
   const [searchValue, setSearchValue] = useState('')
@@ -58,25 +57,17 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
   const classes = useStyles()
 
   useEffect(() => {
-    if (!shouldLoad) return
-
-    let query: firebase.default.firestore.CollectionReference | firebase.default.firestore.Query =
-      FirebaseService.firestore.collection('recipes').limit(FirebaseService.QUERY_LIMIT * 2)
-
-    const handleSnapshot = (querySnapshot: firebase.default.firestore.QuerySnapshot) => {
-      setLoading(false)
-      setRecipes(querySnapshot.docs.map(doc => doc.data() as Recipe))
+    if (!shouldLoad) {
+      return
     }
 
-    if (debouncedSearchValue.length > 0) {
-      return query
-        .orderBy('name', 'asc')
-        .where('name', '>=', debouncedSearchValue)
-        .where('name', '<', endAt(debouncedSearchValue))
-        .onSnapshot(handleSnapshot)
-    } else {
-      return query.orderBy('createdDate', 'desc').onSnapshot(handleSnapshot)
-    }
+    return onSnapshot(
+      resolveRelatedRecipes(debouncedSearchValue),
+      querySnapshot => {
+        setLoading(false)
+        setRecipes(querySnapshot.docs.map(doc => doc.data() as Recipe))
+      }
+    )
   }, [debouncedSearchValue, shouldLoad])
 
   const handleSelectedChange = (recipeName: string) => {
@@ -100,7 +91,10 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
       legend="Über Verknüpfungen werden Menüs erstellt"
       header={
         <InputBase
-          classes={{ root: classes.inputBaseRoot, input: classes.inputBaseInput }}
+          classes={{
+            root: classes.inputBaseRoot,
+            input: classes.inputBaseInput,
+          }}
           value={searchValue}
           placeholder="Nach Rezeptnamen filtern"
           onChange={e => setSearchValue(e.target.value)}
@@ -109,7 +103,10 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
       highlight={relatedRecipes.length > 0}>
       <List disablePadding>
         {recipes.map(recipe => (
-          <ListItem button key={recipe.name} onClick={() => handleSelectedChange(recipe.name)}>
+          <ListItem
+            button
+            key={recipe.name}
+            onClick={() => handleSelectedChange(recipe.name)}>
             <ListItemAvatar>
               <Avatar
                 src={
@@ -119,22 +116,21 @@ const RelatedRecipesSelection = ({ relatedRecipes, onRelatedRecipesChange }: Pro
                 }
                 className={clsx(
                   classes.avatarRoot,
-                  relatedRecipes.some(name => name === recipe.name) && classes.avatarSelected
+                  relatedRecipes.some(name => name === recipe.name) &&
+                    classes.avatarSelected
                 )}>
                 {recipe.name.slice(0, 1)}
               </Avatar>
             </ListItemAvatar>
             <ListItemText
               primary={recipe.name}
-              secondary={FirebaseService.createDateFromTimestamp(
-                recipe.createdDate
-              ).toLocaleDateString()}
+              secondary={recipe.createdDate.toDate().toLocaleDateString()}
             />
           </ListItem>
         ))}
 
         {loading &&
-          new Array(FirebaseService.QUERY_LIMIT * 2).fill(1).map((_dummy, index) => (
+          new Array(queryLimits.desktop * 2).fill(1).map((_dummy, index) => (
             <ListItem key={index}>
               <ListItemAvatar>
                 <Skeleton variant="circle" height={40} width={40} />

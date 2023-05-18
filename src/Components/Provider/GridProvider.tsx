@@ -22,7 +22,8 @@ const GridProvider: FC = ({ children }) => {
       value={{
         gridLayout,
         setGridLayout,
-        gridBreakpointProps: gridLayout === 'list' ? { xs: 12 } : { xs: 12, md: 6, xl: 4 },
+        gridBreakpointProps:
+          gridLayout === 'list' ? { xs: 12 } : { xs: 12, md: 6, xl: 4 },
       }}>
       {children}
     </Context.Provider>

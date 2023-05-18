@@ -28,7 +28,10 @@ const SatisfactionUser = ({ uid, ...ratingProps }: Props) => {
   return (
     <Grid container wrap="nowrap" spacing={2} alignItems="center">
       <Grid item>
-        <Avatar variant="rounded" className={classes.avatar} src={user.profilePicture}>
+        <Avatar
+          variant="rounded"
+          className={classes.avatar}
+          src={user.profilePicture}>
           {user.username.slice(0, 1)}
         </Avatar>
       </Grid>

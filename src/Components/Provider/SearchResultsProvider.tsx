@@ -13,7 +13,8 @@ interface SearchResultContext {
 
 const Context = createContext<SearchResultContext | null>(null)
 
-export const useSearchResultsContext = () => useContext(Context) as SearchResultContext
+export const useSearchResultsContext = () =>
+  useContext(Context) as SearchResultContext
 
 const SearchResultsProvider: FC = ({ children }) => {
   const [hits, setHits] = useState<ReadonlyArray<Hit>>([])
@@ -21,7 +22,8 @@ const SearchResultsProvider: FC = ({ children }) => {
   const [loading, setLoading] = useState(false)
 
   return (
-    <Context.Provider value={{ hits, setHits, error, setError, loading, setLoading }}>
+    <Context.Provider
+      value={{ hits, setHits, error, setError, loading, setLoading }}>
       {children}
     </Context.Provider>
   )

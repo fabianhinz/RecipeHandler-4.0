@@ -19,6 +19,20 @@ ___
 1. navigate into the root dir of the cloned repo and `npm install` via your prefered shell
 1. to start the webapp run `npm start`
 
+## Testplan
+
+> wip 
+
+- https://docs.google.com/spreadsheets/d/1heY9iIOZixZRMYhq6JMEn8OaiBvwpGnqNuQkd0LpFt8/edit?usp=sharing
+
+## firebase emulators
+
+- run `firebase:emulators:start`. This will start the emulators und sync data from `./emulators-data`
+- if stopping and restarting does not work because of blocked ports consider killing it `lsof -i tcp:<PORT>`, `kill -9 <PID>`
+- for every role in this app (user, editor, admin) there's a user. PW and identifier (email) are the same
+- working on functions: for every change needs a `tsc`
+- working on the app: algolia is disabled
+
 ## Deploy a preview version
 
 Firebase offers the possibility to deploy preview versions on separate preview channels. An example for a channel ID is ```my_new_test_feature```. For more information read the [firebase docs](https://firebase.google.com/docs/hosting/test-preview-deploy#preview-channels).

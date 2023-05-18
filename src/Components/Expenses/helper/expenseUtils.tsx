@@ -1,5 +1,12 @@
 import { makeStyles, Theme } from '@material-ui/core'
-import { amber, blue, blueGrey, deepPurple, green, pink } from '@material-ui/core/colors'
+import {
+  amber,
+  blue,
+  blueGrey,
+  deepPurple,
+  green,
+  pink,
+} from '@material-ui/core/colors'
 import { AttachMoney, FlightTakeoff } from '@material-ui/icons'
 import Commute from '@material-ui/icons/Commute'
 import Fastfood from '@material-ui/icons/Fastfood'
@@ -21,14 +28,18 @@ export const CATEGORIES_PALETTE: { [key: string]: string | undefined } = {
 
 const useStyles = makeStyles<Theme, CategoryPaletteProps>(() => ({
   icon: props => ({
-    color: props.variant === 'card' ? CATEGORIES_PALETTE[props.category] : '#fff',
+    color:
+      props.variant === 'card' ? CATEGORIES_PALETTE[props.category] : '#fff',
   }),
 }))
 
 const useExpenseCategoryPalette = (props: CategoryPaletteProps) => {
   const classes = useStyles(props)
   const fontSize = props.variant === 'chip' ? 'small' : 'large'
-  const palette = { backgroundColor: CATEGORIES_PALETTE[props.category], color: '#000' }
+  const palette = {
+    backgroundColor: CATEGORIES_PALETTE[props.category],
+    color: '#000',
+  }
 
   switch (props.category) {
     case 'Lebensmittel':
@@ -74,13 +85,19 @@ const getFormattedDateString = (date: Date) => {
   return dayFormatter.format(date)
 }
 
-const monthFormatter = new Intl.DateTimeFormat('de', { month: 'long', year: 'numeric' })
+const monthFormatter = new Intl.DateTimeFormat('de', {
+  month: 'long',
+  year: 'numeric',
+})
 const getMonthStringByDate = (date: Date) => {
   return monthFormatter.format(date)
 }
 
 const numberFormatter = new Intl.NumberFormat('de')
-const expenseFormatter = new Intl.NumberFormat('de', { style: 'currency', currency: 'EUR' })
+const expenseFormatter = new Intl.NumberFormat('de', {
+  style: 'currency',
+  currency: 'EUR',
+})
 
 export const formatAmount = (amount: number | string) =>
   amount.toLocaleString('de-DE', {
@@ -88,7 +105,11 @@ export const formatAmount = (amount: number | string) =>
     currency: 'EUR',
   })
 // we should only need one getAmount*** function
-const getAmountByCategory = (category: string, expenses: Expense[], format?: boolean) => {
+const getAmountByCategory = (
+  category: string,
+  expenses: Expense[],
+  format?: boolean
+) => {
   const amount = expenses
     .filter(e => e.category === category)
     .reduce((acc, curr) => (acc += curr.amount), 0)
@@ -108,7 +129,10 @@ function getAmountByExpenseKey<Key extends keyof Expense>(
   return amount
 }
 
-const getExpensesByYear = (expensesByMonth: ExpenseState['expensesByMonth'], year: number) => {
+const getExpensesByYear = (
+  expensesByMonth: ExpenseState['expensesByMonth'],
+  year: number
+) => {
   const filteredExpenses: ExpenseState['expensesByMonth'] = new Map()
 
   for (const [month, expenses] of expensesByMonth.entries()) {

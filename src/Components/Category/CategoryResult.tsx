@@ -6,13 +6,17 @@ import { sortObjectKeys } from '@/util/fns'
 
 import getIconByCategory from './CategoryIcons'
 
-type StyleProps = { swatches?: Recipe['previewAttachmentSwatches']; extraPadding?: boolean }
+type StyleProps = {
+  swatches?: Recipe['previewAttachmentSwatches']
+  extraPadding?: boolean
+}
 
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
   categoryResultRoot: {
     display: 'flex',
     gap: theme.spacing(1),
-    padding: props => (props.extraPadding ? `0px ${theme.spacing(1)}px` : undefined),
+    padding: props =>
+      props.extraPadding ? `0px ${theme.spacing(1)}px` : undefined,
     flexWrap: 'nowrap',
     overflow: 'auto',
     '&::-webkit-scrollbar': {
@@ -21,14 +25,18 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
   },
   root: props => ({
     backgroundColor: props.swatches?.muted,
-    color: props.swatches?.muted ? theme.palette.getContrastText(props.swatches.muted) : undefined,
+    color: props.swatches?.muted
+      ? theme.palette.getContrastText(props.swatches.muted)
+      : undefined,
   }),
   icon: {
     color: 'inherit',
   },
 }))
 
-interface CategoryResultProps extends Pick<ChipProps, 'color' | 'variant' | 'size'>, StyleProps {
+interface CategoryResultProps
+  extends Pick<ChipProps, 'color' | 'variant' | 'size'>,
+    StyleProps {
   categories: Categories<string>
 }
 
@@ -39,9 +47,15 @@ export const CategoryResult: FC<CategoryResultProps> = ({
   extraPadding,
   ...chipProps
 }) => {
-  const { categoryResultRoot, ...chipClasses } = useStyles({ swatches, extraPadding })
+  const { categoryResultRoot, ...chipClasses } = useStyles({
+    swatches,
+    extraPadding,
+  })
 
-  const memoizedCategories = useMemo(() => sortObjectKeys('asc', categories), [categories])
+  const memoizedCategories = useMemo(
+    () => sortObjectKeys('asc', categories),
+    [categories]
+  )
 
   return (
     <div className={categoryResultRoot}>

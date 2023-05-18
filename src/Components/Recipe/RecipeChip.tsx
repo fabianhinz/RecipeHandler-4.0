@@ -15,7 +15,11 @@ const RecipeChip = (props: Props) => {
 
   return (
     <Chip
-      avatar={<Avatar src={recipeDoc?.previewAttachment}>{props.recipeName.slice(0, 1)}</Avatar>}
+      avatar={
+        <Avatar src={recipeDoc?.previewAttachment}>
+          {props.recipeName.slice(0, 1)}
+        </Avatar>
+      }
       onClick={() => history.push(PATHS.details(props.recipeName))}
       label={props.recipeName}
     />

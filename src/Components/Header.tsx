@@ -1,4 +1,12 @@
-import { AppBar, Avatar, Hidden, IconButton, makeStyles, Toolbar, Tooltip } from '@material-ui/core'
+import {
+  AppBar,
+  Avatar,
+  Hidden,
+  IconButton,
+  makeStyles,
+  Toolbar,
+  Tooltip,
+} from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import {
   AccountCircleOutline,
@@ -38,7 +46,9 @@ const useStyles = makeStyles(theme => ({
     top: 'env(safe-area-inset-top)',
     backgroundColor: theme.palette.background.paper,
     borderBottom: `1px solid ${
-      theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)'
+      theme.palette.type === 'light'
+        ? 'rgba(0, 0, 0, 0.12)'
+        : 'rgba(255, 255, 255, 0.12)'
     }`,
     boxShadow: 'unset',
   },
@@ -83,7 +93,11 @@ const Header = () => {
     <>
       <div className={classes.safeArea} />
 
-      <AppBar variant="elevation" className={classes.appbar} color="default" position="fixed">
+      <AppBar
+        variant="elevation"
+        className={classes.appbar}
+        color="default"
+        position="fixed">
         <Toolbar className={classes.toolbar}>
           <div className={classes.menuIcon}>
             <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
@@ -95,10 +109,17 @@ const Header = () => {
 
           <div className={classes.headerButtons}>
             <Hidden smDown>
-              <Tooltip title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
+              <Tooltip
+                title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
                 <IconButton
-                  onClick={() => setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))}>
-                  {gridLayout === 'grid' ? <ViewAgendaOutline /> : <ViewGridOutline />}
+                  onClick={() =>
+                    setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
+                  }>
+                  {gridLayout === 'grid' ? (
+                    <ViewAgendaOutline />
+                  ) : (
+                    <ViewGridOutline />
+                  )}
                 </IconButton>
               </Tooltip>
             </Hidden>
@@ -119,7 +140,10 @@ const Header = () => {
                   else setAuthenticationOpen(true)
                 }}>
                 {user ? (
-                  <Avatar className={classes.userAvatar} src={user.profilePicture} />
+                  <Avatar
+                    className={classes.userAvatar}
+                    src={user.profilePicture}
+                  />
                 ) : (
                   <IconButton disabled={!loginEnabled}>
                     <AccountCircleOutline />

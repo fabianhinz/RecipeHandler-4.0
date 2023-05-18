@@ -30,7 +30,11 @@ const ExpenseAutocomplete = (props: Props) => (
     filterOptions={(options, filterState) => {
       const filtered = filter(options, filterState)
 
-      if (!props.disableFreeSolo && filtered.length === 0 && filterState.inputValue.length > 0) {
+      if (
+        !props.disableFreeSolo &&
+        filtered.length === 0 &&
+        filterState.inputValue.length > 0
+      ) {
         filtered.push(filterState.inputValue)
       }
 
@@ -38,7 +42,12 @@ const ExpenseAutocomplete = (props: Props) => (
     }}
     options={props.options}
     renderInput={params => (
-      <TextField margin="normal" {...params} label={props.label} variant="outlined" />
+      <TextField
+        margin="normal"
+        {...params}
+        label={props.label}
+        variant="outlined"
+      />
     )}
   />
 )

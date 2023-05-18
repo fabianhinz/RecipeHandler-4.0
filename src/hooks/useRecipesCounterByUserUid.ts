@@ -1,12 +1,13 @@
+import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
-import { FirebaseService } from '@/services/firebase'
+import { resolveCollection } from '@/firebase/firebaseQueries'
 
 export const useRecipesCounterByUserUid = () => {
   const [counter, setCounter] = useState<[string, number][]>([])
 
   useEffect(() => {
-    return FirebaseService.firestore.collection('recipesCounter').onSnapshot(docSnapshot => {
+    return onSnapshot(resolveCollection('recipesCounter'), docSnapshot => {
       const sortedByNumberOfRecipes = docSnapshot.docs
         .map(d => [d.id, d.data().value] as [string, number])
         .filter(([uid, counter]) => Boolean(uid) && counter > 0)

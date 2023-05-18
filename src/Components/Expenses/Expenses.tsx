@@ -37,11 +37,7 @@ import expenseUtils from './helper/expenseUtils'
 
 const selector = (state: ExpenseStore) => ({
   expenses: state.expenses,
-  isDialogOpen: state.isNewExpenseDialogOpen,
-})
-
-const dispatchSelector = (state: ExpenseStore) => ({
-  openDialog: state.openNewExpenseDialog,
+  isDialogOpen: state.isDialogOpen,
 })
 
 const useStyles = makeStyles(theme => ({
@@ -81,10 +77,12 @@ const Expenses = () => {
   const classes = useStyles()
 
   const { expenses, isDialogOpen } = useExpenseStore(selector)
-  const { openDialog } = useExpenseStore(dispatchSelector)
+  const setIsDialogOpen = useExpenseStore(store => store.setIsDialogOpen)
   const expensesByMonth = useExpenseStore(store => store.expensesByMonth)
   const expenseStoreLoading = useExpenseStore(store => store.loading)
-  const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
+  const autocompleteOptions = useExpenseStore(
+    store => store.autocompleteOptions
+  )
   const resetCurrentExpense = useCurrentExpenseStore(store => store.clearState)
   const years = useExpenseStore(store => store.years)
   const expenseFilter = useExpenseStore(store => store.expenseFilter)
@@ -119,7 +117,8 @@ const Expenses = () => {
       return Array.from(expensesByMonth.entries())
     }
 
-    let byYear: Nullable<ReturnType<typeof expenseUtils.getExpensesByYear>> = null
+    let byYear: Nullable<ReturnType<typeof expenseUtils.getExpensesByYear>> =
+      null
     if (tabIndex !== undefined && years[tabIndex] !== undefined) {
       byYear = expenseUtils.getExpensesByYear(expensesByMonth, years[tabIndex])
     }
@@ -210,7 +209,11 @@ const Expenses = () => {
 
       {autocompleteOptions.creator.length > 0 && tabIndex !== undefined && (
         <Grid item xs={12}>
-          <Grid container wrap="nowrap" className={classes.container} spacing={3}>
+          <Grid
+            container
+            wrap="nowrap"
+            className={classes.container}
+            spacing={3}>
             {autocompleteOptions.creator.map(u => (
               <ExpenseUserCard year={years[tabIndex]} key={u} userName={u} />
             ))}
@@ -237,12 +240,15 @@ const Expenses = () => {
       <SecouredRouteFab
         onClick={() => {
           resetCurrentExpense()
-          openDialog(true)
+          setIsDialogOpen(true)
         }}
         tooltipTitle="Ausgabe hinzufügen"
         icon={<AddIcon />}
       />
-      <ExpenseDialog open={isDialogOpen} onClose={() => openDialog(false)} />
+      <ExpenseDialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </EntryGridContainer>
   )
 }

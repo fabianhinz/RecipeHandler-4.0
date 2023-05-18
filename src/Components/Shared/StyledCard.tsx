@@ -24,7 +24,10 @@ const useStyles = makeStyles<Theme, { expanded: boolean }>(theme => ({
     justifyContent: 'space-between',
   },
   backgroundIcon: {
-    color: theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    color:
+      theme.palette.type === 'dark'
+        ? 'rgba(255, 255, 255, 0.1)'
+        : 'rgba(0, 0, 0, 0.1)',
     position: 'absolute',
     bottom: theme.spacing(1),
     right: theme.spacing(1),
@@ -98,7 +101,9 @@ const StyledCard = (props: Props) => {
           {props.action && <div className={classes.action}>{props.action}</div>}
         </div>
       )}
-      <CardContent className={classes.cardContent}>{props.children}</CardContent>
+      <CardContent className={classes.cardContent}>
+        {props.children}
+      </CardContent>
       {props.expandable && (
         <div className={classes.expandContainer}>
           <div className={classes.expandBackground} />
@@ -110,7 +115,9 @@ const StyledCard = (props: Props) => {
           </Fab>
         </div>
       )}
-      {props.BackgroundIcon && <props.BackgroundIcon className={classes.backgroundIcon} />}
+      {props.BackgroundIcon && (
+        <props.BackgroundIcon className={classes.backgroundIcon} />
+      )}
     </Card>
   )
 }

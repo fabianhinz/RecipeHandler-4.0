@@ -9,36 +9,57 @@ import {
   Typography,
 } from '@material-ui/core'
 import { Unarchive } from '@material-ui/icons'
+import { addDoc, deleteDoc, onSnapshot } from 'firebase/firestore'
 import { Archive, Delete } from 'mdi-material-ui'
 import { useEffect, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
-import { ArchivedExpense } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
-import useExpenseStore, {
-  ARCHIVED_EXPENSES_COLLECTION,
-  USER_COLLECTION,
-} from '@/store/ExpenseStore'
+import {
+  resolveArchivedExpensesOrderedByDateDesc,
+  resolveCollection,
+  resolveDoc,
+} from '@/firebase/firebaseQueries'
+import { ArchivedExpense, Expense, User } from '@/model/model'
+
+const clearArchive = async (expenses: Expense[], userId: User['uid']) => {
+  return Promise.all(
+    expenses.map(expense => {
+      return deleteDoc(
+        resolveDoc(`users/${userId}/archivedExpenses`, expense.id)
+      )
+    })
+  )
+}
+
+const restoreExpense = async (
+  { deletedAt, ...expense }: ArchivedExpense,
+  userId: User['uid']
+) => {
+  await addDoc(resolveCollection(`users/${userId}/expenses`), expense)
+  await deleteDoc(resolveDoc(`users/${userId}/archivedExpenses`, expense.id))
+}
 
 const ArchivedExpensesSelection = () => {
   const [shouldLoad, setShouldLoad] = useState(false)
   const [expenses, setExpenses] = useState<ArchivedExpense[]>([])
   const authContext = useFirebaseAuthContext()
-  const restoreExpense = useExpenseStore(store => store.restoreExpense)
-  const clearArchive = useExpenseStore(store => store.clearArchive)
 
   useEffect(() => {
-    if (!shouldLoad || !authContext.user) return
+    if (!shouldLoad || !authContext.user) {
+      return
+    }
 
-    return FirebaseService.firestore
-      .collection(USER_COLLECTION)
-      .doc(authContext.user.uid)
-      .collection(ARCHIVED_EXPENSES_COLLECTION)
-      .orderBy('date', 'desc')
-      .onSnapshot(snapshot => {
-        setExpenses(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as ArchivedExpense)))
-      })
+    return onSnapshot(
+      resolveArchivedExpensesOrderedByDateDesc(authContext.user.uid),
+      snapshot => {
+        setExpenses(
+          snapshot.docs.map(
+            doc => ({ ...doc.data(), id: doc.id } as ArchivedExpense)
+          )
+        )
+      }
+    )
   }, [authContext.user, shouldLoad])
 
   return (
@@ -47,7 +68,8 @@ const ArchivedExpensesSelection = () => {
       onClose={() => setShouldLoad(false)}
       buttonProps={{ icon: <Archive />, label: 'Archiv' }}
       action={
-        <IconButton onClick={() => clearArchive(expenses, authContext.user!.uid)}>
+        <IconButton
+          onClick={() => clearArchive(expenses, authContext.user!.uid)}>
           <Delete />
         </IconButton>
       }>
@@ -66,12 +88,14 @@ const ArchivedExpensesSelection = () => {
               }
               secondary={
                 <Typography variant="caption">
-                  {expense.date.toDate().toLocaleDateString()}, {expense.category}
+                  {expense.date.toDate().toLocaleDateString()},{' '}
+                  {expense.category}
                 </Typography>
               }
             />
             <ListItemSecondaryAction>
-              <IconButton onClick={() => restoreExpense(expense, authContext.user!.uid)}>
+              <IconButton
+                onClick={() => restoreExpense(expense, authContext.user!.uid)}>
                 <Unarchive />
               </IconButton>
             </ListItemSecondaryAction>

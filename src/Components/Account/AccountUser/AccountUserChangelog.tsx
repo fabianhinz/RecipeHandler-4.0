@@ -18,13 +18,17 @@ import {
 import CloseIcon from '@material-ui/icons/Close'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import UpdateIconRounded from '@material-ui/icons/UpdateRounded'
+import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 import Progress from '@/Components/Shared/Progress'
 import { SlideUp } from '@/Components/Shared/Transitions'
+import {
+  resolveCollection,
+  resolvePullRequestsOrderedByClosedAtDesc,
+} from '@/firebase/firebaseQueries'
 import { Issue, Pullrequest } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -53,26 +57,32 @@ const AccountUserChangelog = () => {
 
   useEffect(() => {
     setLoading(true)
-    return FirebaseService.firestore
-      .collection('pullrequests')
-      .orderBy('closedAt', 'desc')
-      .limit(20)
-      .onSnapshot(querySnapshot => {
-        setPullrequests(querySnapshot.docs.map(doc => doc.data() as Pullrequest))
+
+    return onSnapshot(
+      resolvePullRequestsOrderedByClosedAtDesc(),
+      querySnapshot => {
+        setPullrequests(
+          querySnapshot.docs.map(doc => doc.data() as Pullrequest)
+        )
         setLoading(false)
-      })
+      }
+    )
   }, [])
 
   useEffect(() => {
-    if (!changelogOpen) return
+    if (!changelogOpen) {
+      return
+    }
 
-    return FirebaseService.firestore
-      .collection('issues')
-      .onSnapshot(querySnapshot => setIssues(querySnapshot.docs.map(doc => doc.data() as Issue)))
+    return onSnapshot(resolveCollection('issues'), querySnapshot => {
+      setIssues(querySnapshot.docs.map(doc => doc.data() as Issue))
+    })
   }, [changelogOpen])
 
   const getRelatedIssues = (pullrequest: Pullrequest) =>
-    issues.filter(issue => pullrequest.issueNumbers?.includes(issue.number.toString()))
+    issues.filter(issue =>
+      pullrequest.issueNumbers?.includes(issue.number.toString())
+    )
 
   return (
     <>
@@ -101,13 +111,21 @@ const AccountUserChangelog = () => {
           {pullrequests.map(pr => (
             <Accordion variant="elevation" key={pr.shortSha}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Grid container alignItems="center" justifyContent="space-between" spacing={1}>
+                <Grid
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={1}>
                   <Grid item xs={12} sm={9}>
                     <Grid container alignItems="center" spacing={3}>
                       <Grid item xs={4} sm={3}>
                         <Chip
                           label={pr.shortSha}
-                          color={pr.shortSha === RECIPE_HANDLER_APP_VERSION ? 'primary' : 'default'}
+                          color={
+                            pr.shortSha === RECIPE_HANDLER_APP_VERSION
+                              ? 'primary'
+                              : 'default'
+                          }
                         />
                       </Grid>
                       <Grid item xs={8} sm={9}>
@@ -117,13 +135,19 @@ const AccountUserChangelog = () => {
                   </Grid>
                   <Hidden xsDown>
                     <Grid item>
-                      <Typography>{pr.closedAt.toDate().toLocaleDateString()}</Typography>
+                      <Typography>
+                        {pr.closedAt.toDate().toLocaleDateString()}
+                      </Typography>
                     </Grid>
                   </Hidden>
                 </Grid>
               </AccordionSummary>
               <AccordionDetails>
-                <Grid container alignItems="center" justifyContent="space-between" spacing={1}>
+                <Grid
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={1}>
                   <Grid item>
                     <ListSubheader disableGutters>{pr.creator}</ListSubheader>
                   </Grid>
@@ -158,7 +182,9 @@ const AccountUserChangelog = () => {
                                 label={label.name}
                                 size="small"
                                 style={{
-                                  color: theme.palette.getContrastText('#' + label.color),
+                                  color: theme.palette.getContrastText(
+                                    '#' + label.color
+                                  ),
                                   backgroundColor: '#' + label.color,
                                   margin: theme.spacing(0.5),
                                 }}
@@ -170,7 +196,9 @@ const AccountUserChangelog = () => {
                     </Grid>
                   ) : (
                     <Grid item xs={12}>
-                      <Typography>Keine zugehörigen Issues vorhanden</Typography>
+                      <Typography>
+                        Keine zugehörigen Issues vorhanden
+                      </Typography>
                     </Grid>
                   )}
                 </Grid>

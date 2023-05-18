@@ -1,4 +1,6 @@
 import { Grid } from '@material-ui/core'
+import { signOut } from 'firebase/auth'
+import { updateDoc } from 'firebase/firestore'
 import { LogoutVariant } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import { useMemo } from 'react'
@@ -9,10 +11,11 @@ import { useGridContext } from '@/Components/Provider/GridProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import { SecouredRouteFab } from '@/Components/Routes/SecouredRouteFab'
 import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
+import { auth } from '@/firebase/firebaseConfig'
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import useProgress from '@/hooks/useProgress'
 import { User } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { getRecipeService } from '@/services/recipeService'
 
 import AccountUserAdmin from '../AccountUser/AccountUserAdmin'
@@ -45,86 +48,88 @@ const AccountUser = () => {
 
   useDocumentTitle(user.username)
 
-  const userDoc = useMemo(
-    () => FirebaseService.firestore.collection('users').doc(user.uid),
-    [user.uid]
-  )
+  const userDoc = useMemo(() => {
+    return resolveDoc('users', user.uid)
+  }, [user.uid])
 
   const handleLogout = () => {
     setProgress(true)
-    FirebaseService.auth
-      .signOut()
-      .catch(error => enqueueSnackbar(error.message, { variant: 'error' }))
+
+    signOut(auth).catch(error =>
+      enqueueSnackbar(error.message, { variant: 'error' })
+    )
   }
 
-  const handleUserSettingChange: UserSettingChangeHandler = (key: SettingKeys) => (uid?: any) => {
-    switch (key) {
-      case 'muiTheme': {
-        userDoc.update({
-          [key]:
-            user.muiTheme === 'dynamic'
-              ? 'dark'
-              : user.muiTheme === 'dark'
-              ? 'light'
-              : user.muiTheme === 'light'
-              ? 'black'
-              : 'dynamic',
-        })
-        break
-      }
-      case 'selectedUsers': {
-        if (typeof uid !== 'string') throw new Error('whoops we need a string for this')
-
-        // ? throw away all "cached" recipes
-        getRecipeService().scrollPosition.set(PATHS.home, 0)
-        getRecipeService().pagedRecipes = new Map()
-
-        let selectedIds = [...user.selectedUsers]
-        const idExists = selectedIds.some(id => id === uid)
-
-        if (idExists && selectedIds.length > 1) {
-          selectedIds = selectedIds.filter(id => id !== uid)
-        } else if (!idExists && selectedIds.length < 10) {
-          selectedIds.push(uid)
+  const handleUserSettingChange: UserSettingChangeHandler =
+    (key: SettingKeys) => (uid?: any) => {
+      switch (key) {
+        case 'muiTheme': {
+          updateDoc(userDoc, {
+            [key]:
+              user.muiTheme === 'dynamic'
+                ? 'dark'
+                : user.muiTheme === 'dark'
+                ? 'light'
+                : user.muiTheme === 'light'
+                ? 'black'
+                : 'dynamic',
+          })
+          break
         }
+        case 'selectedUsers': {
+          if (typeof uid !== 'string')
+            throw new Error('whoops we need a string for this')
 
-        userDoc.update({ [key]: selectedIds })
-        break
-      }
-      case 'showNew': {
-        userDoc.update({ [key]: !user.showNew })
-        break
-      }
-      case 'showRecentlyEdited': {
-        userDoc.update({ [key]: !user.showRecentlyEdited })
-        break
-      }
-      case 'showMostCooked': {
-        userDoc.update({ [key]: !user.showMostCooked })
-        break
-      }
-      case 'notifications': {
-        userDoc.update({ [key]: !user.notifications })
-        break
-      }
-      case 'algoliaAdvancedSyntax': {
-        userDoc.update({ [key]: !user.algoliaAdvancedSyntax })
-        break
-      }
-      case 'bookmarkSync': {
-        const newSyncSetting = !user.bookmarkSync
-        const updates: Partial<Pick<User, 'bookmarks' | 'bookmarkSync'>> = {
-          bookmarkSync: newSyncSetting,
+          // ? throw away all "cached" recipes
+          getRecipeService().scrollPosition.set(PATHS.home, 0)
+          getRecipeService().pagedRecipes = new Map()
+
+          let selectedIds = [...user.selectedUsers]
+          const idExists = selectedIds.some(id => id === uid)
+
+          if (idExists && selectedIds.length > 1) {
+            selectedIds = selectedIds.filter(id => id !== uid)
+          } else if (!idExists && selectedIds.length < 10) {
+            selectedIds.push(uid)
+          }
+
+          updateDoc(userDoc, { [key]: selectedIds })
+          break
         }
-        // ? user has already selected bookmarks and decides to sync them
-        if (newSyncSetting && bookmarks.size > 0) {
-          updates.bookmarks = [...bookmarks.values()]
+        case 'showNew': {
+          updateDoc(userDoc, { [key]: !user.showNew })
+          break
         }
-        userDoc.update(updates)
-        break
+        case 'showRecentlyEdited': {
+          updateDoc(userDoc, { [key]: !user.showRecentlyEdited })
+          break
+        }
+        case 'showMostCooked': {
+          updateDoc(userDoc, { [key]: !user.showMostCooked })
+          break
+        }
+        case 'notifications': {
+          updateDoc(userDoc, { [key]: !user.notifications })
+          break
+        }
+        case 'algoliaAdvancedSyntax': {
+          updateDoc(userDoc, { [key]: !user.algoliaAdvancedSyntax })
+          break
+        }
+        case 'bookmarkSync': {
+          const newSyncSetting = !user.bookmarkSync
+          const updates: Partial<Pick<User, 'bookmarks' | 'bookmarkSync'>> = {
+            bookmarkSync: newSyncSetting,
+          }
+          // ? user has already selected bookmarks and decides to sync them
+          if (newSyncSetting && bookmarks.size > 0) {
+            updates.bookmarks = [...bookmarks.values()]
+          }
+          updateDoc(userDoc, updates)
+          break
+        }
       }
     }
-  }
 
   return (
     <>
@@ -150,7 +155,11 @@ const AccountUser = () => {
         </Grid>
       </EntryGridContainer>
 
-      <SecouredRouteFab onClick={handleLogout} icon={<LogoutVariant />} tooltipTitle="Ausloggen" />
+      <SecouredRouteFab
+        onClick={handleLogout}
+        icon={<LogoutVariant />}
+        tooltipTitle="Ausloggen"
+      />
       <ProgressComponent />
     </>
   )

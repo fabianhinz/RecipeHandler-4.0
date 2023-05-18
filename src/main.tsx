@@ -11,12 +11,12 @@ import ErrorBoundary from '@/Components/ErrorBoundary'
 import { AppProvider } from './Components/AppProvider'
 
 ReactDOM.render(
-  <ErrorBoundary>
+  <ErrorBoundary root>
     <AppProvider>
       <App />
     </AppProvider>
   </ErrorBoundary>,
-  document.getElementById('root')!
+  document.getElementById('root')
 )
 
 // ? components will provide their own contextmenus

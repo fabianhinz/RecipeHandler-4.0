@@ -13,14 +13,21 @@ import {
 } from '@material-ui/core'
 import { Save } from '@material-ui/icons'
 import CloseIcon from '@material-ui/icons/Close'
-import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers'
 import deLocale from 'date-fns/locale/de'
+import { addDoc, Timestamp, updateDoc } from 'firebase/firestore'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { SlideUp } from '@/Components/Shared/Transitions'
-import { FirebaseService } from '@/services/firebase'
-import useCurrentExpenseStore, { CurrentExpenseStore } from '@/store/CurrentExpenseStore'
+import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
+import { Expense } from '@/model/model'
+import useCurrentExpenseStore, {
+  CurrentExpenseStore,
+} from '@/store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
 
 import ExpenseAutocomplete from './ExpenseAutocomplete'
@@ -58,11 +65,6 @@ const dispatchCurrentExpenseSelector = (state: CurrentExpenseStore) => ({
   clearState: state.clearState,
 })
 
-const dispatchSelector = (state: ExpenseStore) => ({
-  addExpense: state.addExpense,
-  updateExpense: state.updateExpense,
-})
-
 const useStyles = makeStyles({
   form: {
     display: 'flex',
@@ -74,9 +76,16 @@ const useStyles = makeStyles({
 
 const ExpenseDialog = (props: Props) => {
   const { autocompleteOptions } = useExpenseStore(selector)
-  const { addExpense, updateExpense } = useExpenseStore(dispatchSelector)
-  const { id, amount, category, creator, date, description, relatedUsers, shop } =
-    useCurrentExpenseStore(currentExpenseSelector)
+  const {
+    id,
+    amount,
+    category,
+    creator,
+    date,
+    description,
+    relatedUsers,
+    shop,
+  } = useCurrentExpenseStore(currentExpenseSelector)
   const {
     setRelatedUsers,
     setAmount,
@@ -87,12 +96,14 @@ const ExpenseDialog = (props: Props) => {
     setShop,
     clearState,
   } = useCurrentExpenseStore(dispatchCurrentExpenseSelector)
-  const setAutocompleteOptions = useExpenseStore(store => store.setAutocompleteOptions)
+  const setAutocompleteOptions = useExpenseStore(
+    store => store.setAutocompleteOptions
+  )
   const authContext = useFirebaseAuthContext()
   const breakpointsContext = useBreakpointsContext()
   const classes = useStyles()
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if (!authContext.user) {
@@ -100,31 +111,35 @@ const ExpenseDialog = (props: Props) => {
     }
 
     if (id === undefined) {
-      addExpense(
-        {
-          amount,
-          category,
-          creator,
-          date: date ?? FirebaseService.createTimestampFromDate(new Date()),
-          shop,
-          description: description ?? 'Einkauf',
-          relatedUsers,
-        },
-        authContext.user.uid
+      const data: Expense = {
+        amount,
+        category,
+        creator,
+        date: date ?? Timestamp.fromDate(new Date()),
+        shop,
+        description: description ?? 'Einkauf',
+        relatedUsers,
+      }
+
+      await addDoc(
+        resolveCollection(`users/${authContext.user.uid}/expenses`),
+        data
       )
     } else {
-      updateExpense(
-        {
-          id,
-          amount,
-          category,
-          creator,
-          date: date ?? FirebaseService.createTimestampFromDate(new Date()),
-          shop,
-          description: description ?? 'Einkauf',
-          relatedUsers,
-        },
-        authContext.user.uid
+      const data: Expense = {
+        id,
+        amount,
+        category,
+        creator,
+        date: date ?? Timestamp.fromDate(new Date()),
+        shop,
+        description: description ?? 'Einkauf',
+        relatedUsers,
+      }
+
+      await updateDoc(
+        resolveDoc(`users/${authContext.user.uid}/expenses`, id),
+        data
       )
     }
 
@@ -144,7 +159,9 @@ const ExpenseDialog = (props: Props) => {
       fullWidth
       fullScreen={breakpointsContext.isDialogFullscreen}
       maxWidth="md">
-      <DialogTitle>{id ? 'Ausgabe bearbeiten' : 'Neue Ausgabe hinzufügen'}</DialogTitle>
+      <DialogTitle>
+        {id ? 'Ausgabe bearbeiten' : 'Neue Ausgabe hinzufügen'}
+      </DialogTitle>
       <form className={classes.form} onSubmit={handleSubmit} noValidate>
         <DialogContent>
           <Grid container spacing={2} alignItems="center">
@@ -168,7 +185,9 @@ const ExpenseDialog = (props: Props) => {
                 type="number"
                 inputProps={{ min: 0 }}
                 InputProps={{
-                  endAdornment: <InputAdornment position="end">€</InputAdornment>,
+                  endAdornment: (
+                    <InputAdornment position="end">€</InputAdornment>
+                  ),
                 }}
                 defaultValue={amount}
                 onChange={e => {
@@ -199,19 +218,30 @@ const ExpenseDialog = (props: Props) => {
                 }}
                 onDescriptionChange={newDescription => {
                   setDescription(newDescription)
-                  if (!autocompleteOptions.description.includes(newDescription)) {
+                  if (
+                    !autocompleteOptions.description.includes(newDescription)
+                  ) {
                     setAutocompleteOptions({
                       ...autocompleteOptions,
-                      description: [...autocompleteOptions.description, newDescription],
+                      description: [
+                        ...autocompleteOptions.description,
+                        newDescription,
+                      ],
                     })
                   }
                 }}
               />
             </Grid>
             <Grid item md={6} xs={12}>
-              <Grid container spacing={2} alignItems="center" direction="column">
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                direction="column">
                 <Grid item>
-                  <MuiPickersUtilsProvider locale={deLocale} utils={DateFnsUtils}>
+                  <MuiPickersUtilsProvider
+                    locale={deLocale}
+                    utils={DateFnsUtils}>
                     <KeyboardDatePicker
                       fullWidth
                       disableFuture
@@ -221,10 +251,10 @@ const ExpenseDialog = (props: Props) => {
                       margin="normal"
                       id="date-picker-inline"
                       label="Einkaufsdatum"
-                      value={FirebaseService.createDateFromTimestamp(date)}
+                      value={date.toDate()}
                       onChange={date => {
                         const newDate = date ?? new Date()
-                        setDate(FirebaseService.createTimestampFromDate(newDate))
+                        setDate(Timestamp.fromDate(newDate))
                       }}
                       KeyboardButtonProps={{
                         'aria-label': 'change date',
@@ -237,7 +267,11 @@ const ExpenseDialog = (props: Props) => {
                     {autocompleteOptions.creator.map(user => (
                       <Grid item key={user}>
                         <Chip
-                          color={relatedUsers.includes(user) ? 'secondary' : 'default'}
+                          color={
+                            relatedUsers.includes(user)
+                              ? 'secondary'
+                              : 'default'
+                          }
                           label={user}
                           onClick={() => setRelatedUsers(user)}
                         />

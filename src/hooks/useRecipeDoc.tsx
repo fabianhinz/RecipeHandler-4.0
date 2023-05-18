@@ -1,8 +1,9 @@
+import { onSnapshot, Timestamp } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import { Nullable, Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 type RecipesCollectionState = { loading: boolean; recipe: Recipe | null }
 type RecipeLocation = Pick<RecipesCollectionState, 'recipe'>
@@ -25,23 +26,40 @@ export const useRecipeDoc = (props: Props) => {
 
     const recipe = location.state?.recipe
 
-    if (recipe) setState({ loading: false, recipe })
+    if (recipe) {
+      setState({
+        loading: false,
+        recipe: {
+          ...recipe,
+          // ? the location state only contains a pojo, so we need to explicitly convert the Timestamp
+          createdDate: new Timestamp(
+            recipe.createdDate.seconds,
+            recipe.createdDate.nanoseconds
+          ),
+        },
+      })
+    }
 
-    FirebaseService.firestore
-      .collection('recipes')
-      .doc(props.recipeName)
-      .onSnapshot(documentSnapshot => {
-        if (!mounted) return
-        if (!documentSnapshot.exists && recipe) return
+    const unsubscribe = onSnapshot(
+      resolveDoc('recipes', props.recipeName),
+      documentSnapshot => {
+        if (!mounted) {
+          return
+        }
+        if (!documentSnapshot.exists() && recipe) {
+          return
+        }
 
         setState({
           loading: false,
           recipe: documentSnapshot.data() as Recipe,
         })
-      })
+      }
+    )
 
     return () => {
       mounted = false
+      unsubscribe()
     }
   }, [location.state, props.recipeName])
 

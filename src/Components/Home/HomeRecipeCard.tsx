@@ -1,5 +1,15 @@
-import { Avatar, Box, Card, Grid, makeStyles, Theme, Typography, Zoom } from '@material-ui/core'
+import {
+  Avatar,
+  Box,
+  Card,
+  Grid,
+  makeStyles,
+  Theme,
+  Typography,
+  Zoom,
+} from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
+import { Timestamp } from 'firebase/firestore'
 import { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -7,7 +17,6 @@ import { CategoryResult } from '@/Components/Category/CategoryResult'
 import { PATHS } from '@/Components/Routes/Routes'
 import useImgSrcLazy from '@/hooks/useImgSrcLazy'
 import { Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS } from '@/theme'
 
 import { useUsersContext } from '../Provider/UsersProvider'
@@ -79,7 +88,7 @@ const useStyles = makeStyles<
 
 interface Props {
   recipe: Recipe
-  lastCookedDate?: firebase.default.firestore.Timestamp
+  lastCookedDate?: Timestamp
 }
 
 const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
@@ -90,9 +99,15 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
     skipOnUndefined: true,
   })
   const { getByUid } = useUsersContext()
-  const classes = useStyles({ hover, swatches: recipe.previewAttachmentSwatches })
+  const classes = useStyles({
+    hover,
+    swatches: recipe.previewAttachmentSwatches,
+  })
 
-  const editor = useMemo(() => getByUid(recipe.editorUid), [getByUid, recipe.editorUid])
+  const editor = useMemo(
+    () => getByUid(recipe.editorUid),
+    [getByUid, recipe.editorUid]
+  )
 
   const changeHover = (state: 'active' | 'inactive') => () => {
     setHover(state === 'active')
@@ -108,8 +123,11 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
   return (
     <>
       <Grid item xs={6} md={4} lg={3} xl={2}>
-        <HomeRecipeContextMenu name={recipe.name} numberOfComments={recipe.numberOfComments}>
-          <Link to={{ pathname: PATHS.details(recipe.name), state: { recipe } }}>
+        <HomeRecipeContextMenu
+          name={recipe.name}
+          numberOfComments={recipe.numberOfComments}>
+          <Link
+            to={{ pathname: PATHS.details(recipe.name), state: { recipe } }}>
             <Card
               onMouseEnter={changeHover('active')}
               onMouseLeave={changeHover('inactive')}
@@ -119,14 +137,19 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
               </Avatar>
               {editor && (
                 <Zoom in mountOnEnter>
-                  <Avatar className={classes.userAvatar} src={editor.profilePicture}>
+                  <Avatar
+                    className={classes.userAvatar}
+                    src={editor.profilePicture}>
                     {editor.username.slice(0, 1).toUpperCase()}
                   </Avatar>
                 </Zoom>
               )}
               <div className={classes.avatarOverlay}>
                 <Box mx={1}>
-                  <Typography className={classes.typographyRecipeName} variant="h6" gutterBottom>
+                  <Typography
+                    className={classes.typographyRecipeName}
+                    variant="h6"
+                    gutterBottom>
                     {recipe.name}
                   </Typography>
                 </Box>
@@ -134,7 +157,7 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
                 {lastCookedDate ? (
                   <Box mx={1}>
                     <Typography>
-                      {FirebaseService.createDateFromTimestamp(lastCookedDate).toLocaleDateString()}
+                      {lastCookedDate.toDate().toLocaleDateString()}
                     </Typography>
                   </Box>
                 ) : (

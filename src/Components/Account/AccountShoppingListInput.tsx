@@ -7,6 +7,7 @@ import {
   useTheme,
 } from '@material-ui/core'
 import { DeleteSweep } from '@material-ui/icons'
+import { setDoc } from 'firebase/firestore'
 import React, { useMemo, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
@@ -28,23 +29,32 @@ const AccountShoppingListInput = (props: {
   const classes = useStyles()
   const theme = useTheme()
 
-  const handleDeleteAll = () => {
-    shoppingListRef.current?.set({ list: [] })
+  const handleDeleteAll = async () => {
+    if (shoppingListRef.current) {
+      await setDoc(shoppingListRef.current, {
+        list: [],
+      })
+    }
   }
 
   const memoizedTags = useMemo(() => {
     const getIsTagDone = (tag: string) =>
       shoppingList.filter(item => item.tag === tag).every(item => item.checked)
 
-    const uniqueTags = new Set(shoppingList.map(item => item.tag).filter(Boolean))
-    return Array.from(uniqueTags).map(tag => ({ value: tag, isDone: getIsTagDone(tag) }))
+    const uniqueTags = new Set(
+      shoppingList.map(item => item.tag).filter(Boolean)
+    )
+    return Array.from(uniqueTags).map(tag => ({
+      value: tag,
+      isDone: getIsTagDone(tag),
+    }))
   }, [shoppingList])
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!textFieldValue.trim()) return
 
-    let tag: string = ''
+    let tag = ''
     let value = textFieldValue
     const regexRes = /[ ]*#(\w|ä|Ä|ö|Ö|ü|Ü){1,}[ ]*/.exec(textFieldValue)
 
@@ -64,8 +74,11 @@ const AccountShoppingListInput = (props: {
       },
       ...shoppingList,
     ]
-    shoppingListRef.current?.set({ list })
+
     setTextFieldValue('')
+    if (shoppingListRef.current) {
+      await setDoc(shoppingListRef.current, { list })
+    }
   }
 
   return (
@@ -81,7 +94,9 @@ const AccountShoppingListInput = (props: {
               <Typography
                 key={tag.value}
                 onClick={() =>
-                  props.onTagFilterChange(props.tagFilter === tag.value ? undefined : tag.value)
+                  props.onTagFilterChange(
+                    props.tagFilter === tag.value ? undefined : tag.value
+                  )
                 }
                 style={{
                   cursor: 'pointer',
@@ -90,7 +105,10 @@ const AccountShoppingListInput = (props: {
                     : tag.value === props.tagFilter
                     ? 'underline'
                     : 'none',
-                  color: tag.value === props.tagFilter ? theme.palette.secondary.main : 'inherit',
+                  color:
+                    tag.value === props.tagFilter
+                      ? theme.palette.secondary.main
+                      : 'inherit',
                 }}
                 variant="caption">
                 #{tag.value}

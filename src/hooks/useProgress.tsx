@@ -7,7 +7,9 @@ const useProgress = (variant?: ProgressVariant) => {
 
   return {
     setProgress,
-    ProgressComponent: () => <>{progress && <Progress variant={variant || 'fixed'} />}</>,
+    ProgressComponent: () => (
+      <>{progress && <Progress variant={variant || 'fixed'} />}</>
+    ),
   }
 }
 

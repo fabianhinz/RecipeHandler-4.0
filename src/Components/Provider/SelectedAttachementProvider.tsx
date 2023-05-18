@@ -8,12 +8,15 @@ import { BORDER_RADIUS } from '@/theme'
 type SelectedAttachment = AllDataUrls | null
 
 interface AttachmentSelect {
-  setSelectedAttachment: React.Dispatch<React.SetStateAction<SelectedAttachment>>
+  setSelectedAttachment: React.Dispatch<
+    React.SetStateAction<SelectedAttachment>
+  >
 }
 
 const Context = createContext<AttachmentSelect | null>(null)
 
-export const useSelectedAttachementContext = () => useContext(Context) as AttachmentSelect
+export const useSelectedAttachementContext = () =>
+  useContext(Context) as AttachmentSelect
 
 interface StyleProps {
   blurImg: boolean
@@ -53,14 +56,16 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const SelectedAttachementProvider: FC = ({ children }) => {
-  const [selectedAttachment, setSelectedAttachment] = useState<SelectedAttachment>(null)
+  const [selectedAttachment, setSelectedAttachment] =
+    useState<SelectedAttachment>(null)
   const [imgSrc, setImgSrc] = useState<string | undefined>()
 
   const { location } = useRouterContext()
   const classes = useStyles({ blurImg: !imgSrc })
 
   useEffect(() => {
-    if (!selectedAttachment || !selectedAttachment.fullDataUrl) return setImgSrc(undefined)
+    if (!selectedAttachment || !selectedAttachment.fullDataUrl)
+      return setImgSrc(undefined)
 
     const img = new Image()
     img.onload = () => setImgSrc(img.src)
@@ -79,9 +84,14 @@ const SelectedAttachementProvider: FC = ({ children }) => {
 
   return (
     <>
-      <Context.Provider value={{ setSelectedAttachment }}>{children}</Context.Provider>
+      <Context.Provider value={{ setSelectedAttachment }}>
+        {children}
+      </Context.Provider>
       <Slide direction="up" in={Boolean(selectedAttachment)}>
-        <Backdrop open onClick={() => setSelectedAttachment(null)} className={classes.backdrop}>
+        <Backdrop
+          open
+          onClick={() => setSelectedAttachment(null)}
+          className={classes.backdrop}>
           <img
             src={imgSrc || selectedAttachment?.mediumDataUrl}
             className={classes.attachment}

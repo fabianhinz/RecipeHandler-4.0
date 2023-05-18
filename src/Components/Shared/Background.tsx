@@ -1,13 +1,14 @@
 import { makeStyles, Theme, useTheme } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
+import { getDocs } from 'firebase/firestore'
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router'
 
 import { PATHS } from '@/Components/Routes/Routes'
+import { resolveNRecipeAttachmentsOrderedByCreatedDateAsc } from '@/firebase/firebaseQueries'
 import { useAttachment } from '@/hooks/useAttachment'
 import useImgSrcLazy from '@/hooks/useImgSrcLazy'
 import { AttachmentDoc } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 type StyleProps = {
   backgroundImage: string
@@ -44,7 +45,8 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
   },
   icon: props => ({
     padding: theme.spacing(2),
-    filter: theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
+    filter:
+      theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
     width: 400,
     [theme.breakpoints.only('xs')]: {
       flex: 1,
@@ -57,8 +59,13 @@ interface Props {
 }
 
 export const Background = ({ Icon }: Props) => {
-  const [firstAttachment, setFirstAttachment] = useState<AttachmentDoc | undefined>()
-  const match = useRouteMatch<{ name: string }>([PATHS.recipeEdit(), PATHS.details()])
+  const [firstAttachment, setFirstAttachment] = useState<
+    AttachmentDoc | undefined
+  >()
+  const match = useRouteMatch<{ name: string }>([
+    PATHS.recipeEdit(),
+    PATHS.details(),
+  ])
   const location = useLocation()
   const { attachmentRef, attachmentRefLoading } = useAttachment(firstAttachment)
   const { imgSrc, imgLoading } = useImgSrcLazy({
@@ -89,22 +96,23 @@ export const Background = ({ Icon }: Props) => {
       return
     }
 
-    FirebaseService.firestore
-      .collection('recipes')
-      .doc(match.params.name)
-      .collection('attachments')
-      .orderBy('createdDate', 'desc')
-      .limit(5)
-      .get()
-      .then(snapshot => {
-        const randomDoc = snapshot.docs[Math.floor(Math.random() * snapshot.docs.length)]
+    void getDocs(
+      resolveNRecipeAttachmentsOrderedByCreatedDateAsc(match.params.name)
+    ).then(snapshot => {
+      if (snapshot.docs.length === 0) {
+        setFirstAttachment(undefined)
+        return
+      }
 
-        if (randomDoc.exists) {
-          setFirstAttachment(randomDoc.data() as AttachmentDoc)
-        } else {
-          setFirstAttachment(undefined)
-        }
-      })
+      const randomDoc =
+        snapshot.docs[Math.floor(Math.random() * snapshot.docs.length)]
+
+      if (randomDoc.exists()) {
+        setFirstAttachment(randomDoc.data() as AttachmentDoc)
+      } else {
+        setFirstAttachment(undefined)
+      }
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname])
 

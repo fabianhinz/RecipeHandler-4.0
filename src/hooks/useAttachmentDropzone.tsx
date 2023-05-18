@@ -1,11 +1,11 @@
 import { Alert } from '@material-ui/lab'
 import compressImage from 'browser-image-compression'
+import { Timestamp } from 'firebase/firestore'
 import { useCallback, useState } from 'react'
 import { DropzoneState, FileRejection, useDropzone } from 'react-dropzone'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { AttachmentDoc, DataUrl } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 export const readDocumentAsync = (document: Blob) =>
   new Promise<string>((resolve, reject) => {
@@ -31,8 +31,12 @@ export const useAttachmentDropzone = ({
   attachmentMaxWidth,
   attachmentMaxSize,
 }: Options) => {
-  const [attachments, setAttachments] = useState<Array<AttachmentDoc & DataUrl>>([])
-  const [attachmentAlert, setAttachmentAlert] = useState<JSX.Element | undefined>()
+  const [attachments, setAttachments] = useState<
+    Array<AttachmentDoc & DataUrl>
+  >([])
+  const [attachmentAlert, setAttachmentAlert] = useState<
+    JSX.Element | undefined
+  >()
 
   const { user } = useFirebaseAuthContext()
 
@@ -61,7 +65,9 @@ export const useAttachmentDropzone = ({
           </Alert>
         )
 
-      setAttachmentAlert(<Alert severity="info">Dateien werden komprimiert</Alert>)
+      setAttachmentAlert(
+        <Alert severity="info">Dateien werden komprimiert</Alert>
+      )
 
       const newAttachments: Array<AttachmentDoc & DataUrl> = []
       for (const file of acceptedFiles) {
@@ -80,7 +86,7 @@ export const useAttachmentDropzone = ({
           fullPath: '',
           size: compressedFile?.size || file.size,
           editorUid: user ? user.uid : 'unkown',
-          createdDate: FirebaseService.createTimestampFromDate(new Date()),
+          createdDate: Timestamp.fromDate(new Date()),
         })
       }
       setAttachments(newAttachments)

@@ -47,7 +47,10 @@ const AccountListItem = ({ uid, onChange, checked, variant }: Props) => {
   return (
     <ListItem>
       <ListItemAvatar className={classes.itemAvatar}>
-        <Avatar variant="rounded" className={classes.avatar} src={profilePicture}>
+        <Avatar
+          variant="rounded"
+          className={classes.avatar}
+          src={profilePicture}>
           {username.slice(0, 1)}
         </Avatar>
       </ListItemAvatar>

@@ -1,21 +1,46 @@
 import { makeStyles } from '@material-ui/core'
-import { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { logEvent, setUserId } from 'firebase/analytics'
+import {
+  onAuthStateChanged,
+  signInWithCustomToken,
+  User as FirebaseUser,
+} from 'firebase/auth'
+import {
+  DocumentData,
+  DocumentReference,
+  onSnapshot,
+  setDoc,
+  Timestamp,
+  updateDoc,
+} from 'firebase/firestore'
+import {
+  createContext,
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import BuiltWithFirebase from '@/Components/Shared/BuiltWithFirebase'
+import { analytics, auth, getCustomToken } from '@/firebase/firebaseConfig'
+import {
+  resolveDoc,
+  resolveExpensesOrderedByDateDesc,
+} from '@/firebase/firebaseQueries'
 import { ShoppingListItem, User } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
-import useExpenseStore, { EXPENSE_COLLECTION } from '@/store/ExpenseStore'
+import useExpenseStore from '@/store/ExpenseStore'
 import { ArrayFns, ReorderParams } from '@/util/fns'
-
-type DocumentRef =
-  firebase.default.firestore.DocumentReference<firebase.default.firestore.DocumentData>
 
 interface AuthContext {
   user: User | undefined
   shoppingList: ShoppingListItem[]
   loginEnabled: boolean
-  shoppingListRef: { current?: DocumentRef }
-  reorderShoppingList: (reorderParams: ReorderParams<ShoppingListItem>) => void
+  shoppingListRef: { current?: DocumentReference<DocumentData> }
+  reorderShoppingList: (
+    reorderParams: ReorderParams<ShoppingListItem>
+  ) => Promise<void>
 }
 
 const Context = createContext<AuthContext>({
@@ -23,7 +48,8 @@ const Context = createContext<AuthContext>({
   shoppingList: [],
   loginEnabled: false,
   shoppingListRef: { current: undefined },
-  reorderShoppingList: (reorderParams: ReorderParams<ShoppingListItem>) => null,
+  reorderShoppingList: async (reorderParams: ReorderParams<ShoppingListItem>) =>
+    undefined,
 })
 
 export const useFirebaseAuthContext = () => useContext(Context)
@@ -58,87 +84,129 @@ const FirebaseAuthProvider: FC = ({ children }) => {
   const [user, setUser] = useState<User | undefined>()
   const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([])
 
-  const shoppingListRef = useRef<DocumentRef>()
+  const unsafeShoppingListRef =
+    useRef<AuthContext['shoppingListRef']['current']>()
 
   const classes = useStyles()
 
-  const handleAuthStateChange = useCallback((user: firebase.default.User | null) => {
-    setAuthReady(true)
-    if (!user) {
-      setUser(undefined)
-      setLoginEnabled(true)
+  const handleAuthStateChange = useCallback(
+    async (user: FirebaseUser | null) => {
+      setAuthReady(true)
+
+      if (!user) {
+        setUser(undefined)
+        setLoginEnabled(true)
+        return
+      }
+
+      if (analytics) {
+        setUserId(analytics, user.uid)
+        logEvent(analytics, 'login')
+      }
+
+      try {
+        const customTokenResponse = await getCustomToken(user.uid)
+        await signInWithCustomToken(auth, customTokenResponse.data)
+      } catch {
+        // only editors may recive a custom token, catch and move on for other users
+      }
+
+      const userDocUnsubsribe = onSnapshot(
+        resolveDoc('users', user.uid),
+        doc => {
+          setUser({
+            ...(doc.data() as Omit<User, 'uid'>),
+            uid: user.uid,
+          })
+
+          setLoginEnabled(true)
+        },
+        () => {
+          // not an editor, this user was just created and has no permissions yet
+          setUser({
+            uid: user.uid,
+            username: user.email ?? 'unknown username',
+            admin: false,
+            muiTheme: 'dynamic',
+            selectedUsers: [],
+            showRecentlyEdited: true,
+            showMostCooked: true,
+            showNew: true,
+            notifications: false,
+            createdDate: Timestamp.fromDate(
+              new Date(user.metadata.creationTime ?? Date.now())
+            ),
+            algoliaAdvancedSyntax: false,
+            bookmarkSync: true,
+            emailVerified: false,
+            bookmarks: [],
+          })
+        }
+      )
+
+      unsafeShoppingListRef.current = resolveDoc(
+        `users/${user.uid}/shoppingList`,
+        'static'
+      )
+
+      const shoppingListUnsubscribe = onSnapshot(
+        unsafeShoppingListRef.current,
+        snapshot => {
+          setShoppingList(snapshot.data()?.list ?? [])
+        }
+      )
+
+      const expensesUnsubscribe = onSnapshot(
+        resolveExpensesOrderedByDateDesc(user.uid),
+        useExpenseStore.getState().handleFirebaseSnapshot
+      )
+
+      return () => {
+        expensesUnsubscribe()
+        userDocUnsubsribe()
+        shoppingListUnsubscribe()
+      }
+    },
+    []
+  )
+
+  useEffect(() => {
+    if (!user || user.emailVerified) {
       return
     }
 
-    const userDocRef = FirebaseService.firestore.collection('users').doc(user.uid)
-
-    const userDocUnsubsribe = userDocRef.onSnapshot(doc => {
-      setUser({
-        ...(doc.data() as Omit<User, 'uid'>),
-        uid: user.uid,
-      })
-      FirebaseService.analytics?.setUserId(user.uid)
-      FirebaseService.analytics?.logEvent('login')
-      setLoginEnabled(true)
-    })
-
-    shoppingListRef.current = userDocRef.collection('shoppingList').doc('static')
-
-    const shoppingListUnsubscribe = shoppingListRef.current.onSnapshot(snapshot => {
-      setShoppingList(snapshot.data()?.list ?? [])
-    })
-
-    const expensesUnsubscribe = userDocRef
-      .collection(EXPENSE_COLLECTION)
-      .orderBy('date', 'desc')
-      .onSnapshot(useExpenseStore.getState().handleFirebaseSnapshot)
-
-    return () => {
-      expensesUnsubscribe()
-      userDocUnsubsribe()
-      shoppingListUnsubscribe()
-    }
-  }, [])
-
-  const signInWithCustomToken = useCallback(async () => {
-    if (!user) return
-    const getCustomToken = FirebaseService.functions.httpsCallable('getCustomToken')
-    try {
-      const response = await getCustomToken(user.uid)
-      FirebaseService.auth.signInWithCustomToken(response.data)
-    } catch (e) {
-      // only editors may recive a custom token, catch and move on for other users
-    }
+    const update: Partial<User> = { emailVerified: user.emailVerified }
+    void updateDoc(resolveDoc('users', user.uid), update)
   }, [user])
 
   useEffect(() => {
-    if (!user || user.emailVerified) return
-
-    FirebaseService.firestore
-      .collection('users')
-      .doc(user.uid)
-      .update({ emailVerified: user.emailVerified })
-  }, [user])
-
-  useEffect(() => {
-    signInWithCustomToken()
-  }, [signInWithCustomToken])
-
-  useEffect(() => {
-    return FirebaseService.auth.onAuthStateChanged(handleAuthStateChange)
+    return onAuthStateChanged(auth, handleAuthStateChange)
   }, [handleAuthStateChange])
 
-  const reorderShoppingList = (reorderParams: ReorderParams<ShoppingListItem>) => {
+  const reorderShoppingList = async (
+    reorderParams: ReorderParams<ShoppingListItem>
+  ) => {
     const reorderedList = ArrayFns.reorder(reorderParams)
     setShoppingList(reorderedList)
-    shoppingListRef.current?.set({
-      list: reorderedList,
-    })
+
+    if (!unsafeShoppingListRef.current) {
+      throw new Error(
+        'cannot update shopping list without a document reference'
+      )
+    }
+
+    await setDoc(unsafeShoppingListRef.current, { list: reorderedList })
   }
 
   return (
     <Context.Provider
-      value={{ user, loginEnabled, shoppingList, shoppingListRef, reorderShoppingList }}>
+      value={{
+        user,
+        loginEnabled,
+        shoppingList,
+        shoppingListRef: unsafeShoppingListRef,
+        reorderShoppingList,
+      }}>
       {authReady ? (
         <div className={classes.main}>{children}</div>
       ) : (

@@ -1,5 +1,12 @@
 import { PaletteType } from '@material-ui/core'
+import { DocumentChangeType, Timestamp } from 'firebase/firestore'
 import { RouteComponentProps } from 'react-router'
+
+import {
+  RecipesRootCollection,
+  SupportedCollectionPath,
+  TrialsRootCollection,
+} from '@/firebase/firebaseModel'
 
 export interface Editor {
   editorUid: string
@@ -10,10 +17,13 @@ export interface DataUrl {
 }
 
 export interface CreatedDate {
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
 }
 
-export interface AttachmentDoc extends Editor, CreatedDate, Partial<FirestoreDocPath> {
+export interface AttachmentDoc
+  extends Editor,
+    CreatedDate,
+    Partial<FirestoreDocPath> {
   name: string
   size: number
   fullPath: string
@@ -54,7 +64,7 @@ export interface Category {
 export type RouteWithRecipeName = RouteComponentProps<{ name: string }>
 
 export interface Comment extends Editor {
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
   documentId: string
   comment: string
 }
@@ -65,11 +75,11 @@ export interface CommentReaction extends Editor, CreatedDate {
 
 export interface Trial extends Editor, CommentsDocument {
   fullPath: string
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
 }
 
 export interface CommentsCollections {
-  collection: 'recipes' | 'trials'
+  collection: RecipesRootCollection | TrialsRootCollection
 }
 
 type AlgoliaSnippetResult = {
@@ -105,14 +115,14 @@ export type User = {
   admin?: boolean
   profilePicture?: string
   emailVerified: boolean
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
   algoliaAdvancedSyntax: boolean
   bookmarkSync: boolean
   bookmarks: string[]
 }
 
 export interface Pullrequest {
-  closedAt: firebase.default.firestore.Timestamp
+  closedAt: Timestamp
   creator: string
   issueNumbers: string[] | undefined
   shortSha: string
@@ -147,12 +157,12 @@ export interface Metadata {
 }
 
 export interface FirestoreDocPath {
-  docPath: string
+  docPath: SupportedCollectionPath
 }
 
 export interface MostCooked<T> {
   value: T
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
 }
 
 export type TesseractResult = {
@@ -175,7 +185,7 @@ export interface TesseractLog {
 }
 
 export interface CookingHistory {
-  createdDate: firebase.default.firestore.Timestamp
+  createdDate: Timestamp
   recipeName: string
 }
 
@@ -193,17 +203,17 @@ export interface Expense {
   shop: string
   category: string
   description: string
-  date: firebase.default.firestore.Timestamp
+  date: Timestamp
   relatedUsers: string[]
   // TODO fix me
   [key: string]: any
 }
 
-export type ArchivedExpense = Expense & { deletedAt: firebase.default.firestore.Timestamp }
+export type ArchivedExpense = Expense & { deletedAt: Timestamp }
 
 export type Nullable<UnderlyingType> = null | UnderlyingType
 
 export type ChangesRecord<DocType> = Record<
-  firebase.default.firestore.DocumentChangeType,
+  DocumentChangeType,
   Map<DocumentId, DocType>
 >

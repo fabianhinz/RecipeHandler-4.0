@@ -1,7 +1,21 @@
-import { Button, ButtonProps, Grid, IconButton, makeStyles, Typography } from '@material-ui/core'
+import {
+  Button,
+  ButtonProps,
+  Grid,
+  IconButton,
+  makeStyles,
+  Typography,
+} from '@material-ui/core'
 import clsx from 'clsx'
 import { ChevronDown } from 'mdi-material-ui'
-import { Children, ReactNode, ReactText, useCallback, useMemo, useState } from 'react'
+import {
+  Children,
+  ReactNode,
+  ReactText,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
 import { GridLayout, useGridContext } from '@/Components/Provider/GridProvider'
@@ -16,7 +30,8 @@ interface StyleProps extends Pick<Props, 'itemHeight' | 'rows'> {
 const useStyles = makeStyles(theme => ({
   container: {
     overflowY: 'hidden',
-    height: ({ itemHeight, rows }: StyleProps) => (rows ? rows * itemHeight : itemHeight),
+    height: ({ itemHeight, rows }: StyleProps) =>
+      rows ? rows * itemHeight : itemHeight,
     transition: theme.transitions.create('height', {
       easing: theme.transitions.easing.easeOut,
     }),
@@ -27,11 +42,15 @@ const useStyles = makeStyles(theme => ({
     },
     [theme.breakpoints.between('md', 'lg')]: {
       height: ({ gridItems, gridLayout, itemHeight }: StyleProps) =>
-        gridLayout === 'list' ? gridItems * itemHeight : Math.ceil(gridItems / 2) * itemHeight,
+        gridLayout === 'list'
+          ? gridItems * itemHeight
+          : Math.ceil(gridItems / 2) * itemHeight,
     },
     [theme.breakpoints.up('xl')]: {
       height: ({ gridItems, gridLayout, itemHeight }: StyleProps) =>
-        gridLayout === 'list' ? gridItems * itemHeight : Math.ceil(gridItems / 3) * itemHeight,
+        gridLayout === 'list'
+          ? gridItems * itemHeight
+          : Math.ceil(gridItems / 3) * itemHeight,
     },
   },
   hidden: {
@@ -73,17 +92,22 @@ const ExpandableGridContainer = ({
   }, [expanded, onExpandedChange])
 
   const chevron = useMemo(
-    () => <ChevronDown className={clsx(classes.hidden, expanded && classes.expanded)} />,
+    () => (
+      <ChevronDown
+        className={clsx(classes.hidden, expanded && classes.expanded)}
+      />
+    ),
     [classes.expanded, classes.hidden, expanded]
   )
 
-  const sharedExpandBtnProps: Pick<ButtonProps, 'disabled' | 'onClick'> = useMemo(
-    () => ({
-      disabled: gridItems === 0,
-      onClick: handleExpandBtnChange,
-    }),
-    [gridItems, handleExpandBtnChange]
-  )
+  const sharedExpandBtnProps: Pick<ButtonProps, 'disabled' | 'onClick'> =
+    useMemo(
+      () => ({
+        disabled: gridItems === 0,
+        onClick: handleExpandBtnChange,
+      }),
+      [gridItems, handleExpandBtnChange]
+    )
 
   return (
     <EntryGridContainer>
@@ -97,7 +121,10 @@ const ExpandableGridContainer = ({
             {isMobile ? (
               <IconButton {...sharedExpandBtnProps}>{chevron}</IconButton>
             ) : (
-              <Button {...sharedExpandBtnProps} variant="contained" startIcon={chevron}>
+              <Button
+                {...sharedExpandBtnProps}
+                variant="contained"
+                startIcon={chevron}>
                 {expanded ? titles.expanded : titles.notExpanded}
               </Button>
             )}
@@ -108,7 +135,10 @@ const ExpandableGridContainer = ({
       <Grid item xs={12}>
         <Grid
           container
-          className={clsx(classes.container, expanded && classes.containerExpanded)}
+          className={clsx(
+            classes.container,
+            expanded && classes.containerExpanded
+          )}
           spacing={3}>
           {children}
         </Grid>

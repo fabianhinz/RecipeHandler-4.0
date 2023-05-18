@@ -1,4 +1,9 @@
-import { Avatar, ButtonBase, CircularProgress, makeStyles } from '@material-ui/core'
+import {
+  Avatar,
+  ButtonBase,
+  CircularProgress,
+  makeStyles,
+} from '@material-ui/core'
 import clsx from 'clsx'
 import { ImageSearch } from 'mdi-material-ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -55,7 +60,9 @@ interface Props extends Pick<Recipe, 'description' | 'ingredients'> {
 const TesseractSelection = ({ onChange, ingredients, description }: Props) => {
   const [shouldLoad, setShouldLoad] = useState(false)
   const [log, setLog] = useState<TesseractLog | undefined>()
-  const [paragraphs, setParagraphs] = useState<Pick<Paragraph, 'text' | 'confidence'>[]>([])
+  const [paragraphs, setParagraphs] = useState<
+    Pick<Paragraph, 'text' | 'confidence'>[]
+  >([])
 
   const workerRef = useRef<Tesseract.Worker | null>(null)
 
@@ -99,7 +106,10 @@ const TesseractSelection = ({ onChange, ingredients, description }: Props) => {
         setParagraphs(prev => [
           ...prev,
           ...data.paragraphs
-            .filter(({ text }) => !prev.find(({ text: prevText }) => prevText === text))
+            .filter(
+              ({ text }) =>
+                !prev.find(({ text: prevText }) => prevText === text)
+            )
             .map(({ text, confidence }) => ({ text, confidence })),
         ])
       }
@@ -122,12 +132,20 @@ const TesseractSelection = ({ onChange, ingredients, description }: Props) => {
         disabled={log?.status !== 'initialized api'}
         {...dropzoneProps.getRootProps()}>
         <Avatar variant="rounded" className={classes.dropzoneAvatar}>
-          {log?.status === 'initialized api' || log?.status === 'recognizing text' ? (
+          {log?.status === 'initialized api' ||
+          log?.status === 'recognizing text' ? (
             <ImageSearch className={classes.dropzoneIcon} />
           ) : (
-            <CircularProgress color="secondary" disableShrink size={60} thickness={5.4} />
+            <CircularProgress
+              color="secondary"
+              disableShrink
+              size={60}
+              thickness={5.4}
+            />
           )}
-          <div className={clsx(classes.progressRoot, classes.progressAnimated)} />
+          <div
+            className={clsx(classes.progressRoot, classes.progressAnimated)}
+          />
         </Avatar>
         <input {...dropzoneProps.getInputProps()} />
       </ButtonBase>

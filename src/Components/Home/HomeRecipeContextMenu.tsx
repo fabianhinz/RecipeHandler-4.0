@@ -30,7 +30,9 @@ interface Props {
 }
 
 const HomeRecipeContextMenu = (props: Props) => {
-  const [anchorPosition, setAnchorPosition] = useState<PopoverPosition | undefined>()
+  const [anchorPosition, setAnchorPosition] = useState<
+    PopoverPosition | undefined
+  >()
   const classes = useStyles()
   const theme = useTheme()
 
@@ -38,7 +40,10 @@ const HomeRecipeContextMenu = (props: Props) => {
     <>
       <Popover
         PaperProps={{ className: classes.homeRecipeContextMenuRoot }}
-        transitionDuration={{ enter: theme.transitions.duration.complex, exit: 0 }}
+        transitionDuration={{
+          enter: theme.transitions.duration.complex,
+          exit: 0,
+        }}
         anchorReference="anchorPosition"
         anchorPosition={anchorPosition}
         open={Boolean(anchorPosition)}
@@ -52,7 +57,9 @@ const HomeRecipeContextMenu = (props: Props) => {
           horizontal: 'left',
         }}>
         <List disablePadding onClick={() => setAnchorPosition(undefined)}>
-          <ListItem onClick={() => window.open(PATHS.details(props.name))} button>
+          <ListItem
+            onClick={() => window.open(PATHS.details(props.name))}
+            button>
             <ListItemIcon>
               <AddCircleOutlined />
             </ListItemIcon>

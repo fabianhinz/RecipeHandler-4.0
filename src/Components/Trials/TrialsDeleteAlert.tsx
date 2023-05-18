@@ -21,7 +21,13 @@ interface Props {
   onAbort: () => void
 }
 
-const TrialsDeleteAlert = ({ open, onConfirm, onAbort, title, disabled }: Props) => {
+const TrialsDeleteAlert = ({
+  open,
+  onConfirm,
+  onAbort,
+  title,
+  disabled,
+}: Props) => {
   const { isDialogFullscreen } = useBreakpointsContext()
 
   return (
@@ -33,8 +39,9 @@ const TrialsDeleteAlert = ({ open, onConfirm, onAbort, title, disabled }: Props)
       <DialogTitle>Rezeptidee löschen?</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Möglicherweise werden Ideen anderer Benutzer gelöscht. Gelöschte Dateien können im
-          Gegensatz zu den Kommentaren nicht wiederhergestellt werden. Trotzdem fortfahren?
+          Möglicherweise werden Ideen anderer Benutzer gelöscht. Gelöschte
+          Dateien können im Gegensatz zu den Kommentaren nicht wiederhergestellt
+          werden. Trotzdem fortfahren?
         </DialogContentText>
       </DialogContent>
       <DialogActions>

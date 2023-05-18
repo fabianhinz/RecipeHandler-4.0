@@ -53,7 +53,9 @@ const TesseractParagraph = ({
             <Chip
               icon={<BookIcon />}
               color={ingredientsChecked ? 'secondary' : 'default'}
-              onClick={() => onChipClick({ text, tesseractPart: 'ingredients' })}
+              onClick={() =>
+                onChipClick({ text, tesseractPart: 'ingredients' })
+              }
               label="Zutaten"
             />
           </Grid>
@@ -61,7 +63,9 @@ const TesseractParagraph = ({
             <Chip
               icon={<AssignmentIcon />}
               color={descriptionChecked ? 'secondary' : 'default'}
-              onClick={() => onChipClick({ text, tesseractPart: 'description' })}
+              onClick={() =>
+                onChipClick({ text, tesseractPart: 'description' })
+              }
               label="Beschreibung"
             />
           </Grid>

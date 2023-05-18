@@ -1,6 +1,7 @@
 import { Grid, GridSize } from '@material-ui/core'
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import LabelIcon from '@material-ui/icons/Label'
+import { Timestamp } from 'firebase/firestore'
 import { useCallback, useEffect } from 'react'
 import { RouteComponentProps, useRouteMatch } from 'react-router'
 
@@ -15,7 +16,6 @@ import TrialsSelection from '@/Components/Trials/TrialsSelection'
 import { useCategorySelect } from '@/hooks/useCategorySelect'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import { Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { getRecipeService } from '@/services/recipeService'
 
 import RelatedRecipesSelection from '../RelatedRecipesSelection'
@@ -37,15 +37,20 @@ const fromPropsOrPreviousState = ({ recipe }: Props) =>
   recipe ?? getRecipeService().recipeCreateState
 
 const RecipeCreate = (props: Props) => {
-  const { state, dispatch } = useRecipeCreateReducer(fromPropsOrPreviousState(props))
-
-  const recipeCreateService = useRecipeCreate(state, props.edit)
-  const { selectedCategories, setSelectedCategories, removeSelectedCategories } = useCategorySelect(
+  const { state, dispatch } = useRecipeCreateReducer(
     fromPropsOrPreviousState(props)
   )
+
+  const recipeCreateService = useRecipeCreate(state, props.edit)
+  const {
+    selectedCategories,
+    setSelectedCategories,
+    removeSelectedCategories,
+  } = useCategorySelect(fromPropsOrPreviousState(props))
   const { user } = useFirebaseAuthContext()
   const { history } = useRouterContext()
-  const { gridBreakpointProps: breakpointsFromContext, gridLayout } = useGridContext()
+  const { gridBreakpointProps: breakpointsFromContext, gridLayout } =
+    useGridContext()
 
   const match = useRouteMatch()
 
@@ -84,7 +89,9 @@ const RecipeCreate = (props: Props) => {
     if (valid) dispatch({ type: 'previewChange' })
   }
 
-  const relatedAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
+  const relatedAwareBreakpoints: Partial<
+    Record<Breakpoint, boolean | GridSize>
+  > =
     gridLayout === 'list' || state.relatedRecipes.length > 0
       ? breakpointsFromContext
       : { xs: 12, md: 6 }
@@ -95,7 +102,7 @@ const RecipeCreate = (props: Props) => {
         <RecipeResult
           recipe={{
             name: state.name,
-            createdDate: FirebaseService.createTimestampFromDate(new Date()),
+            createdDate: Timestamp.fromDate(new Date()),
             numberOfComments: state.numberOfComments,
             numberOfAttachments: state.numberOfAttachments,
             categories: state.categories,
@@ -177,7 +184,9 @@ const RecipeCreate = (props: Props) => {
               {state.relatedRecipes.length > 0 && (
                 <Grid item {...relatedAwareBreakpoints}>
                   <StyledCard header="Passt gut zu" BackgroundIcon={LabelIcon}>
-                    <RecipeResultRelated relatedRecipes={state.relatedRecipes} />
+                    <RecipeResultRelated
+                      relatedRecipes={state.relatedRecipes}
+                    />
                   </StyledCard>
                 </Grid>
               )}

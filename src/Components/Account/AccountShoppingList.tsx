@@ -1,4 +1,5 @@
 import { Grid, List } from '@material-ui/core'
+import { setDoc } from 'firebase/firestore'
 import React, { useLayoutEffect, useState } from 'react'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
 
@@ -15,9 +16,12 @@ const AccountUserShoppingList = () => {
   const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
   const [tagFilter, setTagFilter] = useState<string | undefined>()
 
-  const { shoppingList, shoppingListRef, reorderShoppingList } = useFirebaseAuthContext()
+  const { shoppingList, reorderShoppingList, shoppingListRef } =
+    useFirebaseAuthContext()
 
-  useDocumentTitle(`Einkaufsliste (${shoppingList.filter(item => !item.checked).length})`)
+  useDocumentTitle(
+    `Einkaufsliste (${shoppingList.filter(item => !item.checked).length})`
+  )
 
   useLayoutEffect(() => {
     setRecipeRefs(
@@ -30,22 +34,37 @@ const AccountUserShoppingList = () => {
     )
   }, [shoppingList])
 
-  const handleCheckboxChange =
-    (index: number) => (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const handleCheckboxChange = (index: number) => {
+    return async (
+      _event: React.ChangeEvent<HTMLInputElement>,
+      checked: boolean
+    ) => {
       const list = [...shoppingList]
       list[index].checked = checked
-      shoppingListRef.current?.set({ list })
-    }
 
-  const handleDelete = (index: number) => () => {
-    shoppingListRef.current?.set({
-      list: shoppingList.filter((_, itemIndex) => itemIndex !== index),
-    })
+      if (shoppingListRef.current) {
+        await setDoc(shoppingListRef.current, { list })
+      }
+    }
   }
 
-  const handleDragEnd = (result: DropResult) => {
-    if (result.destination === undefined) return
-    reorderShoppingList({
+  const handleDelete = (index: number) => {
+    return async () => {
+      if (!shoppingListRef.current) {
+        throw new Error('cannot set shoppinglist without a document reference')
+      }
+
+      await setDoc(shoppingListRef.current, {
+        list: shoppingList.filter((_, itemIndex) => itemIndex !== index),
+      })
+    }
+  }
+
+  const handleDragEnd = async (result: DropResult) => {
+    if (result.destination === undefined) {
+      return
+    }
+    await reorderShoppingList({
       array: shoppingList,
       from: result.source.index,
       to: result.destination.index,
@@ -55,12 +74,19 @@ const AccountUserShoppingList = () => {
   return (
     <EntryGridContainer>
       <Grid item xs={12}>
-        <AccountShoppingListInput tagFilter={tagFilter} onTagFilterChange={setTagFilter} />
+        <AccountShoppingListInput
+          tagFilter={tagFilter}
+          onTagFilterChange={setTagFilter}
+        />
       </Grid>
 
       {recipeRefs.size > 0 && (
         <Grid item xs={12}>
-          <Grid style={{ overflowX: 'auto' }} wrap="nowrap" container spacing={1}>
+          <Grid
+            style={{ overflowX: 'auto' }}
+            wrap="nowrap"
+            container
+            spacing={1}>
             {[...recipeRefs.values()].map(recipeRef => (
               <Grid item key={recipeRef}>
                 <RecipeChip recipeName={recipeRef} />

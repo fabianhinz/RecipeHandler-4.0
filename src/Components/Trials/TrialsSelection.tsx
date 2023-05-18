@@ -1,11 +1,12 @@
 import { Grid } from '@material-ui/core'
+import { onSnapshot } from 'firebase/firestore'
 import { Lightbulb } from 'mdi-material-ui'
 import { useEffect, useState } from 'react'
 
 import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
 import Skeletons from '@/Components/Shared/Skeletons'
+import { resolveTrialsOrderedByCreatedDateDesc } from '@/firebase/firebaseQueries'
 import { Trial } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 import TrialsCard from './TrialsCard'
 
@@ -20,20 +21,25 @@ const TrialsSelection = ({ selectedTrial, onSelectedTrialChange }: Props) => {
   const [trials, setTrials] = useState<Trial[]>([])
 
   useEffect(() => {
-    if (!shouldLoad) return
+    if (!shouldLoad) {
+      return
+    }
 
-    return FirebaseService.firestore
-      .collection('trials')
-      .orderBy('createdDate', 'desc')
-      .onSnapshot(querySnapshot => {
+    return onSnapshot(
+      resolveTrialsOrderedByCreatedDateDesc(),
+      querySnapshot => {
         setLoading(false)
         setTrials(querySnapshot.docs.map(doc => doc.data() as Trial))
-      })
+      }
+    )
   }, [shouldLoad])
 
   const handleTrialCardClick = (trial: Trial) => {
-    if (trial.name !== selectedTrial?.name) onSelectedTrialChange(trial)
-    else onSelectedTrialChange(undefined)
+    if (trial.name !== selectedTrial?.name) {
+      onSelectedTrialChange(trial)
+    } else {
+      onSelectedTrialChange(undefined)
+    }
   }
 
   return (

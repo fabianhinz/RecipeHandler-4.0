@@ -8,7 +8,10 @@ interface Props {
   onDescriptionChange: (value: string) => void
 }
 
-const RecipeCreateDescription = ({ description, onDescriptionChange }: Props) => {
+const RecipeCreateDescription = ({
+  description,
+  onDescriptionChange,
+}: Props) => {
   return (
     <StyledCard header="Beschreibung" BackgroundIcon={BookIcon}>
       <MarkdownInput outerValue={description} onChange={onDescriptionChange} />

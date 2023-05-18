@@ -30,10 +30,15 @@ const AttachmentPreview = ({ attachment, onClick }: Props) => {
   const originIdRef = useRef(elementIdService.getId('attachment-origin'))
 
   const { attachmentRef } = useAttachment(attachment)
-  const { imgLoading, imgSrc } = useImgSrcLazy({ src: attachmentRef.mediumDataUrl })
+  const { imgLoading, imgSrc } = useImgSrcLazy({
+    src: attachmentRef.mediumDataUrl,
+  })
   const classes = useStyles()
 
-  if (imgLoading) return <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
+  if (imgLoading)
+    return (
+      <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
+    )
 
   return (
     <img

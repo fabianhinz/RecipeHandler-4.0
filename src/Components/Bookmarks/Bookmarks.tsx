@@ -2,6 +2,7 @@ import { Grid, Tab, Tabs } from '@material-ui/core'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import BookIcon from '@material-ui/icons/Book'
 import { Skeleton } from '@material-ui/lab'
+import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
 
@@ -14,9 +15,9 @@ import RecipeDetailsButton from '@/Components/Recipe/RecipeDetailsButton'
 import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
 import NotFound from '@/Components/Shared/NotFound'
 import StyledCard from '@/Components/Shared/StyledCard'
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import { Recipe } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 interface BookmarkProps {
   recipeName: string
@@ -27,17 +28,9 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
   const [value, setValue] = useState(0)
 
   useEffect(() => {
-    let mounted = true
-    FirebaseService.firestore
-      .collection('recipes')
-      .doc(recipeName)
-      .onSnapshot(doc => {
-        if (mounted) setRecipe({ name: doc.id, ...doc.data() } as Recipe)
-      })
-
-    return () => {
-      mounted = false
-    }
+    return onSnapshot(resolveDoc('recipes', recipeName), doc => {
+      setRecipe({ name: doc.id, ...doc.data() } as Recipe)
+    })
   }, [recipeName])
 
   return (
@@ -52,8 +45,14 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
               <RecipeBookmarkButton name={recipeName} />
             </>
           }>
-          <Tabs variant="fullWidth" value={value} onChange={(_e, newValue) => setValue(newValue)}>
-            <Tab icon={<AssignmentIcon />} label={`Zutaten für ${recipe?.amount}`} />
+          <Tabs
+            variant="fullWidth"
+            value={value}
+            onChange={(_e, newValue) => setValue(newValue)}>
+            <Tab
+              icon={<AssignmentIcon />}
+              label={`Zutaten für ${recipe?.amount}`}
+            />
             <Tab icon={<BookIcon />} label="Beschreibung" />
           </Tabs>
 
@@ -61,7 +60,9 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
             <MarkdownRenderer withShoppingList recipeName={recipeName}>
               {recipe.ingredients}
             </MarkdownRenderer>
-            <MarkdownRenderer recipeName={recipeName}>{recipe.description}</MarkdownRenderer>
+            <MarkdownRenderer recipeName={recipeName}>
+              {recipe.description}
+            </MarkdownRenderer>
           </SwipeableViews>
         </StyledCard>
       ) : (

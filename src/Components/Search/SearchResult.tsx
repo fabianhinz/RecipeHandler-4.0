@@ -34,7 +34,9 @@ const SearchResult = (props: Props) => {
       className={classes.listItem}
       onClick={() => history.push(PATHS.details(props.hit.name))}>
       <ListItemAvatar>
-        <Avatar src={recipeDoc?.previewAttachment}>{props.hit.name.slice(0, 1)}</Avatar>
+        <Avatar src={recipeDoc?.previewAttachment}>
+          {props.hit.name.slice(0, 1)}
+        </Avatar>
       </ListItemAvatar>
       <ListItemText
         primary={props.hit.name}

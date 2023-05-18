@@ -10,6 +10,12 @@ import {
 } from '@material-ui/core'
 import AccountIcon from '@material-ui/icons/AccountCircleRounded'
 import CloseIcon from '@material-ui/icons/Close'
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+} from 'firebase/auth'
+import { setDoc, Timestamp } from 'firebase/firestore'
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 
@@ -17,9 +23,10 @@ import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import { SlideUp } from '@/Components/Shared/Transitions'
+import { auth } from '@/firebase/firebaseConfig'
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import useProgress from '@/hooks/useProgress'
 import { User } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(() => ({
   form: {
@@ -97,46 +104,47 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
 
     if (newUser) {
       if (password === passwordRepeat && username.length > 0) {
-        FirebaseService.auth
-          .createUserWithEmailAndPassword(email, password)
+        createUserWithEmailAndPassword(auth, email, password)
           .then(value => {
             setNewUser(false)
             const { user } = value
 
             if (!user) return
             // save the username - this allows admins to enable/disable editors by username
-            FirebaseService.firestore
-              .collection('users')
-              .doc(user.uid)
-              .set({
-                username,
-                // this is just sugar for the ui, firesture.rules performs authorization
-                admin: false,
-                muiTheme: 'dynamic',
-                selectedUsers: userIds,
-                showRecentlyEdited: true,
-                showMostCooked: true,
-                showNew: true,
-                notifications: false,
-                createdDate: FirebaseService.createTimestampFromDate(new Date()),
-                algoliaAdvancedSyntax: false,
-                bookmarkSync: true,
-                emailVerified: false,
-                bookmarks: [],
-              } as Omit<User, 'uid'>)
+
+            setDoc(resolveDoc('users', user.uid), {
+              username,
+              // this is just sugar for the ui, firesture.rules performs authorization
+              admin: false,
+              muiTheme: 'dynamic',
+              selectedUsers: userIds,
+              showRecentlyEdited: true,
+              showMostCooked: true,
+              showNew: true,
+              notifications: false,
+              createdDate: Timestamp.fromDate(new Date()),
+              algoliaAdvancedSyntax: false,
+              bookmarkSync: true,
+              emailVerified: false,
+              bookmarks: [],
+            } as Omit<User, 'uid'>)
+
             // send a verification email to the newly created user
-            user.sendEmailVerification({ url: 'https://recipehandler.web.app/' })
+            sendEmailVerification(user, {
+              url: 'https://recipehandler.web.app/',
+            })
           })
           .catch(error => handleAuthError(error))
           .finally(() => setProgress(false))
       } else {
-        if (password !== passwordRepeat) handleAuthError({ code: 'app/passwords-not-equal' })
-        if (username.length === 0) handleAuthError({ code: 'app/username-empty' })
+        if (password !== passwordRepeat)
+          handleAuthError({ code: 'app/passwords-not-equal' })
+        if (username.length === 0)
+          handleAuthError({ code: 'app/username-empty' })
         setProgress(false)
       }
     } else {
-      FirebaseService.auth
-        .signInWithEmailAndPassword(email, password)
+      signInWithEmailAndPassword(auth, email, password)
         .catch(error => handleAuthError(error))
         .finally(() => setProgress(false))
     }

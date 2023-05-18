@@ -11,7 +11,9 @@ interface Props extends Pick<Expense, 'shop' | 'category' | 'description'> {
 }
 
 export const ExpenseAutocompleteWrapper = (props: Props) => {
-  const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
+  const autocompleteOptions = useExpenseStore(
+    store => store.autocompleteOptions
+  )
   const categories = useExpenseStore(store => store.categories)
 
   return (

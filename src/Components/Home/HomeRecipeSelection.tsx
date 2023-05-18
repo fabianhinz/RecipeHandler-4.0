@@ -30,15 +30,24 @@ const useStyles = makeStyles(theme => ({
     transform: 'rotate(180deg)',
   },
   editorContainer: {
-    paddingLeft: theme.mixins.gutters().paddingLeft,
-    paddingRight: theme.mixins.gutters().paddingRight,
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: theme.spacing(3),
+      paddingRight: theme.spacing(3),
+    },
   },
   listSubheader: { backgroundColor: theme.palette.background.paper },
   editorCounterList: {
     display: 'flex',
     gap: theme.spacing(1),
     flexWrap: 'wrap',
-    ...theme.mixins.gutters(),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: theme.spacing(3),
+      paddingRight: theme.spacing(3),
+    },
   },
 }))
 
@@ -119,7 +128,9 @@ const HomeRecipeSelection = (props: Props) => {
       buttonProps={{ variant: 'text' }}>
       {authContext.user && (
         <Grid item xs={12}>
-          <ListSubheader className={classes.listSubheader}>Autoren</ListSubheader>
+          <ListSubheader className={classes.listSubheader}>
+            Autoren
+          </ListSubheader>
           <List>
             {recipesCounterByUserUid.map(([uid, counter]) => {
               const user = userContext.getByUid(uid)
@@ -128,11 +139,16 @@ const HomeRecipeSelection = (props: Props) => {
                 <ListItem
                   button
                   onClick={() => {
-                    props.onSelectedEditorChange(uid === props.selectedEditor ? '' : uid)
+                    props.onSelectedEditorChange(
+                      uid === props.selectedEditor ? '' : uid
+                    )
                   }}
                   key={uid}>
                   <ListItemAvatar>
-                    <AccountAvatar user={user} isUserSelected={props.selectedEditor === uid} />
+                    <AccountAvatar
+                      user={user}
+                      isUserSelected={props.selectedEditor === uid}
+                    />
                   </ListItemAvatar>
                   <ListItemText primary={user.username} secondary={counter} />
                 </ListItem>

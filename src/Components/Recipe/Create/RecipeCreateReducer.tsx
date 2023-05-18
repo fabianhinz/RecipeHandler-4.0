@@ -16,7 +16,10 @@ export interface RecipeCreateState {
   selectedTrial?: Trial
 }
 
-export type CreateChangeKey = keyof Pick<RecipeCreateState, 'ingredients' | 'description' | 'name'>
+export type CreateChangeKey = keyof Pick<
+  RecipeCreateState,
+  'ingredients' | 'description' | 'name'
+>
 export type AttachmentName = { old: string; new: string }
 
 type Action =
@@ -44,7 +47,7 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
     case 'previewChange':
       return { ...state, preview: !state.preview }
     case 'categoriesChange': {
-      let categories: Categories<string> = {}
+      const categories: Categories<string> = {}
       action.selectedCategories.forEach((value, type) => {
         categories[type] = value
       })
@@ -57,10 +60,17 @@ const reducer: Reducer<RecipeCreateState, Action> = (state, action) => {
       }
     }
     case 'decreaseAmount': {
-      return { ...state, amount: state.amount === 1 ? state.amount : --state.amount }
+      return {
+        ...state,
+        amount: state.amount === 1 ? state.amount : --state.amount,
+      }
     }
     case 'relatedRecipesChange': {
-      return { ...state, relatedRecipes: action.relatedRecipes, relatedRecipesDialog: false }
+      return {
+        ...state,
+        relatedRecipes: action.relatedRecipes,
+        relatedRecipesDialog: false,
+      }
     }
     case 'selectedTrialChange': {
       return { ...state, selectedTrial: action.selectedTrial }
@@ -89,7 +99,9 @@ const initialState: RecipeCreateState = {
   relatedRecipes: [],
 }
 
-export const useRecipeCreateReducer = (recipe?: RecipeCreateState | Recipe | null) => {
+export const useRecipeCreateReducer = (
+  recipe?: RecipeCreateState | Recipe | null
+) => {
   const [state, dispatch] = useReducer(reducer, { ...initialState, ...recipe })
   return { state, dispatch }
 }

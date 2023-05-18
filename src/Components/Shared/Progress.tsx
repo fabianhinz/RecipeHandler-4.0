@@ -36,7 +36,12 @@ const Progress = ({ variant }: Props) => {
   if (variant === 'absolute')
     return (
       <div className={classes.circularProgress}>
-        <CircularProgress color="secondary" disableShrink size={60} thickness={5.4} />
+        <CircularProgress
+          color="secondary"
+          disableShrink
+          size={60}
+          thickness={5.4}
+        />
       </div>
     )
 

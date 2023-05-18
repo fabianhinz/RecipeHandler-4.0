@@ -1,4 +1,11 @@
-import { FC, FunctionComponent, lazy, LazyExoticComponent, Suspense, SVGProps } from 'react'
+import {
+  FC,
+  FunctionComponent,
+  lazy,
+  LazyExoticComponent,
+  Suspense,
+  SVGProps,
+} from 'react'
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
@@ -13,6 +20,8 @@ import { ReactComponent as ImpressumIcon } from '@/icons/impressum.svg'
 import { ReactComponent as SearchIcon } from '@/icons/search.svg'
 import { ReactComponent as ShoppingCardIcon } from '@/icons/shopping.svg'
 import { ReactComponent as TrialsIcon } from '@/icons/trial.svg'
+
+import ErrorBoundary from '../ErrorBoundary'
 
 export const PATHS = {
   home: '/',
@@ -108,7 +117,9 @@ const renderRoute = ({ path, Component, BackgroundIcon }: AppRoute) => (
     exact
     render={routeProps => (
       <Suspense fallback={<Progress variant="fixed" />}>
-        <Component {...routeProps} />
+        <ErrorBoundary>
+          <Component {...routeProps} />
+        </ErrorBoundary>
         <Background Icon={BackgroundIcon} />
       </Suspense>
     )}

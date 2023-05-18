@@ -16,6 +16,7 @@ import DarkThemeIcon from '@material-ui/icons/BrightnessLowRounded'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import SearchIcon from '@material-ui/icons/SearchRounded'
+import { DocumentData, DocumentReference } from 'firebase/firestore'
 import {
   CloudOffOutline,
   CloudSync,
@@ -33,7 +34,7 @@ import { UserSettingChangeHandler } from './AccountUser'
 
 interface Props {
   user: User
-  userDoc: firebase.default.firestore.DocumentReference<firebase.default.firestore.DocumentData>
+  userDoc: DocumentReference<DocumentData>
   onUserSettingChange: UserSettingChangeHandler
 }
 
@@ -100,10 +101,15 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
               </ListItemIcon>
               <ListItemText
                 primary="Design"
-                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                secondaryTypographyProps={
+                  { component: 'div' } as TypographyProps
+                }
                 secondary={
                   <>
-                    <Typography gutterBottom variant="body2" color="textSecondary">
+                    <Typography
+                      gutterBottom
+                      variant="body2"
+                      color="textSecondary">
                       {user.muiTheme === 'dynamic'
                         ? 'Dynamisch'
                         : user.muiTheme === 'dark'
@@ -113,32 +119,50 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
                         : 'Hell'}
                     </Typography>
                     <Collapse in={showInfo}>
-                      <Typography gutterBottom variant="body2" color="textSecondary">
-                        Folgende Ausprägungen des Designs existieren: Dynamisch, Dunkel, Schwarz und
-                        Hell
+                      <Typography
+                        gutterBottom
+                        variant="body2"
+                        color="textSecondary">
+                        Folgende Ausprägungen des Designs existieren: Dynamisch,
+                        Dunkel, Schwarz und Hell
                       </Typography>
                     </Collapse>
                   </>
                 }
               />
             </ListItem>
-            <ListItem button onClick={onUserSettingChange('algoliaAdvancedSyntax')}>
+            <ListItem
+              button
+              onClick={onUserSettingChange('algoliaAdvancedSyntax')}>
               <ListItemIcon>
-                {user.algoliaAdvancedSyntax ? <DatabaseSearch /> : <SearchIcon />}
+                {user.algoliaAdvancedSyntax ? (
+                  <DatabaseSearch />
+                ) : (
+                  <SearchIcon />
+                )}
               </ListItemIcon>
               <ListItemText
                 primary="Erweiterte Abfragesyntax"
-                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                secondaryTypographyProps={
+                  { component: 'div' } as TypographyProps
+                }
                 secondary={
                   <>
-                    <Typography gutterBottom variant="body2" color="textSecondary">
+                    <Typography
+                      gutterBottom
+                      variant="body2"
+                      color="textSecondary">
                       {user.algoliaAdvancedSyntax ? 'aktiviert' : 'deaktiviert'}
                     </Typography>
                     <Collapse in={showInfo}>
-                      <Typography variant="body2" gutterBottom color="textSecondary">
-                        Suchanfragen die mit <b>doppelten Anführungszeichen</b> starten und enden
-                        werden als ganze Sätze interpretiert. Über den <b>Bindestrich</b> können
-                        Wörter explizit aus der Suche ausgeschlossen werden.
+                      <Typography
+                        variant="body2"
+                        gutterBottom
+                        color="textSecondary">
+                        Suchanfragen die mit <b>doppelten Anführungszeichen</b>{' '}
+                        starten und enden werden als ganze Sätze interpretiert.
+                        Über den <b>Bindestrich</b> können Wörter explizit aus
+                        der Suche ausgeschlossen werden.
                       </Typography>
                     </Collapse>
                   </>
@@ -147,20 +171,30 @@ const AccountUserSettings = ({ user, onUserSettingChange }: Props) => {
             </ListItem>
             <Divider variant="inset" />
             <ListItem button onClick={onUserSettingChange('bookmarkSync')}>
-              <ListItemIcon>{user.bookmarkSync ? <CloudSync /> : <CloudOffOutline />}</ListItemIcon>
+              <ListItemIcon>
+                {user.bookmarkSync ? <CloudSync /> : <CloudOffOutline />}
+              </ListItemIcon>
               <ListItemText
                 primary="Geräteübergreifende Lesezeichen"
-                secondaryTypographyProps={{ component: 'div' } as TypographyProps}
+                secondaryTypographyProps={
+                  { component: 'div' } as TypographyProps
+                }
                 secondary={
                   <>
-                    <Typography gutterBottom variant="body2" color="textSecondary">
+                    <Typography
+                      gutterBottom
+                      variant="body2"
+                      color="textSecondary">
                       {user.bookmarkSync ? 'aktiviert' : 'deaktiviert'}
                     </Typography>
                     <Collapse in={showInfo}>
-                      <Typography variant="body2" gutterBottom color="textSecondary">
-                        ist die Synchronisation aktiviert, so werden gesetzte Lesezeichen
-                        automatisch auf Geräte, auf denen derselbe Nutzer eingeloggt ist,
-                        übertragen.
+                      <Typography
+                        variant="body2"
+                        gutterBottom
+                        color="textSecondary">
+                        ist die Synchronisation aktiviert, so werden gesetzte
+                        Lesezeichen automatisch auf Geräte, auf denen derselbe
+                        Nutzer eingeloggt ist, übertragen.
                       </Typography>
                     </Collapse>
                   </>

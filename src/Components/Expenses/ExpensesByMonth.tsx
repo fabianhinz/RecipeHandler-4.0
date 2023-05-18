@@ -46,7 +46,9 @@ const ExpensesByMonth = (props: Props) => {
   const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
 
   const amountMemoized = useMemo(() => {
-    return props.expenses.map(e => e.amount).reduce((prev, curr) => prev + curr, 0)
+    return props.expenses
+      .map(e => e.amount)
+      .reduce((prev, curr) => prev + curr, 0)
   }, [props.expenses])
 
   if (hasActiveFilter && amountMemoized === 0) {
@@ -77,9 +79,17 @@ const ExpensesByMonth = (props: Props) => {
         <Grid container spacing={2}>
           <Grid item xs={12} />
           <Grid item xs={12}>
-            <Grid container wrap="nowrap" className={classes.chipContainer} spacing={1}>
+            <Grid
+              container
+              wrap="nowrap"
+              className={classes.chipContainer}
+              spacing={1}>
               {categories.map(category => (
-                <ExpenseCategoryChip key={category} category={category} expenses={props.expenses} />
+                <ExpenseCategoryChip
+                  key={category}
+                  category={category}
+                  expenses={props.expenses}
+                />
               ))}
             </Grid>
           </Grid>

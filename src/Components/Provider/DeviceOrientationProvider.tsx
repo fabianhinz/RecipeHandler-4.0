@@ -9,7 +9,8 @@ interface Orientation {
 
 const Context = createContext<Orientation | null>(null)
 
-export const useDeviceOrientationContext = () => useContext(Context) as Orientation
+export const useDeviceOrientationContext = () =>
+  useContext(Context) as Orientation
 
 const DeviceOrientationProvider: FC = ({ children }) => {
   const { isLowRes } = useBreakpointsContext()
@@ -27,12 +28,15 @@ const DeviceOrientationProvider: FC = ({ children }) => {
     }
 
     window.addEventListener('orientationchange', handleOrientationChange)
-    return () => window.removeEventListener('orientationchange', handleOrientationChange)
+    return () =>
+      window.removeEventListener('orientationchange', handleOrientationChange)
   }, [isLowRes])
 
   return (
     <>
-      <Context.Provider value={{ landscape: false, portrait: false }}>{children}</Context.Provider>
+      <Context.Provider value={{ landscape: false, portrait: false }}>
+        {children}
+      </Context.Provider>
     </>
   )
 }

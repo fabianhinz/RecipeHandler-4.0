@@ -13,6 +13,8 @@ import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
 import CheckIcon from '@material-ui/icons/Check'
 import DeleteIcon from '@material-ui/icons/Delete'
 import clsx from 'clsx'
+import { deleteDoc } from 'firebase/firestore'
+import { deleteObject, ref } from 'firebase/storage'
 import { useSnackbar } from 'notistack'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -21,9 +23,10 @@ import { Comments } from '@/Components/Comments/Comments'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useGridContext } from '@/Components/Provider/GridProvider'
 import { useSelectedAttachementContext } from '@/Components/Provider/SelectedAttachementProvider'
+import { storage } from '@/firebase/firebaseConfig'
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import { getResizedImagesWithMetadata } from '@/hooks/useAttachment'
 import { AllDataUrls, Trial } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS } from '@/theme'
 
 import TrialsDeleteAlert from './TrialsDeleteAlert'
@@ -99,7 +102,7 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
 
   useEffect(() => {
     let mounted = true
-    getResizedImagesWithMetadata(trial.fullPath).then(
+    void getResizedImagesWithMetadata(trial.fullPath).then(
       ({ fullDataUrl, mediumDataUrl, smallDataUrl }) => {
         if (!mounted) return
         setDataUrls({ fullDataUrl, mediumDataUrl, smallDataUrl })
@@ -115,8 +118,12 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
     // ! --> which is fine, we can recover comments even if the trial is lost
     try {
       setDeleteDisabled(true)
-      await FirebaseService.firestore.collection('trials').doc(trial.name).delete()
-      await FirebaseService.storageRef.child(trial.fullPath).delete()
+
+      await Promise.all([
+        deleteDoc(resolveDoc('trials', trial.name)),
+        deleteObject(ref(storage, trial.fullPath)),
+      ])
+
       setDeleteAlert(false)
     } catch (e) {
       enqueueSnackbar(e.message, { variant: 'error' })
@@ -126,7 +133,9 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
     }
   }
 
-  const selectionAwareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> = useMemo(
+  const selectionAwareBreakpoints: Partial<
+    Record<Breakpoint, boolean | GridSize>
+  > = useMemo(
     () => (selectionProps ? { xs: 12 } : gridBreakpointProps),
     [gridBreakpointProps, selectionProps]
   )
@@ -145,9 +154,9 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
         <Card className={classes.card}>
           <AccountChip
             uid={trial.editorUid}
-            enhanceLabel={`am ${FirebaseService.createDateFromTimestamp(
-              trial.createdDate
-            ).toLocaleDateString()}`}
+            enhanceLabel={`am ${trial.createdDate
+              .toDate()
+              .toLocaleDateString()}`}
             position="absolute"
             placement="top"
           />
@@ -161,7 +170,9 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
               <CheckIcon className={classes.selectionCheckIcon} />
             </div>
 
-            <CardMedia image={dataUrls?.mediumDataUrl} className={classes.cardMedia}>
+            <CardMedia
+              image={dataUrls?.mediumDataUrl}
+              className={classes.cardMedia}>
               {/* make mui happy */}
               <></>
             </CardMedia>
@@ -169,7 +180,11 @@ const TrialsCard = ({ trial, selectionProps, onDelete }: Props) => {
 
           {user && (
             <Slide direction="up" in>
-              <Grid container justifyContent="flex-end" spacing={1} className={classes.actions}>
+              <Grid
+                container
+                justifyContent="flex-end"
+                spacing={1}
+                className={classes.actions}>
                 <Grid item xs="auto">
                   <Comments
                     highContrast

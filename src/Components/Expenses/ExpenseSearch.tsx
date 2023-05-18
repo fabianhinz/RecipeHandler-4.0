@@ -19,7 +19,10 @@ import { useMemo, useState } from 'react'
 
 import { useDisableScrollEffect } from '@/hooks/useDisableScrollEffect'
 import { ReactComponent as FirebaseIcon } from '@/icons/firebase.svg'
-import useExpenseStore, { AutocompleteOptionGroups, ExpenseFilter } from '@/store/ExpenseStore'
+import useExpenseStore, {
+  AutocompleteOptionGroups,
+  ExpenseFilter,
+} from '@/store/ExpenseStore'
 import { BORDER_RADIUS } from '@/theme'
 
 import NotFound from '../Shared/NotFound'
@@ -34,7 +37,8 @@ const useStyles = makeStyles<Theme, { open: boolean }>(theme => ({
         : theme.palette.type === 'dark'
         ? 'rgba(255, 255, 255, 0.1)'
         : 'rgba(0, 0, 0, 0.08)',
-    boxShadow: ({ open }) => (theme.palette.type === 'light' && open ? theme.shadows[1] : 'unset'),
+    boxShadow: ({ open }) =>
+      theme.palette.type === 'light' && open ? theme.shadows[1] : 'unset',
     borderRadius: BORDER_RADIUS,
     padding: theme.spacing(1),
     transition: theme.transitions.create('all', {
@@ -45,7 +49,8 @@ const useStyles = makeStyles<Theme, { open: boolean }>(theme => ({
   },
   searchInput: {
     ...theme.typography.h6,
-    color: ({ open }) => (open || theme.palette.type === 'light' ? '#000' : '#fff'),
+    color: ({ open }) =>
+      open || theme.palette.type === 'light' ? '#000' : '#fff',
   },
   expenseSearchGrid: {
     display: 'grid',
@@ -85,24 +90,29 @@ const LOCALIZED_LABELS: Record<AutocompleteOptionGroups, string> = {
 
 interface ExpenseGroupProps extends AutocompleteRenderGroupParams {
   collapsed: Record<AutocompleteOptionGroups, boolean>
-  onCollapsedChange: (group: AutocompleteOptionGroups, collapsed: boolean) => void
+  onCollapsedChange: (
+    group: AutocompleteOptionGroups,
+    collapsed: boolean
+  ) => void
 }
 
-const useExpenseGroupStyles = makeStyles<Theme, { collapsed: boolean }>(theme => ({
-  listSubheader: {
-    display: 'flex',
-    gap: theme.spacing(1),
-    alignItems: 'center',
-    backgroundColor: theme.palette.background.default,
-    boxShadow: theme.shadows[1],
-    padding: theme.spacing(0, 1),
-    cursor: 'pointer',
-  },
-  chevron: {
-    transition: theme.transitions.create('transform'),
-    transform: props => `rotate(${props.collapsed ? 90 : 0}deg)`,
-  },
-}))
+const useExpenseGroupStyles = makeStyles<Theme, { collapsed: boolean }>(
+  theme => ({
+    listSubheader: {
+      display: 'flex',
+      gap: theme.spacing(1),
+      alignItems: 'center',
+      backgroundColor: theme.palette.background.default,
+      boxShadow: theme.shadows[1],
+      padding: theme.spacing(0, 1),
+      cursor: 'pointer',
+    },
+    chevron: {
+      transition: theme.transitions.create('transform'),
+      transform: props => `rotate(${props.collapsed ? 90 : 0}deg)`,
+    },
+  })
+)
 
 const ExpenseGroup = (props: ExpenseGroupProps) => {
   const group = props.group as AutocompleteOptionGroups
@@ -114,7 +124,8 @@ const ExpenseGroup = (props: ExpenseGroupProps) => {
       <ListSubheader
         onClick={() => props.onCollapsedChange(group, !collapsed)}
         className={classes.listSubheader}>
-        <ChevronRight className={classes.chevron} /> <span>{LOCALIZED_LABELS[group]}</span>
+        <ChevronRight className={classes.chevron} />{' '}
+        <span>{LOCALIZED_LABELS[group]}</span>
       </ListSubheader>
       <Collapse in={collapsed}>{props.children}</Collapse>
     </div>
@@ -141,7 +152,9 @@ export const ExpenseSearch = () => {
 
   const expenseFilter = useExpenseStore(store => store.expenseFilter)
   const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
-  const autocompleteOptions = useExpenseStore(store => store.autocompleteOptions)
+  const autocompleteOptions = useExpenseStore(
+    store => store.autocompleteOptions
+  )
 
   useDisableScrollEffect(open)
 
@@ -186,7 +199,10 @@ export const ExpenseSearch = () => {
   return (
     <Container maxWidth="md" className={classes.container}>
       <Autocomplete
-        classes={{ listbox: classes.autoCompleteListBox, paper: classes.autoCompletePaper }}
+        classes={{
+          listbox: classes.autoCompleteListBox,
+          paper: classes.autoCompletePaper,
+        }}
         multiple
         renderTags={(tags, getTagProps) => {
           const tagsToDisplay = tags.slice(0, limitTagsMemoized)
@@ -198,12 +214,17 @@ export const ExpenseSearch = () => {
                 <Chip
                   key={`${tag.group}:${tag.value}`}
                   label={`${LOCALIZED_LABELS[tag.group]}: ${tag.value}`}
-                  style={{ maxWidth: smAndMd ? 200 : 300, boxShadow: theme.shadows[1] }}
+                  style={{
+                    maxWidth: smAndMd ? 200 : 300,
+                    boxShadow: theme.shadows[1],
+                  }}
                   {...getTagProps({ index })}
                 />
               ))}
               {potentialTagOverflow && xsOnly && (
-                <Typography style={{ whiteSpace: 'nowrap' }}>{tags.length} Filter aktiv</Typography>
+                <Typography style={{ whiteSpace: 'nowrap' }}>
+                  {tags.length} Filter aktiv
+                </Typography>
               )}
               {potentialTagOverflow && !xsOnly && (
                 <Typography>+{tags.length - tagsToDisplay.length}</Typography>
@@ -234,7 +255,10 @@ export const ExpenseSearch = () => {
         onChange={async (_, newValue) => {
           const latestEntry = newValue.at(-1)
           if (!latestEntry) {
-            useExpenseStore.setState({ expenseFilter: {}, hasActiveFilter: false })
+            useExpenseStore.setState({
+              expenseFilter: {},
+              hasActiveFilter: false,
+            })
             return
           }
 
@@ -254,7 +278,12 @@ export const ExpenseSearch = () => {
         open={open}
         onInputChange={(_, v) => {
           if (v.length > 0) {
-            setCollapsed({ category: true, creator: true, description: true, shop: true })
+            setCollapsed({
+              category: true,
+              creator: true,
+              description: true,
+              shop: true,
+            })
           }
         }}
         renderInput={params => (

@@ -30,7 +30,13 @@ interface Props extends Pick<ChipProps, 'variant'> {
   enhanceLabel?: string
 }
 
-const AccountChip = ({ uid, variant, position, enhanceLabel, placement }: Props) => {
+const AccountChip = ({
+  uid,
+  variant,
+  position,
+  enhanceLabel,
+  placement,
+}: Props) => {
   const { getByUid } = useUsersContext()
   const user: User | undefined = getByUid(uid)
 
@@ -48,7 +54,11 @@ const AccountChip = ({ uid, variant, position, enhanceLabel, placement }: Props)
             position === 'absolute' && classes.absolute,
             placement && classes[placement]
           )}
-          avatar={<Avatar src={user.profilePicture}>{user.username.slice(0, 1)}</Avatar>}
+          avatar={
+            <Avatar src={user.profilePicture}>
+              {user.username.slice(0, 1)}
+            </Avatar>
+          }
           label={`${user.username} ${enhanceLabel || ''}`}
         />
       )}

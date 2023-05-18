@@ -12,14 +12,18 @@ import {
 } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
 import clsx from 'clsx'
+import { FirebaseError } from 'firebase/app'
+import { setDoc } from 'firebase/firestore'
+import { ref, uploadString } from 'firebase/storage'
 import { CloudUpload, HeartBroken } from 'mdi-material-ui'
 import { useSnackbar } from 'notistack'
 import { useCallback, useEffect, useState } from 'react'
 import { Prompt } from 'react-router-dom'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
+import { storage } from '@/firebase/firebaseConfig'
+import { resolveDoc } from '@/firebase/firebaseQueries'
 import { AttachmentDoc, DataUrl } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 
 const useStyles = makeStyles(theme => ({
   avatar: {
@@ -83,25 +87,28 @@ const AttachmentUploadListItem = ({
   useEffect(() => {
     let mounted = true
 
-    const docRef = FirebaseService.firestore
-      .collection('recipes')
-      .doc(recipeName)
-      .collection('attachments')
-      .doc()
+    const docRef = resolveDoc(
+      `recipes/${recipeName}/attachments`,
+      undefined,
+      true
+    )
+    const storageRef = ref(
+      storage,
+      `recipes/${recipeName}/${user?.uid}/${docRef.id}/${attachment.name}`
+    )
 
-    FirebaseService.storageRef
-      .child(`recipes/${recipeName}/${user?.uid}/${docRef.id}/${attachment.name}`)
-      .putString(attachment.dataUrl, 'data_url', { cacheControl: 'public, max-age=31536000' })
+    uploadString(storageRef, attachment.dataUrl, 'data_url', {
+      cacheControl: 'public, max-age=31536000',
+    })
       .then(snapshot => {
         const { fullPath, size, name } = snapshot.metadata
-        docRef
-          .set({
-            fullPath,
-            size,
-            name,
-            editorUid: user?.uid,
-            createdDate: attachment.createdDate,
-          } as AttachmentDoc)
+        setDoc(docRef, {
+          fullPath,
+          size,
+          name,
+          editorUid: user?.uid,
+          createdDate: attachment.createdDate,
+        } as AttachmentDoc)
           .then(() => {
             setUploading(false)
             setTimeout(() => {
@@ -112,8 +119,8 @@ const AttachmentUploadListItem = ({
             setError(true)
           })
       })
-      .catch((e: any) => {
-        if (e.code_ === 'storage/unauthorized') {
+      .catch((e: FirebaseError) => {
+        if (e.code === 'storage/unauthorized') {
           enqueueSnackbar('fehlende Berechtigungen', { variant: 'error' })
           onUploadComplete(attachment.name)
         }
@@ -131,8 +138,20 @@ const AttachmentUploadListItem = ({
       <ListItem>
         <ListItemAvatar>
           <Avatar
-            className={clsx(classes.avatar, !uploading && classes.done, error && classes.error)}>
-            {uploading ? error ? <HeartBroken /> : <CloudUpload /> : <CheckIcon />}
+            className={clsx(
+              classes.avatar,
+              !uploading && classes.done,
+              error && classes.error
+            )}>
+            {uploading ? (
+              error ? (
+                <HeartBroken />
+              ) : (
+                <CloudUpload />
+              )
+            ) : (
+              <CheckIcon />
+            )}
             {uploading && !error && (
               <CircularProgress
                 disableShrink
@@ -173,7 +192,9 @@ const AttachmentUpload = ({
   dropzoneAlert,
   recipeName,
 }: UploadContainerProps) => {
-  const [uploads, setUploads] = useState<Map<string, AttachmentDoc & DataUrl>>(new Map())
+  const [uploads, setUploads] = useState<Map<string, AttachmentDoc & DataUrl>>(
+    new Map()
+  )
   const classes = useStyles()
 
   useEffect(() => {
@@ -181,7 +202,8 @@ const AttachmentUpload = ({
 
     setUploads(previous => {
       for (const attachment of dropzoneAttachments) {
-        if (!previous.get(attachment.name)) previous.set(attachment.name, attachment)
+        if (!previous.get(attachment.name))
+          previous.set(attachment.name, attachment)
       }
       return new Map(previous)
     })
@@ -195,7 +217,9 @@ const AttachmentUpload = ({
   }, [])
 
   return (
-    <Slide in={Boolean(dropzoneAlert || dropzoneAttachments.length > 0)} direction="left">
+    <Slide
+      in={Boolean(dropzoneAlert || dropzoneAttachments.length > 0)}
+      direction="left">
       <Card className={classes.card} elevation={8}>
         {uploads.size > 0 && (
           <List>

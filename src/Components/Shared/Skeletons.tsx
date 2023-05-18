@@ -4,7 +4,7 @@ import { Skeleton } from '@material-ui/lab'
 
 import { RECIPE_CARD_HEIGHT } from '@/Components/Home/HomeRecipeCard'
 import { useGridContext } from '@/Components/Provider/GridProvider'
-import { FirebaseService } from '@/services/firebase'
+import { queryLimits } from '@/firebase/firebaseQueries'
 
 const useStyles = makeStyles(theme => {
   const trial = {
@@ -52,7 +52,9 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
 
   if (!visible) return <></>
 
-  const variantAvareBreakpoints: Partial<Record<Breakpoint, boolean | GridSize>> =
+  const variantAvareBreakpoints: Partial<
+    Record<Breakpoint, boolean | GridSize>
+  > =
     variant === 'trialsSelection'
       ? { xs: 12 }
       : variant === 'recipe'
@@ -61,14 +63,22 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
 
   return (
     <>
-      {new Array(numberOfSkeletons || FirebaseService.QUERY_LIMIT)
+      {new Array(numberOfSkeletons || queryLimits.desktop)
         .fill(1)
         .map((_skeleton, index) => (
           <Grid {...variantAvareBreakpoints} item key={index}>
-            <Grid container spacing={2} justifyContent="space-between" alignItems="center">
+            <Grid
+              container
+              spacing={2}
+              justifyContent="space-between"
+              alignItems="center">
               <Grid xs={12} item>
                 <Card>
-                  <Skeleton animation="wave" className={classes[variant]} variant="rect" />
+                  <Skeleton
+                    animation="wave"
+                    className={classes[variant]}
+                    variant="rect"
+                  />
                 </Card>
               </Grid>
             </Grid>

@@ -1,12 +1,19 @@
-import { CardActionArea, Grid, makeStyles, Paper, Typography } from '@material-ui/core'
+import {
+  CardActionArea,
+  Grid,
+  makeStyles,
+  Paper,
+  Typography,
+} from '@material-ui/core'
 import green from '@material-ui/core/colors/green'
+import { onSnapshot } from 'firebase/firestore'
 import { memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useGridContext } from '@/Components/Provider/GridProvider'
 import { PATHS } from '@/Components/Routes/Routes'
 import Skeletons from '@/Components/Shared/Skeletons'
-import { FirebaseService } from '@/services/firebase'
+import { resolveCookCounterOrderedByCreatedDateDescWhereValueIsZero } from '@/firebase/firebaseQueries'
 
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
@@ -28,14 +35,13 @@ const HomeNew = () => {
   const classes = useStyles()
 
   useEffect(() => {
-    return FirebaseService.firestore
-      .collection('cookCounter')
-      .orderBy('createdDate', 'desc')
-      .where('value', '==', 0)
-      .onSnapshot(snapshot => {
+    return onSnapshot(
+      resolveCookCounterOrderedByCreatedDateDescWhereValueIsZero(),
+      snapshot => {
         setRecipeNames(snapshot.docs.map(doc => doc.id))
         setLoading(false)
-      })
+      }
+    )
   }, [])
 
   return (
@@ -46,7 +52,10 @@ const HomeNew = () => {
             <Link to={PATHS.details(recipeName)}>
               <CardActionArea>
                 <Paper className={classes.paper}>
-                  <Typography noWrap className={classes.typography} variant="h6">
+                  <Typography
+                    noWrap
+                    className={classes.typography}
+                    variant="h6">
                     {recipeName}
                   </Typography>
                 </Paper>
@@ -56,7 +65,11 @@ const HomeNew = () => {
         </Grid>
       ))}
 
-      <Skeletons variant="cookCounter" visible={loading} numberOfSkeletons={12} />
+      <Skeletons
+        variant="cookCounter"
+        visible={loading}
+        numberOfSkeletons={12}
+      />
     </Grid>
   )
 }

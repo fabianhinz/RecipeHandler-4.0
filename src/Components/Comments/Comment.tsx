@@ -3,6 +3,7 @@ import {
   Fab,
   Grid,
   IconButton,
+  Link,
   List,
   ListItem,
   ListItemText,
@@ -12,14 +13,15 @@ import {
   Typography,
 } from '@material-ui/core'
 import { AvatarGroup } from '@material-ui/lab'
+import { onSnapshot, setDoc, Timestamp } from 'firebase/firestore'
 import { StickerEmoji } from 'mdi-material-ui'
 import { memo, useEffect, useMemo, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
+import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
 import { Comment as CommentModel, CommentReaction, Recipe } from '@/model/model'
 import { CommentsCollections } from '@/model/model'
-import { FirebaseService } from '@/services/firebase'
 import { BORDER_RADIUS_HUGE } from '@/theme'
 
 const useStyles = makeStyles(theme => ({
@@ -60,20 +62,30 @@ interface CommentProps extends Pick<Recipe, 'name'>, CommentsCollections {
   comment: CommentModel
 }
 
-const includesUrl = (value: string) => value.includes('http://') || value.includes('https://')
+const includesUrl = (value: string) =>
+  value.includes('http://') || value.includes('https://')
 
 const getCommentTypography = (comment: string): React.ReactNode => {
-  if (!includesUrl(comment)) return comment
-  const complexComment: Array<any> = []
+  if (!includesUrl(comment)) {
+    return comment
+  }
+
+  const complexComment: Array<unknown> = []
 
   comment.split(' ').forEach(value => {
-    if (includesUrl(value))
+    if (includesUrl(value)) {
       complexComment.push(
-        <a href={value} target="_blank" rel="noopener noreferrer">
+        <Link
+          href={value}
+          color="primary"
+          target="_blank"
+          rel="noopener noreferrer">
           Link
-        </a>
+        </Link>
       )
-    else complexComment.push(<>{value}</>)
+    } else {
+      complexComment.push(<>{value}</>)
+    }
   })
 
   return (
@@ -86,38 +98,38 @@ const getCommentTypography = (comment: string): React.ReactNode => {
 }
 
 const Comment = ({ comment, name, collection }: CommentProps) => {
-  const [emoticonAnchorEl, setEmoticonAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [emoticonAnchorEl, setEmoticonAnchorEl] =
+    useState<HTMLButtonElement | null>(null)
   const [reactions, setReactions] = useState<CommentReaction[]>([])
 
   const classes = useStyles()
   const { getByUid } = useUsersContext()
   const { user: currentUser } = useFirebaseAuthContext()
 
-  const reactionsFirestoreRef = useMemo(
-    () =>
-      FirebaseService.firestore
-        .collection(collection)
-        .doc(name)
-        .collection('comments')
-        .doc(comment.documentId)
-        .collection('reactions'),
-
-    [collection, comment.documentId, name]
-  )
+  const reactionsFirestoreRef = useMemo(() => {
+    return resolveCollection(
+      `${collection}/${name}/comments/${comment.documentId}/reactions`
+    )
+  }, [collection, comment.documentId, name])
 
   useEffect(() => {
-    reactionsFirestoreRef?.onSnapshot(querySnapshot =>
-      setReactions(querySnapshot.docs.map(doc => ({ ...doc.data() } as CommentReaction)))
-    )
+    return onSnapshot(reactionsFirestoreRef, querySnapshot => {
+      setReactions(
+        querySnapshot.docs.map(doc => ({ ...doc.data() } as CommentReaction))
+      )
+    })
   }, [reactionsFirestoreRef])
 
-  const handleEmojiClick = (emoji: string) => {
+  const handleEmojiClick = async (emoji: string) => {
     setEmoticonAnchorEl(null)
-    if (!currentUser) return
-    reactionsFirestoreRef?.doc(currentUser.uid).set({
+    if (!currentUser) {
+      return
+    }
+    const docRef = resolveDoc(reactionsFirestoreRef, currentUser.uid)
+    await setDoc(docRef, {
       emoji,
       editorUid: currentUser.uid,
-      createdDate: FirebaseService.createTimestampFromDate(new Date()),
+      createdDate: Timestamp.fromDate(new Date()),
     } as CommentReaction)
   }
 
@@ -130,16 +142,16 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
           <Grid container wrap="nowrap" spacing={1} alignItems="center">
             {commentOwner?.profilePicture && (
               <Grid item>
-                <Avatar className={classes.avatar} src={commentOwner.profilePicture}></Avatar>
+                <Avatar
+                  className={classes.avatar}
+                  src={commentOwner.profilePicture}></Avatar>
               </Grid>
             )}
             <Grid item>
               <div className={classes.comment}>
                 <Typography gutterBottom>
                   <b>{commentOwner?.username}: </b>
-                  {FirebaseService.createDateFromTimestamp(
-                    comment.createdDate
-                  ).toLocaleDateString()}
+                  {comment.createdDate.toDate().toLocaleDateString()}
                 </Typography>
 
                 <Typography>{getCommentTypography(comment.comment)}</Typography>
@@ -160,9 +172,12 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
             title={
               <List disablePadding dense>
                 {reactions.map(reaction => (
-                  <ListItem key={`${reaction.createdDate}-${reaction.editorUid}`}>
+                  <ListItem
+                    key={`${reaction.createdDate}-${reaction.editorUid}`}>
                     <ListItemText
-                      primary={`${getByUid(reaction.editorUid)?.username} ${reaction.emoji}`}
+                      primary={`${getByUid(reaction.editorUid)?.username} ${
+                        reaction.emoji
+                      }`}
                     />
                   </ListItem>
                 ))}
@@ -216,5 +231,7 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
 export default memo(
   Comment,
   (prev, next) =>
-    prev.collection === next.collection && prev.comment === next.comment && prev.name === next.name
+    prev.collection === next.collection &&
+    prev.comment === next.comment &&
+    prev.name === next.name
 )

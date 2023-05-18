@@ -1,12 +1,13 @@
 import { Grid, Tooltip } from '@material-ui/core'
 import SatisfactionBackgroundIcon from '@material-ui/icons/SupervisedUserCircle'
 import { Rating } from '@material-ui/lab'
-import { ReactText, useCallback, useEffect, useMemo, useState } from 'react'
+import { onSnapshot, setDoc } from 'firebase/firestore'
+import { ReactText, useCallback, useEffect, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import StyledCard from '@/Components/Shared/StyledCard'
-import { FirebaseService } from '@/services/firebase'
+import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
 
 import SatisfactionIconContainer from './SatisfactionIconContainer'
 import SatisfactionUser from './SatisfactionUser'
@@ -16,30 +17,35 @@ interface Props {
 }
 
 const Satisfaction = ({ recipeName }: Props) => {
-  const [satisfaction, setSatisfaction] = useState<Map<string, number>>(new Map())
+  const [satisfaction, setSatisfaction] = useState<Map<string, number>>(
+    new Map()
+  )
   const [tooltipTitle, setTooltipTitle] = useState<ReactText>('')
 
   const { user } = useFirebaseAuthContext()
   const { userIds } = useUsersContext()
 
-  const memoSatisfactionCollection = useMemo(
-    () =>
-      FirebaseService.firestore.collection('recipes').doc(recipeName).collection('satisfaction'),
-    [recipeName]
-  )
+  useEffect(() => {
+    return onSnapshot(
+      resolveCollection(`recipes/${recipeName}/satisfaction`),
+      querySnapshot =>
+        setSatisfaction(
+          new Map(querySnapshot.docs.map(doc => [doc.id, doc.data().value]))
+        )
+    )
+  }, [recipeName])
 
-  useEffect(
-    () =>
-      memoSatisfactionCollection.onSnapshot(querySnapshot =>
-        setSatisfaction(new Map(querySnapshot.docs.map(doc => [doc.id, doc.data().value])))
-      ),
-    [memoSatisfactionCollection]
-  )
+  const handleSatisfactionChange = async (
+    _event: React.ChangeEvent<unknown>,
+    value: number | null
+  ) => {
+    if (!user) {
+      return
+    }
 
-  const handleSatisfactionChange = (_event: React.ChangeEvent<{}>, value: number | null) => {
-    if (!user) return
-
-    memoSatisfactionCollection.doc(user.uid).set({ value })
+    await setDoc(resolveDoc(`recipes/${recipeName}/satisfaction`, user.uid), {
+      value,
+    })
   }
 
   const satisfactionValueOrNull = useCallback(
@@ -47,7 +53,10 @@ const Satisfaction = ({ recipeName }: Props) => {
     [satisfaction]
   )
 
-  const handleActiveChange = (_event: React.ChangeEvent<{}>, value: number) => {
+  const handleActiveChange = (
+    _event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
     switch (value) {
       case 1: {
         setTooltipTitle('Das war wohl nix')
@@ -96,7 +105,11 @@ const Satisfaction = ({ recipeName }: Props) => {
           .filter(uid => uid !== user?.uid)
           .map(uid => (
             <Grid item key={uid}>
-              <SatisfactionUser disabled value={satisfactionValueOrNull(uid)} uid={uid} />
+              <SatisfactionUser
+                disabled
+                value={satisfactionValueOrNull(uid)}
+                uid={uid}
+              />
             </Grid>
           ))}
       </Grid>
