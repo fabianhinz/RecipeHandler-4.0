@@ -127,7 +127,7 @@ export const resolveCookCounterOrderedByCreatedDateDescWhereValueIsZero =
     return query(
       resolveCollection('cookCounter'),
       orderBy('createdDate', 'desc'),
-      where('value', '==', '0')
+      where('value', '==', 0)
     )
   }
 
