@@ -20,11 +20,12 @@ const ExpenseAutocomplete = (props: Props) => (
     handleHomeEndKeys
     fullWidth
     value={props.value}
-    onChange={(_, newValue: string | null) => {
+    onChange={(_, value: string | null) => {
+      const trimmedValue = value?.trim()
       if (props.clearable) {
-        props.onValueChange(newValue ?? '')
-      } else if (newValue) {
-        props.onValueChange(newValue)
+        props.onValueChange(trimmedValue ?? '')
+      } else if (trimmedValue) {
+        props.onValueChange(trimmedValue)
       }
     }}
     filterOptions={(options, filterState) => {
