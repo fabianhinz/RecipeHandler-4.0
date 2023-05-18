@@ -289,6 +289,7 @@ const ExpenseDialog = (props: Props) => {
                   return (
                     <Grid item key={user}>
                       <Chip
+                        disabled={relatedUsers.length === 1 && splitActive}
                         icon={
                           <Zoom mountOnEnter unmountOnExit in={splitActive}>
                             <Euro />
