@@ -37,7 +37,7 @@ interface AuthContext {
   user: User | undefined
   shoppingList: ShoppingListItem[]
   loginEnabled: boolean
-  unsafeShoppingListRef: { current?: DocumentReference<DocumentData> }
+  shoppingListRef: { current?: DocumentReference<DocumentData> }
   reorderShoppingList: (
     reorderParams: ReorderParams<ShoppingListItem>
   ) => Promise<void>
@@ -47,7 +47,7 @@ const Context = createContext<AuthContext>({
   user: undefined,
   shoppingList: [],
   loginEnabled: false,
-  unsafeShoppingListRef: { current: undefined },
+  shoppingListRef: { current: undefined },
   reorderShoppingList: async (reorderParams: ReorderParams<ShoppingListItem>) =>
     undefined,
 })
@@ -85,7 +85,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
   const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([])
 
   const unsafeShoppingListRef =
-    useRef<AuthContext['unsafeShoppingListRef']['current']>()
+    useRef<AuthContext['shoppingListRef']['current']>()
 
   const classes = useStyles()
 
@@ -204,7 +204,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
         user,
         loginEnabled,
         shoppingList,
-        unsafeShoppingListRef,
+        shoppingListRef: unsafeShoppingListRef,
         reorderShoppingList,
       }}>
       {authReady ? (

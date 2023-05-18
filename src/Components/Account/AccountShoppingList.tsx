@@ -9,7 +9,6 @@ import EntryGridContainer from '@/Components/Shared/EntryGridContainer'
 import NotFound from '@/Components/Shared/NotFound'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 
-import { useSafeShoppingListRef } from '../../hooks/useSafeShoppingListRef'
 import AccountShoppingListInput from './AccountShoppingListInput'
 import AccountShoppingListItem from './AccountShoppingListItem'
 
@@ -17,8 +16,8 @@ const AccountUserShoppingList = () => {
   const [recipeRefs, setRecipeRefs] = useState<Set<string>>(new Set())
   const [tagFilter, setTagFilter] = useState<string | undefined>()
 
-  const { shoppingList, reorderShoppingList } = useFirebaseAuthContext()
-  const shoppingListRef = useSafeShoppingListRef()
+  const { shoppingList, reorderShoppingList, shoppingListRef } =
+    useFirebaseAuthContext()
 
   useDocumentTitle(
     `Einkaufsliste (${shoppingList.filter(item => !item.checked).length})`
@@ -43,17 +42,19 @@ const AccountUserShoppingList = () => {
       const list = [...shoppingList]
       list[index].checked = checked
 
-      await setDoc(shoppingListRef, { list })
+      if (shoppingListRef.current) {
+        await setDoc(shoppingListRef.current, { list })
+      }
     }
   }
 
   const handleDelete = (index: number) => {
     return async () => {
-      if (!shoppingListRef) {
+      if (!shoppingListRef.current) {
         throw new Error('cannot set shoppinglist without a document reference')
       }
 
-      await setDoc(shoppingListRef, {
+      await setDoc(shoppingListRef.current, {
         list: shoppingList.filter((_, itemIndex) => itemIndex !== index),
       })
     }

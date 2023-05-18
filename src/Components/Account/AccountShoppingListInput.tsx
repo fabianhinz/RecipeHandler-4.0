@@ -12,8 +12,6 @@ import React, { useMemo, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 
-import { useSafeShoppingListRef } from '../../hooks/useSafeShoppingListRef'
-
 const useStyles = makeStyles(theme => ({
   textFieldHelperRoot: {
     display: 'flex',
@@ -26,16 +24,17 @@ const AccountShoppingListInput = (props: {
   tagFilter: string | undefined
   onTagFilterChange: (newFilter: string | undefined) => void
 }) => {
-  const { shoppingList } = useFirebaseAuthContext()
-  const shoppingListRef = useSafeShoppingListRef()
+  const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
   const [textFieldValue, setTextFieldValue] = useState('')
   const classes = useStyles()
   const theme = useTheme()
 
   const handleDeleteAll = async () => {
-    await setDoc(shoppingListRef, {
-      list: [],
-    })
+    if (shoppingListRef.current) {
+      await setDoc(shoppingListRef.current, {
+        list: [],
+      })
+    }
   }
 
   const memoizedTags = useMemo(() => {
@@ -77,7 +76,9 @@ const AccountShoppingListInput = (props: {
     ]
 
     setTextFieldValue('')
-    await setDoc(shoppingListRef, { list })
+    if (shoppingListRef.current) {
+      await setDoc(shoppingListRef.current, { list })
+    }
   }
 
   return (

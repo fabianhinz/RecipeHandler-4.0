@@ -28,8 +28,6 @@ import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvid
 import { PATHS } from '@/Components/Routes/Routes'
 import { GrowIn } from '@/Components/Shared/Transitions'
 
-import { useSafeShoppingListRef } from '../../hooks/useSafeShoppingListRef'
-
 const useStyles = makeStyles(theme => ({
   checkboxRoot: {
     padding: theme.spacing(0.5),
@@ -49,11 +47,10 @@ interface Props extends Omit<ReactMarkdownOptions, 'components' | 'className'> {
 }
 
 const MarkdownRenderer = (props: Props) => {
-  const { user } = useFirebaseAuthContext()
+  const { user, shoppingListRef } = useFirebaseAuthContext()
   const match = useRouteMatch()
   const classes = useStyles()
   const { shoppingList } = useFirebaseAuthContext()
-  const shoppingListRef = useSafeShoppingListRef()
 
   const markdownPropsToGrocery = (children: any[]) => {
     return children[0]
@@ -94,7 +91,9 @@ const MarkdownRenderer = (props: Props) => {
         )
       }
 
-      await setDoc(shoppingListRef, { list })
+      if (shoppingListRef.current) {
+        await setDoc(shoppingListRef.current, { list })
+      }
     }
   }
 

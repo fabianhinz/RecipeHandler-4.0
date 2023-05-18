@@ -20,8 +20,6 @@ import { Draggable, DraggingStyle, NotDraggingStyle } from 'react-beautiful-dnd'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { ShoppingListItem } from '@/model/model'
 
-import { useSafeShoppingListRef } from '../../hooks/useSafeShoppingListRef'
-
 const useStyles = makeStyles<Theme, { muted: boolean }>(theme => ({
   checked: {
     textDecoration: 'line-through',
@@ -55,8 +53,7 @@ const AccountShoppingListItem = (props: Props) => {
   const [isEditMode, setIsEditMode] = useState(false)
   const [editValue, setEditValue] = useState('')
 
-  const { shoppingList } = useFirebaseAuthContext()
-  const shoppingListRef = useSafeShoppingListRef()
+  const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
 
   const getItemStyle = useCallback(
     (
@@ -89,7 +86,9 @@ const AccountShoppingListItem = (props: Props) => {
     }
 
     shoppingList[props.index].value = editValue
-    await setDoc(shoppingListRef, { list: shoppingList })
+    if (shoppingListRef.current) {
+      await setDoc(shoppingListRef.current, { list: shoppingList })
+    }
     setIsEditMode(false)
   }
 
