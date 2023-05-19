@@ -118,9 +118,6 @@ const AccountShoppingListItem = (props: Props) => {
             />
           </ListItemIcon>
           <ListItemText
-            classes={{
-              primary: clsx(props.item.checked && classes.checked),
-            }}
             disableTypography
             primary={
               <>
@@ -140,6 +137,7 @@ const AccountShoppingListItem = (props: Props) => {
                 ) : (
                   <>
                     <Typography
+                      className={clsx(props.item.checked && classes.checked)}
                       style={{ cursor: 'edit' }}
                       onClick={handleEnterEditMode}>
                       {props.item.value}

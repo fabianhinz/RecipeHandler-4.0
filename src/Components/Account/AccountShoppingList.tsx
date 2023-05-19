@@ -61,7 +61,7 @@ const AccountUserShoppingList = () => {
   }
 
   const handleDragEnd = async (result: DropResult) => {
-    if (result.destination === undefined) {
+    if (!result.destination) {
       return
     }
     await reorderShoppingList({
