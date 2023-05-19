@@ -37,7 +37,7 @@
     "react-draggable": "^4.4.5",
     "react-dropzone": "^11.7.1",
     "react-highlight-words": "^0.17.0",
-    "react-markdown": "^6.0.3",
+    "react-markdown": "^8.0.7",
     "react-router-dom": "^5.3.4",
     "react-swipeable-views": "^0.14.0",
     "recharts": "^2.6.2",
