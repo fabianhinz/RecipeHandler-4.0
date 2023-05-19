@@ -29,7 +29,7 @@
     "date-fns": "^2.30.0",
     "firebase": "^9.22.0",
     "immer": "^9.0.21",
-    "mdi-material-ui": "^6.29.0",
+    "mdi-material-ui": "^7.7.0",
     "notistack": "^3.0.1",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.1",
