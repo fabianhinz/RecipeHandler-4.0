@@ -42,7 +42,7 @@
     "react-swipeable-views": "^0.14.0",
     "recharts": "^2.6.2",
     "stacktrace-js": "^2.0.2",
-    "tesseract.js": "^2.1.4",
+    "tesseract.js": "^4.0.6",
     "typeface-roboto": "1.1.13",
     "typeface-ubuntu": "1.1.13",
     "web-animations-js": "^2.3.2",
