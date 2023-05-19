@@ -98,8 +98,8 @@ const AccountShoppingListItem = (props: Props) => {
     setIsEditMode(false)
   }
 
-  const secondaryText = [props.item.recipeNameRef, props.item.tag]
-    .filter(Boolean)
+  const secondaryText = [props.item.recipeNameRef, `#${props.item.tag}`]
+    .filter(text => !!text && text !== '#')
     .join(', ')
 
   return (
@@ -149,7 +149,12 @@ const AccountShoppingListItem = (props: Props) => {
                       onClick={handleEnterEditMode}>
                       {props.item.value}
                     </Typography>
-                    <Fade in={!muted}>
+                    <Fade
+                      timeout={{
+                        appear: 0,
+                        exit: theme.transitions.duration.standard,
+                      }}
+                      in={!muted}>
                       <Typography variant="body2" color="textSecondary">
                         {secondaryText}
                       </Typography>
