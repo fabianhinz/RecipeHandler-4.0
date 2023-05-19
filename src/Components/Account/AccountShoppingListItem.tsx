@@ -1,6 +1,6 @@
 import {
   Checkbox,
-  ClickAwayListener,
+  Fade,
   IconButton,
   ListItem,
   ListItemIcon,
@@ -19,6 +19,8 @@ import { Draggable, DraggingStyle, NotDraggingStyle } from 'react-beautiful-dnd'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { ShoppingListItem } from '@/model/model'
+
+import { accountUtils } from './accountUtils'
 
 const useStyles = makeStyles<Theme, { muted: boolean }>(theme => ({
   checked: {
@@ -46,8 +48,10 @@ interface Props {
 }
 
 const AccountShoppingListItem = (props: Props) => {
+  const muted =
+    props.tagFilter !== undefined && props.tagFilter !== props.item.tag
   const classes = useStyles({
-    muted: props.tagFilter !== undefined && props.tagFilter !== props.item.tag,
+    muted,
   })
   const theme = useTheme()
   const [isEditMode, setIsEditMode] = useState(false)
@@ -72,8 +76,16 @@ const AccountShoppingListItem = (props: Props) => {
   )
 
   const handleEnterEditMode = () => {
+    if (muted) {
+      return
+    }
+
     setIsEditMode(true)
-    setEditValue(props.item.value)
+    if (props.item.tag.length > 0) {
+      setEditValue(`#${props.item.tag} ${props.item.value}`)
+    } else {
+      setEditValue(props.item.value)
+    }
   }
 
   const handleExitEditMode = async () => {
@@ -85,15 +97,31 @@ const AccountShoppingListItem = (props: Props) => {
       return
     }
 
-    shoppingList[props.index].value = editValue
-    if (shoppingListRef.current) {
+    const item = shoppingList[props.index]
+    const itemClone = structuredClone(item)
+    const { tag, value } = accountUtils.parseInput(editValue)
+    item.value = value
+    item.tag = tag
+
+    if (
+      shoppingListRef.current &&
+      (itemClone.tag !== tag || itemClone.value !== value)
+    ) {
+      console.log('change')
       await setDoc(shoppingListRef.current, { list: shoppingList })
     }
+
     setIsEditMode(false)
   }
 
-  const secondaryText = [props.item.recipeNameRef, props.item.tag]
-    .filter(Boolean)
+  const secondaryText = [props.item.recipeNameRef, `#${props.item.tag}`]
+    .filter(text => {
+      if (isEditMode) {
+        return false
+      }
+
+      return !!text && text !== '#'
+    })
     .join(', ')
 
   return (
@@ -113,41 +141,47 @@ const AccountShoppingListItem = (props: Props) => {
           <ListItemIcon>
             <Checkbox
               checked={props.item.checked}
+              disabled={muted}
               onChange={props.onCheckboxChange(props.index)}
               edge="start"
             />
           </ListItemIcon>
           <ListItemText
-            classes={{
-              primary: clsx(props.item.checked && classes.checked),
-            }}
             disableTypography
             primary={
               <>
                 {isEditMode ? (
-                  <ClickAwayListener onClickAway={handleExitEditMode}>
-                    <TextField
-                      autoFocus
-                      helperText={secondaryText}
-                      FormHelperTextProps={{
-                        classes: { root: classes.textFieldHelperRoot },
-                      }}
-                      fullWidth
-                      value={editValue}
-                      onChange={e => setEditValue(e.target.value)}
-                    />
-                  </ClickAwayListener>
+                  <TextField
+                    autoFocus
+                    helperText={secondaryText}
+                    FormHelperTextProps={{
+                      classes: { root: classes.textFieldHelperRoot },
+                    }}
+                    fullWidth
+                    value={editValue}
+                    onBlur={handleExitEditMode}
+                    onChange={e => setEditValue(e.target.value)}
+                  />
                 ) : (
-                  <>
+                  <div
+                    onClick={handleEnterEditMode}
+                    style={{ cursor: muted ? 'inherit' : 'text' }}>
                     <Typography
-                      style={{ cursor: 'edit' }}
-                      onClick={handleEnterEditMode}>
+                      noWrap={muted}
+                      className={clsx(props.item.checked && classes.checked)}>
                       {props.item.value}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {secondaryText}
-                    </Typography>
-                  </>
+                    <Fade
+                      timeout={{
+                        appear: 0,
+                        exit: theme.transitions.duration.standard,
+                      }}
+                      in={!muted}>
+                      <Typography variant="body2" color="textSecondary">
+                        {secondaryText}
+                      </Typography>
+                    </Fade>
+                  </div>
                 )}
               </>
             }
