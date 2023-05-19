@@ -20,6 +20,8 @@ import { Draggable, DraggingStyle, NotDraggingStyle } from 'react-beautiful-dnd'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { ShoppingListItem } from '@/model/model'
 
+import { accountUtils } from './accountUtils'
+
 const useStyles = makeStyles<Theme, { muted: boolean }>(theme => ({
   checked: {
     textDecoration: 'line-through',
@@ -79,7 +81,11 @@ const AccountShoppingListItem = (props: Props) => {
     }
 
     setIsEditMode(true)
-    setEditValue(props.item.value)
+    if (props.item.tag.length > 0) {
+      setEditValue(`#${props.item.tag} ${props.item.value}`)
+    } else {
+      setEditValue(props.item.value)
+    }
   }
 
   const handleExitEditMode = async () => {
@@ -91,15 +97,31 @@ const AccountShoppingListItem = (props: Props) => {
       return
     }
 
-    shoppingList[props.index].value = editValue
-    if (shoppingListRef.current) {
+    const item = shoppingList[props.index]
+    const itemClone = structuredClone(item)
+    const { tag, value } = accountUtils.parseInput(editValue)
+    item.value = value
+    item.tag = tag
+
+    if (
+      shoppingListRef.current &&
+      (itemClone.tag !== tag || itemClone.value !== value)
+    ) {
+      console.log('change')
       await setDoc(shoppingListRef.current, { list: shoppingList })
     }
+
     setIsEditMode(false)
   }
 
   const secondaryText = [props.item.recipeNameRef, `#${props.item.tag}`]
-    .filter(text => !!text && text !== '#')
+    .filter(text => {
+      if (isEditMode) {
+        return false
+      }
+
+      return !!text && text !== '#'
+    })
     .join(', ')
 
   return (
@@ -141,12 +163,12 @@ const AccountShoppingListItem = (props: Props) => {
                     onChange={e => setEditValue(e.target.value)}
                   />
                 ) : (
-                  <>
+                  <div
+                    onClick={handleEnterEditMode}
+                    style={{ cursor: muted ? 'inherit' : 'text' }}>
                     <Typography
                       noWrap={muted}
-                      className={clsx(props.item.checked && classes.checked)}
-                      style={{ cursor: muted ? 'inherit' : 'text' }}
-                      onClick={handleEnterEditMode}>
+                      className={clsx(props.item.checked && classes.checked)}>
                       {props.item.value}
                     </Typography>
                     <Fade
@@ -159,7 +181,7 @@ const AccountShoppingListItem = (props: Props) => {
                         {secondaryText}
                       </Typography>
                     </Fade>
-                  </>
+                  </div>
                 )}
               </>
             }

@@ -12,6 +12,8 @@ import React, { useMemo, useState } from 'react'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 
+import { accountUtils } from './accountUtils'
+
 const useStyles = makeStyles(theme => ({
   textFieldHelperRoot: {
     display: 'flex',
@@ -54,18 +56,10 @@ const AccountShoppingListInput = (props: {
     event.preventDefault()
     if (!textFieldValue.trim()) return
 
-    let tag = ''
-    let value = textFieldValue
-    const regexRes = /[ ]*#(\w|ä|Ä|ö|Ö|ü|Ü){1,}[ ]*/.exec(textFieldValue)
-
-    if (regexRes) {
-      const [rawTag] = regexRes
-      value = textFieldValue.replace(rawTag, ' ').trim()
-      tag = rawTag.trim().replace('#', '')
-    } else if (props.tagFilter !== undefined) {
-      tag = props.tagFilter
-    }
-
+    const { value, tag } = accountUtils.parseInput(
+      textFieldValue,
+      props.tagFilter
+    )
     const list = [
       {
         checked: false,
