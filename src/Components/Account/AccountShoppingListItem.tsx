@@ -1,6 +1,6 @@
 import {
   Checkbox,
-  ClickAwayListener,
+  Fade,
   IconButton,
   ListItem,
   ListItemIcon,
@@ -46,8 +46,10 @@ interface Props {
 }
 
 const AccountShoppingListItem = (props: Props) => {
+  const muted =
+    props.tagFilter !== undefined && props.tagFilter !== props.item.tag
   const classes = useStyles({
-    muted: props.tagFilter !== undefined && props.tagFilter !== props.item.tag,
+    muted,
   })
   const theme = useTheme()
   const [isEditMode, setIsEditMode] = useState(false)
@@ -72,6 +74,10 @@ const AccountShoppingListItem = (props: Props) => {
   )
 
   const handleEnterEditMode = () => {
+    if (muted) {
+      return
+    }
+
     setIsEditMode(true)
     setEditValue(props.item.value)
   }
@@ -113,6 +119,7 @@ const AccountShoppingListItem = (props: Props) => {
           <ListItemIcon>
             <Checkbox
               checked={props.item.checked}
+              disabled={muted}
               onChange={props.onCheckboxChange(props.index)}
               edge="start"
             />
@@ -122,29 +129,31 @@ const AccountShoppingListItem = (props: Props) => {
             primary={
               <>
                 {isEditMode ? (
-                  <ClickAwayListener onClickAway={handleExitEditMode}>
-                    <TextField
-                      autoFocus
-                      helperText={secondaryText}
-                      FormHelperTextProps={{
-                        classes: { root: classes.textFieldHelperRoot },
-                      }}
-                      fullWidth
-                      value={editValue}
-                      onChange={e => setEditValue(e.target.value)}
-                    />
-                  </ClickAwayListener>
+                  <TextField
+                    autoFocus
+                    helperText={secondaryText}
+                    FormHelperTextProps={{
+                      classes: { root: classes.textFieldHelperRoot },
+                    }}
+                    fullWidth
+                    value={editValue}
+                    onBlur={handleExitEditMode}
+                    onChange={e => setEditValue(e.target.value)}
+                  />
                 ) : (
                   <>
                     <Typography
+                      noWrap={muted}
                       className={clsx(props.item.checked && classes.checked)}
-                      style={{ cursor: 'edit' }}
+                      style={{ cursor: muted ? 'inherit' : 'text' }}
                       onClick={handleEnterEditMode}>
                       {props.item.value}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {secondaryText}
-                    </Typography>
+                    <Fade in={!muted}>
+                      <Typography variant="body2" color="textSecondary">
+                        {secondaryText}
+                      </Typography>
+                    </Fade>
                   </>
                 )}
               </>
