@@ -41,9 +41,9 @@ jobs:
       - name: set short sha
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      - name: deploy
+      - name: deploy hosting
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only hosting --message ${{ steps.vars.outputs.sha_short }}
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECIPEHANDLER }}
