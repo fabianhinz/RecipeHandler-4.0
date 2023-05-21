@@ -1,9 +1,12 @@
 import {
   AppBar,
+  Avatar,
   Box,
+  Divider,
   Grid,
   Hidden,
   makeStyles,
+  Paper,
   Tab,
   Tabs,
   Toolbar,
@@ -16,6 +19,7 @@ import { TableChart, Timeline, VerticalSplit } from '@material-ui/icons'
 import AddIcon from '@material-ui/icons/Add'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import { Sigma } from 'mdi-material-ui'
 import { useLayoutEffect, useMemo, useState } from 'react'
 
 import { SecouredRouteFab } from '@/Components/Routes/SecouredRouteFab'
@@ -52,6 +56,14 @@ const useStyles = makeStyles(theme => ({
   },
   toolbar: {
     justifyContent: 'space-between',
+  },
+  totalSumContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: theme.spacing(1),
+    margin: theme.spacing(2),
+    padding: theme.spacing(0.5, 1),
+    color: theme.palette.text.secondary,
   },
 }))
 
@@ -129,14 +141,26 @@ const Expenses = () => {
   }, [expensesByMonth, expenseFilter, tabIndex, years])
 
   const memoizedTable = useMemo(() => {
+    if (expensesToRenderMemoized.length === 0) {
+      return
+    }
+
+    const sum = expensesToRenderMemoized
+      .flatMap(([_, expenses]) => expenses)
+      .reduce((acc, curr) => (acc += curr.amount), 0)
+
     // check for length to avoid jumpy chart animation
     return (
-      expensesToRenderMemoized.length > 0 &&
-      expensesToRenderMemoized.map(([month, expenses]) => (
-        <ExpensesByMonth key={month} expenses={expenses} month={month} />
-      ))
+      <>
+        {expensesToRenderMemoized.map(([month, expenses]) => (
+          <ExpensesByMonth key={month} expenses={expenses} month={month} />
+        ))}
+        <Paper className={classes.totalSumContainer}>
+          <Typography>Total: {expenseUtils.formatAmount(sum)}</Typography>
+        </Paper>
+      </>
     )
-  }, [expensesToRenderMemoized])
+  }, [classes.totalSumContainer, expensesToRenderMemoized])
 
   const memoizedGraph = useMemo(() => {
     return (
