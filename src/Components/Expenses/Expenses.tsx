@@ -1,8 +1,6 @@
 import {
   AppBar,
-  Avatar,
   Box,
-  Divider,
   Grid,
   Hidden,
   makeStyles,
@@ -19,7 +17,6 @@ import { TableChart, Timeline, VerticalSplit } from '@material-ui/icons'
 import AddIcon from '@material-ui/icons/Add'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-import { Sigma } from 'mdi-material-ui'
 import { useLayoutEffect, useMemo, useState } from 'react'
 
 import { SecouredRouteFab } from '@/Components/Routes/SecouredRouteFab'
@@ -90,7 +87,7 @@ const Expenses = () => {
 
   const { expenses, isDialogOpen } = useExpenseStore(selector)
   const setIsDialogOpen = useExpenseStore(store => store.setIsDialogOpen)
-  const expensesByMonth = useExpenseStore(store => store.expensesByMonth)
+  const rawExpensesByMonth = useExpenseStore(store => store.expensesByMonth)
   const expenseStoreLoading = useExpenseStore(store => store.loading)
   const autocompleteOptions = useExpenseStore(
     store => store.autocompleteOptions
@@ -116,43 +113,48 @@ const Expenses = () => {
 
   useDocumentTitle('Ausgaben')
 
-  const maxAmount = useMemo(() => {
-    const amounts: number[] = []
-    for (const [, expenses] of expensesByMonth) {
-      amounts.push(expenses.reduce((acc, curr) => (acc += curr.amount), 0))
-    }
-    return amounts.sort((a, b) => b - a)[0] ?? 0
-  }, [expensesByMonth])
-
-  const expensesToRenderMemoized = useMemo(() => {
+  const expensesFilteredMemoized = useMemo(() => {
     if (!expenseFilter && tabIndex === years.length) {
-      return Array.from(expensesByMonth.entries())
+      return Array.from(rawExpensesByMonth.entries())
     }
 
     let byYear: Nullable<ReturnType<typeof expenseUtils.getExpensesByYear>> =
       null
     if (tabIndex !== undefined && years[tabIndex] !== undefined) {
-      byYear = expenseUtils.getExpensesByYear(expensesByMonth, years[tabIndex])
+      byYear = expenseUtils.getExpensesByYear(
+        rawExpensesByMonth,
+        years[tabIndex]
+      )
     }
     return expenseUtils.getFilteredExpensesByMonth(
-      byYear ? new Map(byYear) : expensesByMonth,
+      byYear ? new Map(byYear) : rawExpensesByMonth,
       expenseFilter
     )
-  }, [expensesByMonth, expenseFilter, tabIndex, years])
+  }, [rawExpensesByMonth, expenseFilter, tabIndex, years])
+
+  const expensesFlattened = useMemo(() => {
+    return expensesFilteredMemoized.flatMap(([_, expenses]) => expenses)
+  }, [expensesFilteredMemoized])
+
+  const maxAmount = useMemo(() => {
+    const amounts: number[] = []
+    for (const [, expenses] of expensesFilteredMemoized) {
+      amounts.push(expenses.reduce((acc, curr) => (acc += curr.amount), 0))
+    }
+    return amounts.sort((a, b) => b - a)[0] ?? 0
+  }, [expensesFilteredMemoized])
 
   const memoizedTable = useMemo(() => {
-    if (expensesToRenderMemoized.length === 0) {
+    if (expensesFilteredMemoized.length === 0) {
       return
     }
 
-    const sum = expensesToRenderMemoized
-      .flatMap(([_, expenses]) => expenses)
-      .reduce((acc, curr) => (acc += curr.amount), 0)
+    const sum = expensesFlattened.reduce((acc, curr) => (acc += curr.amount), 0)
 
     // check for length to avoid jumpy chart animation
     return (
       <>
-        {expensesToRenderMemoized.map(([month, expenses]) => (
+        {expensesFilteredMemoized.map(([month, expenses]) => (
           <ExpensesByMonth key={month} expenses={expenses} month={month} />
         ))}
         <Paper className={classes.totalSumContainer}>
@@ -160,17 +162,17 @@ const Expenses = () => {
         </Paper>
       </>
     )
-  }, [classes.totalSumContainer, expensesToRenderMemoized])
+  }, [classes.totalSumContainer, expensesFlattened, expensesFilteredMemoized])
 
   const memoizedGraph = useMemo(() => {
     return (
       <ExpensesChart
         enableFixedOnScroll={view === 'split'}
         maxAmount={maxAmount}
-        expensesByMonth={expensesToRenderMemoized}
+        expensesByMonth={expensesFilteredMemoized}
       />
     )
-  }, [expensesToRenderMemoized, maxAmount, view])
+  }, [expensesFilteredMemoized, maxAmount, view])
 
   return (
     <EntryGridContainer>
@@ -239,7 +241,12 @@ const Expenses = () => {
             className={classes.container}
             spacing={3}>
             {autocompleteOptions.creator.map(u => (
-              <ExpenseUserCard year={years[tabIndex]} key={u} userName={u} />
+              <ExpenseUserCard
+                expenses={expensesFlattened}
+                year={years[tabIndex]}
+                key={u}
+                userName={u}
+              />
             ))}
           </Grid>
         </Grid>

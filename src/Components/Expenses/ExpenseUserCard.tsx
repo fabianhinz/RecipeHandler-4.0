@@ -11,18 +11,15 @@ import { useLayoutEffect, useMemo, useState } from 'react'
 import { Cell, Pie, PieChart } from 'recharts'
 
 import useDebounce from '@/hooks/useDebounce'
-import { Nullable } from '@/model/model'
-import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
+import { Expense, Nullable } from '@/model/model'
+import useExpenseStore from '@/store/ExpenseStore'
 import { stopPropagationProps } from '@/util/constants'
 
 import { CATEGORIES_PALETTE } from './helper/expenseUtils'
 
-const selector = (state: ExpenseStore) => state.expenses
-
 interface StyleProps {
   userData: UserData
   activePieCell: Nullable<ActivePieCell>
-  disabled: boolean
 }
 
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
@@ -34,7 +31,6 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     gap: theme.spacing(2),
     position: 'relative',
     transition: theme.transitions.create('opacity'),
-    opacity: props => (props.disabled ? 0.3 : 1),
   },
   activePieCell: {
     position: 'absolute',
@@ -81,12 +77,11 @@ type ActivePieCell = {
 interface Props {
   userName: string
   year: number | undefined
+  expenses: Expense[]
 }
 
 const ExpenseUserCard = (props: Props) => {
-  const expenses = useExpenseStore(selector)
   const categories = useExpenseStore(store => store.categories)
-  const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
   const [activePieCell, setActivePieCell] =
     useState<Nullable<ActivePieCell>>(null)
   const [userData, setUserData] = useState<UserData>({
@@ -99,11 +94,10 @@ const ExpenseUserCard = (props: Props) => {
   const classes = useStyles({
     userData,
     activePieCell,
-    disabled: hasActiveFilter,
   })
 
   useLayoutEffect(() => {
-    const expensesOfYear = expenses.filter(expense => {
+    const expensesOfYear = props.expenses.filter(expense => {
       if (props.year === undefined) {
         return expense
       }
@@ -142,7 +136,7 @@ const ExpenseUserCard = (props: Props) => {
       ),
       difference: payed - shouldPay,
     })
-  }, [expenses, props.userName, categories, props.year])
+  }, [props.expenses, props.userName, categories, props.year])
 
   const debouncedAmountByCategory = useDebounce(userData.amountByCategory, 50)
   const amountByCategoryEntries = useMemo(
@@ -151,10 +145,6 @@ const ExpenseUserCard = (props: Props) => {
   )
 
   const handlePieChartMouseEnter = (_: unknown, index: number) => {
-    if (hasActiveFilter) {
-      return
-    }
-
     const [category, payload] = amountByCategoryEntries[index]
     setActivePieCell({
       category,
