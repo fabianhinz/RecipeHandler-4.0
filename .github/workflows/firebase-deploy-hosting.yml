@@ -21,11 +21,11 @@ jobs:
         run: npm run build
         env:
           VERSION: ${{ steps.vars.outputs.sha_short }}
-      - name: archive build
+      - name: archive dist
         uses: actions/upload-artifact@master
         with:
-          name: build
-          path: build
+          name: dist
+          path: dist
   deploy:
     name: deploy
     needs: build
@@ -33,11 +33,11 @@ jobs:
     steps:
       - name: checkout master
         uses: actions/checkout@master
-      - name: download build
+      - name: download dist
         uses: actions/download-artifact@master
         with:
-          name: build
-          path: build
+          name: dist
+          path: dist
       - name: set short sha
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
