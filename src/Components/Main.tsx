@@ -8,17 +8,15 @@ const useStyles = makeStyles<Theme, { extraPadding?: boolean }>(theme => ({
   main: {
     minHeight: '60vh',
     backgroundColor: theme.palette.background.default,
+    borderRadius: BORDER_RADIUS,
     [theme.breakpoints.only('xs')]: {
-      padding: theme.spacing(2),
       boxShadow: theme.shadows[0],
     },
     [theme.breakpoints.up('sm')]: {
-      padding: theme.spacing(3),
       marginLeft: 'calc(env(safe-area-inset-left) + 95px)',
     },
     [theme.breakpoints.up('md')]: {
-      borderRadius: BORDER_RADIUS,
-      boxShadow: theme.shadows[2],
+      boxShadow: theme.shadows[4],
     },
   },
   container: {
