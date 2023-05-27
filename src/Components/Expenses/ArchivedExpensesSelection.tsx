@@ -22,6 +22,8 @@ import {
 } from '@/firebase/firebaseQueries'
 import { ArchivedExpense, Expense, User } from '@/model/model'
 
+import NotFound from '../Shared/NotFound'
+
 const clearArchive = async (expenses: Expense[], userId: User['uid']) => {
   return Promise.all(
     expenses.map(expense => {
@@ -41,12 +43,11 @@ const restoreExpense = async (
 }
 
 const ArchivedExpensesSelection = () => {
-  const [shouldLoad, setShouldLoad] = useState(false)
   const [expenses, setExpenses] = useState<ArchivedExpense[]>([])
   const authContext = useFirebaseAuthContext()
 
   useEffect(() => {
-    if (!shouldLoad || !authContext.user) {
+    if (!authContext.user) {
       return
     }
 
@@ -60,19 +61,24 @@ const ArchivedExpensesSelection = () => {
         )
       }
     )
-  }, [authContext.user, shouldLoad])
+  }, [authContext.user])
 
   return (
     <SelectionDrawer
-      onOpen={() => setShouldLoad(true)}
-      onClose={() => setShouldLoad(false)}
-      buttonProps={{ icon: <Archive />, label: 'Archiv' }}
+      buttonProps={{
+        icon: <Archive />,
+        label: 'Archiv',
+        disabled: expenses.length === 0,
+      }}
       action={
         <IconButton
+          disabled={expenses.length === 0}
           onClick={() => clearArchive(expenses, authContext.user!.uid)}>
           <Delete />
         </IconButton>
       }>
+      <NotFound visible={expenses.length === 0} />
+
       <List disablePadding>
         {expenses.map(expense => (
           <ListItem key={expense.id}>
