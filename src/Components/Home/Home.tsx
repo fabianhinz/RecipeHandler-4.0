@@ -32,6 +32,8 @@ import HomeRecipeSelection from './HomeRecipeSelection'
 const useStyles = makeStyles(theme => ({
   homeRoot: {
     borderRadius: BORDER_RADIUS,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   tabWrapper: {
     fontSize: theme.typography.h5.fontSize,
@@ -133,8 +135,8 @@ const Home = () => {
 
   return (
     <>
-      <EntryGridContainer>
-        <Grid item xs={12}>
+      <EntryGridContainer
+        header={
           <AppBar
             className={classes.homeRoot}
             position="static"
@@ -179,8 +181,7 @@ const Home = () => {
               </Fade>
             </Toolbar>
           </AppBar>
-        </Grid>
-
+        }>
         <Grid item xs={12}>
           <Fade in={tabIndex === 0} mountOnEnter unmountOnExit>
             <HomeRecipes

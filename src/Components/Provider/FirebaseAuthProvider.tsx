@@ -91,9 +91,8 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
   const handleAuthStateChange = useCallback(
     async (user: FirebaseUser | null) => {
-      setAuthReady(true)
-
       if (!user) {
+        setAuthReady(true)
         setUser(undefined)
         setLoginEnabled(true)
         return
@@ -118,7 +117,7 @@ const FirebaseAuthProvider: FC = ({ children }) => {
             ...(doc.data() as Omit<User, 'uid'>),
             uid: user.uid,
           })
-
+          setAuthReady(true)
           setLoginEnabled(true)
         },
         () => {
@@ -158,7 +157,9 @@ const FirebaseAuthProvider: FC = ({ children }) => {
 
       const expensesUnsubscribe = onSnapshot(
         resolveExpensesOrderedByDateDesc(user.uid),
-        useExpenseStore.getState().handleFirebaseSnapshot
+        snapshot => {
+          useExpenseStore.getState().handleFirebaseSnapshot(snapshot)
+        }
       )
 
       return () => {

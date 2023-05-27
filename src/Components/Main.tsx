@@ -8,26 +8,28 @@ const useStyles = makeStyles<Theme, { extraPadding?: boolean }>(theme => ({
   main: {
     minHeight: '60vh',
     backgroundColor: theme.palette.background.default,
-    boxShadow: theme.shadows[2],
     borderRadius: BORDER_RADIUS,
     [theme.breakpoints.only('xs')]: {
-      padding: theme.spacing(2),
       boxShadow: theme.shadows[0],
     },
     [theme.breakpoints.up('sm')]: {
-      padding: theme.spacing(3),
       marginLeft: 'calc(env(safe-area-inset-left) + 95px)',
+    },
+    [theme.breakpoints.up('md')]: {
+      boxShadow: theme.shadows[4],
     },
   },
   container: {
     userSelect: 'none',
     padding: 0,
-    paddingTop: props => (props.extraPadding ? 256 : 192),
-    [theme.breakpoints.up('sm')]: {
+    paddingTop: props =>
+      props.extraPadding ? theme.spacing(32) : theme.spacing(24),
+    [theme.breakpoints.up('md')]: {
       paddingLeft: theme.spacing(3),
       paddingRight: theme.spacing(3),
       paddingBottom: theme.spacing(8),
-      paddingTop: props => (props.extraPadding ? 320 : 256),
+      paddingTop: props =>
+        props.extraPadding ? theme.spacing(40) : theme.spacing(32),
     },
     '@media (min-width: 1440px)': {
       maxWidth: 1440,

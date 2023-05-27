@@ -20,6 +20,7 @@ import { Draggable, DraggingStyle, NotDraggingStyle } from 'react-beautiful-dnd'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { ShoppingListItem } from '@/model/model'
 
+import { useBreakpointsContext } from '../Provider/BreakpointsProvider'
 import { accountUtils } from './accountUtils'
 
 const useStyles = makeStyles<Theme, { muted: boolean }>(theme => ({
@@ -32,7 +33,7 @@ const useStyles = makeStyles<Theme, { muted: boolean }>(theme => ({
   },
   listItem: {
     opacity: props => (props.muted ? 0.3 : 1),
-    height: props => (props.muted ? theme.spacing(5) : theme.spacing(9)),
+    height: props => (props.muted ? theme.spacing(5) : 'auto'),
     transition: theme.transitions.create(['box-shadow', 'opacity', 'height']),
   },
 }))
@@ -56,6 +57,7 @@ const AccountShoppingListItem = (props: Props) => {
   const theme = useTheme()
   const [isEditMode, setIsEditMode] = useState(false)
   const [editValue, setEditValue] = useState('')
+  const breakpoints = useBreakpointsContext()
 
   const { shoppingList, shoppingListRef } = useFirebaseAuthContext()
 
@@ -188,7 +190,9 @@ const AccountShoppingListItem = (props: Props) => {
           />
           {/* do not use the ListItemSecondaryAction. This will mess up styles on dragging */}
           <ListItemIcon>
-            <IconButton onClick={props.onDelete(props.index)}>
+            <IconButton
+              size={breakpoints.isMobile ? 'small' : 'medium'}
+              onClick={props.onDelete(props.index)}>
               <Clear />
             </IconButton>
           </ListItemIcon>

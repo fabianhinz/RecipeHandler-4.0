@@ -45,8 +45,10 @@ const useStyles = makeStyles(theme => ({
   container: {
     overflowX: 'auto',
   },
-  homeRoot: {
+  header: {
     borderRadius: BORDER_RADIUS,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   tabWrapper: {
     fontSize: theme.typography.h5.fontSize,
@@ -175,9 +177,9 @@ const Expenses = () => {
   }, [expensesFilteredMemoized, maxAmount, view])
 
   return (
-    <EntryGridContainer>
-      <Grid item xs={12}>
-        <AppBar className={classes.homeRoot} position="static" color="default">
+    <EntryGridContainer
+      header={
+        <AppBar className={classes.header} position="static" color="default">
           <Toolbar className={classes.toolbar}>
             <Tabs
               scrollButtons="on"
@@ -191,8 +193,7 @@ const Expenses = () => {
             </Tabs>
           </Toolbar>
         </AppBar>
-      </Grid>
-
+      }>
       <Grid item xs={12}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box
