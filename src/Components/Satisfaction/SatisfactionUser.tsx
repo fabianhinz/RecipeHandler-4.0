@@ -1,5 +1,5 @@
 import { RatingProps } from '@mui/lab'
-import { Avatar, Grid, Typography } from '@mui/material'
+import { Avatar, Grid, Theme, Typography } from '@mui/material'
 import { Rating } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 
@@ -7,7 +7,7 @@ import { useUsersContext } from '@/Components/Provider/UsersProvider'
 
 import SatisfactionIconContainer from './SatisfactionIconContainer'
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme>(() => ({
   avatar: {
     width: 50,
     height: 50,

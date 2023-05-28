@@ -10,6 +10,7 @@ import {
   Grid,
   IconButton,
   Slide,
+  Theme,
   Tooltip,
   useTheme,
 } from '@mui/material'
@@ -63,7 +64,7 @@ const Context = createContext<AnimationHandler | null>(null)
 export const useAttachmentGalleryContext = () =>
   useContext(Context) as AnimationHandler
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   background: {
     position: 'fixed',
     top: 0,

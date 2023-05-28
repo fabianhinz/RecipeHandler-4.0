@@ -1,9 +1,9 @@
-import { CircularProgress, LinearProgress } from '@mui/material'
+import { CircularProgress, LinearProgress, Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 
 import { BORDER_RADIUS } from '@/theme'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   linearProgress: {
     position: 'fixed',
     top: `max(0px, env(safe-area-inset-bottom))`,

@@ -1,6 +1,6 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon'
-import { Grid, IconButton } from '@mui/material'
+import { Grid, IconButton, Theme } from '@mui/material'
 import { ToggleButton } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useState } from 'react'
@@ -32,7 +32,7 @@ const EMOJIS = [
   '🎂',
 ]
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   emojiLabel: {
     width: theme.spacing(4),
     height: theme.spacing(4),

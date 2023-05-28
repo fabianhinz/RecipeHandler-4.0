@@ -3,6 +3,7 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  Theme,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -14,7 +15,7 @@ import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvid
 
 import { accountUtils } from './accountUtils'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   textFieldHelperRoot: {
     display: 'flex',
     flexWrap: 'wrap',

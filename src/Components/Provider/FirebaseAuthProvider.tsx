@@ -1,3 +1,4 @@
+import { Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { logEvent, setUserId } from 'firebase/analytics'
 import {
@@ -54,7 +55,7 @@ const Context = createContext<AuthContext>({
 
 export const useFirebaseAuthContext = () => useContext(Context)
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme>(() => ({
   '@keyframes chip-appear': {
     from: {
       opacity: 0,

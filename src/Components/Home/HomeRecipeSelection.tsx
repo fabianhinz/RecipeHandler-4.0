@@ -7,6 +7,7 @@ import {
   ListItemAvatar,
   ListItemText,
   ListSubheader,
+  Theme,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
@@ -19,7 +20,7 @@ import { useRecipesCounterByUserUid } from '@/hooks/useRecipesCounterByUserUid'
 import { OrderByRecord } from '@/model/model'
 import { getRecipeService } from '@/services/recipeService'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   orderByAsc: {
     transform: 'rotate(0deg)',
     transition: theme.transitions.create('transform', {
@@ -85,7 +86,8 @@ const HomeRecipeSelection = (props: Props) => {
           fullWidth
           variant="outlined"
           onClick={handleOrderByChange('name')}
-          color={props.orderBy.name ? 'secondary' : 'default'}
+          // TODO fix me
+          // color={props.orderBy.name ? 'secondary' : 'default'}
           startIcon={
             <ArrowUpwardIcon
               className={clsx(
@@ -102,7 +104,8 @@ const HomeRecipeSelection = (props: Props) => {
           fullWidth
           variant="outlined"
           onClick={handleOrderByChange('createdDate')}
-          color={props.orderBy.createdDate ? 'secondary' : 'default'}
+          // TODO fix me
+          // color={props.orderBy.createdDate ? 'secondary' : 'default'}
           startIcon={
             <ArrowUpwardIcon
               className={clsx(

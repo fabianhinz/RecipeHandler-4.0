@@ -1,5 +1,9 @@
-import { adaptV4Theme, createTheme, responsiveFontSizes } from '@mui/material'
-import { DeprecatedThemeOptions } from '@mui/material/styles'
+import {
+  adaptV4Theme,
+  createTheme,
+  DeprecatedThemeOptions,
+  responsiveFontSizes,
+} from '@mui/material'
 
 export const BORDER_RADIUS = 10
 export const BORDER_RADIUS_HUGE = 16
@@ -22,18 +26,19 @@ const sharedTheme: Partial<DeprecatedThemeOptions> = {
     },
   },
   overrides: {
-    MuiExpansionPanel: {
-      rounded: {
-        '&:first-child': {
-          borderTopLeftRadius: BORDER_RADIUS,
-          borderTopRightRadius: BORDER_RADIUS,
-        },
-        '&:last-child': {
-          borderBottomLeftRadius: BORDER_RADIUS,
-          borderBottomRightRadius: BORDER_RADIUS,
-        },
-      },
-    },
+    // TODO fixme
+    // MuiExpansionPanel: {
+    //   rounded: {
+    //     '&:first-child': {
+    //       borderTopLeftRadius: BORDER_RADIUS,
+    //       borderTopRightRadius: BORDER_RADIUS,
+    //     },
+    //     '&:last-child': {
+    //       borderBottomLeftRadius: BORDER_RADIUS,
+    //       borderBottomRightRadius: BORDER_RADIUS,
+    //     },
+    //   },
+    // },
     MuiPaper: {
       rounded: {
         borderRadius: BORDER_RADIUS,
@@ -135,12 +140,13 @@ const sharedTheme: Partial<DeprecatedThemeOptions> = {
         },
       },
     },
-    MuiTab: {
-      wrapper: {
-        fontFamily: 'Ubuntu',
-        textTransform: 'capitalize',
-      },
-    },
+    // TODO fix me
+    // MuiTab: {
+    //   wrapper: {
+    //     fontFamily: 'Ubuntu',
+    //     textTransform: 'capitalize',
+    //   },
+    // },
   },
 }
 

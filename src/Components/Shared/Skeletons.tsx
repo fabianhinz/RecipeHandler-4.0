@@ -1,13 +1,12 @@
-import { Card, Grid, GridSize } from '@mui/material'
+import { Breakpoint, Card, Grid, GridSize, Theme } from '@mui/material'
 import { Skeleton } from '@mui/material'
-import { Breakpoint } from '@mui/material/styles'
 import makeStyles from '@mui/styles/makeStyles'
 
 import { RECIPE_CARD_HEIGHT } from '@/Components/Home/HomeRecipeCard'
 import { useGridContext } from '@/Components/Provider/GridProvider'
 import { queryLimits } from '@/firebase/firebaseQueries'
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles<Theme>(theme => {
   const trial = {
     [theme.breakpoints.down('md')]: {
       height: 283,

@@ -1,6 +1,7 @@
 import CheckIcon from '@mui/icons-material/Check'
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
+  Breakpoint,
   Card,
   CardActionArea,
   CardMedia,
@@ -8,10 +9,10 @@ import {
   Grid,
   GridSize,
   Slide,
+  Theme,
   Tooltip,
 } from '@mui/material'
-import { Breakpoint } from '@mui/material/styles'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles } from '@mui/styles'
 import clsx from 'clsx'
 import { deleteDoc } from 'firebase/firestore'
 import { deleteObject, ref } from 'firebase/storage'
@@ -31,7 +32,7 @@ import { BORDER_RADIUS } from '@/theme'
 
 import TrialsDeleteAlert from './TrialsDeleteAlert'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   cardMedia: {
     [theme.breakpoints.down('md')]: {
       height: 283,

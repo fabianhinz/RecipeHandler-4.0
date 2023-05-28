@@ -6,6 +6,7 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Theme,
 } from '@mui/material'
 import { Skeleton } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
@@ -18,7 +19,7 @@ import { queryLimits, resolveRelatedRecipes } from '@/firebase/firebaseQueries'
 import useDebounce from '@/hooks/useDebounce'
 import { Recipe } from '@/model/model'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   avatarRoot: {
     height: 40,
     width: 40,

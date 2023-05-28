@@ -6,6 +6,7 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
+  Theme,
 } from '@mui/material'
 import { brown } from '@mui/material/colors'
 import makeStyles from '@mui/styles/makeStyles'
@@ -14,7 +15,7 @@ import { FC } from 'react'
 import RecipeBookmarkButton from '../RecipeBookmarkButton'
 import RecipeDetailsButton from '../RecipeDetailsButton'
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles<Theme>(theme => {
   const background = theme.palette.mode === 'light' ? brown[200] : brown[400]
 
   return {

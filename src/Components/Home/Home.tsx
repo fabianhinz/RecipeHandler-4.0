@@ -1,5 +1,5 @@
 import AddIcon from '@mui/icons-material/Add'
-import { AppBar, Fade, Grid, Tab, Tabs, Toolbar } from '@mui/material'
+import { AppBar, Fade, Grid, Tab, Tabs, Theme, Toolbar } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import withStyles from '@mui/styles/withStyles'
 import { onSnapshot } from 'firebase/firestore'
@@ -22,7 +22,7 @@ import { RECIPE_CARD_HEIGHT } from './HomeRecipeCard'
 import { HomeRecipes } from './HomeRecipes'
 import HomeRecipeSelection from './HomeRecipeSelection'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   homeRoot: {
     borderRadius: BORDER_RADIUS,
     borderBottomLeftRadius: 0,
@@ -177,20 +177,18 @@ const Home = () => {
           </AppBar>
         }>
         <Grid item xs={12}>
-          <Fade in={tabIndex === 0} mountOnEnter unmountOnExit>
+          {tabIndex === 0 && (
             <HomeRecipes
               pagedRecipes={pagedRecipes}
               IntersectionObserverTrigger={IntersectionObserverTrigger}
               pagedRecipesSize={pagedRecipesSize}
               querying={querying}
             />
-          </Fade>
-          <Fade in={tabIndex === 1} mountOnEnter unmountOnExit>
-            <HomeNew />
-          </Fade>
-          <Fade in={tabIndex === 2} mountOnEnter unmountOnExit>
-            <HomeMostCooked />
-          </Fade>
+          )}
+
+          {tabIndex === 1 && <HomeNew />}
+
+          {tabIndex === 2 && <HomeMostCooked />}
         </Grid>
       </EntryGridContainer>
 

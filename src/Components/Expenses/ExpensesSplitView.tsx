@@ -1,10 +1,11 @@
 import Splitter from '@devbookhq/splitter'
+import { Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useState } from 'react'
 
 import { BORDER_RADIUS } from '@/theme'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   container: {
     overflowX: 'auto',
   },

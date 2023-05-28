@@ -25,7 +25,7 @@ import { storage } from '@/firebase/firebaseConfig'
 import { resolveDoc } from '@/firebase/firebaseQueries'
 import { AttachmentDoc, DataUrl } from '@/model/model'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   avatar: {
     position: 'relative',
     transition: theme.transitions.create('all', {

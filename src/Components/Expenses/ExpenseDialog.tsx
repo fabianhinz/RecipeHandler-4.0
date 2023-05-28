@@ -11,6 +11,7 @@ import {
   InputAdornment,
   Paper,
   TextField,
+  Theme,
   Typography,
   Zoom,
 } from '@mui/material'
@@ -64,7 +65,7 @@ const dispatchCurrentExpenseSelector = (state: CurrentExpenseStore) => ({
   clearState: state.clearState,
 })
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   form: {
     display: 'flex',
     flex: 1,

@@ -41,7 +41,7 @@ const selector = (state: ExpenseStore) => ({
   isDialogOpen: state.isDialogOpen,
 })
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   container: {
     overflowX: 'auto',
   },

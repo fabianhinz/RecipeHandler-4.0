@@ -6,12 +6,13 @@ import {
   ButtonProps,
   Drawer,
   IconButton,
+  Theme,
   Typography,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { ReactText, useEffect, useRef, useState } from 'react'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   paper: {
     [theme.breakpoints.between('xs', 'lg')]: {
       width: 320,

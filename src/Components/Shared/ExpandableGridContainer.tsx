@@ -3,6 +3,7 @@ import {
   ButtonProps,
   Grid,
   IconButton,
+  Theme,
   Typography,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
@@ -27,7 +28,7 @@ interface StyleProps extends Pick<Props, 'itemHeight' | 'rows'> {
   gridLayout: GridLayout
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   container: {
     overflowY: 'hidden',
     height: ({ itemHeight, rows }: StyleProps) =>

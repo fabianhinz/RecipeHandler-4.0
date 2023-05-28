@@ -1,6 +1,5 @@
 import {
   StyledEngineProvider,
-  Theme,
   ThemeProvider as MuiThemeProvider,
   useMediaQuery,
 } from '@mui/material'
@@ -13,11 +12,6 @@ import {
 } from '@/theme'
 
 import { useFirebaseAuthContext } from './FirebaseAuthProvider'
-
-declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
 
 interface Props {
   children: ReactNode

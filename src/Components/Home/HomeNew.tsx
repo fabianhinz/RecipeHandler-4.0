@@ -1,4 +1,4 @@
-import { CardActionArea, Grid, Paper, Typography } from '@mui/material'
+import { CardActionArea, Grid, Paper, Theme, Typography } from '@mui/material'
 import { green } from '@mui/material/colors'
 import makeStyles from '@mui/styles/makeStyles'
 import { onSnapshot } from 'firebase/firestore'
@@ -12,7 +12,7 @@ import { resolveCookCounterOrderedByCreatedDateDescWhereValueIsZero } from '@/fi
 
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   paper: {
     padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
     backgroundColor: green.A100,

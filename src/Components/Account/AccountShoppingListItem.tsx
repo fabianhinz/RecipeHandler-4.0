@@ -132,7 +132,7 @@ const AccountShoppingListItem = (props: Props) => {
       index={props.index}>
       {(provided, snapshot) => (
         <ListItem
-          innerRef={provided.innerRef}
+          ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className={classes.listItem}

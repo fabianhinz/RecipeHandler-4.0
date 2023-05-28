@@ -4,6 +4,7 @@ import {
   Avatar,
   Hidden,
   IconButton,
+  Theme,
   Toolbar,
   Tooltip,
 } from '@mui/material'
@@ -26,7 +27,7 @@ import Search from '@/Components/Search/Search'
 
 import { ExpenseSearch } from './Expenses/ExpenseSearch'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   userAvatar: {
     height: 40,
     width: 40,

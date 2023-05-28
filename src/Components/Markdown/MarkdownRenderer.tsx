@@ -16,6 +16,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Theme,
   Tooltip,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
@@ -28,7 +29,7 @@ import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvid
 import { PATHS } from '@/Components/Routes/Routes'
 import { GrowIn } from '@/Components/Shared/Transitions'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   checkboxRoot: {
     padding: theme.spacing(0.5),
   },

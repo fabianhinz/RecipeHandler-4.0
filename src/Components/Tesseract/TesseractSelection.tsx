@@ -1,4 +1,4 @@
-import { Avatar, ButtonBase, CircularProgress } from '@mui/material'
+import { Avatar, ButtonBase, CircularProgress, Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import { ImageSearch } from 'mdi-material-ui'
@@ -15,7 +15,7 @@ interface StyleProps {
   progress?: number
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   dropzoneAvatar: {
     width: '100%',
     height: 100,

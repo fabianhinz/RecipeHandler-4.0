@@ -1,11 +1,11 @@
-import { Chip, Link, Typography } from '@mui/material'
+import { Chip, Link, Theme, Typography } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import { memo } from 'react'
 
 import { ReactComponent as FirebaseIcon } from '@/icons/firebase.svg'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   chip: {
     boxShadow: theme.shadows[4],
     backgroundColor: '#2C384A',

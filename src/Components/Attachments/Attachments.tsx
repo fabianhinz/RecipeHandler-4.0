@@ -13,7 +13,7 @@ interface Props {
   recipe: Recipe
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   attachmentsRoot: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',

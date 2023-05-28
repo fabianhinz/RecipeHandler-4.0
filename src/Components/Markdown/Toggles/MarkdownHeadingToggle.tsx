@@ -1,6 +1,6 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import TextFormatIcon from '@mui/icons-material/TextFormat'
-import { List, ListItem, ListItemText } from '@mui/material'
+import { List, ListItem, ListItemText, Theme } from '@mui/material'
 import { ToggleButton } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
@@ -24,7 +24,7 @@ const HEADINGS: HeadingToggle[] = [
   { heading: 'h4', label: 'Überschrift 4' },
 ]
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme>(() => ({
   hRoot: {
     whiteSpace: 'nowrap',
     overflow: 'hidden',

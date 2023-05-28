@@ -1,6 +1,6 @@
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import BookIcon from '@mui/icons-material/Book'
-import { Chip, Divider, Grid, Typography } from '@mui/material'
+import { Chip, Divider, Grid, Theme, Typography } from '@mui/material'
 import { red } from '@mui/material/colors'
 import makeStyles from '@mui/styles/makeStyles'
 import { Paragraph } from 'tesseract.js'
@@ -10,7 +10,7 @@ import { BORDER_RADIUS } from '@/theme'
 
 type StyleProps = Pick<Props, 'confidence'>
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   confidenceContainer: {
     height: 12,
     backgroundColor: ({ confidence }: StyleProps) =>

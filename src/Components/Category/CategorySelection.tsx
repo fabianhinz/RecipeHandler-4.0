@@ -19,7 +19,7 @@ import SelectionDrawer from '@/Components/Shared/SelectionDrawer'
 
 import getIconByCategory from './CategoryIcons'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   avatarSelected: {
     backgroundColor: theme.palette.secondary.main,
     color: theme.palette.getContrastText(theme.palette.secondary.main),

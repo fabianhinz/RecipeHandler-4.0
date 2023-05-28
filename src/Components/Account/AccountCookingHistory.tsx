@@ -18,7 +18,7 @@ import useDocumentTitle from '@/hooks/useDocumentTitle'
 import { CookingHistory, Recipe } from '@/model/model'
 import { BORDER_RADIUS } from '@/theme'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles<Theme>({
   skeleton: {
     height: RECIPE_CARD_HEIGHT,
     width: '100%',

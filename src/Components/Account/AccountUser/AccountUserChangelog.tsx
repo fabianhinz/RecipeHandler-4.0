@@ -14,6 +14,7 @@ import {
   Hidden,
   IconButton,
   ListSubheader,
+  Theme,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -30,7 +31,7 @@ import {
 } from '@/firebase/firebaseQueries'
 import { Issue, Pullrequest } from '@/model/model'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   dialogContent: {
     paddingLeft: 0,
     paddingRight: 0,

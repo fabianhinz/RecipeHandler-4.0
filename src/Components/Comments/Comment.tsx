@@ -24,7 +24,7 @@ import { Comment as CommentModel, CommentReaction, Recipe } from '@/model/model'
 import { CommentsCollections } from '@/model/model'
 import { BORDER_RADIUS_HUGE } from '@/theme'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   comment: {
     cursor: 'auto',
     background: theme.palette.primary.main,

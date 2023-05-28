@@ -1,7 +1,14 @@
 import AddIcon from '@mui/icons-material/AddCircle'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import RemoveIcon from '@mui/icons-material/RemoveCircle'
-import { Button, Grid, IconButton, Popover, Typography } from '@mui/material'
+import {
+  Button,
+  Grid,
+  IconButton,
+  Popover,
+  Theme,
+  Typography,
+} from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useState } from 'react'
 
@@ -16,7 +23,7 @@ interface Props extends RecipeCreateDispatch {
   onIngredientsChange: (value: string) => void
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   headerButton: {
     textTransform: 'none',
   },

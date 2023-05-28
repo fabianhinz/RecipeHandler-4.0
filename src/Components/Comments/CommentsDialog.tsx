@@ -35,7 +35,7 @@ import { BORDER_RADIUS_HUGE } from '@/theme'
 
 import Comment from './Comment'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   skeleton: {
     borderRadius: BORDER_RADIUS_HUGE,
   },

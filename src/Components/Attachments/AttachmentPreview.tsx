@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import { Skeleton, Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useRef } from 'react'
 
@@ -8,7 +8,7 @@ import { AttachmentDoc } from '@/model/model'
 import elementIdService from '@/services/elementIdService'
 import { BORDER_RADIUS } from '@/theme'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   skeleton: {
     borderRadius: BORDER_RADIUS,
     height: 300,

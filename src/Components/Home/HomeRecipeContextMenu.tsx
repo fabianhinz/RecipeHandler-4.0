@@ -17,7 +17,7 @@ import RecipeShareButton from '@/Components/Recipe/RecipeShareButton'
 import { PATHS } from '@/Components/Routes/Routes'
 import { Recipe } from '@/model/model'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   homeRecipeContextMenuRoot: {
     display: 'flex',
   },

@@ -1,6 +1,5 @@
 import LabelIcon from '@mui/icons-material/Label'
-import { Grid, GridSize } from '@mui/material'
-import { Breakpoint } from '@mui/material/styles'
+import { Breakpoint, Grid, GridSize } from '@mui/material'
 import { Timestamp } from 'firebase/firestore'
 import { useCallback, useEffect } from 'react'
 import { RouteComponentProps, useRouteMatch } from 'react-router'

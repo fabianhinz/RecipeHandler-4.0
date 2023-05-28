@@ -1,4 +1,4 @@
-import { Avatar, Chip } from '@mui/material'
+import { Avatar, Chip, Theme } from '@mui/material'
 import { ChipProps } from '@mui/material/Chip'
 import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import { User } from '@/model/model'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   absolute: {
     boxShadow: theme.shadows[4],
     position: 'absolute',

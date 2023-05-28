@@ -3,6 +3,7 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Theme,
   Typography,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
@@ -12,7 +13,7 @@ import { PATHS } from '@/Components/Routes/Routes'
 import { useRecipeDoc } from '@/hooks/useRecipeDoc'
 import { Hit } from '@/model/model'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles<Theme>({
   listItem: {
     borderRadius: 0,
   },

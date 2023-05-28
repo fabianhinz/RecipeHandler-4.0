@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Theme,
   Typography,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
@@ -28,7 +29,7 @@ import { resolveDoc } from '@/firebase/firebaseQueries'
 import useProgress from '@/hooks/useProgress'
 import { User } from '@/model/model'
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme>(() => ({
   form: {
     display: 'flex',
     flexDirection: 'column',
@@ -112,7 +113,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
             if (!user) return
             // save the username - this allows admins to enable/disable editors by username
 
-            setDoc(resolveDoc('users', user.uid), {
+            void setDoc(resolveDoc('users', user.uid), {
               username,
               // this is just sugar for the ui, firesture.rules performs authorization
               admin: false,
@@ -130,7 +131,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
             } as Omit<User, 'uid'>)
 
             // send a verification email to the newly created user
-            sendEmailVerification(user, {
+            void sendEmailVerification(user, {
               url: 'https://recipehandler.web.app/',
             })
           })

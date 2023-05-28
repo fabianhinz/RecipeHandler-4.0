@@ -1,8 +1,8 @@
-import { Zoom, ZoomProps } from '@mui/material'
+import { Theme, Zoom, ZoomProps } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { ReactNode } from 'react'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   container: {
     zIndex: theme.zIndex.drawer + 1,
     position: 'fixed',

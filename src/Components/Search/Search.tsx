@@ -7,6 +7,7 @@ import {
   InputBase,
   Paper,
   Portal,
+  Theme,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -39,7 +40,7 @@ interface StyleProps {
   showResultsPaper: boolean
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   searchContainer: {
     display: 'flex',
     position: 'relative',

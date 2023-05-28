@@ -1,10 +1,10 @@
-import { Badge } from '@mui/material/'
+import { Badge, Theme } from '@mui/material/'
 import { BadgeProps } from '@mui/material/Badge'
 import { blueGrey } from '@mui/material/colors'
 import makeStyles from '@mui/styles/makeStyles'
 import { FC } from 'react'
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles<Theme>(theme => {
   const background =
     theme.palette.mode === 'light' ? blueGrey[900] : theme.palette.grey[600]
 

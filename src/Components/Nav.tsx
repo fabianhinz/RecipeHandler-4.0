@@ -10,6 +10,7 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Theme,
   Typography,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
@@ -35,7 +36,7 @@ interface StyleProps {
   active?: boolean
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   nav: {
     display: 'flex',
     flexDirection: 'column',

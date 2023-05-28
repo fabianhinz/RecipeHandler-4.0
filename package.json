@@ -29,6 +29,7 @@
     "clipboard-copy": "^4.0.1",
     "clsx": "^1.2.1",
     "date-fns": "^2.30.0",
+    "dayjs": "^1.11.7",
     "firebase": "^9.22.0",
     "immer": "^9.0.21",
     "mdi-material-ui": "^6.29.0",

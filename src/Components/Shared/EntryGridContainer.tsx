@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material'
+import { Grid, Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
   header?: React.ReactNode
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   root: {
     [theme.breakpoints.only('xs')]: {
       padding: theme.spacing(2),

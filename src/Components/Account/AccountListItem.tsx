@@ -6,6 +6,7 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   Switch,
+  Theme,
   TypographyProps,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
@@ -20,7 +21,7 @@ interface Props {
   variant: 'user' | 'admin'
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   itemAvatar: {
     minWidth: 66,
   },

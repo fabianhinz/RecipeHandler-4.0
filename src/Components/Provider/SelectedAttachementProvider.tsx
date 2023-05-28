@@ -1,4 +1,4 @@
-import { Backdrop, Slide } from '@mui/material'
+import { Backdrop, Slide, Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { createContext, FC, useContext, useEffect, useState } from 'react'
 
@@ -23,7 +23,7 @@ interface StyleProps {
   blurImg: boolean
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   backdrop: {
     paddingBottom: theme.spacing(8),
     paddingTop: theme.spacing(8),

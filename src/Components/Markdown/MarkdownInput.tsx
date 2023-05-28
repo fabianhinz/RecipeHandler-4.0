@@ -1,4 +1,4 @@
-import { Divider, TextField, useTheme } from '@mui/material'
+import { Divider, TextField, Theme, useTheme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useEffect, useRef, useState } from 'react'
 
@@ -20,7 +20,7 @@ export interface CurrentFormats {
   formats: Format[]
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   paper: {
     display: 'flex',
     overflowX: 'auto',

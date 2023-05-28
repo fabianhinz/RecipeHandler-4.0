@@ -1,7 +1,7 @@
-import { Popover, PopoverProps } from '@mui/material'
+import { Popover, PopoverProps, Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   popoverPaper: {
     padding: theme.spacing(1),
     maxWidth: 300,

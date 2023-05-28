@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material'
+import { Grid, Theme, Typography } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 
 import { CategoryResult } from '@/Components/Category/CategoryResult'
@@ -7,7 +7,7 @@ import { Recipe } from '@/model/model'
 
 import RecipeResultButtons from './RecipeResultButtons'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   recipeName: {
     [theme.breakpoints.only('xs')]: {
       textAlign: 'center',

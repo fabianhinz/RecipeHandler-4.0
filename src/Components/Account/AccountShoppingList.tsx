@@ -100,7 +100,7 @@ const AccountUserShoppingList = () => {
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="shoppingListDroppable">
             {provided => (
-              <List disablePadding innerRef={provided.innerRef}>
+              <List disablePadding ref={provided.innerRef}>
                 {shoppingList.map((item, index) => (
                   <AccountShoppingListItem
                     tagFilter={tagFilter}

@@ -1,10 +1,10 @@
 /* eslint-disable react/no-multi-comp */
 import {
-  Box,
   Button,
   CardActions,
   Container,
   LinearProgress,
+  Theme,
   Typography,
 } from '@mui/material'
 import { Alert, AlertTitle } from '@mui/material'
@@ -16,7 +16,7 @@ import StackTrace from 'stacktrace-js'
 
 import { addDocTo } from '@/firebase/firebaseQueries'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   root: {
     overflow: 'hidden',
   },
@@ -31,37 +31,35 @@ const ErrorComponent = (props: BoundaryProps & BoundaryState) => {
   const history = useHistory()
 
   return (
-    <Container maxWidth={props.root ? 'sm' : false}>
-      <Box marginTop={4}>
-        <Alert severity="error" classes={classes}>
-          <AlertTitle>Fehler</AlertTitle>
+    <Container sx={{ py: 2 }} maxWidth={props.root ? 'sm' : false}>
+      <Alert severity="error" classes={classes}>
+        <AlertTitle>Fehler</AlertTitle>
 
-          {props.errorLogged ? (
-            <Typography noWrap gutterBottom color="textSecondary">
-              {props.error}
-            </Typography>
-          ) : (
-            <LinearProgress />
-          )}
+        {props.errorLogged ? (
+          <Typography noWrap gutterBottom color="textSecondary">
+            {props.error}
+          </Typography>
+        ) : (
+          <LinearProgress />
+        )}
 
-          <CardActions style={{ justifyContent: 'flex-end' }}>
-            {props.root !== true && (
-              <Button
-                disabled={!props.errorLogged}
-                color="inherit"
-                onClick={() => history.goBack()}>
-                zurück
-              </Button>
-            )}
+        <CardActions style={{ justifyContent: 'flex-end' }}>
+          {props.root !== true && (
             <Button
               disabled={!props.errorLogged}
               color="inherit"
-              onClick={() => window.location.reload()}>
-              neu laden
+              onClick={() => history.goBack()}>
+              zurück
             </Button>
-          </CardActions>
-        </Alert>
-      </Box>
+          )}
+          <Button
+            disabled={!props.errorLogged}
+            color="inherit"
+            onClick={() => window.location.reload()}>
+            neu laden
+          </Button>
+        </CardActions>
+      </Alert>
     </Container>
   )
 }

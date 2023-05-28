@@ -1,3 +1,4 @@
+import { Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useLayoutEffect, useRef } from 'react'
 
@@ -9,7 +10,7 @@ interface useIntersectionObserverOptions {
   options?: IntersectionObserverInit
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme>(() => ({
   trigger: {
     minWidth: 1,
     minHeight: 1,

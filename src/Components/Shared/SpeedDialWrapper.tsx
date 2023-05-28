@@ -1,9 +1,9 @@
 import SpeedDialIcon from '@mui/icons-material/ClassRounded'
-import { SpeedDial } from '@mui/material'
+import { SpeedDial, Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useState } from 'react'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   speedDial: {
     zIndex: theme.zIndex.drawer + 1,
     position: 'fixed',

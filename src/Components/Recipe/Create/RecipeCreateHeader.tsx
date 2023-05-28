@@ -1,8 +1,8 @@
-import { InputBase } from '@mui/material'
+import { InputBase, Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useState } from 'react'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   inputBaseRoot: {
     width: '100%',
     ...theme.typography.h5,

@@ -1,4 +1,4 @@
-import { Avatar, CardActionArea, Grid, Typography } from '@mui/material'
+import { Avatar, CardActionArea, Grid, Theme, Typography } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { DocumentData, DocumentReference, updateDoc } from 'firebase/firestore'
 import { useSnackbar } from 'notistack'
@@ -9,7 +9,7 @@ import { User } from '@/model/model'
 
 import AccountUserChangelog from './AccountUserChangelog'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme>(theme => ({
   userAvatar: {
     [theme.breakpoints.between('xs', 'lg')]: {
       height: 100,
