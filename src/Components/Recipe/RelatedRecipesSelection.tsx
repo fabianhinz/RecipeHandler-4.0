@@ -1,7 +1,14 @@
-import { Avatar, InputBase, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import SwapIcon from '@mui/icons-material/SwapHorizontalCircle'
-import { Skeleton } from '@mui/material';
+import {
+  Avatar,
+  InputBase,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+} from '@mui/material'
+import { Skeleton } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
@@ -136,7 +143,7 @@ const RelatedRecipesSelection = ({
           ))}
       </List>
     </SelectionDrawer>
-  );
+  )
 }
 
 export default RelatedRecipesSelection

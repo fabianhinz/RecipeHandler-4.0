@@ -1,7 +1,7 @@
-import { Grid, Tab, Tabs } from '@mui/material'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import BookIcon from '@mui/icons-material/Book'
-import { Skeleton } from '@mui/material';
+import { Grid, Tab, Tabs } from '@mui/material'
+import { Skeleton } from '@mui/material'
 import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
@@ -33,41 +33,48 @@ const Bookmark = ({ recipeName }: BookmarkProps) => {
     })
   }, [recipeName])
 
-  return <>
-    {recipe ? (
-      <StyledCard
-        expandable
-        header={recipeName}
-        action={
-          <>
-            <RecipeDetailsButton recipe={recipe} />
-            <RecipeBookmarkButton name={recipeName} />
-          </>
-        }>
-        <Tabs
-          variant="fullWidth"
-          value={value}
-          onChange={(_e, newValue) => setValue(newValue)}>
-          <Tab
-            icon={<AssignmentIcon />}
-            label={`Zutaten für ${recipe?.amount}`}
-          />
-          <Tab icon={<BookIcon />} label="Beschreibung" />
-        </Tabs>
+  return (
+    <>
+      {recipe ? (
+        <StyledCard
+          expandable
+          header={recipeName}
+          action={
+            <>
+              <RecipeDetailsButton recipe={recipe} />
+              <RecipeBookmarkButton name={recipeName} />
+            </>
+          }>
+          <Tabs
+            variant="fullWidth"
+            value={value}
+            onChange={(_e, newValue) => setValue(newValue)}>
+            <Tab
+              icon={<AssignmentIcon />}
+              label={`Zutaten für ${recipe?.amount}`}
+            />
+            <Tab icon={<BookIcon />} label="Beschreibung" />
+          </Tabs>
 
-        <SwipeableViews disableLazyLoading disabled index={value}>
-          <MarkdownRenderer withShoppingList recipeName={recipeName}>
-            {recipe.ingredients}
-          </MarkdownRenderer>
-          <MarkdownRenderer recipeName={recipeName}>
-            {recipe.description}
-          </MarkdownRenderer>
-        </SwipeableViews>
-      </StyledCard>
-    ) : (
-      <Skeleton animation="wave" width="100%" height={400} variant="rectangular" />
-    )}
-  </>;
+          <SwipeableViews disableLazyLoading disabled index={value}>
+            <MarkdownRenderer withShoppingList recipeName={recipeName}>
+              {recipe.ingredients}
+            </MarkdownRenderer>
+            <MarkdownRenderer recipeName={recipeName}>
+              {recipe.description}
+            </MarkdownRenderer>
+          </SwipeableViews>
+        </StyledCard>
+      ) : (
+        <Skeleton
+          animation="wave"
+          width="100%"
+          height={400}
+          variant="rectangular"
+        />
+      )}
+    </>
+  )
 }
 
 // eslint-disable-next-line react/no-multi-comp

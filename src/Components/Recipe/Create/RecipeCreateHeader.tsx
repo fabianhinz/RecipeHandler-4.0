@@ -1,5 +1,5 @@
-import { InputBase } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { InputBase } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { useState } from 'react'
 
 const useStyles = makeStyles(theme => ({

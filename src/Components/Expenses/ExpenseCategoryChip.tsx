@@ -1,5 +1,5 @@
-import { Chip, ChipProps, Grid, Theme } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Chip, ChipProps, Grid, Theme } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { useMemo } from 'react'
 
 import { Expense } from '@/model/model'

@@ -9,8 +9,8 @@ import {
   Portal,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { useSnackbar } from 'notistack'
 import {
   useCallback,
@@ -174,38 +174,40 @@ const Search = () => {
     setFocused(direction === 'in' ? true : false)
   }
 
-  return <>
-    <Container maxWidth="md" className={classes.container}>
-      <form onSubmit={handleSubmit} className={classes.searchContainer}>
-        <InputBase
-          onFocus={handleFocusChange('in')}
-          onBlur={handleFocusChange('out')}
-          className={classes.searchInput}
-          fullWidth
-          placeholder="Rezepte suchen"
-          value={value}
-          onChange={handleInputChange}
-          endAdornment={
-            <Hidden smDown>
-              <InputAdornment position="end">
-                {AlgoliaDocSearchRef}
-              </InputAdornment>
-            </Hidden>
-          }
-        />
+  return (
+    <>
+      <Container maxWidth="md" className={classes.container}>
+        <form onSubmit={handleSubmit} className={classes.searchContainer}>
+          <InputBase
+            onFocus={handleFocusChange('in')}
+            onBlur={handleFocusChange('out')}
+            className={classes.searchInput}
+            fullWidth
+            placeholder="Rezepte suchen"
+            value={value}
+            onChange={handleInputChange}
+            endAdornment={
+              <Hidden smDown>
+                <InputAdornment position="end">
+                  {AlgoliaDocSearchRef}
+                </InputAdornment>
+              </Hidden>
+            }
+          />
 
-        <Grow in={showResultsPaper} mountOnEnter>
-          <Paper className={classes.searchResultsPaper}>
-            <SearchResults />
-          </Paper>
-        </Grow>
-      </form>
-    </Container>
+          <Grow in={showResultsPaper} mountOnEnter>
+            <Paper className={classes.searchResultsPaper}>
+              <SearchResults />
+            </Paper>
+          </Grow>
+        </form>
+      </Container>
 
-    <Portal>
-      <Backdrop className={classes.backdrop} open={showResultsPaper} />
-    </Portal>
-  </>;
+      <Portal>
+        <Backdrop className={classes.backdrop} open={showResultsPaper} />
+      </Portal>
+    </>
+  )
 }
 
 export default Search

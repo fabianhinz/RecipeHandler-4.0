@@ -1,5 +1,12 @@
-import { Card, CardContent, Fab, SvgIconProps, Theme, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  Card,
+  CardContent,
+  Fab,
+  SvgIconProps,
+  Theme,
+  Typography,
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { UnfoldLessHorizontal, UnfoldMoreHorizontal } from 'mdi-material-ui'
 import { useState } from 'react'
 

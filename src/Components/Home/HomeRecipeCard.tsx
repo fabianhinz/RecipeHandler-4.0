@@ -1,6 +1,6 @@
-import { Avatar, Box, Card, Grid, Theme, Typography, Zoom } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Avatar, Box, Card, Grid, Theme, Typography, Zoom } from '@mui/material'
 import Skeleton from '@mui/material/Skeleton'
+import makeStyles from '@mui/styles/makeStyles'
 import { Timestamp } from 'firebase/firestore'
 import { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -110,7 +110,7 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
       <Grid item xs={6} md={4} lg={3} xl={2}>
         <Skeleton className={classes.avatar} variant="rectangular" />
       </Grid>
-    );
+    )
 
   return (
     <>

@@ -1,5 +1,5 @@
-import withStyles from '@mui/styles/withStyles';
-import { ToggleButtonGroup } from '@mui/material';
+import { ToggleButtonGroup } from '@mui/material'
+import withStyles from '@mui/styles/withStyles'
 
 const MarkdownToggleButtonGroup = withStyles(theme => ({
   grouped: {

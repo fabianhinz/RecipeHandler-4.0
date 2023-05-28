@@ -10,9 +10,9 @@ import {
   Popover,
   Tooltip,
   Typography,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { AvatarGroup } from '@mui/material';
+} from '@mui/material'
+import { AvatarGroup } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { onSnapshot, setDoc, Timestamp } from 'firebase/firestore'
 import { StickerEmoji } from 'mdi-material-ui'
 import { memo, useEffect, useMemo, useState } from 'react'
@@ -135,96 +135,98 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
 
   const commentOwner = getByUid(comment.editorUid)
 
-  return <>
-    <Grid container spacing={1} direction="column" alignItems="flex-end">
-      <Grid item xs={12}>
-        <Grid container wrap="nowrap" spacing={1} alignItems="center">
-          {commentOwner?.profilePicture && (
+  return (
+    <>
+      <Grid container spacing={1} direction="column" alignItems="flex-end">
+        <Grid item xs={12}>
+          <Grid container wrap="nowrap" spacing={1} alignItems="center">
+            {commentOwner?.profilePicture && (
+              <Grid item>
+                <Avatar
+                  className={classes.avatar}
+                  src={commentOwner.profilePicture}></Avatar>
+              </Grid>
+            )}
             <Grid item>
-              <Avatar
-                className={classes.avatar}
-                src={commentOwner.profilePicture}></Avatar>
+              <div className={classes.comment}>
+                <Typography gutterBottom>
+                  <b>{commentOwner?.username}: </b>
+                  {comment.createdDate.toDate().toLocaleDateString()}
+                </Typography>
+
+                <Typography>{getCommentTypography(comment.comment)}</Typography>
+
+                <Fab
+                  onClick={e => setEmoticonAnchorEl(e.currentTarget)}
+                  className={classes.reactionFab}
+                  size="small">
+                  <StickerEmoji />
+                </Fab>
+              </div>
             </Grid>
-          )}
-          <Grid item>
-            <div className={classes.comment}>
-              <Typography gutterBottom>
-                <b>{commentOwner?.username}: </b>
-                {comment.createdDate.toDate().toLocaleDateString()}
-              </Typography>
-
-              <Typography>{getCommentTypography(comment.comment)}</Typography>
-
-              <Fab
-                onClick={e => setEmoticonAnchorEl(e.currentTarget)}
-                className={classes.reactionFab}
-                size="small">
-                <StickerEmoji />
-              </Fab>
-            </div>
           </Grid>
+        </Grid>
+
+        <Grid item>
+          <Tooltip
+            title={
+              <List disablePadding dense>
+                {reactions.map(reaction => (
+                  <ListItem
+                    key={`${reaction.createdDate}-${reaction.editorUid}`}>
+                    <ListItemText
+                      primary={`${getByUid(reaction.editorUid)?.username} ${
+                        reaction.emoji
+                      }`}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            }>
+            <AvatarGroup>
+              {reactions.slice(0, 2).map(reaction => (
+                <Avatar key={`${reaction.createdDate}-${reaction.editorUid}`}>
+                  {reaction.emoji}
+                </Avatar>
+              ))}
+
+              <Avatar>{reactions.length}</Avatar>
+            </AvatarGroup>
+          </Tooltip>
         </Grid>
       </Grid>
 
-      <Grid item>
-        <Tooltip
-          title={
-            <List disablePadding dense>
-              {reactions.map(reaction => (
-                <ListItem
-                  key={`${reaction.createdDate}-${reaction.editorUid}`}>
-                  <ListItemText
-                    primary={`${getByUid(reaction.editorUid)?.username} ${
-                      reaction.emoji
-                    }`}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          }>
-          <AvatarGroup>
-            {reactions.slice(0, 2).map(reaction => (
-              <Avatar key={`${reaction.createdDate}-${reaction.editorUid}`}>
-                {reaction.emoji}
-              </Avatar>
-            ))}
-
-            <Avatar>{reactions.length}</Avatar>
-          </AvatarGroup>
-        </Tooltip>
-      </Grid>
-    </Grid>
-
-    <Popover
-      classes={{ paper: classes.popoverPaper }}
-      open={Boolean(emoticonAnchorEl)}
-      anchorEl={emoticonAnchorEl}
-      onClose={() => setEmoticonAnchorEl(null)}
-      anchorOrigin={{
-        vertical: 'center',
-        horizontal: 'left',
-      }}
-      transformOrigin={{
-        vertical: 'center',
-        horizontal: 'right',
-      }}>
-      <Grid justifyContent="space-evenly" container spacing={1}>
-        {EMOJIS.map(emoji => (
-          <Grid item key={emoji}>
-            <IconButton
-              onClick={() => handleEmojiClick(emoji)}
-              classes={{
-                label: classes.emojiLabel,
-                root: classes.iconButtonRoot,
-              }}
-              size="large">
-              {emoji}
-            </IconButton>
-          </Grid>
-        ))}
-      </Grid>
-    </Popover>
-  </>;
+      <Popover
+        classes={{ paper: classes.popoverPaper }}
+        open={Boolean(emoticonAnchorEl)}
+        anchorEl={emoticonAnchorEl}
+        onClose={() => setEmoticonAnchorEl(null)}
+        anchorOrigin={{
+          vertical: 'center',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'center',
+          horizontal: 'right',
+        }}>
+        <Grid justifyContent="space-evenly" container spacing={1}>
+          {EMOJIS.map(emoji => (
+            <Grid item key={emoji}>
+              <IconButton
+                onClick={() => handleEmojiClick(emoji)}
+                classes={{
+                  label: classes.emojiLabel,
+                  root: classes.iconButtonRoot,
+                }}
+                size="large">
+                {emoji}
+              </IconButton>
+            </Grid>
+          ))}
+        </Grid>
+      </Popover>
+    </>
+  )
 }
 
 export default memo(

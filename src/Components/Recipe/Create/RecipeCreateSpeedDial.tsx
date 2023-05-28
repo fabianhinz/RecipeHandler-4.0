@@ -1,7 +1,7 @@
 import { VisibilityOff } from '@mui/icons-material'
 import EyeIcon from '@mui/icons-material/RemoveRedEye'
 import SaveIcon from '@mui/icons-material/Save'
-import { SpeedDialAction } from '@mui/material';
+import { SpeedDialAction } from '@mui/material'
 
 import SpeedDialWrapper from '@/Components/Shared/SpeedDialWrapper'
 interface Props {

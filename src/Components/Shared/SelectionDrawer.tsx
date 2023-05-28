@@ -1,6 +1,14 @@
-import { Badge, Box, Button, ButtonProps, Drawer, IconButton, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '@mui/icons-material/Close'
+import {
+  Badge,
+  Box,
+  Button,
+  ButtonProps,
+  Drawer,
+  IconButton,
+  Typography,
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { ReactText, useEffect, useRef, useState } from 'react'
 
 const useStyles = makeStyles(theme => ({
@@ -82,48 +90,50 @@ const SelectionDrawer = ({
 
   const { label, icon, ...muiButtonProps } = buttonProps
 
-  return <>
-    <Button
-      onClick={openDrawer}
-      variant="contained"
-      size="large"
-      {...muiButtonProps}>
-      <div>
-        <Box display="flex" alignItems="center">
-          <Box mr={1} lineHeight={1}>
-            <Badge
-              overlap="rectangular"
-              color="secondary"
-              variant="dot"
-              invisible={!highlight}>
-              {icon}
-            </Badge>
+  return (
+    <>
+      <Button
+        onClick={openDrawer}
+        variant="contained"
+        size="large"
+        {...muiButtonProps}>
+        <div>
+          <Box display="flex" alignItems="center">
+            <Box mr={1} lineHeight={1}>
+              <Badge
+                overlap="rectangular"
+                color="secondary"
+                variant="dot"
+                invisible={!highlight}>
+                {icon}
+              </Badge>
+            </Box>
+            {label}
           </Box>
-          {label}
-        </Box>
 
-        {legend && <Typography variant="caption">{legend}</Typography>}
-      </div>
-    </Button>
+          {legend && <Typography variant="caption">{legend}</Typography>}
+        </div>
+      </Button>
 
-    <Drawer
-      PaperProps={{ className: classes.paper }}
-      open={open}
-      onClose={closeDrawer}
-      anchor="right"
-      keepMounted>
-      <div className={classes.header}>{header}</div>
-      <div className={classes.container}>
-        {typeof children === 'function' ? children(closeDrawer) : children}
-      </div>
-      <div className={classes.action}>
-        <IconButton onClick={closeDrawer} size="large">
-          <CloseIcon />
-        </IconButton>
-        {action && <div onClick={closeDrawer}>{action}</div>}
-      </div>
-    </Drawer>
-  </>;
+      <Drawer
+        PaperProps={{ className: classes.paper }}
+        open={open}
+        onClose={closeDrawer}
+        anchor="right"
+        keepMounted>
+        <div className={classes.header}>{header}</div>
+        <div className={classes.container}>
+          {typeof children === 'function' ? children(closeDrawer) : children}
+        </div>
+        <div className={classes.action}>
+          <IconButton onClick={closeDrawer} size="large">
+            <CloseIcon />
+          </IconButton>
+          {action && <div onClick={closeDrawer}>{action}</div>}
+        </div>
+      </Drawer>
+    </>
+  )
 }
 
 export default SelectionDrawer

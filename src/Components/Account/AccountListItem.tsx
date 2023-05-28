@@ -1,3 +1,4 @@
+import EmailIcon from '@mui/icons-material/EmailRounded'
 import {
   Avatar,
   ListItem,
@@ -6,9 +7,8 @@ import {
   ListItemText,
   Switch,
   TypographyProps,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import EmailIcon from '@mui/icons-material/EmailRounded'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import { User } from '@/model/model'

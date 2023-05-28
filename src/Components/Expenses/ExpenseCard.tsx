@@ -1,3 +1,4 @@
+import { Archive, Edit } from '@mui/icons-material'
 import {
   Button,
   Card,
@@ -9,9 +10,8 @@ import {
   Grid,
   Theme,
   Typography,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { Archive, Edit } from '@mui/icons-material'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { addDoc, deleteDoc, Timestamp } from 'firebase/firestore'
 import { useState } from 'react'
 

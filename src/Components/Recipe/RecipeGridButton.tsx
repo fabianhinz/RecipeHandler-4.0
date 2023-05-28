@@ -1,5 +1,5 @@
-import { IconButton, Tooltip, TooltipProps } from '@mui/material/'
 import { GridOff, GridOn } from '@mui/icons-material'
+import { IconButton, Tooltip, TooltipProps } from '@mui/material/'
 
 import { useLayoutStore } from '@/store/LayoutStore'
 
@@ -21,7 +21,7 @@ const RecipeGridButton = ({ tooltipProps }: Props) => {
         {gridListActive ? <GridOff /> : <GridOn />}
       </IconButton>
     </Tooltip>
-  );
+  )
 }
 
 export default RecipeGridButton

@@ -1,9 +1,9 @@
 import {
-  ThemeProvider as MuiThemeProvider,
-  Theme,
   StyledEngineProvider,
+  Theme,
+  ThemeProvider as MuiThemeProvider,
   useMediaQuery,
-} from '@mui/material';
+} from '@mui/material'
 import { ReactNode, useLayoutEffect, useState } from 'react'
 
 import {
@@ -14,12 +14,10 @@ import {
 
 import { useFirebaseAuthContext } from './FirebaseAuthProvider'
 
-
 declare module '@mui/styles/defaultTheme' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
-
 
 interface Props {
   children: ReactNode
@@ -69,5 +67,5 @@ export const ThemeProvider = (props: Props) => {
     <StyledEngineProvider injectFirst>
       <MuiThemeProvider theme={theme}>{props.children}</MuiThemeProvider>
     </StyledEngineProvider>
-  );
+  )
 }

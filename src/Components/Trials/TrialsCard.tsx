@@ -1,8 +1,17 @@
-import { Card, CardActionArea, CardMedia, Fab, Grid, GridSize, Slide, Tooltip } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { Breakpoint } from '@mui/material/styles';
 import CheckIcon from '@mui/icons-material/Check'
 import DeleteIcon from '@mui/icons-material/Delete'
+import {
+  Card,
+  CardActionArea,
+  CardMedia,
+  Fab,
+  Grid,
+  GridSize,
+  Slide,
+  Tooltip,
+} from '@mui/material'
+import { Breakpoint } from '@mui/material/styles'
+import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import { deleteDoc } from 'firebase/firestore'
 import { deleteObject, ref } from 'firebase/storage'

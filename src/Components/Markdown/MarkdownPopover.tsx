@@ -1,6 +1,5 @@
-import { Popover, PopoverProps } from '@mui/material';
-
-import makeStyles from '@mui/styles/makeStyles';
+import { Popover, PopoverProps } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 
 const useStyles = makeStyles(theme => ({
   popoverPaper: {

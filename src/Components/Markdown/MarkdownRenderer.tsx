@@ -1,4 +1,6 @@
 /* eslint-disable react/no-multi-comp */
+import AddCircleIcon from '@mui/icons-material/AddCircle'
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 import {
   Avatar,
   Checkbox,
@@ -15,10 +17,8 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import AddCircleIcon from '@mui/icons-material/AddCircle'
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { setDoc } from 'firebase/firestore'
 import React from 'react'
 import ReactMarkdown, { ReactMarkdownOptions } from 'react-markdown'

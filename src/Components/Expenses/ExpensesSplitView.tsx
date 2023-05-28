@@ -1,5 +1,5 @@
 import Splitter from '@devbookhq/splitter'
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from '@mui/styles/makeStyles'
 import { useState } from 'react'
 
 import { BORDER_RADIUS } from '@/theme'

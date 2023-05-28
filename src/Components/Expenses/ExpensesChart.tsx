@@ -6,8 +6,8 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import {
   Bar,

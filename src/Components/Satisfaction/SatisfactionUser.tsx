@@ -1,7 +1,7 @@
-import { Avatar, Grid, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { Rating } from '@mui/material';
-import { RatingProps } from '@mui/lab';
+import { RatingProps } from '@mui/lab'
+import { Avatar, Grid, Typography } from '@mui/material'
+import { Rating } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 

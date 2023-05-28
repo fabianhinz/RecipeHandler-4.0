@@ -21,12 +21,15 @@ const RecipeDetailsButton = ({ recipe, name }: Props) => {
   return (
     <Tooltip title="Details">
       <div>
-        <IconButton disabled={!recipe && !name} onClick={handleIconButtonClick} size="large">
+        <IconButton
+          disabled={!recipe && !name}
+          onClick={handleIconButtonClick}
+          size="large">
           <Eye />
         </IconButton>
       </div>
     </Tooltip>
-  );
+  )
 }
 
 export default RecipeDetailsButton

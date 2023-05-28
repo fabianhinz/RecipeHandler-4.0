@@ -1,5 +1,5 @@
-import { Fab, IconButton, Tooltip } from '@mui/material'
 import CommentIcon from '@mui/icons-material/Comment'
+import { Fab, IconButton, Tooltip } from '@mui/material'
 import { FC, useCallback, useMemo, useState } from 'react'
 
 import { BadgeWrapper } from '@/Components/Shared/BadgeWrapper'
@@ -26,23 +26,27 @@ export const Comments: FC<
     [numberOfComments]
   )
 
-  return <>
-    <Tooltip title="Kommentare">
-      {highContrast ? (
-        <Fab size="small" onClick={handleDrawerChange}>
-          {badgeComment}
-        </Fab>
-      ) : (
-        <IconButton onClick={handleDrawerChange} size="large">{badgeComment}</IconButton>
-      )}
-    </Tooltip>
+  return (
+    <>
+      <Tooltip title="Kommentare">
+        {highContrast ? (
+          <Fab size="small" onClick={handleDrawerChange}>
+            {badgeComment}
+          </Fab>
+        ) : (
+          <IconButton onClick={handleDrawerChange} size="large">
+            {badgeComment}
+          </IconButton>
+        )}
+      </Tooltip>
 
-    <CommentsDialog
-      collection={collection}
-      numberOfComments={numberOfComments}
-      name={name}
-      open={drawer}
-      onClose={handleDrawerChange}
-    />
-  </>;
+      <CommentsDialog
+        collection={collection}
+        numberOfComments={numberOfComments}
+        name={name}
+        open={drawer}
+        onClose={handleDrawerChange}
+      />
+    </>
+  )
 }

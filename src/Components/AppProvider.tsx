@@ -11,18 +11,20 @@ import GridProvider from '@/Components/Provider/GridProvider'
 import RouterProvider from '@/Components/Provider/RouterProvider'
 import SearchResultsProvider from '@/Components/Provider/SearchResultsProvider'
 import SelectedAttachementProvider from '@/Components/Provider/SelectedAttachementProvider'
-import { ThemeProvider, Theme, StyledEngineProvider } from '@/Components/Provider/ThemeProvider';
+import {
+  StyledEngineProvider,
+  Theme,
+  ThemeProvider,
+} from '@/Components/Provider/ThemeProvider'
 import UsersProvider from '@/Components/Provider/UsersProvider'
 
 import BreakpointsProvider from './Provider/BreakpointsProvider'
 import FirebaseAuthProvider from './Provider/FirebaseAuthProvider'
 
-
 declare module '@mui/styles/defaultTheme' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
-
 
 export const AppProvider: FC = ({ children }) => (
   <StyledEngineProvider injectFirst>

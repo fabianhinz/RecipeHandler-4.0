@@ -6,13 +6,13 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+} from '@mui/material'
+import { brown } from '@mui/material/colors'
+import makeStyles from '@mui/styles/makeStyles'
 import { FC } from 'react'
-import RecipeBookmarkButton from '../RecipeBookmarkButton'
 
+import RecipeBookmarkButton from '../RecipeBookmarkButton'
 import RecipeDetailsButton from '../RecipeDetailsButton'
-import { brown } from '@mui/material/colors';
 
 const useStyles = makeStyles(theme => {
   const background = theme.palette.mode === 'light' ? brown[200] : brown[400]

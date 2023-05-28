@@ -1,5 +1,5 @@
 import { GridSize } from '@mui/material'
-import { Breakpoint } from '@mui/material/styles';
+import { Breakpoint } from '@mui/material/styles'
 import { createContext, FC, useContext, useState } from 'react'
 
 export type GridLayout = 'list' | 'grid'

@@ -1,5 +1,5 @@
-import { Grid } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Grid } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 

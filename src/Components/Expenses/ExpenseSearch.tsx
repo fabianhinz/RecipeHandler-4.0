@@ -1,3 +1,4 @@
+import { AutocompleteRenderGroupParams } from '@mui/lab'
 import {
   Backdrop,
   Chip,
@@ -11,10 +12,9 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { Autocomplete } from '@mui/material';
-import { AutocompleteRenderGroupParams } from '@mui/lab';
+} from '@mui/material'
+import { Autocomplete } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { ChevronRight } from 'mdi-material-ui'
 import { useMemo, useState } from 'react'
 
@@ -309,5 +309,5 @@ export const ExpenseSearch = () => {
         <Backdrop className={classes.backdrop} open={open} />
       </Portal>
     </Container>
-  );
+  )
 }

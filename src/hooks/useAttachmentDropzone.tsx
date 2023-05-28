@@ -1,4 +1,4 @@
-import { Alert } from '@mui/material';
+import { Alert } from '@mui/material'
 import compressImage from 'browser-image-compression'
 import { Timestamp } from 'firebase/firestore'
 import { useCallback, useState } from 'react'

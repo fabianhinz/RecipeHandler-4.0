@@ -1,3 +1,4 @@
+import CheckIcon from '@mui/icons-material/Check'
 import {
   Avatar,
   Card,
@@ -8,9 +9,8 @@ import {
   ListItemText,
   Slide,
   Typography,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import CheckIcon from '@mui/icons-material/Check'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import { FirebaseError } from 'firebase/app'
 import { setDoc } from 'firebase/firestore'

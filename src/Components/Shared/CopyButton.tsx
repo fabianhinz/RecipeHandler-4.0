@@ -14,9 +14,11 @@ export default function CopyButton({ text }: Props) {
     <Tooltip
       onMouseOut={() => setCopied(false)}
       title={copied ? 'kopiert' : 'kopieren'}>
-      <IconButton onClick={() => copy(text).then(() => setCopied(true))} size="large">
+      <IconButton
+        onClick={() => copy(text).then(() => setCopied(true))}
+        size="large">
         <ContentCopy />
       </IconButton>
     </Tooltip>
-  );
+  )
 }

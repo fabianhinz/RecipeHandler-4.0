@@ -1,6 +1,6 @@
-import { Theme, useTheme } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { Skeleton } from '@mui/material';
+import { Theme, useTheme } from '@mui/material'
+import { Skeleton } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { getDocs } from 'firebase/firestore'
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router'
@@ -127,5 +127,5 @@ export const Background = ({ Icon }: Props) => {
         <Icon className={classes.icon} />
       )}
     </div>
-  );
+  )
 }

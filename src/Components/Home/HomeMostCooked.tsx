@@ -1,6 +1,6 @@
-import { CardActionArea, Grid, Paper, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { CardActionArea, Grid, Paper, Typography } from '@mui/material'
 import { yellow } from '@mui/material/colors'
+import makeStyles from '@mui/styles/makeStyles'
 import { onSnapshot } from 'firebase/firestore'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'

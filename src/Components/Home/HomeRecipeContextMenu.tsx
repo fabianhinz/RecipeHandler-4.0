@@ -1,3 +1,4 @@
+import { AddCircleOutlined } from '@mui/icons-material'
 import {
   Divider,
   List,
@@ -7,9 +8,8 @@ import {
   Popover,
   PopoverPosition,
   useTheme,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { AddCircleOutlined } from '@mui/icons-material'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { ReactNode, useState } from 'react'
 
 import RecipeBookmarkButton from '@/Components/Recipe/RecipeBookmarkButton'

@@ -1,5 +1,5 @@
-import { Chip, ChipProps, Theme } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Chip, ChipProps, Theme } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { FC, useMemo } from 'react'
 
 import { Categories, Recipe } from '@/model/model'

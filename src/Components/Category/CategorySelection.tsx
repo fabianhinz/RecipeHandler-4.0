@@ -1,3 +1,4 @@
+import DeleteIcon from '@mui/icons-material/Delete'
 import {
   Avatar,
   ButtonProps,
@@ -8,9 +9,8 @@ import {
   ListItemAvatar,
   ListItemText,
   ListSubheader,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import DeleteIcon from '@mui/icons-material/Delete'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import { Filter } from 'mdi-material-ui'
 
@@ -101,5 +101,5 @@ export default function CategorySelection({
         {children}
       </Grid>
     </SelectionDrawer>
-  );
+  )
 }

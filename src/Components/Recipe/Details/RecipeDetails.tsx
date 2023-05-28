@@ -1,5 +1,5 @@
 import EditIcon from '@mui/icons-material/Edit'
-import { SpeedDialAction } from '@mui/material';
+import { SpeedDialAction } from '@mui/material'
 import { CloudUploadOutline } from 'mdi-material-ui'
 import { FC } from 'react'
 import { useHistory } from 'react-router-dom'

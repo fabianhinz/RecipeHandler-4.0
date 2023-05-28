@@ -1,6 +1,6 @@
-import { Grid, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { Skeleton } from '@mui/material';
+import { Grid, Typography } from '@mui/material'
+import { Skeleton } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { getDoc, onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
@@ -44,19 +44,21 @@ const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
 
   if (notFound) return <></>
 
-  return <>
-    {recipe ? (
-      <HomeRecipeCard recipe={recipe} lastCookedDate={createdDate} />
-    ) : (
-      <Grid item xs={6} md={4} lg={3} xl={2}>
-        <Skeleton
-          variant="rectangular"
-          animation="wave"
-          className={classes.skeleton}
-        />
-      </Grid>
-    )}
-  </>;
+  return (
+    <>
+      {recipe ? (
+        <HomeRecipeCard recipe={recipe} lastCookedDate={createdDate} />
+      ) : (
+        <Grid item xs={6} md={4} lg={3} xl={2}>
+          <Skeleton
+            variant="rectangular"
+            animation="wave"
+            className={classes.skeleton}
+          />
+        </Grid>
+      )}
+    </>
+  )
 }
 
 // eslint-disable-next-line react/no-multi-comp

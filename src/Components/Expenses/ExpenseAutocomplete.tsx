@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material'
-import { Autocomplete } from '@mui/material';
-import { createFilterOptions } from '@mui/material/useAutocomplete';
+import { Autocomplete } from '@mui/material'
+import { createFilterOptions } from '@mui/material/useAutocomplete'
 
 interface Props {
   disableFreeSolo?: boolean

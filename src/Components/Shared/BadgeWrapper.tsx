@@ -1,8 +1,8 @@
-import { Badge } from '@mui/material/';
-import makeStyles from '@mui/styles/makeStyles';
+import { Badge } from '@mui/material/'
 import { BadgeProps } from '@mui/material/Badge'
+import { blueGrey } from '@mui/material/colors'
+import makeStyles from '@mui/styles/makeStyles'
 import { FC } from 'react'
-import { blueGrey } from '@mui/material/colors';
 
 const useStyles = makeStyles(theme => {
   const background =

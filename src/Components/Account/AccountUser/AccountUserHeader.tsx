@@ -1,5 +1,5 @@
-import { Avatar, CardActionArea, Grid, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Avatar, CardActionArea, Grid, Typography } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { DocumentData, DocumentReference, updateDoc } from 'firebase/firestore'
 import { useSnackbar } from 'notistack'
 import { useEffect } from 'react'

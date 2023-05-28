@@ -39,9 +39,11 @@ const RecipeBookmarkButton = (props: Props) => {
 
   return (
     <Tooltip {...props.tooltipProps} title={title}>
-      <IconButton onClick={onClick} size="large">{icon}</IconButton>
+      <IconButton onClick={onClick} size="large">
+        {icon}
+      </IconButton>
     </Tooltip>
-  );
+  )
 }
 
 export default RecipeBookmarkButton

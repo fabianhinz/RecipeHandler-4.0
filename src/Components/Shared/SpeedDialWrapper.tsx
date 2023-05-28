@@ -1,6 +1,6 @@
-import makeStyles from '@mui/styles/makeStyles';
 import SpeedDialIcon from '@mui/icons-material/ClassRounded'
-import { SpeedDial } from '@mui/material';
+import { SpeedDial } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { useState } from 'react'
 
 const useStyles = makeStyles(theme => ({

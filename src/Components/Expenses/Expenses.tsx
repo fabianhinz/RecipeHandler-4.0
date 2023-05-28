@@ -1,3 +1,5 @@
+import { TableChart, Timeline, VerticalSplit } from '@mui/icons-material'
+import AddIcon from '@mui/icons-material/Add'
 import {
   AppBar,
   Box,
@@ -10,13 +12,11 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import withStyles from '@mui/styles/withStyles';
-import { TableChart, Timeline, VerticalSplit } from '@mui/icons-material'
-import AddIcon from '@mui/icons-material/Add'
+} from '@mui/material'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
+import makeStyles from '@mui/styles/makeStyles'
+import withStyles from '@mui/styles/withStyles'
 import { useLayoutEffect, useMemo, useState } from 'react'
 
 import { SecouredRouteFab } from '@/Components/Routes/SecouredRouteFab'
@@ -283,7 +283,7 @@ const Expenses = () => {
         onClose={() => setIsDialogOpen(false)}
       />
     </EntryGridContainer>
-  );
+  )
 }
 
 export default Expenses

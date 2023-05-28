@@ -1,5 +1,5 @@
-import { IconButton, Tooltip } from '@mui/material/'
 import FavoriteIcon from '@mui/icons-material/Favorite'
+import { IconButton, Tooltip } from '@mui/material/'
 import {
   addDoc,
   FieldValue,
@@ -62,7 +62,7 @@ const RecipeCookCounterButton = ({ name }: Props) => {
         </IconButton>
       </div>
     </Tooltip>
-  );
+  )
 }
 
 export default RecipeCookCounterButton

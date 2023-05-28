@@ -1,3 +1,4 @@
+import ShareIcon from '@mui/icons-material/Share'
 import {
   IconButton,
   ListItem,
@@ -5,7 +6,6 @@ import {
   ListItemText,
   Tooltip,
 } from '@mui/material'
-import ShareIcon from '@mui/icons-material/Share'
 import copy from 'clipboard-copy'
 import { useState } from 'react'
 
@@ -53,7 +53,7 @@ const RecipeShareButton = (props: Props) => {
         <ShareIcon />
       </IconButton>
     </Tooltip>
-  );
+  )
 }
 
 export default RecipeShareButton

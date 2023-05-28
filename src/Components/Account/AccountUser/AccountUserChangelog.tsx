@@ -1,3 +1,6 @@
+import CloseIcon from '@mui/icons-material/Close'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import UpdateIconRounded from '@mui/icons-material/UpdateRounded'
 import {
   Accordion,
   AccordionDetails,
@@ -13,11 +16,8 @@ import {
   ListSubheader,
   Typography,
   useTheme,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import CloseIcon from '@mui/icons-material/Close'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import UpdateIconRounded from '@mui/icons-material/UpdateRounded'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
@@ -84,134 +84,136 @@ const AccountUserChangelog = () => {
       pullrequest.issueNumbers?.includes(issue.number.toString())
     )
 
-  return <>
-    <Chip
-      onClick={() => setChangelogOpen(true)}
-      icon={<UpdateIconRounded />}
-      label={RECIPE_HANDLER_APP_VERSION}
-      color={
-        pullrequests.some(pr => pr.shortSha === RECIPE_HANDLER_APP_VERSION) &&
-        pullrequests[0]?.shortSha !== RECIPE_HANDLER_APP_VERSION
-          ? 'secondary'
-          : 'default'
-      }
-    />
-    <Dialog
-      fullScreen={isDialogFullscreen}
-      open={changelogOpen}
-      onClose={() => setChangelogOpen(false)}
-      keepMounted
-      TransitionComponent={SlideUp}
-      maxWidth="sm"
-      fullWidth>
-      <DialogTitle>Changelog</DialogTitle>
-      {loading && <Progress variant="absolute" />}
-      <DialogContent className={classes.dialogContent}>
-        {pullrequests.map(pr => (
-          <Accordion variant="elevation" key={pr.shortSha}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Grid
-                container
-                alignItems="center"
-                justifyContent="space-between"
-                spacing={1}>
-                <Grid item xs={12} sm={9}>
-                  <Grid container alignItems="center" spacing={3}>
-                    <Grid item xs={4} sm={3}>
-                      <Chip
-                        label={pr.shortSha}
-                        color={
-                          pr.shortSha === RECIPE_HANDLER_APP_VERSION
-                            ? 'primary'
-                            : 'default'
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={8} sm={9}>
-                      <Typography>{pr.title}</Typography>
+  return (
+    <>
+      <Chip
+        onClick={() => setChangelogOpen(true)}
+        icon={<UpdateIconRounded />}
+        label={RECIPE_HANDLER_APP_VERSION}
+        color={
+          pullrequests.some(pr => pr.shortSha === RECIPE_HANDLER_APP_VERSION) &&
+          pullrequests[0]?.shortSha !== RECIPE_HANDLER_APP_VERSION
+            ? 'secondary'
+            : 'default'
+        }
+      />
+      <Dialog
+        fullScreen={isDialogFullscreen}
+        open={changelogOpen}
+        onClose={() => setChangelogOpen(false)}
+        keepMounted
+        TransitionComponent={SlideUp}
+        maxWidth="sm"
+        fullWidth>
+        <DialogTitle>Changelog</DialogTitle>
+        {loading && <Progress variant="absolute" />}
+        <DialogContent className={classes.dialogContent}>
+          {pullrequests.map(pr => (
+            <Accordion variant="elevation" key={pr.shortSha}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Grid
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={1}>
+                  <Grid item xs={12} sm={9}>
+                    <Grid container alignItems="center" spacing={3}>
+                      <Grid item xs={4} sm={3}>
+                        <Chip
+                          label={pr.shortSha}
+                          color={
+                            pr.shortSha === RECIPE_HANDLER_APP_VERSION
+                              ? 'primary'
+                              : 'default'
+                          }
+                        />
+                      </Grid>
+                      <Grid item xs={8} sm={9}>
+                        <Typography>{pr.title}</Typography>
+                      </Grid>
                     </Grid>
                   </Grid>
+                  <Hidden smDown>
+                    <Grid item>
+                      <Typography>
+                        {pr.closedAt.toDate().toLocaleDateString()}
+                      </Typography>
+                    </Grid>
+                  </Hidden>
                 </Grid>
-                <Hidden smDown>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Grid
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={1}>
                   <Grid item>
-                    <Typography>
-                      {pr.closedAt.toDate().toLocaleDateString()}
-                    </Typography>
+                    <ListSubheader disableGutters>{pr.creator}</ListSubheader>
                   </Grid>
-                </Hidden>
-              </Grid>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Grid
-                container
-                alignItems="center"
-                justifyContent="space-between"
-                spacing={1}>
-                <Grid item>
-                  <ListSubheader disableGutters>{pr.creator}</ListSubheader>
-                </Grid>
-                <Grid item>
-                  <ListSubheader disableGutters>
-                    {pr.closedAt.toDate().toLocaleString()} Uhr
-                  </ListSubheader>
-                </Grid>
-                {pr.issueNumbers && pr.issueNumbers.length > 0 ? (
-                  <Grid item xs={12}>
-                    {getRelatedIssues(pr).map(issue => (
-                      <Grid
-                        key={issue.number}
-                        container
-                        wrap="nowrap"
-                        justifyContent="space-between"
-                        className={classes.issueContainer}>
-                        <Grid item xs={9}>
-                          <Grid container spacing={1}>
-                            <Grid item xs={2}>
-                              <Typography noWrap>{issue.number}</Typography>
-                            </Grid>
-                            <Grid item xs={10}>
-                              <Typography>{issue.title}</Typography>
+                  <Grid item>
+                    <ListSubheader disableGutters>
+                      {pr.closedAt.toDate().toLocaleString()} Uhr
+                    </ListSubheader>
+                  </Grid>
+                  {pr.issueNumbers && pr.issueNumbers.length > 0 ? (
+                    <Grid item xs={12}>
+                      {getRelatedIssues(pr).map(issue => (
+                        <Grid
+                          key={issue.number}
+                          container
+                          wrap="nowrap"
+                          justifyContent="space-between"
+                          className={classes.issueContainer}>
+                          <Grid item xs={9}>
+                            <Grid container spacing={1}>
+                              <Grid item xs={2}>
+                                <Typography noWrap>{issue.number}</Typography>
+                              </Grid>
+                              <Grid item xs={10}>
+                                <Typography>{issue.title}</Typography>
+                              </Grid>
                             </Grid>
                           </Grid>
+                          <Grid item className={classes.labelsContainer}>
+                            {issue.labels.map(label => (
+                              <Chip
+                                key={issue.number + label.name}
+                                label={label.name}
+                                size="small"
+                                style={{
+                                  color: theme.palette.getContrastText(
+                                    '#' + label.color
+                                  ),
+                                  backgroundColor: '#' + label.color,
+                                  margin: theme.spacing(0.5),
+                                }}
+                              />
+                            ))}
+                          </Grid>
                         </Grid>
-                        <Grid item className={classes.labelsContainer}>
-                          {issue.labels.map(label => (
-                            <Chip
-                              key={issue.number + label.name}
-                              label={label.name}
-                              size="small"
-                              style={{
-                                color: theme.palette.getContrastText(
-                                  '#' + label.color
-                                ),
-                                backgroundColor: '#' + label.color,
-                                margin: theme.spacing(0.5),
-                              }}
-                            />
-                          ))}
-                        </Grid>
-                      </Grid>
-                    ))}
-                  </Grid>
-                ) : (
-                  <Grid item xs={12}>
-                    <Typography>
-                      Keine zugehörigen Issues vorhanden
-                    </Typography>
-                  </Grid>
-                )}
-              </Grid>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-      </DialogContent>
-      <DialogActions>
-        <IconButton onClick={() => setChangelogOpen(false)} size="large">
-          <CloseIcon />
-        </IconButton>
-      </DialogActions>
-    </Dialog>
-  </>;
+                      ))}
+                    </Grid>
+                  ) : (
+                    <Grid item xs={12}>
+                      <Typography>
+                        Keine zugehörigen Issues vorhanden
+                      </Typography>
+                    </Grid>
+                  )}
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <IconButton onClick={() => setChangelogOpen(false)} size="large">
+            <CloseIcon />
+          </IconButton>
+        </DialogActions>
+      </Dialog>
+    </>
+  )
 }
 
 export default AccountUserChangelog

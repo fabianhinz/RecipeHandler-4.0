@@ -1,6 +1,5 @@
-import { Grid } from '@mui/material';
-
-import makeStyles from '@mui/styles/makeStyles';
+import { Grid } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 
 interface Props {
   children: React.ReactNode

@@ -1,7 +1,7 @@
 import FormatBoldIcon from '@mui/icons-material/FormatBold'
 import FormatItalicIcon from '@mui/icons-material/FormatItalic'
 import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough'
-import { ToggleButton } from '@mui/material';
+import { ToggleButton } from '@mui/material'
 
 import { CurrentFormats, ToggleChangeHandler } from '../MarkdownInput'
 import MarkdownToggleButtonGroup from './MarkdownToggleButtonGroup'

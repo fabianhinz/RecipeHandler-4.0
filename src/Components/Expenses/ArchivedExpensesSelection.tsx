@@ -1,3 +1,4 @@
+import { Unarchive } from '@mui/icons-material'
 import {
   Avatar,
   IconButton,
@@ -8,7 +9,6 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material'
-import { Unarchive } from '@mui/icons-material'
 import { addDoc, deleteDoc, onSnapshot } from 'firebase/firestore'
 import { Archive, Delete } from 'mdi-material-ui'
 import { useEffect, useState } from 'react'
@@ -111,7 +111,7 @@ const ArchivedExpensesSelection = () => {
         ))}
       </List>
     </SelectionDrawer>
-  );
+  )
 }
 
 export default ArchivedExpensesSelection

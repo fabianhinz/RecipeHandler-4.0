@@ -1,12 +1,20 @@
 /* eslint-disable react/no-multi-comp */
-import { Chip, Fab, Grid, IconButton, Slide, Tooltip, useTheme } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Alert, Skeleton } from '@mui/material';
-import { AlertProps } from '@mui/lab';
+import { AlertProps } from '@mui/lab'
+import {
+  Chip,
+  Fab,
+  Grid,
+  IconButton,
+  Slide,
+  Tooltip,
+  useTheme,
+} from '@mui/material'
+import { Alert, Skeleton } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import { deleteDoc, updateDoc } from 'firebase/firestore'
 import { deleteObject, getDownloadURL, ref } from 'firebase/storage'
@@ -200,7 +208,7 @@ const SwipeableAttachment = ({
         uid={attachment.editorUid}
       />
     </div>
-  );
+  )
 }
 
 interface AttachmentAlert
@@ -413,97 +421,111 @@ const AttachmentGalleryProvider: FC = ({ children }) => {
     setTimeout(() => setAlert(prev => ({ ...prev, open: false })), 500)
   }
 
-  return <>
-    <Context.Provider value={{ handleAnimation }}>
-      {children}
-    </Context.Provider>
-    <Slide in={Boolean(originId)} direction="up">
-      <div className={classes.background}>
-        <Fab
-          size="medium"
-          onClick={() => setActiveAttachment(prev => --prev)}
-          disabled={activeAttachment === 0}>
-          <ChevronLeft />
-        </Fab>
-        <div id="destination" className={classes.destination}>
-          {attachments && (
-            <SwipeableViews disabled index={activeAttachment}>
-              {attachments.map((attachment, index) => (
-                <SwipeableAttachment
-                  onPossiblePreviewLoad={handlePossiblePreviewLoad}
-                  index={index}
-                  key={index}
-                  attachment={attachment}
-                />
-              ))}
-            </SwipeableViews>
-          )}
-        </div>
-        <Fab
-          size="medium"
-          onClick={() => setActiveAttachment(prev => ++prev)}
-          disabled={
-            attachments && activeAttachment === attachments.length - 1
-          }>
-          <ChevronRight />
-        </Fab>
+  return (
+    <>
+      <Context.Provider value={{ handleAnimation }}>
+        {children}
+      </Context.Provider>
+      <Slide in={Boolean(originId)} direction="up">
+        <div className={classes.background}>
+          <Fab
+            size="medium"
+            onClick={() => setActiveAttachment(prev => --prev)}
+            disabled={activeAttachment === 0}>
+            <ChevronLeft />
+          </Fab>
+          <div id="destination" className={classes.destination}>
+            {attachments && (
+              <SwipeableViews disabled index={activeAttachment}>
+                {attachments.map((attachment, index) => (
+                  <SwipeableAttachment
+                    onPossiblePreviewLoad={handlePossiblePreviewLoad}
+                    index={index}
+                    key={index}
+                    attachment={attachment}
+                  />
+                ))}
+              </SwipeableViews>
+            )}
+          </div>
+          <Fab
+            size="medium"
+            onClick={() => setActiveAttachment(prev => ++prev)}
+            disabled={
+              attachments && activeAttachment === attachments.length - 1
+            }>
+            <ChevronRight />
+          </Fab>
 
-        <Grid
-          className={classes.btnContainer}
-          container
-          justifyContent="flex-end"
-          spacing={1}>
-          <Grid item>
-            <Tooltip placement="bottom" title="Schließen">
-              <div>
-                <IconButton disabled={alert.open} onClick={() => handleAnimation()} size="large">
-                  <CloseIcon />
-                </IconButton>
-              </div>
-            </Tooltip>
-          </Grid>
-          <Grid item>
-            <Tooltip placement="bottom" title="Als Vorschaubild setzen">
-              <IconButton disabled={alert.open} onClick={handlePreviewChange} size="large">
-                <FileImage />
-              </IconButton>
-            </Tooltip>
-          </Grid>
-          {!isSafari && (
+          <Grid
+            className={classes.btnContainer}
+            container
+            justifyContent="flex-end"
+            spacing={1}>
             <Grid item>
-              <Tooltip placement="bottom" title="Herunterladen">
+              <Tooltip placement="bottom" title="Schließen">
                 <div>
-                  <IconButton disabled={alert.open} onClick={handleDownload} size="large">
-                    <Download />
+                  <IconButton
+                    disabled={alert.open}
+                    onClick={() => handleAnimation()}
+                    size="large">
+                    <CloseIcon />
                   </IconButton>
                 </div>
               </Tooltip>
             </Grid>
-          )}
-          <Grid item>
-            <Tooltip placement="bottom" title="Löschen">
-              <div>
-                <IconButton disabled={alert.open} onClick={requestDeleteConfirmation} size="large">
-                  <DeleteIcon />
+            <Grid item>
+              <Tooltip placement="bottom" title="Als Vorschaubild setzen">
+                <IconButton
+                  disabled={alert.open}
+                  onClick={handlePreviewChange}
+                  size="large">
+                  <FileImage />
                 </IconButton>
-              </div>
-            </Tooltip>
+              </Tooltip>
+            </Grid>
+            {!isSafari && (
+              <Grid item>
+                <Tooltip placement="bottom" title="Herunterladen">
+                  <div>
+                    <IconButton
+                      disabled={alert.open}
+                      onClick={handleDownload}
+                      size="large">
+                      <Download />
+                    </IconButton>
+                  </div>
+                </Tooltip>
+              </Grid>
+            )}
+            <Grid item>
+              <Tooltip placement="bottom" title="Löschen">
+                <div>
+                  <IconButton
+                    disabled={alert.open}
+                    onClick={requestDeleteConfirmation}
+                    size="large">
+                    <DeleteIcon />
+                  </IconButton>
+                </div>
+              </Tooltip>
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Slide direction="down" in={alert.open}>
-          <div className={classes.alertContainer}>
-            <Alert
-              severity={alert?.severity}
-              action={alert.action}
-              onClose={() => setAlert(prev => ({ ...prev, open: false }))}>
-              {alert?.text}
-            </Alert>
-          </div>
-        </Slide>
-      </div>
-    </Slide>
-  </>;
+          <Slide direction="down" in={alert.open}>
+            <div className={classes.alertContainer}>
+              <Alert
+                severity={alert?.severity}
+                action={alert.action}
+                onClose={() => setAlert(prev => ({ ...prev, open: false }))}>
+                {alert?.text}
+              </Alert>
+            </div>
+          </Slide>
+        </div>
+      </Slide>
+    </>
+  )
 }
 
 export default AttachmentGalleryProvider

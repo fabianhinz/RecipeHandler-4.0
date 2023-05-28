@@ -1,3 +1,6 @@
+import CloseIcon from '@mui/icons-material/Close'
+import ScrollToLatestIcon from '@mui/icons-material/ExpandMore'
+import SaveIcon from '@mui/icons-material/Save'
 import {
   Dialog,
   DialogActions,
@@ -6,13 +9,10 @@ import {
   Grid,
   IconButton,
   TextField,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+} from '@mui/material'
 import Paper, { PaperProps } from '@mui/material/Paper'
-import CloseIcon from '@mui/icons-material/Close'
-import ScrollToLatestIcon from '@mui/icons-material/ExpandMore'
-import SaveIcon from '@mui/icons-material/Save'
 import Skeleton from '@mui/material/Skeleton'
+import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import { onSnapshot, Timestamp } from 'firebase/firestore'
 import { FC, useEffect, useState } from 'react'
@@ -229,5 +229,5 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
         </form>
       </DialogActions>
     </Dialog>
-  );
+  )
 }

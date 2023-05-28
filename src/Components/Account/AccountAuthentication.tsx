@@ -1,3 +1,5 @@
+import AccountIcon from '@mui/icons-material/AccountCircleRounded'
+import CloseIcon from '@mui/icons-material/Close'
 import {
   Button,
   Dialog,
@@ -6,10 +8,8 @@ import {
   DialogTitle,
   TextField,
   Typography,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import AccountIcon from '@mui/icons-material/AccountCircleRounded'
-import CloseIcon from '@mui/icons-material/Close'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,

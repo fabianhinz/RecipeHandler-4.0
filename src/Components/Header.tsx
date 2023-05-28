@@ -1,6 +1,13 @@
-import { AppBar, Avatar, Hidden, IconButton, Toolbar, Tooltip } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import MenuIcon from '@mui/icons-material/Menu'
+import {
+  AppBar,
+  Avatar,
+  Hidden,
+  IconButton,
+  Toolbar,
+  Tooltip,
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import {
   AccountCircleOutline,
   InformationOutline,
@@ -82,79 +89,83 @@ const Header = () => {
   const { setGridLayout, gridLayout } = useGridContext()
   const { user, loginEnabled } = useFirebaseAuthContext()
 
-  return <>
-    <div className={classes.safeArea} />
+  return (
+    <>
+      <div className={classes.safeArea} />
 
-    <AppBar
-      variant="elevation"
-      className={classes.appbar}
-      color="default"
-      position="fixed">
-      <Toolbar className={classes.toolbar}>
-        <div className={classes.menuIcon}>
-          <IconButton onClick={() => setDrawerOpen(!drawerOpen)} size="large">
-            <MenuIcon />
-          </IconButton>
-        </div>
+      <AppBar
+        variant="elevation"
+        className={classes.appbar}
+        color="default"
+        position="fixed">
+        <Toolbar className={classes.toolbar}>
+          <div className={classes.menuIcon}>
+            <IconButton onClick={() => setDrawerOpen(!drawerOpen)} size="large">
+              <MenuIcon />
+            </IconButton>
+          </div>
 
-        {showExpensesSearch ? <ExpenseSearch /> : <Search />}
+          {showExpensesSearch ? <ExpenseSearch /> : <Search />}
 
-        <div className={classes.headerButtons}>
-          <Hidden mdDown>
-            <Tooltip
-              title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
-              <IconButton
-                onClick={() =>
-                  setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
-                }
-                size="large">
-                {gridLayout === 'grid' ? (
-                  <ViewAgendaOutline />
-                ) : (
-                  <ViewGridOutline />
-                )}
-              </IconButton>
-            </Tooltip>
-          </Hidden>
-
-          <Hidden mdDown>
-            <Tooltip title="Impressum">
-              <IconButton onClick={() => history.push(PATHS.impressum)} size="large">
-                <InformationOutline />
-              </IconButton>
-            </Tooltip>
-          </Hidden>
-
-          <Tooltip title={user?.username || 'Einloggen'}>
-            <div
-              className={classes.accountContainer}
-              onClick={() => {
-                if (user) history.push(PATHS.account)
-                else setAuthenticationOpen(true)
-              }}>
-              {user ? (
-                <Avatar
-                  className={classes.userAvatar}
-                  src={user.profilePicture}
-                />
-              ) : (
-                <IconButton disabled={!loginEnabled} size="large">
-                  <AccountCircleOutline />
+          <div className={classes.headerButtons}>
+            <Hidden mdDown>
+              <Tooltip
+                title={gridLayout === 'grid' ? 'Listenansicht' : 'Gridansicht'}>
+                <IconButton
+                  onClick={() =>
+                    setGridLayout(prev => (prev === 'grid' ? 'list' : 'grid'))
+                  }
+                  size="large">
+                  {gridLayout === 'grid' ? (
+                    <ViewAgendaOutline />
+                  ) : (
+                    <ViewGridOutline />
+                  )}
                 </IconButton>
-              )}
-            </div>
-          </Tooltip>
-        </div>
-      </Toolbar>
-    </AppBar>
+              </Tooltip>
+            </Hidden>
 
-    <AccountAuthentication
-      open={authenticationOpen}
-      onClose={() => setAuthenticationOpen(false)}
-    />
+            <Hidden mdDown>
+              <Tooltip title="Impressum">
+                <IconButton
+                  onClick={() => history.push(PATHS.impressum)}
+                  size="large">
+                  <InformationOutline />
+                </IconButton>
+              </Tooltip>
+            </Hidden>
 
-    <Nav drawerOpen={drawerOpen} onDrawerClose={() => setDrawerOpen(false)} />
-  </>;
+            <Tooltip title={user?.username || 'Einloggen'}>
+              <div
+                className={classes.accountContainer}
+                onClick={() => {
+                  if (user) history.push(PATHS.account)
+                  else setAuthenticationOpen(true)
+                }}>
+                {user ? (
+                  <Avatar
+                    className={classes.userAvatar}
+                    src={user.profilePicture}
+                  />
+                ) : (
+                  <IconButton disabled={!loginEnabled} size="large">
+                    <AccountCircleOutline />
+                  </IconButton>
+                )}
+              </div>
+            </Tooltip>
+          </div>
+        </Toolbar>
+      </AppBar>
+
+      <AccountAuthentication
+        open={authenticationOpen}
+        onClose={() => setAuthenticationOpen(false)}
+      />
+
+      <Nav drawerOpen={drawerOpen} onDrawerClose={() => setDrawerOpen(false)} />
+    </>
+  )
 }
 
 export default Header

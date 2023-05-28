@@ -1,6 +1,6 @@
-import { Avatar, Chip, Theme } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { Skeleton } from '@mui/material';
+import { Avatar, Chip, Theme } from '@mui/material'
+import { Skeleton } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { useHistory } from 'react-router-dom'
 
 import { PATHS } from '@/Components/Routes/Routes'
@@ -43,7 +43,7 @@ const RecipeChip = (props: Props) => {
       <Skeleton variant="rectangular" style={{ borderRadius: 16 }}>
         <Chip avatar={<Avatar></Avatar>} label={props.recipeName} />{' '}
       </Skeleton>
-    );
+    )
   }
 
   return (

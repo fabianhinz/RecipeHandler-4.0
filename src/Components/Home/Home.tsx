@@ -1,7 +1,7 @@
-import { AppBar, Fade, Grid, Tab, Tabs, Toolbar } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import withStyles from '@mui/styles/withStyles';
 import AddIcon from '@mui/icons-material/Add'
+import { AppBar, Fade, Grid, Tab, Tabs, Toolbar } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
+import withStyles from '@mui/styles/withStyles'
 import { onSnapshot } from 'firebase/firestore'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -126,79 +126,81 @@ const Home = () => {
     setLastRecipe(undefined)
   }, [])
 
-  return <>
-    <EntryGridContainer
-      header={
-        <AppBar
-          className={classes.homeRoot}
-          position="static"
-          color="default">
-          <Toolbar className={classes.toolbar}>
-            <Tabs
-              scrollButtons
-              variant="scrollable"
-              value={tabIndex}
-              onChange={(_, newIndex) => setTabIndex(newIndex)}
-              allowScrollButtonsMobile>
-              <StyledTab label="Alle Rezepte" />
-              <StyledTab label="Neue" />
-              <StyledTab label="Häufig gekocht" />
-            </Tabs>
-            <Fade mountOnEnter unmountOnExit in={tabIndex === 0}>
-              <div>
-                <HomeRecipeSelection
-                  selectedCategories={selectedCategories}
-                  onRemoveSelectedCategories={() => {
-                    removeSelectedCategories()
-                    resetRecipeState()
-                    setSelectedEditor('')
-                    getRecipeService().selectedEditor = ''
-                  }}
-                  onSelectedCategoriesChange={(type, value) => {
-                    setSelectedCategories(type, value)
-                    resetRecipeState()
-                  }}
-                  selectedEditor={selectedEditor}
-                  onSelectedEditorChange={uid => {
-                    setSelectedEditor(uid)
-                    getRecipeService().selectedEditor = uid
-                    resetRecipeState()
-                  }}
-                  orderBy={orderBy}
-                  onOrderByChange={newOrderBy => {
-                    setOrderBy(newOrderBy)
-                    resetRecipeState()
-                  }}
-                />
-              </div>
-            </Fade>
-          </Toolbar>
-        </AppBar>
-      }>
-      <Grid item xs={12}>
-        <Fade in={tabIndex === 0} mountOnEnter unmountOnExit>
-          <HomeRecipes
-            pagedRecipes={pagedRecipes}
-            IntersectionObserverTrigger={IntersectionObserverTrigger}
-            pagedRecipesSize={pagedRecipesSize}
-            querying={querying}
-          />
-        </Fade>
-        <Fade in={tabIndex === 1} mountOnEnter unmountOnExit>
-          <HomeNew />
-        </Fade>
-        <Fade in={tabIndex === 2} mountOnEnter unmountOnExit>
-          <HomeMostCooked />
-        </Fade>
-      </Grid>
-    </EntryGridContainer>
+  return (
+    <>
+      <EntryGridContainer
+        header={
+          <AppBar
+            className={classes.homeRoot}
+            position="static"
+            color="default">
+            <Toolbar className={classes.toolbar}>
+              <Tabs
+                scrollButtons
+                variant="scrollable"
+                value={tabIndex}
+                onChange={(_, newIndex) => setTabIndex(newIndex)}
+                allowScrollButtonsMobile>
+                <StyledTab label="Alle Rezepte" />
+                <StyledTab label="Neue" />
+                <StyledTab label="Häufig gekocht" />
+              </Tabs>
+              <Fade mountOnEnter unmountOnExit in={tabIndex === 0}>
+                <div>
+                  <HomeRecipeSelection
+                    selectedCategories={selectedCategories}
+                    onRemoveSelectedCategories={() => {
+                      removeSelectedCategories()
+                      resetRecipeState()
+                      setSelectedEditor('')
+                      getRecipeService().selectedEditor = ''
+                    }}
+                    onSelectedCategoriesChange={(type, value) => {
+                      setSelectedCategories(type, value)
+                      resetRecipeState()
+                    }}
+                    selectedEditor={selectedEditor}
+                    onSelectedEditorChange={uid => {
+                      setSelectedEditor(uid)
+                      getRecipeService().selectedEditor = uid
+                      resetRecipeState()
+                    }}
+                    orderBy={orderBy}
+                    onOrderByChange={newOrderBy => {
+                      setOrderBy(newOrderBy)
+                      resetRecipeState()
+                    }}
+                  />
+                </div>
+              </Fade>
+            </Toolbar>
+          </AppBar>
+        }>
+        <Grid item xs={12}>
+          <Fade in={tabIndex === 0} mountOnEnter unmountOnExit>
+            <HomeRecipes
+              pagedRecipes={pagedRecipes}
+              IntersectionObserverTrigger={IntersectionObserverTrigger}
+              pagedRecipesSize={pagedRecipesSize}
+              querying={querying}
+            />
+          </Fade>
+          <Fade in={tabIndex === 1} mountOnEnter unmountOnExit>
+            <HomeNew />
+          </Fade>
+          <Fade in={tabIndex === 2} mountOnEnter unmountOnExit>
+            <HomeMostCooked />
+          </Fade>
+        </Grid>
+      </EntryGridContainer>
 
-    <SecouredRouteFab
-      pathname={PATHS.recipeCreate}
-      icon={<AddIcon />}
-      tooltipTitle="Rezept erstellen"
-    />
-  </>;
+      <SecouredRouteFab
+        pathname={PATHS.recipeCreate}
+        icon={<AddIcon />}
+        tooltipTitle="Rezept erstellen"
+      />
+    </>
+  )
 }
 
 export default Home

@@ -1,5 +1,5 @@
 import { List } from '@mui/material'
-import { Alert } from '@mui/material';
+import { Alert } from '@mui/material'
 
 import { useSearchResultsContext } from '@/Components/Provider/SearchResultsProvider'
 import NotFound from '@/Components/Shared/NotFound'

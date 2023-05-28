@@ -1,3 +1,4 @@
+import { Clear } from '@mui/icons-material'
 import {
   Checkbox,
   Fade,
@@ -9,9 +10,8 @@ import {
   Theme,
   Typography,
   useTheme,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import { Clear } from '@mui/icons-material'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import { setDoc } from 'firebase/firestore'
 import React, { useCallback, useState } from 'react'

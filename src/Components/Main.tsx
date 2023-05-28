@@ -1,5 +1,5 @@
-import { Container, Theme } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { Container, Theme } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
 import { useRouteMatch } from 'react-router-dom'
 
 import { PATHS, Routes } from '@/Components/Routes/Routes'
