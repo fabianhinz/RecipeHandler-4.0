@@ -1,4 +1,4 @@
-import { PaletteType } from '@material-ui/core'
+import { PaletteType } from '@mui/material'
 import { DocumentChangeType, Timestamp } from 'firebase/firestore'
 import { RouteComponentProps } from 'react-router'
 

@@ -1,4 +1,5 @@
-import DateFnsUtils from '@date-io/date-fns'
+import { Euro, Save } from '@mui/icons-material'
+import CloseIcon from '@mui/icons-material/Close'
 import {
   Button,
   Chip,
@@ -8,16 +9,14 @@ import {
   DialogTitle,
   Grid,
   InputAdornment,
-  makeStyles,
   Paper,
   TextField,
   Typography,
   Zoom,
-} from '@material-ui/core'
-import { Euro, Save } from '@material-ui/icons'
-import CloseIcon from '@material-ui/icons/Close'
-import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
-import deLocale from 'date-fns/locale/de'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { addDoc, Timestamp, updateDoc } from 'firebase/firestore'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'
@@ -79,7 +78,7 @@ const useStyles = makeStyles(theme => ({
     gap: theme.spacing(2),
   },
   widgetContainer: {
-    backgroundColor: theme.palette.primary[theme.palette.type],
+    backgroundColor: theme.palette.primary[theme.palette.mode],
     borderRadius: 10,
     padding: theme.spacing(2),
     display: 'flex',
@@ -255,27 +254,24 @@ const ExpenseDialog = (props: Props) => {
                 Kaufdatum
               </Typography>
 
-              <MuiPickersUtilsProvider locale={deLocale} utils={DateFnsUtils}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  fullWidth
                   disableFuture
                   format="dd.MM.yyyy"
-                  margin="normal"
                   value={date.toDate()}
-                  TextFieldComponent={props => (
-                    <TextField
-                      {...props}
-                      inputProps={{ className: classes.widgetTypography }}
-                      variant="outlined"
-                      margin="none"
-                    />
-                  )}
+                  slotProps={{
+                    textField: {
+                      inputProps: { className: classes.widgetTypography },
+                      variant: 'outlined',
+                      margin: 'none',
+                    },
+                  }}
                   onChange={date => {
                     const newDate = date ?? new Date()
                     setDate(Timestamp.fromDate(newDate))
                   }}
                 />
-              </MuiPickersUtilsProvider>
+              </LocalizationProvider>
             </Paper>
 
             <Paper className={classes.widgetContainer}>

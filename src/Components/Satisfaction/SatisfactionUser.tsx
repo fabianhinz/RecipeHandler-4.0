@@ -1,5 +1,7 @@
-import { Avatar, Grid, makeStyles, Typography } from '@material-ui/core'
-import { Rating, RatingProps } from '@material-ui/lab'
+import { Avatar, Grid, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Rating } from '@mui/material';
+import { RatingProps } from '@mui/lab';
 
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 

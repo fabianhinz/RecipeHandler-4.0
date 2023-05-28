@@ -4,12 +4,12 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  makeStyles,
   Popover,
   PopoverPosition,
   useTheme,
-} from '@material-ui/core'
-import { AddCircleOutlined } from '@material-ui/icons'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { AddCircleOutlined } from '@mui/icons-material'
 import { ReactNode, useState } from 'react'
 
 import RecipeBookmarkButton from '@/Components/Recipe/RecipeBookmarkButton'

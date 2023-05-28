@@ -5,7 +5,7 @@ import {
   ListItemText,
   Tooltip,
   TooltipProps,
-} from '@material-ui/core/'
+} from '@mui/material/'
 import { Bookmark, BookmarkOff } from 'mdi-material-ui'
 
 import { useBookmarkContext } from '@/Components/Provider/BookmarkProvider'
@@ -39,9 +39,9 @@ const RecipeBookmarkButton = (props: Props) => {
 
   return (
     <Tooltip {...props.tooltipProps} title={title}>
-      <IconButton onClick={onClick}>{icon}</IconButton>
+      <IconButton onClick={onClick} size="large">{icon}</IconButton>
     </Tooltip>
-  )
+  );
 }
 
 export default RecipeBookmarkButton

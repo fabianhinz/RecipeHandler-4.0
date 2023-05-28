@@ -1,4 +1,4 @@
-import BookIcon from '@material-ui/icons/Book'
+import BookIcon from '@mui/icons-material/Book'
 
 import MarkdownInput from '@/Components/Markdown/MarkdownInput'
 import StyledCard from '@/Components/Shared/StyledCard'

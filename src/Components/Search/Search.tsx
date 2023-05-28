@@ -5,12 +5,12 @@ import {
   Hidden,
   InputAdornment,
   InputBase,
-  makeStyles,
   Paper,
   Portal,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useSnackbar } from 'notistack'
 import {
   useCallback,
@@ -46,11 +46,11 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: ({ focused }: StyleProps) =>
       focused
         ? '#fff'
-        : theme.palette.type === 'dark'
+        : theme.palette.mode === 'dark'
         ? 'rgba(255, 255, 255, 0.1)'
         : 'rgba(0, 0, 0, 0.08)',
     boxShadow: ({ focused }: StyleProps) =>
-      theme.palette.type === 'light' && focused ? theme.shadows[1] : 'unset',
+      theme.palette.mode === 'light' && focused ? theme.shadows[1] : 'unset',
     borderRadius: BORDER_RADIUS,
     padding: theme.spacing(1),
     transition: theme.transitions.create('all', {
@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
       props.showResultsPaper ? 0 : BORDER_RADIUS,
   },
   searchResultsPaper: {
-    boxShadow: theme.palette.type === 'light' ? theme.shadows[1] : 'unset',
+    boxShadow: theme.palette.mode === 'light' ? theme.shadows[1] : 'unset',
     backgroundColor: theme.palette.background.default,
     borderTop: `1px solid ${theme.palette.divider}`,
     position: 'absolute',
@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
   searchInput: {
     ...theme.typography.h6,
     color: ({ focused }: StyleProps) =>
-      focused || theme.palette.type === 'light' ? '#000' : '#fff',
+      focused || theme.palette.mode === 'light' ? '#000' : '#fff',
   },
   alert: {
     borderRadius: BORDER_RADIUS,
@@ -174,40 +174,38 @@ const Search = () => {
     setFocused(direction === 'in' ? true : false)
   }
 
-  return (
-    <>
-      <Container maxWidth="md" className={classes.container}>
-        <form onSubmit={handleSubmit} className={classes.searchContainer}>
-          <InputBase
-            onFocus={handleFocusChange('in')}
-            onBlur={handleFocusChange('out')}
-            className={classes.searchInput}
-            fullWidth
-            placeholder="Rezepte suchen"
-            value={value}
-            onChange={handleInputChange}
-            endAdornment={
-              <Hidden xsDown>
-                <InputAdornment position="end">
-                  {AlgoliaDocSearchRef}
-                </InputAdornment>
-              </Hidden>
-            }
-          />
+  return <>
+    <Container maxWidth="md" className={classes.container}>
+      <form onSubmit={handleSubmit} className={classes.searchContainer}>
+        <InputBase
+          onFocus={handleFocusChange('in')}
+          onBlur={handleFocusChange('out')}
+          className={classes.searchInput}
+          fullWidth
+          placeholder="Rezepte suchen"
+          value={value}
+          onChange={handleInputChange}
+          endAdornment={
+            <Hidden smDown>
+              <InputAdornment position="end">
+                {AlgoliaDocSearchRef}
+              </InputAdornment>
+            </Hidden>
+          }
+        />
 
-          <Grow in={showResultsPaper} mountOnEnter>
-            <Paper className={classes.searchResultsPaper}>
-              <SearchResults />
-            </Paper>
-          </Grow>
-        </form>
-      </Container>
+        <Grow in={showResultsPaper} mountOnEnter>
+          <Paper className={classes.searchResultsPaper}>
+            <SearchResults />
+          </Paper>
+        </Grow>
+      </form>
+    </Container>
 
-      <Portal>
-        <Backdrop className={classes.backdrop} open={showResultsPaper} />
-      </Portal>
-    </>
-  )
+    <Portal>
+      <Backdrop className={classes.backdrop} open={showResultsPaper} />
+    </Portal>
+  </>;
 }
 
 export default Search

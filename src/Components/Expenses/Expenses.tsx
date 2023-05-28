@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Hidden,
-  makeStyles,
   Paper,
   Tab,
   Tabs,
@@ -11,12 +10,13 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  withStyles,
-} from '@material-ui/core'
-import { TableChart, Timeline, VerticalSplit } from '@material-ui/icons'
-import AddIcon from '@material-ui/icons/Add'
-import ToggleButton from '@material-ui/lab/ToggleButton'
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import withStyles from '@mui/styles/withStyles';
+import { TableChart, Timeline, VerticalSplit } from '@mui/icons-material'
+import AddIcon from '@mui/icons-material/Add'
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { useLayoutEffect, useMemo, useState } from 'react'
 
 import { SecouredRouteFab } from '@/Components/Routes/SecouredRouteFab'
@@ -77,7 +77,7 @@ const StyledTab = withStyles(theme => ({
 const Expenses = () => {
   const theme = useTheme()
   const lgUp = useMediaQuery(theme.breakpoints.up('lg'))
-  const xsDown = useMediaQuery(theme.breakpoints.down('xs'))
+  const xsDown = useMediaQuery(theme.breakpoints.down('sm'))
   const [view, setView] = useState<ViewVariant>('table')
   const [tabIndex, setTabIndex] = useState<number>(0)
 
@@ -182,10 +182,11 @@ const Expenses = () => {
         <AppBar className={classes.header} position="static" color="default">
           <Toolbar className={classes.toolbar}>
             <Tabs
-              scrollButtons="on"
+              scrollButtons
               variant="scrollable"
               value={tabIndex}
-              onChange={(_, newIndex) => setTabIndex(newIndex)}>
+              onChange={(_, newIndex) => setTabIndex(newIndex)}
+              allowScrollButtonsMobile>
               {years.map(year => (
                 <StyledTab label={year} key={year} />
               ))}
@@ -226,7 +227,7 @@ const Expenses = () => {
             </Box>
           </Box>
 
-          <Hidden xsDown>
+          <Hidden smDown>
             <Box flexGrow={0}>
               <ArchivedExpensesSelection />
             </Box>
@@ -282,7 +283,7 @@ const Expenses = () => {
         onClose={() => setIsDialogOpen(false)}
       />
     </EntryGridContainer>
-  )
+  );
 }
 
 export default Expenses

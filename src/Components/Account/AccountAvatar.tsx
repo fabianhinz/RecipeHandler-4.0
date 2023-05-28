@@ -1,10 +1,6 @@
-import {
-  Avatar,
-  ButtonBase,
-  ButtonBaseProps,
-  makeStyles,
-  Theme,
-} from '@material-ui/core'
+import { Avatar, ButtonBase, ButtonBaseProps, Theme } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import { User } from '@/model/model'
 

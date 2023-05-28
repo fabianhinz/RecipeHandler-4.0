@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core'
+import { Grid } from '@mui/material'
 import { signOut } from 'firebase/auth'
 import { updateDoc } from 'firebase/firestore'
 import { LogoutVariant } from 'mdi-material-ui'

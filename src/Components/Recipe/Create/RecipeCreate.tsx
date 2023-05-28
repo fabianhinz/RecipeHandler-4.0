@@ -1,6 +1,6 @@
-import { Grid, GridSize } from '@material-ui/core'
-import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
-import LabelIcon from '@material-ui/icons/Label'
+import { Grid, GridSize } from '@mui/material'
+import { Breakpoint } from '@mui/material/styles';
+import LabelIcon from '@mui/icons-material/Label'
 import { Timestamp } from 'firebase/firestore'
 import { useCallback, useEffect } from 'react'
 import { RouteComponentProps, useRouteMatch } from 'react-router'

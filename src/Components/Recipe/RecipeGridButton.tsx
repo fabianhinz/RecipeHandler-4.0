@@ -1,5 +1,5 @@
-import { IconButton, Tooltip, TooltipProps } from '@material-ui/core/'
-import { GridOff, GridOn } from '@material-ui/icons'
+import { IconButton, Tooltip, TooltipProps } from '@mui/material/'
+import { GridOff, GridOn } from '@mui/icons-material'
 
 import { useLayoutStore } from '@/store/LayoutStore'
 
@@ -16,11 +16,12 @@ const RecipeGridButton = ({ tooltipProps }: Props) => {
       {...tooltipProps}
       title={gridListActive ? 'Bilder schließen' : 'Bilder anzeigen'}>
       <IconButton
-        onClick={() => setPartialLayout({ gridListActive: !gridListActive })}>
+        onClick={() => setPartialLayout({ gridListActive: !gridListActive })}
+        size="large">
         {gridListActive ? <GridOff /> : <GridOn />}
       </IconButton>
     </Tooltip>
-  )
+  );
 }
 
 export default RecipeGridButton

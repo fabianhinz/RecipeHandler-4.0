@@ -1,17 +1,8 @@
-import {
-  Card,
-  CardActionArea,
-  CardMedia,
-  Fab,
-  Grid,
-  GridSize,
-  makeStyles,
-  Slide,
-  Tooltip,
-} from '@material-ui/core'
-import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
-import CheckIcon from '@material-ui/icons/Check'
-import DeleteIcon from '@material-ui/icons/Delete'
+import { Card, CardActionArea, CardMedia, Fab, Grid, GridSize, Slide, Tooltip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Breakpoint } from '@mui/material/styles';
+import CheckIcon from '@mui/icons-material/Check'
+import DeleteIcon from '@mui/icons-material/Delete'
 import clsx from 'clsx'
 import { deleteDoc } from 'firebase/firestore'
 import { deleteObject, ref } from 'firebase/storage'
@@ -33,10 +24,10 @@ import TrialsDeleteAlert from './TrialsDeleteAlert'
 
 const useStyles = makeStyles(theme => ({
   cardMedia: {
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       height: 283,
     },
-    [theme.breakpoints.between('md', 'lg')]: {
+    [theme.breakpoints.between('md', 'xl')]: {
       height: 333,
     },
     [theme.breakpoints.up('xl')]: {

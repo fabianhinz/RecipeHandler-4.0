@@ -1,6 +1,7 @@
-import { Card, Grid, GridSize, makeStyles } from '@material-ui/core'
-import { Breakpoint } from '@material-ui/core/styles/createBreakpoints'
-import { Skeleton } from '@material-ui/lab'
+import { Card, Grid, GridSize } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Breakpoint } from '@mui/material/styles';
+import { Skeleton } from '@mui/material';
 
 import { RECIPE_CARD_HEIGHT } from '@/Components/Home/HomeRecipeCard'
 import { useGridContext } from '@/Components/Provider/GridProvider'
@@ -8,10 +9,10 @@ import { queryLimits } from '@/firebase/firebaseQueries'
 
 const useStyles = makeStyles(theme => {
   const trial = {
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       height: 283,
     },
-    [theme.breakpoints.between('md', 'lg')]: {
+    [theme.breakpoints.between('md', 'xl')]: {
       height: 333,
     },
     [theme.breakpoints.up('xl')]: {
@@ -61,31 +62,29 @@ const Skeletons = ({ visible, numberOfSkeletons, variant }: Props) => {
       ? { xs: 6, md: 4, lg: 3, xl: 2 }
       : gridBreakpointProps
 
-  return (
-    <>
-      {new Array(numberOfSkeletons || queryLimits.desktop)
-        .fill(1)
-        .map((_skeleton, index) => (
-          <Grid {...variantAvareBreakpoints} item key={index}>
-            <Grid
-              container
-              spacing={2}
-              justifyContent="space-between"
-              alignItems="center">
-              <Grid xs={12} item>
-                <Card>
-                  <Skeleton
-                    animation="wave"
-                    className={classes[variant]}
-                    variant="rect"
-                  />
-                </Card>
-              </Grid>
+  return <>
+    {new Array(numberOfSkeletons || queryLimits.desktop)
+      .fill(1)
+      .map((_skeleton, index) => (
+        <Grid {...variantAvareBreakpoints} item key={index}>
+          <Grid
+            container
+            spacing={2}
+            justifyContent="space-between"
+            alignItems="center">
+            <Grid xs={12} item>
+              <Card>
+                <Skeleton
+                  animation="wave"
+                  className={classes[variant]}
+                  variant="rectangular"
+                />
+              </Card>
             </Grid>
           </Grid>
-        ))}
-    </>
-  )
+        </Grid>
+      ))}
+  </>;
 }
 
 export default Skeletons

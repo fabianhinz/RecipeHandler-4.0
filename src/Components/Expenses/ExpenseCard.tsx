@@ -7,11 +7,11 @@ import {
   Collapse,
   Divider,
   Grid,
-  makeStyles,
   Theme,
   Typography,
-} from '@material-ui/core'
-import { Archive, Edit } from '@material-ui/icons'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Archive, Edit } from '@mui/icons-material'
 import { addDoc, deleteDoc, Timestamp } from 'firebase/firestore'
 import { useState } from 'react'
 

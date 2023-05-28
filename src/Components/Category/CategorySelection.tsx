@@ -8,9 +8,9 @@ import {
   ListItemAvatar,
   ListItemText,
   ListSubheader,
-  makeStyles,
-} from '@material-ui/core'
-import DeleteIcon from '@material-ui/icons/Delete'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import DeleteIcon from '@mui/icons-material/Delete'
 import clsx from 'clsx'
 import { Filter } from 'mdi-material-ui'
 
@@ -68,7 +68,7 @@ export default function CategorySelection({
       }}
       legend={legend}
       action={
-        <IconButton onClick={onRemoveSelectedCategories}>
+        <IconButton onClick={onRemoveSelectedCategories} size="large">
           <DeleteIcon />
         </IconButton>
       }
@@ -101,5 +101,5 @@ export default function CategorySelection({
         {children}
       </Grid>
     </SelectionDrawer>
-  )
+  );
 }

@@ -1,7 +1,8 @@
-import { Grid, IconButton, makeStyles } from '@material-ui/core'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
-import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
-import { ToggleButton } from '@material-ui/lab'
+import { Grid, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon'
+import { ToggleButton } from '@mui/material';
 import { useState } from 'react'
 
 import { ToggleChangeHandler } from '../MarkdownInput'
@@ -53,38 +54,37 @@ const MarkdownEmojiToggle = ({ onToggleChange }: ToggleChangeHandler) => {
     onToggleChange('emoji')({} as any, emoji as any)
   }
 
-  return (
-    <>
-      <MarkdownToggleButtonGroup size="small">
-        <ToggleButton
-          onClick={e => setEmoticonAnchorEl(e.currentTarget)}
-          value="emoticonFormat">
-          <InsertEmoticonIcon />
-          <ArrowDropDownIcon />
-        </ToggleButton>
-      </MarkdownToggleButtonGroup>
+  return <>
+    <MarkdownToggleButtonGroup size="small">
+      <ToggleButton
+        onClick={e => setEmoticonAnchorEl(e.currentTarget)}
+        value="emoticonFormat">
+        <InsertEmoticonIcon />
+        <ArrowDropDownIcon />
+      </ToggleButton>
+    </MarkdownToggleButtonGroup>
 
-      <MarkdownPopover
-        open={Boolean(emoticonAnchorEl)}
-        anchorEl={emoticonAnchorEl}
-        onClose={() => setEmoticonAnchorEl(null)}>
-        <Grid justifyContent="space-evenly" container spacing={1}>
-          {EMOJIS.map(emoji => (
-            <Grid item key={emoji}>
-              <IconButton
-                onClick={handleEmojiClick(emoji)}
-                classes={{
-                  label: classes.emojiLabel,
-                  root: classes.iconButtonRoot,
-                }}>
-                {emoji}
-              </IconButton>
-            </Grid>
-          ))}
-        </Grid>
-      </MarkdownPopover>
-    </>
-  )
+    <MarkdownPopover
+      open={Boolean(emoticonAnchorEl)}
+      anchorEl={emoticonAnchorEl}
+      onClose={() => setEmoticonAnchorEl(null)}>
+      <Grid justifyContent="space-evenly" container spacing={1}>
+        {EMOJIS.map(emoji => (
+          <Grid item key={emoji}>
+            <IconButton
+              onClick={handleEmojiClick(emoji)}
+              classes={{
+                label: classes.emojiLabel,
+                root: classes.iconButtonRoot,
+              }}
+              size="large">
+              {emoji}
+            </IconButton>
+          </Grid>
+        ))}
+      </Grid>
+    </MarkdownPopover>
+  </>;
 }
 
 export default MarkdownEmojiToggle

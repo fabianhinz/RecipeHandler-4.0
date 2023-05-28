@@ -1,5 +1,5 @@
-import { IconButton, Tooltip } from '@material-ui/core/'
-import FavoriteIcon from '@material-ui/icons/Favorite'
+import { IconButton, Tooltip } from '@mui/material/'
+import FavoriteIcon from '@mui/icons-material/Favorite'
 import {
   addDoc,
   FieldValue,
@@ -55,14 +55,14 @@ const RecipeCookCounterButton = ({ name }: Props) => {
   return (
     <Tooltip title={disabled ? 'Zähler erhöht' : 'Gekocht Zähler erhöhen'}>
       <div>
-        <IconButton disabled={disabled} onClick={handleClick}>
+        <IconButton disabled={disabled} onClick={handleClick} size="large">
           <BadgeWrapper badgeContent={numberOfCooks}>
             <FavoriteIcon color={disabled ? 'primary' : 'error'} />
           </BadgeWrapper>
         </IconButton>
       </div>
     </Tooltip>
-  )
+  );
 }
 
 export default RecipeCookCounterButton

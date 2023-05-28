@@ -1,4 +1,5 @@
-import { makeStyles, Theme } from '@material-ui/core'
+import { Theme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   amber,
   blue,
@@ -6,11 +7,11 @@ import {
   deepPurple,
   green,
   pink,
-} from '@material-ui/core/colors'
-import { AttachMoney, FlightTakeoff } from '@material-ui/icons'
-import Commute from '@material-ui/icons/Commute'
-import Fastfood from '@material-ui/icons/Fastfood'
-import Weekend from '@material-ui/icons/Weekend'
+} from '@mui/material/colors'
+import { AttachMoney, FlightTakeoff } from '@mui/icons-material'
+import Commute from '@mui/icons-material/Commute'
+import Fastfood from '@mui/icons-material/Fastfood'
+import Weekend from '@mui/icons-material/Weekend'
 import { CashMultiple } from 'mdi-material-ui'
 
 import { Expense } from '@/model/model'

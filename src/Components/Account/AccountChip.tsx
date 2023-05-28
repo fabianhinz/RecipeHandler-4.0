@@ -1,5 +1,6 @@
-import { Avatar, Chip, makeStyles } from '@material-ui/core'
-import { ChipProps } from '@material-ui/core/Chip'
+import { Avatar, Chip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { ChipProps } from '@mui/material/Chip'
 import clsx from 'clsx'
 
 import { useUsersContext } from '@/Components/Provider/UsersProvider'

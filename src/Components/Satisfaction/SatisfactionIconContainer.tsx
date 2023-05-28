@@ -1,9 +1,9 @@
-import DissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied'
-import SatisfiedIcon from '@material-ui/icons/SentimentSatisfied'
-import SatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAltOutlined'
-import VeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied'
-import VerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied'
-import { IconContainerProps } from '@material-ui/lab/Rating'
+import DissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied'
+import SatisfiedIcon from '@mui/icons-material/SentimentSatisfied'
+import SatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined'
+import VeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied'
+import VerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied'
+import { IconContainerProps } from '@mui/material/Rating'
 import { memo } from 'react'
 
 const customIcons: { [index: string]: { icon: React.ReactElement } } = {

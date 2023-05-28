@@ -1,6 +1,6 @@
-import { Grid, Tooltip } from '@material-ui/core'
-import SatisfactionBackgroundIcon from '@material-ui/icons/SupervisedUserCircle'
-import { Rating } from '@material-ui/lab'
+import { Grid, Tooltip } from '@mui/material'
+import SatisfactionBackgroundIcon from '@mui/icons-material/SupervisedUserCircle'
+import { Rating } from '@mui/material';
 import { onSnapshot, setDoc } from 'firebase/firestore'
 import { ReactText, useCallback, useEffect, useState } from 'react'
 

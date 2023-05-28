@@ -1,4 +1,5 @@
-import { Chip, Link, makeStyles, Typography } from '@material-ui/core'
+import { Chip, Link, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx'
 import { memo } from 'react'
 

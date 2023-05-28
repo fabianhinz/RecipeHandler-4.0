@@ -5,9 +5,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
-import DeleteIcon from '@material-ui/icons/Delete'
+} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { ReactNode } from 'react'
 
 import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider'

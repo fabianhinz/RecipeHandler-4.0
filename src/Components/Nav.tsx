@@ -9,10 +9,10 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  makeStyles,
   Typography,
-} from '@material-ui/core'
-import BookIcon from '@material-ui/icons/Book'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import BookIcon from '@mui/icons-material/Book'
 import clsx from 'clsx'
 import {
   BookmarkMultiple,
@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     left: 0,
     borderRight: `1px solid ${
-      theme.palette.type === 'light'
+      theme.palette.mode === 'light'
         ? 'rgba(0, 0, 0, 0.12)'
         : 'rgba(255, 255, 255, 0.12)'
     }`,
@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
     color: ({ active }: StyleProps) =>
       active
         ? theme.palette.primary.main
-        : theme.palette.type === 'light'
+        : theme.palette.mode === 'light'
         ? 'rgba(0, 0, 0, 0.54)'
         : 'inherit',
   },
@@ -86,7 +86,7 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: ({ active }: StyleProps) =>
           active
             ? 'inherit'
-            : theme.palette.type === 'dark'
+            : theme.palette.mode === 'dark'
             ? 'rgba(255, 255, 255, 0.1)'
             : 'rgba(0, 0, 0, 0.08)',
       },
@@ -188,110 +188,108 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
   const { shoppingList, user } = useFirebaseAuthContext()
   const breakpointsContext = useBreakpointsContext()
 
-  return (
-    <>
-      <Hidden xsDown>
-        <nav className={classes.nav}>
+  return <>
+    <Hidden smDown>
+      <nav className={classes.nav}>
+        <NavButton
+          icon={<BookIcon />}
+          label="Rezepte"
+          pathname={PATHS.home}
+        />
+        {breakpointsContext.mdUp === false && (
           <NavButton
-            icon={<BookIcon />}
-            label="Rezepte"
-            pathname={PATHS.home}
+            icon={<BookSearch />}
+            label="Ergebnisse"
+            pathname={PATHS.searchResults}
           />
-          {breakpointsContext.mdUp === false && (
+        )}
+        <NavButton
+          icon={<BookmarkMultiple />}
+          label="Lesezeichen"
+          pathname={PATHS.bookmarks}
+        />
+        {user && (
+          <>
             <NavButton
-              icon={<BookSearch />}
-              label="Ergebnisse"
-              pathname={PATHS.searchResults}
+              icon={<Lightbulb />}
+              label="Ideen"
+              pathname={PATHS.trials}
             />
-          )}
-          <NavButton
-            icon={<BookmarkMultiple />}
-            label="Lesezeichen"
-            pathname={PATHS.bookmarks}
-          />
-          {user && (
-            <>
-              <NavButton
-                icon={<Lightbulb />}
-                label="Ideen"
-                pathname={PATHS.trials}
-              />
-              <NavButton
-                icon={<Cart />}
-                label="Einkaufsliste"
-                pathname={PATHS.shoppingList}
-              />
-              <NavButton
-                icon={<PiggyBank />}
-                label="Ausgaben"
-                pathname={PATHS.expenses}
-              />
-              <NavButton
-                icon={<ChefHat />}
-                label="Kochverlauf"
-                pathname={PATHS.cookingHistory}
-              />
-            </>
-          )}
-        </nav>
-      </Hidden>
+            <NavButton
+              icon={<Cart />}
+              label="Einkaufsliste"
+              pathname={PATHS.shoppingList}
+            />
+            <NavButton
+              icon={<PiggyBank />}
+              label="Ausgaben"
+              pathname={PATHS.expenses}
+            />
+            <NavButton
+              icon={<ChefHat />}
+              label="Kochverlauf"
+              pathname={PATHS.cookingHistory}
+            />
+          </>
+        )}
+      </nav>
+    </Hidden>
 
-      <Drawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={onDrawerClose}
-        PaperProps={{ className: classes.drawerPaper }}>
-        <List disablePadding onClick={onDrawerClose}>
+    <Drawer
+      anchor="left"
+      open={drawerOpen}
+      onClose={onDrawerClose}
+      PaperProps={{ className: classes.drawerPaper }}>
+      <List disablePadding onClick={onDrawerClose}>
+        <NavListItem
+          pathname={PATHS.home}
+          icon={<BookIcon />}
+          label="Rezepte"
+        />
+        {breakpointsContext.mdUp === false && (
           <NavListItem
-            pathname={PATHS.home}
-            icon={<BookIcon />}
-            label="Rezepte"
+            pathname={PATHS.searchResults}
+            icon={<BookSearch />}
+            label="Ergebnisse"
+            secondary={hits.length}
           />
-          {breakpointsContext.mdUp === false && (
+        )}
+        <NavListItem
+          pathname={PATHS.bookmarks}
+          icon={<BookmarkMultiple />}
+          label="Lesezeichen"
+          secondary={bookmarks.size}
+        />
+        {user && (
+          <>
             <NavListItem
-              pathname={PATHS.searchResults}
-              icon={<BookSearch />}
-              label="Ergebnisse"
-              secondary={hits.length}
+              pathname={PATHS.trials}
+              icon={<Lightbulb />}
+              label="Ideen"
             />
-          )}
-          <NavListItem
-            pathname={PATHS.bookmarks}
-            icon={<BookmarkMultiple />}
-            label="Lesezeichen"
-            secondary={bookmarks.size}
-          />
-          {user && (
-            <>
-              <NavListItem
-                pathname={PATHS.trials}
-                icon={<Lightbulb />}
-                label="Ideen"
-              />
 
-              <NavListItem
-                pathname={PATHS.shoppingList}
-                icon={<Cart />}
-                label="Einkaufsliste"
-                secondary={shoppingList.filter(item => !item.checked).length}
-              />
-              <NavListItem
-                pathname={PATHS.expenses}
-                icon={<PiggyBank />}
-                label="Ausgaben"
-              />
-              <NavListItem
-                icon={<ChefHat />}
-                label="Kochverlauf"
-                pathname={PATHS.cookingHistory}
-              />
-            </>
-          )}
-        </List>
-        <div className={classes.algoliaDocSearchRef}>{AlgoliaDocSearchRef}</div>
-      </Drawer>
-    </>
-  )
+            <NavListItem
+              pathname={PATHS.shoppingList}
+              icon={<Cart />}
+              label="Einkaufsliste"
+              secondary={shoppingList.filter(item => !item.checked).length}
+            />
+            <NavListItem
+              pathname={PATHS.expenses}
+              icon={<PiggyBank />}
+              label="Ausgaben"
+            />
+            <NavListItem
+              icon={<ChefHat />}
+              label="Kochverlauf"
+              pathname={PATHS.cookingHistory}
+            />
+          </>
+        )}
+      </List>
+      <div className={classes.algoliaDocSearchRef}>{AlgoliaDocSearchRef}</div>
+    </Drawer>
+  </>;
 }
 
 export default Nav

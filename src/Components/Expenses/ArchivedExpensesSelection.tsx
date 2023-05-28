@@ -7,8 +7,8 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   Typography,
-} from '@material-ui/core'
-import { Unarchive } from '@material-ui/icons'
+} from '@mui/material'
+import { Unarchive } from '@mui/icons-material'
 import { addDoc, deleteDoc, onSnapshot } from 'firebase/firestore'
 import { Archive, Delete } from 'mdi-material-ui'
 import { useEffect, useState } from 'react'
@@ -73,7 +73,8 @@ const ArchivedExpensesSelection = () => {
       action={
         <IconButton
           disabled={expenses.length === 0}
-          onClick={() => clearArchive(expenses, authContext.user!.uid)}>
+          onClick={() => clearArchive(expenses, authContext.user!.uid)}
+          size="large">
           <Delete />
         </IconButton>
       }>
@@ -101,7 +102,8 @@ const ArchivedExpensesSelection = () => {
             />
             <ListItemSecondaryAction>
               <IconButton
-                onClick={() => restoreExpense(expense, authContext.user!.uid)}>
+                onClick={() => restoreExpense(expense, authContext.user!.uid)}
+                size="large">
                 <Unarchive />
               </IconButton>
             </ListItemSecondaryAction>
@@ -109,7 +111,7 @@ const ArchivedExpensesSelection = () => {
         ))}
       </List>
     </SelectionDrawer>
-  )
+  );
 }
 
 export default ArchivedExpensesSelection

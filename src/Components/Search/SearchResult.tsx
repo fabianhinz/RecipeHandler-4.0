@@ -1,11 +1,5 @@
-import {
-  Avatar,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  makeStyles,
-  Typography,
-} from '@material-ui/core'
+import { Avatar, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom'
 
 import { PATHS } from '@/Components/Routes/Routes'

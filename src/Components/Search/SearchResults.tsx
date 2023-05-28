@@ -1,5 +1,5 @@
-import { List } from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
+import { List } from '@mui/material'
+import { Alert } from '@mui/material';
 
 import { useSearchResultsContext } from '@/Components/Provider/SearchResultsProvider'
 import NotFound from '@/Components/Shared/NotFound'

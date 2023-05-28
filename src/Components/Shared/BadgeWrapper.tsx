@@ -1,11 +1,12 @@
-import { Badge, makeStyles } from '@material-ui/core/'
-import { BadgeProps } from '@material-ui/core/Badge'
-import blueGrey from '@material-ui/core/colors/blueGrey'
+import { Badge } from '@mui/material/';
+import makeStyles from '@mui/styles/makeStyles';
+import { BadgeProps } from '@mui/material/Badge'
 import { FC } from 'react'
+import { blueGrey } from '@mui/material/colors';
 
 const useStyles = makeStyles(theme => {
   const background =
-    theme.palette.type === 'light' ? blueGrey[900] : theme.palette.grey[600]
+    theme.palette.mode === 'light' ? blueGrey[900] : theme.palette.grey[600]
 
   return {
     badge: {

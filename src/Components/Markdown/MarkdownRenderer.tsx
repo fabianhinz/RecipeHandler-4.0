@@ -9,16 +9,16 @@ import {
   ListItemAvatar,
   ListItemIcon,
   ListItemText,
-  makeStyles,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   Tooltip,
-} from '@material-ui/core'
-import AddCircleIcon from '@material-ui/icons/AddCircle'
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import AddCircleIcon from '@mui/icons-material/AddCircle'
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
 import { setDoc } from 'firebase/firestore'
 import React from 'react'
 import ReactMarkdown, { ReactMarkdownOptions } from 'react-markdown'

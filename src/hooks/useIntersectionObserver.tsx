@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core'
+import makeStyles from '@mui/styles/makeStyles';
 import { useLayoutEffect, useRef } from 'react'
 
 import ElementIdService from '@/services/elementIdService'

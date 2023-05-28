@@ -1,14 +1,7 @@
-import {
-  Avatar,
-  InputBase,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  makeStyles,
-} from '@material-ui/core'
-import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
-import { Skeleton } from '@material-ui/lab'
+import { Avatar, InputBase, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import SwapIcon from '@mui/icons-material/SwapHorizontalCircle'
+import { Skeleton } from '@mui/material';
 import clsx from 'clsx'
 import { onSnapshot } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
@@ -133,7 +126,7 @@ const RelatedRecipesSelection = ({
           new Array(queryLimits.desktop * 2).fill(1).map((_dummy, index) => (
             <ListItem key={index}>
               <ListItemAvatar>
-                <Skeleton variant="circle" height={40} width={40} />
+                <Skeleton variant="circular" height={40} width={40} />
               </ListItemAvatar>
               <ListItemText
                 primary={<Skeleton variant="text" width="80%" />}
@@ -143,7 +136,7 @@ const RelatedRecipesSelection = ({
           ))}
       </List>
     </SelectionDrawer>
-  )
+  );
 }
 
 export default RelatedRecipesSelection

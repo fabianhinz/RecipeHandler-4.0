@@ -1,4 +1,6 @@
-import { CircularProgress, LinearProgress, makeStyles } from '@material-ui/core'
+import { CircularProgress, LinearProgress } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import { BORDER_RADIUS } from '@/theme'
 

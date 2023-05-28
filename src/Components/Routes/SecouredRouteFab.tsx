@@ -1,4 +1,4 @@
-import { Fab, Tooltip } from '@material-ui/core'
+import { Fab, Tooltip } from '@mui/material'
 import { useHistory } from 'react-router-dom'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'

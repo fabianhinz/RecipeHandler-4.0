@@ -4,11 +4,11 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
-  makeStyles,
   Switch,
   TypographyProps,
-} from '@material-ui/core'
-import EmailIcon from '@material-ui/icons/EmailRounded'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import EmailIcon from '@mui/icons-material/EmailRounded'
 
 import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import { User } from '@/model/model'

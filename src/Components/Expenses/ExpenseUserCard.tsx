@@ -1,11 +1,5 @@
-import {
-  Card,
-  Grid,
-  Grow,
-  makeStyles,
-  Theme,
-  Typography,
-} from '@material-ui/core'
+import { Card, Grid, Grow, Theme, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx'
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { Cell, Pie, PieChart } from 'recharts'

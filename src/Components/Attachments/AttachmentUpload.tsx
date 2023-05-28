@@ -6,11 +6,11 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  makeStyles,
   Slide,
   Typography,
-} from '@material-ui/core'
-import CheckIcon from '@material-ui/icons/Check'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import CheckIcon from '@mui/icons-material/Check'
 import clsx from 'clsx'
 import { FirebaseError } from 'firebase/app'
 import { setDoc } from 'firebase/firestore'

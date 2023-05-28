@@ -1,9 +1,5 @@
-import {
-  Avatar,
-  ButtonBase,
-  CircularProgress,
-  makeStyles,
-} from '@material-ui/core'
+import { Avatar, ButtonBase, CircularProgress } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx'
 import { ImageSearch } from 'mdi-material-ui'
 import { useCallback, useEffect, useRef, useState } from 'react'

@@ -1,11 +1,6 @@
-import {
-  CardActionArea,
-  Grid,
-  makeStyles,
-  Paper,
-  Typography,
-} from '@material-ui/core'
-import { yellow } from '@material-ui/core/colors'
+import { CardActionArea, Grid, Paper, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { yellow } from '@mui/material/colors'
 import { onSnapshot } from 'firebase/firestore'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -41,7 +36,7 @@ interface StyleProps {
 
 const useMostCookedPaperStyles = makeStyles(theme => ({
   paper: {
-    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
     backgroundColor: (props: StyleProps) => props.backgroundColor,
   },
   typography: {

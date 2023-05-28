@@ -1,4 +1,5 @@
-import { makeStyles, Zoom, ZoomProps } from '@material-ui/core'
+import { Zoom, ZoomProps } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { ReactNode } from 'react'
 
 const useStyles = makeStyles(theme => ({

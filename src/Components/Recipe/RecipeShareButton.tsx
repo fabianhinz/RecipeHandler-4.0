@@ -4,8 +4,8 @@ import {
   ListItemIcon,
   ListItemText,
   Tooltip,
-} from '@material-ui/core'
-import ShareIcon from '@material-ui/icons/Share'
+} from '@mui/material'
+import ShareIcon from '@mui/icons-material/Share'
 import copy from 'clipboard-copy'
 import { useState } from 'react'
 
@@ -49,11 +49,11 @@ const RecipeShareButton = (props: Props) => {
     <Tooltip
       onMouseOut={() => setCopied(false)}
       title={copied ? 'In der Zwischenablage gespeichert' : 'Rezept teilen'}>
-      <IconButton onClick={handleShareBtnClick}>
+      <IconButton onClick={handleShareBtnClick} size="large">
         <ShareIcon />
       </IconButton>
     </Tooltip>
-  )
+  );
 }
 
 export default RecipeShareButton

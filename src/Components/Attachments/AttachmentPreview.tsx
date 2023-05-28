@@ -1,5 +1,5 @@
-import { makeStyles } from '@material-ui/core'
-import { Skeleton } from '@material-ui/lab'
+import makeStyles from '@mui/styles/makeStyles';
+import { Skeleton } from '@mui/material';
 import { useRef } from 'react'
 
 import { useAttachment } from '@/hooks/useAttachment'
@@ -36,9 +36,7 @@ const AttachmentPreview = ({ attachment, onClick }: Props) => {
   const classes = useStyles()
 
   if (imgLoading)
-    return (
-      <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
-    )
+    return <Skeleton variant="rectangular" animation="wave" className={classes.skeleton} />;
 
   return (
     <img

@@ -6,14 +6,15 @@ import {
   InputAdornment,
   InputBase,
   ListSubheader,
-  makeStyles,
   Portal,
   Theme,
   Typography,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
-import { Autocomplete, AutocompleteRenderGroupParams } from '@material-ui/lab'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Autocomplete } from '@mui/material';
+import { AutocompleteRenderGroupParams } from '@mui/lab';
 import { ChevronRight } from 'mdi-material-ui'
 import { useMemo, useState } from 'react'
 
@@ -34,11 +35,11 @@ const useStyles = makeStyles<Theme, { open: boolean }>(theme => ({
     backgroundColor: ({ open }) =>
       open
         ? '#fff'
-        : theme.palette.type === 'dark'
+        : theme.palette.mode === 'dark'
         ? 'rgba(255, 255, 255, 0.1)'
         : 'rgba(0, 0, 0, 0.08)',
     boxShadow: ({ open }) =>
-      theme.palette.type === 'light' && open ? theme.shadows[1] : 'unset',
+      theme.palette.mode === 'light' && open ? theme.shadows[1] : 'unset',
     borderRadius: BORDER_RADIUS,
     padding: theme.spacing(1),
     transition: theme.transitions.create('all', {
@@ -50,7 +51,7 @@ const useStyles = makeStyles<Theme, { open: boolean }>(theme => ({
   searchInput: {
     ...theme.typography.h6,
     color: ({ open }) =>
-      open || theme.palette.type === 'light' ? '#000' : '#fff',
+      open || theme.palette.mode === 'light' ? '#000' : '#fff',
   },
   expenseSearchGrid: {
     display: 'grid',
@@ -148,7 +149,7 @@ export const ExpenseSearch = () => {
   })
   const theme = useTheme()
   const xsOnly = useMediaQuery(theme.breakpoints.only('xs'))
-  const smAndMd = useMediaQuery(theme.breakpoints.between('sm', 'md'))
+  const smAndMd = useMediaQuery(theme.breakpoints.between('sm', 'lg'))
 
   const expenseFilter = useExpenseStore(store => store.expenseFilter)
   const hasActiveFilter = useExpenseStore(store => store.hasActiveFilter)
@@ -241,7 +242,7 @@ export const ExpenseSearch = () => {
             }
           />
         )}
-        getOptionSelected={(option, selected) =>
+        isOptionEqualToValue={(option, selected) =>
           option.group === selected.group && option.value === selected.value
         }
         fullWidth
@@ -308,5 +309,5 @@ export const ExpenseSearch = () => {
         <Backdrop className={classes.backdrop} open={open} />
       </Portal>
     </Container>
-  )
+  );
 }

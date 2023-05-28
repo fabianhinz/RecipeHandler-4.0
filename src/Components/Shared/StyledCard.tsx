@@ -1,12 +1,5 @@
-import {
-  Card,
-  CardContent,
-  Fab,
-  makeStyles,
-  SvgIconProps,
-  Theme,
-  Typography,
-} from '@material-ui/core'
+import { Card, CardContent, Fab, SvgIconProps, Theme, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { UnfoldLessHorizontal, UnfoldMoreHorizontal } from 'mdi-material-ui'
 import { useState } from 'react'
 
@@ -25,7 +18,7 @@ const useStyles = makeStyles<Theme, { expanded: boolean }>(theme => ({
   },
   backgroundIcon: {
     color:
-      theme.palette.type === 'dark'
+      theme.palette.mode === 'dark'
         ? 'rgba(255, 255, 255, 0.1)'
         : 'rgba(0, 0, 0, 0.1)',
     position: 'absolute',
@@ -56,7 +49,7 @@ const useStyles = makeStyles<Theme, { expanded: boolean }>(theme => ({
     opacity: props => (props.expanded ? 0 : 1),
     transition: theme.transitions.create('opacity'),
     background:
-      theme.palette.type === 'dark'
+      theme.palette.mode === 'dark'
         ? 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))'
         : 'linear-gradient(to top, rgba(255,255,255,0.8), rgba(0,0,0,0))',
   },

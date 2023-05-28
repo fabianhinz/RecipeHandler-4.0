@@ -1,5 +1,5 @@
-import { List } from '@material-ui/core'
-import SecurityIcon from '@material-ui/icons/VerifiedUser'
+import { List } from '@mui/material'
+import SecurityIcon from '@mui/icons-material/VerifiedUser'
 import { deleteDoc, onSnapshot, setDoc } from 'firebase/firestore'
 import { memo, useEffect, useState } from 'react'
 

@@ -1,13 +1,13 @@
 import {
   FormControlLabel,
-  makeStyles,
   Radio,
   RadioGroup,
   Theme,
   Typography,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useCallback, useMemo, useRef, useState } from 'react'
 import {
   Bar,

@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core'
+import { Grid } from '@mui/material'
 import { onSnapshot } from 'firebase/firestore'
 import { Lightbulb } from 'mdi-material-ui'
 import { useEffect, useState } from 'react'

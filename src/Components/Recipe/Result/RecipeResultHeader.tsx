@@ -1,4 +1,6 @@
-import { Grid, makeStyles, Typography } from '@material-ui/core'
+import { Grid, Typography } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import { CategoryResult } from '@/Components/Category/CategoryResult'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'

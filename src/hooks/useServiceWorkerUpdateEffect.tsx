@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core'
+import { Button } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useLayoutEffect } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'

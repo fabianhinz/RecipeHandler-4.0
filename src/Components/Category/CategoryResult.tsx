@@ -1,4 +1,5 @@
-import { Chip, ChipProps, makeStyles, Theme } from '@material-ui/core'
+import { Chip, ChipProps, Theme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { FC, useMemo } from 'react'
 
 import { Categories, Recipe } from '@/model/model'
@@ -16,7 +17,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     display: 'flex',
     gap: theme.spacing(1),
     padding: props =>
-      props.extraPadding ? `0px ${theme.spacing(1)}px` : undefined,
+      props.extraPadding ? `0px ${theme.spacing(1)}` : undefined,
     flexWrap: 'nowrap',
     overflow: 'auto',
     '&::-webkit-scrollbar': {

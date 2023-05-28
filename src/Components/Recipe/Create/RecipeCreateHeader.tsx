@@ -1,4 +1,5 @@
-import { InputBase, makeStyles } from '@material-ui/core'
+import { InputBase } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useState } from 'react'
 
 const useStyles = makeStyles(theme => ({

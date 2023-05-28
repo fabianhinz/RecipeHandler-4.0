@@ -1,11 +1,5 @@
-import {
-  Button,
-  ButtonProps,
-  Grid,
-  IconButton,
-  makeStyles,
-  Typography,
-} from '@material-ui/core'
+import { Button, ButtonProps, Grid, IconButton, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx'
 import { ChevronDown } from 'mdi-material-ui'
 import {
@@ -37,10 +31,10 @@ const useStyles = makeStyles(theme => ({
     }),
   },
   containerExpanded: {
-    [theme.breakpoints.between('xs', 'sm')]: {
+    [theme.breakpoints.between('xs', 'md')]: {
       height: ({ gridItems, itemHeight }: StyleProps) => gridItems * itemHeight,
     },
-    [theme.breakpoints.between('md', 'lg')]: {
+    [theme.breakpoints.between('md', 'xl')]: {
       height: ({ gridItems, gridLayout, itemHeight }: StyleProps) =>
         gridLayout === 'list'
           ? gridItems * itemHeight
@@ -119,7 +113,7 @@ const ExpandableGridContainer = ({
 
           <Grid item>
             {isMobile ? (
-              <IconButton {...sharedExpandBtnProps}>{chevron}</IconButton>
+              <IconButton {...sharedExpandBtnProps} size="large">{chevron}</IconButton>
             ) : (
               <Button
                 {...sharedExpandBtnProps}
@@ -144,7 +138,7 @@ const ExpandableGridContainer = ({
         </Grid>
       </Grid>
     </EntryGridContainer>
-  )
+  );
 }
 
 export default ExpandableGridContainer

@@ -1,14 +1,7 @@
 /* eslint-disable react/no-multi-comp */
-import {
-  Box,
-  Button,
-  CardActions,
-  Container,
-  LinearProgress,
-  makeStyles,
-  Typography,
-} from '@material-ui/core'
-import { Alert, AlertTitle } from '@material-ui/lab'
+import { Box, Button, CardActions, Container, LinearProgress, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Alert, AlertTitle } from '@mui/material';
 import { Timestamp } from 'firebase/firestore'
 import { Component } from 'react'
 import { useHistory } from 'react-router-dom'

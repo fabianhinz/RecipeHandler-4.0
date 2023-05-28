@@ -1,4 +1,4 @@
-import { IconButton, Tooltip } from '@material-ui/core'
+import { IconButton, Tooltip } from '@mui/material'
 import { Eye } from 'mdi-material-ui'
 import { useHistory } from 'react-router-dom'
 
@@ -21,12 +21,12 @@ const RecipeDetailsButton = ({ recipe, name }: Props) => {
   return (
     <Tooltip title="Details">
       <div>
-        <IconButton disabled={!recipe && !name} onClick={handleIconButtonClick}>
+        <IconButton disabled={!recipe && !name} onClick={handleIconButtonClick} size="large">
           <Eye />
         </IconButton>
       </div>
     </Tooltip>
-  )
+  );
 }
 
 export default RecipeDetailsButton

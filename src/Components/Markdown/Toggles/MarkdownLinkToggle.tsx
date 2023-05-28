@@ -1,10 +1,10 @@
-import { Grid, IconButton, TextField } from '@material-ui/core'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
-import CheckIcon from '@material-ui/icons/Check'
-import ClearIcon from '@material-ui/icons/Clear'
-import LinkIcon from '@material-ui/icons/Link'
-import EyeIcon from '@material-ui/icons/RemoveRedEye'
-import { ToggleButton } from '@material-ui/lab'
+import { Grid, IconButton, TextField } from '@mui/material'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import CheckIcon from '@mui/icons-material/Check'
+import ClearIcon from '@mui/icons-material/Clear'
+import LinkIcon from '@mui/icons-material/Link'
+import EyeIcon from '@mui/icons-material/RemoveRedEye'
+import { ToggleButton } from '@mui/material';
 import { Earth } from 'mdi-material-ui'
 import { useState } from 'react'
 
@@ -31,59 +31,57 @@ const MarkdownLinkToggle = ({ onToggleChange }: ToggleChangeHandler) => {
     resetLinkState()
   }
 
-  return (
-    <>
-      <MarkdownToggleButtonGroup size="small">
-        <ToggleButton
-          onClick={e => setLinkAnchorEl(e.currentTarget)}
-          value="linkFormat">
-          <LinkIcon />
-          <ArrowDropDownIcon />
-        </ToggleButton>
-      </MarkdownToggleButtonGroup>
+  return <>
+    <MarkdownToggleButtonGroup size="small">
+      <ToggleButton
+        onClick={e => setLinkAnchorEl(e.currentTarget)}
+        value="linkFormat">
+        <LinkIcon />
+        <ArrowDropDownIcon />
+      </ToggleButton>
+    </MarkdownToggleButtonGroup>
 
-      <MarkdownPopover
-        open={Boolean(linkAnchorEl)}
-        anchorEl={linkAnchorEl}
-        onClose={() => setLinkAnchorEl(null)}>
-        <Grid container direction="column" spacing={2} alignItems="flex-end">
+    <MarkdownPopover
+      open={Boolean(linkAnchorEl)}
+      anchorEl={linkAnchorEl}
+      onClose={() => setLinkAnchorEl(null)}>
+      <Grid container direction="column" spacing={2} alignItems="flex-end">
+        <Grid item>
+          <TextField
+            label="Text"
+            fullWidth
+            variant="outlined"
+            value={text}
+            onChange={e => setText(e.target.value)}
+            InputProps={{ endAdornment: <EyeIcon /> }}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            label="Url"
+            fullWidth
+            variant="outlined"
+            value={url}
+            onChange={e => setUrl(e.target.value)}
+            type=""
+            InputProps={{ endAdornment: <Earth /> }}
+          />
+        </Grid>
+        <Grid item container justifyContent="space-evenly">
           <Grid item>
-            <TextField
-              label="Text"
-              fullWidth
-              variant="outlined"
-              value={text}
-              onChange={e => setText(e.target.value)}
-              InputProps={{ endAdornment: <EyeIcon /> }}
-            />
+            <IconButton onClick={resetLinkState} size="large">
+              <ClearIcon />
+            </IconButton>
           </Grid>
           <Grid item>
-            <TextField
-              label="Url"
-              fullWidth
-              variant="outlined"
-              value={url}
-              onChange={e => setUrl(e.target.value)}
-              type=""
-              InputProps={{ endAdornment: <Earth /> }}
-            />
-          </Grid>
-          <Grid item container justifyContent="space-evenly">
-            <Grid item>
-              <IconButton onClick={resetLinkState}>
-                <ClearIcon />
-              </IconButton>
-            </Grid>
-            <Grid item>
-              <IconButton onClick={handleLinkSubmit}>
-                <CheckIcon />
-              </IconButton>
-            </Grid>
+            <IconButton onClick={handleLinkSubmit} size="large">
+              <CheckIcon />
+            </IconButton>
           </Grid>
         </Grid>
-      </MarkdownPopover>
-    </>
-  )
+      </Grid>
+    </MarkdownPopover>
+  </>;
 }
 
 export default MarkdownLinkToggle

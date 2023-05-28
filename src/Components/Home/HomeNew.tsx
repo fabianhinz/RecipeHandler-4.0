@@ -1,25 +1,20 @@
-import {
-  CardActionArea,
-  Grid,
-  makeStyles,
-  Paper,
-  Typography,
-} from '@material-ui/core'
-import green from '@material-ui/core/colors/green'
+import { CardActionArea, Grid, Paper, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { onSnapshot } from 'firebase/firestore'
 import { memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-
 import { useGridContext } from '@/Components/Provider/GridProvider'
+
 import { PATHS } from '@/Components/Routes/Routes'
 import Skeletons from '@/Components/Shared/Skeletons'
 import { resolveCookCounterOrderedByCreatedDateDescWhereValueIsZero } from '@/firebase/firebaseQueries'
-
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
+
+import { green } from '@mui/material/colors';
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
     backgroundColor: green.A100,
   },
   typography: {

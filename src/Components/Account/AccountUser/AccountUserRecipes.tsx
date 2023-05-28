@@ -1,5 +1,5 @@
-import { List } from '@material-ui/core'
-import BookIcon from '@material-ui/icons/SupervisedUserCircle'
+import { List } from '@mui/material'
+import BookIcon from '@mui/icons-material/SupervisedUserCircle'
 
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useUsersContext } from '@/Components/Provider/UsersProvider'

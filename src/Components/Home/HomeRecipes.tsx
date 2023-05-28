@@ -1,4 +1,4 @@
-import { Grid, LinearProgress } from '@material-ui/core'
+import { Grid, LinearProgress } from '@mui/material'
 
 import NotFound from '@/Components/Shared/NotFound'
 import Skeletons from '@/Components/Shared/Skeletons'

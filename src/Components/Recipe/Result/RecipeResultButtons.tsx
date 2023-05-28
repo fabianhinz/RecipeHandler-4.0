@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core'
+import { Grid } from '@mui/material'
 
 import { Comments } from '@/Components/Comments/Comments'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'

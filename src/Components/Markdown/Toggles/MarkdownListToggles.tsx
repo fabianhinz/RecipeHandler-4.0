@@ -1,6 +1,6 @@
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted'
-import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
-import { ToggleButton } from '@material-ui/lab'
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered'
+import { ToggleButton } from '@mui/material';
 
 import { CurrentFormats, ToggleChangeHandler } from '../MarkdownInput'
 import MarkdownToggleButtonGroup from './MarkdownToggleButtonGroup'

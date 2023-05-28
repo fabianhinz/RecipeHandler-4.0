@@ -1,4 +1,4 @@
-import { Box, Grow } from '@material-ui/core'
+import { Box, Grow } from '@mui/material'
 
 import notFoundLogo from '@/icons/notFound.png'
 

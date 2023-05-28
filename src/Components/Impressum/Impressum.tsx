@@ -1,4 +1,4 @@
-import { Box, Grid, Link, ListSubheader, Typography } from '@material-ui/core'
+import { Box, Grid, Link, ListSubheader, Typography } from '@mui/material'
 
 import { useGridContext } from '@/Components/Provider/GridProvider'
 import BuiltWithFirebase from '@/Components/Shared/BuiltWithFirebase'

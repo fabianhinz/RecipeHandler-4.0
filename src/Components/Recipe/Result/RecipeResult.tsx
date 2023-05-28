@@ -1,7 +1,7 @@
-import { Grid } from '@material-ui/core'
-import AssignmentIcon from '@material-ui/icons/Assignment'
-import BookIcon from '@material-ui/icons/Book'
-import SwapIcon from '@material-ui/icons/SwapHorizontalCircle'
+import { Grid } from '@mui/material'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import BookIcon from '@mui/icons-material/Book'
+import SwapIcon from '@mui/icons-material/SwapHorizontalCircle'
 import { memo } from 'react'
 
 import AccountChip from '@/Components/Account/AccountChip'

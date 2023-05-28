@@ -1,14 +1,6 @@
-import {
-  Avatar,
-  Box,
-  Card,
-  Grid,
-  makeStyles,
-  Theme,
-  Typography,
-  Zoom,
-} from '@material-ui/core'
-import Skeleton from '@material-ui/lab/Skeleton'
+import { Avatar, Box, Card, Grid, Theme, Typography, Zoom } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Skeleton from '@mui/material/Skeleton'
 import { Timestamp } from 'firebase/firestore'
 import { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -48,7 +40,7 @@ const useStyles = makeStyles<
     },
   },
   compactPaper: {
-    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
   },
   card: {
     height: '100%',
@@ -62,7 +54,7 @@ const useStyles = makeStyles<
     bottom: 0,
     left: 0,
     right: 0,
-    padding: `${theme.spacing(1)}px 0px`,
+    padding: `${theme.spacing(1)} 0px`,
     height: props => (props.hover ? '100%' : '66%'),
     flexDirection: 'column',
     display: 'flex',
@@ -72,11 +64,11 @@ const useStyles = makeStyles<
     }),
     background: props => {
       if (!props.swatches)
-        return theme.palette.type === 'dark'
+        return theme.palette.mode === 'dark'
           ? 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))'
           : 'linear-gradient(to top, rgba(255,255,255,0.8), rgba(0,0,0,0))'
 
-      return theme.palette.type === 'dark'
+      return theme.palette.mode === 'dark'
         ? `linear-gradient(to top, ${props.swatches.darkVibrant}, rgba(0,0,0,0))`
         : `linear-gradient(to top, ${props.swatches.lightVibrant}, rgba(0,0,0,0))`
     },
@@ -116,9 +108,9 @@ const HomeRecipeCard = ({ recipe, lastCookedDate }: Props) => {
   if (imgLoading)
     return (
       <Grid item xs={6} md={4} lg={3} xl={2}>
-        <Skeleton className={classes.avatar} variant="rect" />
+        <Skeleton className={classes.avatar} variant="rectangular" />
       </Grid>
-    )
+    );
 
   return (
     <>

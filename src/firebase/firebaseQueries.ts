@@ -203,7 +203,7 @@ export const resolveRecipesByConstraintValues = ({
 
 const endAt = (search: string) => {
   // https://stackoverflow.com/a/57290806
-  return search.replace(/.$/, c => String.fromCharCode(c.charCodeAt(0) + 1))
+  return search.replace(/.$/, c => String.fromCharCode(c.charCodeAt(0) + 1));
 }
 
 export const resolveRelatedRecipes = (search?: string) => {

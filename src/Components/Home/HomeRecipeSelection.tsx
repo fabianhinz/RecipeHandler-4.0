@@ -1,14 +1,6 @@
-import {
-  Button,
-  Grid,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListSubheader,
-  makeStyles,
-} from '@material-ui/core'
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import { Button, Grid, List, ListItem, ListItemAvatar, ListItemText, ListSubheader } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import clsx from 'clsx'
 
 import AccountAvatar from '@/Components/Account/AccountAvatar'

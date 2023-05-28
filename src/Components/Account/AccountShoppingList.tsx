@@ -1,4 +1,4 @@
-import { Grid, List } from '@material-ui/core'
+import { Grid, List } from '@mui/material'
 import { setDoc } from 'firebase/firestore'
 import React, { useLayoutEffect, useState } from 'react'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'

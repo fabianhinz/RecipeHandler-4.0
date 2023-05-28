@@ -1,7 +1,8 @@
-import { Chip, Divider, Grid, makeStyles, Typography } from '@material-ui/core'
-import { red } from '@material-ui/core/colors'
-import AssignmentIcon from '@material-ui/icons/Assignment'
-import BookIcon from '@material-ui/icons/Book'
+import { Chip, Divider, Grid, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { red } from '@mui/material/colors'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import BookIcon from '@mui/icons-material/Book'
 import { Paragraph } from 'tesseract.js'
 
 import { TesseractResult } from '@/model/model'

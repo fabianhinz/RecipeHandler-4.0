@@ -1,10 +1,5 @@
-import {
-  Avatar,
-  CardActionArea,
-  Grid,
-  makeStyles,
-  Typography,
-} from '@material-ui/core'
+import { Avatar, CardActionArea, Grid, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { DocumentData, DocumentReference, updateDoc } from 'firebase/firestore'
 import { useSnackbar } from 'notistack'
 import { useEffect } from 'react'
@@ -16,7 +11,7 @@ import AccountUserChangelog from './AccountUserChangelog'
 
 const useStyles = makeStyles(theme => ({
   userAvatar: {
-    [theme.breakpoints.between('xs', 'md')]: {
+    [theme.breakpoints.between('xs', 'lg')]: {
       height: 100,
       width: 100,
     },

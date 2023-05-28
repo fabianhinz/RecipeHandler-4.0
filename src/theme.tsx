@@ -1,5 +1,5 @@
-import { createTheme, responsiveFontSizes } from '@material-ui/core'
-import { ThemeOptions } from '@material-ui/core/styles/createTheme'
+import { adaptV4Theme, createTheme, responsiveFontSizes } from '@mui/material'
+import { DeprecatedThemeOptions } from '@mui/material/styles'
 
 export const BORDER_RADIUS = 10
 export const BORDER_RADIUS_HUGE = 16
@@ -7,7 +7,7 @@ export const BORDER_RADIUS_HUGE = 16
 export const PRIMARY_COLOR = '#81c784'
 export const SECONDARY_COLOR = '#ffb74d'
 
-const sharedTheme: Partial<ThemeOptions> = {
+const sharedTheme: Partial<DeprecatedThemeOptions> = {
   props: {
     MuiPaper: {
       variant: 'outlined',
@@ -144,37 +144,43 @@ const sharedTheme: Partial<ThemeOptions> = {
   },
 }
 
-const blackTheme = createTheme({
-  palette: {
-    type: 'dark',
-    primary: { main: PRIMARY_COLOR },
-    secondary: { main: SECONDARY_COLOR },
-    background: {
-      paper: '#1B1B1D',
-      default: '#000',
+const blackTheme = createTheme(
+  adaptV4Theme({
+    palette: {
+      mode: 'dark',
+      primary: { main: PRIMARY_COLOR },
+      secondary: { main: SECONDARY_COLOR },
+      background: {
+        paper: '#1B1B1D',
+        default: '#000',
+      },
     },
-  },
-  ...sharedTheme,
-})
+    ...sharedTheme,
+  })
+)
 
 export const responsiveBlackTheme = responsiveFontSizes(blackTheme)
 
-const darkTheme = createTheme({
-  palette: {
-    type: 'dark',
-    primary: { main: PRIMARY_COLOR },
-    secondary: { main: SECONDARY_COLOR },
-  },
-  ...sharedTheme,
-})
+const darkTheme = createTheme(
+  adaptV4Theme({
+    palette: {
+      mode: 'dark',
+      primary: { main: PRIMARY_COLOR },
+      secondary: { main: SECONDARY_COLOR },
+    },
+    ...sharedTheme,
+  })
+)
 export const responsiveDarkTheme = responsiveFontSizes(darkTheme)
 
-const lightTheme = createTheme({
-  palette: {
-    type: 'light',
-    primary: { main: PRIMARY_COLOR },
-    secondary: { main: SECONDARY_COLOR },
-  },
-  ...sharedTheme,
-})
+const lightTheme = createTheme(
+  adaptV4Theme({
+    palette: {
+      mode: 'light',
+      primary: { main: PRIMARY_COLOR },
+      secondary: { main: SECONDARY_COLOR },
+    },
+    ...sharedTheme,
+  })
+)
 export const responsiveLightTheme = responsiveFontSizes(lightTheme)

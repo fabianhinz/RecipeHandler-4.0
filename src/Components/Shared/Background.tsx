@@ -1,5 +1,6 @@
-import { makeStyles, Theme, useTheme } from '@material-ui/core'
-import { Skeleton } from '@material-ui/lab'
+import { Theme, useTheme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Skeleton } from '@mui/material';
 import { getDocs } from 'firebase/firestore'
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useRouteMatch } from 'react-router'
@@ -39,14 +40,14 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     width: '100%',
     height: '100%',
     background:
-      theme.palette.type === 'dark'
+      theme.palette.mode === 'dark'
         ? 'radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%)'
         : 'radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(255,255,255,0.7) 100%)',
   },
   icon: props => ({
     padding: theme.spacing(2),
     filter:
-      theme.palette.type === 'light' ? 'brightness(110%)' : 'brightness(90%)',
+      theme.palette.mode === 'light' ? 'brightness(110%)' : 'brightness(90%)',
     width: 400,
     [theme.breakpoints.only('xs')]: {
       flex: 1,
@@ -84,9 +85,9 @@ export const Background = ({ Icon }: Props) => {
     }
 
     return `linear-gradient(90deg,${
-      theme.palette.type === 'light' ? '#8EDB91' : '#74B377'
+      theme.palette.mode === 'light' ? '#8EDB91' : '#74B377'
     } 30%,#81c784 70%)`
-  }, [attachmentRefLoading, imgLoading, imgSrc, theme.palette.type])
+  }, [attachmentRefLoading, imgLoading, imgSrc, theme.palette.mode])
 
   const classes = useStyles({ backgroundImage })
 
@@ -119,12 +120,12 @@ export const Background = ({ Icon }: Props) => {
   return (
     <div className={classes.iconContainer}>
       {imgLoading || attachmentRefLoading ? (
-        <Skeleton variant="rect" className={classes.skeleton} />
+        <Skeleton variant="rectangular" className={classes.skeleton} />
       ) : imgSrc ? (
         <div className={classes.gradient} />
       ) : (
         <Icon className={classes.icon} />
       )}
     </div>
-  )
+  );
 }

@@ -1,12 +1,6 @@
-import {
-  IconButton,
-  InputAdornment,
-  makeStyles,
-  TextField,
-  Typography,
-  useTheme,
-} from '@material-ui/core'
-import { DeleteSweep } from '@material-ui/icons'
+import { IconButton, InputAdornment, TextField, Typography, useTheme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { DeleteSweep } from '@mui/icons-material'
 import { setDoc } from 'firebase/firestore'
 import React, { useMemo, useState } from 'react'
 

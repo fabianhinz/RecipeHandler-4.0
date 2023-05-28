@@ -5,14 +5,14 @@ import {
   DialogTitle,
   Grid,
   IconButton,
-  makeStyles,
   TextField,
-} from '@material-ui/core'
-import Paper, { PaperProps } from '@material-ui/core/Paper'
-import CloseIcon from '@material-ui/icons/Close'
-import ScrollToLatestIcon from '@material-ui/icons/ExpandMore'
-import SaveIcon from '@material-ui/icons/Save'
-import Skeleton from '@material-ui/lab/Skeleton'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Paper, { PaperProps } from '@mui/material/Paper'
+import CloseIcon from '@mui/icons-material/Close'
+import ScrollToLatestIcon from '@mui/icons-material/ExpandMore'
+import SaveIcon from '@mui/icons-material/Save'
+import Skeleton from '@mui/material/Skeleton'
 import clsx from 'clsx'
 import { onSnapshot, Timestamp } from 'firebase/firestore'
 import { FC, useEffect, useState } from 'react'
@@ -199,7 +199,7 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
                   helperText={inputDisabled ? 'Wird gespeichert' : ''}
                   InputProps={{
                     endAdornment: (
-                      <IconButton onClick={scrollToLatest}>
+                      <IconButton onClick={scrollToLatest} size="large">
                         <ScrollToLatestIcon />
                       </IconButton>
                     ),
@@ -215,11 +215,11 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
             )}
             <Grid item xs={12}>
               <Grid container justifyContent="space-evenly">
-                <IconButton onClick={onClose}>
+                <IconButton onClick={onClose} size="large">
                   <CloseIcon />
                 </IconButton>
                 {user && (
-                  <IconButton type="submit">
+                  <IconButton type="submit" size="large">
                     <SaveIcon />
                   </IconButton>
                 )}
@@ -229,5 +229,5 @@ export const CommentsDialog: FC<CommentsDialogProps> = ({
         </form>
       </DialogActions>
     </Dialog>
-  )
+  );
 }

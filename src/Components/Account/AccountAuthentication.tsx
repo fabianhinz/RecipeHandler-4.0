@@ -4,12 +4,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  makeStyles,
   TextField,
   Typography,
-} from '@material-ui/core'
-import AccountIcon from '@material-ui/icons/AccountCircleRounded'
-import CloseIcon from '@material-ui/icons/Close'
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import AccountIcon from '@mui/icons-material/AccountCircleRounded'
+import CloseIcon from '@mui/icons-material/Close'
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
