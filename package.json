@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@types/algoliasearch": "^4.0.0",
-    "@types/node": "20.2.1",
+    "@types/node": "20.4.2",
     "@types/react": "^17.0.0",
     "@types/react-beautiful-dnd": "^13.1.4",
     "@types/react-dom": "^17.0.0",
