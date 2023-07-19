@@ -18,8 +18,5 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECIPEHANDLER }}'
           projectId: recipehandler
-      - uses: OctoMind-dev/automagically-action-execute@v1
-        with:
-          url: ${{ steps.deploy.outputs.details_url }}
-          token: ${{ secrets.AUTOMAGICALLY_TOKEN }}  
+      # to access the url of the preview channel: ${{ steps.deploy.outputs.details_url }}
         
