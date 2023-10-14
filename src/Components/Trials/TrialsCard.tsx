@@ -28,7 +28,6 @@ import { storage } from '@/firebase/firebaseConfig'
 import { resolveDoc } from '@/firebase/firebaseQueries'
 import { getResizedImagesWithMetadata } from '@/hooks/useAttachment'
 import { AllDataUrls, Trial } from '@/model/model'
-import { BORDER_RADIUS } from '@/theme'
 
 import TrialsDeleteAlert from './TrialsDeleteAlert'
 
@@ -54,7 +53,7 @@ const useStyles = makeStyles<Theme>(theme => ({
     width: 'fit-content',
   },
   selectionRoot: {
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     position: 'absolute',
     top: 0,
     left: 0,

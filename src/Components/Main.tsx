@@ -3,13 +3,12 @@ import makeStyles from '@mui/styles/makeStyles'
 import { useRouteMatch } from 'react-router-dom'
 
 import { PATHS, Routes } from '@/Components/Routes/Routes'
-import { BORDER_RADIUS } from '@/theme'
 
 const useStyles = makeStyles<Theme, { extraPadding?: boolean }>(theme => ({
   main: {
     minHeight: '60vh',
     backgroundColor: theme.palette.background.default,
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     [theme.breakpoints.only('xs')]: {
       boxShadow: theme.shadows[0],
     },

@@ -31,7 +31,7 @@ import { useDisableScrollEffect } from '@/hooks/useDisableScrollEffect'
 import { ReactComponent as AlgoliaIcon } from '@/icons/algolia.svg'
 import { Hit } from '@/model/model'
 import algolia from '@/services/algolia'
-import { BORDER_RADIUS } from '@/theme'
+
 
 import SearchResults from './SearchResults'
 
@@ -52,15 +52,15 @@ const useStyles = makeStyles<Theme>(theme => ({
         : 'rgba(0, 0, 0, 0.08)',
     boxShadow: ({ focused }: StyleProps) =>
       theme.palette.mode === 'light' && focused ? theme.shadows[1] : 'unset',
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     padding: theme.spacing(1),
     transition: theme.transitions.create('all', {
       easing: theme.transitions.easing.easeOut,
     }),
     borderBottomLeftRadius: (props: StyleProps) =>
-      props.showResultsPaper ? 0 : BORDER_RADIUS,
+      props.showResultsPaper ? 0 : theme.shape.borderRadius,
     borderBottomRightRadius: (props: StyleProps) =>
-      props.showResultsPaper ? 0 : BORDER_RADIUS,
+      props.showResultsPaper ? 0 : theme.shape.borderRadius,
   },
   searchResultsPaper: {
     boxShadow: theme.palette.mode === 'light' ? theme.shadows[1] : 'unset',
@@ -81,7 +81,7 @@ const useStyles = makeStyles<Theme>(theme => ({
       focused || theme.palette.mode === 'light' ? '#000' : '#fff',
   },
   alert: {
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
   },
   container: {
     paddingRight: theme.spacing(1),

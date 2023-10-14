@@ -46,7 +46,6 @@ import { storage } from '@/firebase/firebaseConfig'
 import { resolveDoc } from '@/firebase/firebaseQueries'
 import { useAttachment } from '@/hooks/useAttachment'
 import { AttachmentDoc, Recipe } from '@/model/model'
-import { BORDER_RADIUS } from '@/theme'
 import { isSafari } from '@/util/constants'
 
 import { useRouterContext } from './RouterProvider'
@@ -105,7 +104,7 @@ const useStyles = makeStyles<Theme>(theme => ({
       width: 1280,
       height: 720,
     },
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     position: 'relative',
   },
   attachment: {
@@ -167,7 +166,7 @@ const SwipeableAttachment = ({
     <div className={clsx(classes.destination, classes.attachment)}>
       {!imgLoaded && (
         <Skeleton
-          style={{ borderRadius: BORDER_RADIUS }}
+          style={{ borderRadius: theme.shape.borderRadius }}
           variant="rectangular"
           width="100%"
           height="100%"

@@ -1,3 +1,4 @@
+import { Theme } from '@material-ui/core'
 import { Grid, Typography } from '@mui/material'
 import { Skeleton } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
@@ -16,15 +17,14 @@ import {
 } from '@/firebase/firebaseQueries'
 import useDocumentTitle from '@/hooks/useDocumentTitle'
 import { CookingHistory, Recipe } from '@/model/model'
-import { BORDER_RADIUS } from '@/theme'
 
-const useStyles = makeStyles<Theme>({
+const useStyles = makeStyles<Theme>(theme => ({
   skeleton: {
     height: RECIPE_CARD_HEIGHT,
     width: '100%',
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
   },
-})
+}))
 
 const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
   const [recipe, setRecipe] = useState<Recipe | null>(null)
@@ -33,7 +33,7 @@ const HistoryElement = ({ recipeName, createdDate }: CookingHistory) => {
   const classes = useStyles()
 
   useEffect(() => {
-    getDoc(resolveDoc('recipes', recipeName)).then(doc => {
+    void getDoc(resolveDoc('recipes', recipeName)).then(doc => {
       if (doc.exists()) {
         setRecipe(doc.data() as Recipe)
       } else {

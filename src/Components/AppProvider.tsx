@@ -1,4 +1,9 @@
+import { createTheme } from '@material-ui/core'
 import { CssBaseline } from '@mui/material'
+import {
+  StyledEngineProvider,
+  ThemeProvider as MuiThemeProvider,
+} from '@mui/material'
 import { SnackbarProvider } from 'notistack'
 import { FC } from 'react'
 import { BrowserRouter } from 'react-router-dom'
@@ -18,40 +23,44 @@ import BreakpointsProvider from './Provider/BreakpointsProvider'
 import FirebaseAuthProvider from './Provider/FirebaseAuthProvider'
 
 export const AppProvider: FC = ({ children }) => (
-  <ThemeProvider>
-    <FirebaseAuthProvider>
-      <BrowserRouter>
-        <BreakpointsProvider>
-          <CssBaseline />
-          <SnackbarProvider
-            preventDuplicate
-            autoHideDuration={3000}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-            }}>
-            <RouterProvider>
-              <DeviceOrientationProvider>
-                <UsersProvider>
-                  <CategoriesCollectionProvider>
-                    <GridProvider>
-                      <SelectedAttachementProvider>
-                        <AttachmentGalleryProvider>
-                          <BookmarkProvider>
-                            <SearchResultsProvider>
-                              {children}
-                            </SearchResultsProvider>
-                          </BookmarkProvider>
-                        </AttachmentGalleryProvider>
-                      </SelectedAttachementProvider>
-                    </GridProvider>
-                  </CategoriesCollectionProvider>
-                </UsersProvider>
-              </DeviceOrientationProvider>
-            </RouterProvider>
-          </SnackbarProvider>
-        </BreakpointsProvider>
-      </BrowserRouter>
-    </FirebaseAuthProvider>
-  </ThemeProvider>
+  <StyledEngineProvider injectFirst>
+    <MuiThemeProvider theme={createTheme()}>
+      <FirebaseAuthProvider>
+        <ThemeProvider>
+          <BrowserRouter>
+            <BreakpointsProvider>
+              <CssBaseline />
+              <SnackbarProvider
+                preventDuplicate
+                autoHideDuration={3000}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}>
+                <RouterProvider>
+                  <DeviceOrientationProvider>
+                    <UsersProvider>
+                      <CategoriesCollectionProvider>
+                        <GridProvider>
+                          <SelectedAttachementProvider>
+                            <AttachmentGalleryProvider>
+                              <BookmarkProvider>
+                                <SearchResultsProvider>
+                                  {children}
+                                </SearchResultsProvider>
+                              </BookmarkProvider>
+                            </AttachmentGalleryProvider>
+                          </SelectedAttachementProvider>
+                        </GridProvider>
+                      </CategoriesCollectionProvider>
+                    </UsersProvider>
+                  </DeviceOrientationProvider>
+                </RouterProvider>
+              </SnackbarProvider>
+            </BreakpointsProvider>
+          </BrowserRouter>
+        </ThemeProvider>
+      </FirebaseAuthProvider>
+    </MuiThemeProvider>
+  </StyledEngineProvider>
 )

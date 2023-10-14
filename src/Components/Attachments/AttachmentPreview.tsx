@@ -6,16 +6,15 @@ import { useAttachment } from '@/hooks/useAttachment'
 import useImgSrcLazy from '@/hooks/useImgSrcLazy'
 import { AttachmentDoc } from '@/model/model'
 import elementIdService from '@/services/elementIdService'
-import { BORDER_RADIUS } from '@/theme'
 
 const useStyles = makeStyles<Theme>(theme => ({
   skeleton: {
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     height: 300,
   },
   img: {
     cursor: 'pointer',
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[1],
     objectFit: 'cover',
   },

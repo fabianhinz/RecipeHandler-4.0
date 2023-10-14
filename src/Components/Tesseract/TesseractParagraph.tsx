@@ -6,7 +6,6 @@ import makeStyles from '@mui/styles/makeStyles'
 import { Paragraph } from 'tesseract.js'
 
 import { TesseractResult } from '@/model/model'
-import { BORDER_RADIUS } from '@/theme'
 
 type StyleProps = Pick<Props, 'confidence'>
 
@@ -15,14 +14,14 @@ const useStyles = makeStyles<Theme>(theme => ({
     height: 12,
     backgroundColor: ({ confidence }: StyleProps) =>
       confidence > 80 ? '#81c78480' : red[500] + '80',
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     width: '100%',
   },
   confidence: {
     width: ({ confidence }: StyleProps) => `${confidence}%`,
     height: '100%',
-    borderTopLeftRadius: BORDER_RADIUS,
-    borderBottomLeftRadius: BORDER_RADIUS,
+    borderTopLeftRadius: theme.shape.borderRadius,
+    borderBottomLeftRadius: theme.shape.borderRadius,
     backgroundColor: ({ confidence }: StyleProps) =>
       confidence > 80 ? '#81c784' : red[500] + '80',
   },

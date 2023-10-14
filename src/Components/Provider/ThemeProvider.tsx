@@ -1,8 +1,4 @@
-import {
-  StyledEngineProvider,
-  ThemeProvider as MuiThemeProvider,
-  useMediaQuery,
-} from '@mui/material'
+import { ThemeProvider as MuiThemeProvider, useMediaQuery } from '@mui/material'
 import { ReactNode, useLayoutEffect, useState } from 'react'
 
 import {
@@ -57,9 +53,5 @@ export const ThemeProvider = (props: Props) => {
     }
   }, [colorSchemeDark, user])
 
-  return (
-    <StyledEngineProvider injectFirst>
-      <MuiThemeProvider theme={theme}>{props.children}</MuiThemeProvider>
-    </StyledEngineProvider>
-  )
+  return <MuiThemeProvider theme={theme}>{props.children}</MuiThemeProvider>
 }

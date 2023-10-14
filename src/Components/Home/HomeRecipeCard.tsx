@@ -9,7 +9,6 @@ import { CategoryResult } from '@/Components/Category/CategoryResult'
 import { PATHS } from '@/Components/Routes/Routes'
 import useImgSrcLazy from '@/hooks/useImgSrcLazy'
 import { Recipe } from '@/model/model'
-import { BORDER_RADIUS } from '@/theme'
 
 import { useUsersContext } from '../Provider/UsersProvider'
 import HomeRecipeContextMenu from './HomeRecipeContextMenu'
@@ -32,11 +31,11 @@ const useStyles = makeStyles<
     width: '100%',
     height: RECIPE_CARD_HEIGHT,
     fontSize: theme.typography.pxToRem(60),
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     [theme.breakpoints.up('lg')]: {
-      borderTopLeftRadius: BORDER_RADIUS,
+      borderTopLeftRadius: theme.shape.borderRadius,
       borderTopRightRadius: 0,
-      borderBottomLeftRadius: BORDER_RADIUS,
+      borderBottomLeftRadius: theme.shape.borderRadius,
     },
   },
   compactPaper: {

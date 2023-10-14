@@ -1,3 +1,4 @@
+import { Theme } from '@material-ui/core'
 import {
   Avatar,
   Fab,
@@ -22,7 +23,6 @@ import { useUsersContext } from '@/Components/Provider/UsersProvider'
 import { resolveCollection, resolveDoc } from '@/firebase/firebaseQueries'
 import { Comment as CommentModel, CommentReaction, Recipe } from '@/model/model'
 import { CommentsCollections } from '@/model/model'
-import { BORDER_RADIUS_HUGE } from '@/theme'
 
 const useStyles = makeStyles<Theme>(theme => ({
   comment: {
@@ -30,7 +30,7 @@ const useStyles = makeStyles<Theme>(theme => ({
     background: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     padding: theme.spacing(1),
-    borderRadius: BORDER_RADIUS_HUGE,
+    borderRadius: theme.shape.borderRadius * 2,
     minWidth: 200,
     position: 'relative',
   },
@@ -215,6 +215,7 @@ const Comment = ({ comment, name, collection }: CommentProps) => {
               <IconButton
                 onClick={() => handleEmojiClick(emoji)}
                 classes={{
+                  // TODO fix me
                   label: classes.emojiLabel,
                   root: classes.iconButtonRoot,
                 }}

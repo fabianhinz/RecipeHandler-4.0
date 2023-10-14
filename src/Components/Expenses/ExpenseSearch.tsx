@@ -24,7 +24,6 @@ import useExpenseStore, {
   AutocompleteOptionGroups,
   ExpenseFilter,
 } from '@/store/ExpenseStore'
-import { BORDER_RADIUS } from '@/theme'
 
 import NotFound from '../Shared/NotFound'
 
@@ -40,13 +39,15 @@ const useStyles = makeStyles<Theme, { open: boolean }>(theme => ({
         : 'rgba(0, 0, 0, 0.08)',
     boxShadow: ({ open }) =>
       theme.palette.mode === 'light' && open ? theme.shadows[1] : 'unset',
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     padding: theme.spacing(1),
     transition: theme.transitions.create('all', {
       easing: theme.transitions.easing.easeOut,
     }),
-    borderBottomLeftRadius: props => (props.open ? 0 : BORDER_RADIUS),
-    borderBottomRightRadius: props => (props.open ? 0 : BORDER_RADIUS),
+    borderBottomLeftRadius: props =>
+      props.open ? 0 : theme.shape.borderRadius,
+    borderBottomRightRadius: props =>
+      props.open ? 0 : theme.shape.borderRadius,
   },
   searchInput: {
     ...theme.typography.h6,

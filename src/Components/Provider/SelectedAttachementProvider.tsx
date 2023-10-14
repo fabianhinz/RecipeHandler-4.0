@@ -4,7 +4,6 @@ import { createContext, FC, useContext, useEffect, useState } from 'react'
 
 import { useRouterContext } from '@/Components/Provider/RouterProvider'
 import { AllDataUrls } from '@/model/model'
-import { BORDER_RADIUS } from '@/theme'
 
 type SelectedAttachment = AllDataUrls | null
 
@@ -52,7 +51,7 @@ const useStyles = makeStyles<Theme>(theme => ({
     [theme.breakpoints.up('xl')]: {
       maxHeight: '80%',
     },
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
   },
 }))
 

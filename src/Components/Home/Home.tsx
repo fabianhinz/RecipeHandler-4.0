@@ -14,7 +14,6 @@ import useDocumentTitle from '@/hooks/useDocumentTitle'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
 import { ChangesRecord, DocumentId, OrderByRecord, Recipe } from '@/model/model'
 import { getRecipeService } from '@/services/recipeService'
-import { BORDER_RADIUS } from '@/theme'
 
 import HomeMostCooked from './HomeMostCooked'
 import HomeNew from './HomeNew'
@@ -24,7 +23,7 @@ import HomeRecipeSelection from './HomeRecipeSelection'
 
 const useStyles = makeStyles<Theme>(theme => ({
   homeRoot: {
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },

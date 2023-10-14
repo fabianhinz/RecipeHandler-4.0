@@ -1,7 +1,7 @@
 import { CircularProgress, LinearProgress, Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 
-import { BORDER_RADIUS } from '@/theme'
+
 
 const useStyles = makeStyles<Theme>(theme => ({
   linearProgress: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles<Theme>(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     zIndex: 2,
     position: 'absolute',
     top: 0,

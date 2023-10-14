@@ -3,8 +3,6 @@ import { Theme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useState } from 'react'
 
-import { BORDER_RADIUS } from '@/theme'
-
 const useStyles = makeStyles<Theme>(theme => ({
   container: {
     overflowX: 'auto',
@@ -16,7 +14,7 @@ const useStyles = makeStyles<Theme>(theme => ({
   splitGutter: {
     background: theme.palette.divider,
     margin: theme.spacing(0, 1),
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
   },
 }))
 

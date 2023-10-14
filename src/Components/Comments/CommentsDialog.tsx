@@ -1,3 +1,4 @@
+import { Theme } from '@material-ui/core'
 import CloseIcon from '@mui/icons-material/Close'
 import ScrollToLatestIcon from '@mui/icons-material/ExpandMore'
 import SaveIcon from '@mui/icons-material/Save'
@@ -31,13 +32,12 @@ import {
   CommentsCollections,
   CommentsDocument,
 } from '@/model/model'
-import { BORDER_RADIUS_HUGE } from '@/theme'
 
 import Comment from './Comment'
 
 const useStyles = makeStyles<Theme>(theme => ({
   skeleton: {
-    borderRadius: BORDER_RADIUS_HUGE,
+    borderRadius: theme.shape.borderRadius,
   },
   dialogTitle: {
     cursor: 'move',

@@ -1,3 +1,4 @@
+import { Theme } from '@material-ui/core'
 import { TableChart, Timeline, VerticalSplit } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/Add'
 import {
@@ -26,7 +27,6 @@ import useDocumentTitle from '@/hooks/useDocumentTitle'
 import { Nullable } from '@/model/model'
 import useCurrentExpenseStore from '@/store/CurrentExpenseStore'
 import useExpenseStore, { ExpenseStore } from '@/store/ExpenseStore'
-import { BORDER_RADIUS } from '@/theme'
 
 import ArchivedExpensesSelection from './ArchivedExpensesSelection'
 import ExpenseDialog from './ExpenseDialog'
@@ -46,7 +46,7 @@ const useStyles = makeStyles<Theme>(theme => ({
     overflowX: 'auto',
   },
   header: {
-    borderRadius: BORDER_RADIUS,
+    borderRadius: theme.shape.borderRadius,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
