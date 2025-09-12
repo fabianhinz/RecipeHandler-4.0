@@ -28,7 +28,7 @@ export default defineConfig({
       },
       manifest: {
         short_name: 'RH 4.0',
-        name: 'RecipeHandler 4.0',
+        name: 'OctoRecipes 4.0',
         icons: [
           {
             src: 'logo192.png',

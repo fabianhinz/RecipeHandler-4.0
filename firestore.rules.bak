@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	function isAdmin() {
+        return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    
+    function isEditor() {
+      	return request.auth != null && exists(/databases/$(database)/documents/editors/$(request.auth.uid));
+    }
+
+    match /editors/{userId=**} {
+        allow read, write: if isAdmin();
+    }
+    
+    match /pullrequests/{document=**} {
+    		allow read: if isAdmin() || isEditor();
+    }
+    
+    match /issues/{document=**} {
+    		allow read: if isAdmin() || isEditor();
+    }
+    
+    match /categories/{document=**} {
+        allow read;
+    }
+
+    match /recipes/{recipeName} {
+        allow read;
+    }
+
+    match /recipes/{recipeName} {
+        allow create: if isAdmin() || isEditor();
+        allow update: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
+        allow delete: if isAdmin();
+    }
+    
+    match /recipes/{recipeName}/attachments/{attachmentName} {
+        allow read;
+    }
+
+    match /recipes/{recipeName}/satisfaction/{userId} {
+    		allow read: if isAdmin() || isEditor(); 
+        allow write: if userId == request.auth.uid && isEditor()
+    }
+
+    match /recipes/{recipeName}/attachments/{docId} {
+        allow create: if isAdmin() || isEditor();
+        allow update, delete: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
+    }
+    
+    match /recipes/{recipeName}/comments/{commentId} {
+        allow read, write: if isAdmin() || isEditor();
+    }
+
+    match /recipes/{recipeName}/comments/{commentId}/reactions/{reactionId} {
+        allow read, write: if isAdmin() || isEditor();
+        allow create: if isAdmin() || isEditor();
+        allow update, delete: if isAdmin() || (resource.data.editorUid == request.auth.uid && isEditor());
+    }
+
+    match /cookCounter/{recipe} {
+        allow read;
+        allow write: if isAdmin() || isEditor();
+    }
+    
+    match /recipesCounter/{userId} {
+        allow read: if isAdmin() || isEditor();
+    }
+
+    match /trials/{document=**} {
+        allow read, write: if isAdmin() || isEditor();
+    }
+  
+  	match /errors/{error} {
+        allow write;
+    }
+
+  	match /users/{userId} {
+        allow create: if request.auth.uid != null && request.auth.token.firebase.sign_in_provider == 'password';
+        allow update: if request.auth.uid == userId;
+        allow delete: if isAdmin();
+        allow read: if isAdmin() || isEditor();
+    }
+
+    match /users/{userId}/cookingHistory/{document=**} {
+        allow read, write: if request.auth.uid == userId
+    }
+    
+    match /users/{userId}/expenses/{document=**} {
+        allow read, write: if request.auth.uid == userId
+    }
+    
+    match /users/{userId}/archivedExpenses/{document=**} {
+        allow read, write: if request.auth.uid == userId
+    }
+    
+    match /users/{userId}/shoppingList/{document=**} {
+        allow read, write: if request.auth.uid == userId
+    }
+  }
+}

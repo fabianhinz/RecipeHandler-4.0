@@ -29,7 +29,6 @@ import { useBreakpointsContext } from '@/Components/Provider/BreakpointsProvider
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useSearchResultsContext } from '@/Components/Provider/SearchResultsProvider'
 import { PATHS } from '@/Components/Routes/Routes'
-import { AlgoliaDocSearchRef } from '@/Components/Search/Search'
 
 interface StyleProps {
   active?: boolean
@@ -197,13 +196,7 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
             label="Rezepte"
             pathname={PATHS.home}
           />
-          {breakpointsContext.mdUp === false && (
-            <NavButton
-              icon={<BookSearch />}
-              label="Ergebnisse"
-              pathname={PATHS.searchResults}
-            />
-          )}
+
           <NavButton
             icon={<BookmarkMultiple />}
             label="Lesezeichen"
@@ -247,14 +240,7 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
             icon={<BookIcon />}
             label="Rezepte"
           />
-          {breakpointsContext.mdUp === false && (
-            <NavListItem
-              pathname={PATHS.searchResults}
-              icon={<BookSearch />}
-              label="Ergebnisse"
-              secondary={hits.length}
-            />
-          )}
+
           <NavListItem
             pathname={PATHS.bookmarks}
             icon={<BookmarkMultiple />}
@@ -288,7 +274,7 @@ const Nav = ({ drawerOpen, onDrawerClose }: NavProps) => {
             </>
           )}
         </List>
-        <div className={classes.algoliaDocSearchRef}>{AlgoliaDocSearchRef}</div>
+        
       </Drawer>
     </>
   )

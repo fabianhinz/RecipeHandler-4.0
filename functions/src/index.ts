@@ -1,38 +1,14 @@
-import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch'
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
 import * as path from 'path'
 
-interface AppConfig {
-  algolia: {
-    app: string
-    adminkey: string
-  }
-}
-
-const RECIPE_PATH = 'recipes/{recipeId}'
-const ALGOLIA_INDEX_NAME = 'recipes'
-
-let client: SearchClient
-let index: SearchIndex
-
 if (!process.env.FUNCTIONS_EMULATOR) {
-  const serviceAccount = require('../recipehandler-service-account.json')
+  const serviceAccount = require('../service-account.json')
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://recipehandler.firebaseio.com',
+    databaseURL: 'https://octo-recipes.firebaseio.com',
   })
-  const config: Partial<AppConfig> = functions.config()
 
-  if (!config.algolia?.app) {
-    throw new Error('algolia.app not set')
-  }
-  if (!config.algolia?.adminkey) {
-    throw new Error('algolia.adminkey not set')
-  }
-
-  client = algoliasearch(config.algolia.app, config.algolia.adminkey)
-  index = client.initIndex(ALGOLIA_INDEX_NAME)
 } else {
   admin.initializeApp()
 }
@@ -43,48 +19,6 @@ interface Recipe {
   name: string
   previewAttachment?: string
 }
-
-export const addToAlgolia = functions
-  .region('europe-west1')
-  .firestore.document(RECIPE_PATH)
-  .onCreate(snapshot => {
-    if (process.env.FUNCTIONS_EMULATOR) {
-      functions.logger.info('onCreate: emulator mode - no write ops to algolia')
-      return
-    }
-
-    const { description, ingredients, name } = snapshot.data() as Recipe
-    const objectID = snapshot.id
-
-    return index.saveObject({ description, ingredients, name, objectID })
-  })
-
-export const updateAlgolia = functions
-  .region('europe-west1')
-  .firestore.document(RECIPE_PATH)
-  .onUpdate(change => {
-    if (process.env.FUNCTIONS_EMULATOR) {
-      functions.logger.info('onUpdate: emulator mode - no write ops to algolia')
-      return
-    }
-
-    const { description, ingredients, name } = change.after.data() as Recipe
-    const objectID = change.after.id
-
-    return index.saveObject({ description, ingredients, name, objectID })
-  })
-
-export const deleteFromAlgolia = functions
-  .region('europe-west1')
-  .firestore.document(RECIPE_PATH)
-  .onDelete(snapshot => {
-    if (process.env.FUNCTIONS_EMULATOR) {
-      functions.logger.info('onDelete: emulator mode - no write ops to algolia')
-      return
-    }
-
-    return index.deleteObject(snapshot.id)
-  })
 
 export const getCustomToken = functions
   .region('europe-west1')

@@ -7,5 +7,6 @@ typings/
 
 node_modules/
 recipehandler-service-account.json
+service-account.json
 .runtimeconfig.json
 *.log

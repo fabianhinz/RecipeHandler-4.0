@@ -78,7 +78,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
         snackbarMessage = 'Passwort zu schwach'
         break
       }
-      case 'auth/user-not-found': {
+      case 'auth/invalid-login-credentials': {
         snackbarMessage = 'Benutzer nicht gefunden'
         setNewUser(true)
         break
@@ -131,7 +131,7 @@ const AccountAuthentication = ({ open, onClose }: Props) => {
 
             // send a verification email to the newly created user
             sendEmailVerification(user, {
-              url: 'https://recipehandler.web.app/',
+              url: 'https://octo-recipes.web.app/',
             })
           })
           .catch(error => handleAuthError(error))

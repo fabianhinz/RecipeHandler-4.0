@@ -16,15 +16,14 @@ import { connectStorageEmulator, getStorage } from 'firebase/storage'
 import { User } from '@/model/model'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDfKo9psV6Err683fvtIkdkXX8A-Gep1zs',
-  authDomain: 'recipehandler.firebaseapp.com',
-  databaseURL: 'https://recipehandler.firebaseio.com',
-  projectId: 'recipehandler',
-  storageBucket: 'recipehandler.appspot.com',
-  messagingSenderId: '363099897269',
-  appId: '1:363099897269:web:7086b238a86f56c9546dfc',
-  measurementId: 'G-H654Z1725E',
-}
+  apiKey: "AIzaSyDWSTHdnCu7R-wjkWFN9VHlt2lt0qMPwyA",
+  databaseURL: 'https://octo-recipes.firebaseio.com',
+  authDomain: "octo-recipes.firebaseapp.com",
+  projectId: "octo-recipes",
+  storageBucket: "octo-recipes.firebasestorage.app",
+  messagingSenderId: "366315770438",
+  appId: "1:366315770438:web:6547106fc8855285fdf047"
+};
 
 const app = initializeApp(firebaseConfig)
 
