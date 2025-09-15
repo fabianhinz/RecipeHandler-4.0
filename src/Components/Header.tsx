@@ -22,7 +22,6 @@ import Nav from '@/Components/Nav'
 import { useFirebaseAuthContext } from '@/Components/Provider/FirebaseAuthProvider'
 import { useGridContext } from '@/Components/Provider/GridProvider'
 import { PATHS } from '@/Components/Routes/Routes'
-import Search from '@/Components/Search/Search'
 
 import { ExpenseSearch } from './Expenses/ExpenseSearch'
 
@@ -105,7 +104,7 @@ const Header = () => {
             </IconButton>
           </div>
 
-          {showExpensesSearch ? <ExpenseSearch /> : <Search />}
+          {showExpensesSearch ? <ExpenseSearch /> : <div />}
 
           <div className={classes.headerButtons}>
             <Hidden smDown>

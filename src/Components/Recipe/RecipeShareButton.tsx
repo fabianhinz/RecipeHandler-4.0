@@ -25,7 +25,7 @@ const RecipeShareButton = (props: Props) => {
     )
     if (navigator.share)
       navigator.share({
-        title: 'RecipeHandler',
+        title: 'OctoRecipes',
         text: props.name,
         url,
       })

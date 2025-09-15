@@ -1,5 +1,5 @@
 {
-  "name": "recipehandler",
+  "name": "octo-recipes",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -22,7 +22,6 @@
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "4.0.0-alpha.61",
     "@material-ui/pickers": "^3.3.10",
-    "algoliasearch": "^4.17.0",
     "browser-image-compression": "^1.0.17",
     "clipboard-copy": "^4.0.1",
     "clsx": "^1.2.1",

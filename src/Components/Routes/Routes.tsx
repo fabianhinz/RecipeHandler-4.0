@@ -69,12 +69,7 @@ const anonymousRoutes: AppRoute[] = [
     path: PATHS.impressum,
     Component: lazy(() => import('../Impressum/Impressum')),
     BackgroundIcon: ImpressumIcon,
-  },
-  {
-    path: PATHS.searchResults,
-    Component: lazy(() => import('../Search/SearchResults')),
-    BackgroundIcon: SearchIcon,
-  },
+  }
 ]
 
 const securedRoutes: AppRoute[] = [
