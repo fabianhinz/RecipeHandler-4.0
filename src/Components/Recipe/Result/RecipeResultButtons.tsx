@@ -28,9 +28,9 @@ const RecipeResultButtons = ({ name, numberOfComments }: Props) => {
           <RecipeGridButton />
         </Grid>
       )}
-      <Grid item>
+      {/* <Grid item>
         <RecipeBookmarkButton name={name} />
-      </Grid>
+      </Grid> */}
 
       <Grid item>
         <RecipeShareButton name={name} />

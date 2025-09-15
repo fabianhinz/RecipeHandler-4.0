@@ -3,12 +3,16 @@
 
 name: Deploy to Firebase Hosting on merge
 'on':
+  workflow_dispatch:
+    
   push:
     branches:
       - master
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
     steps:
       - uses: actions/checkout@v3
       - name: set app version
