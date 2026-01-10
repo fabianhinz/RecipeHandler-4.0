@@ -50,7 +50,7 @@ def is_basic_ingredient(row):
 
 @app.function
 def split_common_suffixes(text):
-    suffixes = ["flocken", "mehl", "pulver", "schrot"]
+    suffixes = ["flock", "mehl", "pulver", "schrot"]
     for s in suffixes:
         text = text.replace(s, f" {s}")
     return " ".join(text.split())
@@ -59,7 +59,7 @@ def split_common_suffixes(text):
 @app.cell
 def _(GermanStemmer, re):
     stemmer = GermanStemmer()
-    def normalize_text(text, stemming: bool = False):
+    def normalize_text(text, stemming: bool = True):
       if not isinstance(text, str):
         return ""
       text = text.lower()
@@ -87,29 +87,46 @@ def _(normalize_text, nutrition_df, pd):
 
 
 @app.cell
-def _(nutrition_df_cleaned):
+def _(nutrition_df_cleaned, pd):
     nutrition_df_cleaned.to_parquet("nutrition_df_cleaned", compression="snappy")
+    cleaned_nutrition_df_from_file = pd.read_parquet("nutrition_df_cleaned")
+    return (cleaned_nutrition_df_from_file,)
+
+
+@app.cell
+def _(cleaned_nutrition_df_from_file):
+    cleaned_nutrition_df_from_file
     return
 
 
 @app.cell
-def _(nutrition_df_cleaned):
-    nutrition_df_cleaned
-    return
-
-
-@app.cell
-def _(fuzz, normalize_text, nutrition_df_cleaned, process):
+def _(cleaned_nutrition_df_from_file, fuzz, normalize_text, process):
     def find_ingredients(query, threshold=65):
       normalized_query = normalize_text(query)
       splitted_query = split_common_suffixes(normalized_query)
-      print(splitted_query)
-      choices = nutrition_df_cleaned["search_index"].tolist()
-      result = process.extractOne(splitted_query, choices, scorer=fuzz.WRatio)
+      print(f"used query: {splitted_query}")
+      choices = cleaned_nutrition_df_from_file["search_index"].tolist()
+      results = process.extract(splitted_query, choices, scorer=fuzz.WRatio, limit=5)
+      # result = process.extractOne(splitted_query, choices, scorer=fuzz.WRatio)
+
+      refined_results = []
+
+      for match_str, score, index in results:
+            match_words = match_str.lower().replace(',', ' ').split()
+            final_score = score
+            if splitted_query in match_words:
+                final_score += 25
+            elif any(splitted_query in w for w in match_words):
+                final_score -= 10
+
+            refined_results.append((match_str, final_score, index))
+
+      refined_results.sort(key=lambda x: x[1], reverse=True)
+      result = refined_results[0]
 
       if result and result[1] >= threshold:
         match_str, score, index = result
-        row = nutrition_df_cleaned.iloc[index]
+        row = cleaned_nutrition_df_from_file.iloc[index]
   
       return {
                 "name": row['name'],
@@ -125,8 +142,34 @@ def _(fuzz, normalize_text, nutrition_df_cleaned, process):
 
 
 @app.cell
-def _(find_ingredients):
-    find_ingredients("Apfel")
+def _():
+    ingredients = [(200, "Dinkelmehl 630"), (100, "Mandeln gemahlen"), (100, "Dinkelmehl 1050"), (525, "Vollmilch"), (540, "Äpfel"), (240, "Hühnerei")]
+    return (ingredients,)
+
+
+@app.cell
+def _(find_ingredients, ingredients):
+    total_nutrition = {
+      "kcal": 0,
+      "protein": 0,
+      "fat": 0,
+      "carbs": 0,
+      "fiber": 0,
+    }
+
+    for amount, ingredient in ingredients:
+      print(f"Finding values for {amount}g of {ingredient}")
+      nutrition = find_ingredients(ingredient)
+      print(nutrition)
+      for key in total_nutrition.keys():
+        total_nutrition[key] += (nutrition[key] * (amount / 100))
+    return (total_nutrition,)
+
+
+@app.cell
+def _(total_nutrition):
+    for name, value in total_nutrition.items():
+      print(f"{name}: {value * 0.67}")
     return
 
 
