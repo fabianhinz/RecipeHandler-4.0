@@ -31,6 +31,17 @@ export interface NutritionSummary {
   fiber: number
 }
 
+export interface IngredientMatch {
+  name: string
+  amountG: number
+  matched: NutritionResult | null
+}
+
+export interface NutritionDetailedResult {
+  summary: NutritionSummary
+  matches: IngredientMatch[]
+}
+
 const stemmer = newStemmer('german')
 
 const splitCommonSuffixes = (text: string): string => {
@@ -154,6 +165,37 @@ class NutritionService {
     )
 
     return summary
+  }
+
+  async calculateNutritionDetailed(
+    ingredients: Array<{ amountG: number; name: string }>
+  ): Promise<NutritionDetailedResult> {
+    const summary: NutritionSummary = {
+      kcal: 0,
+      protein: 0,
+      fat: 0,
+      carbs: 0,
+      fiber: 0,
+    }
+
+    const matches = await Promise.all(
+      ingredients.map(async ({ amountG, name }) => {
+        const matched = await this.findIngredient(name)
+        return { name, amountG, matched }
+      })
+    )
+
+    for (const { amountG, matched } of matches) {
+      if (!matched) continue
+      const factor = amountG / 100
+      summary.kcal += matched.kcal * factor
+      summary.protein += matched.protein * factor
+      summary.fat += matched.fat * factor
+      summary.carbs += matched.carbs * factor
+      summary.fiber += matched.fiber * factor
+    }
+
+    return { summary, matches }
   }
 }
 
