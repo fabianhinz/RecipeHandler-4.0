@@ -88,52 +88,172 @@ interface ParseResult {
   skipped: string[]
 }
 
+// cSpell:disable
 const UNIT_MULTIPLIERS: Record<string, number> = {
   g: 1,
   gr: 1,
   kg: 1000,
   ml: 1,
   l: 1000,
+  liter: 1000,
   el: 15,
   tl: 5,
   prise: 1,
   msp: 0.5,
+  tasse: 240, // 1 Tasse ≈ 240 ml/g
+  dose: 400, // 1 Dose (Standarddose) ≈ 400 g
+  zweig: 2, // 1 Zweig Kräuter ≈ 2 g
+  zweige: 2,
+  bund: 100, // 1 Bund ≈ 100 g
+  scheibe: 30, // 1 Scheibe ≈ 30 g
+  scheiben: 30,
+  zehe: 5, // 1 Zehe Knoblauch ≈ 5 g
+  zehen: 5,
+}
+
+// Adjectives that can appear between a number and a unit (e.g. "1 gute Prise Salz")
+const QUANTITY_ADJECTIVES = new Set([
+  'gute',
+  'guter',
+  'gutes',
+  'guten',
+  'gehäufte',
+  'gehäufter',
+  'gehäuftes',
+  'gehäuften',
+  'gestrichene',
+  'gestrichener',
+  'gestrichenes',
+  'gestrichenen',
+  'knappe',
+  'knapper',
+  'knappes',
+  'knappen',
+  'halbe',
+  'halber',
+  'halbes',
+  'halben',
+])
+
+// Approximate per-item gram weight for common count-based ingredients (no unit)
+const PLAIN_COUNT_WEIGHTS: Record<string, number> = {
+  apfel: 150,
+  äpfel: 150,
+  banane: 120,
+  bananen: 120,
+  zitrone: 100,
+  zitronen: 100,
+  orange: 180,
+  orangen: 180,
+  tomate: 100,
+  tomaten: 100,
+  kartoffel: 150,
+  kartoffeln: 150,
+  zwiebel: 80,
+  zwiebeln: 80,
+  karotte: 80,
+  karotten: 80,
+  möhre: 80,
+  möhren: 80,
+  zucchini: 250,
+  gurke: 300,
+  avocado: 200,
+  avocados: 200,
+}
+// cSpell:enable
+
+const NUM = String.raw`(\d+(?:[,.]\d+)?)`
+const RANGE_SEP = String.raw`\s*[-–]\s*`
+
+const parseNum = (s: string) => Number.parseFloat(s.replace(',', '.'))
+const stripParens = (s: string) => s.replace(/\s*\(.*\)\s*$/, '').trim()
+
+const normalizeLine = (rawLine: string): string => {
+  const line = rawLine
+    .replace(/^(\s*[-*•]|\d+\.\s*)/, '')
+    .trim()
+    .replace(/^(ca\.?|etwa|ungefähr)\s+/i, '')
+    .trim()
+  // Strip optional quantity adjective between number and unit ("1 gute Prise" → "1 Prise")
+  const qAdj = new RegExp(String.raw`^${NUM}\s+(\p{L}+)\s+`, 'u').exec(line)
+  return qAdj && QUANTITY_ADJECTIVES.has(qAdj[2].toLowerCase())
+    ? line.replace(new RegExp(String.raw`^${NUM}\s+\p{L}+\s+`, 'u'), '$1 ')
+    : line
+}
+
+const matchEgg = (line: string): ParsedIngredient | null => {
+  const m = new RegExp(String.raw`^${NUM}\s+Ei(?:er)?\b`, 'i').exec(line)
+  return m ? { amountG: parseNum(m[1]) * 50, name: 'Hühnerei' } : null
+}
+
+const matchUnitRange = (line: string): ParsedIngredient | null => {
+  const m = new RegExp(
+    String.raw`^${NUM}${RANGE_SEP}${NUM}\s*(\p{L}+)\.?\s+(.+)$`,
+    'u'
+  ).exec(line)
+  if (!m) return null
+  const multiplier = UNIT_MULTIPLIERS[m[3].toLowerCase()]
+  if (multiplier === undefined) return null
+  return {
+    amountG: ((parseNum(m[1]) + parseNum(m[2])) / 2) * multiplier,
+    name: stripParens(m[4]),
+  }
+}
+
+const matchCountRange = (line: string): ParsedIngredient | null => {
+  const m = new RegExp(
+    String.raw`^${NUM}${RANGE_SEP}${NUM}\s+(\p{L}+(?:\s+.*)?)$`,
+    'u'
+  ).exec(line)
+  if (!m) return null
+  const weight = PLAIN_COUNT_WEIGHTS[m[3].toLowerCase().split(/\s+/)[0]]
+  if (weight === undefined) return null
+  return {
+    amountG: ((parseNum(m[1]) + parseNum(m[2])) / 2) * weight,
+    name: stripParens(m[3]),
+  }
+}
+
+const matchUnit = (line: string): ParsedIngredient | null => {
+  const m = new RegExp(String.raw`^${NUM}\s*(\p{L}+)\.?\s+(.+)$`, 'u').exec(
+    line
+  )
+  if (!m) return null
+  const multiplier = UNIT_MULTIPLIERS[m[2].toLowerCase()]
+  if (multiplier === undefined) return null
+  return { amountG: parseNum(m[1]) * multiplier, name: stripParens(m[3]) }
+}
+
+const matchCount = (line: string): ParsedIngredient | null => {
+  const m = new RegExp(String.raw`^${NUM}\s+(\p{L}+(?:\s+.*)?)$`, 'u').exec(
+    line
+  )
+  if (!m) return null
+  const weight = PLAIN_COUNT_WEIGHTS[m[2].toLowerCase().split(/\s+/)[0]]
+  if (weight === undefined) return null
+  return { amountG: parseNum(m[1]) * weight, name: stripParens(m[2]) }
 }
 
 const parseIngredients = (markdown: string): ParseResult => {
-  const lines = markdown.split('\n')
   const parsed: ParsedIngredient[] = []
   const skipped: string[] = []
 
-  for (const rawLine of lines) {
-    const line = rawLine.replace(/^(\s*[-*•]|\d+\.\s*)/, '').trim()
+  for (const rawLine of markdown.split('\n')) {
+    const line = normalizeLine(rawLine)
     if (!line) continue
 
-    // Special case: Ei/Eier (plain count)
-    const eggMatch = new RegExp(/^(\d+(?:[,.]\d+)?)\s+Ei(?:er)?\b/i).exec(line)
-    if (eggMatch) {
-      const count = Number.parseFloat(eggMatch[1].replace(',', '.'))
-      parsed.push({ amountG: count * 50, name: 'Hühnerei' })
-      continue
-    }
+    const match =
+      matchEgg(line) ??
+      matchUnitRange(line) ??
+      matchCountRange(line) ??
+      matchUnit(line) ??
+      matchCount(line)
 
-    // General unit match
-    const unitMatch = new RegExp(
-      /^(\d+(?:[,.]\d+)?)\s*(g|gr|kg|ml|l|EL|TL|Prise|Msp)\.?\s+(.+)$/i
-    ).exec(line)
-    if (unitMatch) {
-      const amount = Number.parseFloat(unitMatch[1].replace(',', '.'))
-      const unit = unitMatch[2].toLowerCase()
-      const namePart = unitMatch[3].trim()
-      const multiplier = UNIT_MULTIPLIERS[unit]
-      if (multiplier !== undefined) {
-        const name = namePart.replace(/\s*\(.*\)\s*$/, '').trim()
-        parsed.push({ amountG: amount * multiplier, name })
-        continue
-      }
+    if (match) {
+      parsed.push(match)
+    } else {
+      skipped.push(line)
     }
-
-    skipped.push(line)
   }
 
   return { parsed, skipped }

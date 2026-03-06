@@ -1,4 +1,4 @@
-import Fuse from 'fuse.js'
+import Fuse, { FuseResult } from 'fuse.js'
 import { newStemmer } from 'snowball-stemmers'
 
 export interface NutritionEntry {
@@ -44,7 +44,241 @@ export interface NutritionDetailedResult {
 
 const stemmer = newStemmer('german')
 
+// Words that describe preparation, size, or state but don't identify the ingredient.
+// Common inflected forms are included to avoid a dependency on runtime stemming for filtering.
+const MODIFIERS = new Set([
+  // frozen / processing
+  'tk',
+  'tiefkühl',
+  'tiefgefroren',
+  'tiefgekühlt',
+  // preparation methods
+  'frisch',
+  'roh',
+  'getrocknet',
+  'getrocknete',
+  'getrockneter',
+  'getrocknetes',
+  'gehackt',
+  'gehackte',
+  'gehackter',
+  'gehacktes',
+  'gemahlen',
+  'gemahlene',
+  'gemahlener',
+  'gemahlenes',
+  'gerieben',
+  'geriebene',
+  'geröstet',
+  'geröstete',
+  'eingelegt',
+  'eingelegte',
+  'geschält',
+  'geschälte',
+  'gekocht',
+  'gekochte',
+  'gegart',
+  'gegarte',
+  'gebacken',
+  'gebackene',
+  // size
+  'klein',
+  'kleine',
+  'kleiner',
+  'kleines',
+  'groß',
+  'große',
+  'großer',
+  'großes',
+  'mittel',
+  'mittlere',
+  'ganz',
+  'ganze',
+  'ganzer',
+  'ganzes',
+  'gute',
+  'fein',
+  'feine',
+  'feiner',
+  'grob',
+  'grobe',
+  'grober',
+  // temperature / state
+  'kalt',
+  'kalte',
+  'kalter',
+  'kaltes',
+  'warm',
+  'warme',
+  'warmer',
+  'heißes',
+  // connectors
+  'oder',
+  'und',
+  'mit',
+])
+
+/**
+ * Ingredients with no useful BLS entry — skipped before any search so the
+ * fuzzy matcher cannot pick up unrelated compounds (e.g. "zimt" → "Zimtsterne").
+ */
+const SKIP_INGREDIENTS = new Set(['zimt']) // cSpell:ignore zimt
+
+/**
+ * Maps common German ingredient names (lowercase, modifier-stripped) to a more
+ * specific BLS search query. Checked before fuzzy search to avoid ambiguous
+ * short queries matching obscure compounds (e.g. flour matching arrowroot flour).
+ */
+// cSpell:disable
+const INGREDIENT_OVERRIDES: Record<string, string> = {
+  // Flour & grains
+  mehl: 'Weizen Mehl',
+  weizenmehl: 'Weizen Mehl',
+  dinkelmehl: 'Dinkel Mehl',
+  roggenmehl: 'Roggen Mehl',
+  maismehl: 'Mais Mehl',
+  reismehl: 'Reis Mehl',
+  speisestärke: 'Speisestärke',
+  stärke: 'Speisestärke',
+  maisstärke: 'Speisestärke',
+  haferflocken: 'Hafer Flocken',
+  reis: 'Reis',
+  nudeln: 'Nudeln',
+  pasta: 'Nudeln',
+  spaghetti: 'Spaghetti',
+  semmelbrösel: 'Semmelbrösel',
+  paniermehl: 'Semmelbrösel',
+  // Dairy
+  butter: 'Butter',
+  margarine: 'Margarine',
+  sojamilch: 'Sojadrink',
+  milch: 'Vollmilch',
+  sahne: 'Schlagsahne',
+  schlagsahne: 'Schlagsahne',
+  joghurt: 'Joghurt',
+  quark: 'Speisequark',
+  magerquark: 'Speisequark',
+  frischkäse: 'Frischkäse',
+  schmand: 'Schmand',
+  käse: 'Gouda',
+  parmesan: 'Parmesan',
+  mozzarella: 'Mozzarella',
+  gouda: 'Gouda',
+  edamer: 'Edamer',
+  // Eggs
+  ei: 'Hühnerei',
+  eier: 'Hühnerei',
+  // Oils & fats
+  öl: 'Rapsöl',
+  olivenöl: 'Olivenöl',
+  rapsöl: 'Rapsöl',
+  sonnenblumenöl: 'Sonnenblumenöl',
+  kokosöl: 'Kokosöl',
+  // Sweeteners
+  zucker: 'Zucker weiß',
+  puderzucker: 'Puderzucker',
+  honig: 'Honig',
+  ahornsirup: 'Ahornsirup',
+  // Salt, spices & herbs
+  salz: 'Speisesalz',
+  pfeffer: 'Pfeffer',
+  paprikapulver: 'Paprikapulver',
+  muskat: 'Muskatnuss',
+  kurkuma: 'Kurkuma',
+  oregano: 'Oregano',
+  basilikum: 'Basilikum',
+  petersilie: 'Petersilie',
+  thymian: 'Thymian',
+  rosmarin: 'Rosmarin',
+  majoran: 'Majoran',
+  koriander: 'Koriander',
+  // Leavening & baking
+  backpulver: 'Backpulver',
+  hefe: 'Hefe',
+  natron: 'Natriumhydrogencarbonat',
+  vanille: 'Vanilleextrakt',
+  vanillezucker: 'Vanillezucker',
+  // Vegetables
+  tomate: 'Tomate',
+  tomaten: 'Tomate',
+  zwiebel: 'Speisezwiebel',
+  zwiebeln: 'Speisezwiebel',
+  knoblauch: 'Knoblauch',
+  karotte: 'Karotte',
+  karotten: 'Karotte',
+  möhre: 'Möhre',
+  möhren: 'Möhre',
+  kartoffel: 'Kartoffel',
+  kartoffeln: 'Kartoffel',
+  zucchini: 'Zucchini',
+  paprika: 'Gemüsepaprika',
+  spinat: 'Spinat',
+  brokkoli: 'Broccoli',
+  blumenkohl: 'Blumenkohl',
+  gurke: 'Gurke',
+  champignon: 'Champignon',
+  champignons: 'Champignon',
+  pilze: 'Champignon',
+  lauch: 'Lauch',
+  sellerie: 'Sellerie',
+  tomatenmark: 'Tomatenmark',
+  // Legumes
+  erbsen: 'Erbse grün',
+  bohnen: 'Kidneybohne',
+  linsen: 'Linse',
+  kichererbsen: 'Kichererbse',
+  // Proteins
+  hähnchen: 'Hähnchenbrustfilet',
+  hühnchen: 'Hähnchenbrustfilet',
+  rindfleisch: 'Rindfleisch',
+  schweinefleisch: 'Schweinefleisch',
+  hackfleisch: 'Rinderhackfleisch',
+  lachs: 'Lachs',
+  thunfisch: 'Thunfisch',
+  garnelen: 'Garnelen',
+  tofu: 'Tofu',
+  // Nuts & seeds
+  mandeln: 'Mandel süß',
+  haselnüsse: 'Haselnuss',
+  walnüsse: 'Walnuss',
+  erdnüsse: 'Erdnuss',
+  cashews: 'Cashewnuss',
+  sesam: 'Sesam',
+  leinsamen: 'Leinsamen',
+  kürbiskerne: 'Kürbiskerne',
+  sonnenblumenkerne: 'Sonnenblumenkerne',
+  // Fruits
+  apfel: 'Apfel',
+  äpfel: 'Apfel',
+  banane: 'Banane',
+  bananen: 'Banane',
+  zitrone: 'Zitrone',
+  zitronen: 'Zitrone',
+  orange: 'Orange',
+  orangen: 'Orange',
+  erdbeeren: 'Erdbeere',
+  himbeeren: 'Himbeere',
+  blaubeeren: 'Blaubeere',
+  // Condiments & liquids
+  senf: 'Senf',
+  essig: 'Weinessig',
+  sojasoße: 'Sojasoße',
+  brühe: 'Gemüsebrühe',
+  gemüsebrühe: 'Gemüsebrühe',
+  hühnerbrühe: 'Hühnerbrühe',
+  wein: 'Weißwein',
+  rotwein: 'Rotwein',
+  weißwein: 'Weißwein',
+  // Other
+  schokolade: 'Zartbitterschokolade',
+  kakaopulver: 'Kakaopulver',
+  erdnussbutter: 'Erdnussmus',
+  kokosmilch: 'Kokosmilch',
+}
+// cSpell:enable
+
 const splitCommonSuffixes = (text: string): string => {
+  // cSpell:disable-next-line
   const suffixes = ['flock', 'mehl', 'pulver', 'schrot']
   for (const s of suffixes) {
     text = text.split(s).join(` ${s}`)
@@ -59,6 +293,44 @@ const normalizeText = (text: string): string => {
   const words = text.split(/\s+/).filter(Boolean)
   const stemmed = words.map(w => stemmer.stem(w))
   return stemmed.join(' ')
+}
+
+const stripModifiers = (query: string): string =>
+  query
+    .split(/\s+/)
+    .filter(w => !MODIFIERS.has(w.toLowerCase()))
+    .join(' ')
+    .trim()
+
+/**
+ * Generates up to three search variants from an ingredient name:
+ *   1. Full query (normalized + suffix-split)
+ *   2. Modifiers stripped, then normalized
+ *   3. Last word only — the main noun is usually at the end in German
+ *
+ * Duplicates are silently skipped so each variant is searched at most once.
+ */
+const buildSearchVariants = (query: string): string[] => {
+  const seen = new Set<string>()
+  const variants: string[] = []
+
+  const add = (text: string) => {
+    const v = splitCommonSuffixes(normalizeText(text))
+    if (v && !seen.has(v)) {
+      seen.add(v)
+      variants.push(v)
+    }
+  }
+
+  add(query)
+
+  const stripped = stripModifiers(query)
+  if (stripped !== query) add(stripped)
+
+  const words = query.trim().split(/\s+/)
+  if (words.length > 1) add(words.at(-1) ?? '')
+
+  return variants
 }
 
 class NutritionService {
@@ -92,6 +364,33 @@ class NutritionService {
     return this.loadPromise
   }
 
+  private scoreResults(
+    rawResults: FuseResult<NutritionEntry>[],
+    query: string
+  ): Array<{ item: NutritionEntry; finalScore: number }> {
+    return rawResults.map(r => {
+      const baseScore = (1 - (r.score ?? 1)) * 100
+      const matchWords = r.item.searchIndex
+        .toLowerCase()
+        .replaceAll(',', ' ')
+        .split(/\s+/)
+
+      let finalScore = baseScore
+      if (matchWords.includes(query)) {
+        finalScore += 25
+      } else if (matchWords.some((w: string) => w.includes(query))) {
+        // Penalize proportionally: a short query buried in a long compound word
+        // is a weaker signal than a query that covers most of the matched word.
+        const matchedWord =
+          matchWords.find((w: string) => w.includes(query)) ?? query
+        const fraction = query.length / matchedWord.length
+        finalScore -= Math.round(10 + (1 - fraction) * 15)
+      }
+
+      return { item: r.item, finalScore }
+    })
+  }
+
   async findIngredient(
     query: string,
     threshold = 65
@@ -99,34 +398,51 @@ class NutritionService {
     await this.load()
     if (!this.fuse || !this.data) return null
 
-    const normalizedQuery = normalizeText(query)
-    const splittedQuery = splitCommonSuffixes(normalizedQuery)
+    const strippedQuery = stripModifiers(query).toLowerCase()
+    if (SKIP_INGREDIENTS.has(strippedQuery)) return null
 
-    const rawResults = this.fuse.search(splittedQuery, { limit: 5 })
+    // Use the override map for common ingredients: strip modifiers first, then look up.
+    const overrideQuery = INGREDIENT_OVERRIDES[strippedQuery]
 
-    if (rawResults.length === 0) return null
-
-    const refined = rawResults.map(r => {
-      const baseScore = (1 - (r.score ?? 1)) * 100
-      const matchWords = r.item.searchIndex
-        .toLowerCase()
-        .replace(/,/g, ' ')
-        .split(/\s+/)
-
-      let finalScore = baseScore
-      if (matchWords.includes(splittedQuery)) {
-        finalScore += 25
-      } else if (matchWords.some(w => w.includes(splittedQuery))) {
-        finalScore -= 10
+    if (overrideQuery) {
+      // Prefer a direct name match in the BLS data over fuzzy search — avoids
+      // ambiguous stems matching unrelated compounds (e.g. "Sahne" → a liqueur).
+      const overrideLower = overrideQuery.toLowerCase()
+      const direct = this.data.find(e => {
+        const n = e.name.toLowerCase()
+        return (
+          n === overrideLower ||
+          (n.startsWith(overrideLower) && /[ ,/]/.test(n[overrideLower.length]))
+        )
+      })
+      if (direct) {
+        return {
+          name: direct.name,
+          blsCode: direct.id,
+          kcal: direct.kcal,
+          protein: direct.protein,
+          fat: direct.fat,
+          carbs: direct.carbs,
+          fiber: direct.fiber,
+          score: 100,
+        }
       }
+    }
 
-      return { item: r.item, finalScore }
-    })
+    const variants = buildSearchVariants(overrideQuery ?? query)
+    let best: { item: NutritionEntry; finalScore: number } | null = null
 
-    refined.sort((a, b) => b.finalScore - a.finalScore)
-    const best = refined[0]
+    for (const variant of variants) {
+      const rawResults = this.fuse.search(variant, { limit: 5 })
+      const scored = this.scoreResults(rawResults, variant)
+      scored.sort((a, b) => b.finalScore - a.finalScore)
+      const top = scored[0]
+      if (top && (!best || top.finalScore > best.finalScore)) {
+        best = top
+      }
+    }
 
-    if (best.finalScore < threshold) return null
+    if (!best || best.finalScore < threshold) return null
 
     return {
       name: best.item.name,
