@@ -181,7 +181,7 @@ const PLAIN_COUNT_WEIGHTS: Record<string, number> = {
 // cSpell:enable
 
 const NUM = String.raw`(\d+(?:[,.]\d+)?)`
-const RANGE_SEP = String.raw`\s*[-–]\s*`
+const RANGE_SEP = String.raw`\s*(?:[-–]|bis)\s*`
 
 const parseNum = (s: string) => Number.parseFloat(s.replace(',', '.'))
 const stripParens = (s: string) => s.replace(/\s*\(.*\)\s*$/, '').trim()
@@ -261,6 +261,9 @@ const parseIngredients = (markdown: string): ParseResult => {
   const skipped: string[] = []
 
   for (const rawLine of markdown.split('\n')) {
+    // Silently skip non-list lines (section headers, comments, blank lines)
+    if (!/^\s*(?:[-*•]|\d+\.)/.test(rawLine)) continue
+
     const line = normalizeLine(rawLine)
     if (!line) continue
 

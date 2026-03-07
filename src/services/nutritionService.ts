@@ -54,6 +54,7 @@ const MODIFIERS = new Set([
   'tiefgekühlt',
   // preparation methods
   'frisch',
+  'frische',
   'roh',
   'getrocknet',
   'getrocknete',
@@ -338,6 +339,9 @@ class NutritionService {
   private loadPromise: Promise<NutritionEntry[]> | null = null
   private fuse: Fuse<NutritionEntry> | null = null
 
+  private customData: NutritionEntry[] | null = null
+  private customLoadPromise: Promise<NutritionEntry[]> | null = null
+
   private async load(): Promise<NutritionEntry[]> {
     if (this.data) return this.data
     if (this.loadPromise) return this.loadPromise
@@ -362,6 +366,51 @@ class NutritionService {
       })
 
     return this.loadPromise
+  }
+
+  private async loadCustom(): Promise<NutritionEntry[]> {
+    if (this.customData) return this.customData
+    if (this.customLoadPromise) return this.customLoadPromise
+
+    this.customLoadPromise = fetch('/custom_nutrition.json')
+      .then(res => {
+        if (!res.ok)
+          throw new Error(`Failed to load custom nutrition data: ${res.status}`)
+        return res.json() as Promise<Omit<NutritionEntry, 'searchIndex'>[]>
+      })
+      .then(data => {
+        this.customData = data.map(e => ({
+          ...e,
+          searchIndex: normalizeText(e.name),
+        }))
+        return this.customData
+      })
+      .catch(() => {
+        this.customData = []
+        return []
+      })
+
+    return this.customLoadPromise
+  }
+
+  private findInCustom(query: string): NutritionResult | null {
+    if (!this.customData?.length) return null
+    const q = query.toLowerCase()
+    const entry = this.customData.find(e => {
+      const n = e.name.toLowerCase()
+      return n === q || (n.startsWith(q) && /[ ,/]/.test(n[q.length]))
+    })
+    if (!entry) return null
+    return {
+      name: entry.name,
+      blsCode: entry.id,
+      kcal: entry.kcal,
+      protein: entry.protein,
+      fat: entry.fat,
+      carbs: entry.carbs,
+      fiber: entry.fiber,
+      score: 100,
+    }
   }
 
   private scoreResults(
@@ -395,11 +444,15 @@ class NutritionService {
     query: string,
     threshold = 65
   ): Promise<NutritionResult | null> {
-    await this.load()
+    await Promise.all([this.load(), this.loadCustom()])
     if (!this.fuse || !this.data) return null
 
     const strippedQuery = stripModifiers(query).toLowerCase()
     if (SKIP_INGREDIENTS.has(strippedQuery)) return null
+
+    // Custom entries take priority over the BLS database.
+    const customResult = this.findInCustom(strippedQuery)
+    if (customResult) return customResult
 
     // Use the override map for common ingredients: strip modifiers first, then look up.
     const overrideQuery = INGREDIENT_OVERRIDES[strippedQuery]

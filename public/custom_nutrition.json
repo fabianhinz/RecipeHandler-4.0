@@ -1,0 +1,47 @@
+[
+  {
+    "id": "custom-lasagneplatten",
+    "name": "Lasagneplatten",
+    "kcal": 350,
+    "protein": 12.5,
+    "fat": 1.5,
+    "carbs": 70.0,
+    "fiber": 3.0
+  },
+  {
+    "id": "custom-nudeln",
+    "name": "Nudeln",
+    "kcal": 350,
+    "protein": 12.5,
+    "fat": 1.5,
+    "carbs": 70.0,
+    "fiber": 3.0
+  },
+  {
+    "id": "custom-blattspinat",
+    "name": "Blattspinat",
+    "kcal": 22,
+    "protein": 2.8,
+    "fat": 0.3,
+    "carbs": 0.6,
+    "fiber": 1.8
+  },
+  {
+    "id": "custom-gruen-bohnen",
+    "name": "grüne Bohnen",
+    "kcal": 33,
+    "protein": 2.4,
+    "fat": 0.2,
+    "carbs": 5,
+    "fiber": 2
+  },
+  {
+    "id": "custom-maisgriess",
+    "name": "Maisgrieß",
+    "kcal": 344,
+    "protein": 7.7,
+    "fat": 0.8,
+    "carbs": 74,
+    "fiber": 4.8
+  }
+]
