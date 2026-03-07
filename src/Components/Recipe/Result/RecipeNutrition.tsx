@@ -149,6 +149,31 @@ const QUANTITY_ADJECTIVES = new Set([
   'reife',
   'reifer',
   'reifes',
+  // colors — e.g. "rote Paprika", "gelbe Zucchini"
+  'rote',
+  'roter',
+  'rotes',
+  'roten',
+  'gelbe',
+  'gelber',
+  'gelbes',
+  'gelben',
+  'grüne',
+  'grüner',
+  'grünes',
+  'grünen',
+  'weiße',
+  'weißer',
+  'weißes',
+  'weißen',
+  'schwarze',
+  'schwarzer',
+  'schwarzes',
+  'schwarzen',
+  'braune',
+  'brauner',
+  'braunes',
+  'braunen',
 ])
 
 // Approximate per-item gram weight for common count-based ingredients (no unit)
@@ -313,7 +338,14 @@ const RecipeNutrition = ({ recipe }: { recipe: Recipe }) => {
     if (parsed.length === 0) {
       // No unit-based ingredients — show card with n/a if there is any content
       if (recipe.ingredients.trim()) {
-        setSummary({ kcal: 0, protein: 0, fat: 0, carbs: 0, fiber: 0, sugar: 0 })
+        setSummary({
+          kcal: 0,
+          protein: 0,
+          fat: 0,
+          carbs: 0,
+          fiber: 0,
+          sugar: 0,
+        })
         setSkipped(skippedLines)
       }
       return
