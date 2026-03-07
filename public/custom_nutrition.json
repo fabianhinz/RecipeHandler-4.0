@@ -48,5 +48,26 @@
     "carbs": 74,
     "sugar": 1.5,
     "fiber": 4.8
+  },
+  {
+    "id": "custom-zimt",
+    "name": "Zimt",
+    "kcal": 209,
+    "protein": 18.8,
+    "fat": 0.6,
+    "carbs": 0.4,
+    "sugar": 0.4,
+    "fiber": 63.4
+  },
+  {
+    "id": "custom-sojahack",
+    "name": "Sojahack",
+    "kcal": 135,
+    "protein": 16.8,
+    "fat": 2.9,
+    "carbs": 7.5,
+    "sugar": 2.5,
+    "fiber": 5.8
   }
+
 ]
