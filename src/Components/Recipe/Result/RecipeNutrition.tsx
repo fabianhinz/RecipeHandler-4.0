@@ -104,6 +104,8 @@ const UNIT_MULTIPLIERS: Record<string, number> = {
   dose: 400, // 1 Dose (Standarddose) ≈ 400 g
   zweig: 2, // 1 Zweig Kräuter ≈ 2 g
   zweige: 2,
+  stange: 200, // 1 Stange Lauch ≈ 200 g
+  stangen: 200,
   bund: 100, // 1 Bund ≈ 100 g
   scheibe: 30, // 1 Scheibe ≈ 30 g
   scheiben: 30,
@@ -111,8 +113,9 @@ const UNIT_MULTIPLIERS: Record<string, number> = {
   zehen: 5,
 }
 
-// Adjectives that can appear between a number and a unit (e.g. "1 gute Prise Salz")
+// Adjectives that can appear between a number and an ingredient name and should be ignored
 const QUANTITY_ADJECTIVES = new Set([
+  // quantity qualifiers
   'gute',
   'guter',
   'gutes',
@@ -133,6 +136,19 @@ const QUANTITY_ADJECTIVES = new Set([
   'halber',
   'halbes',
   'halben',
+  // size
+  'große',
+  'großer',
+  'großes',
+  'kleine',
+  'kleiner',
+  'kleines',
+  'mittlere',
+  'mittlerer',
+  'mittleres',
+  'reife',
+  'reifer',
+  'reifes',
 ])
 
 // Approximate per-item gram weight for common count-based ingredients (no unit)
@@ -157,6 +173,8 @@ const PLAIN_COUNT_WEIGHTS: Record<string, number> = {
   möhren: 80,
   zucchini: 250,
   gurke: 300,
+  paprika: 150,
+  paprikaschote: 150,
   avocado: 200,
   avocados: 200,
 }
@@ -169,12 +187,16 @@ const parseNum = (s: string) => Number.parseFloat(s.replace(',', '.'))
 const stripParens = (s: string) => s.replace(/\s*\(.*\)\s*$/, '').trim()
 
 const normalizeLine = (rawLine: string): string => {
-  const line = rawLine
+  let line = rawLine
     .replace(/^(\s*[-*•]|\d+\.\s*)/, '')
     .trim()
     .replace(/^(ca\.?|etwa|ungefähr)\s+/i, '')
     .trim()
-  // Strip optional quantity adjective between number and unit ("1 gute Prise" → "1 Prise")
+  // Convert leading fraction to decimal ("1/2 Zitrone" → "0.5 Zitrone")
+  line = line.replace(/^(\d+)\/(\d+)/, (_, n, d) =>
+    String(Number(n) / Number(d))
+  )
+  // Strip optional quantity adjective between number and ingredient ("2 große Äpfel" → "2 Äpfel")
   const qAdj = new RegExp(String.raw`^${NUM}\s+(\p{L}+)\s+`, 'u').exec(line)
   return qAdj && QUANTITY_ADJECTIVES.has(qAdj[2].toLowerCase())
     ? line.replace(new RegExp(String.raw`^${NUM}\s+\p{L}+\s+`, 'u'), '$1 ')

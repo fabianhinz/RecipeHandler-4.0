@@ -132,9 +132,9 @@ const SKIP_INGREDIENTS = new Set(['zimt']) // cSpell:ignore zimt
 // cSpell:disable
 const INGREDIENT_OVERRIDES: Record<string, string> = {
   // Flour & grains
-  mehl: 'Weizen Mehl',
-  weizenmehl: 'Weizen Mehl',
-  dinkelmehl: 'Dinkel Mehl',
+  mehl: 'Weizen Mehl, Type 550',
+  weizenmehl: 'Weizen Mehl, Type 550',
+  dinkelmehl: 'Dinkel Mehl, Type 630',
   roggenmehl: 'Roggen Mehl',
   maismehl: 'Mais Mehl',
   reismehl: 'Reis Mehl',
