@@ -26,6 +26,7 @@ def _(pd):
         "FAT Fett [g/100g]": "fat",
         "CHO Kohlenhydrate, verfügbar [g/100g]": "carbs",
         "FIBT Ballaststoffe, gesamt [g/100g]": "fiber",
+        "SUGAR Zucker (Mono- und Disaccharide), gesamt [g/100g]": "sugar",
     }
     nutrition_df = pd.read_excel(
         "nutrition_information.xlsx", usecols=relevant_columns.keys()
@@ -230,7 +231,7 @@ def _(nutrition_df_cleaned):
 
     records = (
         nutrition_df_cleaned.rename(columns={"search_index": "searchIndex"})[
-            ["id", "name", "kcal", "protein", "fat", "carbs", "fiber", "searchIndex"]
+            ["id", "name", "kcal", "protein", "fat", "carbs", "fiber", "sugar", "searchIndex"]
         ]
         .fillna(0)
         .to_dict(orient="records")

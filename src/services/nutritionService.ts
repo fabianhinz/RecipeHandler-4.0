@@ -9,6 +9,7 @@ export interface NutritionEntry {
   fat: number
   carbs: number
   fiber: number
+  sugar: number
   searchIndex: string
 }
 
@@ -20,6 +21,7 @@ export interface NutritionResult {
   fat: number
   carbs: number
   fiber: number
+  sugar: number
   score: number
 }
 
@@ -29,6 +31,7 @@ export interface NutritionSummary {
   fat: number
   carbs: number
   fiber: number
+  sugar: number
 }
 
 export interface IngredientMatch {
@@ -409,6 +412,7 @@ class NutritionService {
       fat: entry.fat,
       carbs: entry.carbs,
       fiber: entry.fiber,
+      sugar: entry.sugar,
       score: 100,
     }
   }
@@ -477,6 +481,7 @@ class NutritionService {
           fat: direct.fat,
           carbs: direct.carbs,
           fiber: direct.fiber,
+          sugar: direct.sugar,
           score: 100,
         }
       }
@@ -505,6 +510,7 @@ class NutritionService {
       fat: best.item.fat,
       carbs: best.item.carbs,
       fiber: best.item.fiber,
+      sugar: best.item.sugar,
       score: best.finalScore,
     }
   }
@@ -518,6 +524,7 @@ class NutritionService {
       fat: 0,
       carbs: 0,
       fiber: 0,
+      sugar: 0,
     }
 
     await Promise.all(
@@ -530,6 +537,7 @@ class NutritionService {
         summary.fat += result.fat * factor
         summary.carbs += result.carbs * factor
         summary.fiber += result.fiber * factor
+        summary.sugar += result.sugar * factor
       })
     )
 
@@ -545,6 +553,7 @@ class NutritionService {
       fat: 0,
       carbs: 0,
       fiber: 0,
+      sugar: 0,
     }
 
     const matches = await Promise.all(
@@ -562,6 +571,7 @@ class NutritionService {
       summary.fat += matched.fat * factor
       summary.carbs += matched.carbs * factor
       summary.fiber += matched.fiber * factor
+      summary.sugar += matched.sugar * factor
     }
 
     return { summary, matches }

@@ -293,6 +293,7 @@ const MACROS: Array<{
   { key: 'protein', label: 'Protein', unit: 'g' },
   { key: 'fat', label: 'Fett', unit: 'g' },
   { key: 'carbs', label: 'Kohlenhydrate', unit: 'g' },
+  { key: 'sugar', label: 'davon Zucker', unit: 'g' },
   { key: 'fiber', label: 'Ballaststoffe', unit: 'g' },
 ]
 
@@ -312,7 +313,7 @@ const RecipeNutrition = ({ recipe }: { recipe: Recipe }) => {
     if (parsed.length === 0) {
       // No unit-based ingredients — show card with n/a if there is any content
       if (recipe.ingredients.trim()) {
-        setSummary({ kcal: 0, protein: 0, fat: 0, carbs: 0, fiber: 0 })
+        setSummary({ kcal: 0, protein: 0, fat: 0, carbs: 0, fiber: 0, sugar: 0 })
         setSkipped(skippedLines)
       }
       return
