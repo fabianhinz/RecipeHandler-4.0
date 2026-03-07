@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.19.11"
+__generated_with = "0.20.4"
 app = marimo.App()
 
 
@@ -225,19 +225,19 @@ def _(total_nutrition):
 
 
 @app.cell
-def _(nutrition_df_cleaned):
+def _(nutrition_df_cleaned, pd):
     import json
     import pathlib
 
-    records = (
-        nutrition_df_cleaned.rename(columns={"search_index": "searchIndex"})[
-            ["id", "name", "kcal", "protein", "fat", "carbs", "fiber", "sugar", "searchIndex"]
-        ]
-        .fillna(0)
-        .to_dict(orient="records")
-    )
+    numeric_cols = ["kcal", "protein", "fat", "carbs", "fiber", "sugar"]
+    export_df = nutrition_df_cleaned.rename(columns={"search_index": "searchIndex"})[
+        ["id", "name"] + numeric_cols + ["searchIndex"]
+    ].copy()
+    for num_col in numeric_cols:
+        export_df[num_col] = pd.to_numeric(export_df[num_col], errors="coerce").fillna(0.0)
+    records = export_df.to_dict(orient="records")
     out = pathlib.Path("../public/nutrition_data.json")
-    out.write_text(json.dumps(records, ensure_ascii=False))
+    out.write_text(json.dumps(records, ensure_ascii=False, indent=2))
     print(f"Exported {len(records)} entries → {out.resolve()}")
     return
 

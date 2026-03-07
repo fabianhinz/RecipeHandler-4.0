@@ -129,6 +129,7 @@ export const INGREDIENT_OVERRIDES: Record<string, string> = {
   brokkoli: 'Broccoli',
   champignons: 'Champignon',
   pilze: 'Champignon',
+  lauch: 'Porree/Lauch, roh',
   // Legumes
   erbsen: 'Erbse grün',
   bohnen: 'Kidneybohne',
