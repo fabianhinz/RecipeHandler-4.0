@@ -146,6 +146,7 @@ export const INGREDIENT_OVERRIDES: Record<string, string> = {
   erdnüsse: 'Erdnuss',
   cashews: 'Cashewnuss',
   // Fruits
+  apfel: 'Apfel',
   äpfel: 'Apfel',
   bananen: 'Banane',
   zitronen: 'Zitrone',
