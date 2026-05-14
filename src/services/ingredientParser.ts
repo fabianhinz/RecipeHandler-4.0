@@ -127,6 +127,10 @@ const PLAIN_COUNT_WEIGHTS: Record<string, number> = {
   möhren: 80,
   zucchini: 250,
   gurke: 300,
+  salatgurke: 300,
+  salatgurken: 300,
+  frühlingszwiebel: 20,
+  frühlingszwiebeln: 20,
   paprika: 150,
   paprikaschote: 150,
   avocado: 200,
@@ -156,11 +160,17 @@ const normalizeLine = (rawLine: string): string => {
   line = line.replace(/^(\d+)\/(\d+)/, (_, n, d) =>
     String(Number(n) / Number(d))
   )
-  // Strip optional quantity adjective between number and ingredient ("2 große Äpfel" → "2 Äpfel")
-  const qAdj = new RegExp(String.raw`^${NUM}\s+(\p{L}+)\s+`, 'u').exec(line)
-  return qAdj && QUANTITY_ADJECTIVES.has(qAdj[2].toLowerCase())
-    ? line.replace(new RegExp(String.raw`^${NUM}\s+\p{L}+\s+`, 'u'), '$1 ')
-    : line
+  // Strip all leading quantity adjectives between number and ingredient ("2 kleine rote Äpfel" → "2 Äpfel")
+  const leadingAdjectiveRe = new RegExp(String.raw`^${NUM}\s+(\p{L}+)\s+`, 'u')
+  let adjectiveMatch = leadingAdjectiveRe.exec(line)
+  while (
+    adjectiveMatch &&
+    QUANTITY_ADJECTIVES.has(adjectiveMatch[2].toLowerCase())
+  ) {
+    line = line.replace(leadingAdjectiveRe, '$1 ')
+    adjectiveMatch = leadingAdjectiveRe.exec(line)
+  }
+  return line
 }
 
 /** Matches egg lines like "2 Eier" → 2 × 50 g */
