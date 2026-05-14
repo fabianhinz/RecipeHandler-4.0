@@ -17,6 +17,7 @@ import StyledCard from '@/Components/Shared/StyledCard'
 import { Recipe } from '@/model/model'
 import { useLayoutStore } from '@/store/LayoutStore'
 
+import RecipeNutrition from './RecipeNutrition'
 import RecipeResultHeader from './RecipeResultHeader'
 import { RecipeResultRelated } from './RecipeResultRelated'
 
@@ -69,6 +70,10 @@ const RecipeResult = ({ recipe }: RecipeResultProps) => {
                     {recipe.description}
                   </MarkdownRenderer>
                 </StyledCard>
+              </Grid>
+
+              <Grid {...gridBreakpointProps} item>
+                <RecipeNutrition recipe={recipe} />
               </Grid>
 
               {recipe.relatedRecipes.length > 0 && (

@@ -1,0 +1,73 @@
+[
+  {
+    "id": "custom-lasagneplatten",
+    "name": "Lasagneplatten",
+    "kcal": 359,
+    "protein": 13,
+    "fat": 2.0,
+    "carbs": 71.0,
+    "sugar": 3.5,
+    "fiber": 3.0
+  },
+  {
+    "id": "custom-nudeln",
+    "name": "Nudeln",
+    "kcal": 359,
+    "protein": 13,
+    "fat": 2.0,
+    "carbs": 71.0,
+    "sugar": 3.5,
+    "fiber": 3.0
+  },
+  {
+    "id": "custom-blattspinat",
+    "name": "Blattspinat",
+    "kcal": 22,
+    "protein": 2.8,
+    "fat": 0.3,
+    "carbs": 0.6,
+    "sugar": 0.4,
+    "fiber": 1.8
+  },
+  {
+    "id": "custom-gruen-bohnen",
+    "name": "grüne Bohnen",
+    "kcal": 33.0,
+    "protein": 2.4,
+    "fat": 0.2,
+    "carbs": 5.0,
+    "sugar": 2.0,
+    "fiber": 2.0
+  },
+  {
+    "id": "custom-maisgriess",
+    "name": "Maisgrieß",
+    "kcal": 344,
+    "protein": 7.7,
+    "fat": 0.8,
+    "carbs": 74,
+    "sugar": 1.5,
+    "fiber": 4.8
+  },
+  {
+    "id": "custom-zimt",
+    "name": "Zimt",
+    "kcal": 209,
+    "protein": 18.8,
+    "fat": 0.6,
+    "carbs": 0.4,
+    "sugar": 0.4,
+    "fiber": 63.4
+  },
+  {
+    "id": "custom-sojahack",
+    "name": "Sojahack",
+    "kcal": 135,
+    "protein": 16.8,
+    "fat": 2.9,
+    "carbs": 7.5,
+    "sugar": 2.5,
+    "fiber": 5.8
+  }
+
+]
