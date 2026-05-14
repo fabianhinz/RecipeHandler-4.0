@@ -183,7 +183,11 @@ class NutritionService {
     const q = query.toLowerCase()
     const entry = this.customData.find(e => {
       const n = e.name.toLowerCase()
-      return n === q || (n.startsWith(q) && /[ ,/]/.test(n[q.length]))
+      return (
+        n === q ||
+        (n.startsWith(q) && /[ ,/]/.test(n[q.length])) ||
+        (q.startsWith(n) && q.length > n.length && /[ ,/]/.test(q[n.length]))
+      )
     })
     if (!entry) return null
     return {
@@ -275,14 +279,21 @@ class NutritionService {
 
     const strippedQuery = stripModifiers(query).toLowerCase()
 
-    // Custom entries take priority over the BLS database.
-    const customResult = this.findInCustom(strippedQuery)
+    // Custom entries take priority — try the original query first so that entries
+    // like "grüne Bohnen" match even though "grüne" is a modifier.
+    const customResult =
+      this.findInCustom(query) ?? this.findInCustom(strippedQuery)
     if (customResult) return customResult
 
     // Use the override map for common ingredients: strip modifiers first, then look up.
     const exactOverride = INGREDIENT_OVERRIDES[strippedQuery]
 
     if (exactOverride) {
+      // Check custom data for the override target before falling back to BLS so
+      // that e.g. spaghetti → "Nudeln" uses the custom Nudeln entry when present.
+      const customForOverride = this.findInCustom(exactOverride)
+      if (customForOverride) return customForOverride
+
       // Prefer a direct name match in the BLS data over fuzzy search — avoids
       // ambiguous stems matching unrelated compounds (e.g. "Sahne" → a liqueur).
       const overrideLower = exactOverride.toLowerCase()

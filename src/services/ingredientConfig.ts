@@ -32,6 +32,8 @@ export const UNIT_MULTIPLIERS: Record<string, number> = {
   zehe: 5, // 1 Zehe Knoblauch ≈ 5 g
   zehen: 5,
   spritzer: 2,
+  kugel: 90,
+  kugeln: 90,
 }
 
 /** Approximate per-item gram weight for common count-based ingredients (no unit) */
@@ -214,6 +216,7 @@ export const INGREDIENT_OVERRIDES: Record<string, string> = {
   stärke: 'Speisestärke',
   maisstärke: 'Speisestärke',
   haferflocken: 'Hafer Flocken',
+  spaghetti: 'Nudeln',
   pasta: 'Nudeln',
   paniermehl: 'Semmelbrösel',
   // Dairy
@@ -224,6 +227,7 @@ export const INGREDIENT_OVERRIDES: Record<string, string> = {
   sahne: 'Schlagsahne',
   quark: 'Speisequark Fettstufe, 40 % Fett i. Tr.',
   magerquark: 'Speisequark Magerstufe, Magerquark < 10 % Fett i. Tr.',
+  joghurt: 'Joghurt mild, mind. 3,5 % Fett',
   naturjoghurt: 'Joghurt mild, mind. 3,5 % Fett',
   käse: 'Gouda',
   fetakäse: 'Feta mind. 45 % Fett i. Tr.',
@@ -280,6 +284,7 @@ export const INGREDIENT_OVERRIDES: Record<string, string> = {
   essig: 'Weinessig',
   brühe: 'Gemüsebrühe',
   wein: 'Weißwein',
+  wasser: 'Trinkwasser',
   // Other
   schokolade: 'Zartbitterschokolade',
   erdnussbutter: 'Erdnussmus',
