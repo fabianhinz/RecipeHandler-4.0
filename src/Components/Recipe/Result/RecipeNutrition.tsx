@@ -10,7 +10,7 @@ import {
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import LocalDiningIcon from '@material-ui/icons/LocalDining'
-import RemoveIcon from '@material-ui/icons/Remove'
+import RemoveIcon from '@material-ui/icons/RemoveCircleOutline'
 import { useEffect, useState } from 'react'
 
 import StyledCard from '@/Components/Shared/StyledCard'
@@ -23,46 +23,32 @@ import {
 } from '@/services/nutritionService'
 
 const useStyles = makeStyles((theme: Theme) => ({
+  perServingChip: {
+    minWidth: 100,
+  },
   loadingContainer: {
     display: 'flex',
     justifyContent: 'center',
     padding: theme.spacing(2),
   },
-  macroItem: {
-    textAlign: 'center',
-  },
-  macroValue: {
-    fontWeight: 'bold',
-  },
-  macroLabel: {
-    color: theme.palette.text.secondary,
-  },
   divider: {
-    margin: theme.spacing(1.5, 0),
+    margin: theme.spacing(1, 0),
   },
-  matchHeader: {
-    display: 'block',
-    color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(0.5),
+  detailsTitle: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
   },
   matchRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(0.5),
-    marginBottom: theme.spacing(0.25),
+    gap: theme.spacing(2),
+    marginBottom: theme.spacing(0.5),
     overflow: 'hidden',
-  },
-  icon: {
-    fontSize: '1rem',
-    flexShrink: 0,
   },
   iconMatched: {
     color: '#4caf50',
   },
-  iconUnmatched: {
-    color: theme.palette.text.secondary,
-  },
-  iconSkipped: {
+  iconDisabled: {
     color: theme.palette.text.disabled,
   },
   matchName: {
@@ -102,7 +88,7 @@ const RecipeNutrition = ({ recipe }: { recipe: Recipe }) => {
   const [matches, setMatches] = useState<IngredientMatch[]>([])
   const [skipped, setSkipped] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
-  const [perServing, setPerServing] = useState(false)
+  const [perServing, setPerServing] = useState(true)
 
   useEffect(() => {
     let cancelled = false
@@ -149,20 +135,7 @@ const RecipeNutrition = ({ recipe }: { recipe: Recipe }) => {
   const hasMatchDetails = matches.length > 0 || skipped.length > 0
 
   return (
-    <StyledCard
-      expandable
-      header="Nährwerte"
-      BackgroundIcon={LocalDiningIcon}
-      action={
-        summary && hasAnyMatch ? (
-          <Chip
-            size="small"
-            label={perServing ? 'Pro Portion' : 'Gesamt'}
-            onClick={() => setPerServing(p => !p)}
-            clickable
-          />
-        ) : undefined
-      }>
+    <StyledCard expandable header="Nährwerte" BackgroundIcon={LocalDiningIcon}>
       {loading ? (
         <div className={classes.loadingContainer}>
           <CircularProgress size={24} />
@@ -170,22 +143,34 @@ const RecipeNutrition = ({ recipe }: { recipe: Recipe }) => {
       ) : (
         summary && (
           <>
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
+              {summary && hasAnyMatch && (
+                <Grid item>
+                  <Chip
+                    className={classes.perServingChip}
+                    color="secondary"
+                    variant={perServing ? 'default' : 'outlined'}
+                    label="Pro Portion"
+                    disabled={recipe.amount === 1}
+                    onClick={() => setPerServing(p => !p)}
+                  />
+                </Grid>
+              )}
               {MACROS.map(({ key, label, unit }) => {
                 const raw = perServing
                   ? summary[key] / recipe.amount
                   : summary[key]
                 const value = hasAnyMatch ? Math.round(raw) : null
+
                 return (
-                  <Grid key={key} item xs className={classes.macroItem}>
-                    <Typography variant="body1" className={classes.macroValue}>
-                      {value === null ? 'n/a' : `${value} ${unit}`}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      className={classes.macroLabel}>
-                      {label}
-                    </Typography>
+                  <Grid item key={key}>
+                    <Chip
+                      label={
+                        value === null
+                          ? `n/a ${label}`
+                          : `${value}${unit} ${label}`
+                      }
+                    />
                   </Grid>
                 )
               })}
@@ -193,56 +178,52 @@ const RecipeNutrition = ({ recipe }: { recipe: Recipe }) => {
 
             {hasMatchDetails && (
               <>
-                <Divider className={classes.divider} />
-                <Typography variant="caption" className={classes.matchHeader}>
+                <Typography
+                  variant="subtitle2"
+                  className={classes.detailsTitle}>
                   Zuordnung
                 </Typography>
 
                 {matches.map(({ name, amountG, matched }) => (
                   <div key={name} className={classes.matchRow}>
                     {matched ? (
-                      <CheckCircleOutlineIcon
-                        className={`${classes.icon} ${classes.iconMatched}`}
-                      />
+                      <CheckCircleOutlineIcon className={classes.iconMatched} />
                     ) : (
-                      <HelpOutlineIcon
-                        className={`${classes.icon} ${classes.iconUnmatched}`}
-                      />
+                      <HelpOutlineIcon className={classes.iconDisabled} />
                     )}
-                    <Typography variant="caption" className={classes.matchName}>
+                    <Typography className={classes.matchName}>
                       {name}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      className={classes.matchAmount}>
-                      {`(${amountG % 1 === 0 ? amountG : amountG.toFixed(1)}g)`}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      className={
-                        matched
-                          ? classes.matchEntry
-                          : classes.matchEntryNotFound
-                      }>
-                      {matched ? `→ ${matched.name}` : '→ nicht gefunden'}
+                      <Typography
+                        component={'span'}
+                        className={classes.matchAmount}>
+                        {` (${
+                          amountG % 1 === 0 ? amountG : amountG.toFixed(1)
+                        }g)`}
+                      </Typography>
+                      <Typography
+                        component={'span'}
+                        className={
+                          matched
+                            ? classes.matchEntry
+                            : classes.matchEntryNotFound
+                        }>
+                        {matched ? ` → ${matched.name}` : ' → nicht gefunden'}
+                      </Typography>
                     </Typography>
                   </div>
                 ))}
 
                 {skipped.map(line => (
                   <div key={line} className={classes.matchRow}>
-                    <RemoveIcon
-                      className={`${classes.icon} ${classes.iconSkipped}`}
-                    />
+                    <RemoveIcon className={classes.iconDisabled} />
                     <Typography
-                      variant="caption"
                       className={`${classes.matchName} ${classes.matchEntryNotFound}`}>
                       {line}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      className={classes.matchEntryNotFound}>
-                      → nicht erkannt
+                      <Typography
+                        component={'span'}
+                        className={classes.matchEntryNotFound}>
+                        {' → nicht erkannt'}
+                      </Typography>
                     </Typography>
                   </div>
                 ))}
