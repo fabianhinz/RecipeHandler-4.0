@@ -57,6 +57,15 @@ const splitCommonSuffixes = (text: string): string => {
   return text.split(/\s+/).join(' ').trim()
 }
 
+// Re-stem each token after suffix splitting so compound fragments ("roggen" from
+// "roggenmehl") get the same stem ("rogg") as they would in the BLS searchIndex.
+const splitAndRestem = (text: string): string =>
+  splitCommonSuffixes(text)
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(w => stemmer.stem(w))
+    .join(' ')
+
 const normalizeText = (text: string): string => {
   if (!text) return ''
   text = text.toLowerCase()
@@ -86,7 +95,7 @@ const buildSearchVariants = (query: string): string[] => {
   const variants: string[] = []
 
   const add = (text: string) => {
-    const v = splitCommonSuffixes(normalizeText(text))
+    const v = splitAndRestem(normalizeText(text))
     if (v && !seen.has(v)) {
       seen.add(v)
       variants.push(v)
@@ -123,8 +132,14 @@ class NutritionService {
         return res.json() as Promise<NutritionEntry[]>
       })
       .then(data => {
-        this.data = data
-        this.fuse = new Fuse(data, {
+        // Re-split compound suffixes and re-stem so "vollkornmehl" in the
+        // original searchIndex becomes "vollkorn mehl", enabling exact token
+        // matching in findByWordBoundary and accurate Fuse scoring.
+        this.data = data.map(e => ({
+          ...e,
+          searchIndex: splitAndRestem(e.searchIndex),
+        }))
+        this.fuse = new Fuse(this.data, {
           keys: [{ name: 'searchIndex', weight: 1 }],
           includeScore: true,
           threshold: 0.5,
@@ -132,7 +147,7 @@ class NutritionService {
           useExtendedSearch: false,
           minMatchCharLength: 2,
         })
-        return data
+        return this.data
       })
 
     return this.loadPromise
@@ -265,12 +280,12 @@ class NutritionService {
     if (customResult) return customResult
 
     // Use the override map for common ingredients: strip modifiers first, then look up.
-    const overrideQuery = INGREDIENT_OVERRIDES[strippedQuery]
+    const exactOverride = INGREDIENT_OVERRIDES[strippedQuery]
 
-    if (overrideQuery) {
+    if (exactOverride) {
       // Prefer a direct name match in the BLS data over fuzzy search — avoids
       // ambiguous stems matching unrelated compounds (e.g. "Sahne" → a liqueur).
-      const overrideLower = overrideQuery.toLowerCase()
+      const overrideLower = exactOverride.toLowerCase()
       const direct = this.data.find(e => {
         const n = e.name.toLowerCase()
         return (
@@ -293,7 +308,20 @@ class NutritionService {
       }
     }
 
-    const normalizedQuery = splitCommonSuffixes(normalizeText(strippedQuery))
+    // Word-by-word fallback: if "roggenmehl vollkorn" misses as a full key, find
+    // "roggenmehl" and use it as a Fuse hint — but do NOT short-circuit to a direct
+    // name match, so findByWordBoundary can still use all query tokens (incl. "vollkorn").
+    const partialOverride =
+      exactOverride == null
+        ? strippedQuery
+            .split(/\s+/)
+            .map(w => INGREDIENT_OVERRIDES[w])
+            .find(Boolean)
+        : undefined
+
+    const overrideQuery = exactOverride ?? partialOverride
+
+    const normalizedQuery = splitAndRestem(normalizeText(strippedQuery))
     const boundaryResult = this.findByWordBoundary(normalizedQuery)
     if (boundaryResult) return boundaryResult
 
