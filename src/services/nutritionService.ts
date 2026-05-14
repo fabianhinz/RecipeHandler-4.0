@@ -1,7 +1,7 @@
 import Fuse, { FuseResult } from 'fuse.js'
 import { newStemmer } from 'snowball-stemmers'
 
-import { INGREDIENT_OVERRIDES, MODIFIERS } from './nutritionData'
+import { INGREDIENT_OVERRIDES, MODIFIERS } from './ingredientConfig'
 
 export interface NutritionEntry {
   id: string

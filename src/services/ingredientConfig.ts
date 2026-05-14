@@ -1,7 +1,75 @@
+// src/services/ingredientConfig.ts
+
+/** Grams per single egg. */
+export const EGG_WEIGHT_G = 50
+
+/** Returns the midpoint of an ingredient quantity range (e.g. "1–2 Eier" → 1.5). */
+export function resolveRange(min: number, max: number): number {
+  return (min + max) / 2
+}
+
+/** German unit abbreviations mapped to their gram/ml equivalent */
+export const UNIT_MULTIPLIERS: Record<string, number> = {
+  g: 1,
+  gr: 1,
+  kg: 1000,
+  ml: 1,
+  l: 1000,
+  liter: 1000,
+  el: 15,
+  tl: 5,
+  prise: 1,
+  msp: 0.5,
+  tasse: 240, // 1 Tasse ≈ 240 ml/g
+  dose: 400, // 1 Dose (Standarddose) ≈ 400 g
+  zweig: 2, // 1 Zweig Kräuter ≈ 2 g
+  zweige: 2,
+  stange: 200, // 1 Stange Lauch ≈ 200 g
+  stangen: 200,
+  bund: 100, // 1 Bund ≈ 100 g
+  scheibe: 30, // 1 Scheibe ≈ 30 g
+  scheiben: 30,
+  zehe: 5, // 1 Zehe Knoblauch ≈ 5 g
+  zehen: 5,
+  spritzer: 2,
+}
+
+/** Approximate per-item gram weight for common count-based ingredients (no unit) */
+export const PLAIN_COUNT_WEIGHTS: Record<string, number> = {
+  apfel: 150,
+  äpfel: 150,
+  banane: 120,
+  bananen: 120,
+  zitrone: 100,
+  zitronen: 100,
+  orange: 180,
+  orangen: 180,
+  tomate: 100,
+  tomaten: 100,
+  kartoffel: 150,
+  kartoffeln: 150,
+  zwiebel: 80,
+  zwiebeln: 80,
+  karotte: 80,
+  karotten: 80,
+  möhre: 80,
+  möhren: 80,
+  zucchini: 250,
+  gurke: 300,
+  salatgurke: 300,
+  salatgurken: 300,
+  frühlingszwiebel: 20,
+  frühlingszwiebeln: 20,
+  paprika: 150,
+  paprikaschote: 150,
+  avocado: 200,
+  avocados: 200,
+}
+
 /**
- * Words that describe preparation, size, or state but don't identify the ingredient.
- * Common inflected forms are included to avoid a dependency on runtime stemming for filtering.
- * Stripped from ingredient names before BLS fuzzy search.
+ * Merged union of words stripped before BLS matching (nutritionService) and
+ * before parser adjective-stripping (ingredientParser). Replaces the former
+ * MODIFIERS in nutritionData.ts and QUANTITY_ADJECTIVES in ingredientParser.ts.
  */
 export const MODIFIERS = new Set([
   // frozen / processing
@@ -16,6 +84,8 @@ export const MODIFIERS = new Set([
   'rohe',
   'reif',
   'reife',
+  'reifer',
+  'reifes',
   'getr.',
   'getrocknet',
   'getrocknete',
@@ -39,6 +109,7 @@ export const MODIFIERS = new Set([
   'geschälte',
   'gekocht',
   'gekochte',
+  'hartgekochte',
   'gegart',
   'gegarte',
   'gebacken',
@@ -54,17 +125,64 @@ export const MODIFIERS = new Set([
   'großes',
   'mittel',
   'mittlere',
+  'mittlerer',
+  'mittleres',
   'ganz',
   'ganze',
   'ganzer',
   'ganzes',
   'gute',
+  'guter',
+  'gutes',
+  'guten',
   'fein',
   'feine',
   'feiner',
   'grob',
   'grobe',
   'grober',
+  // quantity qualifiers (from former QUANTITY_ADJECTIVES)
+  'gehäufte',
+  'gehäufter',
+  'gehäuftes',
+  'gehäuften',
+  'gestrichene',
+  'gestrichener',
+  'gestrichenes',
+  'gestrichenen',
+  'knappe',
+  'knapper',
+  'knappes',
+  'knappen',
+  'halbe',
+  'halber',
+  'halbes',
+  'halben',
+  // colour adjectives (from former QUANTITY_ADJECTIVES)
+  'rote',
+  'roter',
+  'rotes',
+  'roten',
+  'gelbe',
+  'gelber',
+  'gelbes',
+  'gelben',
+  'grüne',
+  'grüner',
+  'grünes',
+  'grünen',
+  'weiße',
+  'weißer',
+  'weißes',
+  'weißen',
+  'schwarze',
+  'schwarzer',
+  'schwarzes',
+  'schwarzen',
+  'braune',
+  'brauner',
+  'braunes',
+  'braunen',
   // temperature / state
   'kalt',
   'kalte',
