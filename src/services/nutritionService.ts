@@ -50,7 +50,6 @@ export interface NutritionDetailedResult {
 const stemmer = newStemmer('german')
 
 const splitCommonSuffixes = (text: string): string => {
-  // cSpell:disable-next-line
   const suffixes = ['flock', 'mehl', 'pulver', 'schrot']
   for (const s of suffixes) {
     text = text.split(s).join(` ${s}`)
@@ -185,6 +184,46 @@ class NutritionService {
     }
   }
 
+  /**
+   * Token-exact pre-search: every stemmed query token must appear as a complete
+   * token in the entry's searchIndex. Prefers "roh" entries, then shortest name.
+   * Returns null so Fuse still handles misspellings and ambiguous queries.
+   */
+  private findByWordBoundary(normalizedQuery: string): NutritionResult | null {
+    if (!this.data) return null
+    const queryTokens = normalizedQuery.split(/\s+/).filter(Boolean)
+    if (!queryTokens.length) return null
+
+    const candidates = this.data.filter(entry => {
+      const entryTokens = new Set(entry.searchIndex.split(/\s+/))
+      return queryTokens.every(t => entryTokens.has(t))
+    })
+
+    if (!candidates.length) return null
+
+    const ranked = candidates.map(entry => {
+      const tokens = entry.searchIndex.split(/\s+/)
+      return { entry, roh: tokens.includes('roh') ? 0 : 1, len: tokens.length }
+    })
+    ranked.sort((a, b) => {
+      if (a.roh !== b.roh) return a.roh - b.roh
+      return a.len - b.len
+    })
+
+    const best = ranked[0].entry
+    return {
+      name: best.name,
+      blsCode: best.id,
+      kcal: best.kcal,
+      protein: best.protein,
+      fat: best.fat,
+      carbs: best.carbs,
+      fiber: best.fiber,
+      sugar: best.sugar,
+      score: 90,
+    }
+  }
+
   private scoreResults(
     rawResults: FuseResult<NutritionEntry>[],
     query: string
@@ -254,6 +293,10 @@ class NutritionService {
       }
     }
 
+    const normalizedQuery = splitCommonSuffixes(normalizeText(strippedQuery))
+    const boundaryResult = this.findByWordBoundary(normalizedQuery)
+    if (boundaryResult) return boundaryResult
+
     const variants = buildSearchVariants(overrideQuery ?? query)
     let best: { item: NutritionEntry; finalScore: number } | null = null
 
@@ -280,35 +323,6 @@ class NutritionService {
       sugar: best.item.sugar,
       score: best.finalScore,
     }
-  }
-
-  async calculateNutrition(
-    ingredients: Array<{ amountG: number; name: string }>
-  ): Promise<NutritionSummary> {
-    const summary: NutritionSummary = {
-      kcal: 0,
-      protein: 0,
-      fat: 0,
-      carbs: 0,
-      fiber: 0,
-      sugar: 0,
-    }
-
-    await Promise.all(
-      ingredients.map(async ({ amountG, name }) => {
-        const result = await this.findIngredient(name)
-        if (!result) return
-        const factor = amountG / 100
-        summary.kcal += result.kcal * factor
-        summary.protein += result.protein * factor
-        summary.fat += result.fat * factor
-        summary.carbs += result.carbs * factor
-        summary.fiber += result.fiber * factor
-        summary.sugar += result.sugar * factor
-      })
-    )
-
-    return summary
   }
 
   async calculateNutritionDetailed(

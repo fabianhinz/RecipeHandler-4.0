@@ -1,5 +1,3 @@
-// cSpell:disable
-
 export interface ParsedIngredient {
   amountG: number
   name: string
@@ -137,8 +135,6 @@ const PLAIN_COUNT_WEIGHTS: Record<string, number> = {
   avocados: 200,
 }
 
-// cSpell:enable
-
 /** Matches a positive number: integer or decimal with `.` or `,` separator (e.g. "1", "2.5", "1,5") */
 const NUM = String.raw`(\d+(?:[,.]\d+)?)`
 
@@ -173,8 +169,17 @@ const normalizeLine = (rawLine: string): string => {
   return line
 }
 
-/** Matches egg lines like "2 Eier" → 2 × 50 g */
+/** Matches egg lines like "2 Eier" or "4-5 Eier" → (avg) × 50 g */
 const matchEgg = (line: string): ParsedIngredient | null => {
+  const range = new RegExp(
+    String.raw`^${NUM}${RANGE_SEP}${NUM}\s+Ei(?:er)?\b`,
+    'i'
+  ).exec(line)
+  if (range)
+    return {
+      amountG: ((parseNum(range[1]) + parseNum(range[2])) / 2) * 50,
+      name: 'Hühnerei',
+    }
   const m = new RegExp(String.raw`^${NUM}\s+Ei(?:er)?\b`, 'i').exec(line)
   return m ? { amountG: parseNum(m[1]) * 50, name: 'Hühnerei' } : null
 }

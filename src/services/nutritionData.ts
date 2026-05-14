@@ -1,5 +1,3 @@
-// cSpell:disable
-
 /**
  * Words that describe preparation, size, or state but don't identify the ingredient.
  * Common inflected forms are included to avoid a dependency on runtime stemming for filtering.
@@ -18,6 +16,7 @@ export const MODIFIERS = new Set([
   'rohe',
   'reif',
   'reife',
+  'getr.',
   'getrocknet',
   'getrocknete',
   'getrockneter',
@@ -127,18 +126,16 @@ export const INGREDIENT_OVERRIDES: Record<string, string> = {
   natron: 'Natriumhydrogencarbonat',
   vanille: 'Vanilleextrakt',
   // Vegetables
-  tomaten: 'Tomate',
   cocktailtomaten: 'Tomate',
   cherrytomaten: 'Tomate',
   zwiebel: 'Speisezwiebel',
   zwiebeln: 'Speisezwiebel',
   frühlingszwiebeln: 'Frühlingszwiebel/Lauchzwiebel, roh',
   karotten: 'Karotte',
-  möhren: 'Möhre',
+  möhren: 'Karotte',
   kartoffeln: 'Kartoffel',
   paprika: 'Gemüsepaprika',
   brokkoli: 'Broccoli',
-  champignons: 'Champignon',
   pilze: 'Champignon',
   lauch: 'Porree/Lauch, roh',
   // Legumes
@@ -159,14 +156,8 @@ export const INGREDIENT_OVERRIDES: Record<string, string> = {
   erdnüsse: 'Erdnuss',
   cashews: 'Cashewnuss',
   // Fruits
-  apfel: 'Apfel',
-  äpfel: 'Apfel',
-  bananen: 'Banane',
-  zitronen: 'Zitrone',
-  orangen: 'Orange',
-  erdbeeren: 'Erdbeere',
-  himbeeren: 'Himbeere',
-  blaubeeren: 'Blaubeere',
+  blaubeeren: 'Heidelbeere roh',
+  orangenschale: 'Orange roh',
   // Condiments & liquids
   essig: 'Weinessig',
   brühe: 'Gemüsebrühe',
@@ -175,5 +166,3 @@ export const INGREDIENT_OVERRIDES: Record<string, string> = {
   schokolade: 'Zartbitterschokolade',
   erdnussbutter: 'Erdnussmus',
 }
-
-// cSpell:enable
