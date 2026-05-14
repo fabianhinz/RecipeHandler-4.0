@@ -68,6 +68,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   matchName: {
     flexShrink: 0,
   },
+  matchAmount: {
+    color: theme.palette.text.disabled,
+    flexShrink: 0,
+  },
   matchEntry: {
     color: theme.palette.text.secondary,
     overflow: 'hidden',
@@ -194,7 +198,7 @@ const RecipeNutrition = ({ recipe }: { recipe: Recipe }) => {
                   Zuordnung
                 </Typography>
 
-                {matches.map(({ name, matched }) => (
+                {matches.map(({ name, amountG, matched }) => (
                   <div key={name} className={classes.matchRow}>
                     {matched ? (
                       <CheckCircleOutlineIcon
@@ -207,6 +211,11 @@ const RecipeNutrition = ({ recipe }: { recipe: Recipe }) => {
                     )}
                     <Typography variant="caption" className={classes.matchName}>
                       {name}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      className={classes.matchAmount}>
+                      {`(${amountG % 1 === 0 ? amountG : amountG.toFixed(1)}g)`}
                     </Typography>
                     <Typography
                       variant="caption"
